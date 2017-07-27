@@ -1,76 +1,98 @@
-<md-content class="rv-filter-setting rv-invert rv-toggle-slide">
+<rv-content-pane title-style="title" title-value="{{self.title}} - {{ 'filter.table.filter' | translate }}" ng-show="self.tableService.isSettingOpen" close-panel="self.onClose()">
 
-    <h4 class="md-title">{{ 'filter.settings.title' | translate }}</h4>
+    <div class="rv-flex">
+        <div class="rv-filter-setting rv-invert rv-toggle-slide">
 
-    <div class="rv-filter-desc" ng-if="self.description">
-        <md-button
-            class="rv-filter-desc-button rv-button-square"
-            ng-click="self.isShowDescription = !self.isShowDescription"
-            rv-help="group-toggle"></md-button>
-        <div class="rv-icon-24 rv-group-toggle-icon">
-            <md-icon
-                class="md-toggle-icon"
-                ng-class="{ 'rv-toggled' : self.isShowDescription === true }"
-                md-svg-src="hardware:keyboard_arrow_down">
-            </md-icon>
+            <div class="rv-filter-desc" ng-if="self.description">
+                <md-button
+                    class="rv-filter-desc-button rv-button-square"
+                    ng-click="self.isShowDescription = !self.isShowDescription"
+                    rv-help="group-toggle"></md-button>
+                <div class="rv-icon-24 rv-group-toggle-icon">
+                    <md-icon
+                        class="md-toggle-icon"
+                        ng-class="{ 'rv-toggled' : self.isShowDescription === true }"
+                        md-svg-src="hardware:keyboard_arrow_down">
+                    </md-icon>
+                </div>
+                <h3>{{ 'filter.setting.label.description' | translate }}</h3>
+            </div>
+            <div ng-show="self.isShowDescription">
+                <span class="rv-filter-desc-main">{{ self.description }}</span>
+                <ul class="rv-filter-desc-column">{{ 'filter.setting.label.fields' | translate }}
+                    <li ng-repeat="column in self.columns" ng-if="column.description">{{ column.title }} ({{ column.data}}): {{ column.description}}</li>
+                </ul>
+            </div>
+
+            <ul>
+                <li>
+                    <span class="rv-filter-settting-reorder"></span>
+                    <span class="rv-filter-settting-name md-subhead">{{ 'filter.settings.label.name' | translate }}</span>
+                    <span class="rv-filter-settting-item md-subhead">{{ 'filter.settings.label.filter' | translate }}</span>
+                    <span class="rv-filter-settting-sort md-subhead">{{ 'filter.settings.label.sort' | translate }}</span>
+                    <span class="rv-filter-settting-display md-subhead">{{ 'filter.settings.label.show' | translate }}</span>
+                </li>
+                <!--only create the element when columns is set. If not, the dragula directive fired and scope is not set -->
+                <ul class="rv-filter-list"
+                    rv-dragula="table-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.columns"
+                    ng-if="self.columns.length">
+                    <!-- do not show first 2 columns (symbol and interactive buttons). Uge ng-show because ng-if doesn't work with dragula -->
+                    <li ng-repeat="column in self.columns"  data-name="{{ ::column.data }}" ng-show="$index>1" class="rv-filter-setting-item">
+                        <div rv-drag-handle ng-if="$index>1">  <!-- no rv-drag-handle so they will not be use when reorder -->
+                        <md-button
+                                aria-label="{{ filter.settings.reorder | translate }}"
+                                class="rv-filter-settting-reorder md-icon-button">
+                                    <md-tooltip>{{ 'filter.settings.reorder' | translate }}</md-tooltip>
+                                    <md-icon md-svg-src="editor:drag_handle"></md-icon>
+                            </md-button>
+                        </div>
+
+                        <span class="rv-filter-settting-name">{{ column.title }}</span>
+
+                        <div rv-table-definition class="rv-filter-settting-item" info="column"></div>
+
+                        <div class="rv-filter-settting-sort">
+                            <md-button
+                                aria-label="{{ filter.settings.sort | translate }}"
+                                class="md-icon-button"
+                                ng-click="self.sort(column)">
+                                    <md-tooltip>{{ 'filter.settings.sort' | translate }}</md-tooltip>
+                                    <md-icon md-svg-src="navigation:arrow_downward" ng-show="column.sort === 'desc'"></md-icon>
+                                    <md-icon md-svg-src="navigation:arrow_upward" ng-show="column.sort === 'asc'"></md-icon>
+                                    <md-icon md-svg-src="content:remove" ng-show="column.sort === 'none'"></md-icon>
+                            </md-button>
+                        </div>
+
+                        <div class="rv-filter-settting-display">
+                            <md-checkbox
+                                aria-label="{{ filter.settings.label.show | translate }}"
+                                ng-model="column.display"
+                                class="md-primary"
+                                ng-change="self.display(column)">
+                            </md-checkbox>
+                        </div>
+                    </li>
+                </ul>
+            </ul>
         </div>
-        <h3>{{ 'filter.setting.label.description' | translate }}</h3>
+
+        <div class="rv-settings-controls">
+            <md-button
+                aria-label="{{ filter.table.reset.tooltip | translate }}"
+                class="primary"
+                rv-help="table-clear-button"
+                ng-click="self.tableService.clearFilters()">
+                {{ 'filter.table.reset.tooltip' | translate }}
+            </md-button>
+
+            <md-button
+                aria-label="{{ filter.table.apply | translate }}"
+                class="rv-table-apply rv-button-square md-raised md-primary md-button"
+                rv-help="table-apply-button"
+                ng-click="self.tableService.applyFilters()"
+                ng-disabled="self.tableService.filter.isApplied || !(self.tableService.isFeatureLayer || self.tableService.isDynamicLayer)">
+                {{ 'filter.table.apply' | translate }}
+            </md-button>
+        </div>
     </div>
-    <div ng-show="self.isShowDescription">
-        <span class="rv-filter-desc-main">{{ self.description }}</span>
-        <ul class="rv-filter-desc-column">{{ 'filter.setting.label.fields' | translate }}
-            <li ng-repeat="column in self.columns" ng-if="column.description">{{ column.title }} ({{ column.data}}): {{ column.description}}</li>
-        </ul>
-    </div>
-
-    <ul>
-        <li>
-            <span class="rv-filter-settting-reorder">{{ 'filter.settings.label.reorder' | translate }}</span>
-            <span class="rv-filter-settting-name">{{ 'filter.settings.label.name' | translate }}</span>
-            <span class="rv-filter-settting-item">{{ 'filter.settings.label.filter' | translate }}</span>
-            <span class="rv-filter-settting-sort">{{ 'filter.settings.label.sort' | translate }}</span>
-            <span class="rv-filter-settting-display">{{ 'filter.settings.label.display' | translate }}</span>
-        </li>
-         <!--only create the element when columns is set. If not, the dragula directive fired and scope is not set -->
-         <ul class="rv-filter-list"
-            rv-dragula="table-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.columns"
-            ng-if="self.columns.length">
-            <!-- do not show first 2 columns (symbol and interactive buttons). Uge ng-show because ng-if doesn't work with dragula -->
-            <li ng-repeat="column in self.columns"  data-name="{{ ::column.data }}" ng-show="$index>1" class="rv-filter-setting-item">
-                <div rv-drag-handle ng-if="$index>1">  <!-- no rv-drag-handle so they will not be use when reorder -->
-                   <md-button
-                        aria-label="{{ filter.settings.reorder | translate }}"
-                        class="rv-filter-settting-reorder md-icon-button">
-                            <md-tooltip>{{ 'filter.settings.reorder' | translate }}</md-tooltip>
-                            <md-icon md-svg-src="editor:drag_handle"></md-icon>
-                    </md-button>
-                </div>
-
-                <span class="rv-filter-settting-name">{{ column.title }}</span>
-
-                <div rv-table-definition class="rv-filter-settting-item" info="column"></div>
-
-                <div class="rv-filter-settting-sort">
-                    <md-button
-                        aria-label="{{ filter.settings.sort | translate }}"
-                        class="md-icon-button"
-                        ng-click="self.sort(column)">
-                            <md-tooltip>{{ 'filter.settings.sort' | translate }}</md-tooltip>
-                            <md-icon md-svg-src="navigation:arrow_downward" ng-show="column.sort === 'desc'"></md-icon>
-                            <md-icon md-svg-src="navigation:arrow_upward" ng-show="column.sort === 'asc'"></md-icon>
-                            <md-icon md-svg-src="content:remove" ng-show="column.sort === 'none'"></md-icon>
-                    </md-button>
-                </div>
-
-                <div class="rv-filter-settting-display">
-                    <md-checkbox
-                        aria-label="{{ filter.settings.label.display | translate }}"
-                        ng-model="column.display"
-                        class="md-primary"
-                        ng-change="self.display(column)">
-                    </md-checkbox>
-                </div>
-            </li>
-        </ul>
-    </ul>
-</md-content>
+</rv-content-pane>

@@ -383,7 +383,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @function toggleSetting
      */
     function toggleSetting() {
-        service.isSettingOpen = !(service.isSettingOpen);
+        service.isSettingOpen = !service.isSettingOpen;
 
         // show filters if setting is open
         if (service.isSettingOpen) {

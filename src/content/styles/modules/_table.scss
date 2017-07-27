@@ -163,6 +163,10 @@
                 float: right;
                 height: 40px;
 
+                button {
+                    margin: 0;
+                }
+
                 .rv-filters-apply {
                     margin-top: 0;
                     margin-bottom: 0;
@@ -239,15 +243,31 @@ rv-table-search {
 }
 
 rv-table-setting-panel {
-    height: 100%;
-    width: 99%;
-    position: absolute;
-    padding-bottom: 45px;
-    overflow-y: auto;
-    user-select: none; // do not select header text to avoid table selection when drag & drop columns
+
+    .rv-header {
+        padding-right: 12px !important;
+    }
+
+    button {
+        margin: 0 !important;
+    }
 
     md-content {
         height: 100%;
+        padding: 0 !important;
+        margin-bottom: 0 !important;
+        overflow: hidden;
+
+        .rv-flex {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
     }
 
     .rv-filter-desc {
@@ -276,10 +296,19 @@ rv-table-setting-panel {
         padding-left: 12px;
     }
 
+    .rv-settings-controls {
+        flex: 0 0 35px;
+        padding: 9px 16px;
+        text-align: right;
+    }
+
     .rv-filter-setting {
         background-color: $primary-color-dark;
         color: $primary-color-text;
-        padding: 10px;
+        padding: 10px 40px;
+        width: 100%;
+        overflow: auto;
+        flex: 1 0 80%;
 
         h4, h3, .md-toggle-icon {
             color: $primary-color-text;
@@ -291,20 +320,17 @@ rv-table-setting-panel {
 
         ul {
             list-style-type: none;
+            padding: 0;
+            margin: 0;
 
             .rv-filter-list {
                 padding-left: 0px;
             }
 
-            li.rv-mirror {
-                box-shadow: $whiteframe-shadow-4dp;
-                background-color: $primary-color;
-            }
-
             li {
                 display: flex;
-                align-content: center;
-                max-width: 1000px;
+                height: 40px;
+                background-color: $primary-color-dark;
 
                 span, button, div, md-icon {
                     align-self: center;
@@ -312,13 +338,12 @@ rv-table-setting-panel {
                 }
 
                 .rv-filter-settting-reorder {
-                    display: flex;
-                    justify-content: center;
+                    flex: 0 0 40px;
                 }
 
                 .rv-filter-settting-name {
-                    flex: 1 0 30%;
-                    margin-left: 12px;
+                    flex: 2 0 30%;
+                    padding-left: 25px;
                 }
 
                 .rv-filter-settting-item {
@@ -333,15 +358,13 @@ rv-table-setting-panel {
                 }
 
                 .rv-filter-settting-sort {
-                    width: 60px;
-                    display: flex;
-                    justify-content: center;
+                    flex: 0 1 10%;
+                    min-width: 60px;
                 }
 
                 .rv-filter-settting-display {
-                    width: 60px;
-                    display: flex;
-                    justify-content: center;
+                    flex: 0 1 10%;
+                    min-width: 60px;
 
                     md-checkbox {
                         margin: 0;

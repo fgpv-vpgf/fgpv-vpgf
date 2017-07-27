@@ -51,8 +51,10 @@ DataTable text for thousands delimeter,filter.default.thousands.delim, ,1, ,1
 DataTable global filters aria label search icon,filter.aria.table.search,Global Search,1,Recherche globale,1
 DataTable global filters search text placeholder,filter.search.placeholder,Search Text,1,Texte à rechercher,1
 Datatable open setting tooltip,filter.table.setting.tooltip,Toggle filters setting,1,Basculer le réglage des filtres,1
+Datatable clears filters tooltip,filter.table.reset.tooltip,Reset,1,Réinitialiser,1
+Datatable filter title,filter.table.filter,Filter,1,Filtre,1
 Datatable clears filters tooltip,filter.table.clear.tooltip,Clear filters,1,Effacer les filtres,1
-Datatable apply filters on map text,filter.table.apply,Apply to map,1,Appliquer à la carte,1
+Datatable apply filters on map text,filter.table.apply,Apply,1,Appliquer,1
 DataTable string filter placeholder,filter.placeholder.string,text,1,texte,1
 DataTable selector filter placeholder,filter.placeholder.selector,selection,1,sélection,1
 DataTable min filter placeholder,filter.placeholder.min,min,1,min,1
@@ -64,11 +66,10 @@ Datatable settings description label,filter.setting.label.description, Descripti
 Datatable settings field label,filter.setting.label.fields,Fields,1,Champs,1
 Datatable sort setting tooltip,filter.settings.sort,Sort,1,Trier,1
 Datatable reorder fields setting tooltip,filter.settings.reorder,Reorder fields,1,Réorganiser les champs,1
-Datatable settings reorder column label,filter.settings.label.reorder,Reorder,1,Réorganiser,1
 Datatable settings name column label,filter.settings.label.name,Name,1,Nom,1
 Datatable settings filter column label,filter.settings.label.filter,Filter,1,Filtre,1
 Datatable settings sort column label,filter.settings.label.sort,Sort,1,Trier,1
-Datatable settings display column label,filter.settings.label.display,Display,1,Afficher,1
+Datatable settings display column label,filter.settings.label.show,Show,1,Montrer,1
 Details pane title,details.title,Feature Information,1,Information sur l'élément,1
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
