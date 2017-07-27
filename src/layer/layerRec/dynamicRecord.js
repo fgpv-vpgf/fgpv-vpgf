@@ -359,6 +359,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     if (!dFC.extent) {
                         dFC.extent = ld.extent;
                     }
+                    dFC.extent = shared.makeSafeExtent(dFC.extent);
 
                     dFC._scaleSet.minScale = ld.minScale;
                     dFC._scaleSet.maxScale = ld.maxScale;

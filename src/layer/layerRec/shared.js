@@ -102,6 +102,38 @@ function layerLoaded(state) {
 }
 
 /**
+ * Takes an extent. If extent has problematic boundaries, adjust the extent inwards.
+ *
+ * @function makeSafeExtent
+ * @param {Object} extent an extent. Param may be modified in place
+ * @return {Object} an extent that has been adjusted if it's too big
+ */
+function makeSafeExtent(extent) {
+    // TODO add more cases to check for as we find them
+
+    // we modify the parameter in-place due to lazyness (i.e. not wanting to generate
+    // a new prototyped extent object).  If we find this to be a problem, change
+    // the code to make a proper copy (might need some shenanigans to get the
+    // extent constructor function in here)
+
+    // if lat/long, back off if too close to poles or anti-prime-meridian
+    if (extent.spatialReference.wkid === 4326) {
+
+        const squish = (ext, prop, limit, direction) => {
+            if (((ext[prop]) * direction) > (limit * direction)) {
+                ext[prop] = limit;
+            }
+        };
+
+        [['xmin', -179, -1], ['xmax', 179, 1], ['ymin', -89, -1], ['ymax', 89, 1]].forEach(nugget => {
+            squish(extent, ...nugget);
+        });
+    }
+
+    return extent;
+}
+
+/**
  * @class IdentifyResult
  */
 class IdentifyResult {
@@ -126,5 +158,6 @@ module.exports = () => ({
     makeSymbologyArray,
     IdentifyResult,
     parseUrlIndex,
-    layerLoaded
+    layerLoaded,
+    makeSafeExtent
 });

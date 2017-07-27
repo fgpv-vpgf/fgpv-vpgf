@@ -244,14 +244,14 @@ function esriServiceBuilder(esriBundle) {
 }
 
 /**
-* Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions.
-*
-* @method isSpatialRefEqual
-* @static
-* @param {type} sr1 Esri Spatial Reference First to compare
-* @param {type} sr2 Esri Spatial Reference Second to compare
-* @return {Boolean} true if the two spatial references are equivalent.  False otherwise.
-*/
+ * Checks if two spatial reference objects are equivalent.  Handles both wkid and wkt definitions.
+ *
+ * @method isSpatialRefEqual
+ * @static
+ * @param {type} sr1 Esri Spatial Reference First to compare
+ * @param {type} sr2 Esri Spatial Reference Second to compare
+ * @return {Boolean} true if the two spatial references are equivalent.  False otherwise.
+ */
 function isSpatialRefEqual(sr1, sr2) {
     if ((sr1.wkid) && (sr2.wkid)) {
         // both SRs have wkids
