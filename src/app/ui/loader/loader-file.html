@@ -149,7 +149,7 @@
                         <md-select
                             name="latitude"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.latDefaultfield"
+                            ng-model="self.layerSource.latfield"
                             required>
                             <md-option ng-repeat="field in self.layerSource.latFields" value="{{ field.name }}">
                                 {{ field.name }}
@@ -165,7 +165,7 @@
                         <md-select
                             name="longitude"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.longDefaultfield"
+                            ng-model="self.layerSource.lonfield"
                             required>
                             <md-option ng-repeat="field in self.layerSource.longFields" value="{{ field.name }}">
                                 {{ field.name }}
