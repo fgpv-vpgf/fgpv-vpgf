@@ -24,7 +24,7 @@ function rvTableSettingPanel(stateManager, dragulaService, animationService, tab
         restrict: 'E',
         templateUrl,
         scope: { },
-        link: link,
+        link,
         controller: Controller,
         controllerAs: 'self',
         bindToController: true
@@ -34,6 +34,12 @@ function rvTableSettingPanel(stateManager, dragulaService, animationService, tab
 
     function link(scope, directiveElement) {
         const self = scope.self;
+
+        self.tableService = tableService;
+
+        self.onClose = () => {
+            self.tableService.isSettingOpen = false;
+        };
 
         // TODO convert this object into an ES6 class
         // jscs doesn't like enhanced object notation
@@ -82,7 +88,7 @@ function rvTableSettingPanel(stateManager, dragulaService, animationService, tab
         // TODO: abstract the scrolling animation, to avoid code duplication (already in toc.directive)
         scope.$on('table-bag.drag', (evt, dragElement, source) => {
             // handle autoscroll when dragging layers
-            const scrollElem = source.closest('md-content');
+            const scrollElem = source.closest('.rv-filter-setting');
             directiveElement.on('mousemove touchmove', event => {
 
                 const pageY = event.pageY ? event.pageY :  event.originalEvent.touches[0].clientY;
@@ -148,7 +154,8 @@ function Controller($scope, events, tableService, stateManager) {
         self.description = stateManager.display.table.data.filter.description;
         self.columns = stateManager.display.table.data.columns;
         $scope.columns = self.columns;
-
+        self.title = stateManager.display.table.data.filter.title;
+        self.tableService.isSettingOpen = false;
         init();
     });
 
@@ -221,3 +228,4 @@ function Controller($scope, events, tableService, stateManager) {
         column.header().classList.toggle('rv-filter-noexport');
     }
 }
+
