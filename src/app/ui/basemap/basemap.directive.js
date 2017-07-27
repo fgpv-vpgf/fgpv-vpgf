@@ -1,3 +1,5 @@
+const templateUrl = require('./basemap.html');
+
 /**
  * @module rvBasemap
  * @memberof app.ui
@@ -13,7 +15,8 @@ angular
 
 function rvBasemap() {
     const directive = {
-        restrict: 'A',
+        restrict: 'E',
+        templateUrl,
         controller: Controller,
         controllerAs: 'self',
         bindToController: true
