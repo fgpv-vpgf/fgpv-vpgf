@@ -12,9 +12,10 @@
         aria-label="{{ filter.table.clear.tooltip | translate }}"
         class="md-icon-button primary"
         rv-help="table-clear-button"
-        ng-click="self.tableService.clearFilters()">
+        ng-click="self.tableService.clearFilters()"
+        ng-disabled="self.tableService.filter.isApplied || !(self.tableService.isFeatureLayer || self.tableService.isDynamicLayer)">
         <md-tooltip>{{ 'filter.table.clear.tooltip' | translate }}</md-tooltip>
-        <md-icon md-svg-src="community:filter"></md-icon>
+        <md-icon md-svg-src="community:filter-remove"></md-icon>
     </md-button>
 
     <span class="rv-table-divider"></span>
