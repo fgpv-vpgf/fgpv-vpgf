@@ -317,19 +317,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @function toggleSetting
      */
     function toggleSetting() {
-        service.isSettingOpen = !(service.isSettingOpen);
-
-        // show filters if setting is open
-        if (service.isSettingOpen) {
-            layoutService.isFiltersVisible = true;
-        } else {
-            // when setting is close, check if we need to show setting
-            layoutService.isFiltersVisible = service.filter.isOpen;
-
-            // need to recalculate scroller space because user may have switch from default to full view inside setting panel
-            // need a timeout, if not measure occurs when datatable is not displayed and it fails
-            $timeout(() => { activeTable.scroller.measure(); }, 0);
-        }
+        service.isSettingOpen = !service.isSettingOpen;
     }
 
     /**
