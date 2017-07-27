@@ -532,9 +532,9 @@ function validateCSV(data) {
     let errorMessage; // error message if any to return
 
     // validations
-    if (rows.length === 0) {
-        // fail, no rows
-        errorMessage = 'File has no rows';
+    if (rows.length < 2) {
+        // fail, not enough rows
+        errorMessage = 'File does not have enough rows';
     } else {
         // field count of first row.
         const fc = rows[0].length;
@@ -547,12 +547,10 @@ function validateCSV(data) {
                 // regex values
                 const latValueRegex = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
                 const longValueRegex = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
-                const latNameRegex = new RegExp(/^.*(y|la).*$/i);
-                const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
 
                 // candidate fields for latitude and longitude
-                const latCandidates = findCandidates(rows, latValueRegex, latNameRegex);
-                const longCandidates = findCandidates(rows, longValueRegex, longNameRegex);
+                const latCandidates = findCandidates(rows, latValueRegex);
+                const longCandidates = findCandidates(rows, longValueRegex);
 
                 // reject if no latitude or longitude candidates were found
                 if (latCandidates.length === 0 || longCandidates.length === 0) {
@@ -627,19 +625,37 @@ function validateFile(type, data) {
 }
 
 /**
- * From provided CSV data, guesses which columns are long and lat. If guessing is no successful, returns null for one or both fields.
+ * From provided CSV data, guesses which columns are long and lat with in the canadidates.
+ * If guessing is no successful, returns null for one or both fields.
  *
  * @method guessCSVfields
  * @private
  * @param  {Array} rows csv data
+ * @param  {Array} latCandidates list of all the valid latitude fields
+ * @param  {Array} longCandidates list of all the valid longitude fields
  * @return {Object}      an object with lat and long string properties indicating corresponding field names
  */
 function guessCSVfields(rows, latCandidates, longCandidates) {
-    // pick the first lat guess or null
-    const lat = latCandidates[0] || null;
+    const latNameRegex = new RegExp(/^.*(y|lat).*$/i);
+    const longNameRegex = new RegExp(/^.*(x|long).*$/i);
 
-    // pick the first long guess or null
-    const long = longCandidates.find(field => field !== lat) || null;
+    // pick the candidate most likely to be the latitude
+    let lat = latCandidates[0] || null;
+    for (let i in latCandidates) {
+        if (latNameRegex.test(latCandidates[i])) {
+            lat = latCandidates[i];
+            break;
+        }
+    }
+
+    // pick the candidate most likely to be the longitude
+    let long = longCandidates.find(field => field !== lat) || null;
+    for (let j in longCandidates) {
+        if (longNameRegex.test(longCandidates[j])) {
+            long = longCandidates[j];
+            break;
+        }
+    }
 
     // for primary field, pick the first on that is not lat or long field or null
     const primary = rows[0].find(field => field !== lat && field !== long) || null;
@@ -658,17 +674,15 @@ function guessCSVfields(rows, latCandidates, longCandidates) {
  * @private
  * @param  {Array} rows csv data
  * @param {RegExp} regular expression for the value of the field
- * @param {RegExp} regular expression for the name of the filed
  * @return {Array} a list of suitable candidate fields
  */
-function findCandidates(rows, valueRegex, nameRegex) {
+function findCandidates(rows, valueRegex) {
     const fields = rows[0]; // first row must be headers
 
     const candidates =
         fields.filter((field, index) =>
             rows.every((row, rowIndex) =>
-                rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
-        .filter(field => nameRegex.test(field));
+                rowIndex === 0 || valueRegex.test(row[index]))); // skip first row as its just headers
 
     return candidates;
 }

@@ -66,7 +66,7 @@ describe('Attribute', () => {
 
     describe('loadServerAttribs', () => {
 
-        // NOTE: the attributes of the renderer fomr the layer was missing of strange reasons
+        // FIXME need to test it in a different way since the attributes of the renderer fomr the layer was missing
 
         // it('should work for a Feature Layer requesting all attributes', (done) => {
         //     const mapURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer';
