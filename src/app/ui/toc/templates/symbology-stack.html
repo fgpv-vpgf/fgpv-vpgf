@@ -1,6 +1,10 @@
 <div
     class="rv-symbology-container rv-render-{{ self.symbology.renderStyle }}"
-    ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 } ]'>
+    ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 }]'>
+
+    <div class="rv-description-container">
+        <span class="rv-description">{{ ::self.description }}</span>
+    </div>
 
     <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack | rvReverse">
         <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
