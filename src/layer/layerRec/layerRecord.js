@@ -191,6 +191,8 @@ class LayerRecord extends root.Root {
             this.extent = this._layer.fullExtent;
         }
 
+        this.extent = shared.makeSafeExtent(this.extent);
+
         let lookupPromise = Promise.resolve();
         if (this._epsgLookup) {
             const check = this._apiRef.proj.checkProj(this.spatialReference, this._epsgLookup);
@@ -303,11 +305,13 @@ class LayerRecord extends root.Root {
         // TODO possible this would live in the map manager in a bigger refactor.
         // NOTE because we utilize the layer object's full extent (and not child feature class extents),
         //      this function stays in this class.
+        // TODO since we now support extents in child layers, it might be worth looking at using those
+        //      extents instead of the overall layer extent.
 
         // if zoom in is needed; must find center of layer's full extent and perform center&zoom
         if (zoomIn && positionOverLayer) {
             // need to reproject in case full extent in a different sr than basemap
-            const gextent = this._apiRef.proj.localProjectExtent(this._layer.fullExtent, map.spatialReference);
+            const gextent = this._apiRef.proj.localProjectExtent(this.extent, map.spatialReference);
 
             const reprojLayerFullExt = this._apiRef.Map.Extent(gextent.x0, gextent.y0,
                 gextent.x1, gextent.y1, gextent.sr);
