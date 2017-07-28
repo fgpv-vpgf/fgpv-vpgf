@@ -4,6 +4,7 @@ const templateUrl = require('./templates/symbology-stack.html');
 const RV_SYMBOLOGY_ITEM_CLASS = '.rv-symbol';
 const RV_SYMBOLOGY_ITEM_NAME_CLASS = '.rv-symbol-label';
 const RV_SYMBOLOGY_ITEM_TRIGGER = '.rv-symbol-trigger';
+const RV_DESCRIPTION_ITEM = '.rv-description-container';
 
 const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
@@ -42,8 +43,7 @@ function rvSymbologyStack($q, Geo, animationService) {
         templateUrl,
         scope: {
             symbology: '=',
-            // stack: '=',
-            // symbology.renderStyle: '=?',
+            description: '=?',
             container: '=?'
         },
         link: link,
@@ -74,6 +74,8 @@ function rvSymbologyStack($q, Geo, animationService) {
             expandTimeline: null, // expand/collapse animation timeline
             fanOutTimeline: null, // wiggle animation timeline
 
+            descriptionItem: null,
+
             // store reference to symbology nodes
             // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
             symbolItems: [],
@@ -83,6 +85,10 @@ function rvSymbologyStack($q, Geo, animationService) {
             containerWidth: 350,
             maxItemWidth: 350
         };
+
+        // description persist, so need to store reference only once
+        ref.descriptionItem = element.find(RV_DESCRIPTION_ITEM);
+        ref.descriptionItem.css('width', ref.containerWidth)
 
         scope.$watchCollection('self.symbology.stack', (newStack, oldStack) => {
             if (newStack) {
@@ -100,17 +106,6 @@ function rvSymbologyStack($q, Geo, animationService) {
 
         scope.$watch('self.symbology.fannedOut', (newValue, oldValue) =>
             newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop);
-
-
-        /* this should not be needed after all
-        const eventNameToAction = {
-            fanOut: self.fanOutSymbology,
-            expand: self.expandSymbology
-        };
-
-        scope.$on('symbology', (event, name, value) =>
-            eventNameToAction[name](value));
-        */
 
         return true;
 
@@ -225,11 +220,37 @@ function rvSymbologyStack($q, Geo, animationService) {
             });
 
             // in pixels
-            const symbologyListTopOffset = 48; // offset to cover the height of the legend entry nod
+            const symbologyListTopOffset = 48; // offset to cover the height of the legend entry node
             const symbologyListMargin = 16; // gap between the legend endtry and the symbology stack
 
             // keep track of the total height of symbology stack so far
             let totalHeight = symbologyListTopOffset + symbologyListMargin;
+
+            // optional description is displayed above the symbology items
+            if (self.description !== '') {
+                totalHeight -= symbologyListMargin / 2;
+
+                // briefly show the description node to grab it's height, and hide it again
+                ref.descriptionItem.show();
+                const descriptionHeight = ref.descriptionItem.height();
+                ref.descriptionItem.hide();
+
+                // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
+                timeline.set(ref.descriptionItem, {
+                    display: 'block',
+                    top: totalHeight - 30
+                });
+
+                // show and animate description node
+                timeline.to(ref.descriptionItem, RV_DURATION / 3 * 2, {
+                    opacity: 1,
+                    top: totalHeight,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                }, RV_DURATION / 3);
+
+                // include the description height in the total height of the symbology stack
+                totalHeight += descriptionHeight + symbologyListMargin;
+            }
 
             // future-proofing - in case we need different behaviours for other legend types
             const legendItemTLgenerator = {
@@ -434,7 +455,6 @@ function rvSymbologyStack($q, Geo, animationService) {
 }
 
 function symbologyStack(ConfigObject, gapiService) {
-
 
     class SymbologyStack {
         /**

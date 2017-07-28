@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "FGPV Config Schema",
     "type": "object",
-    "version": 2.1,
+    "version": 2.0,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
     "additionalProperties": false,
 
@@ -125,8 +125,7 @@
                 "id": { "type": "string", "description": "A unique id identifying a tile schema (combination of an extent set and a zoom scale)" },
                 "name": { "type": "string", "description": "The name to display in the basemap selector for the set of basemaps referencing this schema" },
                 "extentSetId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
-                "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
-                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" }
+                "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" }
             },
             "required": ["extentSetId", "lodSetId", "id", "name"],
             "additionalProperties": false
@@ -268,8 +267,7 @@
                     "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
                     "minItems": 1
                 },
-                "controls": { "$ref": "#/definitions/legendGroupControls" },
-                "disabledControls": { "$ref": "#/definitions/legendGroupControls" }
+                "controls": { "$ref": "#/definitions/legendGroupControls" }
             },
             "required": ["name", "children"],
             "additionalProperties": false
@@ -310,7 +308,6 @@
                 "entryIndex": {"type": "integer", "description": "Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true ."},
                 "entryId": {"type": "string", "description": "Id of the 'sublayer' in the case of an OGC WMS layer"},
                 "coverIcon": {"type": "string", "description": "An optional icon, if present it will be used to primarily represent the layer"},
-                "description": {"type": "string", "default": "", "description": "Optional description displayed above the symbology stack."},
                 "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
                 "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
             },
@@ -340,7 +337,6 @@
                     "properties": {
                         "infoType": { "type": "string", "enum": [ "unboundLayer" ] },
                         "layerName": {"type": "string", "description": "Name to display in legend"},
-                        "description": {"type": "string", "default": "", "description": "Optional description displayed above the symbology stack."},
                         "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
                         "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
                     },
@@ -573,7 +569,8 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
-                "state": { "$ref": "#/definitions/initialLayerSettings" }
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
@@ -637,7 +634,7 @@
             "type": "object",
             "properties": {
                 "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
-                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [["layers","basemap"],["fullscreen","export","share","touch","help","about"],["language"],["plugins"]] }
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
             },
             "additionalProperties": false,
             "description": "Specifies which options are available in the left side menu."
@@ -648,7 +645,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
             }
         },
 
@@ -656,28 +653,24 @@
             "type": "object",
             "properties": {
                 "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
-                "extra": { "$ref": "#/definitions/navBarButtons", "default": ["fullscreen", "geoLocator", "home", "help"] }
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
             },
             "required": [ "zoom" ],
             "additionalProperties": false
         },
 
         "navBarButtons": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
-            }
+            "type": "string",
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
         },
 
         "mapComponentsNode": {
             "type": "object",
             "properties": {
-                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "geoSearch": { "type": "object", "properties": { "enabled": {"type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
                 "northArrow": { "type": "object" },
-                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "expandFactor": { "type": "number", "default": 2 }}},
+                "overviewMap": { "type": "object" },
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" }
             },
