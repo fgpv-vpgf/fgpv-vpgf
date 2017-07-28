@@ -11,16 +11,12 @@
         <ul class="rv-results-list">
 
             <li class="rv-results-item" ng-repeat="result in self.service.searchResults"
-                ng-mouseenter="self.onItemFocus($event)"
-                ng-mouseleave="self.onItemBlur($event)"
                 ng-mousedown="self.service.zoomTo(result)">
                 <!-- need to use ng-mousedown on li instead of ng-click on button because of ng-focus and ng-blur -->
                 <md-button
                     aria-label="result.name + ' ' + result.location.city ' ' + result.location.province.abbr + ' ' + result.type.name"
                     class="rv-results-item-body-button rv-button-square"
-                    ng-click="self.service.zoomTo(result)"
-                    ng-focus="self.onItemFocus($event)"
-                    ng-blur="self.onItemBlur($event)">
+                    ng-click="self.service.zoomTo(result)">
                 </md-button>
 
                 <div class="rv-results-item-main">
@@ -40,6 +36,13 @@
                     {{ ::result.type.name }}
                 </span>
 
+                <md-tooltip md-direction="right">
+                    {{ result.name
+                    + (result.location.city ? ', ' + result.location.city : '')
+                    + (result.location.province.abbr ? ', ' + result.location.province.abbr : '')
+                    }}&nbsp;
+                    {{ result.type.name }}
+                </md-tooltip>
             </li>
         </ul>
 

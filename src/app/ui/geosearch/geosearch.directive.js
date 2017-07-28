@@ -61,48 +61,10 @@ function Controller(geosearchService, events, debounceService) {
         extentChangeListener: angular.noop
     };
 
-    self.onItemFocus = debounceService.registerDebounce(onItemFocus, 700, false);
-    self.onItemBlur = onItemBlur;
     self.onTopFiltersUpdate = onTopFiltersUpdate;
     self.onBottomFiltersUpdate = onBottomFiltersUpdate;
 
     return;
-
-    /**
-     * On focus, create a tooltip who contains all text section.
-     *
-     * @function onItemFocus
-     * @private
-     */
-    function onItemFocus(evt) {
-        const target = evt.target;
-
-        // get li from event (can be the button or li itself) then children
-        const li = !target.classList.contains('rv-results-item-body-button') ? target : target.parentElement;
-        const children = li.children;
-
-        // create tooltip element
-        const div = document.createElement('div');
-        div.className = 'rv-results-item-tooltip';
-        div.appendChild(children[1]);
-        div.appendChild(children[1]);
-        div.appendChild(children[1]);
-        li.appendChild(div);
-
-        // check it the text exceed the menu width. If so, set the animation so text will move and
-        // user will be able to see it.
-        div.style.left = $(div).width() > 380 ? `${360 - $(div).width()}px` : 0;
-    }
-
-    /**
-     * On blur, remove tooltip.
-     *
-     * @function onItemBlur
-     * @private
-     */
-    function onItemBlur() {
-        $('.rv-results-item-tooltip').children().unwrap();
-    }
 
     /**
      * Triggers geosearch query on top filters (province, type) update.
