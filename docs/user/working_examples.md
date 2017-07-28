@@ -40,10 +40,20 @@ We could also make a viewer a specific width or height with:
 }
 ```
 
+### Using an iframe
+
+Our sample page `index-iframe.html` loads the viewer through an iframe.
+
+```html
+<iframe src="./iframe-map.html" allowfullscreen></iframe>
+```
+
+Note to include the `allowfullscreen` option on the iframe if you want users to be able to full screen the viewer (option is available in the side menu).
+
 
 ### Loading Polyfills
 
-Polyfills are bundled in the viewers source code under `./lib/ie-polyfills.js`, but you must explicitly load it **before you load `bootstrap.js`**. We first define what polyfills we want to include, then load the file. Below is the correct way to initialize polyfills:
+Polyfills are bundled in the viewers source code under `ie-polyfills.js`, but you must explicitly load it **before you load `rv-main.js`**. We first define what polyfills we want to include, then load the file. Below is the correct way to initialize polyfills:
 
 ```js
 <script>
@@ -59,12 +69,12 @@ Polyfills are bundled in the viewers source code under `./lib/ie-polyfills.js`, 
     ].some(function(x) { return !x; });
 
     if (needIePolyfills) {
-        document.write('<script src="../lib/ie-polyfills.js"><\/script>');
+        document.write('<script src="ie-polyfills.js"><\/script>');
     }
 </script>
 ```
 
-### Including bootstrap.js
-Lastly we want to include `bootstrap.js` at the end of our file (right before the closing `body` tag). Refer to {@tutorial app_startup} for more information about the bootstrapping process.
+### Including rv-main.js
+Lastly we want to include `rv-main.js` at the end of our file (right before the closing `body` tag). Refer to {@tutorial app_startup} for more information about the bootstrapping process.
 
-`<script src="../lib/bootstrap.js"><\/script>`
+`<script src="rv-main.js"><\/script>`

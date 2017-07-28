@@ -20,7 +20,6 @@
             height: 700px;
             margin: 10px -15px -15px -15px;
         }
-
         a {
             color: #0d520d;
             text-decoration: underline!important;
@@ -68,7 +67,6 @@
             border-left: 20px solid #0D520D;
             clear: both;
         }
-
         .btn-primary, .btn-primary {
         background-color: #0D520D;
         color: #fff;
@@ -85,7 +83,6 @@
         background-color: #0D520D;
         color: #fff;
         }
-
         .fgp-h1-top {
             margin-top: 10px;
         }
@@ -243,7 +240,6 @@
             margin-bottom: 20px ;
             padding-top: 5px;
         }
-
         h1 {
         color: #0D520D;
         border-bottom: 1px solid #0D520D;
@@ -272,7 +268,6 @@
             min-width: 100%;
             min-height: 100%;
         }
-
         #wb-info .brand {
             border-top: 4px solid #0D520D;
         }
@@ -520,16 +515,13 @@
                 sURLVariables = sPageURL.split('&'),
                 sParameterName,
                 i;
-
             for (i = 0; i < sURLVariables.length; i++) {
                 sParameterName = sURLVariables[i].split('=');
-
                 if (sParameterName[0] === sParam) {
                     return sParameterName[1] === undefined ? true : sParameterName[1];
                 }
             }
         }
-
         var testConfig = getUrlParameter('config');
         if (testConfig) {
             document.getElementById("fgpmap").setAttribute("rv-config", testConfig);
@@ -563,11 +555,9 @@
     <% } %>
 
     <script>
-
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
         RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
         RV.getMap('fgpmap').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};
@@ -589,7 +579,6 @@
             // console.log(bookmark);
             RV.getMap('fgpmap').initialBookmark(bookmark);
         }
-
         function getBookmark(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
@@ -597,7 +586,6 @@
         }
         function testBackToCart() {
             const map = RV.getMap('fgpmap');
-
             map.getBookmark()
                 .then(function (bookmark) {
                     sessionStorage.setItem('fgpmap', bookmark);
