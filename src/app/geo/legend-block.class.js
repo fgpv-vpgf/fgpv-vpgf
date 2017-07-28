@@ -303,6 +303,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get content () {                return this.blockConfig.content; }
 
         get layerName () {              return this.blockConfig.layerName; }
+        get description () {            return this.blockConfig.description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
     }
@@ -601,6 +602,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          */
         fetchGraphic(oid) {         return this._mainProxyWrapper.fetchGraphic(oid); }
 
+        get description () {        return this.blockConfig.description; }
         get symbologyStack () {     return this._symbologyStack; }
 
         get metadataUrl () {        return this._mainProxyWrapper.metadataUrl; }

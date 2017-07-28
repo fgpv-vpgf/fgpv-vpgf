@@ -322,10 +322,12 @@
             "layerId": "scaleDep",
             "controlledIds": [
               "ecogeo", "powerplant100mw-25"
-            ]
+            ],
+            "description": "Ozone's odour is sharp, reminiscent of chlorine, and detectable by many people at concentrations of as little as 100 ppb in air. Ozone's O3 structure was determined in 1865."
           },
           {
-            "layerId": "DateLayer"
+            "layerId": "DateLayer",
+            "description": "Ozone is a powerful oxidant (far more so than dioxygen) and has many industrial and consumer applications related to oxidation."
           },
           {
             "layerId": "powerplant100mw-24",
