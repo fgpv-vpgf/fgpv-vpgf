@@ -1124,6 +1124,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._entryIndex = entrySource.entryIndex;
             this._entryId = entrySource.entryId;
             this._coverIcon = entrySource.coverIcon;
+            this._description = entrySource.description || '';
             this._symbologyStack = entrySource.symbologyStack || [];
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._hidden = entrySource.hidden === true;
@@ -1133,11 +1134,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         static ICONS = 'icons';
         static IMAGES = 'images';
 
-        get layerId () { return this._layerId; }
-        get controlledIds () { return this._controlledIds; }
-        get entryIndex () { return this._entryIndex; }
-        get entryId () { return this._entryId; }
-        get coverIcon () { return this._coverIcon; }
+        get layerId () {        return this._layerId; }
+        get controlledIds () {  return this._controlledIds; }
+        get entryIndex () {     return this._entryIndex; }
+        get entryId () {        return this._entryId; }
+        get coverIcon () {      return this._coverIcon; }
+        get description () {    return this._description; }
         get symbologyStack () { return this._symbologyStack; }
 
         get symbologyRenderStyle () { return this._symbologyRenderStyle; }
@@ -1160,6 +1162,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 entryIndex: this.entryIndex,
                 entryId: this.entryId,
                 coverIcon: this.coverIcon,
+                description: this.description,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle,
                 hidden: this.hidden,
@@ -1232,6 +1235,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._content = entrySource.content;
 
             this._layerName = entrySource.layerName || '';
+            this._description = entrySource.description || '';
             this._symbologyStack = entrySource.symbologyStack || [];
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
         }
@@ -1240,6 +1244,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get content () {                return this._content; }
 
         get layerName () {              return this._layerName; }
+        get description () {            return this._description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
 
@@ -1251,6 +1256,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 content: this.content,
                 entryType: this.entryType,
                 layerName: this.layerName,
+                description: this.description,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle
             };
