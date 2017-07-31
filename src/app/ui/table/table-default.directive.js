@@ -605,6 +605,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
                         // fired event to create filters
                         events.$broadcast(events.rvTableReady);
+
+                        // handle when screen is resized and column headings need to be readjusted
+                        self.onResizeDelistener = layoutService.onResize(
+                            $rootElement,
+                            debounceService.registerDebounce(self.table.columns.adjust)
+                        );
                     }
                 });
             }
@@ -846,6 +852,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // reset index and reference to tablebody for keytable navigation
                 index = undefined;
                 self.tableBody = undefined;
+                self.onResizeDelistener();
             }
         }
     }
