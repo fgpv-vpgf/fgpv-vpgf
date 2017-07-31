@@ -1,3 +1,5 @@
+import * as moment from 'moment-timezone';
+
 // fields blueprints to be added to the table header for large layout and inside setting panel
 // `self` property is named so intentionally, as it will be passed on a scope to the FILTERS_TEMPLATE
 const FILTERS = {
@@ -336,10 +338,25 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
                 }
 
                 const date = data[i].split('-');
-                const val = (date.length === 3) ?
-                    new Date(`${date[0]}-${parseInt(date[1])}-${parseInt(date[2])}`) : false;
 
-                if (val) {
+                if (date.length !== 3) { return false; }  // different column that isn't a date
+
+                const day = date[2].split(' ');     // get the date without the time
+
+                // use moment timezone to parse dates
+                const userTimeZone = moment.tz.guess();
+                // IE does not like dates not in ISO format, so need to add leading 0 if necessary
+                const time = moment.tz(`${date[0]}-${('0' + date[1]).slice(-2)}-${('0' + day[0]).slice(-2)}`, userTimeZone);
+
+                let val = false;
+                if (time !== 'Invalid date') {
+                    const date = new Date(time);
+                    // apply time offset to ensure date entered is not given in UTC (a day behind)
+                    // will allow for correct applying of filters
+                    val = new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
+                }
+
+                if (val && !isNaN(val.getTime())) {
                     // set date to filter values or minimum / maximum date value
                     const min = (filter.min !== null) ? filter.min : new Date(-8640000000000000);
                     const max = (filter.max !== null) ? filter.max : new Date(8640000000000000);
