@@ -338,7 +338,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
                 }
 
                 const date = data[i].split('-');
-
+                // length 3 when in the format [YYYY, MM, DD HH:mm:ss]
                 if (date.length !== 3) { return false; }  // different column that isn't a date
 
                 const day = date[2].split(' ');     // get the date without the time
