@@ -605,6 +605,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
                         // fired event to create filters
                         events.$broadcast(events.rvTableReady);
+
+                        // handle when screen is resized and column headings need to be readjusted
+                        layoutService.onResize(
+                            $rootElement,
+                            debounceService.registerDebounce(self.table.columns.adjust)
+                        );
                     }
                 });
             }
