@@ -139,6 +139,24 @@ class AttribFC extends basicFC.BasicFC {
                     return att;
                 });
 
+                // if a field name resembles a function, the data table will treat it as one.
+                // to get around this, we add a function with the same name that returns the value,
+                // tricking that silly datagrid.
+                columns.forEach(c => {
+                    if (c.data.substr(-2) === '()') {
+                        // have to use function() to get .this to reference the row.
+                        // arrow notation will reference the attribFC class.
+                        const secretFunc = function() {
+                            return this[c.data];
+                        };
+
+                        const stub = c.data.substr(0, c.data.length - 2); // function without brackets
+                        rows.forEach(r => {
+                            r[stub] = secretFunc;
+                        });
+                    }
+                });
+
                 return {
                     columns,
                     rows,

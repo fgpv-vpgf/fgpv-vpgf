@@ -1,6 +1,6 @@
 {
   "name": "geoApi",
-  "version": "v2.0.1-1",
+  "version": "v2.0.1-2",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
