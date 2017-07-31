@@ -98,6 +98,7 @@ function Controller(geosearchService, events, debounceService, layoutService) {
 
     /**
      * Set the indicated self.isNameTruncated to True iff the the result is truncated
+     *
      * @function setTruncated
      * @private
      * @param{event} evt event when being hovered
