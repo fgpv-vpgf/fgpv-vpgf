@@ -542,8 +542,10 @@ function validateCSV(data) {
             // fail not enough columns
             errorMessage = 'File has less than two columns';
         } else {
+            if ((new Set(rows[0])).size < rows[0].length) {
+                errorMessage = 'File has duplicate column names';
             // check field counts of each row
-            if (rows.every(rowArr => rowArr.length === fc)) {
+            } else if (rows.every(rowArr => rowArr.length === fc)) {
                 // regex values
                 const latValueRegex = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
                 const longValueRegex = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
