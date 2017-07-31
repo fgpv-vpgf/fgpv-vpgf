@@ -96,6 +96,12 @@ function Controller(geosearchService, events, debounceService, layoutService) {
         geosearchService.runQuery();
     }
 
+    /**
+     * Set the indicated self.isNameTruncated to True iff the the result is truncated
+     * @function setTruncated
+     * @private
+     * @param{event} evt event when being hovered
+     */
     function setTruncated(evt) {
         const target = evt.currentTarget;
         const result = target.children[1];
