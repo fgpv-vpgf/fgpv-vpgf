@@ -51,7 +51,7 @@ function rvGeosearch(layoutService, debounceService, globalRegistry, $rootElemen
     return directive;
 }
 
-function Controller(geosearchService, events, debounceService) {
+function Controller(geosearchService, events, debounceService, layoutService) {
     'ngInject';
     const self = this;
 
@@ -63,6 +63,9 @@ function Controller(geosearchService, events, debounceService) {
 
     self.onTopFiltersUpdate = onTopFiltersUpdate;
     self.onBottomFiltersUpdate = onBottomFiltersUpdate;
+    self.isNameTruncated = false;
+    self.setTruncated = setTruncated;
+    self.getTooltipDirection = getTooltipDirection;
 
     return;
 
@@ -91,5 +94,26 @@ function Controller(geosearchService, events, debounceService) {
 
         // also run query once on each filters update to refresh the results
         geosearchService.runQuery();
+    }
+
+    function setTruncated(evt) {
+        const target = evt.currentTarget;
+        const result = target.children[1];
+        const type = target.children[3];
+
+        self.isNameTruncated = (result.scrollWidth + type.scrollWidth) > (target.clientWidth - 50);
+    }
+
+    /**
+     * Maps tooltip direction on the legend items to the current layout size:
+     * - to the right of the legend item in large layouts
+     * - above the element on small and medium layouts
+     *
+     * @function getTooltipDirection
+     * @private
+     * @return {String} direction of the tooltip; either 'right' or 'top'
+     */
+    function getTooltipDirection() {
+        return layoutService.currentLayout() === layoutService.LAYOUT.LARGE ? 'right' : 'top';
     }
 }
