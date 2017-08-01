@@ -1816,15 +1816,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class NavBar
      */
     class NavBar {
-        constructor(source = {}, helpSource) {
+        constructor(source = {}) {
             this._source = source;
             this._zoom = source.zoom || 'buttons';
-            this._extra = source.extra || [];
-
-            // remove help if help or its folderName is absent
-            if (! helpSource || ! helpSource.folderName) {
-                common.removeFromArray(this._extra, 'help');
-            }
+            this._extra = angular.isArray(source.extra) ?
+                common.intersect(source.extra, NavBar.EXTRA_AVAILABLE_ITEMS) :
+                angular.copy(NavBar.EXTRA_ITEMS_DEFAULT);
         }
 
         get zoom () { return this._zoom; }
@@ -1836,6 +1833,23 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 extra: this.extra
             }
         }
+
+        static EXTRA_ITEMS_DEFAULT = [
+            'fullscreen',
+            'geoLocator',
+            'home',
+            'help'
+        ];
+
+        static EXTRA_AVAILABLE_ITEMS = [
+            'history',
+            'fullscreen',
+            'marquee',
+            'home',
+            'help',
+            'geoLocator',
+            'basemap'
+        ];
     }
 
     /**
@@ -1843,40 +1857,35 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class SideMenu
      */
     class SideMenu {
-        constructor(source = {}, helpSource) {
+        constructor(source = {}) {
             this._source = source;
             this._logo = source.logo === true;
 
-            const ITEMS_DEFAULT = [
-                [
-                    'layers',
-                    'basemap'
-                ],
-                [
-                    'fullscreen',
-                    'export',
-                    'share',
-                    'touch',
-                    'help',
-                    'about'
-                ],
-                [
-                    'language'
-                ],
-                [
-                    'plugins'
-                ]
-            ];
-
             this._items = angular.isArray(source.items) ?
-                source.items.map(subItems =>
-                    common.intersect(source.items, SideMenu.AVAILABLE_ITEMS)) : angular.copy(ITEMS_DEFAULT);
-
-            // remove help if help or its folderName is absent
-            if (! helpSource || ! helpSource.folderName) {
-                common.removeFromArray(this.items[1], 'help');
-            }
+                source.items.map(subItems => common.intersect(subItems, SideMenu.AVAILABLE_ITEMS)) :
+                angular.copy(SideMenu.ITEMS_DEFAULT);
         }
+
+        static ITEMS_DEFAULT = [
+            [
+                'layers',
+                'basemap'
+            ],
+            [
+                'fullscreen',
+                'export',
+                'share',
+                'touch',
+                'help',
+                'about'
+            ],
+            [
+                'language'
+            ],
+            [
+                'plugins'
+            ]
+        ];
 
         static AVAILABLE_ITEMS = [
             'layers',
@@ -2113,6 +2122,20 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     common.removeFromArray(section, optionName));
 
                 common.removeFromArray(this.ui.navBar.extra, optionName);
+            }
+
+            // remove help from the side menu and map nav cluster if help or its folderName is absent
+            if (!this.ui.help.folderName) {
+                common.removeFromArray(this.ui.navBar.extra, 'help');
+
+                this.ui.sideMenu.items.forEach(section =>
+                    common.removeFromArray(section, 'help'));
+            }
+
+            // remove `about` option if about content or about folder is not provided
+            if (!this.ui.about.folderName && !this.ui.about.content) {
+                this.ui.sideMenu.items.forEach(section =>
+                    common.removeFromArray(section, 'about'));
             }
 
             /**
