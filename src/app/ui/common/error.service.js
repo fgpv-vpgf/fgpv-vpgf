@@ -33,18 +33,20 @@ function errorService($mdToast) {
      * @function display
      * @param {String} errorMsg     The message to display inside the toast
      * @param {Object} parentElem   optional element to attach toast message. Appears on bottom of element if supplied, default is rootElement
+     * @return {Promise}
      */
     function display(errorMsg, parentElem) {
         const opts = {
             textContent: errorMsg,
-            action: 'Close',
-            hideDelay: 0,
+            // action: 'Close',
+            // hideDelay: 0,
             position: 'bottom rv-flex-global'
         };
 
         if (typeof parentElem !== 'undefined') {
             opts.parent = parentElem;
         }
+
         return $mdToast.show($mdToast.simple(opts));
     }
 }
