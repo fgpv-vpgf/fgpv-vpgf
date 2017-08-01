@@ -94,6 +94,9 @@ function picture() {
      */
     function picture(items) {
         // item must be a string
+        if (items === null) {
+            items = '';
+        }
         items = items.toString().split(';');
         const results = Array.isArray(items) ? items.map(process) : process(items);
 
