@@ -64,25 +64,28 @@ this is a layer data object.  it contains information describing the server-side
 */
 
 /**
-* Will generate an empty object structure to store attributes for a single layer of features
-* @private
-* @param  {String} featureIdx server index of the layer
-* @param  {Object} esriBundle bundle of API classes
-* @return {Object} empty layer package object
-*/
+ * Will generate an empty object structure to store attributes for a single layer of features
+ * @private
+ * @param  {String} featureIdx server index of the layer
+ * @param  {Object} esriBundle bundle of API classes
+ * @return {Object} empty layer package object
+ */
 function newLayerPackage(featureIdx, esriBundle) {
     // only reason this is in a function is to tack on the lazy-load
     // attribute function. all object properties are added elsewhere
     const layerPackage = {
         featureIdx,
-        getAttribs
+        getAttribs,
+        loadedFeatureCount: 0,
+        loadAbortFlag: false,
+        abortAttribLoad
     };
 
     /**
-    * Return promise of attribute data object. First request triggers load
-    * @private
-    * @return {Promise} promise of attribute data object
-    */
+     * Return promise of attribute data object. First request triggers load
+     * @private
+     * @return {Promise} promise of attribute data object
+     */
     function getAttribs() {
         if (layerPackage._attribData) {
             // attributes have already been downloaded.
@@ -90,6 +93,8 @@ function newLayerPackage(featureIdx, esriBundle) {
         }
 
         // first request for data. create the promise
+        layerPackage.loadAbortFlag = false;
+        layerPackage.loadedFeatureCount = 0;
         layerPackage._attribData = new Promise((resolve, reject) => {
 
             // first wait for the layer specific data to finish loading
@@ -105,7 +110,8 @@ function newLayerPackage(featureIdx, esriBundle) {
                     oidField: layerData.oidField,
                     attribs: layerData.load.attribs,
                     supportsLimit: layerData.load.supportsLimit,
-                    esriBundle
+                    esriBundle,
+                    layerPackage
                 };
 
                 // begin the loading process
@@ -128,6 +134,15 @@ function newLayerPackage(featureIdx, esriBundle) {
         });
 
         return layerPackage._attribData;
+    }
+
+    /**
+     * Attempts to stop an attribute load process. Will only abort if current load
+     * is not the final batch of data.
+     * @private
+     */
+    function abortAttribLoad() {
+        layerPackage.loadAbortFlag = true;
     }
 
     return layerPackage;
@@ -182,9 +197,18 @@ function getLayerIndex(layerUrl) {
  *         - oidField: string, name of attribute containing the object id for the layer.
  *         - attribs: string, a comma separated list of attributes to download. '*' will download all.
  *         - esriBundle: object, standard set of ESRI API objects.
+ *         - layerPackage: reference to the object that manages the loaded attributes
  * @param  {Object} callerDef deferred object that resolves when current data has been downloaded
  */
 function loadDataBatch(opts, callerDef) {
+
+    if (opts.layerPackage.loadAbortFlag) {
+        delete opts.layerPackage._attribData;
+        opts.layerPackage.loadedFeatureCount = 0;
+        callerDef.reject('ABORTED');
+        return;
+    }
+
     //  fetch attributes from feature layer. where specifies records with id's higher than stuff already
     //  downloaded. no geometry.
     // FIXME replace esriRequest with a library that handles proxies better
@@ -205,6 +229,7 @@ function loadDataBatch(opts, callerDef) {
             const len = dataResult.features.length;
             if (len > 0) {
                 // figure out if we hit the end of the data. different logic for newer vs older servers.
+                opts.layerPackage.loadedFeatureCount += len;
                 let moreData;
                 if (opts.supportsLimit) {
                     moreData = dataResult.exceededTransferLimit;

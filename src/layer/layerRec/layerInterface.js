@@ -36,6 +36,7 @@ class LayerInterface {
     get parentLayerType () { return undefined; } // returns String
     get geometryType () { return undefined; } // returns String
     get featureCount () { return undefined; } // returns Integer
+    get loadedFeatureCount () { return undefined; } // returns Integer
     get extent () { return undefined; } // returns Object (Esri Extent)
 
     // layer states
@@ -91,6 +92,8 @@ class LayerInterface {
     // param: integer
     isOffScale () { return undefined; } // returns Object {offScale: Boolean, zoomIn: Boolean}
 
+    abortAttribLoad () { return undefined; }
+
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
     // defaults. This update happens after a layer has loaded, and new now want
@@ -136,6 +139,7 @@ class LayerInterface {
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
+        newProp(this, 'loadedFeatureCount', featureGetLoadedFeatureCount);
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
         newProp(this, 'queryUrl', featureGetQueryUrl);
 
@@ -144,6 +148,7 @@ class LayerInterface {
         this.fetchGraphic = featureFetchGraphic;
         this.setDefinitionQuery = featureSetDefinitionQuery;
         this.zoomToGraphic = featureZoomToGraphic;
+        this.abortAttribLoad = featureAbortAttribLoad;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -165,6 +170,7 @@ class LayerInterface {
         newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'parentLayerType', dynamicLeafGetParentLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
+        newProp(this, 'loadedFeatureCount', dynamicLeafGetLoadedFeatureCount);
         newProp(this, 'extent', dynamicLeafGetExtent);
 
         newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
@@ -181,6 +187,7 @@ class LayerInterface {
         this.setDefinitionQuery = dynamicLeafSetDefinitionQuery;
         this.isOffScale = dynamicLeafIsOffScale;
         this.zoomToGraphic = dynamicLeafZoomToGraphic;
+        this.abortAttribLoad = dynamicLeafAbortAttribLoad;
     }
 
     convertToPlaceholder (placeholderFC) {
@@ -506,6 +513,26 @@ function standardGetItemIndex() {
 function dynamicLeafGetItemIndex() {
      /* jshint validthis: true */
     return this._source._idx;
+}
+
+function featureGetLoadedFeatureCount() {
+    /* jshint validthis: true */
+    return this._source.loadedFeatureCount;
+}
+
+function dynamicLeafGetLoadedFeatureCount() {
+    /* jshint validthis: true */
+    return this._source.loadedFeatureCount;
+}
+
+function featureAbortAttribLoad() {
+    /* jshint validthis: true */
+    this._source.abortAttribLoad();
+}
+
+function dynamicLeafAbortAttribLoad() {
+    /* jshint validthis: true */
+    this._source.abortAttribLoad();
 }
 
 module.exports = () => ({

@@ -171,6 +171,16 @@ class FeatureRecord extends attribRecord.AttribRecord {
         return this._layer && !this._layer.url;
     }
 
+    /**
+     * Attempts to abort an attribute load in progress.
+     * Harmless to call before or after an attribute load.
+     *
+     * @function abortAttribLoad
+     */
+    abortAttribLoad () {
+        this._featClasses[this._defaultFC].abortAttribLoad();
+    }
+
     // TODO determine who is setting this. if we have an internal
     //      snapshot process, it might become a read-only property
     get isSnapshot () { return this._snapshot; }
@@ -179,6 +189,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
     get layerType () { return shared.clientLayerType.ESRI_FEATURE; }
 
     get featureCount () { return this._fcount; }
+
+    get loadedFeatureCount () { return this._featClasses[this._defaultFC].loadedFeatureCount; }
 
     /**
      * Triggers when the mouse enters a feature of the layer.

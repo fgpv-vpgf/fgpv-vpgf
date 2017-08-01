@@ -31,6 +31,8 @@ class AttribFC extends basicFC.BasicFC {
 
     get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
 
+    get loadedFeatureCount () { return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0; }
+
     /**
      * Returns attribute data for this FC.
      *
@@ -59,6 +61,16 @@ class AttribFC extends basicFC.BasicFC {
      */
     getLayerData () {
         return this._layerPackage.layerData;
+    }
+
+    /**
+     * Attempts to abort an attribute load in progress.
+     * Harmless to call before or after an attribute load.
+     *
+     * @function abortAttribLoad
+     */
+    abortAttribLoad () {
+        this._layerPackage.abortAttribLoad();
     }
 
     /**
@@ -166,9 +178,13 @@ class AttribFC extends basicFC.BasicFC {
                     renderer: lData.renderer
                 };
             })
-            .catch(() => {
+            .catch(e => {
                 delete this._formattedAttributes; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
-                throw new Error('Attrib loading failed');
+                if (e === 'ABORTED') {
+                    throw new Error('ABORTED');
+                } else {
+                    throw new Error('Attrib loading failed');
+                }
             });
 
         return this._formattedAttributes;
