@@ -29,7 +29,6 @@ const ROW_BUTTONS = {
     }
 };
 
-// jscs:disable maximumLineLength
 // actual button template
 const ROW_BUTTON_TEMPLATE = (row, disabled) =>
     `<md-button
@@ -42,7 +41,6 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
         <md-icon md-svg-src="{{ self.isFunction(self.icon) ? self.icon(self.enabled) : self.icon }}"></md-icon>
 
     </md-button>`;
-// jscs:enable maximumLineLength
 
 // max field length accepted
 const fieldLength = 500;
@@ -169,7 +167,6 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             // define pre-deformatting function for date columns
             $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g,''));
 
-            // ~~I hate DataTables~~ Datatables are cool!
             self.table = tableNode
                 .on('init.dt', callbacks.onTableInit)
                 .on('draw.dt', callbacks.onTableDraw)

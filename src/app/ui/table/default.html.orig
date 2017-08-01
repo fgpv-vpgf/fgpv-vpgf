@@ -4,9 +4,13 @@
         static-content="true"
         title-style="title"
         title-value="{{ 'filter.title' | translate }} {{ self.title }}"
+<<<<<<< Updated upstream
         is-loading="self.display.isLoading"
-        hide-when-loading="false"
         ng-hide="self.tableService.isSettingOpen">
+=======
+        hide-when-loading="false"
+        is-loading="self.display.isLoading">
+>>>>>>> Stashed changes
 
         <div class="rv-table-splash rv-hide-animate" ng-class="{ 'rv-hide': !self.display.isLoading, 'rv-splash-count-done': self.display.requester.legendEntry.loadedFeatureCount === self.display.requester.legendEntry.featureCount }">
             <div class="rv-splash-count">
