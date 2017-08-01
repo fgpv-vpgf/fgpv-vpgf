@@ -5,6 +5,72 @@
         }
     }
 
+    .rv-table-splash {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        &.rv-splash-count-done {
+            .rv-splash-count {
+                top: - rem(3);
+                transform: scale(0.7, 0.7);
+                color: #B6B6B6;
+                transition: all $swift-ease-in-duration * 3 $swift-ease-in-out-timing-function;
+
+                &-slash {
+                    stroke: #B6B6B6;
+                    stroke-width: 1;
+                }
+            }
+
+            .rv-splash-message {
+                top: - rem(3);
+                font-size: 14pt;
+                transition: all $swift-ease-in-duration * 3 $swift-ease-in-out-timing-function;
+            }
+        }
+
+        .rv-splash-count {
+            top: 0;
+            height: rem(5);
+            position: relative;
+            display: flex;
+
+            &-current {
+                font-size: 14pt;
+                align-self: flex-start;
+                top: rem(0.5);
+                position: relative;
+                right: - rem(0.5);
+                font-weight: bold;
+            }
+
+            &-slash {
+                stroke: #000;
+                stroke-width: 1;
+            }
+
+            &-total {
+                font-size: 12pt;
+                align-self: flex-end;
+                bottom: rem(0.5);
+                left: - rem(0.5);
+                position: relative;
+            }
+        }
+
+        .rv-splash-message {
+            top: 0;
+            margin-top: rem(1.6);
+            position: relative;
+        }
+    }
+
     .rv-table {
         display: flex;
         flex-direction: column;

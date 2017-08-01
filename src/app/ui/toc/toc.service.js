@@ -11,10 +11,9 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, referenceService, stateManager, graphicsService,
-    geoService, metadataService, errorService, debounceService, $timeout, LegendBlock, configService,
-    legendService) {
-
+function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
+    geoService, metadataService, errorService, LegendBlock, configService, legendService) {
+        
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
@@ -37,9 +36,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     };
 
     let errorToast;
-
-    // debounce toggle filter function
-    const debToggleFilter = debounceService.registerDebounce(debToggleLayerTablePanel);
 
     // set state change watches on metadata, settings and table panel
     watchPanelState('sideMetadata', 'metadata');
@@ -227,8 +223,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
     /**
      * Opens table panel with data from the provided layer object (debounce).
+     *
      * @function toggleLayerTablePanel
-     * @param  {Object} entry layer object whose data should be displayed.
+     * @param  {Object} legendBlock legend block object whose data should be displayed.
      * @private
      */
     function debToggleLayerTablePanel(entry) {
@@ -310,10 +307,37 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             legendEntry: legendBlock
         };
 
+        console.info('|||| started loading');
+
+        /*common.$timeout(() => {
+            // create notification toast
+            const stopToast = $mdToast.simple()
+                .textContent($translate.instant('Loading oodles of data. Might take a while.'))
+                .action($translate.instant('Stop'))
+                .parent(layoutService.panes.toc)
+                .position('bottom rv-flex');
+
+            // promise resolves with 'ok' when user clicks 'undo'
+            $mdToast.show(stop)
+                .then(response =>
+                    response === 'ok' ? () => {} : () => {});
+
+        }, 2000);*/
+
+        const stopTime = common.$interval(function() {
+            legendBlock.loadedFeatureCount += Math.random() * 150;
+            if (legendBlock.loadedFeatureCount > legendBlock.featureCount) {
+                legendBlock.loadedFeatureCount = legendBlock.featureCount;
+                common.$interval.cancel(stopTime);
+            }
+        }, 100);
+
         // const layerRecord = geoService.layers[requester.layerId];
         const dataPromise = legendBlock.formattedData
             .then(attributes => {
                 const rvSymbolColumnName = 'rvSymbol';
+
+                console.info('|||| atributes loaded');
 
                 // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                 // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
@@ -374,6 +398,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                     };
                 }
 
+                console.info('|||| data prepared');
+
                 return {
                     data: attributes,
                     isLoaded: false
@@ -400,19 +426,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     }
 
     /**
-     * Opens table panel with data from the provided layer object.
-     * @function toggleLayerTablePanel
-     * @param  {Object} entry layer object whose data should be displayed.
-     */
-    function toggleLayerTablePanel2(entry) {
-        debToggleFilter(entry);
-    }
-
-    /**
      * Opens metadata panel with data from the provided layer object.
      * @function toggleMetadata
-     * @param  {Object} entry layer object whose data should be displayed.
-     * @param  {Bool | undefined} state of the panel
+     * @param  {Object} legendBlock layer object whose data should be displayed.
+     * @param  {Bool | undefined} value of the panel
      *         {state = true|undefined => pane visible,
      *          state = false => pane not visible}.
      */

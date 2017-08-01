@@ -445,11 +445,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
         get sortGroup () {          return Geo.Layer.SORT_GROUPS_[this.mainProxyWrapper.layerType]; }
 
-        get name () {               return this.mainProxyWrapper.name; }
-        get layerType () {          return this.mainProxyWrapper.layerType; }
-        get parentLayerType () {    return this.mainProxyWrapper.parentLayerType; }
-        get featureCount () {       return this.mainProxyWrapper.featureCount; }
-        get geometryType () {       return this.mainProxyWrapper.geometryType; }
+        get name () {               return this._mainProxyWrapper.name; }
+        get layerType () {          return this._mainProxyWrapper.layerType; }
+        get parentLayerType () {    return this._mainProxyWrapper.parentLayerType; }
+        get featureCount () {       return this._mainProxyWrapper.featureCount; }
+        get loadedFeatureCount () { return this._loadedFeatureCount; }
+        _loadedFeatureCount = 0;
+        set loadedFeatureCount (value) { this._loadedFeatureCount = value; }
+        get geometryType () {       return this._mainProxyWrapper.geometryType; }
         // on change, update the corresponding css rule to make bboxes click-through
         get bboxID () {             return this.layerRecordId + '_' + this.itemIndex + '_bbox'; }
         get itemIndex () {          return this.mainProxyWrapper.itemIndex; }
