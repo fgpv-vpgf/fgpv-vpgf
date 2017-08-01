@@ -12,7 +12,7 @@
 
             <li class="rv-results-item" ng-repeat="result in self.service.searchResults"
                 ng-mousedown="self.service.zoomTo(result)"
-                ng-mouseenter="self.setTruncated($event)">
+                ng-mouseenter="self.setTruncated($event, result)">
                 <!-- need to use ng-mousedown on li instead of ng-click on button because of ng-focus and ng-blur -->
                 <md-button
                     aria-label="result.name + ' ' + result.location.city ' ' + result.location.province.abbr + ' ' + result.type.name"
@@ -37,7 +37,7 @@
                     {{ ::result.type.name }}
                 </span>
 
-                <md-tooltip md-delay="750" md-direction="{{ self.getTooltipDirection() }}" ng-show="self.isNameTruncated">
+                <md-tooltip md-delay="750" md-direction="{{ self.getTooltipDirection() }}" ng-show="result.isNameTruncated">
                     {{ result.name
                     + (result.location.city ? ', ' + result.location.city : '')
                     + (result.location.province.abbr ? ', ' + result.location.province.abbr : '')

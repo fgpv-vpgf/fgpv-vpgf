@@ -103,12 +103,12 @@ function Controller(geosearchService, events, debounceService, layoutService) {
      * @private
      * @param{event} evt event when being hovered
      */
-    function setTruncated(evt) {
+    function setTruncated(evt, result) {
         const target = evt.currentTarget;
-        const result = target.children[1];
+        const location = target.children[1];
         const type = target.children[3];
 
-        self.isNameTruncated = (result.scrollWidth + type.scrollWidth) > (target.clientWidth - 50);
+        result.isNameTruncated = (location.scrollWidth + type.scrollWidth) > (target.clientWidth - 50);
     }
 
     /**
