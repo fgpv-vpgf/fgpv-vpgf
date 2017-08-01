@@ -13,9 +13,10 @@ angular
     .factory('common', common);
 
 // TODO: add helper function to common
-function common($timeout, $q) {
+function common($timeout, $interval, $q) {
     const service = {
         $timeout: $timeout,
+        $interval: $interval,
         $q: $q,
         intersect,
         removeFromArray

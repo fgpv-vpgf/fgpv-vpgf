@@ -11,9 +11,8 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager, graphicsService,
-    geoService, metadataService, errorService, debounceService, $timeout, LegendBlock, configService,
-    legendService) {
+function tocService($q, $rootScope, $mdToast, $translate, common, layoutService, stateManager, graphicsService,
+    geoService, metadataService, errorService, LegendBlock, configService, legendService) {
 
     const service = {
         // method called by the options and flags set on the layer item
@@ -31,9 +30,6 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     };
 
     let errorToast;
-
-    // debounce toggle filter function
-    const debToggleFilter = debounceService.registerDebounce(debToggleLayerTablePanel);
 
     // set state change watches on metadata, settings and table panel
     watchPanelState('sideMetadata', 'metadata');
@@ -196,81 +192,11 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
 
     /**
      * Opens table panel with data from the provided layer object (debounce).
+     *
      * @function toggleLayerTablePanel
-     * @param  {Object} entry layer object whose data should be displayed.
+     * @param  {Object} legendBlock legend block object whose data should be displayed.
      * @private
      */
-    function debToggleLayerTablePanel(entry) {
-        const requester = {
-            id: entry.id,
-            name: entry.name,
-            layerId: (entry.master ? entry.master : entry).id,
-            legendEntry: entry
-        };
-
-        const layerRecord = geoService.layers[requester.layerId];
-        const dataPromise = layerRecord.getAttributes(entry.featureIdx)
-            .then(attributes => {
-                const rvSymbolColumnName = 'rvSymbol';
-
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
-                // add symbol as the first column
-                // check if the symbol column already exists
-                if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-                    attributes.rows.forEach(row => {
-                        // reset href to solve problem in Safari with svg not rendered
-                        row.rvSymbol =
-                            graphicsService.setSvgHref(geoService.retrieveSymbol(row, attributes.renderer));
-                        row.rvInteractive = '';
-                    });
-
-                    // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because table will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
-                    attributes.columns.unshift({
-                        data: 'rvInteractive',
-                        title: '',
-                        orderable: false,
-                        render: '',
-                        width: '40px' // for datatables
-                    });
-
-                    // add a column for symbols
-                    attributes.columns.unshift({
-                        data: rvSymbolColumnName,
-                        title: '',
-                        orderable: false,
-                        render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px' // for datatables
-                    });
-                }
-
-                return {
-                    data: attributes,
-                    isLoaded: false
-                };
-            });
-
-        stateManager.setActive({
-            other: false
-        });
-        stateManager
-            .setActive({
-                side: false
-            })
-            .then(() => {
-                if (errorToast) {
-                    errorService.remove();
-                }
-                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
-            })
-            .catch(() => {
-                errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.filter);
-            });
-    }
-
-
     function toggleLayerTablePanel(legendBlock) {
         const requester = {
             id: legendBlock.id,
@@ -279,10 +205,37 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             legendEntry: legendBlock
         };
 
+        console.info('|||| started loading');
+
+        /*common.$timeout(() => {
+            // create notification toast
+            const stopToast = $mdToast.simple()
+                .textContent($translate.instant('Loading oodles of data. Might take a while.'))
+                .action($translate.instant('Stop'))
+                .parent(layoutService.panes.toc)
+                .position('bottom rv-flex');
+
+            // promise resolves with 'ok' when user clicks 'undo'
+            $mdToast.show(stop)
+                .then(response =>
+                    response === 'ok' ? () => {} : () => {});
+
+        }, 2000);*/
+
+        const stopTime = common.$interval(function() {
+            legendBlock.loadedFeatureCount += Math.random() * 150;
+            if (legendBlock.loadedFeatureCount > legendBlock.featureCount) {
+                legendBlock.loadedFeatureCount = legendBlock.featureCount;
+                common.$interval.cancel(stopTime);
+            }
+        }, 100);
+
         // const layerRecord = geoService.layers[requester.layerId];
         const dataPromise = legendBlock.formattedData
             .then(attributes => {
                 const rvSymbolColumnName = 'rvSymbol';
+
+                console.info('|||| atributes loaded');
 
                 // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                 // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
@@ -343,6 +296,8 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                     };
                 }
 
+                console.info('|||| data prepared');
+
                 return {
                     data: attributes,
                     isLoaded: false
@@ -369,19 +324,10 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
     }
 
     /**
-     * Opens table panel with data from the provided layer object.
-     * @function toggleLayerTablePanel
-     * @param  {Object} entry layer object whose data should be displayed.
-     */
-    function toggleLayerTablePanel2(entry) {
-        debToggleFilter(entry);
-    }
-
-    /**
      * Opens metadata panel with data from the provided layer object.
      * @function toggleMetadata
-     * @param  {Object} entry layer object whose data should be displayed.
-     * @param  {Bool | undefined} state of the panel
+     * @param  {Object} legendBlock layer object whose data should be displayed.
+     * @param  {Bool | undefined} value of the panel
      *         {state = true|undefined => pane visible,
      *          state = false => pane not visible}.
      */
