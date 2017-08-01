@@ -94,13 +94,29 @@ function picture() {
      */
     function picture(items) {
         // item must be a string
-        if (items === null) {
-            items = '';
+        if (Array.isArray(items)) {
+            items = items.map(stringify);
+        } else {
+            items = stringify(items);
         }
+
         items = items.toString().split(';');
         const results = Array.isArray(items) ? items.map(process) : process(items);
 
         return results.join('');
+
+        /**
+         * Checks if `str` can be converted to a string; if not, returns an empty string
+         * @param {Object} str
+         * @return {Object|String} returns the original object if it can be converted to a string; '' otherwise
+         */
+        function stringify(str) {
+            if (typeof str === 'undefined' || str === null) {
+                return '';
+            }
+
+            return str;
+        }
 
         /**
          * Picture helper function.
