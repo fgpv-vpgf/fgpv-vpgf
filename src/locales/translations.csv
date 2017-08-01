@@ -78,6 +78,8 @@ Details pane label for searching,details.label.searching,Searching ...,1,Recherc
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
+,table.splash.loadingdata,Loading Data...,1,[fr] Loading Data ...,0
+,table.splash.buildingtable,Building Table ...,1,[fr] Building Table ...,0
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
 Filter pane menu label for Split View,filter.menu.splitView,Split View,1,Diviser la vue,1
