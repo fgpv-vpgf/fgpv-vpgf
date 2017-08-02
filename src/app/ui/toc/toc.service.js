@@ -201,41 +201,16 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name,
+            error: false,
             layerId: legendBlock.id, //(entry.master ? entry.master : entry).id,
             legendEntry: legendBlock
         };
 
-        console.info('|||| started loading');
-
-        /*common.$timeout(() => {
-            // create notification toast
-            const stopToast = $mdToast.simple()
-                .textContent($translate.instant('Loading oodles of data. Might take a while.'))
-                .action($translate.instant('Stop'))
-                .parent(layoutService.panes.toc)
-                .position('bottom rv-flex');
-
-            // promise resolves with 'ok' when user clicks 'undo'
-            $mdToast.show(stop)
-                .then(response =>
-                    response === 'ok' ? () => {} : () => {});
-
-        }, 2000);*/
-
-        const stopTime = common.$interval(function() {
-            legendBlock.loadedFeatureCount += Math.random() * 150;
-            if (legendBlock.loadedFeatureCount > legendBlock.featureCount) {
-                legendBlock.loadedFeatureCount = legendBlock.featureCount;
-                common.$interval.cancel(stopTime);
-            }
-        }, 100);
-
         // const layerRecord = geoService.layers[requester.layerId];
         const dataPromise = legendBlock.formattedData
+            .then(attributes => common.$timeout(() => attributes), 1000)
             .then(attributes => {
                 const rvSymbolColumnName = 'rvSymbol';
-
-                console.info('|||| atributes loaded');
 
                 // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
                 // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
@@ -296,8 +271,6 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
                     };
                 }
 
-                console.info('|||| data prepared');
-
                 return {
                     data: attributes,
                     isLoaded: false
@@ -317,7 +290,14 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
                 }
                 return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
             })
-            .catch(() => {
+            .catch(error => {
+                // do not show error message if loading was aborted
+                if (error.message === 'ABORTED') {
+                    return ;
+                }
+
+                requester.error = true; // this will hide the table loading splash
+
                 errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
                     layoutService.panes.filter);
             });

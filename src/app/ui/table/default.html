@@ -1,6 +1,7 @@
 <div rv-trap-focus="{{ ::self.appID }}">
     <rv-content-pane
         header-controls="rv-table-default-menu;rv-table-search"
+        close-panel="self.closePanel()"
         static-content="true"
         title-style="title"
         title-value="{{ 'filter.title' | translate }} {{ self.title }}"
@@ -8,7 +9,9 @@
         hide-when-loading="false"
         ng-hide="self.tableService.isSettingOpen">
 
-        <div class="rv-table-splash rv-hide-animate" ng-class="{ 'rv-hide': !self.display.isLoading, 'rv-splash-count-done': self.display.requester.legendEntry.loadedFeatureCount === self.display.requester.legendEntry.featureCount }">
+        <div class="rv-table-splash rv-hide-animate"
+            ng-if="!self.display.requester.error"
+            ng-class="{ 'rv-hide': !self.display.isLoading, 'rv-splash-count-done': self.display.requester.legendEntry.loadedFeatureCount === self.display.requester.legendEntry.featureCount }">
             <div class="rv-splash-count">
                 <span class="rv-splash-count-current">{{ self.display.requester.legendEntry.loadedFeatureCount | number:0 }}</span>
                 <svg class="rv-splash-count-slash" height="50" width="25">

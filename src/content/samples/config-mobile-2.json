@@ -405,6 +405,9 @@
                 "layerId": "crop_density_wheat"
               },
               {
+                "layerId": "aafc_plant_hardiness_zones"
+              },
+              {
                 "layerId": "ecogeofull",
                 "controlledIds": [
                   "powerplant100mw-12"
@@ -520,6 +523,16 @@
       }
     },
     "layers": [
+        {
+          "id":"aafc_plant_hardiness_zones",
+          "name": "AAFC Plant Hardiness Zones",
+          "layerType":"esriDynamic",
+          "layerEntries": [{"index": 0}],
+          "url":"http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer",
+          "state": {
+            "visibility": false
+          }
+        },
         {
           "id": "crop_density_wheat",
           "name": "Crop Destiny",

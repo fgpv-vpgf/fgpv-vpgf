@@ -12,7 +12,7 @@ angular
     .module('app.geo')
     .factory('LegendBlock', LegendBlockFactory);
 
-function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, SymbologyStack) {
+function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack) {
 
     let legendBlockCounter = 0;
 
@@ -95,6 +95,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get layerType () {          return this._proxy.layerType; }
         get parentLayerType () {    return this._proxy.parentLayerType; }
         get featureCount () {       return this._proxy.featureCount; }
+        get loadedFeatureCount () { return this._proxy.loadedFeatureCount; }
         get geometryType () {       return this._proxy.geometryType; }
         get extent () {             return this._proxy.extent; }
         get symbology() {           return this._proxy.symbology; }
@@ -193,6 +194,8 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @return {Promise} a promise resolving with a graphic object
          */
         fetchGraphic(oid) {         return this._proxy.fetchGraphic(oid); }
+
+        abortAttribLoad() {         this._proxy.abortAttribLoad(); }
 
         /**
          * Returns the value of the `userAdded` state flag.
@@ -447,9 +450,19 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get layerType () {          return this._mainProxyWrapper.layerType; }
         get parentLayerType () {    return this._mainProxyWrapper.parentLayerType; }
         get featureCount () {       return this._mainProxyWrapper.featureCount; }
-        get loadedFeatureCount () { return this._loadedFeatureCount; }
-        _loadedFeatureCount = 0;
-        set loadedFeatureCount (value) { this._loadedFeatureCount = value; }
+
+        _derivedLoadedFeatureCount = 0;
+        _stopFeatureCountInterval = null;
+
+        get loadedFeatureCount () {
+            if (this._mainProxyWrapper.featureCount === this._mainProxyWrapper.loadedFeatureCount) {
+                common.$interval.cancel(this._stopFeatureCountInterval);
+                return this._mainProxyWrapper.loadedFeatureCount;
+            }
+
+            return this._derivedLoadedFeatureCount;
+        }
+
         get geometryType () {       return this._mainProxyWrapper.geometryType; }
         // on change, update the corresponding css rule to make bboxes click-through
         get bboxID () {             return this.layerRecordId + '_' + this.itemIndex + '_bbox'; }
@@ -557,7 +570,68 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         get queryUrl () { return this._mainProxyWrapper.queryUrl; }
 
         get formattedData () {
+            if (this._stopFeatureCountInterval === null) {
+                this._stopFeatureCountInterval = this._predictLoadedFeatureCount(this);
+            }
+
             return this._mainProxyWrapper.formattedAttributes;
+        }
+
+        /**
+         * @function predictLoadedFeatureCount
+         * @private
+         * @param {LegendBlock} legendBlock legend block where features are being loaded
+         * @return {Function} a function to stop predictions
+         */
+        _predictLoadedFeatureCount() {
+            const updateDelta = 100; // how often estimates are updated
+            let chunkSize = Math.min(1000, this._mainProxyWrapper.featureCount); // initial guess at the number of records loaded at a time
+            let chunkLoadTime = 3000; // initial guess at how long it takes to load a chunk of records
+            let timeSinceChunkLoad = 0; // time passed since the last chunk was loaded
+            let previousCount = this._mainProxyWrapper.loadedFeatureCount;
+            let updateCount = 0; // estimate on how many updates can be made before the next chunk is loaded
+            let maximumUpdateValue = 0; // estimate on the maximum update value
+            let updateValue = 0; // randomized update value
+
+            this._derivedLoadedFeatureCount = 0;
+
+            const stopInterval = common.$interval(() => {
+                updateCount = chunkLoadTime / updateDelta;
+                maximumUpdateValue = chunkSize / updateCount * 2;
+                updateValue = Math.random() * maximumUpdateValue;
+                this._derivedLoadedFeatureCount += updateValue;
+
+                timeSinceChunkLoad += updateDelta;
+
+                // when the actual loaded feature count changes...
+                if (previousCount !== this._mainProxyWrapper.loadedFeatureCount) {
+                    // udpate time estimate on how long it takes to load a chunk
+                    chunkLoadTime = timeSinceChunkLoad;
+                    timeSinceChunkLoad = 0;
+
+                    // update the chunk size estimate to actual chunk size loaded by geoApi
+                    chunkSize = this._mainProxyWrapper.loadedFeatureCount - previousCount;
+
+                    // if the estimate overshoots the actual loaded count; decrease the chunksize accordingly
+                    // say, previousCount = 0; loadedFeatureCount = 1000; derivedLoadedFeatureCount = 1100;
+                    // then chunkSize will be set to 900, targeting 2000 for the next set of estimates
+                    if (this._derivedLoadedFeatureCount > this._mainProxyWrapper.loadedFeatureCount) {
+                        chunkSize -= this._derivedLoadedFeatureCount - this._mainProxyWrapper.loadedFeatureCount;
+                    }
+
+                    previousCount = this._mainProxyWrapper.loadedFeatureCount;
+
+                    // if the actual loaded count is lower then estimated, still use the esitimated count (don't want to decrease the count)
+                    // since the chunksize is reduced, the estimates will slow down
+                    this._derivedLoadedFeatureCount = Math.max(
+                        this._derivedLoadedFeatureCount,
+                        this._mainProxyWrapper.loadedFeatureCount);
+                }
+
+
+            }, updateDelta);
+
+            return stopInterval;
         }
 
         // FIXME this can probably move directly into geoApi
@@ -604,6 +678,12 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @return {Promise} a promise resolving with a graphic
          */
         fetchGraphic(oid) {         return this._mainProxyWrapper.fetchGraphic(oid); }
+
+        abortAttribLoad () {
+            common.$interval.cancel(this._stopFeatureCountInterval);
+            this._stopFeatureCountInterval = null;
+            this._mainProxyWrapper.abortAttribLoad();
+        }
 
         get description () {        return this.blockConfig.description; }
         get symbologyStack () {     return this._symbologyStack; }

@@ -853,8 +853,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
  * it also watches for dispaly data changes and re-creates the table when it does change.
  * @function Controller
  */
-function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events, tableService,
-    configService, appInfo) {
+function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events,
+    tableService, configService, appInfo, debounceService) {
     'ngInject';
     const self = this;
 
@@ -863,6 +863,7 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     self.draw = draw;
     self.tableService = tableService;
 
+    self.closePanel = closePanel();
 
     const languageObjects = {};
 
@@ -1049,5 +1050,17 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
 
         // set back previous state
         tableService.isSettingOpen = setting;
+    }
+
+    /**
+     * Closes table panel and abort attribute loading.
+     * @function closePanel
+     * @return {Function} a debounced close function
+     */
+    function closePanel() {
+        return debounceService.registerDebounce(() => {
+            stateManager.setActive('table');
+            self.display.requester.legendEntry.abortAttribLoad();
+        });
     }
 }
