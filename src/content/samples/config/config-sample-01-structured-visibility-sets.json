@@ -316,6 +316,9 @@
         "name": "root",
         "children": [
           {
+            "layerId": "crops"
+          },
+          {
             "name": "A Group with a Visibility Set",
             "expanded": true,
             "controls": [
@@ -364,6 +367,16 @@
           "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+      },
+      {
+        "id": "crops",
+        "name": "crops",
+        "layerType": "esriDynamic",
+        "layerEntries": [{"index": 0}],
+        "state": {
+          "visibility": false
+        },
+        "url": "http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer"
       },
       {
         "id": "powerplant100mw-liquids",
