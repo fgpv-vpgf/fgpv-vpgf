@@ -634,7 +634,7 @@
             "type": "object",
             "properties": {
                 "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
-                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [["layers","basemap"],["fullscreen","export","share","touch","help","about"],["language"],["plugins"]] }
             },
             "additionalProperties": false,
             "description": "Specifies which options are available in the left side menu."
@@ -645,7 +645,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
             }
         },
 
@@ -653,15 +653,19 @@
             "type": "object",
             "properties": {
                 "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
-                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
+                "extra": { "$ref": "#/definitions/navBarButtons", "default": ["fullscreen", "geoLocator", "home", "help"] }
             },
             "required": [ "zoom" ],
             "additionalProperties": false
         },
 
         "navBarButtons": {
-            "type": "string",
-            "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
+            }
         },
 
         "mapComponentsNode": {
