@@ -88,7 +88,7 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
         }
 
         setExtent(value) {
-            return this.map.setExtent(value);
+            return this.map.setExtent(value, true);
         }
 
         setScale(value) {
