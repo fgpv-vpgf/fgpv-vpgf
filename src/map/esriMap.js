@@ -142,7 +142,7 @@ function esriMap(esriBundle, geoApi) {
             const projFancyExtent = esriBundle.Extent(projRawExtent.x0, projRawExtent.y0,
                 projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
 
-            return this._map.setExtent(projFancyExtent);
+            return this._map.setExtent(projFancyExtent, true);
         }
 
         /**
