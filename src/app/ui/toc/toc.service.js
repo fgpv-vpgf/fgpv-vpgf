@@ -232,7 +232,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         title: '',
                         orderable: false,
                         render: '',
-                        width: '20px' // for datatables
+                        width: '40px' // for datatables
                     });
 
                     // add a column for symbols
@@ -313,7 +313,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
                         title: '',
                         orderable: false,
                         render: '',
-                        width: '20px', // for datatables
+                        width: '40px', // for datatables
                         position: 1, // for datatables
                         className: 'rv-filter-noexport' // do not show when datatble export or print
                     });
