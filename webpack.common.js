@@ -76,8 +76,6 @@ module.exports = function (env) {
             new webpack.PrefetchPlugin(geoPath),
             new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
-            new webpack.optimize.ModuleConcatenationPlugin(),
-
             new CopyWebpackPlugin([{
                 context: 'src/content/samples/config',
                 from: '**/*.json',
@@ -125,7 +123,8 @@ module.exports = function (env) {
         resolve: {
             modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')],
             alias: {
-                XSLT: path.resolve(__dirname, 'src/content/metadata/')
+                XSLT: path.resolve(__dirname, 'src/content/metadata/'),
+                jquery: 'jquery/src/jquery' // so webpack builds from src and not dist - optional but good to have
             }
         },
 
@@ -151,6 +150,11 @@ module.exports = function (env) {
     };
 
     config.plugins.push(...htmlInjectPlugins());
+
+    // not supported while doing hmr - causes memory leaks and slows build time by ~40%
+    if (!env.hmr) {
+        config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+    }
 
     if (env.geoLocal) {
         config.resolve.alias['geoApi$'] = geoPath;
