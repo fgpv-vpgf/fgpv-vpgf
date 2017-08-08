@@ -327,7 +327,16 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function selectOnContinue
      */
     function selectOnContinue() {
-        const validationPromise = self.layerSource.validate()
+        let validationPromise;
+
+        // incorrectly picking GeoJSON results in syntax error, must be caught here
+        try {
+            validationPromise = self.layerSource.validate();
+        } catch (e) {
+            RV.logger.error('loaderFileDirective', 'file type is wrong', e);
+            toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+            return;
+        }
 
         validationPromise.catch(error => {
             RV.logger.error('loaderFileDirective', 'file type is wrong', error);
