@@ -303,8 +303,7 @@ function pokeFile(url, hint) {
                 case 'zip':
                     guessType = serviceType.Shapefile;
                     break;
-
-                case 'json':
+                default:
                     guessType = serviceType.GeoJSON;
                     break;
             }
@@ -488,6 +487,10 @@ function validateGeoJson(geoJson) {
         Polygon: 'esriGeometryPolygon',
         MultiPolygon: 'esriGeometryPolygon'
     };
+
+    if (! geoJson.features) {
+        return Promise.reject(new Error('File is missing the attribute "features"'));
+    }
 
     const fields = extractFields(geoJson);
     const oid = 'OBJECTID';
