@@ -116,7 +116,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
 
             // if dimensions are 0, something is wrong (I'm looking at you, IE)
             // this happens in IE when switching to full screen; just ignore
-            if (newD.width === 0 || newD.heigth === 0) {
+            if (newD.width === 0 || newD.height === 0) {
                 return;
             }
 
