@@ -9,5 +9,10 @@ module.exports = function (env) {
         config.devtool = 'cheap-module-eval-source-map';
     }
 
+    if (env.bundleAnalyzer) {
+        const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+        config.plugins.push(new BundleAnalyzerPlugin());
+    }
+
     return config;
 }
