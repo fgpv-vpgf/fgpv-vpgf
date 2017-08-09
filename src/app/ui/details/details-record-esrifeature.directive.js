@@ -85,12 +85,15 @@ function Controller($scope, events, mapService, geoService, configService, layou
      * @param {String} oid feature oid
      */
     function initHighlight(oid) {
-        if (oidsAll.length === 0) {
-            mapService.clearHighlight();
-        }
+        // push the hilight off the main thread incase the geometry is massive
+        setTimeout(() => {
+            if (oidsAll.length === 0) {
+                mapService.clearHighlight();
+            }
 
-        oidsAll.push(oid);
-        _drawFeatureHighlight(oid)
+            oidsAll.push(oid);
+            _drawFeatureHighlight(oid);
+        }, 50);
     }
 
     /**
