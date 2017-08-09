@@ -426,12 +426,12 @@ function dynamicLeafGetHighlightFeature() {
 
 function standardZoomToBoundary(map) {
     /* jshint validthis: true */
-    this._source.zoomToBoundary(map);
+    return this._source.zoomToBoundary(map);
 }
 
 function dynamicLeafZoomToBoundary(map) {
     /* jshint validthis: true */
-    this._source.zoomToBoundary(map);
+    return this._source.zoomToBoundary(map);
 }
 
 function standardZoomToScale(map, lods, zoomIn, positionOverLayer = true) {
