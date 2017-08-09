@@ -25,6 +25,7 @@
 
     Panel - Content Pane - Content
 -->
+
 <rv-appbar></rv-appbar>
 
 <!--rv-geosearch></rv-geosearch-->
@@ -32,7 +33,13 @@
 <rv-help-overlay rv-state='help'></rv-help-overlay>
 
 <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
-<rv-panel type="main" close-button="false" rv-state="main" rv-morph="main" class="rv-plug-slide-down"></rv-panel>
+<rv-panel
+    type="main"
+    close-button="false"
+    rv-state="main"
+    rv-morph="main"
+    class="rv-plug-slide-down"
+    ng-class="{ 'rv-no-appbar': !self.config.ui.appBar.enabled }"></rv-panel>
 
 <rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
 
@@ -50,7 +57,7 @@
 <md-progress-linear
     class="rv-progress-bottom"
     md-mode="indeterminate"
-    ng-show="self.map.isMapLoading"></md-progress-linear>
+    ng-show="self.config.map.isMapLoading"></md-progress-linear>
 
 <div class="rv-focus-dialog-content">
     <div class="md-dialog-container">
