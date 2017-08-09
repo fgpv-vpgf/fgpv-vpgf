@@ -259,7 +259,7 @@ function pokeEsriService(url, esriBundle, hint) {
 // resolves with promise of information object
 // - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
 // - fileData : if the file is located on a server, will xhr
-function pokeFile(url, hint) {
+function pokeFile(url) {
 
     // reaction functions to different files
     // overkill right now, as files just identify the type right now
@@ -288,27 +288,23 @@ function pokeFile(url, hint) {
     };
 
     return new Promise(resolve => {
-        if (hint) {
-            // force the data extraction of the hinted format
-            resolve(fileHandler[hint]());
-        } else {
-            // inspect the url for file extensions
-            let guessType = serviceType.Unknown;
-            switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
+        // inspect the url for file extensions
+        let guessType = serviceType.Unknown;
+        switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
 
-                // check for file extensions
-                case 'csv':
-                    guessType = serviceType.CSV;
-                    break;
-                case 'zip':
-                    guessType = serviceType.Shapefile;
-                    break;
-                default:
-                    guessType = serviceType.GeoJSON;
-                    break;
-            }
-            resolve(fileHandler[guessType]());
+            // check for file extensions
+            case 'csv':
+                guessType = serviceType.CSV;
+                break;
+            case 'zip':
+                guessType = serviceType.Shapefile;
+                break;
+            default:
+                guessType = serviceType.GeoJSON;
+                break;
         }
+        resolve(fileHandler[guessType]());
+
     });
 }
 
@@ -322,6 +318,23 @@ function pokeWms(url, esriBundle) {
     console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
 
     return Promise.resolve(makeInfo(serviceType.WMS));
+}
+
+ /**
+  * function predictFileUrlBuilder
+  * @method predictLayerUrl
+  * @param {String} url a url to something that is hopefully a map service
+  * @returns {Promise} a promise resolving with an infomation object
+  */
+function predictFileUrlBuilder(esriBundle) {
+    return (url) => {
+        return new Promise(resolve => {
+            // it was a file. rejoice.
+            pokeFile(url).then(infoFile => {
+                resolve(infoFile);
+            });
+        });
+    }
 }
 
 function predictLayerUrlBuilder(esriBundle) {
@@ -372,11 +385,6 @@ function predictLayerUrlBuilder(esriBundle) {
             hintToFlavour[serviceType.ImageService] = 'F_ESRI';
             hintToFlavour[serviceType.WMS] = 'F_WMS';
 
-            // hint flavour to flavour-handler
-            flavourToHandler.F_FILE = () => {
-                return pokeFile(url, hint);
-            };
-
             flavourToHandler.F_ESRI = () => {
                 return pokeEsriService(url, esriBundle, hint);
             };
@@ -388,70 +396,58 @@ function predictLayerUrlBuilder(esriBundle) {
 
             // execute handler.  hint -> flavour -> handler -> run it -> promise
             return flavourToHandler[hintToFlavour[hint]]();
-
         } else {
-
-            // TODO restructure.  this approach cleans up the pyramid of doom.
-            //      Needs to add check for empty tests, resolve as unknown.
-            //      Still a potential to take advantage of the nice structure.  Will depend
-            //      what comes first:  WMS logic (adding a 3rd test), or changing the request
-            //      library, meaning we get the type early from the head request.
-            /*
-            tests = [pokeFile, pokeService];
-
-            function runTests() {
-                test = tests.pop();
-                test(url, esriBundle).then(info => {
-                    if (info.serviceType !== serviceType.Unknown) {
-                        resolve(info);
-                        return;
-                    }
-                    runTests();
-                });
-            }
-
-            runTests();
-            */
-
             return new Promise(resolve => {
                 // no hint. run tests until we find a match.
-                // test for file
-                pokeFile(url).then(infoFile => {
-                    if (infoFile.serviceType === serviceType.Unknown ||
-                        infoFile.serviceType === serviceType.Error) {
+                // not a file, test for ESRI
+                pokeEsriService(url, esriBundle).then(infoEsri => {
+                    if (infoEsri.serviceType === serviceType.Unknown ||
+                        infoEsri.serviceType === serviceType.Error) {
 
-                        // not a file, test for ESRI
-                        pokeEsriService(url, esriBundle).then(infoEsri => {
-                            if (infoEsri.serviceType === serviceType.Unknown ||
-                                infoEsri.serviceType === serviceType.Error) {
-
-                                // FIXME REAL LOGIC COMING SOON
-                                // pokeWMS
-                                resolve(infoEsri);
-                            } else {
-                                // it was a esri service. rejoice.
-
-                                // shortlived rejoice because grouped layers lul
-                                if (infoEsri.serviceType === serviceType.GroupLayer) {
-                                    const lastSlash = url.lastIndexOf('/');
-                                    const layerIdx = parseInt(url.substring(lastSlash + 1));
-                                    url = url.substring(0, lastSlash);
-                                    pokeEsriService(url, esriBundle).then(infoDynamic => {
-                                        infoDynamic.groupIdx = layerIdx;
-                                        resolve(infoDynamic);
-                                    });
-                                } else {
-                                    resolve(infoEsri);
-                                }
-                            }
-                        });
+                        // FIXME REAL LOGIC COMING SOON
+                        // pokeWMS
+                        resolve(infoEsri);
                     } else {
-                        // it was a file. rejoice.
-                        resolve(infoFile);
+                        // it was a esri service. rejoice.
+
+                        // shortlived rejoice because grouped layers lul
+                        if (infoEsri.serviceType === serviceType.GroupLayer) {
+                            const lastSlash = url.lastIndexOf('/');
+                            const layerIdx = parseInt(url.substring(lastSlash + 1));
+                            url = url.substring(0, lastSlash);
+                            pokeEsriService(url, esriBundle).then(infoDynamic => {
+                                infoDynamic.groupIdx = layerIdx;
+                                resolve(infoDynamic);
+                            });
+                        } else {
+                            resolve(infoEsri);
+                        }
                     }
                 });
             });
         }
+
+        // TODO restructure.  this approach cleans up the pyramid of doom.
+        //      Needs to add check for empty tests, resolve as unknown.
+        //      Still a potential to take advantage of the nice structure.  Will depend
+        //      what comes first:  WMS logic (adding a 3rd test), or changing the request
+        //      library, meaning we get the type early from the head request.
+        /*
+        tests = [pokeFile, pokeService];
+
+        function runTests() {
+            test = tests.pop();
+            test(url, esriBundle).then(info => {
+                if (info.serviceType !== serviceType.Unknown) {
+                    resolve(info);
+                    return;
+                }
+                runTests();
+            });
+        }
+
+        runTests();
+        */
     };
 }
 
@@ -1265,6 +1261,7 @@ module.exports = function (esriBundle, geoApi) {
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
         serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
+        predictFileUrl: predictFileUrlBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
         validateFile,
         csvPeek,
