@@ -43,7 +43,7 @@ angular
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegistry, configService, events,
     stateManager, basemapService, fullScreenService, exportService, layoutService, helpService, reloadService,
-    translations, $mdDialog, pluginService) {
+    translations, $mdDialog, pluginService, geosearchService) {
 
     const service = {
         open,
@@ -73,6 +73,15 @@ function sideNavigationService($mdSidenav, $rootScope, $rootElement, globalRegis
             action: () => {
                 service.close();
                 basemapService.open();
+            }
+        },
+        geoSearch: {
+            type: 'link',
+            label: 'appbar.tooltip.geosearchshort',
+            icon: 'action:search',
+            action: () => {
+                service.close();
+                geosearchService.toggle();
             }
         },
         export: {

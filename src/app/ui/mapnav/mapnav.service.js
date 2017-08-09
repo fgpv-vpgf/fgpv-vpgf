@@ -17,8 +17,8 @@ angular
  * @private
  * @return {object} service object
  */
-function mapNavigationService(stateManager, geoService, $rootScope, locateService,
-    helpService, basemapService, events, fullScreenService) {
+function mapNavigationService(stateManager, geoService, $rootScope, locateService, debounceService,
+    helpService, basemapService, events, fullScreenService, geosearchService, sideNavigationService) {
 
     const service = {
         controls: {}
@@ -46,6 +46,26 @@ function mapNavigationService(stateManager, geoService, $rootScope, locateServic
             icon: 'content:remove',
             tooltip: 'nav.tooltip.zoomOut',
             action: () => geoService.map.shiftZoom(-1)
+        },
+        layers: {
+            label: 'appbar.tooltip.layers',
+            icon: 'maps:layers',
+            tooltip: 'appbar.tooltip.layers',
+            action: debounceService.registerDebounce(() => {
+                stateManager.setActive({ side: false }, 'mainToc');
+            })
+        },
+        sideMenu: {
+            label: 'appbar.tooltip.menu',
+            icon: 'navigation:menu',
+            tooltip: 'appbar.tooltip.menu',
+            action: sideNavigationService.open
+        },
+        geoSearch: {
+            label: 'appbar.tooltip.geosearchshort',
+            icon: 'action:search',
+            tooltip: 'appbar.tooltip.geosearchshort',
+            action: geosearchService.toggle
         },
         geoLocator: {
             label: 'nav.label.geoLocation',

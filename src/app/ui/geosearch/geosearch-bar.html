@@ -1,5 +1,7 @@
 <div class="rv-geosearch-bar rv-whiteframe-z2" ng-attr-rv-trap-focus="{{ !self.service.isResultsVisible ? '' : undefined }}">
+
     <md-button
+        ng-if="self.config.ui.appBar.sideMenu"
         aria-label="{{ 'appbar.aria.menu' | translate }}"
         class="md-icon-button black"
         ng-click="self.sideNavigationService.open();">

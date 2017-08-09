@@ -3,6 +3,11 @@ $result-item-height: rem(4.0);
 $result-item-height-touch: rem(4.8);
 
 @mixin geolegappbar {
+    rv-geosearch-bar {
+        flex: 1;
+        display: flex;
+    }
+
     .rv-geosearch-bar {
         @extend %appbar;
 

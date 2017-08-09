@@ -8,24 +8,22 @@
         white-space: nowrap;
         text-overflow: ellipsis;
 
-        @include include-size(rv-gt-sm) {
-            width: $toolbar-width;
-        }
-
         margin: auto 0 auto rem(0.6);
     }
 }
 
 %appbar {
+    pointer-events: all;
     box-sizing: border-box;
     z-index: auto;
     background: white;
     align-items: center;
     padding: rem(0.4) rem(1.0);
     display: flex;
-    position: absolute;
+    position: relative;
+    flex: 1;
 
-    width: 100%;
+    transition: flex $swift-ease-in-duration / 3 $swift-ease-in-out-timing-function;
 
     button {
         margin: 0;
@@ -40,15 +38,9 @@
             @extend %appbar-title;
         }
 
-        /*.rv-appbar-divider {
-            border-right: $divider-color 1px solid;
-            height: 65%;
-            margin: {
-                right: rem(0.4);
-                left: rem(0.4);
-                //left: rem(1);
-            }
-        }*/
+        &.rv-appbar-collapsed {
+            flex: 0;
+        }
     }
 
     rv-geosearchbar {

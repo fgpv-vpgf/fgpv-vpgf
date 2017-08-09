@@ -1,5 +1,10 @@
-<div class="main-appbar rv-whiteframe-z2" ng-show="!self.stateManager.state.mainGeosearch.active">
+<div class="main-appbar rv-whiteframe-z2"
+    ng-if="self.config.ui.appBar.enabled"
+    ng-class="{ 'rv-appbar-collapsed': !self.stateManager.state.main.active && self.config.ui.appBar.sideMenuOnly }"
+    ng-show="!self.stateManager.state.mainGeosearch.active">
+
     <md-button
+        ng-if="self.config.ui.appBar.sideMenu"
         translate
         aria-label="{{ 'appbar.aria.menu' | translate }}"
         class="md-icon-button black"
@@ -23,7 +28,7 @@
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
-        ng-if="self.config.map.components.geoSearch.enabled && !self.geoSearch.externalApiError">
+        ng-if="self.config.map.components.geoSearch.enabled && !self.geoSearch.externalApiError && self.config.ui.appBar.geoSearch">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>
@@ -38,8 +43,8 @@
         <md-icon md-svg-src="action:search"></md-icon>
     </div>
 
-
     <md-button
+        ng-if="self.config.ui.appBar.basemap"
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
@@ -48,7 +53,7 @@
         <md-icon md-svg-src="maps:map"></md-icon>
     </md-button>
 
-    <span
+    <span ng-if="self.config.ui.appBar.layers"
         class="rv-button-divider">
     </span>
 
@@ -59,17 +64,18 @@
         ng-class="{ selected: self.stateManager.state.mainDetails.active }"
         ng-click="self.toggleDetails()"
         ng-show="self.stateManager.display.details.requestId">
-        <md-tooltip>{{'appbar.tooltip.pointInfo' | translate}}</md-tooltip>
+        <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:place"></md-icon>
     </md-button>
 
     <md-button
+        ng-if="self.config.ui.appBar.layers"
         aria-label="{{ 'appbar.aria.layers' | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
         ng-class="{ selected: self.stateManager.state.mainToc.active }"
         ng-click="self.toggleToc()">
-        <md-tooltip>{{'appbar.tooltip.layers' | translate}}</md-tooltip>
+        <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>
 

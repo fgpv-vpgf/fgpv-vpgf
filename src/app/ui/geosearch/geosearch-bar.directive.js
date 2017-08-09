@@ -38,14 +38,13 @@ function rvGeosearchBar() {
 
     return directive;
 
-    /***/
     function link(scope, el) {
         // auto focus on the search field when created
         el.find('md-autocomplete').rvFocus();
     }
 }
 
-function Controller(appInfo, sideNavigationService, debounceService, geosearchService) {
+function Controller(appInfo, configService, sideNavigationService, debounceService, geosearchService) {
     'ngInject';
     const self = this;
 
@@ -60,6 +59,9 @@ function Controller(appInfo, sideNavigationService, debounceService, geosearchSe
     self.searchLength = 0;
 
     self.onUpdateDebounce = onUpdateDebounceBuilder();
+
+    configService.onEveryConfigLoad(cfg =>
+        (self.config = cfg));
 
     return;
 
