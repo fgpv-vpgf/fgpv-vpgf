@@ -3,6 +3,9 @@ rv-appbar {
     transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
     height: $toolbar-height;
+    pointer-events: none;
+
+    display: flex;
 
     @include include-size(rv-gt-sm) {
         width: $toolbar-width;
@@ -136,6 +139,32 @@ rv-panel[type='main'] {
         z-index: 1;
     }
 
+    &.rv-no-appbar {
+        @include include-size(rv-gt-sm) {
+            @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+        }
+
+        @include include-size(rv-sm) {
+            @include active-panel-plug($left: 0, $top: 1px, $bottom: 0, $width: 100%, $from: top);
+            z-index: 1;
+        }
+
+        // when there is no appbar, we still need to offset geosearch results, so it doesn't overlap with geosearch bar
+        &.geosearch {
+            @include include-size(rv-gt-sm) {
+                top: $viewport-gutter + $toolbar-height + 1;
+            }
+
+            @include include-size(rv-sm) {
+                top: $toolbar-height + 1;
+            }
+        }
+
+        &:before {
+            border-top: none;
+        }
+    }
+
     &:before {
         content: "";
         position: absolute;
@@ -158,10 +187,10 @@ rv-panel[type='main'] {
         pointer-events: none;
 
         .rv-panel {
-            background: transparent;
+            background: transparent !important;
 
             &:after {
-                box-shadow: none;
+                box-shadow: none !important;
             }
         }
     }
