@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($q, $timeout, layoutService, gapiService, configService, identifyService, events) {
+function mapServiceFactory($q, $timeout, $translate, errorService, layoutService, gapiService, configService, identifyService, events) {
     const service = {
         destroyMap,
         makeMap,
@@ -25,7 +25,9 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
         addMarkerHighlight,
         clearHighlight,
 
-        zoomToFeature
+        zoomToFeature,
+
+        checkForBadZoom
     };
 
     return service;
@@ -360,5 +362,32 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
             });
 
         return zoomPromise;
+    }
+
+    /**
+     * Checks if the recent extent change moves the extent center outside of the current basemap's full extent and
+     * displays a toast notification asking the user if they want to move to the adjusted extent.
+     *
+     * @function checkForBadZoom
+     */
+    function checkForBadZoom() {
+        const mapConfig = configService.getSync.map;
+        const map = mapConfig.instance;
+        const fullExtent = map.enhanceConfigExtent(mapConfig.selectedBasemap.full);
+        const checkResult = gapiService.gapi.Map.enforceBoundary(map.extent, fullExtent);
+
+        if (checkResult.adjusted) {
+            // create notification toast
+            const toast = {
+                textContent: $translate.instant('toc.boundaryZoom.badzoom'),
+                action: $translate.instant('toc.boundaryZoom.undo'),
+                parent: layoutService.panels.shell
+            };
+
+            // promise resolves with 'ok' when user clicks 'undo'
+            errorService.display(toast)
+                .then(response =>
+                    response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {});
+        }
     }
 }
