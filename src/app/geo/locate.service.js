@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('locateService', locateService);
 
-function locateService($http, gapiService, configService, errorService) {
+function locateService($http, $translate, gapiService, configService, errorService) {
 
     let apiURL;
     const location = {};
@@ -60,7 +60,7 @@ function locateService($http, gapiService, configService, errorService) {
         const onFailedBrowserCB = () =>
             _apiLocate(
                 geolocate,
-                () => errorService.display('Your location could not be found.')
+                () => errorService.display({ textContent: $translate.instant('geoLocation.error') })
             );
 
         if (location.latitude) {

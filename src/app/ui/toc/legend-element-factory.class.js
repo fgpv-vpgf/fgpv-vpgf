@@ -14,7 +14,7 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService) {
+function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService, mapService) {
     const ref = {
         get autoLegendEh() {
             return configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
@@ -229,7 +229,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         get icon () {   return 'action:zoom_in'; }
         get label () {  return 'toc.label.boundaryZoom'; }
 
-        action () {     this.block.zoomToBoundary(); }
+        action () { this.block.zoomToBoundary().then(mapService.checkForBadZoom); }
     }
 
     class DataControl extends BaseControl {

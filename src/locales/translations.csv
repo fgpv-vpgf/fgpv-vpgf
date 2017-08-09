@@ -123,6 +123,7 @@ Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,1,Votre position,1
+,geoLocation.error,Your location could not be found.,1,[Your location could not be found.],0
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
 Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
@@ -224,6 +225,8 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
+,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,[fr] Zoomed too far?,0
+,toc.boundaryZoom.undo,fix,1,[fr] fix?,0
 Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganiser,1
 ,toc.menu.visibility.title,Toggle Visibility,1,Basculer la visibilité,1
 ,toc.menu.visibility.allon,Show All,1,Montrer tout,1

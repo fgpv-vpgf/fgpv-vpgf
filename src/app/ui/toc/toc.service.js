@@ -75,7 +75,22 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @param  {LegendBlock} legendBlock legend block to be remove from the layer selector
      */
     function removeLayer(legendBlock) {
-        let resolve, reject, openPanelName;
+        let openPanelName;
+        const [resolve, reject] = legendService.removeLegendBlock(legendBlock);
+
+        // create notification toast
+        const toast = {
+            textContent: $translate.instant('toc.label.state.remove'),
+            action: $translate.instant('toc.label.action.remove'),
+            parent: layoutService.panes.toc,
+            position: 'bottom rv-flex'
+        };
+
+        // promise resolves with 'ok' when user clicks 'undo'
+        errorService.display(toast)
+            .then(response =>
+                response === 'ok' ? _restoreLegendBlock() : resolve());
+
         // name mapping between true panel names and their short names
         const panelSwitch = {
             table: {
@@ -400,8 +415,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
                 requester.error = true; // this will hide the table loading splash
 
-                errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    referenceService.panes.filter);
+                errorToast = errorService.display({
+                    textContent: $translate.instant('toc.error.resource.loadfailed'),
+                    parent: layoutService.panes.filter
+                });
             });
     }
 
@@ -441,8 +458,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 service.validMetadata = false;
                 referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
 
-                errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    referenceService.panes.metadata);
+                errorService.display({
+                    textContent: $translate.instant('toc.error.resource.loadfailed'),
+                    parent: layoutService.panes.metadata
+                });
 
                 // display manager will stop the progress bar when datapromise is rejected
                 reject(error);

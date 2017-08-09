@@ -10,7 +10,7 @@ angular
     .module('app.ui')
     .factory('errorService', errorService);
 
-function errorService($mdToast) {
+function errorService($mdToast, $translate) {
     const service = {
         display,
         remove
@@ -31,22 +31,14 @@ function errorService($mdToast) {
      * Renders a toast message containing the supplied errorMsg
      *
      * @function display
-     * @param {String} errorMsg     The message to display inside the toast
-     * @param {Object} parentElem   optional element to attach toast message. Appears on bottom of element if supplied, default is rootElement
-     * @return {Promise}
+     * @param {Object} opts toast options object; see https://material.angularjs.org/latest/api/service/$mdToast for details
+     * @return {Promise} resolving when the toast is hidden
      */
-    function display(errorMsg, parentElem) {
-        const opts = {
-            textContent: errorMsg,
-            // action: 'Close',
-            // hideDelay: 0,
+    function display(opts) {
+        const extendedOpts = angular.extend({}, {
             position: 'bottom rv-flex-global'
-        };
+        }, opts);
 
-        if (typeof parentElem !== 'undefined') {
-            opts.parent = parentElem;
-        }
-
-        return $mdToast.show($mdToast.simple(opts));
+        return $mdToast.show($mdToast.simple(extendedOpts));
     }
 }
