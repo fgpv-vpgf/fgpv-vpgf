@@ -62,6 +62,7 @@ function rvContentPane($compile) {
             headerControlsScope: '=?',
             floatingHeader: '=?',
             footer: '@?',
+            closeButton: '=?',
             closePanel: '&?', // https://docs.angularjs.org/api/ng/service/$compile
             staticContent: '=?'
         },
@@ -86,6 +87,8 @@ function rvContentPane($compile) {
         self.hideWhenLoading = angular.isDefined(self.hideWhenLoading) ? self.hideWhenLoading : true;
         self.staticContent = angular.isDefined(self.staticContent) ? self.staticContent : false;
         self.floatingHeader = angular.isDefined(self.floatingHeader) ? self.floatingHeader : false;
+
+        self.closeButton = self.closeButton !== false;
 
         // first, try to used passed closePanel function; if not, use one on the parent panel controller, or nothing
         if (!self.closePanel && ctrl) {
