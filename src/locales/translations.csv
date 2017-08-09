@@ -9,6 +9,7 @@ Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,1,Détails sur l'élément,1
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
 Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1, Recherche géolocalisée,1
+,appbar.tooltip.geosearchshort,Geo Search,1,[fr] Geo Search,0
 Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,1,Outils,1
 Appbar aria label for layers icon,appbar.aria.layers,Sets,1,Séries,1
@@ -17,6 +18,7 @@ La recherche de géolocalisation n'est pas disponible,1
 Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,1,Détails sur l'élément,1
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,1,Ouvrir le menu de navigation,1
 Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
+,appbar.aria.geosearch,Geo Search,1,[fr] Geo Search,0
 Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search,1, Recherche géolocalisée,1
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,1,Agrandir/Minimiser l'aperçu de la carte,1
 Map aria label description,geo.aria.mapdescription,Interactive Map,1,Carte Interactive,1
