@@ -74,14 +74,15 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
         const [resolve, reject] = legendService.removeLegendBlock(legendBlock);
 
         // create notification toast
-        const undoToast = $mdToast.simple()
-            .textContent($translate.instant('toc.label.state.remove'))
-            .action($translate.instant('toc.label.action.remove'))
-            .parent(layoutService.panes.toc)
-            .position('bottom rv-flex');
+        const toast = {
+            textContent: $translate.instant('toc.label.state.remove'),
+            action: $translate.instant('toc.label.action.remove'),
+            parent: layoutService.panes.toc,
+            position: 'bottom rv-flex'
+        };
 
         // promise resolves with 'ok' when user clicks 'undo'
-        $mdToast.show(undoToast)
+        errorService.display(toast)
             .then(response =>
                 response === 'ok' ? _restoreLegendBlock() : resolve());
 
@@ -298,8 +299,10 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
 
                 requester.error = true; // this will hide the table loading splash
 
-                errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.filter);
+                errorToast = errorService.display({
+                    textContent: $translate.instant('toc.error.resource.loadfailed'),
+                    parent: layoutService.panes.filter
+                });
             });
     }
 
@@ -333,8 +336,10 @@ function tocService($q, $rootScope, $mdToast, $translate, common, layoutService,
                 resolve(metadataPackage);
 
             }).catch(error => {
-                errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.metadata);
+                errorService.display({
+                    textContent: $translate.instant('toc.error.resource.loadfailed'),
+                    parent: layoutService.panes.metadata
+                });
 
                 // display manager will stop the progress bar when datapromise is rejected
                 reject(error);
