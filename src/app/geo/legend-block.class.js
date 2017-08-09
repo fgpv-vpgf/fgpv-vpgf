@@ -659,8 +659,9 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * Zooms the layer controlled by the main proxy object to its bounding box.
          *
          * @function zoomToBoundary
+         * @return {Promise} resolving when the extent change has ended
          */
-        zoomToBoundary () { this._mainProxyWrapper.zoomToBoundary(); }
+        zoomToBoundary () { return this._mainProxyWrapper.zoomToBoundary(); }
 
         /**
          * Zooms to a graphic with the specified oid.
