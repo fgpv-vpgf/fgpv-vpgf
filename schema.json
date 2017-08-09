@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "FGPV Config Schema",
     "type": "object",
-    "version": 2.1,
+    "version": 2.2,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
     "additionalProperties": false,
 
@@ -648,8 +648,19 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
+                "enum": ["layers", "basemap", "geoSearch", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
             }
+        },
+
+        "appBarNode": {
+            "type": "object",
+            "properties": {
+                "sideMenu": { "type": "boolean", "default": true, "description": "Shows the side menu button in the main app toolbar." },
+                "geoSearch": { "type": "boolean", "default": true, "description": "Shows the geosearch button in the main app toolbar. The button will be hidden if geosearch component is disabled or no search service URLs are provided." },
+                "basemap": { "type": "boolean", "default": true, "description": "Shows the basemap selector button in the main app toolbar." },
+                "layers": { "type": "boolean", "default": true, "description": "Shows the layers button in the main app toolbar." }
+            },
+            "additionalProperties": false
         },
 
         "navBarNode": {
@@ -667,7 +678,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
+                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen", "geoSearch", "sideMenu", "layers"]
             }
         },
 
@@ -677,7 +688,10 @@
                 "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
                 "northArrow": { "type": "object" },
-                "overviewMap": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "expandFactor": { "type": "number", "default": 2 }}},
+                "overviewMap": { "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean" },
+                        "expandFactor": { "type": "number", "default": 2 }}},
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" }
             },
@@ -697,6 +711,7 @@
                 "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
                 "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
                 "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
+                "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the all default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
                 "navBar": { "$ref": "#/definitions/navBarNode" },
                 "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
                 "restrictNavigation": {
