@@ -17,7 +17,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
-            toggleLayerGroup,
             toggleLayerTablePanel
         },
 
@@ -208,12 +207,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     */
     function zoomToBoundary(legendEntry) {
         geoService.zoomToBoundary(legendEntry.id);
-    }
-
-    // temp function to open layer groups
-    function toggleLayerGroup(group) {
-        RV.logger.log('tocService', `toggle layer group with name ${group.name}`);
-        group.expanded = !group.expanded;
     }
 
     /**

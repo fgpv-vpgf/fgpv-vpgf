@@ -38,7 +38,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
                 stateManager.setActive({ side: false }, 'mainToc');
             }
-            scope.self.map = config.map;
+            scope.self.config = config;
         });
 
         referenceService.panels.shell = el;
@@ -135,10 +135,9 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
     }
 }
 
-function Controller(geoService, configService) {
+function Controller(geoService) {
     'ngInject';
     const self = this;
 
     self.geoService = geoService;
-    self.configService = configService; // TODO: fix when config service can fire events
 }

@@ -37,8 +37,10 @@ function rvAppbar(referenceService) {
     return directive;
 }
 
-function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService, configService, geoSearch) {
+function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService,
+    configService, geoSearch) {
     'ngInject';
+
     const self = this;
     self.sideNavigationService = sideNavigationService;
     self.stateManager = stateManager;
@@ -53,12 +55,6 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
 
     configService.onEveryConfigLoad(cfg =>
         (self.config = cfg));
-
-    activate();
-
-    function activate() {
-
-    }
 
     function toggleDetails() {
         stateManager.setActive({ side: false }, 'mainDetails');
