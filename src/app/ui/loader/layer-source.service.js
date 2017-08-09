@@ -323,7 +323,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
         // convert forward slashes to backward slashes and poop the file name
         const fileName = path.replace(/\\/g, '/').split('/').pop();
 
-        const fetchPromise = gapiService.gapi.layer.predictLayerUrl(fileName).then(fileInfo => {
+        const fetchPromise = gapiService.gapi.layer.predictFileUrl(fileName).then(fileInfo => {
             // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
             // this.fileData = fileInfo.fileData;
             this.layerType = Geo.Layer.Types.ESRI_FEATURE;
