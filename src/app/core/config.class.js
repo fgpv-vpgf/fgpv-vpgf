@@ -1440,7 +1440,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
             this._maximizeButton = source.maximizeButton;
             this._layerType = source.layerType;
-            this._expandFactor = source.expandFactor;
+            this._expandFactor = source.expandFactor || 2;
         }
 
         get maximizeButton () { return this._maximizeButton; }
@@ -1825,6 +1825,34 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class AppBar {
+        constructor(source = {}) {
+            this._sideMenu = source.sideMenu !== false;
+            this._geoSearch = source.geoSearch !== false;
+            this._basemap = source.basemap !== false;
+            this._layers = source.layers !== false;
+        }
+
+        get sideMenu () {   return this._sideMenu; }
+        get geoSearch () {  return this._geoSearch; }
+        get basemap () {    return this._basemap; }
+        get layers () {     return this._layers; }
+
+        get enabled () {    return this.sideMenu || this.geoSearch || this.layers || this.basemap; }
+        get sideMenuOnly () {
+            return this.sideMenu && !this.geoSearch && !this.layers && !this.basemap;
+        }
+
+        get JSON () {
+            return {
+                sideMenu: this.sideMenu,
+                geoSearch: this.geoSearch,
+                basemap: this.basemap,
+                layers: this.layers
+            };
+        }
+    }
+
     /**
      * Typed representation of the `ui.navBar` section of the config.
      * @class NavBar
@@ -1857,12 +1885,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         static EXTRA_AVAILABLE_ITEMS = [
             'history',
+            'geoSearch',
             'fullscreen',
             'marquee',
             'home',
             'help',
             'geoLocator',
-            'basemap'
+            'basemap',
+            'sideMenu',
+            'layers'
         ];
     }
 
@@ -1903,6 +1934,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         static AVAILABLE_ITEMS = [
             'layers',
+            'geoSearch',
             'basemap',
             'about',
             'fullscreen',
@@ -2059,6 +2091,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         constructor(uiSource) {
             this._source = uiSource;
 
+            this._appBar = new AppBar(uiSource.appBar);
             this._navBar = new NavBar(uiSource.navBar, uiSource.help);
             this._logoUrl = uiSource.logoUrl || null;
             this._title = uiSource.title || null;
@@ -2073,6 +2106,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get source () {                 return this._source; }
 
+        get appBar () {                 return this._appBar; }
         get navBar () {                 return this._navBar; }
         get logoUrl () {                return this._logoUrl; }
         get title () {                  return this._title; }
@@ -2081,11 +2115,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get legend () {                 return this._legend; }
         get help () {                   return this._help; }
         get fullscreen () {             return this._fullscreen; }
-        get tableIsOpen () {           return this._tableIsOpen; }
+        get tableIsOpen () {            return this._tableIsOpen; }
         get about() {                   return this._about; }
 
         get JSON () {
             return {
+                appBar: this.appBar.JSON,
                 navBar: this.navBar.JSON,
                 logoUrl: this.logoUrl,
                 title: this.title,
@@ -2128,9 +2163,22 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
                 && hasAllSearchServices(this.services.search);
 
+            let optionName;
+
+            if (!this.map.components.geoSearch.enabled) {
+                optionName = 'geoSearch';
+
+                this.ui.appBar.geoSearch = false;
+
+                this.ui.sideMenu.items.forEach(section =>
+                    common.removeFromArray(section, optionName));
+
+                common.removeFromArray(this.ui.navBar.extra, optionName);
+            }
+
             // remove fullscreen option if fullscreen functionality is not available
             if (!screenfull.enabled) {
-                const optionName = 'fullscreen';
+                optionName = 'fullscreen';
 
                 this.ui.sideMenu.items.forEach(section =>
                     common.removeFromArray(section, optionName));
