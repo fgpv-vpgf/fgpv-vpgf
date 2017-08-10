@@ -121,6 +121,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
          * @function createTable
          * @param {Object} oLang    Translation object for the table
          */
+        // eslint-disable-next-line max-statements
         function createTable(oLang) {
             const callbacks = {
                 onTableDraw,
@@ -168,6 +169,25 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
             // define pre-deformatting function for date columns
             $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g,''));
+
+            // Reset datatable to initial state if all sorts are removed
+            // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2119
+            // Modified from: https://datatables.net/plug-ins/api/fnSortNeutral
+            $.fn.dataTable.Api.register( 'fnSortNeutral()', oSettings => {
+                /* Remove any current sorting */
+                oSettings.aaSorting = [];
+
+                /* Sort display arrays so we get them in numerical order */
+                oSettings.aiDisplay.sort((x,y) => {
+                    return x-y;
+                });
+                oSettings.aiDisplayMaster.sort((x,y) => {
+                    return x-y;
+                });
+
+                /* Redraw */
+                oSettings.oApi._fnReDraw(oSettings);
+            });
 
             // ~~I hate DataTables~~ Datatables are cool!
             self.table = tableNode

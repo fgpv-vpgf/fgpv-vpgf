@@ -186,6 +186,8 @@ function Controller($scope, events, tableService, stateManager) {
         const table = self.tableService.getTable();
         if (sorts.length) {
             table.order(sorts).draw();
+        } else {    // All sorting removed from settings panel, reset table to original state
+            table.fnSortNeutral(table.settings()[0]);
         }
     }
 
