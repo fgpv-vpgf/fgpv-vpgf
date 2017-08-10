@@ -130,7 +130,7 @@
                                 align-items: center;
 
                                 @include touch {
-                                    @include button-size(rem(4.0));
+                                    @include button-size(rem(3.5));
                                     @include icon-size(rem(2.0));
                                 }
 
