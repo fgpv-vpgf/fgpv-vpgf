@@ -10,7 +10,7 @@ angular
     .module('app.core')
     .factory('reloadService', reloadService);
 
-function reloadService(events, bookmarkService, geoService, configService) {
+function reloadService(events, bookmarkService, geoService, configService, stateManager) {
     const service = {
         // loadNewProjection,
         loadWithExtraKeys,
@@ -63,6 +63,12 @@ function reloadService(events, bookmarkService, geoService, configService) {
         geoService
             .destroyMap()
             .assembleMap();
+
+        stateManager.setActive({
+            side: false
+        }, {
+            table: false
+        });
     }
 
     /**
