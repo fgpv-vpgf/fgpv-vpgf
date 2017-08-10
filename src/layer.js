@@ -259,53 +259,56 @@ function pokeEsriService(url, esriBundle, hint) {
 // resolves with promise of information object
 // - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
 // - fileData : if the file is located on a server, will xhr
-function pokeFile(url) {
+function pokeFile(url, hint) {
+        // reaction functions to different files
+        // overkill right now, as files just identify the type right now
+        // but structure will let us enhance for custom things if we need to
+        const fileHandler = {};
 
-    // reaction functions to different files
-    // overkill right now, as files just identify the type right now
-    // but structure will let us enhance for custom things if we need to
-    const fileHandler = {};
+        // csv
+        fileHandler[serviceType.CSV] = () => {
+            return makeInfo(serviceType.CSV);
+        };
 
-    // csv
-    fileHandler[serviceType.CSV] = () => {
-        return makeInfo(serviceType.CSV);
-    };
+        // geojson
+        fileHandler[serviceType.GeoJSON] = () => {
+            return makeInfo(serviceType.GeoJSON);
+        };
 
-    // geojson
-    fileHandler[serviceType.GeoJSON] = () => {
-        return makeInfo(serviceType.GeoJSON);
-    };
+        // csv
+        fileHandler[serviceType.Shapefile] = () => {
+            return makeInfo(serviceType.Shapefile);
+        };
 
-    // csv
-    fileHandler[serviceType.Shapefile] = () => {
-        return makeInfo(serviceType.Shapefile);
-    };
+        // couldnt figure it out
+        fileHandler[serviceType.Unknown] = () => {
+            // dont supply url, as we don't want to download random files
+            return makeInfo(serviceType.Unknown);
+        };
 
-    // couldnt figure it out
-    fileHandler[serviceType.Unknown] = () => {
-        // dont supply url, as we don't want to download random files
-        return makeInfo(serviceType.Unknown);
-    };
+        return new Promise(resolve => {
+            if (hint) {
+                // force the data extraction of the hinted format
+                resolve(fileHandler[hint]());
+            } else {
+                // inspect the url for file extensions
+                let guessType = serviceType.Unknown;
+                switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
 
-    return new Promise(resolve => {
-        // inspect the url for file extensions
-        let guessType = serviceType.Unknown;
-        switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
-
-            // check for file extensions
-            case 'csv':
-                guessType = serviceType.CSV;
-                break;
-            case 'zip':
-                guessType = serviceType.Shapefile;
-                break;
-            default:
-                guessType = serviceType.GeoJSON;
-                break;
-        }
-        resolve(fileHandler[guessType]());
-
-    });
+                    // check for file extensions
+                    case 'csv':
+                        guessType = serviceType.CSV;
+                        break;
+                    case 'zip':
+                        guessType = serviceType.Shapefile;
+                        break;
+                    default:
+                        guessType = serviceType.GeoJSON;
+                        break;
+                }
+                resolve(fileHandler[guessType]());
+            }
+        });
 }
 
 // tests a URL to see if the value is a wms
@@ -320,9 +323,8 @@ function pokeWms(url, esriBundle) {
     return Promise.resolve(makeInfo(serviceType.WMS));
 }
 
- /**
-  * function predictFileUrlBuilder
-  * @method predictLayerUrl
+/**
+  * @method predictFileUrlBuilder
   * @param {String} url a url to something that is hopefully a map service
   * @returns {Promise} a promise resolving with an infomation object
   */
@@ -374,9 +376,6 @@ function predictLayerUrlBuilder(esriBundle) {
             const flavourToHandler = {};
 
             // hint type to hint flavour
-            hintToFlavour[serviceType.CSV] = 'F_FILE';
-            hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
-            hintToFlavour[serviceType.Shapefile] = 'F_FILE';
             hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
             hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
             hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
