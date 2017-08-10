@@ -82,9 +82,7 @@ function displayManager($timeout, $q, $rootElement) {
             typeof requester.id !== 'undefined' &&
             display.requester.id === requester.id) {
 
-            stateManager.setActive(panelName); // just close the panel
-
-            return $q.reject(); // display for this panel is not defined, exit
+            return stateManager.setActive(panelName);
         } else {
             // cancel previous data retrieval timeout
             $timeout.cancel(display.loadingTimeout);
