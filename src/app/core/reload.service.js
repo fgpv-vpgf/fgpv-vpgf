@@ -36,6 +36,8 @@ function reloadService(events, bookmarkService, geoService, configService, state
     function reloadConfig(bookmark) {
         events.$broadcast(events.rvApiHalt);
 
+        _closeOpenPanels();
+
         geoService._isMapReady = false;
         geoService.destroyMap();
         bookmarkService.emptyStoredBookmark();
@@ -57,18 +59,15 @@ function reloadService(events, bookmarkService, geoService, configService, state
 
     function changeProjection(startPoint) {
         events.$broadcast(events.rvApiHalt);
+
+        _closeOpenPanels();
+
         const bookmark = bookmarkService.getBookmark(startPoint);
         bookmarkService.parseBookmark(bookmark);
 
         geoService
             .destroyMap()
             .assembleMap();
-
-        stateManager.setActive({
-            side: false
-        }, {
-            table: false
-        });
     }
 
     /**
@@ -80,6 +79,8 @@ function reloadService(events, bookmarkService, geoService, configService, state
      */
     function loadNewLang(lang) {
         events.$broadcast(events.rvApiHalt);
+
+        _closeOpenPanels();
 
         const bookmark = bookmarkService.getBookmark();
 
@@ -104,10 +105,12 @@ function reloadService(events, bookmarkService, geoService, configService, state
     function loadWithBookmark(bookmark, initial, additionalKeys = []) {
         if (!bookmark) {
             events.$broadcast(events.rvBookmarkInit);
+            _closeOpenPanels();
             service.bookmarkBlocking = false;
         } else if (!initial || service.bookmarkBlocking) {
             events.$broadcast(events.rvApiHalt);
             events.$broadcast(events.rvBookmarkDetected);
+            _closeOpenPanels();
 
             // FIXME / TODO I think we need more analysis here for what happens if
             // this is not the initial bookmark and there are RCS layers involved.
@@ -185,5 +188,19 @@ function reloadService(events, bookmarkService, geoService, configService, state
         if (service.bookmarkBlocking) {
            loadWithBookmark(bookmark, true, keys);
         }
+    }
+
+    /**
+     * Closes open settings or datatable panels when re-loading configs.
+     *
+     * @function _closeOpenPanels
+     * @private
+     */
+    function _closeOpenPanels() {
+        stateManager.setActive({
+            side: false
+        }, {
+            table: false
+        });
     }
 }
