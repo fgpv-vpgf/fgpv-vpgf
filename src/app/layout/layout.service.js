@@ -55,9 +55,18 @@ function layoutService($rootElement, $rootScope) {
     * @return  {String} either 'small', 'medium', or 'large'
     */
     function currentLayout() {
-        if ($rootElement.width() <= 480) {
+        let elWidth;
+        // IE doesn't like giving the correct width when in full screen
+        // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2266#issuecomment-320984287
+        if ($rootElement[0].parentElement.className.includes('rv-full-screen')) {
+            elWidth = document.documentElement.clientWidth;
+        } else {
+            elWidth = $rootElement.width();
+        }
+
+        if (elWidth <= 480) {
             return service.LAYOUT.SMALL;
-        } else if ($rootElement.width() <= 840) {
+        } else if (elWidth <= 840) {
             return service.LAYOUT.MEDIUM;
         } else {
             return service.LAYOUT.LARGE;
