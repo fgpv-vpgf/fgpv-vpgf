@@ -39,6 +39,9 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 stateManager.setActive({ side: false }, 'mainToc');
             }
             scope.self.config = config;
+
+            // DEMO: open the main panel
+            stateManager.setActive({ side: false }, 'mainToc');
         });
 
         layoutService.panels.shell = el;
