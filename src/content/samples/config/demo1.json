@@ -1,0 +1,347 @@
+{
+  "ui": {
+    "title": "Custom Title",
+    "navBar": {
+      "zoom": "buttons",
+      "extra": [
+        "fullscreen",
+        "geoLocator",
+        "home",
+        "help"
+      ]
+    },
+    "sideMenu": {
+      "logo": true
+    },
+    "help": {
+      "folderName": "default"
+    },
+    "legendIsOpen": {
+      "large": true,
+      "medium": true,
+      "small": false
+    }
+  },
+  "version": "2.0",
+  "language": "en",
+  "services": {
+    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+    "exportMapUrl": "http://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+    "export": {
+      "title": {
+        "value": "Title"
+      },
+      "map": {},
+      "mapElements": {},
+      "legend":{},
+      "footnote": {
+        "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
+      }
+    },
+    "search": {
+      "serviceUrls": {
+        "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
+        "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+        "geoSuggest": "http://geogratis.gc.ca/services/geolocation/en/suggest?q=",
+        "provinces": "http://geogratis.gc.ca/services/geoname/en/codes/province.json",
+        "types": "http://geogratis.gc.ca/services/geoname/en/codes/concise.json"
+      }
+    }
+  },
+  "map": {
+    "initialBasemapId": "dark",
+    "components": {
+      "geoSearch": {
+        "enabled": true,
+        "showGraphic": true,
+        "showInfo": true
+      },
+      "mouseInfo": {
+        "enabled": true,
+        "spatialReference": {
+          "wkid": 102100
+        }
+      },
+      "northArrow": {
+        "enabled": false
+      },
+      "basemap": {
+        "enabled": true
+      },
+      "overviewMap": {
+        "enabled": true,
+        "layerType": "imagery"
+      },
+      "scaleBar": {
+        "enabled": true
+      }
+    },
+    "extentSets": [
+      {
+        "id": "EXT_ESRI_World_AuxMerc_3857",
+        "default": {
+          "xmax": -2131464.2594106756,
+          "xmin": -19414045.31288,
+          "ymax": 13598718.26784584,
+          "ymin": 4506078.283399494
+        },
+        "spatialReference": {
+          "wkid": 102100,
+          "latestWkid": 3857
+        }
+      }
+    ],
+    "lodSets": [
+      {
+        "id": "LOD_ESRI_World_AuxMerc_3857",
+        "lods": [
+          {
+            "level": 0,
+            "resolution": 19567.87924099992,
+            "scale": 73957190.948944
+          },
+          {
+            "level": 1,
+            "resolution": 9783.93962049996,
+            "scale": 36978595.474472
+          },
+          {
+            "level": 2,
+            "resolution": 4891.96981024998,
+            "scale": 18489297.737236
+          },
+          {
+            "level": 3,
+            "resolution": 2445.98490512499,
+            "scale": 9244648.868618
+          },
+          {
+            "level": 4,
+            "resolution": 1222.992452562495,
+            "scale": 4622324.434309
+          },
+          {
+            "level": 5,
+            "resolution": 611.4962262813797,
+            "scale": 2311162.217155
+          },
+          {
+            "level": 6,
+            "resolution": 305.74811314055756,
+            "scale": 1155581.108577
+          },
+          {
+            "level": 7,
+            "resolution": 152.87405657041106,
+            "scale": 577790.554289
+          },
+          {
+            "level": 8,
+            "resolution": 76.43702828507324,
+            "scale": 288895.277144
+          },
+          {
+            "level": 9,
+            "resolution": 38.21851414253662,
+            "scale": 144447.638572
+          },
+          {
+            "level": 10,
+            "resolution": 19.10925707126831,
+            "scale": 72223.819286
+          },
+          {
+            "level": 11,
+            "resolution": 9.554628535634155,
+            "scale": 36111.909643
+          },
+          {
+            "level": 12,
+            "resolution": 4.77731426794937,
+            "scale": 18055.954822
+          },
+          {
+            "level": 13,
+            "resolution": 2.388657133974685,
+            "scale": 9027.977411
+          },
+          {
+            "level": 14,
+            "resolution": 1.1943285668550503,
+            "scale": 4513.988705
+          },
+          {
+            "level": 15,
+            "resolution": 0.5971642835598172,
+            "scale": 2256.994353
+          },
+          {
+            "level": 16,
+            "resolution": 0.29858214164761665,
+            "scale": 1128.497176
+          },
+          {
+            "level": 17,
+            "resolution": 0.14929107082380833,
+            "scale": 564.248588
+          },
+          {
+            "level": 18,
+            "resolution": 0.07464553541190416,
+            "scale": 282.124294
+          },
+          {
+            "level": 19,
+            "resolution": 0.03732276770595208,
+            "scale": 141.062147
+          },
+          {
+            "level": 20,
+            "resolution": 0.01866138385297604,
+            "scale": 70.5310735
+          }
+        ]
+      }
+    ],
+    "legend": {
+      "type": "structured",
+      "root": {
+        "name": "root",
+        "children": [
+          {
+            "exclusiveVisibility":
+            [
+              {
+                "name": "Temperature",
+                "children": [
+                  {
+                    "exclusiveVisibility":
+                    [
+                      {
+                        "layerId": "annual_maxtemp_2021_2050_less"
+                      },
+                      {
+                        "layerId": "annual_maxtemp_2051_2080_less"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Precipitation",
+                "children": [
+                  {
+                    "exclusiveVisibility":
+                    [
+                      {
+                        "layerId": "annual_precip_2021_2050_less"
+                      },
+                      {
+                        "layerId": "annual_precip_2051_2080_less"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layerId": "thegrid"
+          }
+        ]
+      }
+    },
+    "layers": [
+      {
+        "id": "thegrid",
+        "name": "This must be visible for hover",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"
+      },
+      {
+        "id": "plus30_2060_851.tif",
+        "name": "A demo aaa Test",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer"
+      },
+      {
+        "id": "annual_maxtemp_2021_2050_less",
+        "name": "Annual Max Temperature 2021-2050",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2030_45/MapServer"
+      },
+      {
+        "id": "annual_maxtemp_2051_2080_less",
+        "name": "Annual Max Temperature 2051-2080",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "annual_precip_2021_2050_less",
+        "name": "Annual Precipitation from 2021-2050",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_precip_2030_45/MapServer"
+      },
+      {
+        "id": "annual_precip_2051_2080_less",
+        "name": "Annual Precipitation from 2051-2080",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_precip_2060_45/MapServer"
+      }
+    ],
+    "tileSchemas": [
+      {
+        "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "name": "Lambert Maps",
+        "extentSetId": "EXT_NRCAN_Lambert_3978",
+        "lodSetId": "LOD_NRCAN_Lambert_3978"
+      },
+      {
+        "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+        "name": "Web Mercator Maps",
+        "extentSetId": "EXT_ESRI_World_AuxMerc_3857",
+        "lodSetId": "LOD_ESRI_World_AuxMerc_3857"
+      }
+    ],
+    "baseMaps": [
+      {
+        "id": "dark",
+        "name": "Dark Gray Canvas Base",
+        "description": "This map draws attention to your thematic content by providing a neutral background with minimal colors, labels, and features. Only key information is represented to provide geographic context, allowing your data to come to the foreground. This dark gray map supports bright colors, creating a visually compelling map graphic which helps your reader see the patterns intended. This map was developed by Esri using HERE data, DeLorme basemap layers, OpenStreetMap contributors, Esri basemap data, and select data from the GIS user community. Worldwide coverage is provided from Level 0 (1:591M scale) through Level 10 (1:577k scale). In North America, Central and South America, Africa, India, Australia & New Zealand, Pacific Islands, and select countries in the Middle East from Level 11 (1:288k scale) through Level 16 (1:9k scale). For more information on this map, visit us online at http://goto.arcgisonline.com/maps/World_Dark_Gray_Base",
+        "altText": "Dark Gray Canvas Base",
+        "layers": [
+          {
+            "id": "dark",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      }
+    ]
+  }
+}
