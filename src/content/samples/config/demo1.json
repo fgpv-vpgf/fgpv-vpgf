@@ -33,7 +33,7 @@
       },
       "map": {},
       "mapElements": {},
-      "legend":{},
+      "legend": {},
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
       }
@@ -209,38 +209,191 @@
         "name": "root",
         "children": [
           {
-            "exclusiveVisibility":
-            [
+            "exclusiveVisibility": [
               {
                 "name": "Temperature",
                 "children": [
                   {
-                    "exclusiveVisibility":
-                    [
+                    "exclusiveVisibility": [
                       {
-                        "layerId": "annual_maxtemp_2021_2050_less",
-                        "controlledIds": [
-                          "annual_maxtemp_2051_2080_less",
-                          "annual_maxtemp_2021_2050_more", 
-                          "annual_maxtemp_2051_2080_more",
-                          "annual_maxtemp_2021_2050_baseline"
+                        "name": "Annual",
+                        "children": [
+                          {
+                            "exclusiveVisibility": [
+                              {
+                                "layerId": "annual_maxtemp_2051_2080_less",
+                                "controlledIds": [
+                                  "annual_maxtemp_2021_2050_baseline",
+                                  "annual_maxtemp_2021_2050_less",
+                                  "annual_maxtemp_2021_2050_more",
+                                  "annual_maxtemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "annual_mintemp_2051_2080_less",
+                                "controlledIds": [
+                                  "annual_mintemp_2021_2050_baseline",
+                                  "annual_mintemp_2021_2050_less",
+                                  "annual_mintemp_2021_2050_more",
+                                  "annual_mintemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "annual_meantemp_2021_2050_less",
+                                "controlledIds": [
+                                  "annual_meantemp_2021_2050_baseline",
+                                  "annual_meantemp_2021_2050_less",
+                                  "annual_meantemp_2021_2050_more",
+                                  "annual_meantemp_2051_2080_more"
+                                ]
+                              }
+                            ]
+                          }
                         ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "Precipitation",
-                "children": [
-                  {
-                    "exclusiveVisibility":
-                    [
-                      {
-                        "layerId": "annual_precip_2021_2050_less"
                       },
                       {
-                        "layerId": "annual_precip_2051_2080_less"
+                        "name": "Spring",
+                        "children": [
+                          {
+                            "exclusiveVisibility": [
+                              {
+                                "layerId": "spring_maxtemp_2051_2080_less",
+                                "controlledIds": [
+                                  "spring_maxtemp_2021_2050_baseline",
+                                  "spring_maxtemp_2021_2050_less",
+                                  "spring_maxtemp_2021_2050_more",
+                                  "spring_maxtemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "spring_mintemp_2051_2080_less",
+                                "controlledIds": [
+                                  "spring_mintemp_2021_2050_baseline",
+                                  "spring_mintemp_2021_2050_less",
+                                  "spring_mintemp_2021_2050_more",
+                                  "spring_mintemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "spring_meantemp_2051_2080_less",
+                                "controlledIds": [
+                                  "spring_meantemp_2021_2050_baseline",
+                                  "spring_meantemp_2021_2050_less",
+                                  "spring_meantemp_2021_2050_more",
+                                  "spring_meantemp_2051_2080_more"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Summer",
+                        "children": [
+                          {
+                            "exclusiveVisibility": [
+                              {
+                                "layerId": "summer_maxtemp_2051_2080_less",
+                                "controlledIds": [
+                                  "summer_maxtemp_2021_2050_baseline",
+                                  "summer_maxtemp_2021_2050_less",
+                                  "summer_maxtemp_2021_2050_more",
+                                  "summer_maxtemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "summer_mintemp_2051_2080_less",
+                                "controlledIds": [
+                                  "summer_mintemp_2021_2050_baseline",
+                                  "summer_mintemp_2021_2050_less",
+                                  "summer_mintemp_2021_2050_more",
+                                  "summer_mintemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "summer_meantemp_2051_2080_less",
+                                "controlledIds": [
+                                  "summer_meantemp_2021_2050_baseline",
+                                  "summer_meantemp_2021_2050_less",
+                                  "summer_meantemp_2021_2050_more",
+                                  "summer_meantemp_2051_2080_more"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Fall",
+                        "children": [
+                          {
+                            "exclusiveVisibility": [
+                              {
+                                "layerId": "fall_maxtemp_2051_2080_less",
+                                "controlledIds": [
+                                  "fall_maxtemp_2021_2050_baseline",
+                                  "fall_maxtemp_2021_2050_less",
+                                  "fall_maxtemp_2021_2050_more",
+                                  "fall_maxtemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "fall_mintemp_2051_2080_less",
+                                "controlledIds": [
+                                  "fall_mintemp_2021_2050_baseline",
+                                  "fall_mintemp_2021_2050_less",
+                                  "fall_mintemp_2021_2050_more",
+                                  "fall_mintemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "fall_meantemp_2051_2080_less",
+                                "controlledIds": [
+                                  "fall_meantemp_2021_2050_baseline",
+                                  "fall_meantemp_2021_2050_less",
+                                  "fall_meantemp_2021_2050_more",
+                                  "fall_meantemp_2051_2080_more"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Winter",
+                        "children": [
+                          {
+                            "exclusiveVisibility": [
+                              {
+                                "layerId": "winter_maxtemp_2051_2080_less",
+                                "controlledIds": [
+                                  "winter_maxtemp_2021_2050_baseline",
+                                  "winter_maxtemp_2021_2050_less",
+                                  "winter_maxtemp_2021_2050_more",
+                                  "winter_maxtemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "winter_mintemp_2051_2080_less",
+                                "controlledIds": [
+                                  "winter_mintemp_2021_2050_baseline",
+                                  "winter_mintemp_2021_2050_less",
+                                  "winter_mintemp_2021_2050_more",
+                                  "winter_mintemp_2051_2080_more"
+                                ]
+                              },
+                              {
+                                "layerId": "winter_meantemp_2051_2080_less",
+                                "controlledIds": [
+                                  "winter_meantemp_2021_2050_baseline",
+                                  "winter_meantemp_2021_2050_less",
+                                  "winter_meantemp_2021_2050_more",
+                                  "winter_meantemp_2051_2080_more"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
                       }
                     ]
                   }
@@ -316,24 +469,719 @@
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "annual_precip_2021_2050_less",
-        "name": "Annual Precipitation from 2021-2050",
+        "id": "annual_mintemp_2021_2050_baseline",
+        "name": "Min Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_precip_2030_45/MapServer"
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_baseline/MapServer"
       },
       {
-        "id": "annual_precip_2051_2080_less",
-        "name": "Annual Precipitation from 2051-2080",
+        "id": "annual_mintemp_2021_2050_less",
+        "name": "Min Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_precip_2060_45/MapServer"
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2030_45/MapServer"
+      },
+      {
+        "id": "annual_mintemp_2051_2080_less",
+        "name": "Min Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2060_45/MapServer"
+      },
+      {
+        "id": "annual_mintemp_2021_2050_more",
+        "name": "Min Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2030_85/MapServer"
+      },
+      {
+        "id": "annual_mintemp_2051_2080_more",
+        "name": "Min Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2060_85/MapServer"
+      },
+      {
+        "id": "annual_meantemp_2021_2050_baseline",
+        "name": "Mean Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_baseline/MapServer"
+      },
+      {
+        "id": "annual_meantemp_2021_2050_less",
+        "name": "Mean Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2030_45/MapServer"
+      },
+      {
+        "id": "annual_meantemp_2051_2080_less",
+        "name": "Mean Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2060_45/MapServer"
+      },
+      {
+        "id": "annual_meantemp_2021_2050_more",
+        "name": "Mean Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2030_85/MapServer"
+      },
+      {
+        "id": "annual_meantemp_2051_2080_more",
+        "name": "Mean Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2060_85/MapServer"
+      },
+
+
+
+
+      {
+        "id": "fall_maxtemp_2021_2050_baseline",
+        "name": "Max Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_baseline/MapServer"
+      },
+      {
+        "id": "fall_maxtemp_2021_2050_less",
+        "name": "Max Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2030_45/MapServer"
+      },
+      {
+        "id": "fall_maxtemp_2051_2080_less",
+        "name": "Max Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "fall_maxtemp_2021_2050_more",
+        "name": "Max Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2030_85/MapServer"
+      },
+      {
+        "id": "fall_maxtemp_2051_2080_more",
+        "name": "Max Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2060_85/MapServer"
+      },
+      {
+        "id": "fall_mintemp_2021_2050_baseline",
+        "name": "Min Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_baseline/MapServer"
+      },
+      {
+        "id": "fall_mintemp_2021_2050_less",
+        "name": "Min Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2030_45/MapServer"
+      },
+      {
+        "id": "fall_mintemp_2051_2080_less",
+        "name": "Min Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2060_45/MapServer"
+      },
+      {
+        "id": "fall_mintemp_2021_2050_more",
+        "name": "Min Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2030_85/MapServer"
+      },
+      {
+        "id": "fall_mintemp_2051_2080_more",
+        "name": "Min Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2060_85/MapServer"
+      },
+      {
+        "id": "fall_meantemp_2021_2050_baseline",
+        "name": "Mean Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_baseline/MapServer"
+      },
+      {
+        "id": "fall_meantemp_2021_2050_less",
+        "name": "Mean Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2030_45/MapServer"
+      },
+      {
+        "id": "fall_meantemp_2051_2080_less",
+        "name": "Mean Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2060_45/MapServer"
+      },
+      {
+        "id": "fall_meantemp_2021_2050_more",
+        "name": "Mean Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2030_85/MapServer"
+      },
+      {
+        "id": "fall_meantemp_2051_2080_more",
+        "name": "Mean Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2060_85/MapServer"
+      },
+
+
+
+
+      {
+        "id": "spring_maxtemp_2021_2050_baseline",
+        "name": "Max Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_baseline/MapServer"
+      },
+      {
+        "id": "spring_maxtemp_2021_2050_less",
+        "name": "Max Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2030_45/MapServer"
+      },
+      {
+        "id": "spring_maxtemp_2051_2080_less",
+        "name": "Max Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "spring_maxtemp_2021_2050_more",
+        "name": "Max Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2030_85/MapServer"
+      },
+      {
+        "id": "spring_maxtemp_2051_2080_more",
+        "name": "Max Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2060_85/MapServer"
+      },
+      {
+        "id": "spring_mintemp_2021_2050_baseline",
+        "name": "Min Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_baseline/MapServer"
+      },
+      {
+        "id": "spring_mintemp_2021_2050_less",
+        "name": "Min Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2030_45/MapServer"
+      },
+      {
+        "id": "spring_mintemp_2051_2080_less",
+        "name": "Min Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2060_45/MapServer"
+      },
+      {
+        "id": "spring_mintemp_2021_2050_more",
+        "name": "Min Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2030_85/MapServer"
+      },
+      {
+        "id": "spring_mintemp_2051_2080_more",
+        "name": "Min Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2060_85/MapServer"
+      },
+      {
+        "id": "spring_meantemp_2021_2050_baseline",
+        "name": "Mean Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_baseline/MapServer"
+      },
+      {
+        "id": "spring_meantemp_2021_2050_less",
+        "name": "Mean Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2030_45/MapServer"
+      },
+      {
+        "id": "spring_meantemp_2051_2080_less",
+        "name": "Mean Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2060_45/MapServer"
+      },
+      {
+        "id": "spring_meantemp_2021_2050_more",
+        "name": "Mean Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2030_85/MapServer"
+      },
+      {
+        "id": "spring_meantemp_2051_2080_more",
+        "name": "Mean Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2060_85/MapServer"
+      },
+
+
+
+
+      {
+        "id": "summer_maxtemp_2021_2050_baseline",
+        "name": "Max Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_baseline/MapServer"
+      },
+      {
+        "id": "summer_maxtemp_2021_2050_less",
+        "name": "Max Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2030_45/MapServer"
+      },
+      {
+        "id": "summer_maxtemp_2051_2080_less",
+        "name": "Max Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "summer_maxtemp_2021_2050_more",
+        "name": "Max Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2030_85/MapServer"
+      },
+      {
+        "id": "summer_maxtemp_2051_2080_more",
+        "name": "Max Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2060_85/MapServer"
+      },
+      {
+        "id": "summer_mintemp_2021_2050_baseline",
+        "name": "Min Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_baseline/MapServer"
+      },
+      {
+        "id": "summer_mintemp_2021_2050_less",
+        "name": "Min Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2030_45/MapServer"
+      },
+      {
+        "id": "summer_mintemp_2051_2080_less",
+        "name": "Min Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2060_45/MapServer"
+      },
+      {
+        "id": "summer_mintemp_2021_2050_more",
+        "name": "Min Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2030_85/MapServer"
+      },
+      {
+        "id": "summer_mintemp_2051_2080_more",
+        "name": "Min Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2060_85/MapServer"
+      },
+      {
+        "id": "summer_meantemp_2021_2050_baseline",
+        "name": "Mean Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_baseline/MapServer"
+      },
+      {
+        "id": "summer_meantemp_2021_2050_less",
+        "name": "Mean Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2030_45/MapServer"
+      },
+      {
+        "id": "summer_meantemp_2051_2080_less",
+        "name": "Mean Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2060_45/MapServer"
+      },
+      {
+        "id": "summer_meantemp_2021_2050_more",
+        "name": "Mean Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2030_85/MapServer"
+      },
+      {
+        "id": "summer_meantemp_2051_2080_more",
+        "name": "Mean Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2060_85/MapServer"
+      },
+
+
+
+      {
+        "id": "winter_maxtemp_2021_2050_baseline",
+        "name": "Max Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_baseline/MapServer"
+      },
+      {
+        "id": "winter_maxtemp_2021_2050_less",
+        "name": "Max Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2030_45/MapServer"
+      },
+      {
+        "id": "winter_maxtemp_2051_2080_less",
+        "name": "Max Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "winter_maxtemp_2021_2050_more",
+        "name": "Max Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2030_85/MapServer"
+      },
+      {
+        "id": "winter_maxtemp_2051_2080_more",
+        "name": "Max Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2060_85/MapServer"
+      },
+      {
+        "id": "winter_mintemp_2021_2050_baseline",
+        "name": "Min Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_baseline/MapServer"
+      },
+      {
+        "id": "winter_mintemp_2021_2050_less",
+        "name": "Min Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2030_45/MapServer"
+      },
+      {
+        "id": "winter_mintemp_2051_2080_less",
+        "name": "Min Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2060_45/MapServer"
+      },
+      {
+        "id": "winter_mintemp_2021_2050_more",
+        "name": "Min Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2030_85/MapServer"
+      },
+      {
+        "id": "winter_mintemp_2051_2080_more",
+        "name": "Min Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2060_85/MapServer"
+      },
+      {
+        "id": "winter_meantemp_2021_2050_baseline",
+        "name": "Mean Temperature Base",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_baseline/MapServer"
+      },
+      {
+        "id": "winter_meantemp_2021_2050_less",
+        "name": "Mean Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2030_45/MapServer"
+      },
+      {
+        "id": "winter_meantemp_2051_2080_less",
+        "name": "Mean Temperature AL51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2060_45/MapServer"
+      },
+      {
+        "id": "winter_meantemp_2021_2050_more",
+        "name": "Mean Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2030_85/MapServer"
+      },
+      {
+        "id": "winter_meantemp_2051_2080_more",
+        "name": "Mean Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2060_85/MapServer"
       }
     ],
     "tileSchemas": [

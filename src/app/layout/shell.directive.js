@@ -112,13 +112,13 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 2080: layers.find(lr => /2051_2080/g.test(lr.layerId))
             };
 
-            layerByType.baseline.setOpacity(Math.max(0, 1 - (scope.sliderVal/100)));
-
-            if (scope.sliderVal <=100) {
+            if (scope.sliderVal < 100) {
+                layerByType.baseline.setOpacity(1);
                 layerByType[2050].setOpacity(Math.max(0, scope.sliderVal/100));
                 layerByType[2080].setOpacity(0);
             } else {
-                layerByType[2050].setOpacity(Math.max(0, 2 - (scope.sliderVal/100)));
+                layerByType.baseline.setOpacity(0);
+                layerByType[2050].setOpacity(1);
                 layerByType[2080].setOpacity(Math.max(0, (scope.sliderVal - 100)/100));
             }
         }
