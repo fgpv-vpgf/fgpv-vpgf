@@ -17,6 +17,7 @@ import 'gsap/ScrollToPlugin.js';
 import 'highcharts/highcharts.js';
 import 'highcharts/highcharts-more.js';
 import 'highcharts/themes/gray.js';
+import 'plyr/dist/plyr.js';
 import 'datatables.net';
 import 'datatables.net-buttons';
 import 'datatables.net-buttons/js/buttons.html5.js';

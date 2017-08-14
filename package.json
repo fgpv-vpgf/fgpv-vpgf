@@ -35,6 +35,7 @@
     "linkifyjs": "2.1.4",
     "marked": "0.3.6",
     "moment-timezone": "0.5.13",
+    "plyr": "^2.0.13",
     "rcolor": "1.0.1",
     "screenfull": "3.3.1",
     "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js",

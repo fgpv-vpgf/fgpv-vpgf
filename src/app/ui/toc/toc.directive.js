@@ -3,6 +3,8 @@ const templateUrl = require('./toc.html');
 const LEGEND_ROOT_CLASS = '.rv-legend-root';
 const REORDER_CLASS = 'rv-reorder';
 
+const plyr = require('plyr');
+
 const Highcharts = require('highcharts');
 require('highcharts/highcharts-more')(Highcharts);
 
@@ -330,6 +332,8 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
                     }
                 ]
             });
+
+            plyr.setup();
         }, 1000);
     }
 }
