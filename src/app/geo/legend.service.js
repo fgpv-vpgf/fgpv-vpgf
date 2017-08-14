@@ -795,6 +795,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             if (blockConfig.hidden) {
                 blueprint.config.state.query = false;
             }
+
             const layerRecord = layerRegistry.makeLayerRecord(blueprint);
             layerRegistry.loadLayerRecord(layerRecord.config.id);
 
