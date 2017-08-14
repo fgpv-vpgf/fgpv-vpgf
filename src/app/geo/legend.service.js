@@ -791,6 +791,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
          * @return {Proxy} a layers proxy object
          */
         function _getLegendBlockProxy(blueprint) {
+            // hidden legend blocks can't have hover tooltips or query enabled on the layers
+            if (blockConfig.hidden) {
+                blueprint.config.state.query = false;
+            }
             const layerRecord = layerRegistry.makeLayerRecord(blueprint);
             layerRegistry.loadLayerRecord(layerRecord.config.id);
 
