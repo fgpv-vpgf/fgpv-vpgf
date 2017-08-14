@@ -666,6 +666,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // set again tabindex because new lines as been added to the dom
                 $rootElement.find('.dataTables_scrollBody td').attr('tabindex', '-3');
 
+                if (self.tableBody) {
+                    // disable header inputs inside scrollBody so they aren't focusable
+                    const bodyHeader = self.tableBody.find('thead input, thead md-select, thead button');
+                    bodyHeader.attr('disabled', 'disabled');
+                }
+
                 // set keyboard table navigation management
                 setkeytable();
             }
