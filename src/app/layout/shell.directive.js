@@ -15,7 +15,7 @@ angular
     .directive('rvShell', rvShell);
 
 function rvShell($rootElement, $rootScope, events, stateManager, configService, layoutService,
-    mapToolService, debounceService, geoService) {
+    mapToolService, debounceService, geoService, layerRegistry) {
 
     const directive = {
         restrict: 'E',
@@ -77,6 +77,55 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 });
             }
         });
+
+        scope.sliderVal = 0;
+        scope.toggleVal = false;
+        scope.$watch('sliderVal', doSomeWorkEh);
+        scope.$watch('toggleVal', doSomeWorkEh);
+
+
+        function doSomeWorkEh() {
+            if (scope.sliderVal === 0) {
+                return;
+            }
+
+            const visibleLayers = configService.getSync.map.layerRecords.filter(lr => lr.visible && lr.layerId !== 'thegrid');
+            const lessSevereLayers = visibleLayers.filter(lr => /less/g.test(lr.layerId));
+            const moreSevereLayers = visibleLayers.filter(lr => /more/g.test(lr.layerId));
+            const baseline = visibleLayers.find(lr => /baseline/g.test(lr.layerId));
+
+            let layers;
+
+            if (scope.toggleVal) {
+                layers = moreSevereLayers;
+                layers.push(baseline);
+                lessSevereLayers.forEach(lr => lr.setOpacity(0));
+            } else {
+                layers = lessSevereLayers;
+                layers.push(baseline);
+                moreSevereLayers.forEach(lr => lr.setOpacity(0));
+            }
+
+            const layerByType = {
+                baseline: layers.find(lr => /baseline/g.test(lr.layerId)),
+                2050: layers.find(lr => /2021_2050/g.test(lr.layerId)),
+                2080: layers.find(lr => /2051_2080/g.test(lr.layerId))
+            };
+
+            layerByType.baseline.setOpacity(Math.max(0, 1 - (scope.sliderVal/100)));
+
+            if (scope.sliderVal <=100) {
+                layerByType[2050].setOpacity(Math.max(0, scope.sliderVal/100));
+                layerByType[2080].setOpacity(0);
+            } else {
+                layerByType[2050].setOpacity(Math.max(0, 2 - (scope.sliderVal/100)));
+                layerByType[2080].setOpacity(Math.max(0, (scope.sliderVal - 100)/100));
+            }
+        }
+
+
+
+
 
         /**
         * Displays map coordinates on map

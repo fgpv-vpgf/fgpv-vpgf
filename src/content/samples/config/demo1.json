@@ -218,10 +218,13 @@
                     "exclusiveVisibility":
                     [
                       {
-                        "layerId": "annual_maxtemp_2021_2050_less"
-                      },
-                      {
-                        "layerId": "annual_maxtemp_2051_2080_less"
+                        "layerId": "annual_maxtemp_2021_2050_less",
+                        "controlledIds": [
+                          "annual_maxtemp_2051_2080_less",
+                          "annual_maxtemp_2021_2050_more", 
+                          "annual_maxtemp_2051_2080_more",
+                          "annual_maxtemp_2021_2050_baseline"
+                        ]
                       }
                     ]
                   }
@@ -263,18 +266,18 @@
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"
       },
       {
-        "id": "plus30_2060_851.tif",
-        "name": "A demo aaa Test",
+        "id": "annual_maxtemp_2021_2050_baseline",
+        "name": "Max Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer"
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_baseline/MapServer"
       },
       {
         "id": "annual_maxtemp_2021_2050_less",
-        "name": "Annual Max Temperature 2021-2050",
+        "name": "Max Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -284,13 +287,33 @@
       },
       {
         "id": "annual_maxtemp_2051_2080_less",
-        "name": "Annual Max Temperature 2051-2080",
+        "name": "Max Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_45/MapServer"
+      },
+      {
+        "id": "annual_maxtemp_2021_2050_more",
+        "name": "Max Temperature AS21-50",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2030_85/MapServer"
+      },
+      {
+        "id": "annual_maxtemp_2051_2080_more",
+        "name": "Max Temperature AS51-80",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_85/MapServer"
       },
       {
         "id": "annual_precip_2021_2050_less",
