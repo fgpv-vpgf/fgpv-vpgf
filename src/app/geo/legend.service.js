@@ -12,7 +12,7 @@ angular
     .factory('legendService', legendServiceFactory);
 
 function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
-    layerRegistry, common) {
+    layerRegistry, common, bookmarkService) {
 
     const service = {
         constructLegend,
@@ -66,7 +66,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
     /**
      * Instantiates and registers a layer blueprint based on the given layer definition.
      *
-     * @function addLayerDefinition
+     * @function createBlueprint
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @returns {LayerBlueprint} generated layer blueprint
      */
@@ -108,8 +108,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const importedLegendBlock = _makeLegendBlock(importedBlockConfig, [layerBlueprint]);
 
         let position = 0;
+        let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
         // find an appropriate spot in a auto legend;
-        if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+        if (orderdBookmarkIds.length !== 0) {   // If the order from bookmark exists
+            for (let i = 0; i < orderdBookmarkIds.length; i++) {
+                if (orderdBookmarkIds[i] === entryConfigObject.layerId) {
+                    position = i;
+                }
+            }
+        } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             position = legendBlocks.entries.findIndex(block =>
                 sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
 

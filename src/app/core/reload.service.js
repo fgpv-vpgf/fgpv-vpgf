@@ -41,6 +41,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
         geoService._isMapReady = false;
         geoService.destroyMap();
         bookmarkService.emptyStoredBookmark();
+        bookmarkService.emptyOrderdBookmarkIds();
         configService.reInitialize();
 
         if (!bookmark) {
