@@ -20,7 +20,7 @@ angular
     .module('app.ui')
     .factory('tooltipService', tooltipService);
 
-function tooltipService($rootScope, $compile, $q, layoutService, events) {
+function tooltipService($rootScope, $compile, $q, common, layoutService, events) {
     /**
      * Tooltip's origin point is generally the position of the initial mouse cursor or clientX/Y of a mouse event when the tooltip was first created.
      * Movement and Collision strategies are defined in the TooltipService on initialization and then passed to Tooltip instances.
@@ -46,7 +46,7 @@ function tooltipService($rootScope, $compile, $q, layoutService, events) {
             this._scope = scope;
             this._scope.updateDimensions = this._updateDimensions.bind(this);
 
-            this._node = $compile(`<rv-tooltip template="${this._templateName}">${content}</rv-tooltip>`)(scope);
+            this._node = $compile(`<rv-tooltip class="${scope.self.clickTooltip ? 'rv-click-tooltip' : ''}" template="${this._templateName}">${content}</rv-tooltip>`)(scope);
             this._movementStrategy.register(this);
 
             this._mouseGap = 10;
@@ -399,13 +399,17 @@ function tooltipService($rootScope, $compile, $q, layoutService, events) {
 
     const ref = {
         hoverTooltip: null, // there can only be one hoverTooltip
+        clickTooltips: [],
         followMapStrategy: null,
         followMouseStrategy: null
     };
 
     const service = {
         addHoverTooltip,
+        addClickTooltip,
         removeHoverTooltip,
+        removeClickTooltip,
+        removeAllClickTooltips,
         refreshHoverTooltip
     };
 
@@ -444,6 +448,21 @@ function tooltipService($rootScope, $compile, $q, layoutService, events) {
         return ref.hoverTooltip;
     }
 
+    function addClickTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
+        const tooltipScope = $rootScope.$new();
+        tooltipScope.self = self;
+
+
+        const clickTooltip = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, content, tooltipScope);
+        layoutService.panels.shell.append(clickTooltip.node);
+
+        clickTooltip.position(point.x, point.y);
+
+        ref.clickTooltips.push(clickTooltip);
+
+        return clickTooltip;
+    }
+
     /**
      * Removes an existing hover tooltip if one exists, otherwise does nothing.
      *
@@ -453,6 +472,22 @@ function tooltipService($rootScope, $compile, $q, layoutService, events) {
         if (ref.hoverTooltip) {
             ref.hoverTooltip.destroy();
         }
+    }
+
+    function removeClickTooltip(tooltip) {
+        if (!tooltip) {
+            return;
+        }
+
+        common.removeFromArray(ref.clickTooltips, tooltip);
+        tooltip.destroy();
+    }
+
+    function removeAllClickTooltips() {
+        ref.clickTooltips.forEach(tooltip => {
+            common.removeFromArray(ref.clickTooltips, tooltip);
+            tooltip.destroy();
+        });
     }
 
     /**

@@ -588,6 +588,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._nameField = source.nameField;
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
+
+            this._hovertipEnabled = source.hovertipEnabled !== false;
         }
 
         _hovertipEnabled = true;

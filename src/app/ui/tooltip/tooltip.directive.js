@@ -1,4 +1,5 @@
 const templateUrl = require('./tooltip-hover.html');
+const plyr = require('plyr');
 
 /**
  *
@@ -28,6 +29,8 @@ function rvTooltip($q, debounceService) {
             const debouncedUpdateDimensions = debounceService.registerDebounce(dimensions => {
                 scope.updateDimensions(dimensions);
                 self.isRendered = true;
+
+                plyr.setup('.rv-tooltip-video');
             }, 20, false, true);
 
             // TODO: use layoutservice on resize here somehow to avoid duplication

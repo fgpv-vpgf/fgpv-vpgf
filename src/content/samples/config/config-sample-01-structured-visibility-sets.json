@@ -319,6 +319,9 @@
             "layerId": "crops"
           },
           {
+            "layerId": "flicks"
+          },
+          {
             "name": "A Group with a Visibility Set",
             "expanded": true,
             "controls": [
@@ -356,6 +359,13 @@
           "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "flicks",
+        "name": "Youtube videos",
+        "layerType": "esriFeature",
+        "hovertipEnabled": false,
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/DemoVid/MapServer/0"
       },
       {
         "id": "powerplant100mw-naturalGas",

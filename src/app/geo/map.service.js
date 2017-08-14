@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($q, $timeout, $translate, errorService, layoutService, gapiService, configService, identifyService, events) {
+function mapServiceFactory($q, $timeout, $translate, errorService, tooltipService, layoutService, gapiService, configService, identifyService, events) {
     const service = {
         destroyMap,
         makeMap,
@@ -253,6 +253,12 @@ function mapServiceFactory($q, $timeout, $translate, errorService, layoutService
                 _setLoadingFlag(false, 100);
             },
             click: clickEvent => {
+                if (clickEvent.target.parentElement.id === 'flicks_layer') {
+                    clearHighlight();
+                    return;
+                }
+
+                tooltipService.removeAllClickTooltips();
                 clearHighlight();
                 addMarkerHighlight(clickEvent.mapPoint);
                 identifyService.identify(clickEvent);

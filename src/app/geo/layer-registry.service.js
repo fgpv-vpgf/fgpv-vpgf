@@ -18,7 +18,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService) {
+function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, events, gapiService, Geo, configService, tooltipService) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -40,6 +40,117 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         loadingQueue: [],
         loadingCount: 0
     };
+
+    demo_hacks();
+
+    function demo_hacks() {
+        let tipRef;
+
+        $rootElement.on('mouseover', '#flicks_layer > image', event => {
+
+        });
+
+        const template = `
+            <div class="rv-tooltip-content">
+                <span class="rv-tooltip-text md-subhead" ng-bind-html="self.name"></span>
+
+                <md-button class="rv-close md-icon-button black rv-button-16"
+                    ng-click="self.closeTooltip()">
+                    <md-tooltip md-direction="top">{{ 'contentPane.tooltip.close' | translate }}</md-tooltip>
+                    <md-icon md-svg-src="navigation:close"></md-icon>
+                </md-button>
+
+                <div class="rv-tooltip-video" data-type="youtube" data-video-id="{{ self.youtubeid }}"></div>
+            </div>`
+        ;
+
+        const videos = [
+            {
+                name: 'Heritage Minutes: Basketball',
+                youtubeid: 'xiJJIacdF-E'
+            },
+            {
+                name: 'Heritage Minutes: Orphans',
+                youtubeid: 'H48gaLbJfxc'
+            },
+            {
+                name: 'Heritage Minutes: John Cabot',
+                youtubeid: 'ds8G9sFOK5w'
+            },
+            {
+                name: 'Heritage Minutes: Kenojuak Ashevak',
+                youtubeid: 'wypPbnRee0Y'
+            },
+            {
+                name: 'Heritage Minutes: Naskumituwin (Treaty)',
+                youtubeid: 'mVVD9yYCKiI'
+            },
+            {
+                name: 'Heritage Minutes: Viola Desmond',
+                youtubeid: 'ie0xWYRSX7Y'
+            },
+            {
+                name: 'Heritage Minutes: Terry Fox',
+                youtubeid: 'H2F9LbF_pF0'
+            },
+            {
+                name: 'Heritage Minutes: Nursing Sisters',
+                youtubeid: '00n67k-f7Yw'
+            },
+            {
+                name: 'Heritage Minutes: Étienne Parent',
+                youtubeid: 'fwS_DwaP7EY'
+            },
+            {
+                name: 'Heritage Minutes: Rural Teacher',
+                youtubeid: 'kqAgOOaJyLc'
+            },
+            {
+                name: 'Heritage Minutes: Marconi',
+                youtubeid: 'YohYd9iTfy8'
+            },
+            {
+                name: 'Heritage Minutes: Flags',
+                youtubeid: 'ikY7bMDVQTg'
+            },
+            {
+                name: 'Heritage Minutes: Expo 67',
+                youtubeid: 'QPvy8TzvO3E'
+            },
+            {
+                name: 'Heritage Minutes: Tommy Prince',
+                youtubeid: '4RrtGg3KnR4'
+            },
+            {
+                name: 'Heritage Minutes: Joseph Casavant',
+                youtubeid: 'VsIHv4rngi4'
+            }
+        ];
+
+        $rootElement.on('click', '#flicks_layer > image', event => {
+            tooltipService.removeClickTooltip(tipRef);
+            tipRef = null;
+
+            const selectedVideo = videos[Math.floor(Math.random() * videos.length)];
+
+            // make the content and display the hovertip
+            const tipContent = {
+                name: selectedVideo.name,
+                youtubeid: selectedVideo.youtubeid,
+                clickTooltip: true,
+                closeTooltip: () => tooltipService.removeClickTooltip(tipRef)
+            };
+
+            const ro = $rootElement.offset();
+
+            const isFullScreen = $rootElement[0].parentElement.className.includes('rv-full-screen');
+
+            tipRef = tooltipService.addClickTooltip({
+                x: event.clientX - (isFullScreen ? 0 : ro.left),
+                y: event.clientY - (isFullScreen ? 0 : ro.top)
+            }, tipContent, template);
+        });
+    }
 
     /**
      * Finds and returns the layer record using the id specified.

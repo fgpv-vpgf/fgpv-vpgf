@@ -10,6 +10,29 @@
     }
 
     rv-tooltip {
+
+        &.rv-click-tooltip {
+            pointer-events: auto;
+
+            .rv-tooltip-content {
+                flex-direction: column !important;
+                min-width: 350px !important;
+                max-width: 1080px !important;
+                // min-height: 200px !important;
+
+                .plyr {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .rv-close {
+                    position: absolute;
+                    right: 0px;
+                }
+            }
+        }
+
+
         position: absolute;
         pointer-events: none;
         z-index: 10;
