@@ -38,7 +38,6 @@ import './core/core-loader.js';
 import './geo/geo-loader.js';
 import './layout/layout-loader.js';
 import './app.module.js';
-import './focus-manager.js';
 import './app-seed.js';
 import '../plugins/core/back-to-cart.js';
 import '../plugins/core/coord-info.js';

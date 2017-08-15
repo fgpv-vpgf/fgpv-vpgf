@@ -93,7 +93,7 @@
     </div>
     <div-- id="col-rcp" style="opacity: 1;">
         <!--div ng-show="toggleVal" style="position: absolute;bottom: 20px;right: -8px;"><img src="https://loading.io/spinners/lava-lamp/index.gif"></div-->
-        <md-switch class="md-primary" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
+        <md-switch class="md-primary" ng-disabled="sliderVal <= 1" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
         <div class="radiotitle">Severe Forecast</div>
     </div>
 </div>

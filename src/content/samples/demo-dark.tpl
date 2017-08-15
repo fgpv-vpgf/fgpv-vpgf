@@ -15,7 +15,6 @@
 
         .myMap {
             height: 100%;
-            margin: 10px;
         }
     </style>
 
@@ -30,6 +29,10 @@
 </head>
 
 <body>
+<div style="height: 25px;background-color: black;text-align: center;padding: 10px;">
+    <object type="image/svg+xml" style="height: 25px;" tabindex="-1" role="img" data="https://digital.canada.ca/assets/img/cds/goc--header-logo.svg" aria-label="Symbol of the Government of Canada" class="logo"></object>
+</div>
+
 
     <div class="myMap" id="mobile-map" is="rv-map" rv-config="config/demo1.json" rv-langs='["en-CA"]'>
         <noscript>
