@@ -526,6 +526,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
         }
 
         let tipContent;
+        let isHighlighted = false;
 
         layerRecord.addHoverListener(_onHoverHandler);
 
@@ -536,7 +537,13 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
             // for tooltips that are no longer active.
             const typeMap = {
                 mouseOver: e => {
-                    $(data.target).css({ fill: "#fff", "fill-opacity": 0.4, "stroke-opacity": "1 !important" });
+
+                    if (!isHighlighted) {
+                        $(data.target).css({ fill: "#fff", "fill-opacity": 0.4, "stroke-opacity": "1 !important" });
+                    }
+
+                    isHighlighted = true;
+
                     // make the content and display the hovertip
                     tipContent = {
                         name: null,
@@ -557,7 +564,11 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                 },
                 mouseOut: e => {
                     tooltipService.removeHoverTooltip();
-                    $(data.target).css({ "fill-opacity": 0 });
+                    if (isHighlighted) {
+                        $(data.target).css({ "fill-opacity": 0 });
+                    }
+
+                    isHighlighted = false;
                 },
                 // TODO: reattach this
                 forceClose: () => {

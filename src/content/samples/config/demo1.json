@@ -78,12 +78,24 @@
     },
     "extentSets": [
       {
+        "id": "EXT_NRCAN_Lambert_3978",
+        "default": {
+          "xmax": 3549492,
+          "xmin": -2681457,
+          "ymax": 3482193,
+          "ymin": -883440
+        },
+        "spatialReference": {
+          "wkid": 3978
+        }
+      },
+      {
         "id": "EXT_ESRI_World_AuxMerc_3857",
         "default": {
-          "xmax": -2131464.2594106756,
-          "xmin": -19414045.31288,
-          "ymax": 13598718.26784584,
-          "ymin": 4506078.283399494
+          "xmax": -5007771.626060756,
+          "xmin": -16632697.354854,
+          "ymax": 10015875.184845109,
+          "ymin": 5022907.964742964
         },
         "spatialReference": {
           "wkid": 102100,
@@ -92,6 +104,101 @@
       }
     ],
     "lodSets": [
+      {
+        "id": "LOD_NRCAN_Lambert_3978",
+        "lods": [
+          {
+            "level": 0,
+            "resolution": 38364.660062653464,
+            "scale": 145000000
+          },
+          {
+            "level": 1,
+            "resolution": 22489.62831258996,
+            "scale": 85000000
+          },
+          {
+            "level": 2,
+            "resolution": 13229.193125052918,
+            "scale": 50000000
+          },
+          {
+            "level": 3,
+            "resolution": 7937.5158750317505,
+            "scale": 30000000
+          },
+          {
+            "level": 4,
+            "resolution": 4630.2175937685215,
+            "scale": 17500000
+          },
+          {
+            "level": 5,
+            "resolution": 2645.8386250105837,
+            "scale": 10000000
+          },
+          {
+            "level": 6,
+            "resolution": 1587.5031750063501,
+            "scale": 6000000
+          },
+          {
+            "level": 7,
+            "resolution": 926.0435187537042,
+            "scale": 3500000
+          },
+          {
+            "level": 8,
+            "resolution": 529.1677250021168,
+            "scale": 2000000
+          },
+          {
+            "level": 9,
+            "resolution": 317.50063500127004,
+            "scale": 1200000
+          },
+          {
+            "level": 10,
+            "resolution": 185.20870375074085,
+            "scale": 700000
+          },
+          {
+            "level": 11,
+            "resolution": 111.12522225044451,
+            "scale": 420000
+          },
+          {
+            "level": 12,
+            "resolution": 66.1459656252646,
+            "scale": 250000
+          },
+          {
+            "level": 13,
+            "resolution": 38.36466006265346,
+            "scale": 145000
+          },
+          {
+            "level": 14,
+            "resolution": 22.48962831258996,
+            "scale": 85000
+          },
+          {
+            "level": 15,
+            "resolution": 13.229193125052918,
+            "scale": 50000
+          },
+          {
+            "level": 16,
+            "resolution": 7.9375158750317505,
+            "scale": 30000
+          },
+          {
+            "level": 17,
+            "resolution": 4.6302175937685215,
+            "scale": 17500
+          }
+        ]
+      },
       {
         "id": "LOD_ESRI_World_AuxMerc_3857",
         "lods": [
@@ -208,6 +315,9 @@
       "root": {
         "name": "root",
         "children": [
+          {
+            "layerId": "flicks"
+          },
           {
             "exclusiveVisibility": [
               {
@@ -408,6 +518,13 @@
       }
     },
     "layers": [
+      {
+        "id": "flicks",
+        "name": "Youtube videos",
+        "layerType": "esriFeature",
+        "hovertipEnabled": false,
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/DemoVid/MapServer/0"
+      },
       {
         "id": "thegrid",
         "name": "This must be visible for hover",
@@ -1186,12 +1303,6 @@
     ],
     "tileSchemas": [
       {
-        "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "name": "Lambert Maps",
-        "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
-      },
-      {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
         "name": "Web Mercator Maps",
         "extentSetId": "EXT_ESRI_World_AuxMerc_3857",
@@ -1209,6 +1320,90 @@
             "id": "dark",
             "layerType": "esriFeature",
             "url": "http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriWorld",
+        "name": "World Imagery",
+        "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
+        "altText": "altText - World Imagery",
+        "layers": [
+          {
+            "id": "World_Imagery",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriPhysical",
+        "name": "World Physical Map",
+        "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
+        "altText": "altText - World Physical Map",
+        "layers": [
+          {
+            "id": "World_Physical_Map",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriRelief",
+        "name": "World Shaded Relief",
+        "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
+        "altText": "altText - World Shaded Relief",
+        "layers": [
+          {
+            "id": "World_Shaded_Relief",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriStreet",
+        "name": "World Street Map",
+        "description": "This worldwide street map presents highway-level data for the world.",
+        "altText": "altText - ESWorld Street Map",
+        "layers": [
+          {
+            "id": "World_Street_Map",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriTerrain",
+        "name": "World Terrain Base",
+        "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
+        "altText": "altText - World Terrain Base",
+        "layers": [
+          {
+            "id": "World_Terrain_Base",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id": "baseEsriTopo",
+        "name": "World Topographic Map",
+        "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
+        "altText": "altText - World Topographic Map",
+        "layers": [
+          {
+            "id": "World_Topo_Map",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
           }
         ],
         "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
