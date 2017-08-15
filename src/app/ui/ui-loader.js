@@ -31,6 +31,7 @@ import './common/minicolor.directive.js';
 import './details/detail.service.js';
 import './details/details-content.directives.js';
 import './details/details-header.directive.js';
+import './details/details-demo.directive.js';
 import './details/details-record-text.directive.js';
 import './details/details-record-html.directive.js';
 import './details/details-record-esrifeature.directive.js';

@@ -21,7 +21,7 @@ angular
  * @function rvDetailsContent
  * @return {object} directive body
  */
-function rvDetailsContent() {
+function rvDetailsContent($timeout) {
     const directive = {
         restrict: 'A',
         templateUrl,

@@ -1,0 +1,38 @@
+<h4 class="md-title">Projected change in</h4>
+<h5 class="md-subhead">Heavy Precipitation Days (20 mm)</h5>
+
+<div class="dvalues rv-icon-40">
+    <div class="dfrom">
+        <span class="dyear">1981-2010</span>
+        <span class="dvalue md-display-2">{{ self.from | number:1 }}</span>
+    </div>
+    <md-icon class="darrow" md-svg-src="community:chevron-right"></md-icon>
+    <div class="dto">
+        <span class="dyear">2021-2050</span>
+        <span class="dvalue md-display-2">{{ ::self.to | number:1 }}</span>
+    </div>
+</div>
+
+<h4 class="md-title">Scenario</h4>
+<h5 class="md-subhead">Low Carbon</h5>
+
+<div class="rv-chart"></div>
+
+<h4 class="md-title">Downloads</h4>
+
+<ul class="rv-list dlist">
+    <li></md-icon>
+        <span>Climate Report</span>
+        <md-button class="rv-button-square md-icon-button black rv-button-24">
+            <md-tooltip md-direction="top">{{ 'export.download' | translate }}</md-tooltip>
+            <md-icon md-svg-src="community:download"></md-icon>
+        </md-button>
+    </li>
+    <li></md-icon>
+        <span>Agriculutre / engineering report</span>
+        <md-button class="rv-button-square md-icon-button black rv-button-24">
+            <md-tooltip md-direction="top">{{ 'export.download' | translate }}</md-tooltip>
+            <md-icon md-svg-src="community:download"></md-icon>
+        </md-button>
+    </li>
+</ul>

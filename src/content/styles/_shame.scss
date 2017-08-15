@@ -16,9 +16,59 @@ Obviously you need some kind of rules and criteria:
     1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
 */
 
+.demo-details {
+    padding: 14px;
+
+    h4 {
+        margin: 0;
+    }
+
+    h5 {
+        margin: 6px 0 14px;
+    }
+
+    .dvalues {
+        margin-bottom: 30px;
+
+        display: flex;
+
+        .darrow {
+            margin: 31px 20px 0;
+        }
+
+        .dfrom, .dto {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+
+    .dlist {
+        li {
+            display: flex;
+            span {
+                flex: 1;
+            }
+        }
+
+        margin: 15px;
+    }
+
+    .rv-chart {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
 // hide grid and video layers
-[data-id="flicks"], [data-id="thegrid"] {
+[data-id="flicks"], [data-id="thegrid"], [data-id="cities"] {
     display: none;
+}
+
+#cities_layer circle {
+    stroke: black;
+    stroke-opacity: 1;
 }
 
 #map-scenario-menu {

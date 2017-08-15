@@ -16,10 +16,13 @@
     "help": {
       "folderName": "default"
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
+    "legend": {
+      "allowImport": false,
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      }
     }
   },
   "version": "2.0",
@@ -307,19 +310,28 @@
             "layerId": "flicks"
           },
           {
+            "layerId": "cities"
+          },
+          {
+            "layerId": "thegrid"
+          },
+          {
             "exclusiveVisibility": [
               {
                 "name": "Temperature",
+                "expanded": true,
                 "children": [
                   {
                     "exclusiveVisibility": [
                       {
                         "name": "Annual",
+                        "expanded": true,
                         "children": [
                           {
                             "exclusiveVisibility": [
                               {
                                 "layerId": "annual_maxtemp_2051_2080_less",
+                                "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
                                 "controlledIds": [
                                   "annual_maxtemp_2021_2050_baseline",
                                   "annual_maxtemp_2021_2050_less",
@@ -498,21 +510,26 @@
                 ]
               }
             ]
-          },
-          {
-            "layerId": "thegrid",
-            "hidden": true
           }
         ]
       }
     },
     "layers": [
       {
+        "id": "cities",
+        "name": "Cities",
+        "layerType": "esriFeature",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BasicCity/MapServer/0"
+      },
+      {
         "id": "flicks",
         "name": "Youtube videos",
         "layerType": "esriFeature",
         "hovertipEnabled": false,
-        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/DemoVid/MapServer/0"
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/DemoVid/MapServer/0",
+        "state": {
+          "query": false
+        }
       },
       {
         "id": "thegrid",
@@ -526,7 +543,7 @@
       },
       {
         "id": "annual_maxtemp_2021_2050_baseline",
-        "name": "Max Temperature Base",
+        "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -536,7 +553,7 @@
       },
       {
         "id": "annual_maxtemp_2021_2050_less",
-        "name": "Max Temperature",
+        "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -546,7 +563,7 @@
       },
       {
         "id": "annual_maxtemp_2051_2080_less",
-        "name": "Max Temperature AL51-80",
+        "name": "Maximum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -556,7 +573,7 @@
       },
       {
         "id": "annual_maxtemp_2021_2050_more",
-        "name": "Max Temperature AS21-50",
+        "name": "Maximum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -566,7 +583,7 @@
       },
       {
         "id": "annual_maxtemp_2051_2080_more",
-        "name": "Max Temperature AS51-80",
+        "name": "Maximum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -576,7 +593,7 @@
       },
       {
         "id": "annual_mintemp_2021_2050_baseline",
-        "name": "Min Temperature Base",
+        "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -586,7 +603,7 @@
       },
       {
         "id": "annual_mintemp_2021_2050_less",
-        "name": "Min Temperature",
+        "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -596,7 +613,7 @@
       },
       {
         "id": "annual_mintemp_2051_2080_less",
-        "name": "Min Temperature AL51-80",
+        "name": "Minimum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -606,7 +623,7 @@
       },
       {
         "id": "annual_mintemp_2021_2050_more",
-        "name": "Min Temperature AS21-50",
+        "name": "Minimum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -616,7 +633,7 @@
       },
       {
         "id": "annual_mintemp_2051_2080_more",
-        "name": "Min Temperature AS51-80",
+        "name": "Minimum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -680,7 +697,7 @@
 
       {
         "id": "fall_maxtemp_2021_2050_baseline",
-        "name": "Max Temperature Base",
+        "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -690,7 +707,7 @@
       },
       {
         "id": "fall_maxtemp_2021_2050_less",
-        "name": "Max Temperature",
+        "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -700,7 +717,7 @@
       },
       {
         "id": "fall_maxtemp_2051_2080_less",
-        "name": "Max Temperature AL51-80",
+        "name": "Maximum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -710,7 +727,7 @@
       },
       {
         "id": "fall_maxtemp_2021_2050_more",
-        "name": "Max Temperature AS21-50",
+        "name": "Maximum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -720,7 +737,7 @@
       },
       {
         "id": "fall_maxtemp_2051_2080_more",
-        "name": "Max Temperature AS51-80",
+        "name": "Maximum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -730,7 +747,7 @@
       },
       {
         "id": "fall_mintemp_2021_2050_baseline",
-        "name": "Min Temperature Base",
+        "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -740,7 +757,7 @@
       },
       {
         "id": "fall_mintemp_2021_2050_less",
-        "name": "Min Temperature",
+        "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -750,7 +767,7 @@
       },
       {
         "id": "fall_mintemp_2051_2080_less",
-        "name": "Min Temperature AL51-80",
+        "name": "Minimum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -760,7 +777,7 @@
       },
       {
         "id": "fall_mintemp_2021_2050_more",
-        "name": "Min Temperature AS21-50",
+        "name": "Minimum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -770,7 +787,7 @@
       },
       {
         "id": "fall_mintemp_2051_2080_more",
-        "name": "Min Temperature AS51-80",
+        "name": "Minimum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -834,7 +851,7 @@
 
       {
         "id": "spring_maxtemp_2021_2050_baseline",
-        "name": "Max Temperature Base",
+        "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -844,7 +861,7 @@
       },
       {
         "id": "spring_maxtemp_2021_2050_less",
-        "name": "Max Temperature",
+        "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -854,7 +871,7 @@
       },
       {
         "id": "spring_maxtemp_2051_2080_less",
-        "name": "Max Temperature AL51-80",
+        "name": "Maximum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -864,7 +881,7 @@
       },
       {
         "id": "spring_maxtemp_2021_2050_more",
-        "name": "Max Temperature AS21-50",
+        "name": "Maximum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -874,7 +891,7 @@
       },
       {
         "id": "spring_maxtemp_2051_2080_more",
-        "name": "Max Temperature AS51-80",
+        "name": "Maximum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -884,7 +901,7 @@
       },
       {
         "id": "spring_mintemp_2021_2050_baseline",
-        "name": "Min Temperature Base",
+        "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -894,7 +911,7 @@
       },
       {
         "id": "spring_mintemp_2021_2050_less",
-        "name": "Min Temperature",
+        "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -904,7 +921,7 @@
       },
       {
         "id": "spring_mintemp_2051_2080_less",
-        "name": "Min Temperature AL51-80",
+        "name": "Minimum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -914,7 +931,7 @@
       },
       {
         "id": "spring_mintemp_2021_2050_more",
-        "name": "Min Temperature AS21-50",
+        "name": "Minimum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -924,7 +941,7 @@
       },
       {
         "id": "spring_mintemp_2051_2080_more",
-        "name": "Min Temperature AS51-80",
+        "name": "Minimum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -988,7 +1005,7 @@
 
       {
         "id": "summer_maxtemp_2021_2050_baseline",
-        "name": "Max Temperature Base",
+        "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -998,7 +1015,7 @@
       },
       {
         "id": "summer_maxtemp_2021_2050_less",
-        "name": "Max Temperature",
+        "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1008,7 +1025,7 @@
       },
       {
         "id": "summer_maxtemp_2051_2080_less",
-        "name": "Max Temperature AL51-80",
+        "name": "Maximum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1018,7 +1035,7 @@
       },
       {
         "id": "summer_maxtemp_2021_2050_more",
-        "name": "Max Temperature AS21-50",
+        "name": "Maximum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1028,7 +1045,7 @@
       },
       {
         "id": "summer_maxtemp_2051_2080_more",
-        "name": "Max Temperature AS51-80",
+        "name": "Maximum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1038,7 +1055,7 @@
       },
       {
         "id": "summer_mintemp_2021_2050_baseline",
-        "name": "Min Temperature Base",
+        "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1048,7 +1065,7 @@
       },
       {
         "id": "summer_mintemp_2021_2050_less",
-        "name": "Min Temperature",
+        "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1058,7 +1075,7 @@
       },
       {
         "id": "summer_mintemp_2051_2080_less",
-        "name": "Min Temperature AL51-80",
+        "name": "Minimum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1068,7 +1085,7 @@
       },
       {
         "id": "summer_mintemp_2021_2050_more",
-        "name": "Min Temperature AS21-50",
+        "name": "Minimum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1078,7 +1095,7 @@
       },
       {
         "id": "summer_mintemp_2051_2080_more",
-        "name": "Min Temperature AS51-80",
+        "name": "Minimum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1141,7 +1158,7 @@
 
       {
         "id": "winter_maxtemp_2021_2050_baseline",
-        "name": "Max Temperature Base",
+        "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1151,7 +1168,7 @@
       },
       {
         "id": "winter_maxtemp_2021_2050_less",
-        "name": "Max Temperature",
+        "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1161,7 +1178,7 @@
       },
       {
         "id": "winter_maxtemp_2051_2080_less",
-        "name": "Max Temperature AL51-80",
+        "name": "Maximum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1171,7 +1188,7 @@
       },
       {
         "id": "winter_maxtemp_2021_2050_more",
-        "name": "Max Temperature AS21-50",
+        "name": "Maximum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1181,7 +1198,7 @@
       },
       {
         "id": "winter_maxtemp_2051_2080_more",
-        "name": "Max Temperature AS51-80",
+        "name": "Maximum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1191,7 +1208,7 @@
       },
       {
         "id": "winter_mintemp_2021_2050_baseline",
-        "name": "Min Temperature Base",
+        "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1201,7 +1218,7 @@
       },
       {
         "id": "winter_mintemp_2021_2050_less",
-        "name": "Min Temperature",
+        "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1211,7 +1228,7 @@
       },
       {
         "id": "winter_mintemp_2051_2080_less",
-        "name": "Min Temperature AL51-80",
+        "name": "Minimum Temperature AL51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1221,7 +1238,7 @@
       },
       {
         "id": "winter_mintemp_2021_2050_more",
-        "name": "Min Temperature AS21-50",
+        "name": "Minimum Temperature AS21-50",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
@@ -1231,7 +1248,7 @@
       },
       {
         "id": "winter_mintemp_2051_2080_more",
-        "name": "Min Temperature AS51-80",
+        "name": "Minimum Temperature AS51-80",
         "layerType": "esriTile",
         "state": {
           "visibility": true,

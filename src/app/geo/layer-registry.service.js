@@ -538,7 +538,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
             const typeMap = {
                 mouseOver: e => {
 
-                    if (!isHighlighted) {
+                    if (!isHighlighted && layerRecord.config.id !== 'cities') {
                         $(data.target).css({ fill: "#fff", "fill-opacity": 0.4, "stroke-opacity": "1 !important" });
                     }
 
@@ -558,7 +558,9 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                     if (tipContent && tipContent.graphic === e.target) {
                         e.name = e.name.toLowerCase().replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()) );
 
-                        tipContent.name = e.name;
+                        const prefix = layerRecord.config.id === 'cities' ? 'city' : 'region';
+
+                        tipContent.name = `${e.name} (${prefix})`;
                         // tipContent.name = $filter('picture')(e.name);
                         tipContent.svgcode = e.svgcode;
                     }
@@ -567,7 +569,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                 },
                 mouseOut: e => {
                     tooltipService.removeHoverTooltip();
-                    if (isHighlighted) {
+                    if (isHighlighted && layerRecord.config.id !== 'cities') {
                         $(data.target).css({ "fill-opacity": 0 });
                     }
 

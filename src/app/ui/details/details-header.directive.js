@@ -41,4 +41,7 @@ function Controller(detailService) {
 
     self.expandPanel = detailService.expandPanel;
     self.closeDetails = detailService.closeDetails;
+
+    self.lower = (text = '') =>
+        text.toLowerCase().replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
 }

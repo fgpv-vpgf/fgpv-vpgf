@@ -33,7 +33,9 @@ function detailService($mdDialog, stateManager, mapService, layoutService) {
             parent: layoutService.panels.shell,
             locals: {
                 item: stateManager.display.details.selectedItem,
-                cancel: $mdDialog.cancel
+                cancel: $mdDialog.cancel,
+                lower: (text = '') =>
+                    text.toLowerCase().replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()))
             },
             templateUrl,
             clickOutsideToClose: true,
