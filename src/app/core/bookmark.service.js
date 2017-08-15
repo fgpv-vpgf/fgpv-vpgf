@@ -13,6 +13,7 @@ angular
 function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
 
     let _bookmarkObject = null;
+    let _orderdBookmarkIds = [];
 
     const service = {
         getBookmark,
@@ -21,7 +22,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         extractRcsLayers,
         insertRcsLayers,
         get storedBookmark() { return _bookmarkObject; },
-        emptyStoredBookmark() { _bookmarkObject = null; }
+        getOrderdBookmarkIds() { return _orderdBookmarkIds},
+        emptyStoredBookmark() { _bookmarkObject = null; },
+        emptyOrderdBookmarkIds() { _orderdBookmarkIds = []; }
     };
 
     return service;
@@ -399,6 +402,10 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             //filterConfigLayers(bookmarkLayers, config);
         } else {
             bookmarkObject.bookmarkLayers = [];
+        }
+        // record the order of legends from the bookmark
+        for (let layer of bookmarkObject.bookmarkLayers) {
+            _orderdBookmarkIds.push(layer.id);
         }
 
         _bookmarkObject = bookmarkObject;

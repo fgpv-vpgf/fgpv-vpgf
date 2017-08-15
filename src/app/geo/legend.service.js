@@ -57,16 +57,17 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function addLayerDefinition
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @param {pos} optional position for layer to be on the legend
      * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
-    function addLayerDefinition(layerDefinition) {
-        return importLayerBlueprint(createBlueprint(layerDefinition));
+    function addLayerDefinition(layerDefinition, pos = null) {
+        return importLayerBlueprint(createBlueprint(layerDefinition), pos);
     }
 
     /**
      * Instantiates and registers a layer blueprint based on the given layer definition.
      *
-     * @function addLayerDefinition
+     * @function createBlueprint
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @returns {LayerBlueprint} generated layer blueprint
      */
@@ -81,9 +82,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function importLayerBlueprint
      * @param {LayerBlueprint} layerBlueprint a layer blueprint to be imported into the map and added to the legend
+     * @param {pos} optional position for layer to be on the legend
      * @return {LegendBlock} returns a corresponding, newly created legend block
      */
-    function importLayerBlueprint(layerBlueprint) {
+    function importLayerBlueprint(layerBlueprint, pos = null) {
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
@@ -109,7 +111,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
         let position = 0;
         // find an appropriate spot in a auto legend;
-        if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+        if (pos) {   // If the order from bookmark exists
+           position = pos;
+        } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             position = legendBlocks.entries.findIndex(block =>
                 sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
 
