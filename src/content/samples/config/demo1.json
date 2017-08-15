@@ -512,7 +512,8 @@
             ]
           },
           {
-            "layerId": "thegrid"
+            "layerId": "thegrid",
+            "hidden": true
           }
         ]
       }

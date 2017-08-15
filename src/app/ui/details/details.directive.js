@@ -31,21 +31,6 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
     'ngInject';
     const self = this;
 
-
-    const randomRegions = ["Toronto", "Huntsville", "Woodstock", "White River", "Sudbury", "Thunder Bay"];
-    const tempType = ["Iron", "Wind", "Rain", "Body", "Work", "Road", "Food"];
-    
-
-    function getRand(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    self.randomRegion = getRand(randomRegions);
-    self.tempType = getRand(tempType);
-    self.lowTemp = Math.round(Math.random() * 30 * 10) / 10;
-    self.highTemp = self.lowTemp + Math.round(Math.random() * 15 * 10) / 10;
-    self.changeTemp = Math.round((self.highTemp - self.lowTemp) * 10) / 10;
-
     self.closeDetails = detailService.closeDetails;
     self.display = stateManager.display.details;
     self.selectItem = selectItem;
@@ -93,6 +78,21 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
 
     $scope.$watch('self.display.data', (newValue, oldValue) => {
         deRegisterFirstResultWatch();
+
+        const randomRegions = ["Toronto", "Huntsville", "Woodstock", "White River", "Sudbury", "Thunder Bay"];
+        const tempType = ["Iron", "Wind", "Rain", "Body", "Work", "Road", "Food"];
+        
+    
+        function getRand(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+    
+        self.randomRegion = getRand(randomRegions);
+        self.tempType = getRand(tempType);
+        self.lowTemp = Math.round(Math.random() * 30 * 10) / 10;
+        self.highTemp = self.lowTemp + Math.round(Math.random() * 15 * 10) / 10;
+        self.changeTemp = Math.round((self.highTemp - self.lowTemp) * 10) / 10;
+    
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
