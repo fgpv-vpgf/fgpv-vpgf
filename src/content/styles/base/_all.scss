@@ -34,3 +34,191 @@ a {
 
     @include keyboard-focus;
 }
+
+
+#main-sidebar {
+    display: none;
+    position: absolute;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    // background-color: rgba(72,72,75,.9);
+    color: rgba(72,72,75,.9);
+    z-index: 99999;
+    font-size: 10pt;
+}
+
+#main-sidebar .sb-head {
+    margin: 15px 40px 45px 40px;
+}
+
+#main-sidebar .prehead {
+    font-size: 1.2em;
+    color: rgba(72,72,75,.9);
+    font-weight: 400;
+}
+
+#primary h1 {
+    letter-spacing: 1px;
+    font-size: 3.5rem;
+    line-height: 1em;
+}
+
+#main-sidebar h1 {
+    font-size: 3em;
+    line-height: 1em;
+    color: #f3a014;
+    text-transform: uppercase;
+    margin-bottom: 0;
+}
+
+article.type-region h1 {
+    font-size: 32px;
+    margin-bottom: 1em;
+    color: #FAB404;
+    clear: none;
+}
+
+#main-sidebar #location-data > div:first-child {
+    padding-top: 0;
+}
+
+#main-sidebar #location-linegraph {
+    margin: 0 0 30px 0;
+}
+
+#main-sidebar .block {
+    margin: 0 40px;
+    clear: both;
+    padding: 25px 0;
+    min-height: 80px;
+}
+
+#main-sidebar #location-linegraph .prehead, #main-sidebar #location-linegraph h2 {
+    margin: 0 40px;
+}
+
+#main-sidebar .prehead {
+    font-size: 1.2em;
+    color: rgba(72,72,75,.9);
+    font-weight: 400;
+}
+
+#main-sidebar #location-linegraph .prehead, #main-sidebar #location-linegraph h2 {
+    margin: 0 40px;
+}
+
+#main-sidebar h2 {
+    font-size: 2.5em;
+    color: #f3a014;
+}
+
+#main-sidebar .block .block {
+    margin-top: 10px;
+}
+
+#main-sidebar .years {
+    font-size: 1.2em;
+}
+
+#main-sidebar .value {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1em;
+    color: #f3a014;
+}
+
+#main-sidebar .units {
+    color: rgba(72,72,75,.9);
+    margin-left: 10px;
+}
+
+#variable-value .years {
+    text-align: right;
+}
+
+#variable-value i {
+    margin: 0 1.5rem 0 1rem;
+    font-size: 2rem;
+    line-height: 3rem;
+    vertical-align: top;
+}
+
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#variable-delta {
+    margin-top: 1rem;
+}
+
+#main-sidebar #variable-delta .prehead {
+    margin: 0;
+}
+
+#main-sidebar #location-linegraph .prehead, #main-sidebar #location-linegraph h2 {
+    margin: 0 40px;
+}
+
+#main-sidebar .prehead {
+    font-size: 1.2em;
+    color: rgba(72,72,75,.9);
+    font-weight: 400;
+}
+
+#main-sidebar #variable-delta .value {
+    font-size: 2rem;
+    color: rgba(72,72,75,.9);
+}
+
+#main-sidebar #location-linegraph .prehead.meta {
+    margin: 10px 0;
+}
+
+#main-sidebar #location-linegraph .prehead, #main-sidebar #location-linegraph h2 {
+    margin: 0 40px;
+}
+
+#main-sidebar .prehead {
+    font-size: 1.2em;
+    color: rgba(72,72,75,.9);
+    font-weight: 400;
+}
+
+#main-sidebar #location-linegraph .prehead, #main-sidebar #location-linegraph h2 {
+    margin: 0 40px;
+}
+
+#main-sidebar .prehead {
+    font-size: 1.2em;
+    color: rgba(72,72,75,.9);
+    font-weight: 400;
+}
+
+h3.location-scenario {
+    margin: 5px 0 0 40px;
+    font-size: 1rem;
+    color: #f3a014;
+}
+
+#linegraph, #histogram {
+    margin: 1em 0;
+}
+
+#main-sidebar .block {
+    margin: 0 40px;
+    clear: both;
+    padding: 25px 0;
+    min-height: 80px;
+}
+
+#prodata {
+    color: rgba(72,72,75,.9);
+    font-size: 1.25rem;
+    float: right;
+}

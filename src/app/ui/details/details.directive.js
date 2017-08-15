@@ -31,6 +31,21 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
     'ngInject';
     const self = this;
 
+
+    const randomRegions = ["Toronto", "Huntsville", "Woodstock", "White River", "Sudbury", "Thunder Bay"];
+    const tempType = ["Iron", "Wind", "Rain", "Body", "Work", "Road", "Food"];
+    
+
+    function getRand(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    self.randomRegion = getRand(randomRegions);
+    self.tempType = getRand(tempType);
+    self.lowTemp = Math.round(Math.random() * 30 * 10) / 10;
+    self.highTemp = self.lowTemp + Math.round(Math.random() * 15 * 10) / 10;
+    self.changeTemp = Math.round((self.highTemp - self.lowTemp) * 10) / 10;
+
     self.closeDetails = detailService.closeDetails;
     self.display = stateManager.display.details;
     self.selectItem = selectItem;
@@ -69,7 +84,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         }
 
         self.selectedItem = item;
-        self.selectedLayerProxy = item ? item.requester.proxy : null;
+        self.selectedLayerProxy = null;
 
         self.display.selectedItem = self.selectedItem;
     }
@@ -82,33 +97,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
 
-            const previouslySelected = findPreviouslySelected(newValue);
-            if (previouslySelected) {
-                // pick selected item user previously selected one,
-                selectItem(previouslySelected);
-            } else if (newValue.length === 1) {
-                // or if there is a single item, pick that
-                selectItem(newValue[0]);
-            } else {
-                // otherwise, wait for the first item to get results and select that
-                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, item => {
-                    if (!item) {
-                        return;
-                    }
-
-                    deRegisterFirstResultWatch();
-                    // if the user alreayd selected an item, do not override the selection
-                    if (self.selectedItem) {
-                        return;
-                    }
-
-                    selectItem(item);
-                });
-            }
-
-            // wrap symbology returned by the proxy into a symbology stack object
-            newValue.forEach(item =>
-                (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
+            selectItem(newValue[0]);
 
         } else if (oldValue) {
             selectItem(null);
