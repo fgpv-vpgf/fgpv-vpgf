@@ -78,22 +78,22 @@
     </div>
 </div>
 
-<div id="map-scenario-menu" style="left: 35%;">
+<div id="map-scenario-menu" class="rv-whiteframe-z2" style="left: 35%;">
     <div id="col-period" style="opacity: 1;">
-        <div class="radiotitle">Time Period</div>
+        <div class="radiotitle md-subhead">Time Period</div>
         <div layout>
             <md-slider flex class="md-primary" ng-model="sliderVal" step="1" min="1" max="200" aria-label="rating">
             </md-slider>
-            </div>
+        </div>
             <ul class="range-labels" id="range-period">
-            <li data-var="period" data-val="baseline" data-range="period" class="first third selected">Recent Past</li>
-            <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2021-2050</li>
-            <li data-var="period" data-val="2060" data-range="period" class="last third selected">2051-2080</li>
+                <li data-var="period" data-val="baseline" data-range="period" class="first third selected">Recent Past</li>
+                <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2021-2050</li>
+                <li data-var="period" data-val="2060" data-range="period" class="last third selected">2051-2080</li>
             </ul>
     </div>
-    <div id="col-rcp" style="opacity: 1;">
-        <div ng-show="toggleVal" style="position: absolute;bottom: 20px;right: -8px;"><img src="https://loading.io/spinners/lava-lamp/index.gif"></div>
-        <md-switch ng-model="toggleVal" aria-label="Switch 1"></md-switch>
+    <div-- id="col-rcp" style="opacity: 1;">
+        <!--div ng-show="toggleVal" style="position: absolute;bottom: 20px;right: -8px;"><img src="https://loading.io/spinners/lava-lamp/index.gif"></div-->
+        <md-switch class="md-primary" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
         <div class="radiotitle">Severe Forecast</div>
     </div>
 </div>

@@ -15,3 +15,208 @@ Obviously you need some kind of rules and criteria:
 4. Try and clean shame.css up when you have some down time.
     1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
 */
+
+#map-scenario-menu {
+    background-color: white;
+
+    position: absolute;
+    bottom: 10px;
+    left: 37%;
+    z-index: 1;
+    padding: 0 10px;
+
+    > #col-period {
+        border-right: 1px solid $divider-color;
+    }
+
+    .layout-row {
+        height: 20px !important;
+    }
+
+    & > div {
+        margin-top: 0;
+    }
+
+    #col-rcp {
+        padding: 10px 10px 10px 15px;
+
+        margin-top: 3px;
+        .radiotitle {
+            text-align: left;
+            font-size: 12px;
+        }
+    }
+
+    #col-period {
+        width: 350px;
+
+        padding: 10px 15px 10px 10px;
+    }
+
+    #col-rcp,
+    #col-period {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .radiotitle {
+        margin-bottom: -10px;
+    }
+
+    .range {
+        position: relative;
+        width: 550px;
+        height: 5px;
+    }
+
+    .range input {
+        width: 100%;
+        position: absolute;
+        top: 2px;
+        height: 0;
+        -webkit-appearance: none;
+    }
+
+    .range input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        margin: -8px 0 0;
+        border-radius: 50%;
+        // background: #37adbf;
+        cursor: pointer;
+        border: 0 !important;
+    }
+
+    .range input::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        margin: -8px 0 0;
+        border-radius: 50%;
+        // background: #37adbf;
+        cursor: pointer;
+        border: 0 !important;
+    }
+
+    .range input::-ms-thumb {
+        width: 18px;
+        height: 18px;
+        margin: -8px 0 0;
+        border-radius: 50%;
+        // background: #37adbf;
+        cursor: pointer;
+        border: 0 !important;
+    }
+
+    .range input::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 2px;
+        cursor: pointer;
+        background: #b2b2b2;
+    }
+
+    .range input::-moz-range-track {
+        width: 100%;
+        height: 2px;
+        cursor: pointer;
+        background: #b2b2b2;
+    }
+
+    .range input::-ms-track {
+        width: 100%;
+        height: 2px;
+        cursor: pointer;
+        background: #b2b2b2;
+    }
+
+    .range input:focus {
+        background: none;
+        outline: none;
+    }
+
+    .range input::-ms-track {
+        width: 100%;
+        cursor: pointer;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+
+    .range-labels {
+        padding: 0;
+        list-style: none;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .range-labels li {
+        position: relative;
+        float: left;
+        width: 90.25px;
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .range-labels li::before {
+        position: absolute;
+        top: -14px;
+        right: 0;
+        left: 0;
+        content: "";
+        margin: 0 auto;
+        width: 9px;
+        height: 9px;
+        background: #b2b2b2;
+        border-radius: 50%;
+    }
+
+    .range-labels li {
+        &:first-child {
+            text-align: left;
+        }
+
+        &:last-child {
+            text-align: right;
+        }
+    }
+
+    .range-labels .active {
+        color: #37adbf;
+    }
+
+    .range-labels .selected::before {
+        background-color: rgb(96, 125, 139);
+    }
+
+    .range-labels .active.selected::before {
+        display: none;
+    }
+
+    .range-labels li.first:before {
+        left: -98px;
+        z-index: -1;
+    }
+
+    .range-labels li.last {
+        text-align: right;
+    }
+
+    .range-labels li.third {
+        width: 33%;
+    }
+
+
+    .md-thumb:after {
+        // background-color: rgb(96, 125, 139) !important;
+    }
+
+
+    .range-labels li.last:before {
+        right: -105px;
+    }
+
+    md-switch {
+        margin-bottom: 0 !important;
+    }
+}
