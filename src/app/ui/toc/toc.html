@@ -44,6 +44,7 @@
             <!-- filter: { controlled: false } will filter out layer controled by a dynamic layer which is rendered as a group -->
             <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false } track by block.id"
                 class="rv-toggle-slide"
+                data-id="{{ ::block.layerRecordId }}"
                 data-sort-group="{{ ::block.sortGroup }}">
 
                 <!-- legend block -->

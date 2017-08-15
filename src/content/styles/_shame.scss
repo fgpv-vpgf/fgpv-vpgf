@@ -16,6 +16,11 @@ Obviously you need some kind of rules and criteria:
     1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
 */
 
+// hide grid and video layers
+[data-id="flicks"], [data-id="thegrid"] {
+    display: none;
+}
+
 #map-scenario-menu {
     background-color: white;
 
