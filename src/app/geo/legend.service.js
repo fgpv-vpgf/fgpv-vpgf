@@ -12,7 +12,7 @@ angular
     .factory('legendService', legendServiceFactory);
 
 function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
-    layerRegistry, common, bookmarkService) {
+    layerRegistry, common) {
 
     const service = {
         constructLegend,
@@ -57,10 +57,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function addLayerDefinition
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
+     * @param {pos} optional position for layer to be on the legend
      * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
-    function addLayerDefinition(layerDefinition) {
-        return importLayerBlueprint(createBlueprint(layerDefinition));
+    function addLayerDefinition(layerDefinition, pos) {
+        return importLayerBlueprint(createBlueprint(layerDefinition), pos);
     }
 
     /**
@@ -81,9 +82,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function importLayerBlueprint
      * @param {LayerBlueprint} layerBlueprint a layer blueprint to be imported into the map and added to the legend
+     * @param {pos} optional position for layer to be on the legend
      * @return {LegendBlock} returns a corresponding, newly created legend block
      */
-    function importLayerBlueprint(layerBlueprint) {
+    function importLayerBlueprint(layerBlueprint, pos) {
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
@@ -108,14 +110,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const importedLegendBlock = _makeLegendBlock(importedBlockConfig, [layerBlueprint]);
 
         let position = 0;
-        let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
         // find an appropriate spot in a auto legend;
-        if (orderdBookmarkIds.length !== 0) {   // If the order from bookmark exists
-            for (let i = 0; i < orderdBookmarkIds.length; i++) {
-                if (orderdBookmarkIds[i] === entryConfigObject.layerId) {
-                    position = i;
-                }
-            }
+        if (pos) {   // If the order from bookmark exists
+           position = pos;
         } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             position = legendBlocks.entries.findIndex(block =>
                 sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);

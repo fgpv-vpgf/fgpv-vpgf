@@ -63,8 +63,19 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                 this._isMapReady = true;
                 $rootScope.$broadcast(events.rvApiReady);
                 events.$on(events.rvCfgUpdated, (evt, layers) => {
-                    console.info(layers);
-                    layers.forEach(layer => legendService.addLayerDefinition(layer));
+                    let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
+                    layers.forEach(layer => {
+                        if (orderdBookmarkIds.length !== 0) {   // it is a bookmark
+                            for (let i = 0; i < orderdBookmarkIds.length; i++) {
+                                if (orderdBookmarkIds[i] === layer.id) {
+                                    legendService.addLayerDefinition(layer, i);
+                                    break;
+                                }
+                            }
+                        } else {
+                            legendService.addLayerDefinition(layer);
+                        }
+                    });
                 });
             }).catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
         }
