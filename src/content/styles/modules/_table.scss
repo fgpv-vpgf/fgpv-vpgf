@@ -87,6 +87,10 @@
                         background: lighten($divider-color, 20%);
                         width: 100% !important;
 
+                        thead {
+                            visibility: hidden;
+                        }
+
                         tbody {
                             // for keyTable navigation
                             td:focus {
