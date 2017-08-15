@@ -199,25 +199,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Object} standard mouse event object
      */
     onMouseOver (e) {
-        /* discussion on quick-lookup.
-        there are two different ways to get attributes from the server for a single feature.
-        1. using the feature rest endpoint (FR)
-        2. using the feature layer's query rest endpoint (FQ)
-        FR returns a smaller response object (it omits a pile of layer metadata). this is good.
-        FR is used in the hilight module. so we are already caching that response and have the
-        code to make the FR request. this is good.
-        FR always includes the geometry. which means if we hover over a feature with massive geometry and
-        a small attribute set, we will download way more data than we want. this is bad.
-        FQ has a larger response in general (metadata that we dont care about). this is bad.
-        FQ can omit the geometry. this is good.
-        FQ is not being used elsewhere, so we would have to write a new function and cache. this is bad.
-        Conclusion:  for time being, we will use the FR approach. In most cases it will be faster. The
-        one potential problem (massive geometry polys) would only have the impact of the maptip not showing
-        promptly (or timing out).
-        If we find this is a major issue, suggest re-doing fetchGraphic to use FQ for both hover and hilight,
-        adding parameters to include or omit the geometry.
-        */
-
         if (this._hoverListeners.length > 0) {
 
             const showBundle = {
@@ -234,33 +215,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
             this.getLayerData().then(lInfo => {
                 // graphic attributes will only have the OID if layer is server based
                 oid = e.graphic.attributes[lInfo.oidField];
+                const graphicPromise = this.fetchGraphic(oid, { attribs: true });
+                return Promise.all([Promise.resolve(lInfo), graphicPromise]);
+            }).then(([lInfo, graphicBundle]) => {
 
-                let attribSetPromise;
-                if (this._featClasses[this._defaultFC].attribsLoaded()) {
-                    // we have already pulled attributes from the server. use them.
-                    attribSetPromise = this.getAttribs();
-                } else {
-                    // we have not pulled attributes from the server.
-                    // instead of downloading them all, just get the one
-                    // we are interested in.
-                    // we skip the client side graphic attributes if we are server based, as it will
-                    // only contain the OID.  File based layers will have all the attributes client side.
-                    attribSetPromise = this.fetchGraphic(oid, !this.isFileLayer()).then(graphicBundle => {
-                        const fakeSet = {
-                            features: [
-                                graphicBundle.graphic
-                            ],
-                            oidIndex: {}
-                        };
-                        fakeSet.oidIndex[oid] = 0; // because only one feature added above
-                        return fakeSet;
-                    });
-                }
-                return Promise.all([Promise.resolve(lInfo), attribSetPromise]);
-            }).then(([lInfo, aInfo]) => {
-
-                // get name via attribs and name field
-                const featAttribs = aInfo.features[aInfo.oidIndex[oid]].attributes;
+                const featAttribs = graphicBundle.graphic.attributes;
 
                 // get icon via renderer and geoApi call
                 const svgcode = this._apiRef.symbology.getGraphicIcon(featAttribs, lInfo.renderer);

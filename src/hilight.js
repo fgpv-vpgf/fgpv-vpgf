@@ -6,22 +6,6 @@ const defaultSymbols = require('./defaultHilightSymbols.json');
 
 // contains functions to support the hilight layer.
 
-function cloneBuilder(esriBundle) {
-    /**
-    * Clone a graphic from a map-bound layer.
-    * @method cloneLayerGraphic
-    * @param {Graphic} graphic an ESRI graphic that resides in a map layer.
-    * @return {Object} an unbound copy of the graphic
-    */
-    return graphic => {
-        const clone = new esriBundle.Graphic({
-                geometry: graphic.geometry
-            });
-        clone.symbol = graphic.getLayer().renderer.getSymbol(graphic);
-        return clone;
-    };
-}
-
 function graphicBuilder(esriBundle) {
     /**
     * Generating a graphic from server geometry.
@@ -44,7 +28,7 @@ function getGraphicsBuilder(esriBundle, geoApi) {
     /**
     * Generating a graphic from server geometry.
     * @method getUnboundGraphics
-    * @param {Array} graphicBundles set of graphic bundles with properties .graphic, .source, .layerFC
+    * @param {Array} graphicBundles set of graphic bundles with properties .graphic, .layerFC
     * @param {Object} spatialReference the projection the unbound graphics should be in
     * @return {Array} a set of promises that resolve with an unbound graphic, one for each graphic bundle provided
     */
@@ -53,24 +37,18 @@ function getGraphicsBuilder(esriBundle, geoApi) {
         // generate detached graphics to give to the hilight layer.
         // promises because server layers renderer is inside a promise
         return graphicBundles.map(bundle => {
-            if (bundle.source === 'server') {
-                let geom = bundle.graphic.geometry;
+            let geom = bundle.graphic.geometry;
 
-                // check projection
-                if (!geoApi.proj.isSpatialRefEqual(geom.spatialReference, spatialReference)) {
-                    geom = geoApi.proj.localProjectGeometry(spatialReference, geom);
-                }
-
-                // determine symbol for this server graphic
-                return bundle.layerFC.getLayerData().then(layerData => {
-                    const symb = geoApi.symbology.getGraphicSymbol(bundle.graphic.attributes, layerData.renderer);
-                    return geoApi.hilight.geomToGraphic(geom, symb);
-                });
-
-            } else {
-                // local graphic. clone and hilight
-                return Promise.resolve(geoApi.hilight.cloneLayerGraphic(bundle.graphic));
+            // check projection
+            if (!geoApi.proj.isSpatialRefEqual(geom.spatialReference, spatialReference)) {
+                geom = geoApi.proj.localProjectGeometry(spatialReference, geom);
             }
+
+            // determine symbol for this server graphic
+            return bundle.layerFC.getLayerData().then(layerData => {
+                const symb = geoApi.symbology.getGraphicSymbol(bundle.graphic.attributes, layerData.renderer);
+                return geoApi.hilight.geomToGraphic(geom, symb);
+            });
         });
     };
 }
@@ -149,6 +127,5 @@ function hilightBuilder(esriBundle) {
 module.exports = (esriBundle, geoApi) => ({
     makeHilightLayer: hilightBuilder(esriBundle),
     geomToGraphic: graphicBuilder(esriBundle),
-    cloneLayerGraphic: cloneBuilder(esriBundle),
     getUnboundGraphics: getGraphicsBuilder(esriBundle, geoApi)
 });

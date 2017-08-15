@@ -36,7 +36,7 @@ it contains the attribute data as an array, and an index mapping object id to ar
         },
         ...
     ],
-        "oidIndex": {
+    "oidIndex": {
         "23": 0,
         ...
     }
@@ -78,6 +78,7 @@ function newLayerPackage(featureIdx, esriBundle) {
         getAttribs,
         loadedFeatureCount: 0,
         loadAbortFlag: false,
+        loadIsDone: false,
         abortAttribLoad
     };
 
@@ -120,6 +121,7 @@ function newLayerPackage(featureIdx, esriBundle) {
                 // after all data has been loaded
                 defFinished.promise.then(features => {
                     delete layerData.load; // no longer need this info
+                    layerPackage.loadIsDone = true;
 
                     // resolve the promise with the attribute set
                     resolve(createAttribSet(layerData.oidField, features));

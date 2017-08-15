@@ -71,7 +71,7 @@ class LayerInterface {
     // param: boolean
     setQuery () { return undefined; }
 
-    // param: integer, boolean (optional)
+    // param: integer, object
     fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
 
     // param: esriMap
@@ -459,14 +459,14 @@ function dynamicLeafAttributesToDetails(attribs, fields) {
     return this._source._parent.attributesToDetails(attribs, fields);
 }
 
-function featureFetchGraphic(oid, ignoreLocal = false) {
+function featureFetchGraphic(oid, opts) {
     /* jshint validthis: true */
-    return this._source.fetchGraphic(oid, ignoreLocal);
+    return this._source.fetchGraphic(oid, opts);
 }
 
-function dynamicLeafFetchGraphic(oid, ignoreLocal = false) {
+function dynamicLeafFetchGraphic(oid, opts) {
     /* jshint validthis: true */
-    return this._source.fetchGraphic(oid, ignoreLocal);
+    return this._source.fetchGraphic(oid, opts);
 }
 
 function featureZoomToGraphic(oid, map, offsetFraction) {

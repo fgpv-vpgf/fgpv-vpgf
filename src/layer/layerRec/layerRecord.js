@@ -251,6 +251,16 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Indicates if layer is file based.
+     *
+     * @function isFileLayer
+     */
+    isFileLayer () {
+        // only instances of FeatureLayer can be file based; that class overrides this function
+        return false;
+    }
+
+    /**
      * Creates an options object for the map API object
      *
      * @function makeLayerConfig

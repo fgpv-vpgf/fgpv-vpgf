@@ -521,22 +521,25 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * Will attempt local copy (unless overridden), will hit the server if not available.
      *
      * @function fetchGraphic
-     * @param {String}  childIndex    index of the child layer to target
-     * @param  {Integer} objId          ID of object being searched for
-     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
-     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     * @param {String}  childIndex     index of the child layer to target
+     * @param {Integer} objId          ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - geom          boolean. indicates if return value should have geometry included. default to false
+     *                 - attribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (childIndex, objId, ignoreLocal = false) {
-        return this._featClasses[childIndex].fetchGraphic(objId, ignoreLocal);
+    fetchGraphic (childIndex, objId, opts) {
+        return this._featClasses[childIndex].fetchGraphic(objId, opts);
     }
 
     /**
      * Will attempt to zoom the map view so the a graphic is prominent.
      *
      * @function zoomToGraphic
-     * @param {String}  childIndex    index of the child layer to target
-     * @param  {Integer} objId          Object ID of grahpic being searched for
-     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {String}  childIndex      index of the child layer to target
+     * @param {Integer} objId           Object ID of grahpic being searched for
+     * @param {Object} map              wrapper object for the map we want to zoom
      * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
      * @return {Promise}                resolves after the map is done moving
      */

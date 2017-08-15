@@ -23,7 +23,10 @@ class AttribFC extends basicFC.BasicFC {
         this._layerPackage = layerPackage;
         this._geometryType = undefined; // this indicates unknown to the ui.
         this._fcount = undefined;
-        this._quickCache = {};
+        this._quickCache = {
+            attribs: {},
+            geoms: {}
+        };
     }
 
     get geomType () { return this._geometryType; }
@@ -47,10 +50,10 @@ class AttribFC extends basicFC.BasicFC {
      * Indicates if attributes have been downloaded for this FC.
      *
      * @function attribsLoaded
-     * @returns {Boolean}         true if attributes are download / downloading.
+     * @returns {Boolean}         true if attributes are downloaded.
      */
     attribsLoaded () {
-        return !!this._layerPackage._attribData;
+        return this._layerPackage.loadIsDone;
     }
 
     /**
@@ -267,77 +270,191 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-    * Fetches feature information, including geometry, from esri servers for feature layer.
-    * @param {Integer} objectId for feature to be retrived from the server
-    * @returns {Promise} promise resolves with an esri Graphic (http://resources.arcgis.com/en/help/arcgis-rest-api/#/Feature_Map_Service_Layer/02r3000000r9000000/)
-    */
-    getServerFeatureInfo (objectId) {
-        if (this._quickCache[objectId]) {
-            return Promise.resolve(this._quickCache[objectId]);
-        }
-        return new Promise(
-            (resolve, reject) => {
-                const parent = this._parent;
-                const defData = parent._esriRequest({
-                    url: `${parent.rootUrl}/${this._idx}/${objectId}`,
-                    content: {
-                        f: 'json',
-                    },
-                    callbackParamName: 'callback',
-                    handleAs: 'json'
-                });
-
-                defData.then(
-                    serverFeature => {
-                        // server result omits spatial reference
-                        serverFeature.feature.geometry.spatialReference = parent._layer.spatialReference;
-                        this._quickCache[objectId] = serverFeature;
-                        resolve(serverFeature);
-                    }, error => {
-                        console.warn(error);
-                        reject(error);
-                    }
-                );
-            });
-    }
-
-    /**
      * Fetches a graphic from the given layer.
      * Will attempt local copy (unless overridden), will hit the server if not available.
      *
      * @function fetchGraphic
-     * @param  {Integer} objId          ID of object being searched for
-     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
-     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     * @param  {Integer} objectId      ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - geom          boolean. indicates if return value should have geometry included. default to false
+     *                 - attribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (objId, ignoreLocal = false) {
+    fetchGraphic (objectId, opts) {
+
+        // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
+        // things are done the way they are in this function.
+
+        // TODO this is currently a mess of IF statements, and a very dirty hack using a promise.
+        //      could certainly use a refactor LATER.
+        // this function should win a prize for good structure :trophy:
 
         const layerObj = this._parent._layer;
         const result = {
             graphic: null,
-            source: null,
             layerFC: this
         };
+        const resultFeat = {};
 
-        // if feature layer, check if graphic is already loaded on the client. return it if found.
-        if (!ignoreLocal && layerObj.graphics) {
-            const myG = layerObj.graphics.find(g =>
+        const nonPoint = this.geomType !== 'esriGeometryPoint';
+        let needWebAttr = false;
+        let needWebGeom = false;
+        let lod;
+        let gCache;
+        let aCache;
+        let localGraphic;
+
+        // basically this hack promise handles one odd case where we are getting attributes from
+        // an asynch source that is very inconvenient (code would be mint if it was synch source).
+        // so in all other cases, the promse just resolves. in the odd case, it waits, then updates
+        // the result variable, then resolves.
+        // so at both points in the code where the main return value promise resolves, we first
+        // wait on this (which usually resolves right away, and the odd case the thing it's waiting
+        // on is already resolved, but need to treat it like a promise because of rules!)
+        let attribHackPromise = Promise.resolve();
+
+        // subfunction to extract a graphic from a feature layerk
+        const huntLocalGraphic = objId => {
+            return layerObj.graphics.find(g =>
                 g.attributes[layerObj.objectIdField] === objId);
-            if (myG) {
-                result.graphic = myG;
-                result.source = 'layer';
-                return Promise.resolve(result);
+        };
+
+        if (opts.attribs) {
+            // attempt to get attributes from fastest source.
+            aCache = this._quickCache.attribs;
+            if (aCache[objectId]) {
+                // value is already cached. use it
+                resultFeat.attributes = aCache[objectId];
+            } else if (this._layerPackage.loadIsDone) {
+                // all attributes have been loaded. use that store.
+                // since our store is a promise, need to do some hack trickery here
+                attribHackPromise = new Promise(resolve => {
+                    this._layerPackage.getAttribs().then(ad => {
+                        resultFeat.attributes = ad.features[ad.oidIndex[objectId]].attributes;
+                        resolve();
+                    });
+                });
+
+            } else if (this._parent.isFileLayer() && layerObj.graphics) {
+                // it is a feature layer that is file based. we can extract info from it.
+                localGraphic = huntLocalGraphic(objectId);
+                resultFeat.attributes = localGraphic.attributes;
+
+            } else {
+                // we will need to ask the service
+                needWebAttr = true;
             }
         }
 
-        // were not able to get a local copy of the graphic. to the server!
-        // TODO add some error handling. Cases: failed server call. server call is not a feature
-        return this.getServerFeatureInfo(objId)
-            .then(featureInfo => {
-                result.graphic = featureInfo.feature;
-                result.source = 'server';
+        if (opts.geom) {
+            // first locate the appropriate cache due to simplifications.
+            gCache = this._quickCache.geoms;
+
+            if (nonPoint) {
+                // lines and polys have a cache for each LOD
+
+                const mapLevel = opts.map.getLevel();
+                lod = opts.map.lods.find(l => l.level === mapLevel);
+
+                if (!gCache[lod.scale]) {
+                    gCache[lod.scale] = {};
+                }
+                gCache = gCache[lod.scale];
+            }
+
+            // attempt to get geometry from fastest source.
+            if (gCache[objectId]) {
+                resultFeat.geometry = gCache[objectId];
+            } else if (layerObj.graphics) {
+                // it is a feature layer. we can attempt to extract info from it.
+                // but remember the feature may not exist on the client currently
+                if (!localGraphic) {
+                    // wasn't fetched during attribute section. do it now
+                    localGraphic = huntLocalGraphic(objectId);
+                }
+
+                if (localGraphic) {
+                    // found one. cache it and use it
+                    gCache[objectId] = localGraphic.geometry;
+                    resultFeat.geometry = localGraphic.geometry;
+                } else {
+                    needWebGeom = true;
+                }
+
+            } else {
+                needWebGeom = true;
+            }
+        }
+
+        // hit the server if we dont have cached values
+        if (needWebAttr || needWebGeom) {
+            return new Promise(
+                (resolve, reject) => {
+                    const parent = this._parent;
+                    const reqParam = {
+                        url: `${parent.rootUrl}/${this._idx}/query`,
+                        content: {
+                            f: 'json',
+                            objectIds: objectId,
+                            outFields: '*',
+                            returnGeometry: needWebGeom
+                        },
+                        callbackParamName: 'callback',
+                        handleAs: 'json'
+                    };
+
+                    if (needWebGeom) {
+                        reqParam.content.outSR = map.spatialReference;
+                        if (nonPoint) {
+                            reqParam.content.maxAllowableOffset = lod.resolution;
+                        }
+                    }
+
+                    // TODO investigate adding `geometryPrecision` to the param.
+                    //      if we have bloated decimal places, this will drop them.
+                    //      need to be careful of the units of the map and the current scale.
+                    //      e.g. a basemap in lat long will certainly need decimal places.
+
+                    const defData = parent._esriRequest(reqParam);
+
+                    defData.then(
+                        queryResult => {
+                            const feat = queryResult.features[0];
+
+                            if (!feat) {
+                                throw new Error(`Could not find feature (oid ${objectId})`);
+                            }
+
+                            if (needWebGeom) {
+                                // server result omits spatial reference
+                                feat.geometry.spatialReference = queryResult.spatialReference;
+                                gCache[objectId] = feat.geometry;
+                                resultFeat.geometry = feat.geometry;
+                            }
+
+                            if (needWebAttr) {
+                                aCache[objectId] = feat.attributes;
+                                resultFeat.attributes = feat.attributes;
+                            }
+
+                            result.graphic = resultFeat;
+                            attribHackPromise.then(() => {
+                                resolve(result);
+                            });
+                        }, error => {
+                            console.warn(error);
+                            reject(error);
+                        }
+                    );
+                });
+        } else {
+            // no need for web requests. everything was available locally
+            return attribHackPromise.then(() => {
+                result.graphic = resultFeat;
                 return result;
             });
+        }
     }
 
     /**
@@ -351,22 +468,20 @@ class AttribFC extends basicFC.BasicFC {
      */
     zoomToGraphic (objId, map, offsetFraction) {
 
-        return this.fetchGraphic(objId)
+        return this.fetchGraphic(objId, { map, geom: true })
             .then(fetchedGraphic => {
                 const gapi = this._parent._apiRef;
 
                 // make new graphic (on the chance it came from server and is just raw json geometry)
-                const graphic = gapi.proj.Graphic({ geometry: fetchedGraphic.graphic.geometry });
+                const graphic = gapi.proj.Graphic(fetchedGraphic.graphic);
 
-                // TODO only do this if projections are actually different.
                 // reproject graphic to spatialReference of the map
-                const graphicExtent = gapi.proj.localProjectExtent(
-                    gapi.proj.graphicsUtils.graphicsExtent([graphic]),
-                    map.spatialReference);
-
-                // need to make new esri extent to use getCenter function
-                const extent = gapi.Map.Extent(graphicExtent.x0, graphicExtent.y0,
-                    graphicExtent.x1, graphicExtent.y1, graphicExtent.sr);
+                let extent = gapi.proj.graphicsUtils.graphicsExtent([graphic]);
+                if (!gapi.proj.isSpatialRefEqual(graphic.geometry.spatialReference, map.spatialReference)) {
+                    const intermExtent = gapi.proj.localProjectExtent(extent, map.spatialReference);
+                    extent = gapi.Map.Extent(intermExtent.x0, intermExtent.y0,
+                        intermExtent.x1, intermExtent.y1, intermExtent.sr);
+                }
 
                 // move map according to geometry
                 let geomZoomPromise;
