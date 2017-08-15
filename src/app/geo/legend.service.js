@@ -60,7 +60,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @param {pos} optional position for layer to be on the legend
      * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
-    function addLayerDefinition(layerDefinition, pos) {
+    function addLayerDefinition(layerDefinition, pos = null) {
         return importLayerBlueprint(createBlueprint(layerDefinition), pos);
     }
 
@@ -85,7 +85,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @param {pos} optional position for layer to be on the legend
      * @return {LegendBlock} returns a corresponding, newly created legend block
      */
-    function importLayerBlueprint(layerBlueprint, pos) {
+    function importLayerBlueprint(layerBlueprint, pos = null) {
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
