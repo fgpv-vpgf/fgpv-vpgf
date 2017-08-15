@@ -556,10 +556,13 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                 tipLoaded: e => {
                     // update the content of the tip with real data.
                     if (tipContent && tipContent.graphic === e.target) {
+                        e.name = e.name.toLowerCase().replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()) );
+
                         tipContent.name = e.name;
-                        tipContent.name = $filter('picture')(e.name);
+                        // tipContent.name = $filter('picture')(e.name);
                         tipContent.svgcode = e.svgcode;
                     }
+
                     tooltipService.refreshHoverTooltip();
                 },
                 mouseOut: e => {
