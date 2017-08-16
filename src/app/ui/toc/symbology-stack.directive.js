@@ -88,7 +88,6 @@ function rvSymbologyStack($q, Geo, animationService) {
 
         // description persist, so need to store reference only once
         ref.descriptionItem = element.find(RV_DESCRIPTION_ITEM);
-        ref.descriptionItem.css('width', ref.containerWidth)
 
         scope.$watchCollection('self.symbology.stack', (newStack, oldStack) => {
             if (newStack) {
@@ -200,6 +199,8 @@ function rvSymbologyStack($q, Geo, animationService) {
             ref.symbolItems.forEach(symbolItem =>
                 symbolItem.label.css('width', ref.maxItemWidth));
 
+            // hardcode for demo
+            ref.descriptionItem.css('width', 315);
             // console.log('ref.maxItemWidth', ref.maxItemWidth);
 
             ref.expandTimeline = makeExpandTimeline();
