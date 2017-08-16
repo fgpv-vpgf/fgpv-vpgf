@@ -66,8 +66,15 @@ Obviously you need some kind of rules and criteria:
     display: none;
 }
 
+
+#flicks_layer {
+    & > path, & > image {
+        cursor: pointer;
+    }
+}
+
 #cities_layer circle {
-    stroke: black;
+    stroke: rgb(74, 74, 74);
     stroke-opacity: 1;
 }
 

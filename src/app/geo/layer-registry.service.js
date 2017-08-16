@@ -319,6 +319,25 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                 $timeout.cancel(throttleTimeoutHandle);
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
+
+                // do this in code after geoApi gets loaded / promise resolves
+
+                gapiService.gapi.debug(true);
+
+                // do this somewhere in the layer loading process (after load event)
+
+                if (layerRecord.config.id === 'flicks') {
+                    let jsonSymbol = {
+                        "type" : "esriPMS",
+                        "width" : 20,
+                        "height" : 20,
+                        "url": 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgICBoZWlnaHQ9IjU0Ni4xNTMwMiIgICB3aWR0aD0iNTQ2LjE1ODAyIiAgIHhtbDpzcGFjZT0icHJlc2VydmUiICAgdmlld0JveD0iMCAwIDU0Ni4xNTgwMyA1NDYuMTUzMDMiICAgeT0iMHB4IiAgIHg9IjBweCIgICBpZD0iTGF5ZXJfMSIgICB2ZXJzaW9uPSIxLjEiPjxtZXRhZGF0YSAgICAgaWQ9Im1ldGFkYXRhNDg5MyI+PHJkZjpSREY+PGNjOldvcmsgICAgICAgICByZGY6YWJvdXQ9IiI+PGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+PGRjOnR5cGUgICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+PGRjOnRpdGxlPjwvZGM6dGl0bGU+PC9jYzpXb3JrPjwvcmRmOlJERj48L21ldGFkYXRhPjxkZWZzICAgICBpZD0iZGVmczQ4OTEiIC8+PHBhdGggICAgIGlkPSJwYXRoNDg1NSIgICAgIGQ9Ik0gNTIxLjE1OCwyNzMuMDgyIEMgNTIxLjE1OCwxMzYuMDYxIDQxMC4wODgsMjUgMjczLjA4MiwyNSAxMzYuMDcsMjQuOTk5IDI1LDEzNi4wNTkgMjUsMjczLjA4MiAyNSw0MTAuMDg0IDEzNi4wNyw1MjEuMTUzIDI3My4wODMsNTIxLjE1MyA0MTAuMDg4LDUyMS4xNTIgNTIxLjE1OCw0MTAuMDgzIDUyMS4xNTgsMjczLjA4MiBaIiAgICAgc3R5bGU9ImZpbGw6IzMyYmVhNjtzdHJva2U6I2ZmZmZmZjtzdHJva2Utd2lkdGg6NTA7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz48cGF0aCAgICAgaWQ9InBhdGg0ODU3IiAgICAgZD0iTSAzOTUuODA1LDI2MC4yMzkgMjIwLjg1NiwxNTIuODE1IGMgLTQuNzc2LC0yLjkzNCAtMTEuMDYxLC0zLjA2MSAtMTUuOTUxLC0wLjMyMiAtNC45NzksMi43ODUgLTguMDcxLDguMDU5IC04LjA3MSwxMy43NjIgbCAwLDIxNCBjIDAsNS42OTMgMy4wODMsMTAuOTYzIDguMDQ2LDEzLjc1MiAyLjM1MywxLjMyIDUuMDI0LDIuMDIgNy43MjUsMi4wMiAyLjg5NywwIDUuNzM0LC0wLjc5NyA4LjIwNSwtMi4zMDMgTCAzOTUuNzU3LDI4Ny4xNDggYyA0LjY1NywtMi44MzYgNy41NTYsLTcuOTg2IDcuNTY1LC0xMy40NCAwLjAxLC01LjQ1MyAtMi44NywtMTAuNjE1IC03LjUxNywtMTMuNDY5IHoiICAgICBzdHlsZT0iZmlsbDojZmZmZmZmIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODU5IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODYxIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODYzIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODY1IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODY3IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODY5IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODcxIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODczIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODc1IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODc3IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODc5IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODgxIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODgzIiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODg1IiAvPjxnICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNSwyNC45OTcpIiAgICAgaWQ9Imc0ODg3IiAvPjwvc3ZnPg=='
+                    };
+
+                    let eb = gapiService.gapi.esriBundle();
+                    let realSymbol = eb.symbolJsonUtils.fromJson(jsonSymbol);
+                    layerRecord._layer.renderer.symbol = realSymbol;
+                }
             }
         }
 
