@@ -118,29 +118,12 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             }
         };
 
-        // each legend block can have only one panel open at a time; find its name;
-        const openPanelName = Object.keys(panelSwitch)
-            .map(panelName => {
-                const panelDisplay = stateManager.display[panelName];
-                if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
-                    return panelName;
-                } else {
-                    return null;
-                }
-            })
-            .filter(a => a !== null)[0] || null;
-
-        if (openPanelName) {
-            stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
-        }
+        stateManager.setActive({ side: false }, { table: false });
 
         console.log(stateManager.display);
 
         function _restoreLegendBlock() {
             reject();
-            if (openPanelName) {
-                panelSwitch[openPanelName].action(legendBlock);
-            }
         }
     }
 
