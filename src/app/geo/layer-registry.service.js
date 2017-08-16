@@ -337,6 +337,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                     let eb = gapiService.gapi.esriBundle();
                     let realSymbol = eb.symbolJsonUtils.fromJson(jsonSymbol);
                     layerRecord._layer.renderer.symbol = realSymbol;
+                    layerRecord._layer.redraw();
                 }
             }
         }
