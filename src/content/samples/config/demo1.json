@@ -508,6 +508,15 @@
                     ]
                   }
                 ]
+              },
+              {
+                "layerId": "tropical_nights_2051_2080_less",
+                "controlledIds": [
+                  "tropical_nights_baseline",
+                  "tropical_nights_2021_2050_less",
+                  "tropical_nights_2021_2050_more",
+                  "tropical_nights_2051_2080_more"
+                ]
               }
             ]
           }
@@ -1305,6 +1314,56 @@
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2060_85/MapServer"
+      },
+      {
+        "id": "tropical_nights_2051_2080_more",
+        "name": "Tropical Nights",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2060_85/MapServer"
+      },
+      {
+        "id": "tropical_nights_2021_2050_more",
+        "name": "Tropical Nights",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2030_85/MapServer"
+      },
+      {
+        "id": "tropical_nights_2051_2080_less",
+        "name": "Tropical Nights",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2060_45/MapServer"
+      },
+      {
+        "id": "tropical_nights_2021_2050_less",
+        "name": "Tropical Nights",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2030_45/MapServer"
+      },
+      {
+        "id": "tropical_nights_baseline",
+        "name": "Tropical Nights",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_baseline/MapServer"
       }
     ],
     "tileSchemas": [
