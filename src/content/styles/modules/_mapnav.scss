@@ -44,7 +44,7 @@
         }
 
         .rv-button-group {
-            background-color: rgba(255, 255, 255, $opacity-from);
+            background-color: rgba(255, 255, 255, 1);
             transition: background-color $fade-in-out-duration ease-in;
 
             &:not([disabled]):hover,

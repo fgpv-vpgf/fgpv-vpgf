@@ -1,6 +1,6 @@
 {
   "ui": {
-    "title": "Custom Title",
+    "title": "PCC Demo",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -11,7 +11,8 @@
       ]
     },
     "sideMenu": {
-      "logo": true
+      "logo": true,
+      "items": [["fullscreen","share","touch","help"]]
     },
     "help": {
       "folderName": "default"
@@ -60,7 +61,7 @@
         "enabled": true
       },
       "overviewMap": {
-        "enabled": true,
+        "enabled": false,
         "layerType": "imagery"
       },
       "scaleBar": {
