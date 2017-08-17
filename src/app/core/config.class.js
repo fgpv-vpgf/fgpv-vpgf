@@ -249,7 +249,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._query = source.query;
             this._snapshot = source.snapshot;
             this._userAdded = source.userAdded;
-            this._hovertips = source.hovertips;
+            this._hovertips = source.hovertips === undefined || source.hovertips;
 
             // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
         }
