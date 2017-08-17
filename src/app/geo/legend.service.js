@@ -193,7 +193,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      */
     function removeLegendBlock(legendBlock) {
         // store visibility for legendBlock and any children being removed
-        const cache = legendBlock.walk(item => item.visibility);
+        let cache;
+        if (legendBlock.entries) {
+            cache = legendBlock.walk(item => item.visibility);
+        } else {
+            cache = legendBlock.visibility;
+        }
         legendBlock.visibility = false;
 
         const legendBlocks = configService.getSync.map.legendBlocks;
@@ -242,7 +247,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         function _reject() {
             legendBlockParent.addEntry(legendBlock, index);
             // restore visibility of all legendBlock and any children
-            legendBlock.walk(item => (item.visibility = cache.shift()));
+            if (legendBlock.entries) {
+                legendBlock.walk(item => (item.visibility = cache.shift()));
+            } else {
+                legendBlock.visibility = cache;
+            }
         }
     }
 
