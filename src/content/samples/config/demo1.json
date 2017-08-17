@@ -308,13 +308,8 @@
         "name": "root",
         "children": [
           {
-            "layerId": "flicks"
-          },
-          {
-            "layerId": "cities"
-          },
-          {
-            "layerId": "thegrid"
+            "infoType": "title",
+            "content": "Themes"
           },
           {
             "exclusiveVisibility": [
@@ -764,11 +759,43 @@
                 ]
               }
             ]
+          },
+          {
+            "infoType": "title",
+            "content": "Settings"
+          },
+          {
+            "layerId": "flicks"
+          },
+          {
+            "exclusiveVisibility": [
+              {
+                "layerId": "cities"
+              },
+              {
+                "layerId": "treaties",
+                "symbologyStack": [
+                  {
+                    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfhCBETASD1DBUcAAAANUlEQVRIx2Nk+M9AEWCiTDsDAwsDAwMDAyOZuv9TwQWjBowaMGrAqAGjBowaMLgMYBzw2hkAEXMDP5UP7NcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTctMDgtMTdUMTk6MDE6MzIrMDI6MDAqHxHdAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE3LTA4LTE3VDE5OjAxOjMyKzAyOjAwW0KpYQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=",
+                    "text": ""
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layerId": "thegrid"
           }
         ]
       }
     },
     "layers": [
+      {
+        "id": "treaties",
+        "name": "Historic Aboriginal Treaties",
+        "layerType": "esriFeature",
+        "url": "http://data.aadnc-aandc.gc.ca/geomatics/rest/services/Donnees_Ouvertes-Open_Data/Traite_Pre_1975_Treaty/MapServer/0"
+      },
       {
         "id": "cities",
         "name": "Cities",

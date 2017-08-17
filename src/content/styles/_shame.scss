@@ -16,6 +16,24 @@ Obviously you need some kind of rules and criteria:
     1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
 */
 
+.rv-legend-list.rv-legend-root {
+    position: relative;
+    top: -64px;
+    margin-bottom: -64px;
+}
+
+.rv-legend-title {
+    margin-right: 5px !important;
+}
+
+.rv-legend-info {
+    .md-title {
+        padding: 0 0 16px 0;
+        border-bottom: 1px solid #B6B6B6;
+        margin: 24px 0 16px 0 !important;
+    }
+}
+
 .demo-details {
     padding: 14px;
 
@@ -62,7 +80,7 @@ Obviously you need some kind of rules and criteria:
 }
 
 // hide grid and video layers
-[data-id="flicks"], [data-id="thegrid"], [data-id="cities"] {
+[data-id="flicks"], [data-id="thegrid"] {
     display: none;
 }
 
@@ -70,6 +88,22 @@ Obviously you need some kind of rules and criteria:
 #flicks_layer {
     & > path, & > image {
         cursor: pointer;
+    }
+}
+
+#treaties_layer {
+     path {
+        stroke: white;
+        fill-opacity: 0;
+        stroke-width: 2;
+    }
+}
+
+[data-id="cities"] {
+    .rv-symbol-graphic circle {
+        stroke: rgb(74, 74, 74);
+        stroke-opacity: 1;
+        stroke-width: 1;
     }
 }
 
