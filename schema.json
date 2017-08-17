@@ -227,7 +227,8 @@
                 "visibility": { "type": "boolean", "default": true, "description": "Initial visibility setting" },
                 "boundingBox": { "type": "boolean", "default": false, "description": "Display bounding box" },
                 "query": { "type": "boolean", "default": true, "description": "Allow querying" },
-                "snapshot": { "type": "boolean", "default": false, "description": "Retrieve all feature data immediately on load" }
+                "snapshot": { "type": "boolean", "default": false, "description": "Retrieve all feature data immediately on load" },
+                "hovertips": { "type": "boolean", "default": true, "description": "Disable hover tips" }
             },
             "additionalProperties": false
         },
