@@ -75,33 +75,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
      * @param  {LegendBlock} legendBlock legend block to be remove from the layer selector
      */
     function removeLayer(legendBlock) {
-        let resolve, reject;
-
-        // legendBlock is the only child in the group, remove parent instead of just child
-        if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
-            removeLayer(legendBlock.parent);
-            return;
-        // legendBlock has no parent, so we are at the top most level
-        // this block has one entry which is the only one currently in the legend, remove that entry
-        } else if (!legendBlock.parent) {
-            [resolve, reject] = legendService.removeLegendBlock(legendBlock.entries[0]);
-        // remove the legendBlock normally since it has other siblings
-        } else {
-            [resolve, reject] = legendService.removeLegendBlock(legendBlock);
-        }
-
-        // create notification toast
-        const undoToast = $mdToast.simple()
-            .textContent($translate.instant('toc.label.state.remove'))
-            .action($translate.instant('toc.label.action.remove'))
-            .parent(layoutService.panes.toc)
-            .position('bottom rv-flex');
-
-        // promise resolves with 'ok' when user clicks 'undo'
-        $mdToast.show(undoToast)
-            .then(response =>
-                response === 'ok' ? _restoreLegendBlock() : resolve());
-
+        let resolve, reject, openPanelName;
         // name mapping between true panel names and their short names
         const panelSwitch = {
             table: {
@@ -118,13 +92,72 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             }
         };
 
-        stateManager.setActive({ side: false }, { table: false });
+        // legendBlock is the only child in the group, remove parent instead of just child
+        if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
+            removeLayer(legendBlock.parent);
+            return;
+            // legendBlock has no parent, so we are at the top most level
+            // this block has one entry which is the only one currently in the legend, remove that entry
+        } else if (!legendBlock.parent) {
+            openPanelName = _findOpenPanel(panelSwitch, legendBlock);
+            [resolve, reject] = legendService.removeLegendBlock(legendBlock.entries[0]);
+            // remove the legendBlock normally since it has other siblings
+        } else {
+            // each legend block can have only one panel open at a time; find its name;
+            openPanelName = _findOpenPanel(panelSwitch, legendBlock);
+            [resolve, reject] = legendService.removeLegendBlock(legendBlock);
+        }
+
+        if (openPanelName) {
+            stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
+        }
+
+        // create notification toast
+        const undoToast = $mdToast.simple()
+        .textContent($translate.instant('toc.label.state.remove'))
+        .action($translate.instant('toc.label.action.remove'))
+        .parent(layoutService.panes.toc)
+        .position('bottom rv-flex');
+
+        // promise resolves with 'ok' when user clicks 'undo'
+        $mdToast.show(undoToast)
+        .then(response =>
+            response === 'ok' ? _restoreLegendBlock() : resolve());
 
         console.log(stateManager.display);
 
         function _restoreLegendBlock() {
             reject();
         }
+    }
+
+    /**
+    * Find if any panels are open matching the legendBlock being removed
+    * @private
+    * @function _findOpenPanel
+    * @param {Object} panelSwitch name mapping between true panel names and their short names
+    * @param {LegendBlock} legendBlock legend block to be searched for open panel
+    * @return {String} type of open panel
+    */
+    function _findOpenPanel(panelSwitch, legendBlock) {
+        return Object.keys(panelSwitch)
+            .map(panelName => {
+                const panelDisplay = stateManager.display[panelName];
+                if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
+                    return panelName;
+                }
+                else if (panelDisplay.requester && legendBlock.entries) {
+                    // walk thruogh the children of the current block to see if there's an open panel being removed
+                    return legendBlock
+                        .walk(lb => {
+                            return lb.id === panelDisplay.requester.id ? lb.id : null;
+                        })
+                        .filter(a => a)[0] ? panelName : null;
+                } else {
+                    return null;
+                }
+            })
+            .filter(a => a !== null)[0] || null;
     }
 
     // TODO: rename to something like `setVisibility` to make it clearer what this does
