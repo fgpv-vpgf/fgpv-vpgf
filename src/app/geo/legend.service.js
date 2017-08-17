@@ -192,7 +192,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @return {Array} returns two functions [resolve, reject]; calling `resolve` will clean up by removing the hidden layer record form the map; calling `reject` will restore the legend block and the corresponding layer record to its previous visibility
      */
     function removeLegendBlock(legendBlock) {
-        const cachedVisibility = legendBlock.visibility;
+        // store visibility for legendBlock and any children being removed
+        const cache = legendBlock.walk(item => item.visibility);
         legendBlock.visibility = false;
 
         const legendBlocks = configService.getSync.map.legendBlocks;
@@ -240,7 +241,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
          */
         function _reject() {
             legendBlockParent.addEntry(legendBlock, index);
-            legendBlock.visibility = cachedVisibility;
+            // restore visibility of all legendBlock and any children
+            legendBlock.walk(item => (item.visibility = cache.shift()));
         }
     }
 
