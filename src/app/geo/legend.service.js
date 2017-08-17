@@ -202,7 +202,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             .filter(a => a !== null)[0];
 
         // TODO: instead of removing the legend block form the selector, just hide it with some css
-        // FIXME: when removing a single child of a collapsed dynamic group or a single child from a dynamic group, need to remove the group itself since it no longer serves any purpose
         const index = legendBlockParent.removeEntry(legendBlock);
 
         return [_resolve, _reject];

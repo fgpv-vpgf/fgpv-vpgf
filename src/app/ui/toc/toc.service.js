@@ -75,7 +75,20 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
      * @param  {LegendBlock} legendBlock legend block to be remove from the layer selector
      */
     function removeLayer(legendBlock) {
-        const [resolve, reject] = legendService.removeLegendBlock(legendBlock);
+        let resolve, reject;
+
+        // legendBlock is the only child in the group, remove parent instead of just child
+        if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
+            removeLayer(legendBlock.parent);
+            return;
+        // legendBlock has no parent, so we are at the top most level
+        // this block has one entry which is the only one currently in the legend, remove that entry
+        } else if (!legendBlock.parent) {
+            [resolve, reject] = legendService.removeLegendBlock(legendBlock.entries[0]);
+        // remove the legendBlock normally since it has other siblings
+        } else {
+            [resolve, reject] = legendService.removeLegendBlock(legendBlock);
+        }
 
         // create notification toast
         const undoToast = $mdToast.simple()
@@ -105,29 +118,12 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             }
         };
 
-        // each legend block can have only one panel open at a time; find its name;
-        const openPanelName = Object.keys(panelSwitch)
-            .map(panelName => {
-                const panelDisplay = stateManager.display[panelName];
-                if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
-                    return panelName;
-                } else {
-                    return null;
-                }
-            })
-            .filter(a => a !== null)[0] || null;
-
-        if (openPanelName) {
-            stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
-        }
+        stateManager.setActive({ side: false }, { table: false });
 
         console.log(stateManager.display);
 
         function _restoreLegendBlock() {
             reject();
-            if (openPanelName) {
-                panelSwitch[openPanelName].action(legendBlock);
-            }
         }
     }
 
