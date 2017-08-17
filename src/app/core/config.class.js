@@ -249,6 +249,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._query = source.query;
             this._snapshot = source.snapshot;
             this._userAdded = source.userAdded;
+            this._hovertips = source.hovertips;
 
             // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
         }
@@ -270,6 +271,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get userAdded () {          return this._userAdded; }
         set userAdded (value) {     this._userAdded = value; }
+
+        get hovertips() { return this._hovertips; }
+        set hovertips(value) { this._hovertips = value; }
 
         get JSON() {
             return {
@@ -524,10 +528,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get metadataUrl () {            return this._metadataUrl; }
         get catalogueUrl () {           return this._catalogueUrl; }
         get extent () {                 return this._extent; }
-
-        _hovertipEnabled = false;
-        get hovertipEnabled () {        return this._hovertipEnabled; }
-        set hovertipEnabled (value) {   this._hovertipEnabled = value; }
 
         /**
          * @return {Array} an array of control names which are visible in UI;

@@ -410,7 +410,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             return;
         }
 
-        if (!layerRecord.config.hovertipEnabled) {
+        if (!layerRecord.config.state.hovertips) {
             return;
         }
 
