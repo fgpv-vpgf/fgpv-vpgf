@@ -1,10 +1,5 @@
 <rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
 
-<div class="rv-map-coordinates rv-lg">
-    <span></span>
-    <span></span>
-</div>
-
 <rv-sidenav></rv-sidenav>
 
 <!-- TODO: add proper loading message or animation to the loading splash -->
@@ -78,7 +73,7 @@
     </div>
 </div>
 
-<div id="map-scenario-menu" class="rv-whiteframe-z2" style="left: 35%;">
+<div id="map-scenario-menu" class="rv-whiteframe-z2" style="left: 50%;">
     <div id="col-period" style="opacity: 1;">
         <div class="radiotitle md-subhead">Time Period</div>
         <div layout>
@@ -86,14 +81,9 @@
             </md-slider>
         </div>
             <ul class="range-labels" id="range-period">
-                <li data-var="period" data-val="baseline" data-range="period" class="first third selected">Recent Past</li>
-                <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2021-2050</li>
-                <li data-var="period" data-val="2060" data-range="period" class="last third selected">2051-2080</li>
+                <li data-var="period" data-val="baseline" data-range="period" class="first third selected">1981-2010</li>
+                <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2011-2040</li>
+                <li data-var="period" data-val="2060" data-range="period" class="last third selected">2041-2070</li>
             </ul>
-    </div>
-    <div-- id="col-rcp" style="opacity: 1;">
-        <!--div ng-show="toggleVal" style="position: absolute;bottom: 20px;right: -8px;"><img src="https://loading.io/spinners/lava-lamp/index.gif"></div-->
-        <md-switch class="md-primary" ng-disabled="sliderVal <= 1" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
-        <div class="radiotitle">Severe Forecast</div>
     </div>
 </div>
