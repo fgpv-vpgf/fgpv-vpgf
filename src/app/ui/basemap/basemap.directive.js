@@ -17,6 +17,7 @@ function rvBasemap() {
     const directive = {
         restrict: 'E',
         templateUrl,
+        scope: {},
         controller: Controller,
         controllerAs: 'self',
         bindToController: true

@@ -1,0 +1,53 @@
+<md-sidenav rv-trap-focus class="rv-theme-selector site-sidenav md-sidenav-right md-whiteframe-z2" md-component-id="middle">
+        <header class="rv-header">
+                <md-button class="md-icon-button black rv-button-32 minimize-button" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
+                    <md-icon md-svg-src="community:chevron-double-right"></md-icon>
+                </md-button>
+
+                <h3 class="md-title">Themes</h3>
+        </header>
+
+        <md-content role="navigation">
+
+                <md-card ng-repeat="theme in self.themes">
+                    <!--md-card-header>
+                        <md-card-avatar>
+                            <img class="md-user-avatar" src="">
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">Title</span>
+                            <span class="md-subhead">Sub header</span>
+                        </md-card-header-text>
+                    </md-card-header-->
+                    <img  ng-src="{{ theme.image }}" class="md-card-image" ng-click="self.rootScope.selectedTheme = theme; self.close();">
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-title">{{ theme.name }}</span>
+                        </md-card-title-text>
+                    </md-card-title>
+
+                    <div class="rv-theme-card-check" ng-if="theme.name === self.rootScope.selectedTheme.name">
+                        <md-icon md-svg-src="navigation:check" ></md-icon>
+                    </div>
+
+                    <md-card-actions layout="row" layout-align="start center">
+                        <md-button>learn more</md-button>
+                        <md-card-icon-actions>
+                            <md-button class="rv-theme-card-more md-icon-button" aria-label="icon" ng-click="theme.expanded = !theme.expanded">
+                                <md-icon md-svg-icon="community:chevron-down"></md-icon>
+                            </md-button>
+                        </md-card-icon-actions>
+                    </md-card-actions>
+                    <md-card-content ng-show="theme.expanded" class="rv-toggle-slide">
+                        <p>
+                            {{ theme.description }}
+                        </p>
+                        <h5 class="md-subhead">Included in this theme:</h5>
+                        <ul>
+                            <li ng-repeat="item in theme.items">{{ item }}</li>
+                        </ul>
+                    </md-card-content>
+                </md-card>
+
+        </md-content>
+    </md-sidenav>

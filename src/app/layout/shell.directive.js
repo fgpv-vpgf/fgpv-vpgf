@@ -180,9 +180,13 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
     }
 }
 
-function Controller(geoService) {
+function Controller(geoService, $mdSidenav, $rootScope) {
     'ngInject';
     const self = this;
 
     self.geoService = geoService;
+
+    self.themCardShowMore = false;
+    self.openThemeSelector = () => $mdSidenav('middle').open();
+    self.rootScope = $rootScope;
 }

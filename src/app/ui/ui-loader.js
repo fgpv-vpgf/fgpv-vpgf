@@ -93,6 +93,7 @@ import './settings/settings.directive.js';
 import './sidenav/menulink.directive.js';
 import './sidenav/sidenav.directive.js';
 import './sidenav/sidenav.service.js';
+import './sidenav/theme-selector.directive.js';
 
 import './toc/templates/expand-menu.directive.js';
 import './toc/templates/visibility-menu.directive.js';

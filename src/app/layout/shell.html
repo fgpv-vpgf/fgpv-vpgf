@@ -6,6 +6,7 @@
 </div>
 
 <rv-sidenav></rv-sidenav>
+<rv-theme-selector></rv-theme-selector>
 
 <!-- TODO: add proper loading message or animation to the loading splash -->
 <div class="rv-loading-screen" layout layout-align="center center" ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
@@ -33,13 +34,7 @@
 <rv-help-overlay rv-state='help'></rv-help-overlay>
 
 <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
-<rv-panel
-    type="main"
-    close-button="false"
-    rv-state="main"
-    rv-morph="main"
-    class="rv-plug-slide-down"
-    ng-class="{ 'rv-no-appbar': !self.config.ui.appBar.enabled }"></rv-panel>
+<rv-panel type="main" close-button="false" rv-state="main" rv-morph="main" class="rv-plug-slide-down" ng-class="{ 'rv-no-appbar': !self.config.ui.appBar.enabled }"></rv-panel>
 
 <rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
 
@@ -54,24 +49,23 @@
 
 <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
 
-<md-progress-linear
-    class="rv-progress-bottom"
-    md-mode="indeterminate"
-    ng-show="self.config.map.isMapLoading"></md-progress-linear>
+<md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.config.map.isMapLoading"></md-progress-linear>
 
 <div class="rv-focus-dialog-content">
     <div class="md-dialog-container">
         <md-dialog>
             <md-dialog-content class="md-dialog-content" role="document">
                 <h2 class="md-title ng-binding">{{ 'focus.dialog.press' | translate }}
-                <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.enter' | translate }}</div>
-                {{ 'focus.dialog.toactivate' | translate }} <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}
-                </div></h2>
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.enter' | translate }}</div>
+                    {{ 'focus.dialog.toactivate' | translate }}
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}
+                    </div>
+                </h2>
 
                 <div class="md-dialog-content-body">
-                        {{ 'focus.dialog.main' | translate }}
-                        <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div> +
-                        <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
+                    {{ 'focus.dialog.main' | translate }}
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div> +
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
                 </div>
             </md-dialog-content>
         </md-dialog>
@@ -85,15 +79,57 @@
             <md-slider flex class="md-primary" ng-model="sliderVal" step="1" min="1" max="200" aria-label="rating">
             </md-slider>
         </div>
-            <ul class="range-labels" id="range-period">
-                <li data-var="period" data-val="baseline" data-range="period" class="first third selected">Recent Past</li>
-                <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2021-2050</li>
-                <li data-var="period" data-val="2060" data-range="period" class="last third selected">2051-2080</li>
-            </ul>
+        <ul class="range-labels" id="range-period">
+            <li data-var="period" data-val="baseline" data-range="period" class="first third selected">Recent Past</li>
+            <li data-var="period" data-val="2030" data-range="period" class="middle third selected">2021-2050</li>
+            <li data-var="period" data-val="2060" data-range="period" class="last third selected">2051-2080</li>
+        </ul>
     </div>
-    <div-- id="col-rcp" style="opacity: 1;">
+    <div id="col-rcp" style="opacity: 1;">
         <!--div ng-show="toggleVal" style="position: absolute;bottom: 20px;right: -8px;"><img src="https://loading.io/spinners/lava-lamp/index.gif"></div-->
         <md-switch class="md-primary" ng-disabled="sliderVal <= 1" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
         <div class="radiotitle">Severe Forecast</div>
     </div>
+</div>
+
+<div class="rv-card-holder">
+    <md-card>
+        <!--md-card-header>
+            <md-card-avatar>
+                <img class="md-user-avatar" src="">
+            </md-card-avatar>
+            <md-card-header-text>
+                <span class="md-title">Title</span>
+                <span class="md-subhead">Sub header</span>
+            </md-card-header-text>
+        </md-card-header-->
+        <img  ng-src="{{ self.rootScope.selectedTheme.image }}" class="md-card-image" ng-click="self.openThemeSelector()">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-title">{{ self.rootScope.selectedTheme.name }}</span>
+            </md-card-title-text>
+        </md-card-title>
+
+        <!--div class="rv-theme-card-check">
+            <md-icon md-svg-src="navigation:check" ></md-icon>
+        </div-->
+
+        <md-card-actions layout="row" layout-align="start center">
+            <md-button>learn more</md-button>
+            <md-card-icon-actions>
+                <md-button class="rv-theme-card-more md-icon-button" aria-label="icon" ng-click="self.themCardShowMore = !self.themCardShowMore">
+                    <md-icon md-svg-icon="community:chevron-down"></md-icon>
+                </md-button>
+            </md-card-icon-actions>
+        </md-card-actions>
+        <md-card-content ng-show="self.themCardShowMore" class="rv-toggle-slide">
+            <p>
+                {{ self.rootScope.selectedTheme.description }}
+            </p>
+            <h5 class="md-subhead">Included in this theme:</h5>
+            <ul>
+                <li ng-repeat="item in self.rootScope.selectedTheme.items">{{ item }}</li>
+            </ul>
+        </md-card-content>
+    </md-card>
 </div>
