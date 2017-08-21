@@ -26,7 +26,7 @@ function rvThemeSelector() {
     return directive;
 }
 
-function Controller(sideNavigationService, version, configService, $mdSidenav, $rootScope) {
+function Controller(sideNavigationService, version, configService, $mdSidenav, $rootScope, themeService) {
     'ngInject';
     const self = this;
     const ref = {
@@ -43,6 +43,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Very Hot Days (+30C)',
                     'Very Cold Days (-30C)'
                 ],
+                action: themeService.showExtreme,
                 expanded: false
             },
             {
@@ -54,6 +55,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Maximum Temperature',
                     'Mean Temperature'
                 ],
+                action: themeService.showTemp,
                 expanded: false
             },
             {
@@ -65,6 +67,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Heavy Precipitation Days (10mm)',
                     'Precipitation'
                 ],
+                action: themeService.showPrecipitation,
                 expanded: false
             },
             {
@@ -83,6 +86,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Date of First Fall Frost',
                     'Frost-Free Season'
                 ],
+                action: themeService.showAgriculture,
                 expanded: false
             },
             {
@@ -95,6 +99,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Frost Days',
                     'Freeze-Thaw Days'
                 ],
+                action: themeService.showEngineering,
                 expanded: false
             },
             {
@@ -104,6 +109,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                 items: [
                     'trends in Mean Temperature'
                 ],
+                action: themeService.showTrends,
                 expanded: false
             }
         ]

@@ -5,19 +5,32 @@ angular
 function themeService(configService, $interval) {
 
     const service = {
-        showTemp
+        showTemp,
+        showExtreme
     };
 
     const visibleElements = {
-        temperature: ['Temperatures', 'Cities', 'Treaties']
+        temperature: ['Temperatures', 'Cities', 'Treaties'],
+        extreme: ['Tropical', 'Cities', 'Treaties']
     };
     const visibleLayers = {
-        temperature: [/temp/g, 'cities', 'treaties']
+        temperature: [/temp/g, 'cities', 'treaties'],
+        extreme: [/tropical/g, 'cities', 'treaties']
     };
 
     let config;
 
     return service;
+
+    function showExtreme() {
+        reset().then(conf => {
+            assembleLayers('extreme').forEach(lr => lr.setVisibility(true));
+            assembleElements('extreme').forEach(el => {
+                el.css('display', 'block');
+                el.find('li').css('display', 'block');
+            });
+        });
+    }
 
     function showTemp() {
         reset().then(conf => {

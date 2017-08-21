@@ -654,8 +654,7 @@
             ]
           },
           {
-            "name": "Extreme",
-            "children": [
+            "exclusiveVisibility": [
               {
                 "layerId": "tropical_nights_2051_2080_less",
                 "controlledIds": [
