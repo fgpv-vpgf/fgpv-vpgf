@@ -93,6 +93,8 @@ function rvSymbologyStack($q, Geo, animationService) {
             if (newStack) {
                 ref.isReady = false;
 
+                self.coverSymbol = newStack[0].name === '__cover__';
+
                 // collapse the stack when underlying collection of the symbology changes as the expanded ui stack might initialy had a different number of items
                 if (self.isExpanded) {
                     self.expandSymbology(false);
@@ -165,7 +167,7 @@ function rvSymbologyStack($q, Geo, animationService) {
             const canvas = document.createElement('canvas');
 
             // find all symbology items and their parts
-            ref.symbolItems = element.find(RV_SYMBOLOGY_ITEM_CLASS)
+            ref.symbolItems = element.find(RV_SYMBOLOGY_ITEM_CLASS).not('.rv-symbol-cover')
                 .toArray()
                 .map(domNode => {
                     domNode = angular.element(domNode);

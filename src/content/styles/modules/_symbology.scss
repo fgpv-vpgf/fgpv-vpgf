@@ -64,7 +64,7 @@
             }
         }
 
-        &.rv-compound .rv-symbol {
+        &.rv-compound .rv-symbol:not(.rv-symbol-cover) {
             $compound-icon-size: $icon-size - rem(0.2);
 
             width: $compound-icon-size;

@@ -16,6 +16,14 @@ Obviously you need some kind of rules and criteria:
     1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
 */
 
+.rv-symbol-cover {
+    pointer-events: none;
+}
+
+.rv-no-shadow-legend.rv-symbol {
+    box-shadow: none;
+}
+
 .rv-card-holder {
     position: absolute;
     right: 0;

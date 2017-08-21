@@ -1,16 +1,23 @@
 <div
     class="rv-symbology-container rv-render-{{ self.symbology.renderStyle }}"
-    ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 }]'>
+    ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 && !self.coverSymbol }]'>
 
     <div class="rv-description-container">
         <span class="rv-description">{{ ::self.description }}</span>
     </div>
 
-    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack | rvReverse">
+    <div class="rv-symbol"
+        ng-class="{ 'rv-no-shadow-legend': self.coverSymbol }"
+        ng-repeat="symbol in self.symbology.stack | rvReverse | filter: { name: '!__cover__' }">
         <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
         <div class="rv-symbol-label-container">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
         </div>
+    </div>
+
+    <div class="rv-symbol rv-symbol-cover"
+        ng-repeat="symbol in self.symbology.stack | filter: { name: '__cover__' }">
+        <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
     </div>
 
     <md-button
