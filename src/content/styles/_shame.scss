@@ -18,6 +18,19 @@ Obviously you need some kind of rules and criteria:
 
 .rv-symbol-cover {
     pointer-events: none;
+    box-shadow: none !important;
+
+    rv-svg {
+        padding: 2px;
+    }
+}
+
+.rv-symbol-graphic {
+    box-shadow: none !important;
+}
+
+.rv-no-shadow-legend.rv-symbol-trigger {
+    opacity: 0 !important;
 }
 
 .rv-no-shadow-legend.rv-symbol {

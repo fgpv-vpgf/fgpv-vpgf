@@ -22,6 +22,7 @@
 
     <md-button
         class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
+        ng-class="{ 'rv-no-shadow-legend': self.coverSymbol }"
         ng-if="self.symbology.isInteractive"
         ng-click="self.expandSymbology()"
         ng-focus="self.fanOutSymbology(true)"

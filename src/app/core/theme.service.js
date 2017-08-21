@@ -10,28 +10,28 @@ function themeService(configService, $interval) {
 
     const visibleElements = {
         temperature: [
-            'Temperatures', 
-            'Cities', 
-            'Treaties', 
-            'Municipalities', 
+            'Temperatures',
+            'Cities',
+            'Treaties',
+            'Municipalities',
             'Provinces'
         ],
         extremes: [
             'Very cold days',
-            'Very hot days', 
-            'Tropical Nights', 
-            'Warmest Maximum', 
+            'Very hot days',
+            'Tropical Nights',
+            'Warmest Maximum',
             'Coldest Minimum',
             'Summer Days',
-            'Cities', 
+            'Cities',
             'Treaties',
-            'Municipalities', 
+            'Municipalities',
             'Provinces'
         ]
     };
     const visibleLayers = {
-        temperature: [/temp/g, 'cities', 'treaties', 'municipalities', 'provinces'],
-        extremes: [/extreme/g, 'cities', 'treaties', 'municipalities', 'provinces']
+        temperature: [/temp/g, 'cities', 'treaties', 'municipalities', 'provinces', 'thegrid', 'flicks'],
+        extremes: [/extreme/g, 'cities', 'treaties', 'municipalities', 'provinces', 'thegrid', 'flicks']
     };
 
     let config;
