@@ -33,7 +33,7 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
     function link(scope, directiveElement) {
         const self = scope.self;
 
-        themeService.showExtreme();
+        themeService.showSomething('extremes');
 
         self.toggleSortGroups = toggleSortGroups;
 
