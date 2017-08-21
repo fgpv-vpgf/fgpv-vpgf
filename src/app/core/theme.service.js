@@ -9,10 +9,10 @@ function themeService(configService, $interval) {
     };
 
     const visibleElements = {
-        temperature: ['Temperatures', 'Cities']
+        temperature: ['Temperatures', 'Cities', 'Treaties']
     };
     const visibleLayers = {
-        temperature: [/temp/g, 'cities']
+        temperature: [/temp/g, 'cities', 'treaties']
     };
 
     let config;
