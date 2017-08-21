@@ -9,8 +9,25 @@ function themeService(configService, $interval) {
     };
 
     const visibleElements = {
-        temperature: ['Temperatures', 'Cities', 'Treaties', 'Municipalities', 'Provinces'],
-        extremes: ['Very cold days', 'Very hot days', 'Tropical Nights', 'Warmest Maximum', 'Cities', 'Treaties','Municipalities', 'Provinces']
+        temperature: [
+            'Temperatures', 
+            'Cities', 
+            'Treaties', 
+            'Municipalities', 
+            'Provinces'
+        ],
+        extremes: [
+            'Very cold days',
+            'Very hot days', 
+            'Tropical Nights', 
+            'Warmest Maximum', 
+            'Coldest Minimum',
+            'Summer Days',
+            'Cities', 
+            'Treaties',
+            'Municipalities', 
+            'Provinces'
+        ]
     };
     const visibleLayers = {
         temperature: [/temp/g, 'cities', 'treaties', 'municipalities', 'provinces'],

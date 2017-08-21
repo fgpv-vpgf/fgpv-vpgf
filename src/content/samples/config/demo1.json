@@ -719,6 +719,48 @@
                 ]
               },
               {
+                "layerId": "extreme_minmin_2051_2080_less",
+                "controlledIds": [
+                  "extreme_minmin_baseline",
+                  "extreme_minmin_2021_2050_less",
+                  "extreme_minmin_2021_2050_more",
+                  "extreme_minmin_2051_2080_more"
+                ],
+                "description": "",
+                "symbologyRenderStyle": "images",
+                "symbologyStack": [
+                  {
+                    "image": "data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCA0ODEuMzI5IDQ4MS4zMjkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ4MS4zMjkgNDgxLjMyOTsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+CjxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNMTYxLjEyMywyNzMuNzJWNDkuNjQ4QzE2MS4xMjMsMjIuMjMyLDEzOC44OTEsMCwxMTEuNDc1LDBsMCwwICBDODQuMDUxLDAsNjEuODI3LDIyLjIzMiw2MS44MjcsNDkuNjQ4djIyNi40OTZDMjQuNTIzLDI5Ni40NTYsMC4zNzEsMzM3Ljg4LDUuNDM1LDM4NC4zNzYgIGM1LjQ1Niw1MC4wOTYsNDYuMDE2LDkwLjczNiw5Ni4xMDQsOTYuMjY0YzY1Ljg4OCw3LjI4LDEyMS42NDgtNDQuMTEyLDEyMS42NDgtMTA4LjUyOCAgQzIyMy4xODcsMzI4LjcxMiwxOTcuODAzLDI5MS4zMzYsMTYxLjEyMywyNzMuNzJ6Ii8+CjxnPgoJPHBhdGggc3R5bGU9ImZpbGw6I0U2NjAzMjsiIGQ9Ik0xMzUuNTU1LDMwMi43NDRWMjE2YzAtMTMuMjU2LTEwLjc0NC0yNC0yNC0yNGwwLDBjLTEzLjI1NiwwLTI0LDEwLjc0NC0yNCwyNHY4OC4wMjQgICBjLTI1LjI0LDkuOTc2LTQzLjMzNiwzNC4xMTItNDQuMzc2LDYyLjY0Yy0xLjM5MiwzOC4zMTIsMjkuNzc2LDcxLjY1Niw2OC4xMDQsNzIuNzI4YzM5LjY3MiwxLjExMiw3Mi4xODQtMzAuNzIsNzIuMTg0LTcwLjE0NCAgIEMxODMuNDY3LDMzOC4yODgsMTYzLjM4NywzMTIuMDU2LDEzNS41NTUsMzAyLjc0NHoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNFNjYwMzI7IiBkPSJNMTI3LjU2MywxODMuNTA0Yy0yLjY4LDAtNS4yOTYtMS4zNDQtNi44MDgtMy43OTJsLTguNzEyLTE0LjA4bC05Ljg4OCwxNC40ICAgYy0yLjUwNCwzLjY0OC03LjQ3Miw0LjU3Ni0xMS4xMjgsMi4wNjRjLTMuNjQtMi40OTYtNC41Ni03LjQ4OC0yLjA2NC0xMS4xMjhsMTYuODMyLTI0LjQ5NmMxLjUyOC0yLjIyNCwzLjk4NC0zLjU0NCw2Ljc4NC0zLjQ3MiAgIGMyLjY5NiwwLjA3Miw1LjE4NCwxLjQ5Niw2LjYwOCwzLjc5MmwxNS4xNjgsMjQuNDk2YzIuMzI4LDMuNzYsMS4xNjgsOC42ODgtMi41OTIsMTEuMDE2ICAgQzEzMC40NTEsMTgzLjEyLDEyOS4wMDMsMTgzLjUwNCwxMjcuNTYzLDE4My41MDR6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRTY2MDMyOyIgZD0iTTEyNy41NjMsMTM1LjUwNGMtMi42OCwwLTUuMjk2LTEuMzQ0LTYuODA4LTMuNzkybC04LjcxMi0xNC4wOGwtOS44ODgsMTQuNCAgIGMtMi41MDQsMy42NDgtNy40NzIsNC41NzYtMTEuMTI4LDIuMDY0Yy0zLjY0LTIuNDk2LTQuNTYtNy40ODgtMi4wNjQtMTEuMTI4bDE2LjgzMi0yNC40OTZjMS41MjgtMi4yMjQsMy45ODQtMy41Niw2Ljc4NC0zLjQ3MiAgIGMyLjY5NiwwLjA3Miw1LjE4NCwxLjQ5Niw2LjYwOCwzLjc5MmwxNS4xNjgsMjQuNDk2YzIuMzI4LDMuNzYsMS4xNjgsOC42ODgtMi41OTIsMTEuMDE2ICAgQzEzMC40NTEsMTM1LjEyLDEyOS4wMDMsMTM1LjUwNCwxMjcuNTYzLDEzNS41MDR6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRTY2MDMyOyIgZD0iTTEyNy41NjMsODcuNTA0Yy0yLjY4LDAtNS4yOTYtMS4zNDQtNi44MDgtMy43OTJsLTguNzEyLTE0LjA4bC05Ljg4OCwxNC40ICAgYy0yLjUwNCwzLjY0OC03LjQ3Miw0LjU2OC0xMS4xMjgsMi4wNjRjLTMuNjQtMi40OTYtNC41Ni03LjQ4OC0yLjA2NC0xMS4xMjhsMTYuODMyLTI0LjQ5NmMxLjUyOC0yLjIyNCwzLjk4NC0zLjQsNi43ODQtMy40NzIgICBjMi42OTYsMC4wNzIsNS4xODQsMS40OTYsNi42MDgsMy43OTJsMTUuMTY4LDI0LjQ5NmMyLjMyOCwzLjc2LDEuMTY4LDguNjg4LTIuNTkyLDExLjAxNiAgIEMxMzAuNDUxLDg3LjEyLDEyOS4wMDMsODcuNTA0LDEyNy41NjMsODcuNTA0eiIvPgo8L2c+CjxnPgoJPGVsbGlwc2Ugc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGN4PSIzMzcuNzk1IiBjeT0iMTcwLjc0NCIgcng9IjEzOC43NjgiIHJ5PSIxNDEuMjU2Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRkNCNjQxOyIgZD0iTTQzOS41NTUsMzEyYy00LjQxNiwwLTgtMy41NzYtOC04di01NmMwLTQuNDI0LDMuNTg0LTgsOC04czgsMy41NzYsOCw4djU2ICAgQzQ0Ny41NTUsMzA4LjQyNCw0NDMuOTcxLDMxMiw0MzkuNTU1LDMxMnoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNNDM5LjU1NSwzNjBjLTQuNDE2LDAtOC0zLjU3Ni04LTh2LTE2YzAtNC40MjQsMy41ODQtOCw4LThzOCwzLjU3Niw4LDh2MTYgICBDNDQ3LjU1NSwzNTYuNDI0LDQ0My45NzEsMzYwLDQzOS41NTUsMzYweiIvPgoJPHBhdGggc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGQ9Ik0zNTkuNTU1LDM2OGMtNC40MTYsMC04LTMuNTc2LTgtOHYtNTZjMC00LjQyNCwzLjU4NC04LDgtOHM4LDMuNTc2LDgsOHY1NiAgIEMzNjcuNTU1LDM2NC40MjQsMzYzLjk3MSwzNjgsMzU5LjU1NSwzNjh6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRkNCNjQxOyIgZD0iTTM1OS41NTUsNDE2Yy00LjQxNiwwLTgtMy41NzYtOC04di0xNmMwLTQuNDI0LDMuNTg0LTgsOC04czgsMy41NzYsOCw4djE2ICAgQzM2Ny41NTUsNDEyLjQyNCwzNjMuOTcxLDQxNiwzNTkuNTU1LDQxNnoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNMjcxLjU1NSwzMjhjLTQuNDE2LDAtOC0zLjU3Ni04LTh2LTI0YzAtNC40MjQsMy41ODQtOCw4LThzOCwzLjU3Niw4LDh2MjQgICBDMjc5LjU1NSwzMjQuNDI0LDI3NS45NzEsMzI4LDI3MS41NTUsMzI4eiIvPgoJPHBhdGggc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGQ9Ik0yNzEuNTU1LDM3NmMtNC40MTYsMC04LTMuNTc2LTgtOHYtMTZjMC00LjQyNCwzLjU4NC04LDgtOHM4LDMuNTc2LDgsOHYxNiAgIEMyNzkuNTU1LDM3Mi40MjQsMjc1Ljk3MSwzNzYsMjcxLjU1NSwzNzZ6Ii8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==",
+                    "text":"__cover__"
+                  },
+                  {
+                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "layerId": "extreme_25C_2051_2080_less",
+                "controlledIds": [
+                  "extreme_25C_baseline",
+                  "extreme_25C_2021_2050_less",
+                  "extreme_25C_2021_2050_more",
+                  "extreme_25C_2051_2080_more"
+                ],
+                "description": "",
+                "symbologyRenderStyle": "images",
+                "symbologyStack": [
+                  {
+                    "image": "data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCA0ODEuMzI5IDQ4MS4zMjkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ4MS4zMjkgNDgxLjMyOTsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+CjxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNMTYxLjEyMywyNzMuNzJWNDkuNjQ4QzE2MS4xMjMsMjIuMjMyLDEzOC44OTEsMCwxMTEuNDc1LDBsMCwwICBDODQuMDUxLDAsNjEuODI3LDIyLjIzMiw2MS44MjcsNDkuNjQ4djIyNi40OTZDMjQuNTIzLDI5Ni40NTYsMC4zNzEsMzM3Ljg4LDUuNDM1LDM4NC4zNzYgIGM1LjQ1Niw1MC4wOTYsNDYuMDE2LDkwLjczNiw5Ni4xMDQsOTYuMjY0YzY1Ljg4OCw3LjI4LDEyMS42NDgtNDQuMTEyLDEyMS42NDgtMTA4LjUyOCAgQzIyMy4xODcsMzI4LjcxMiwxOTcuODAzLDI5MS4zMzYsMTYxLjEyMywyNzMuNzJ6Ii8+CjxnPgoJPHBhdGggc3R5bGU9ImZpbGw6I0U2NjAzMjsiIGQ9Ik0xMzUuNTU1LDMwMi43NDRWMjE2YzAtMTMuMjU2LTEwLjc0NC0yNC0yNC0yNGwwLDBjLTEzLjI1NiwwLTI0LDEwLjc0NC0yNCwyNHY4OC4wMjQgICBjLTI1LjI0LDkuOTc2LTQzLjMzNiwzNC4xMTItNDQuMzc2LDYyLjY0Yy0xLjM5MiwzOC4zMTIsMjkuNzc2LDcxLjY1Niw2OC4xMDQsNzIuNzI4YzM5LjY3MiwxLjExMiw3Mi4xODQtMzAuNzIsNzIuMTg0LTcwLjE0NCAgIEMxODMuNDY3LDMzOC4yODgsMTYzLjM4NywzMTIuMDU2LDEzNS41NTUsMzAyLjc0NHoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNFNjYwMzI7IiBkPSJNMTI3LjU2MywxODMuNTA0Yy0yLjY4LDAtNS4yOTYtMS4zNDQtNi44MDgtMy43OTJsLTguNzEyLTE0LjA4bC05Ljg4OCwxNC40ICAgYy0yLjUwNCwzLjY0OC03LjQ3Miw0LjU3Ni0xMS4xMjgsMi4wNjRjLTMuNjQtMi40OTYtNC41Ni03LjQ4OC0yLjA2NC0xMS4xMjhsMTYuODMyLTI0LjQ5NmMxLjUyOC0yLjIyNCwzLjk4NC0zLjU0NCw2Ljc4NC0zLjQ3MiAgIGMyLjY5NiwwLjA3Miw1LjE4NCwxLjQ5Niw2LjYwOCwzLjc5MmwxNS4xNjgsMjQuNDk2YzIuMzI4LDMuNzYsMS4xNjgsOC42ODgtMi41OTIsMTEuMDE2ICAgQzEzMC40NTEsMTgzLjEyLDEyOS4wMDMsMTgzLjUwNCwxMjcuNTYzLDE4My41MDR6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRTY2MDMyOyIgZD0iTTEyNy41NjMsMTM1LjUwNGMtMi42OCwwLTUuMjk2LTEuMzQ0LTYuODA4LTMuNzkybC04LjcxMi0xNC4wOGwtOS44ODgsMTQuNCAgIGMtMi41MDQsMy42NDgtNy40NzIsNC41NzYtMTEuMTI4LDIuMDY0Yy0zLjY0LTIuNDk2LTQuNTYtNy40ODgtMi4wNjQtMTEuMTI4bDE2LjgzMi0yNC40OTZjMS41MjgtMi4yMjQsMy45ODQtMy41Niw2Ljc4NC0zLjQ3MiAgIGMyLjY5NiwwLjA3Miw1LjE4NCwxLjQ5Niw2LjYwOCwzLjc5MmwxNS4xNjgsMjQuNDk2YzIuMzI4LDMuNzYsMS4xNjgsOC42ODgtMi41OTIsMTEuMDE2ICAgQzEzMC40NTEsMTM1LjEyLDEyOS4wMDMsMTM1LjUwNCwxMjcuNTYzLDEzNS41MDR6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRTY2MDMyOyIgZD0iTTEyNy41NjMsODcuNTA0Yy0yLjY4LDAtNS4yOTYtMS4zNDQtNi44MDgtMy43OTJsLTguNzEyLTE0LjA4bC05Ljg4OCwxNC40ICAgYy0yLjUwNCwzLjY0OC03LjQ3Miw0LjU2OC0xMS4xMjgsMi4wNjRjLTMuNjQtMi40OTYtNC41Ni03LjQ4OC0yLjA2NC0xMS4xMjhsMTYuODMyLTI0LjQ5NmMxLjUyOC0yLjIyNCwzLjk4NC0zLjQsNi43ODQtMy40NzIgICBjMi42OTYsMC4wNzIsNS4xODQsMS40OTYsNi42MDgsMy43OTJsMTUuMTY4LDI0LjQ5NmMyLjMyOCwzLjc2LDEuMTY4LDguNjg4LTIuNTkyLDExLjAxNiAgIEMxMzAuNDUxLDg3LjEyLDEyOS4wMDMsODcuNTA0LDEyNy41NjMsODcuNTA0eiIvPgo8L2c+CjxnPgoJPGVsbGlwc2Ugc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGN4PSIzMzcuNzk1IiBjeT0iMTcwLjc0NCIgcng9IjEzOC43NjgiIHJ5PSIxNDEuMjU2Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRkNCNjQxOyIgZD0iTTQzOS41NTUsMzEyYy00LjQxNiwwLTgtMy41NzYtOC04di01NmMwLTQuNDI0LDMuNTg0LTgsOC04czgsMy41NzYsOCw4djU2ICAgQzQ0Ny41NTUsMzA4LjQyNCw0NDMuOTcxLDMxMiw0MzkuNTU1LDMxMnoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNNDM5LjU1NSwzNjBjLTQuNDE2LDAtOC0zLjU3Ni04LTh2LTE2YzAtNC40MjQsMy41ODQtOCw4LThzOCwzLjU3Niw4LDh2MTYgICBDNDQ3LjU1NSwzNTYuNDI0LDQ0My45NzEsMzYwLDQzOS41NTUsMzYweiIvPgoJPHBhdGggc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGQ9Ik0zNTkuNTU1LDM2OGMtNC40MTYsMC04LTMuNTc2LTgtOHYtNTZjMC00LjQyNCwzLjU4NC04LDgtOHM4LDMuNTc2LDgsOHY1NiAgIEMzNjcuNTU1LDM2NC40MjQsMzYzLjk3MSwzNjgsMzU5LjU1NSwzNjh6Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojRkNCNjQxOyIgZD0iTTM1OS41NTUsNDE2Yy00LjQxNiwwLTgtMy41NzYtOC04di0xNmMwLTQuNDI0LDMuNTg0LTgsOC04czgsMy41NzYsOCw4djE2ICAgQzM2Ny41NTUsNDEyLjQyNCwzNjMuOTcxLDQxNiwzNTkuNTU1LDQxNnoiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiNGQ0I2NDE7IiBkPSJNMjcxLjU1NSwzMjhjLTQuNDE2LDAtOC0zLjU3Ni04LTh2LTI0YzAtNC40MjQsMy41ODQtOCw4LThzOCwzLjU3Niw4LDh2MjQgICBDMjc5LjU1NSwzMjQuNDI0LDI3NS45NzEsMzI4LDI3MS41NTUsMzI4eiIvPgoJPHBhdGggc3R5bGU9ImZpbGw6I0ZDQjY0MTsiIGQ9Ik0yNzEuNTU1LDM3NmMtNC40MTYsMC04LTMuNTc2LTgtOHYtMTZjMC00LjQyNCwzLjU4NC04LDgtOHM4LDMuNTc2LDgsOHYxNiAgIEMyNzkuNTU1LDM3Mi40MjQsMjc1Ljk3MSwzNzYsMjcxLjU1NSwzNzZ6Ii8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==",
+                    "text":"__cover__"
+                  },
+                  {
+                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "text": ""
+                  }
+                ]
+              },
+              {
                 "layerId": "extreme_tropical_nights_2051_2080_less",
                 "controlledIds": [
                   "extreme_tropical_nights_baseline",
@@ -1005,6 +1047,118 @@
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_baseline/MapServer"
+      },
+
+
+      {
+        "id": "extreme_minmin_2021_2050_less",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2030_45/MapServer"
+      },
+
+      {
+        "id": "extreme_minmin_2051_2080_less",
+        "name": "Coldest Minimum Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2060_45/MapServer"
+      },
+
+      {
+        "id": "extreme_minmin_2021_2050_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2030_85/MapServer"
+      },
+
+      {
+        "id": "extreme_minmin_2051_2080_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2060_85/MapServer"
+      },
+
+      {
+        "id": "extreme_minmin_baseline",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_baseline/MapServer"
+      },
+
+
+      {
+        "id": "extreme_25C_2021_2050_less",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_45/MapServer"
+      },
+
+      {
+        "id": "extreme_25C_2051_2080_less",
+        "name": "Summer Days",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_45/MapServer"
+      },
+
+      {
+        "id": "extreme_25C_2021_2050_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_85/MapServer"
+      },
+
+      {
+        "id": "extreme_25C_2051_2080_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_85/MapServer"
+      },
+
+      {
+        "id": "extreme_25C_baseline",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_baseline/MapServer"
       },
 
 
