@@ -9,13 +9,8 @@ function themeService(configService, $interval) {
     };
 
     const visibleElements = {
-<<<<<<< HEAD
-        temperature: ['Temperatures', 'Cities', 'Treaties'],
-        extremes: ['Very cold days', 'Very hot days', 'Tropical Nights', 'Warmest Maximum', 'Cities', 'Treaties']
-=======
         temperature: ['Temperatures', 'Cities', 'Treaties', 'Municipalities', 'Provinces'],
-        extremes: ['Very cold days', 'Tropical Nights', 'Cities', 'Treaties', 'Municipalities', 'Provinces']
->>>>>>> upstream/demo-themes
+        extremes: ['Very cold days', 'Very hot days', 'Tropical Nights', 'Warmest Maximum', 'Cities', 'Treaties','Municipalities', 'Provinces']
     };
     const visibleLayers = {
         temperature: [/temp/g, 'cities', 'treaties', 'municipalities', 'provinces'],
