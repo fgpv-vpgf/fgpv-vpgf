@@ -754,6 +754,12 @@
                 "layerId": "cities"
               },
               {
+                "layerId": "provinces"
+              },
+              {
+                "layerId": "municipalities"
+              },
+              {
                 "layerId": "treaties",
                 "symbologyStack": [
                   {
@@ -771,6 +777,18 @@
       }
     },
     "layers": [
+      {
+        "id": "provinces",
+        "name": "Provinces",
+        "layerType": "esriFeature",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/CanadaThings/MapServer/1"
+      },
+      {
+        "id": "municipalities",
+        "name": "Municipalities",
+        "layerType": "esriFeature",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/CanadaThings/MapServer/0"
+      },
       {
         "id": "treaties",
         "name": "Historic Aboriginal Treaties",

@@ -43,7 +43,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Very Hot Days (+30C)',
                     'Very Cold Days (-30C)'
                 ],
-                action: themeService.showExtreme,
+                action: () => themeService.showSomething('extremes'),
                 expanded: false
             },
             {
@@ -55,7 +55,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Maximum Temperature',
                     'Mean Temperature'
                 ],
-                action: themeService.showTemp,
+                action: () => themeService.showSomething('temperature'),
                 expanded: false
             },
             {
@@ -67,7 +67,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Heavy Precipitation Days (10mm)',
                     'Precipitation'
                 ],
-                action: themeService.showPrecipitation,
+                action: () => themeService.showSomething('extremes'),
                 expanded: false
             },
             {
@@ -86,7 +86,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Date of First Fall Frost',
                     'Frost-Free Season'
                 ],
-                action: themeService.showAgriculture,
+                action: () => themeService.showSomething('extremes'),
                 expanded: false
             },
             {
@@ -99,7 +99,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Frost Days',
                     'Freeze-Thaw Days'
                 ],
-                action: themeService.showEngineering,
+                action: () => themeService.showSomething('extremes'),
                 expanded: false
             },
             {
@@ -109,7 +109,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                 items: [
                     'trends in Mean Temperature'
                 ],
-                action: themeService.showTrends,
+                action: () => themeService.showSomething('extremes'),
                 expanded: false
             }
         ]
