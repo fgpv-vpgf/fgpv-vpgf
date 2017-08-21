@@ -677,6 +677,48 @@
                 ]
               },
               {
+                "layerId": "extreme_veryhot_2051_2080_less",
+                "controlledIds": [
+                  "extreme_veryhot_baseline",
+                  "extreme_veryhot_2021_2050_less",
+                  "extreme_veryhot_2021_2050_more",
+                  "extreme_veryhot_2051_2080_more"
+                ],
+                "description": "",
+                "symbologyRenderStyle": "images",
+                "symbologyStack": [
+                  {
+                    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAB4FBMVEX///8ASW0AQGAAOVUAM00AK0AAJzsLQ2QLQGoKPWYJQmgAM0YAMksGLksALUQGPmYENEwHP2UDMEcHQWYHQGUEMEYEMUYGQGYGP2YHPmUHQGYHP2cHP2YDLkEHP2YDLkAHP2cGP2cGPmYCLkECL0ACL0ECLj8GP2YGP2YGP2YGP2YCLDoDKzkDKzkGP2YGP2YGP2YGP2YCKjYCKjUCKTUCKDICKDMCJzADKDEEKDEEKTIEMkkFKjMFKzMGKzQGP2YHLDQHLDUHQGcJLjYJLzcKQWgKQ2kLMDgLQ2kMMTkMRGoOMzsORmsPNDwPR2wRPlMRSG0SSW4TS28UOEAUOEEUOUEVOUEVOkEWPEMWTXEXPEMXRFkXTnEYTnIZPUUbP0cbUXQcUnUeQkoeVHYgRUwhRUwiV3kkWXolWnsmW3sqT1UrT1UsYH8tYYAuVVkyZoQ3W2BKepRMfJVhj6RihIdjj6Rki5Vqi49sjZBsmKttmat0lZd2obJ6pLR/qLeCq7qFrbuHp6mOtcGUusWiw8ekydClytGmytKqztWs0s2wzs6x0M+x1Nm31tW/3dzD4+XD5eHG5+PK6erM6uvM7OjO7ezP7u7U8vDX9fPY9fPZ9vPZ9/Ta9/Tb+PXb+fXc+fax5XsmAAAAN3RSTlMABwgJCgwNFxgZGygpLC0tQElLS0x0eISFl5iam8HBwsLHyM3Q0NLa2+Dj7/Hy8vP19vn7/P7+CQdOBwAAAeZJREFUeAFl0OdfE0EQxvEhIAUFQaX3XiIEIsdEiTyKRRF774rFYC/YFeyAvYhG0Tj/qju3+eQS7vvi3uSX53aPPDnl7cGw44SDrWXZ5FfU5nDKYMtSypTb4HAGp24JpSnuYZ/Vy7zfSwY43RgzR5jXrKCkvK4hXuwCmyK5kdUEuMUV31vsOSoALYYfPIzwuogZ99SRUdAHted94tzxjcy8gZOikaijt62C2jErn/jMAeZtzDx6RIPDd5lbiLJ6oZ6//fqar15k167TbnAwyoPZVAp1/veCvBxivzKqhppOJOQDtNB3HPKCVqqH+iwiv7ZrsfYW8yYvCFIHjJ0JMW5Ci0xhCsG4JuoR/IVjg8syPy8Sj2kRZebNY17QCWPkp6i5fb6NMDVCzYjrMU7ZYr13yBqoKbFenbQbNyJstdMqqFj8i7i+39biKPMou8opEIKaTEjSjzdP79x/8fEJKyeHqBZqZFaU+qePd8Os2oiosB/YMo5xU5iVBfcpcyfsQBEZlbAbk3Fx/ZU/z7ba2zaQCjTDik3N6Pf4Nn0J9i49ueTK7wYwYWcmru+F0mKgmJKWd+PYvbNYpKuEUvKbsRvGfnia8ihNoLIfGfoqsihTYW0IKb1VBeQXWFnT2BkKddRXl6b9+z8q0+/LODIdsgAAAABJRU5ErkJggg==",
+                    "text":"__cover__"
+                  },
+                  {
+                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "text": ""
+                  }
+                ]
+              },
+              {
+                "layerId": "extreme_maxmax_2051_2080_less",
+                "controlledIds": [
+                  "extreme_maxmax_baseline",
+                  "extreme_maxmax_2021_2050_less",
+                  "extreme_maxmax_2021_2050_more",
+                  "extreme_maxmax_2051_2080_more"
+                ],
+                "description": "",
+                "symbologyRenderStyle": "images",
+                "symbologyStack": [
+                  {
+                    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAB4FBMVEX///8ASW0AQGAAOVUAM00AK0AAJzsLQ2QLQGoKPWYJQmgAM0YAMksGLksALUQGPmYENEwHP2UDMEcHQWYHQGUEMEYEMUYGQGYGP2YHPmUHQGYHP2cHP2YDLkEHP2YDLkAHP2cGP2cGPmYCLkECL0ACL0ECLj8GP2YGP2YGP2YGP2YCLDoDKzkDKzkGP2YGP2YGP2YGP2YCKjYCKjUCKTUCKDICKDMCJzADKDEEKDEEKTIEMkkFKjMFKzMGKzQGP2YHLDQHLDUHQGcJLjYJLzcKQWgKQ2kLMDgLQ2kMMTkMRGoOMzsORmsPNDwPR2wRPlMRSG0SSW4TS28UOEAUOEEUOUEVOUEVOkEWPEMWTXEXPEMXRFkXTnEYTnIZPUUbP0cbUXQcUnUeQkoeVHYgRUwhRUwiV3kkWXolWnsmW3sqT1UrT1UsYH8tYYAuVVkyZoQ3W2BKepRMfJVhj6RihIdjj6Rki5Vqi49sjZBsmKttmat0lZd2obJ6pLR/qLeCq7qFrbuHp6mOtcGUusWiw8ekydClytGmytKqztWs0s2wzs6x0M+x1Nm31tW/3dzD4+XD5eHG5+PK6erM6uvM7OjO7ezP7u7U8vDX9fPY9fPZ9vPZ9/Ta9/Tb+PXb+fXc+fax5XsmAAAAN3RSTlMABwgJCgwNFxgZGygpLC0tQElLS0x0eISFl5iam8HBwsLHyM3Q0NLa2+Dj7/Hy8vP19vn7/P7+CQdOBwAAAeZJREFUeAFl0OdfE0EQxvEhIAUFQaX3XiIEIsdEiTyKRRF774rFYC/YFeyAvYhG0Tj/qju3+eQS7vvi3uSX53aPPDnl7cGw44SDrWXZ5FfU5nDKYMtSypTb4HAGp24JpSnuYZ/Vy7zfSwY43RgzR5jXrKCkvK4hXuwCmyK5kdUEuMUV31vsOSoALYYfPIzwuogZ99SRUdAHted94tzxjcy8gZOikaijt62C2jErn/jMAeZtzDx6RIPDd5lbiLJ6oZ6//fqar15k167TbnAwyoPZVAp1/veCvBxivzKqhppOJOQDtNB3HPKCVqqH+iwiv7ZrsfYW8yYvCFIHjJ0JMW5Ci0xhCsG4JuoR/IVjg8syPy8Sj2kRZebNY17QCWPkp6i5fb6NMDVCzYjrMU7ZYr13yBqoKbFenbQbNyJstdMqqFj8i7i+39biKPMou8opEIKaTEjSjzdP79x/8fEJKyeHqBZqZFaU+qePd8Os2oiosB/YMo5xU5iVBfcpcyfsQBEZlbAbk3Fx/ZU/z7ba2zaQCjTDik3N6Pf4Nn0J9i49ueTK7wYwYWcmru+F0mKgmJKWd+PYvbNYpKuEUvKbsRvGfnia8ihNoLIfGfoqsihTYW0IKb1VBeQXWFnT2BkKddRXl6b9+z8q0+/LODIdsgAAAABJRU5ErkJggg==",
+                    "text":"__cover__"
+                  },
+                  {
+                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "text": ""
+                  }
+                ]
+              },
+              {
                 "layerId": "extreme_tropical_nights_2051_2080_less",
                 "controlledIds": [
                   "extreme_tropical_nights_baseline",
@@ -767,58 +809,169 @@
       {
         "id": "extreme_verycold_2021_2050_less",
         "name": "",
-        "layerType": "esriFeature",
+        "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_45/MapServer/2"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_45/MapServer"
       },
 
       {
         "id": "extreme_verycold_2051_2080_less",
         "name": "Very cold days",
-        "layerType": "esriFeature",
+        "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_45/MapServer/2"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_45/MapServer"
       },
 
       {
         "id": "extreme_verycold_2021_2050_more",
         "name": "",
-        "layerType": "esriFeature",
+        "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_85/MapServer/2"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_85/MapServer"
       },
 
       {
         "id": "extreme_verycold_2051_2080_more",
         "name": "",
-        "layerType": "esriFeature",
+        "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_85/MapServer/2"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_85/MapServer"
       },
 
       {
         "id": "extreme_verycold_baseline",
         "name": "",
-        "layerType": "esriFeature",
+        "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_baseline/MapServer/2"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_baseline/MapServer"
       },
 
+
+      {
+        "id": "extreme_veryhot_2021_2050_less",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2030_45/MapServer"
+      },
+
+      {
+        "id": "extreme_veryhot_2051_2080_less",
+        "name": "Very hot days",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2060_45/MapServer"
+      },
+
+      {
+        "id": "extreme_veryhot_2021_2050_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2030_85/MapServer"
+      },
+
+      {
+        "id": "extreme_veryhot_2051_2080_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer"
+      },
+
+      {
+        "id": "extreme_veryhot_baseline",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_baseline/MapServer"
+      },
+
+
+      {
+        "id": "extreme_maxmax_2021_2050_less",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2030_45/MapServer"
+      },
+
+      {
+        "id": "extreme_maxmax_2051_2080_less",
+        "name": "Warmest Maximum Temperature",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2060_45/MapServer"
+      },
+
+      {
+        "id": "extreme_maxmax_2021_2050_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2030_85/MapServer"
+      },
+
+      {
+        "id": "extreme_maxmax_2051_2080_more",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2060_85/MapServer"
+      },
+
+      {
+        "id": "extreme_maxmax_baseline",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_baseline/MapServer"
+      },
 
 
 
