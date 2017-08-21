@@ -68,7 +68,7 @@ angular
  * @function rvTableDefault
  * @return {object} directive body
  */
-function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, layoutService,
+function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
     tableService, events) {
 
@@ -97,7 +97,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
         self.createTable = createTable;
         self.destroyTable = destroyTable;
 
-        layoutService.panes.table = el;
+        referenceService.panes.table = el;
 
         // columns type with filters information
         const columnTypes = {

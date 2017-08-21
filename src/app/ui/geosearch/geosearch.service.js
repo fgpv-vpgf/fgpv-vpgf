@@ -10,7 +10,7 @@ angular
     .module('app.ui')
     .factory('geosearchService', geosearchService);
 
-function geosearchService($q, $rootScope, stateManager, layoutService, geoSearch, events, debounceService) {
+function geosearchService($q, $rootScope, stateManager, referenceService, geoSearch, events, debounceService) {
 
     const service = {
         isLoading: false, // waiting for results
@@ -29,7 +29,7 @@ function geosearchService($q, $rootScope, stateManager, layoutService, geoSearch
     };
 
     const ref = {
-        mainPanel: layoutService.panels.shell.find('[rv-state=main]'),
+        mainPanel: referenceService.panels.shell.find('[rv-state=main]'),
 
         runningRequestCount: 0 // used to track the latest query and discard results from previous ones if they resolve after an older query
     };

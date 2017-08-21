@@ -23,7 +23,7 @@ angular
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
 function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
-    layoutService) {
+    referenceService) {
 
     const service = {
         addState,
@@ -64,8 +64,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         };
 
         if (service.state[pName].active) {
-            dimensions.width = layoutService.panels[pName].outerWidth();
-            dimensions.height = layoutService.panels[pName].outerHeight();
+            dimensions.width = referenceService.panels[pName].outerWidth();
+            dimensions.height = referenceService.panels[pName].outerHeight();
         }
 
         return dimensions;

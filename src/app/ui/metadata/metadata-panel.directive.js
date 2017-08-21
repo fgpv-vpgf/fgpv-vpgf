@@ -19,7 +19,7 @@ angular
  * @function rvMetadataPanel
  * @return {object} directive body
  */
-function rvMetadataPanel(layoutService) {
+function rvMetadataPanel(referenceService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -33,7 +33,7 @@ function rvMetadataPanel(layoutService) {
     return directive;
 
     function link(scope, el) {
-        layoutService.panes.metadata = el;
+        referenceService.panes.metadata = el;
     }
 }
 

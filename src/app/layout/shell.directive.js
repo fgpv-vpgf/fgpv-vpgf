@@ -14,7 +14,7 @@ angular
     .module('app.layout')
     .directive('rvShell', rvShell);
 
-function rvShell($rootElement, $rootScope, events, stateManager, configService, layoutService,
+function rvShell($rootElement, $rootScope, events, stateManager, configService, layoutService, referenceService,
     mapToolService, debounceService, geoService) {
 
     const directive = {
@@ -41,7 +41,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             scope.self.map = config.map;
         });
 
-        layoutService.panels.shell = el;
+        referenceService.panels.shell = el;
 
         // fix for IE 11 where focus can move to esri generated svg elements
         $rootScope.$on(events.rvApiReady, () => {

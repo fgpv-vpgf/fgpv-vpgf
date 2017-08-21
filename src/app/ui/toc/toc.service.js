@@ -11,7 +11,7 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateManager, graphicsService,
+function tocService($q, $rootScope, $mdToast, $translate, referenceService, stateManager, graphicsService,
     geoService, metadataService, errorService, debounceService, $timeout, LegendBlock, configService,
     legendService) {
 
@@ -116,7 +116,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
         const undoToast = $mdToast.simple()
         .textContent($translate.instant('toc.label.state.remove'))
         .action($translate.instant('toc.label.action.remove'))
-        .parent(layoutService.panes.toc)
+        .parent(referenceService.panes.toc)
         .position('bottom rv-flex');
 
         // promise resolves with 'ok' when user clicks 'undo'
@@ -295,7 +295,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             })
             .catch(() => {
                 errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.filter);
+                    referenceService.panes.filter);
             });
     }
 
@@ -393,7 +393,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
             })
             .catch(() => {
                 errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.filter);
+                    referenceService.panes.filter);
             });
     }
 
@@ -437,7 +437,7 @@ function tocService($q, $rootScope, $mdToast, $translate, layoutService, stateMa
 
             }).catch(error => {
                 errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    layoutService.panes.metadata);
+                    referenceService.panes.metadata);
 
                 // display manager will stop the progress bar when datapromise is rejected
                 reject(error);

@@ -19,7 +19,7 @@ angular
  * @function rvAppbar
  * @return {object} directive body
  */
-function rvAppbar(layoutService) {
+function rvAppbar(referenceService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -31,7 +31,7 @@ function rvAppbar(layoutService) {
     };
 
     function link(scope, el) {
-        layoutService.panels.sidePanel = el;
+        referenceService.panels.sidePanel = el;
     }
 
     return directive;

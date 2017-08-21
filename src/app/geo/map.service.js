@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($q, $timeout, layoutService, gapiService, configService, identifyService, events) {
+function mapServiceFactory($q, $timeout, referenceService, gapiService, configService, identifyService, events) {
     const service = {
         destroyMap,
         makeMap,
@@ -89,7 +89,7 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
         mapConfig.instance._map.destroy();
         mapConfig.reset();
 
-        layoutService.mapNode.empty();
+        referenceService.mapNode.empty();
         // FIXME: do we need to destroy scalebar and overview map even after we empty the node
     }
 
@@ -104,7 +104,7 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
         const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
         // dom node to build the map on; need to be specified only the first time the map is created and stored for reuse;
-        const mapNode = layoutService.mapNode;
+        const mapNode = referenceService.mapNode;
 
         const mapSettings = {
             basemaps: mapConfig.basemaps,
@@ -330,7 +330,7 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
      */
     function _toggleHighlightHaze(value = null) {
         if (value !== null) {
-            angular.element(layoutService.mapNode).toggleClass('rv-map-highlight', value);
+            angular.element(referenceService.mapNode).toggleClass('rv-map-highlight', value);
         }
     }
 
@@ -343,12 +343,12 @@ function mapServiceFactory($q, $timeout, layoutService, gapiService, configServi
      * @return {Promise} a promise resolving after map completes extent change
      */
     function zoomToFeature(proxy, oid) {
-        const offset = layoutService.mainPanelsOffset
+        const offset = referenceService.mainPanelsOffset
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
         if (offset.x > peekFactor || offset.y > peekFactor) {
             offset.x = offset.y = 0;
-            layoutService.peekAtMap();
+            referenceService.peekAtMap();
         }
 
         const zoomPromise = proxy.zoomToGraphic(
