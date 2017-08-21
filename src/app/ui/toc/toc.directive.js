@@ -16,7 +16,7 @@ angular
     .module('app.ui')
     .directive('rvToc', rvToc);
 
-function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService, configService) {
+function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -40,8 +40,8 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
         directiveElement.on('touchstart', () =>
             (isTouchDetected = true));
 
-        // register toc node with layoutService so it can be targeted
-        layoutService.panes.toc = directiveElement;
+        // register toc node with referenceService so it can be targeted
+        referenceService.panes.toc = directiveElement;
 
         // TODO convert this object into an ES6 class
         // jscs doesn't like enhanced object notation

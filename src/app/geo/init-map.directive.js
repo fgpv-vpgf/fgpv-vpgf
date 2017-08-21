@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, $interval, globalRegistry) {
+function rvInitMap($rootScope, geoService, events, referenceService, $rootElement, $interval, globalRegistry) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -33,7 +33,7 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
 
         // deregister after the first `rvReady` event as it's fired only once
         const deRegister = scope.$on(events.rvReady, () => {
-            layoutService.mapNode = el;
+            referenceService.mapNode = el;
             geoService.assembleMap(/*el[0]*/);
             deRegister();
         });
@@ -137,7 +137,7 @@ function rvInitMap($rootScope, geoService, events, layoutService, $rootElement, 
 
         } else if (keyMap.indexOf(event.which) === -1) {
             // enable keyboard support only when map is focused
-            if (layoutService.mapNode.is($(document.activeElement))) {
+            if (referenceService.mapNode.is($(document.activeElement))) {
                 keyMap.push(event.which);
                 animate(event);
             }

@@ -35,7 +35,7 @@ function rvDetailsRecordEsrifeature() {
     return directive;
 }
 
-function Controller($scope, events, mapService, geoService, configService, layoutService) {
+function Controller($scope, events, mapService, geoService, configService) {
     'ngInject';
     const self = this;
 

@@ -140,7 +140,7 @@ angular
  * @function rvTableDefinition
  * @return {object} directive body
  */
-function rvTableDefinition(stateManager, events, $compile, tableService, layoutService, $rootScope) {
+function rvTableDefinition(stateManager, events, $compile, tableService, referenceService, $rootScope) {
     const directive = {
         restrict: 'A',
         template: '',
@@ -284,7 +284,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, layoutS
 
             filter.scope.self[column.simpleColumnName] = column.filter;
 
-            $rootScope.$watch(() => layoutService.isFiltersVisible, val => { filter.self[column.simpleColumnName].filtersVisible = val });
+            $rootScope.$watch(() => referenceService.isFiltersVisible, val => { filter.self[column.simpleColumnName].filtersVisible = val });
 
             // create directive
             const template = FILTERS_TEMPLATE[column.type](column.simpleColumnName);

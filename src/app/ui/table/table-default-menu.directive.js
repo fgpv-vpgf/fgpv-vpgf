@@ -34,7 +34,7 @@ function rvTableDefaultMenu(layoutService) {
     }
 }
 
-function Controller($scope, stateManager, events, tableService, appInfo, $rootScope, layoutService) {
+function Controller($scope, stateManager, events, tableService, appInfo, $rootScope, referenceService) {
     'ngInject';
     const self = this;
 
@@ -53,7 +53,7 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
     function showFilters() {
         stateManager.display.table.data.filter.isOpen = self.filter.isOpen; // set on layer so it will persist when we switch between layers
         // always show filters if settings panel is open
-        layoutService.isFiltersVisible = tableService.isSettingOpen ? true : stateManager.display.table.data.filter.isOpen;
+        referenceService.isFiltersVisible = tableService.isSettingOpen ? true : stateManager.display.table.data.filter.isOpen;
     }
 
     function setMode(mode) {

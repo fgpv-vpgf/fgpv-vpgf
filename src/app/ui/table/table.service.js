@@ -12,7 +12,7 @@ angular
     .factory('tableService', tableService);
 
 function tableService(stateManager, geoService, $rootScope, $q, gapiService, debounceService, $rootElement, $timeout,
-    layoutService, layerRegistry) {
+    referenceService, layerRegistry) {
 
     // timestamps can be watched for key changes to filter data
     const filterTimeStamps = {
@@ -321,10 +321,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // show filters if setting is open
         if (service.isSettingOpen) {
-            layoutService.isFiltersVisible = true;
+            referenceService.isFiltersVisible = true;
         } else {
             // when setting is close, check if we need to show setting
-            layoutService.isFiltersVisible = service.filter.isOpen;
+            referenceService.isFiltersVisible = service.filter.isOpen;
 
             // need to recalculate scroller space because user may have switch from default to full view inside setting panel
             // need a timeout, if not measure occurs when datatable is not displayed and it fails
@@ -491,7 +491,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // check if we need to show the filters (need this check when table is created)
         // always show filters if settings panel is open
-        layoutService.isFiltersVisible = service.isSettingOpen ? true : service.filter.isOpen;
+        referenceService.isFiltersVisible = service.isSettingOpen ? true : service.filter.isOpen;
 
         // set layer type to see if we show apply filter button. Only works on feature/dynamic layer
         // user added layer (layer created by value from a feature collection like CSV file) does not support definition expressions and time definitions)

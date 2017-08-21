@@ -34,7 +34,7 @@ function rvMetadataExpand() {
     return directive;
 }
 
-function Controller(stateManager, $mdDialog, layoutService) {
+function Controller(stateManager, $mdDialog, referenceService) {
     'ngInject';
     const self = this;
 
@@ -58,7 +58,7 @@ function Controller(stateManager, $mdDialog, layoutService) {
             controllerAs: 'self',
             disableParentScroll: false,
             bindToController: true,
-            parent: layoutService.panels.shell
+            parent: referenceService.panels.shell
         });
     }
 }

@@ -20,7 +20,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(layoutService) {
+function rvPanel(referenceService) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {
@@ -47,7 +47,7 @@ function rvPanel(layoutService) {
      * @param {Array} attr directive's attributes
      */
     function link(scope, element, attr) {
-        layoutService.panels[attr.type] = element;
+        referenceService.panels[attr.type] = element;
     }
 }
 
@@ -55,11 +55,11 @@ function rvPanel(layoutService) {
  * Skeleton controller function.
  * @function Controller
  */
-function Controller($attrs, stateManager, layoutService, $element, debounceService) {
+function Controller($attrs, stateManager, referenceService, $element, debounceService) {
     'ngInject';
     const self = this;
 
-    layoutService.panels[$attrs.type] = $element;
+    referenceService.panels[$attrs.type] = $element;
 
     self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
 

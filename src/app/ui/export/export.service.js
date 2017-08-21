@@ -20,7 +20,7 @@ angular
     .module('app.ui')
     .service('exportService', exportService);
 
-function exportService($mdDialog, $mdToast, layoutService) {
+function exportService($mdDialog, $mdToast, referenceService) {
     const service = {
         open,
         close
@@ -36,7 +36,7 @@ function exportService($mdDialog, $mdToast, layoutService) {
      * @param {Object} event original click event
      */
     function open(event) {
-        const shellNode = layoutService.panels.shell;
+        const shellNode = referenceService.panels.shell;
 
         $mdDialog.show({
             locals: {

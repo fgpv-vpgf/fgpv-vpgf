@@ -14,7 +14,7 @@ angular
     .module('app.ui')
     .factory('exportSizesService', exportSizesService);
 
-function exportSizesService(ExportSize, layoutService) {
+function exportSizesService(ExportSize, referenceService) {
     const customOption = new ExportSize('export.size.custom', 1); // user types in the exact size
     const defaultOption = new ExportSize('export.size.default', 1); // default option is always the same size as the map/shell
     const tempOption = new ExportSize('export.size.custom', 1); // temp option is used as an intermediary step when setting a custom size
@@ -61,7 +61,7 @@ function exportSizesService(ExportSize, layoutService) {
      * @return {Object} itself
      */
     function update() {
-        const shellNode = layoutService.panels.shell;
+        const shellNode = referenceService.panels.shell;
         const [mapWidth, mapHeight] = [shellNode.width(), shellNode.height()];
 
         service.exportSizeRatio = mapWidth / mapHeight;
