@@ -578,7 +578,15 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                     if (tipContent && tipContent.graphic === e.target) {
                         e.name = e.name.toLowerCase().replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()) );
 
-                        const prefix = layerRecord.config.id === 'cities' ? 'city' : 'region';
+                        const prefixes = {
+                            cities: 'city',
+                            provinces: 'province',
+                            municipalities: 'municipality',
+                            thegrid: 'region',
+                            treaties: 'treaty'
+                        };
+
+                        const prefix = prefixes[layerRecord.config.id];
 
                         tipContent.name = `${e.name} (${prefix})`;
                         // tipContent.name = $filter('picture')(e.name);
