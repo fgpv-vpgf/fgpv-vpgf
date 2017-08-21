@@ -18,3 +18,4 @@ import './statemanager.constant.service.js';
 import './statemanager.service.js';
 import './translation.service.js';
 import './version.service.js';
+import './theme.service.js';

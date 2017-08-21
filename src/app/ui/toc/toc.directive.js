@@ -17,7 +17,7 @@ angular
     .module('app.ui')
     .directive('rvToc', rvToc);
 
-function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService, configService) {
+function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoService, animationService, configService, themeService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -32,6 +32,8 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
 
     function link(scope, directiveElement) {
         const self = scope.self;
+
+        themeService.showTemp();
 
         self.toggleSortGroups = toggleSortGroups;
 
