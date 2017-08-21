@@ -9,7 +9,7 @@ angular
     .module('app.layout')
     .factory('layoutService', layoutService);
 
-function layoutService($rootElement, $rootScope) {
+function layoutService($rootElement, $rootScope, fullScreenService) {
 
     const ref = {
         onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
@@ -39,8 +39,8 @@ function layoutService($rootElement, $rootScope) {
         let elWidth;
         // IE doesn't like giving the correct width when in full screen
         // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2266#issuecomment-320984287
-        if ($rootElement[0].parentElement.className.includes('rv-full-screen')) {
-            elWidth = document.documentElement.clientWidth;
+        if (fullScreenService.isExpanded()) {
+            elWidth = screen.width
         } else {
             elWidth = $rootElement.width();
         }
