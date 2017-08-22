@@ -191,9 +191,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * Retrieves a graphic with the id specified.
          *
          * @param {Number} oid the object id to be returned
+         * @param {Object} opts options object for the graphic
          * @return {Promise} a promise resolving with a graphic object
          */
-        fetchGraphic(oid) {         return this._proxy.fetchGraphic(oid); }
+        fetchGraphic(oid, opts) {         return this._proxy.fetchGraphic(oid, opts); }
 
         abortAttribLoad() {         this._proxy.abortAttribLoad(); }
 
@@ -676,9 +677,13 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * Retrieves a graphic object from the main connected layer given the object id.
          *
          * @param {Number} oid the object id
+         * @param {Object} opts options object for the graphic
+         *                      - map           map wrapper object of current map. only required if requesting geometry
+         *                      - geom          boolean. indicates if return value should have geometry included. default to false
+         *                      - attribs       boolean. indicates if return value should have attributes included. default to false
          * @return {Promise} a promise resolving with a graphic
          */
-        fetchGraphic(oid) {         return this._mainProxyWrapper.fetchGraphic(oid); }
+        fetchGraphic(oid, opts) {         return this._mainProxyWrapper.fetchGraphic(oid, opts); }
 
         abortAttribLoad () {
             common.$interval.cancel(this._stopFeatureCountInterval);
