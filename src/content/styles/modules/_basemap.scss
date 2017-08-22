@@ -4,8 +4,12 @@
     .rv-basemap-selector {
 
         .rv-minimize-button {
+            z-index: 99;
             flex: 0;
-            margin: 0;
+            position: absolute;
+            margin: 20px;
+            top: 0;
+            right: 8px;
         }
     }
 
