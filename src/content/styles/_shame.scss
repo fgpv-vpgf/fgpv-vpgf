@@ -83,6 +83,7 @@ md-card {
         color: white;
         right: 0px;
         left: 0px;
+        pointer-events: none;
 
         md-card-title-text {
             z-index: 1;
@@ -99,6 +100,10 @@ md-card {
             top: 0;
         }
     }
+}
+
+.rv-description {
+    white-space: pre-line;
 }
 
 .rv-theme-card-check {

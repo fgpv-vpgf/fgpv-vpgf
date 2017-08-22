@@ -666,7 +666,7 @@
                   "extreme_verycold_2021_2050_more",
                   "extreme_verycold_2051_2080_more"
                 ],
-                "description": "",
+                "description": "Average number of very cold days (-30 ˚C or colder) per year.\n\nCold days are an indicator of how severe winters are. Very cold temperatures are necessary to kill invasive species and other pests. Reliably cold weather is critical to life in Canada's north because it ensures the stability of the permafrost underlying much of the built environment and the ability to create snow and ice roads for transportation.\n\nMany places in Canada are well adapted to these cold temperatures. Changing winter weather conditions affect how we build and heat our homes, what winter activities we can pursue, and how well local plants and animals survive and thrive. Warming winters also disrupt our experience of normal seasonal change. ",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
                   {
@@ -674,7 +674,7 @@
                     "text":"__cover__"
                   },
                   {
-                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "image": "https://i.imgur.com/qzaq5Cv.png",
                     "text": ""
                   }
                 ]
@@ -687,7 +687,7 @@
                   "extreme_veryhot_2021_2050_more",
                   "extreme_veryhot_2051_2080_more"
                 ],
-                "description": "",
+                "description": "Average number of hot days (30 °C or hotter) per year.\n\n People - especially the elderly - are much more likely to suffer from heat exhaustion and heat stroke, especially in urban environments which amplify the heat. Many outdoor activities become dangerous or impossible in such high temperatures. In general, Canadians aren't used to extremely hot summers, and increases in hot days will bring new and unusual risks as well as a very different experience of summertime.  \n\nHigh, persistent temperatures increases the risk of drought, which can severely impact food production and increases the risk of wildfire. Hot temperatures lead to more thunderstorms, which means increased risks of flash flooding, lightning, hail and tornadoes. ",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
                   {
@@ -695,7 +695,7 @@
                     "text":"__cover__"
                   },
                   {
-                    "image": "https://i.imgur.com/JLSw2ty.png",
+                    "image": "https://i.imgur.com/6YylUN4.png",
                     "text": ""
                   }
                 ]
@@ -708,7 +708,7 @@
                   "extreme_maxmax_2021_2050_more",
                   "extreme_maxmax_2051_2080_more"
                 ],
-                "description": "",
+                "description": "This map depicts the average annual warmest temperature (max maximum temperature).",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
                   {
@@ -729,7 +729,7 @@
                   "extreme_minmin_2021_2050_more",
                   "extreme_minmin_2051_2080_more"
                 ],
-                "description": "",
+                "description": "This map depicts the average annual coldest temperature (min minimum temperature).",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
                   {

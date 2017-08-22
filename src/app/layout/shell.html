@@ -33,6 +33,49 @@
 
 <rv-help-overlay rv-state='help'></rv-help-overlay>
 
+<div class="rv-card-holder">
+    <md-card>
+        <!--md-card-header>
+            <md-card-avatar>
+                <img class="md-user-avatar" src="">
+            </md-card-avatar>
+            <md-card-header-text>
+                <span class="md-title">Title</span>
+                <span class="md-subhead">Sub header</span>
+            </md-card-header-text>
+        </md-card-header-->
+        <img  ng-src="{{ self.rootScope.selectedTheme.image }}" class="md-card-image" ng-click="self.openThemeSelector()">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-title">{{ self.rootScope.selectedTheme.name }}</span>
+            </md-card-title-text>
+        </md-card-title>
+
+        <!--div class="rv-theme-card-check">
+            <md-icon md-svg-src="navigation:check" ></md-icon>
+        </div-->
+
+        <md-card-actions layout="row" layout-align="start center">
+            <md-button>learn more</md-button>
+            <md-card-icon-actions>
+                <md-button class="rv-theme-card-more md-icon-button" aria-label="icon" ng-click="self.themCardShowMore = !self.themCardShowMore">
+                    <md-icon md-svg-icon="community:chevron-down"></md-icon>
+                </md-button>
+            </md-card-icon-actions>
+        </md-card-actions>
+        <md-card-content ng-show="self.themCardShowMore" class="rv-toggle-slide">
+            <p>
+                {{ self.rootScope.selectedTheme.description }}
+            </p>
+            <h5 class="md-subhead">Included in this theme:</h5>
+            <ul>
+                <li ng-repeat="item in self.rootScope.selectedTheme.items">{{ item }}</li>
+            </ul>
+        </md-card-content>
+    </md-card>
+</div>
+
+
 <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
 <rv-panel type="main" close-button="false" rv-state="main" rv-morph="main" class="rv-plug-slide-down" ng-class="{ 'rv-no-appbar': !self.config.ui.appBar.enabled }"></rv-panel>
 
@@ -90,46 +133,4 @@
         <md-switch class="md-primary" ng-disabled="sliderVal <= 1" ng-model="toggleVal" aria-label="Switch 1"></md-switch>
         <div class="radiotitle">Severe Forecast</div>
     </div>
-</div>
-
-<div class="rv-card-holder">
-    <md-card>
-        <!--md-card-header>
-            <md-card-avatar>
-                <img class="md-user-avatar" src="">
-            </md-card-avatar>
-            <md-card-header-text>
-                <span class="md-title">Title</span>
-                <span class="md-subhead">Sub header</span>
-            </md-card-header-text>
-        </md-card-header-->
-        <img  ng-src="{{ self.rootScope.selectedTheme.image }}" class="md-card-image" ng-click="self.openThemeSelector()">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-title">{{ self.rootScope.selectedTheme.name }}</span>
-            </md-card-title-text>
-        </md-card-title>
-
-        <!--div class="rv-theme-card-check">
-            <md-icon md-svg-src="navigation:check" ></md-icon>
-        </div-->
-
-        <md-card-actions layout="row" layout-align="start center">
-            <md-button>learn more</md-button>
-            <md-card-icon-actions>
-                <md-button class="rv-theme-card-more md-icon-button" aria-label="icon" ng-click="self.themCardShowMore = !self.themCardShowMore">
-                    <md-icon md-svg-icon="community:chevron-down"></md-icon>
-                </md-button>
-            </md-card-icon-actions>
-        </md-card-actions>
-        <md-card-content ng-show="self.themCardShowMore" class="rv-toggle-slide">
-            <p>
-                {{ self.rootScope.selectedTheme.description }}
-            </p>
-            <h5 class="md-subhead">Included in this theme:</h5>
-            <ul>
-                <li ng-repeat="item in self.rootScope.selectedTheme.items">{{ item }}</li>
-            </ul>
-        </md-card-content>
-    </md-card>
 </div>
