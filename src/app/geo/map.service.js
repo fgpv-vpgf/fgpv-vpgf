@@ -353,10 +353,10 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
             referenceService.peekAtMap();
         }
 
-        const zoomPromise = proxy.zoomToGraphic(
-            oid, configService.getSync.map.instance, offset)
+        const map = configService.getSync.map.instance;
+        const zoomPromise = proxy.zoomToGraphic(oid, map, offset)
             .then(() => {
-                const graphiBundlePromise = proxy.fetchGraphic(oid);
+                const graphiBundlePromise = proxy.fetchGraphic(oid, { map, geom: true, attribs: true });
                 service.addGraphicHighlight(graphiBundlePromise, true);
             });
 

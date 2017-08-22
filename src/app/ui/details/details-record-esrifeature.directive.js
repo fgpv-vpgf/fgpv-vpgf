@@ -141,7 +141,8 @@ function Controller($scope, events, mapService, geoService, configService) {
      * @param {String} oid if of the feature to be highlighted
      */
     function _drawFeatureHighlight(oid) {
-        const graphiBundlePromise = self.item.requester.proxy.fetchGraphic(oid);
+        const map = configService.getSync.map.instance;
+        const graphiBundlePromise = self.item.requester.proxy.fetchGraphic(oid, { map, geom: true, attribs: true });
         mapService.addGraphicHighlight(graphiBundlePromise, true);
     }
 }
