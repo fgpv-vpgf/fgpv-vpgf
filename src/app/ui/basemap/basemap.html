@@ -10,7 +10,7 @@
                     <h3 class="md-title">{{ tileSchema.name }}
                         <md-tooltip>{{ tileSchema.name }}</md-tooltip>
                     </h3>
-                    <md-button class="md-icon-button black rv-button-24 rv-minimize-button" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
+                    <md-button class="md-icon-button black rv-button-24 rv-minimize-button" ng-show="$first" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
                         <md-icon md-svg-src="community:chevron-double-left"></md-icon>
                     </md-button>
                     <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
