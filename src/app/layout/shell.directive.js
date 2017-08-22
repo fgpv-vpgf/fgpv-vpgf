@@ -85,6 +85,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         scope.toggleVal = false;
         scope.$watch('sliderVal', doSomeWorkEh);
         scope.$watch('toggleVal', doSomeWorkEh);
+        events.$on('vischgd', doSomeWorkEh);
 
 
         function doSomeWorkEh() {

@@ -14,7 +14,7 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService, mapService) {
+function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService, mapService, events) {
     const ref = {
         get autoLegendEh() {
             return configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
@@ -65,7 +65,10 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         }
 
         _debouncedAction = debounceService.registerDebounce(
-            value => { this.block.visibility = value; }, 300);
+            value => { 
+                this.block.visibility = value; 
+                events.$broadcast('vischgd');
+            }, 300);
     }
 
     class VisibilityNodeControl extends VisibilityControl {
