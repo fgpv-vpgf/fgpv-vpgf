@@ -30,8 +30,8 @@ function themeService(configService, $interval) {
         ]
     };
     const visibleLayers = {
-        temperature: [/temp/g, 'cities', 'treaties', 'municipalities', 'provinces', 'thegrid', 'flicks'],
-        extremes: [/extreme/g, 'cities', 'treaties', 'municipalities', 'provinces', 'thegrid', 'flicks']
+        temperature: ['annual_mintemp_2051_2080_less', 'cities', 'thegrid', 'flicks'],
+        extremes: ['extreme_verycold_2051_2080_less', 'cities', 'thegrid', 'flicks']
     };
 
     let config;
@@ -40,11 +40,11 @@ function themeService(configService, $interval) {
 
     function showSomething(type) {
         reset().then(conf => {
-            assembleLayers(type).forEach(lr => lr && lr.setVisibility(true));
             assembleElements(type).forEach(el => {
                 el.css('display', 'block');
                 el.find('li').css('display', 'block');
             });
+            assembleLayers(type).forEach(lr => lr.setVisibility(true));
         });
     }
 
