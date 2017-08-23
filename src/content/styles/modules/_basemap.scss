@@ -3,13 +3,32 @@
 
     .rv-basemap-selector {
 
-        .rv-minimize-button {
+        .rv-basemap-header {
             z-index: 99;
+            height: 60px;
+            width: 100%;
+            background: linear-gradient(#CFD8DC, #FFFFFF);
+            border-bottom: 1px solid $primary-color-light;
+
+            h1 {
+                color: black;
+                text-align: center;
+                font-weight: 400;
+                font-size: 26px;
+            }
+        }
+
+        .rv-minimize-button {
+            z-index: 100;
             flex: 0;
             position: absolute;
-            margin: 20px;
-            top: 0;
-            right: 8px;
+            margin: 10px;
+            top: 10px;
+            right: 5px;
+        }
+
+        .rv-basemap-content .rv-content-pane{
+            top: 60px;
         }
     }
 

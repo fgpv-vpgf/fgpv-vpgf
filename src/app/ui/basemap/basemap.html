@@ -2,37 +2,42 @@
     <!-- rv-trap-focus property is applied here so that focus remains inside the basemap selector (and wraps to the top/bottom as needed).
     This prevents focus from being applied to elements outside the basemap selector that are under the overlay, or hidden by the basemap itself (mapnav buttons) -->
     <md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-left md-whiteframe-z2" md-component-id="right">
-
+        <header class="rv-basemap-header">
+            <h1>{{ 'nav.label.basemap' | translate }}</h1>
+            <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
+        </header>
         <md-button class="md-icon-button black rv-button-24 rv-minimize-button" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
             <md-icon md-svg-src="community:chevron-double-left"></md-icon>
         </md-button>
 
-        <rv-content-pane rv-trap-focus>
+        <div class="rv-basemap-content">
+            <rv-content-pane rv-trap-focus>
 
-            <div class="rv-subsection" ng-repeat="tileSchema in self.map.tileSchemas">
+                <div class="rv-subsection" ng-repeat="tileSchema in self.map.tileSchemas">
 
-                <div class="rv-subheader">
-                    <h3 class="md-title">{{ tileSchema.name }}
-                        <md-tooltip>{{ tileSchema.name }}</md-tooltip>
-                    </h3>
-                    <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
-                        <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
-                        <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
+                    <div class="rv-subheader">
+                        <h3 class="md-title">{{ tileSchema.name }}
+                            <md-tooltip>{{ tileSchema.name }}</md-tooltip>
+                        </h3>
+                        <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
+                            <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
+                            <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
+                        </div>
                     </div>
+
+                    <div class="rv-subcontent">
+
+                        <ul class="rv-list rv-basemap-list">
+                            <li class="rv-basemap-list-item" ng-repeat="basemap in self.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
+                                <rv-basemap-item basemap="basemap" select="self.selectBasemap(basemap)"></rv-basemap-item>
+                            </li>
+                        </ul>
+
+                    </div>
+
                 </div>
 
-                <div class="rv-subcontent">
-
-                    <ul class="rv-list rv-basemap-list">
-                        <li class="rv-basemap-list-item" ng-repeat="basemap in self.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
-                            <rv-basemap-item basemap="basemap" select="self.selectBasemap(basemap)"></rv-basemap-item>
-                        </li>
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </rv-content-pane>
+            </rv-content-pane>
+        </div>
     </md-sidenav>
 </div>
