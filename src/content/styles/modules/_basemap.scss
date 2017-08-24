@@ -3,9 +3,25 @@
 
     .rv-basemap-selector {
 
+        .rv-basemap-header {
+            padding: 0 0 0 16px;
+            min-height: 49px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid $primary-color-light;
+
+            h3 {
+                padding: 0;
+                margin: 0;
+            }
+        }
+
         .rv-minimize-button {
-            flex: 0;
-            margin: 0;
+            margin: 10px;
+        }
+
+        .rv-basemap-content .rv-content-pane{
+            top: 49px;
         }
     }
 
