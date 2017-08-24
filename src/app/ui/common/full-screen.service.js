@@ -201,6 +201,7 @@ function fullScreenService($rootElement, $timeout, referenceService, gapiService
         // if call right after animation completes, the map object still confused about its true size and extent
         $timeout(() => {
             // center the map
+            ref.trueCenterPoint = configService.getSync.map.instance.extent.getCenter();
             map._map.centerAt(ref.trueCenterPoint);
 
             // clear offset properties on the map container node
