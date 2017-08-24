@@ -114,15 +114,15 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
         // create notification toast
         const undoToast = $mdToast.simple()
-        .textContent($translate.instant('toc.label.state.remove'))
-        .action($translate.instant('toc.label.action.remove'))
-        .parent(referenceService.panes.toc)
-        .position('bottom rv-flex');
+            .textContent($translate.instant('toc.label.state.remove'))
+            .action($translate.instant('toc.label.action.remove'))
+            .parent(referenceService.panes.toc)
+            .position('bottom rv-flex');
 
         // promise resolves with 'ok' when user clicks 'undo'
         $mdToast.show(undoToast)
-        .then(response =>
-            response === 'ok' ? _restoreLegendBlock() : resolve());
+            .then(response =>
+                response === 'ok' ? _restoreLegendBlock() : resolve());
 
         console.log(stateManager.display);
 
@@ -149,9 +149,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                 else if (panelDisplay.requester && legendBlock.entries) {
                     // walk thruogh the children of the current block to see if there's an open panel being removed
                     return legendBlock
-                        .walk(lb => {
-                            return lb.id === panelDisplay.requester.id ? lb.id : null;
-                        })
+                        .walk(lb => lb.id === panelDisplay.requester.id ? lb.id : null)
                         .filter(a => a)[0] ? panelName : null;
                 } else {
                     return null;

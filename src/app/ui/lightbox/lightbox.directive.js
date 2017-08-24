@@ -26,7 +26,7 @@ function rvLightbox($mdDialog, referenceService) {
 
     function link(scope, element) {
 
-        element.on('click', (event) => {
+        element.on('click', event => {
             // prevent the link from opening
             event.preventDefault(true);
             event.stopPropagation(true);
@@ -35,7 +35,7 @@ function rvLightbox($mdDialog, referenceService) {
 
             if (imgs.length > 0) {
                 const images = [];
-                imgs.each((index) => { images.push(imgs[index].src); });
+                imgs.each(index => { images.push(imgs[index].src); });
 
                 $mdDialog.show({
                     controller: LightboxController,

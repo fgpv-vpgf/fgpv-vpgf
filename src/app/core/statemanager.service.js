@@ -156,8 +156,9 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return  {Promise}   resolves when a panel has finished its closing animation
      */
     function closePanelFromHistory() {
-        const promise = service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop()))
-                                                        : $q.resolve();
+        const promise = service.panelHistory.length > 0 ?
+            closePanel(getItem(service.panelHistory.pop())) :
+            $q.resolve();
 
         return promise;
     }
@@ -224,18 +225,18 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                 fulfill(true);
             }
         })
-        .then(skipEvent => {
-            if (!skipEvent) {
-                // emit event on the rootscope when change is complete
-                $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+            .then(skipEvent => {
+                if (!skipEvent) {
+                    // emit event on the rootscope when change is complete
+                    $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 
-                // record history of `active` changes only
-                if (property === 'morph') {
-                    return;
+                    // record history of `active` changes only
+                    if (property === 'morph') {
+                        return;
+                    }
                 }
-            }
-            return;
-        });
+                return;
+            });
     }
 
     /**
@@ -404,8 +405,9 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             animationPromise = setItemProperty(panelToClose.name, 'active', false)
                 .then(() =>
                     // wait for all child transition promises to resolve
-                    propagate ? $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false)))
-                                : true
+                    propagate ?
+                        $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
+                        true
                 );
 
         // closing child panel
@@ -460,11 +462,10 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      */
     function getChildren(parentName) {
         return Object.keys(service.state)
-            .filter(key =>
-                service.state[key].parent === parentName)
+            .filter(key => service.state[key].parent === parentName)
             .map(key => ({
-                    name: key,
-                    item: service.state[key]
-                }));
+                name: key,
+                item: service.state[key]
+            }));
     }
 }

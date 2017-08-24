@@ -252,6 +252,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @param   {Object}   column   column object
      * @return {Array} defs definition queries array
      */
+    // eslint-disable-next-line complexity
     function getFilterDefintion(defs, column) {
         /*jshint maxcomplexity:11 */
         if (column.type === 'string') {

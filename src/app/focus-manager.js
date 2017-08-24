@@ -431,15 +431,15 @@ function onFocusin(event) {
 
     viewer.setDialogAction(() =>
         viewer.mdDialog
-        .show({
-            contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-            clickOutsideToClose: false,
-            escapeToClose: false,
-            disableParentScroll: false,
-            parent: viewer.rootElement.find('rv-shell'),
-            focusOnOpen: false
-        })
-        .then(() => viewer.clearTabindex()));
+            .show({
+                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
+                clickOutsideToClose: false,
+                escapeToClose: false,
+                disableParentScroll: false,
+                parent: viewer.rootElement.find('rv-shell'),
+                focusOnOpen: false
+            })
+            .then(() => viewer.clearTabindex()));
 }
 
 /**

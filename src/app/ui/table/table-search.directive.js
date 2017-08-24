@@ -190,6 +190,7 @@ function Controller(tableService, debounceService, $timeout, $rootElement, state
      * @param {String} column column name to search on
      * @param {String} value the search term
      */
+    // eslint-disable-next-line complexity
     function setFilterInfo(column, value) {
         // default filter object
         const filter = { column, searchTerm: null, operator: null };

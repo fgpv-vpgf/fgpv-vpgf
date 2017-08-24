@@ -126,8 +126,8 @@ function StepperFactory($q) {
             let isMoveCanceled = false;
             // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
             // technically, it's a deferred
-            const cancelPromise = $q(resolve =>
-                (this._resolveCancelPromise = resolve)).then(() => {
+            const cancelPromise = $q(resolve => (this._resolveCancelPromise = resolve))
+                .then(() => {
                     isMoveCanceled = true;
                     this._think(currentStep, false);
                 });

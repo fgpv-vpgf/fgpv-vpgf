@@ -33,10 +33,8 @@ angular
 function rvLegendControl(LegendElementFactory) {
     const directive = {
         restrict: 'E',
-        templateUrl: (elm, attr) => {
-            // returns a different templateUrl based on the value of the templateUrl attribute
-            return templateUrl[attr.template || 'button'];
-        },
+        // returns a different templateUrl based on the value of the templateUrl attribute
+        templateUrl: (elm, attr) => templateUrl[attr.template || 'button'],
         scope: {
             block: '=',
             name: '@'

@@ -176,8 +176,10 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         const mx = Math.floor(Math.abs((long - dx) * 60));
         const sx = Math.round((Math.abs(long) - Math.abs(dx) - mx / 60) * 3600);
 
-        return { y: `${Math.abs(dy)}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\"`,
-                x: `${Math.abs(dx)}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\"` };
+        return {
+            y: `${Math.abs(dy)}${cardinal.deg} ${padZero(my)}\' ${padZero(sy)}\"`,
+            x: `${Math.abs(dx)}${cardinal.deg} ${padZero(mx)}\' ${padZero(sx)}\"`
+        };
     }
 
     /**

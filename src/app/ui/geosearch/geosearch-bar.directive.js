@@ -121,9 +121,9 @@ function Controller(appInfo, sideNavigationService, debounceService, geosearchSe
      * @return {Promise} a promise resolving with geo search query suggestion if any
      */
     function getSuggestions() {
-        const suggestionsPromise = geosearchService.runQuery().then((data = {}) => {
-            return data.suggestions || [];
-        });
+        const suggestionsPromise = geosearchService.runQuery().then((data = {}) =>
+            data.suggestions || []
+        );
 
         return suggestionsPromise;
     }

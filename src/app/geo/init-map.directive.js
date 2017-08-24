@@ -188,7 +188,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
         let hasShiftMultiplier = 1;
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
-                // enter key is pressed - trigger identify
+            // enter key is pressed - trigger identify
             case 13:
                 // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                 // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager

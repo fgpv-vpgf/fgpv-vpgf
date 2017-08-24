@@ -285,9 +285,10 @@ function rvSymbologyStack($q, Geo, animationService) {
                 }, 0);
 
                 // wiggle the last icon in the stack
-                timeline.to(ref.symbolItems.slice(-1)
-                    .pop()
-                    .container, RV_DURATION, {
+                timeline.to(
+                    ref.symbolItems.slice(-1).pop().container,
+                    RV_DURATION,
+                    {
                         x: `+=${displacement}px`,
                         y: `+=${displacement}px`,
                         ease: RV_SWIFT_IN_OUT_EASE

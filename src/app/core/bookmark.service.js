@@ -152,9 +152,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      */
     function hexToBinary(value) {
         const hexes = value.match(/./g); // split into single chars
-        return hexes.map(h => {
-            return encodeInteger(parseInt(h, 16), 4); // 4-digit padded binary
-        }).join('');
+        return hexes.map(h =>
+            encodeInteger(parseInt(h, 16), 4) // 4-digit padded binary
+        ).join('');
     }
 
     /**
@@ -217,12 +217,12 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         // and let them go back to default when bookmark loads
         const goodState = state => {
             switch (state) {
-                case Geo.Layer.States.ERROR:
-                case Geo.Layer.States.LOADING:
-                case Geo.Layer.States.NEW:
-                    return false;
-                default:
-                    return true;
+            case Geo.Layer.States.ERROR:
+            case Geo.Layer.States.LOADING:
+            case Geo.Layer.States.NEW:
+                return false;
+            default:
+                return true;
             }
         };
 
@@ -602,7 +602,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {String}        The encoded string
      */
     function encode64(string) {
-        return btoa(string).replace(/=/g, '').replace(/\//g, '_').replace(/\+/g, '-');
+        return btoa(string).replace(/\=/g, '').replace(/\//g, '_').replace(/\+/g, '-');
     }
 
     /**

@@ -194,14 +194,14 @@ function fullScreenService($rootElement, $timeout, referenceService, gapiService
         const originalPanDuration = map.mapDefault('panDuration');
         map.mapDefault('panDuration', 0);
         // TODO: fix after geoapi allows this through
-        map._map.resize();
-        map._map.reposition();
+        map.resize();
+        map.reposition();
 
         // wait for a bit before recentring the map
         // if call right after animation completes, the map object still confused about its true size and extent
         $timeout(() => {
             // center the map
-            map._map.centerAt(ref.trueCenterPoint);
+            map.centerAt(ref.trueCenterPoint);
 
             // clear offset properties on the map container node
             animationService.set(ref.mapContainerNode, {

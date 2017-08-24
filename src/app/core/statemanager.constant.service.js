@@ -23,14 +23,14 @@ const STATE_OBJECT_DEFAULTS = (parentName, displayName) => {
     }
 };
 
-const DISPLAY_OBJECT_DEFAULTS = data => {
-    return {
+const DISPLAY_OBJECT_DEFAULTS = data =>
+    ({
         isLoading: false,
         requester: null,
         requestId: null,
         data: data || null
-    };
-};
+    });
+
 
 /**
  * @member initialState
