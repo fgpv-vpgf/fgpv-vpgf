@@ -13,33 +13,38 @@
         }
 
         #bookmarkURL {
-            width: 79.33%;
+            display: inline-block;
+            width: 79.5%;
+            padding: 0;
         }
 
         .btn {
-            width: 10%;
+            display: inline-block;
+            width: 9%;
+            float: right;
+            margin-left: 1%;
+            padding: 0;
         }
 
         .myMap {
             height: 100%;
-            margin: 10px;
         }
 
         #header {
             width: 100%;
-            display: none;
             background: linear-gradient(#CFD8DC, #FFFFFF);
         }
 
         #hideShow {
             position: absolute;
-            right: 50%;
+            width: 150px;
+            right: 45%;
             z-index: 100;
-            top: 20px;
+            top: 90px;
         }
 
         .fade {
-            opacity: 0.25;
+            opacity: 0.5;
             transition: opacity .25s ease-in-out;
         }
 
@@ -54,16 +59,16 @@
             display: inline-block;
             height: 0.45em;
             position: relative;
-            top: 0.15em;
-            transform: rotate(135deg);
+            top: 0.45em;
+            transform: rotate(-45deg);
             vertical-align: top;
             width: 0.45em;
         }
 
         .chevron.bottom:before {
             top: 0;
-            top: 0.45em;
-            transform: rotate(-45deg);
+            top: 0.15em;
+            transform: rotate(135deg);
         }
 
         .row {
@@ -259,15 +264,15 @@
         }
 
         function hide() {
-            if (!document.getElementById("header").style.display || document.getElementById("header").style.display === "none") {
+            if (document.getElementById("header").style.display === "none") {
                 document.getElementById("header").style.display = "block";
-                document.getElementById("hideShow").classList.remove('top');
-                document.getElementById("hideShow").classList.add('bottom');
+                document.getElementById("hideShow").classList.remove('bottom');
+                document.getElementById("hideShow").classList.add('top');
                 document.getElementById("hideShow").style.top = ('100px');
             } else {
                 document.getElementById("header").style.display = "none";
-                document.getElementById("hideShow").classList.remove('bottom');
-                document.getElementById("hideShow").classList.add('top');
+                document.getElementById("hideShow").classList.remove('top');
+                document.getElementById("hideShow").classList.add('bottom');
                 document.getElementById("hideShow").style.top = ('20px');
             }
         }
