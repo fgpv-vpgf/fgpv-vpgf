@@ -3,11 +3,11 @@
     This prevents focus from being applied to elements outside the basemap selector that are under the overlay, or hidden by the basemap itself (mapnav buttons) -->
     <md-sidenav rv-basemap class="rv-basemap-selector md-sidenav-left md-whiteframe-z2" md-component-id="right">
         <header class="rv-basemap-header">
-            <h1>{{ 'nav.label.basemap' | translate }}</h1>
+            <h3 class="ng-binding md-headline">{{ 'nav.label.basemap' | translate }}</h3>
+            <md-button class="md-icon-button black rv-button-24 rv-minimize-button md-button md-ink-ripple" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
+                <md-icon md-svg-src="community:chevron-double-left"></md-icon>
+            </md-button>
         </header>
-        <md-button class="md-icon-button black rv-button-24 rv-minimize-button" ng-click="self.close()" aria-label="{{ 'contentPane.aria.close' | translate }}">
-            <md-icon md-svg-src="community:chevron-double-left"></md-icon>
-        </md-button>
 
         <div class="rv-basemap-content">
             <rv-content-pane rv-trap-focus>
