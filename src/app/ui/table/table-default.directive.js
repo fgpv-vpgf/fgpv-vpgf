@@ -715,6 +715,10 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     // get index value of currrent cell
                     index = self.table.cell(event.currentTarget).index();
 
+                    if (!index) {
+                        return;
+                    }
+
                     // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
                     // get the number of columns
                     const indexes = self.table.rows().indexes();
