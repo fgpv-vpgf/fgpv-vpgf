@@ -40,7 +40,7 @@
             <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false } track by block.id"
                 class="rv-toggle-slide"
                 data-sort-group="{{ ::block.sortGroup }}"
-                data-legend-id="{{ block.id }}">
+                legend-block-id="{{ block.id }}">
 
                 <!-- legend block -->
                 <rv-legend-block

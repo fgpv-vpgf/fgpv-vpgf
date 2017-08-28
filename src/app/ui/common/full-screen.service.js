@@ -193,7 +193,6 @@ function fullScreenService($rootElement, $timeout, referenceService, gapiService
         const map = configService.getSync.map.instance;
         const originalPanDuration = map.mapDefault('panDuration');
         map.mapDefault('panDuration', 0);
-        // TODO: fix after geoapi allows this through
         map.resize();
         map.reposition();
 
