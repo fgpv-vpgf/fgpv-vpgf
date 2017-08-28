@@ -147,6 +147,11 @@ $layer-item-height-touch: rem(7.2);
             &:hover ~ .rv-shadow {
                 background-color: $primary-color;
             }
+
+            // highlight the selected item
+            &.rv-selected:before {
+                background-color: $accent-color;
+            }
         }
 
         &.rv-legend-node,
