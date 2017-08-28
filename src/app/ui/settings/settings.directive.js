@@ -45,6 +45,7 @@ function rvSettings($compile) {
                 contentPanel
                     .empty()
                     .append($compile(template)(scope));
+                element.find('button.rv-close').rvFocus({ delay: 400 });
             } else {
                 contentPanel.empty();
             }

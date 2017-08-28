@@ -33,6 +33,11 @@ function rvMetadataPanel(referenceService) {
     return directive;
 
     function link(scope, el) {
+        scope.$watch('self.display.data', metadata => {
+            if (metadata) {
+                el.find('button.rv-close').rvFocus({ delay: 400 });
+            }
+        });
         referenceService.panes.metadata = el;
     }
 }
