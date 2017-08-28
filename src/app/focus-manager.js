@@ -463,6 +463,7 @@ function onKeydown(event) {
             viewerActive.setStatus(statuses.INACTIVE);
 
         } else if (event.which === 9) { // tab keydown only
+            ignoreFocusLoss = false;
             const shiftState = shiftFocus(!event.shiftKey, restoreFromHistory);
             // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
             // In general we ALWAYS want to prevent browser focus movements but on full page viewers shiftfocus will fail (correct behaviour) so we
@@ -636,7 +637,6 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
 
         if (jqueryElem.is(':focus')) {
             history.push(jqueryElem);
-            ignoreFocusLoss = false;
         } else {
             // applying focus didn't work, try going back to a history element
             shiftFocus(false, true);
