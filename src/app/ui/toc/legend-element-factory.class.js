@@ -26,6 +26,8 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
             this._legendBlock = legendBlock;
         }
 
+        get controlName () { return this._controlName; }
+
         get block () { return this._legendBlock; }
 
         get icon () {    return ''; }
@@ -40,8 +42,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
 
         get isDisabled () {
             const value =
-                this.block.isControlDisabled(this._controlName) ||
-                this.block.isControlUserDisabled(this._controlName);
+                this.block.isControlDisabled(this._controlName);
 
             return value;
         }

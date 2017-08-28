@@ -388,6 +388,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
                 legendBlockGroup.collapsed = true;
+            } else {
+                // if collapse is not allowed, update the initial config value
+                layerConfig.singleEntryCollapse = false;
             }
 
             return legendBlockGroup;
@@ -460,8 +463,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
             // dynamic children might not support opacity if the layer is not a true dynamic layer
-            // TODO: allow for an optional description why the control is disabled
-            if (!layerRecord.isTrueDynamic) {
+            // do not disable opacity on single entry collapsed blocks
+            if (!layerRecord.isTrueDynamic && !layerConfig.singleEntryCollapse) {
                 dynamicLayerChildDefaults.userDisabledControls.push('opacity');
             }
 
@@ -507,6 +510,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                                 disabledControls: common.intersect(
                                     originalSource.disabledControls,
                                     groupDefaults.controls),
+                                userDisabledControls: common.intersect(
+                                    originalSource.userDisabledControls,
+                                    groupDefaults.controls
+                                ),
                                 name: treeChild.name
                             });
 

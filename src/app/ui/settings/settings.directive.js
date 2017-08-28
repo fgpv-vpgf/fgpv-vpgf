@@ -37,18 +37,24 @@ function rvSettings($compile) {
         let contentPanel;
         const template = `<rv-settings-content block="self.block"></rv-settings-content>`;
 
-        scope.$watch('self.display.data', newLegendBlock => {
+        const self = scope.self;
+
+        scope.$watch('self.display.data', updateSettingsPanel);
+
+        function updateSettingsPanel(newLegendBlock) {
             contentPanel = element.find(SETTINGS_CONTENT_PANEL);
 
             if (newLegendBlock) {
-                scope.self.block = newLegendBlock;
+                self.block = newLegendBlock;
+
                 contentPanel
                     .empty()
                     .append($compile(template)(scope));
+
             } else {
                 contentPanel.empty();
             }
-        });
+        }
     }
 }
 

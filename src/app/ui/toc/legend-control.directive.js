@@ -1,6 +1,7 @@
 const templateUrl = {
     body: require('./templates/legend-control-body.html'),
     button: require('./templates/legend-control-button.html'),
+    link: require('./templates/legend-control-link.html'),
     menu: require('./templates/legend-control-menu.html'),
     slider: require('./templates/legend-control-slider.html'),
     switch: require('./templates/legend-control-switch.html'),
@@ -37,6 +38,7 @@ function rvLegendControl(LegendElementFactory) {
         templateUrl: (elm, attr) => templateUrl[attr.template || 'button'],
         scope: {
             block: '=',
+            valueParentBlock: '=',
             name: '@'
         },
         link: {

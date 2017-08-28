@@ -1,4 +1,4 @@
-<div class="rv-subsection" ng-if="self.checkAvailableControls('visibility|opacity|boundingBox')">
+<div class="rv-subsection" ng-if="::self.checkAvailableControls('visibility|opacity|boundingBox')">
     <div class="rv-subheader">
         <h4 translate class="md-subhead">settings.label.display</h4>
     </div>
@@ -8,7 +8,7 @@
         <md-divider class="rv-settings-divider"></md-divider>
         <rv-legend-control block="self.block" template="switch" name="visibility"></rv-legend-control>
         <md-divider class="rv-settings-divider"></md-divider>
-        <rv-legend-control block="self.block" template="slider" name="opacity"></rv-legend-control>
+        <rv-legend-control block="self.block" template="slider" name="opacity" value-parent-block="self.valueParentBlock"></rv-legend-control>
         <md-divider class="rv-settings-divider"></md-divider>
         <rv-legend-control block="self.block" template="switch" name="boundingBox"></rv-legend-control>
         <md-divider class="rv-settings-divider"></md-divider>
@@ -17,7 +17,7 @@
 
 </div>
 
-<div class="rv-subsection" ng-if="self.checkAvailableControls('query|snapshot')">
+<div class="rv-subsection" ng-if="::self.checkAvailableControls('query|snapshot')">
     <div class="rv-subheader">
         <h4 translate class="md-subhead">settings.label.data</h4>
     </div>
