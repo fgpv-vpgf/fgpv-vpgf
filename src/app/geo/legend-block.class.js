@@ -1029,7 +1029,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
      * @return {Boolean} true if the control specified should be disabled in the UI
      */
     function isControlDisabled(controlName) {
-        return this.disabledControls.indexOf(controlName) !== -1;
+        return this.isControlSystemDisabled(controlName) || this.isControlUserDisabled(controlName);
     }
 
     /**
@@ -1041,7 +1041,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
      * @return {Boolean} true if the control specified is locked from modifications by the system and user
      */
     function isControlSystemDisabled(controlName) {
-        return this.isControlDisabled(controlName);
+        return this.disabledControls.indexOf(controlName) !== -1;
     }
 
     /**

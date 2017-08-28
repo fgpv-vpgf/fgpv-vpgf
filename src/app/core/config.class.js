@@ -1183,7 +1183,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 entryGroupSource.disabledControls,
                 DEFAULTS.legend[TYPES.legend.GROUP].controls) :
                 DEFAULTS.legend[TYPES.legend.GROUP].disabledControls;
-            this._userDisabledControls = [];
+            this._userDisabledControls = angular.isArray(entryGroupSource.userDisabledControls) ? common.intersect(
+                entryGroupSource.userDisabledControls,
+                DEFAULTS.legend[TYPES.legend.GROUP].controls) :
+                [];
 
             this._expanded = entryGroupSource.expanded || false;
 
