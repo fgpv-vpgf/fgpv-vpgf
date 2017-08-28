@@ -361,7 +361,7 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
     if (onlyUseHistory) {
         lastVisibleHistoryElement().rvFocus();
 
-    } else if (link) {
+    } else if (link && link[0][0] !== link[1][0]) {     // check that the link created is not the element with itself
         // goto target if focusable
         if (link.getDestinationElement(forward).is(elemIsFocusable)) {
             link.getDestinationElement(forward).rvFocus();

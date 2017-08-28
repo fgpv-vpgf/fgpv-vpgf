@@ -50,7 +50,11 @@ function rvSettings($compile) {
                 contentPanel
                     .empty()
                     .append($compile(template)(scope));
+<<<<<<< HEAD
 
+=======
+                element.find('button.rv-close').rvFocus({ delay: 400 });
+>>>>>>> fix(focus): close button has focus for side panels
             } else {
                 contentPanel.empty();
             }
