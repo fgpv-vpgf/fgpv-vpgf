@@ -40,7 +40,8 @@
             width: 150px;
             right: 45%;
             z-index: 100;
-            top: 90px;
+            top: 76px;
+            padding: 0;
         }
 
         .fade {
@@ -269,12 +270,12 @@
                 document.getElementById("header").style.display = "block";
                 document.getElementById("hideShow").classList.remove('bottom');
                 document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('100px');
+                document.getElementById("hideShow").style.top = ('76px');
             } else {
                 document.getElementById("header").style.display = "none";
                 document.getElementById("hideShow").classList.remove('top');
                 document.getElementById("hideShow").classList.add('bottom');
-                document.getElementById("hideShow").style.top = ('20px');
+                document.getElementById("hideShow").style.top = ('0px');
             }
         }
 
