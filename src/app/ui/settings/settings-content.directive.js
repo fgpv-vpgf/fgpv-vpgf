@@ -42,7 +42,8 @@ function rvSettingsContent(layerRegistry) {
         const opacityName = 'opacity';
         const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
 
-        if (self.block.isControlDisabled(opacityName) && !layerRecord.isTrueDynamic) {
+        // only search for opacity parent if the control is userDisabled on non-true-dynamic dynamic layers
+        if (self.block.isControlUserDisabled(opacityName) && !layerRecord.isTrueDynamic) {
             self.valueParentBlock = findOpacityParentBlock(self.block);
         }
 
@@ -58,7 +59,8 @@ function rvSettingsContent(layerRegistry) {
 
             const parent = block.visualParent;
 
-            if (!parent) {
+            // the root of the legend doesn't have a parent or any visual representation, ignore it
+            if (!parent || !parent.parent) {
                 return null;
             }
 

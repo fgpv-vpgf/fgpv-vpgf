@@ -316,10 +316,91 @@
         "name": "root",
         "children": [
           {
-              "layerId": "blah"
+            "infoType": "title",
+            "content": "Confusing Opacity Controls"
           },
           {
-              "layerId": "blah2"
+            "name": "Description",
+            "controls": [],
+            "children": [
+              {
+                "infoType": "text",
+                "content": "If a dynamic layer does not support children opacity, all children will have their opacity controls disabled and display a jump link to its parent unless it's single entry collapsed. Jump link should never point to group blocks not belonging to this layer record."
+              },
+              {
+                "infoType": "image",
+                "content": "https://i.imgur.com/DJGO9mN.png"
+              }
+            ]
+          },
+          {
+            "name": "Test 1",
+            "controls": [],
+            "children": [
+              {
+                  "infoType": "text",
+                  "content": "Opacity only enabled at the 'Test Data' group block; all children should have opacity disabled and display a jump link to that group."
+              },
+              {
+                  "layerId": "blah"
+              }
+            ]
+          },
+          {
+            "name": "Test 2",
+            "controls": [],
+            "children": [
+              {
+                  "infoType": "text",
+                  "content": "Opacity should be enabled on the single entry collapsed child since the layer root (its parent) is hidden."
+              },
+              {
+                  "layerId": "blah2"
+              }
+            ]
+          },
+          {
+            "name": "Test 3",
+            "controls": [],
+            "children": [
+              {
+                  "infoType": "text",
+                  "content": "Opacity should be enabled at the 'Group 2' group block; its single child should have opacity disabled and display a jump link to that group."
+              },
+              {
+                  "layerId": "blah3"
+              }
+            ]
+          },
+          {
+            "name": "Test 4",
+            "controls": [],
+            "children": [
+              {
+                  "infoType": "text",
+                  "content": "'Group with opacity disabled' has the opacity control disabled :D Both its children are single entry collapsed."
+              },
+              {
+                "name": "Group with opacity disabled",
+                "disabledControls": ["opacity"],
+                "children": [
+                  {
+                    "infoType": "text",
+                    "content": "1 This layer has the opacity control disabled in the config using 'disabledControls'; should not have a jump link to its visual (real parent is hidden) parent group."
+                  },
+                  {
+                      "layerId": "blah4"
+                  },
+                  {
+                    "infoType": "text",
+                    "content": "2 This layer has the opacity control enabled since it's single entry collapsed."
+                  },
+                  {
+                      "layerId": "blah5"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
@@ -334,6 +415,31 @@
       },
       {
         "id": "blah2",
+        "name": "Test Data",
+        "layerType": "esriDynamic",
+        "layerEntries": [{"index": 2}],
+        "singleEntryCollapse": true,
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer"
+      },
+      {
+        "id": "blah3",
+        "name": "Test Data",
+        "layerType": "esriDynamic",
+        "layerEntries": [{"index": 1}],
+        "singleEntryCollapse": true,
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer"
+      },
+      {
+        "id": "blah4",
+        "name": "Test Data",
+        "layerType": "esriDynamic",
+        "layerEntries": [{"index": 2}],
+        "disabledControls": ["opacity"],
+        "singleEntryCollapse": true,
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer"
+      },
+      {
+        "id": "blah5",
         "name": "Test Data",
         "layerType": "esriDynamic",
         "layerEntries": [{"index": 2}],
