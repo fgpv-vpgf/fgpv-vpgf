@@ -24,6 +24,78 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
     return service;
 
+    /**
+     * Apply filters on map
+     *
+     * @function applyFilters
+     * @private
+     * @param {ProxyWrapper} the proxy wrapper of the layer
+     * @columns {array} the list of columns of the layer
+     */
+    function applyFilter(proxyWrapper, columns) {
+        let defs = [];
+        columns.forEach(column => {
+            if (typeof column.filter !== 'undefined') {
+                defs = getFilterDefintion(defs, column);
+            }
+        });
+
+        defs = defs.join(' AND ');
+
+        proxyWrapper.proxy.setDefinitionQuery(defs);
+    }
+
+
+    /**
+     * Set the layer definition query
+     *
+     * @function getFilterDefintion
+     * @private
+     * @param   {Array}   defs   array of definition queries
+     * @param   {Object}   column   column object
+     * @return {Array} defs definition queries array
+     */
+    function getFilterDefintion(defs, column) {
+        /*jshint maxcomplexity:11 */
+        if (column.filter.type === 'string') {
+            // replace ' by '' to be able to perform the search in the datatable
+            // relpace * wildcard and construct the query (add wildcard at the end)
+            const val = column.filter.value.replace(/'/g, /''/);
+            if (val !== '') {
+                defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
+            }
+        } else if (column.filter.type === 'selector') {
+            const val =  column.filter.value.join(',').replace(/"/g, '\'');
+            if (val !== '') {
+                defs.push(`${column.data} IN (${val})`);
+            }
+        } else {
+
+            const values = column.filter.value.split(',');
+            const min = values[0];
+            const max = values[1];
+
+            if (column.filter.type === 'number') {
+                if (min !== '') {
+                    defs.push(`${column.data} >= ${min}`);
+                }
+                if (max !== '') {
+                    defs.push(`${column.data} <= ${max}`);
+                }
+            } else if (column.type === 'rv-date') {
+                if (min !== null) {
+                    const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
+                    defs.push(`${column.data} >= DATE \'${dateMin}\'`);
+                }
+                if (max !== null) {
+                    const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
+                    defs.push(`${column.data} <= DATE \'${dateMax}\'`);
+                }
+            }
+        }
+        return defs;
+    }
+
     /***/
 
     /**
@@ -526,6 +598,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     const mainProxy = layerRecord.getChildProxy(treeChild.entryIndex);
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
+                    // apply filter if enabled
+                    if (layerConfig.table.applyMap) {
+                        applyFilter(proxyWrapper, layerConfig.table.columns);
+                    }
+
                     treeChild.proxyWrapper = proxyWrapper;
                 }
 
@@ -645,6 +722,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             }
 
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
+
+            // apply filter if enabled
+            if (layerConfig.table.applyMap) {
+                applyFilter(proxyWrapper, layerConfig.table.columns);
+            }
 
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);
 
