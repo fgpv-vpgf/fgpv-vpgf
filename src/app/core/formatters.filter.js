@@ -28,10 +28,10 @@ function dateTimeZone() {
      *
      * @function dateTimeZone
      * @param {Number} esriDate epoch time to convert
-     * @param {String} [format=YYYY-MM-D H:MM:SSA z] moment format string for output date/time
+     * @param {String} [format=YYYY-MM-D H:mm:ssA z] moment format string for output date/time
      * @return {String} data/time adjusted to users timezone
      */
-    function dateTimeZone(esriDate, format = 'YYYY-MM-D H:MM:SSA z') {
+    function dateTimeZone(esriDate, format = 'YYYY-MM-D H:mm:ssA z') {
         if (esriDate) {
             const time = moment.tz(esriDate, userTimeZone).format(format);
             // if esriDate is not valid, assume it follows 'format'
