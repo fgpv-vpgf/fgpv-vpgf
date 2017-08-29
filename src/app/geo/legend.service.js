@@ -35,7 +35,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
     function applyFilter(proxyWrapper, columns) {
         let defs = [];
         columns.forEach(column => {
-            if (typeof column.filter !== 'undefined') {
+            if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
                 defs = getFilterDefintion(defs, column);
             }
         });
@@ -599,7 +599,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
                     // apply filter if enabled
-                    if (layerConfig.table.applyMap) {
+                    if (layerConfig.table && layerConfig.table.applyMap) {
                         applyFilter(proxyWrapper, layerConfig.table.columns);
                     }
 
@@ -724,7 +724,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
 
             // apply filter if enabled
-            if (layerConfig.table.applyMap) {
+            if (layerConfig.table && layerConfig.table.applyMap) {
                 applyFilter(proxyWrapper, layerConfig.table.columns);
             }
 
