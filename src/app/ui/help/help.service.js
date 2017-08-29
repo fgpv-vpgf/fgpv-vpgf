@@ -224,6 +224,7 @@ function helpService($mdDialog, $translate, translations, referenceService) {
                 mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
 
                 // start breaking down markdown file into sections where h1 headers (#) denote a new section
+                // eslint-disable-next-line no-cond-assign
                 while (section = reg.exec(mdStr)) { // jshint ignore:line
                     self.sections.push({
                         header: section[1],

@@ -178,12 +178,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 oSettings.aaSorting = [];
 
                 /* Sort display arrays so we get them in numerical order */
-                oSettings.aiDisplay.sort((x,y) => {
-                    return x-y;
-                });
-                oSettings.aiDisplayMaster.sort((x,y) => {
-                    return x-y;
-                });
+                oSettings.aiDisplay.sort((x,y) => x-y);
+
+                oSettings.aiDisplayMaster.sort((x,y) => x-y);
 
                 /* Redraw */
                 oSettings.oApi._fnReDraw(oSettings);
@@ -441,6 +438,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             * @private
             * @param {Object} config    configuration file for table
             */
+            // eslint-disable-next-line complexity
             function customizeTable(config = {}) {
                 // set title and description
                 displayData.filter.title = config.title ?

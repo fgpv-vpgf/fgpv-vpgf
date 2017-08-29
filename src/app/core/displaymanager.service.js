@@ -107,7 +107,10 @@ function displayManager($timeout, $q, $rootElement) {
 
             // whenever a panel is opened (or updated) create a focus link between the element which triggered the
             // panel change to the first focusable element in the panel.
-            animationPromise.then(() => $.link($rootElement.find(`[rv-state="${panelName}"]`)));
+            animationPromise.then(() => {
+                const sourceEl = $rootElement.find(`[legend-block-id="${requester.id}"] button`).filter(':visible').first();
+                $(sourceEl).link($rootElement.find(`[rv-state="${panelName}"]`));
+            });
 
             // update requestId and the requester object
             display.requester = requester;

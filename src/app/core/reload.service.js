@@ -187,7 +187,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
         // TODO if we find this blocking check is redundant, we can get rid of
         //      this function and just call loadWithBookmark directly
         if (service.bookmarkBlocking) {
-           loadWithBookmark(bookmark, true, keys);
+            loadWithBookmark(bookmark, true, keys);
         }
     }
 

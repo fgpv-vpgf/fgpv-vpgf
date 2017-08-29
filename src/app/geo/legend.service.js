@@ -112,7 +112,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         let position = 0;
         // find an appropriate spot in a auto legend;
         if (pos) {   // If the order from bookmark exists
-           position = pos;
+            position = pos;
         } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             position = legendBlocks.entries.findIndex(block =>
                 sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);

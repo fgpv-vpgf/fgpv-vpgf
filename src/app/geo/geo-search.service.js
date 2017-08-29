@@ -238,9 +238,9 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
                 position: item.position.coordinates
             }))))
             .then(res => res.length === 0 ?
-                    $http.get(serviceUrls.geoSuggest + q)
-                        .then(s => ({ suggestions: s.data.suggestions, results: [] })) :
-                    { results: res }
+                $http.get(serviceUrls.geoSuggest + q)
+                    .then(s => ({ suggestions: s.data.suggestions, results: [] })) :
+                { results: res }
             ));
 
         // return value from geogratis and geonames services
