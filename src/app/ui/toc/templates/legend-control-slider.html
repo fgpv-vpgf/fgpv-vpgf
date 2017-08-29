@@ -11,4 +11,12 @@
             max="1" min="0" step="0.01" ng-model="self.uiControl.value"></md-slider>
         <span class="rv-slider-indicator">{{ self.Math.round(self.uiControl.value * 100) }}%</span>
     </div>
+
+    <!-- this block is used when the control is disabled -->
+    <div class="rv-slider-footer" ng-if="self.valueParentBlock" >
+        <!-- double variable replacement https://github.com/angular-translate/angular-translate/issues/1667 -->
+        <span class="rv-slider-changeat md-caption" translate="settings.change.at" translate-values="{ controlName: self.uiControl.controlName }" translate-compile></span>
+
+        <rv-legend-control block="self.valueParentBlock" template="link" name="settings"></rv-legend-control>
+    </div>
 </div>

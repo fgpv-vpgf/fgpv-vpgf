@@ -127,6 +127,7 @@ Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
 Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir métadonnées,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
+,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,[fr]Change {{settingName}} at,0
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1,Zone de délimitation,1

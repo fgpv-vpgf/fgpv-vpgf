@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "FGPV Config Schema",
     "type": "object",
-    "version": 2.0,
+    "version": 2.1,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
     "additionalProperties": false,
 
@@ -267,7 +267,8 @@
                     "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
                     "minItems": 1
                 },
-                "controls": { "$ref": "#/definitions/legendGroupControls" }
+                "controls": { "$ref": "#/definitions/legendGroupControls" },
+                "disabledControls": { "$ref": "#/definitions/legendGroupControls" }
             },
             "required": ["name", "children"],
             "additionalProperties": false

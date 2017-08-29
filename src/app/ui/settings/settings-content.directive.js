@@ -21,19 +21,56 @@ angular
  * @function rvSettingsContent
  * @return {object} directive body
  */
-function rvSettingsContent() {
+function rvSettingsContent(layerRegistry) {
     const directive = {
         restrict: 'E',
         templateUrl,
         scope: {
             block: '='
         },
+        link,
         controller: Controller,
         controllerAs: 'self',
         bindToController: true
     };
 
     return directive;
+
+    function link(scope) {
+        const self = scope.self;
+
+        const opacityName = 'opacity';
+        const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+
+        // only search for opacity parent if the control is userDisabled on non-true-dynamic dynamic layers
+        if (self.block.isControlUserDisabled(opacityName) && !layerRecord.isTrueDynamic) {
+            self.valueParentBlock = findOpacityParentBlock(self.block);
+        }
+
+        /**
+         * Finds the closes parent group which enabled and visible opacity control.
+         *
+         * @function findOpacityParentBlock
+         * @private
+         * @param {LegendBlock} block
+         * @return {LegendBlock|null} a LegendBlock group or null if the parent doesn't exist
+         */
+        function findOpacityParentBlock(block) {
+
+            const parent = block.visualParent;
+
+            // the root of the legend doesn't have a parent or any visual representation, ignore it
+            if (!parent || !parent.parent) {
+                return null;
+            }
+
+            if (!parent.isControlDisabled(opacityName) && parent.isControlVisible(opacityName)) {
+                return parent;
+            } else {
+                return findOpacityParentBlock(parent);
+            }
+        }
+    }
 }
 
 function Controller(common) {

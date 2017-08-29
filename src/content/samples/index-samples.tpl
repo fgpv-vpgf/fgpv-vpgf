@@ -40,7 +40,8 @@
             width: 150px;
             right: 45%;
             z-index: 100;
-            top: 90px;
+            top: 76px;
+            padding: 0;
         }
 
         .fade {
@@ -140,6 +141,7 @@
                 <option value="config/config-sample-43.json">43. Map with custom title</option>
                 <option value="config/config-sample-44.json">44. Viewer with custom name and logo</option>
                 <option value="config/config-sample-45.json">45. Viewer defaulting to Mercator, with no layers</option>
+                <option value="config/config-sample-47.json">47. Dynamic opacity controls for "not-true-dynamic" dynamic layers</option>
             </select>
         </div>
 
@@ -268,12 +270,12 @@
                 document.getElementById("header").style.display = "block";
                 document.getElementById("hideShow").classList.remove('bottom');
                 document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('100px');
+                document.getElementById("hideShow").style.top = ('76px');
             } else {
                 document.getElementById("header").style.display = "none";
                 document.getElementById("hideShow").classList.remove('top');
                 document.getElementById("hideShow").classList.add('bottom');
-                document.getElementById("hideShow").style.top = ('20px');
+                document.getElementById("hideShow").style.top = ('0px');
             }
         }
 

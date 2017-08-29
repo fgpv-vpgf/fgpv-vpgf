@@ -216,10 +216,8 @@ function rvSymbologyStack($q, Geo, animationService) {
         function makeExpandTimeline() {
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () =>
-                    (self.isExpanded = true),
-                onReverseComplete: () =>
-                    (self.isExpanded = false)
+                onStart: () => { self.isExpanded = self.symbology.expanded = true; },
+                onReverseComplete: () => { self.isExpanded = self.symbology.expanded = false }
             });
 
             // in pixels
@@ -267,10 +265,8 @@ function rvSymbologyStack($q, Geo, animationService) {
             // we only need one timeline since we can reuse it
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () =>
-                    (ref.isFannedOut = true),
-                onReverseComplete: () =>
-                    (ref.isFannedOut = false)
+                onStart: () => { ref.isFannedOut = self.symbology.fannedOut = true },
+                onReverseComplete: () => {ref.isFannedOut = self.symbology.fannedOut = false}
             });
 
             const displacement = 4;

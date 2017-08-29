@@ -30,6 +30,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         reloadLayer
     };
 
+    const ref = {
+        selecteLegendBlockLog: {}
+    };
+
     let errorToast;
 
     // debounce toggle filter function
@@ -486,18 +490,21 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
      * @param {Boolean} value defaults to true;
      */
     function setTocEntrySelectedState(id, value = true) {
-        console.log(configService, id, value);
+        const legendBlocks = configService.getSync.map.legendBlocks;
 
-        return;
+        const block = legendBlocks
+            .walk(lb => lb.id === id ? lb : null)
+            .filter(a => a)[0];
 
-        /* FIXME
-        const entry = geoService.legend.getItemById(id);
-        if (entry) {
-            // toc entry is considered selected if its metadata, settings, or data panel is opened;
-            // when switching between panels (opening metadata when settings is already open), events may happen out of order
-            // to ensure a toc entry is not deselected untimely, keep count of open/close events
-            selectedLayerLog[id] = (selectedLayerLog[id] || 0) + (value ? 1 : -1);
-            entry.selected = selectedLayerLog[id] > 0 ? true : false;
-        }*/
+        // there should always be a block with the provided id, but check anyway in case it was remove or something
+        if (!block) {
+            return;
+        }
+
+        // toc entry is considered selected if its metadata, settings, or data panel is opened;
+        // when switching between panels (opening metadata when settings is already open), events may happen out of order
+        // to ensure a toc entry is not deselected untimely, keep count of open/close events
+        ref.selecteLegendBlockLog[id] = (ref.selecteLegendBlockLog[id] || 0) + (value ? 1 : -1);
+        block.isSelected = ref.selecteLegendBlockLog[id] > 0;
     }
 }

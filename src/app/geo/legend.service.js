@@ -388,6 +388,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
                 legendBlockGroup.collapsed = true;
+            } else {
+                // if collapse is not allowed, update the initial config value
+                layerConfig.singleEntryCollapse = false;
             }
 
             return legendBlockGroup;
@@ -459,12 +462,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
-            // dynamic children might not support opacity if the layer is not a true dynamic layer
-            // TODO: allow for an optional description why the control is disabled
-            if (!layerRecord.isTrueDynamic) {
-                dynamicLayerChildDefaults.userDisabledControls.push('opacity');
-            }
-
             layerRecord.derivedChildConfigs = [];
             const tree = layerRecord.getChildTree();
             tree.forEach(treeChild =>
@@ -507,6 +504,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                                 disabledControls: common.intersect(
                                     originalSource.disabledControls,
                                     groupDefaults.controls),
+                                userDisabledControls: common.intersect(
+                                    originalSource.userDisabledControls,
+                                    groupDefaults.controls
+                                ),
                                 name: treeChild.name
                             });
 
@@ -583,6 +584,16 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                         layerEntryConfig.source,
                         dynamicLayerChildDefaults,
                         parentLayerConfigSource);
+
+                    // dynamic children might not support opacity if the layer is not a true dynamic layer
+                    // in such cases the opacity control is user disabled for all children and opacity of the whole layer should be changed at the root
+                    // in single entry collapse cases, the root is hidden, and opacity control is left user enabled at the top single entry; all subsequent children are user disabled as usual
+                    if (!layerRecord.isTrueDynamic &&
+                        !(layerConfig.singleEntryCollapse &&
+                        derivedChildLayerConfigSource.index === layerConfig.layerEntries[0].index)) {
+
+                        derivedChildLayerConfigSource.userDisabledControls.push('opacity');
+                    }
 
                     const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
                         derivedChildLayerConfigSource, true);
