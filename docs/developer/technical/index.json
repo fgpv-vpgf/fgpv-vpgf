@@ -8,6 +8,10 @@
         "title": "Working with DataTables"
     },
 
+    "legend": {
+        "title": "Legends"
+    },
+
     "details": {
         "title": "Details Panel"
     },

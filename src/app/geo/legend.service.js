@@ -117,6 +117,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             position = legendBlocks.entries.findIndex(block =>
                 sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
 
+            // FIXME: there might be an error here when importing a Feature layer to a legend with only WMS and Dynamic layers; need to check more;
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
             position = position === -1 ? legendBlocks.entries.length : position;
         }
