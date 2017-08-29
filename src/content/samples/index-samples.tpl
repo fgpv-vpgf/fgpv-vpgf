@@ -14,13 +14,13 @@
 
         #bookmarkURL {
             display: inline-block;
-            width: 79.5%;
+            width: 75.5%;
             padding: 0;
         }
 
         .btn {
             display: inline-block;
-            width: 9%;
+            width: 11%;
             float: right;
             margin-left: 1%;
             padding: 0;
@@ -141,7 +141,11 @@
                 <option value="config/config-sample-43.json">43. Map with custom title</option>
                 <option value="config/config-sample-44.json">44. Viewer with custom name and logo</option>
                 <option value="config/config-sample-45.json">45. Viewer defaulting to Mercator, with no layers</option>
+<<<<<<< HEAD
                 <option value="config/config-sample-47.json">47. Dynamic opacity controls for "not-true-dynamic" dynamic layers</option>
+=======
+                <option value="config/config-sample-46.json">46. Layers with filter applied on load</option>
+>>>>>>> docs(samples): add samples for testing
             </select>
         </div>
 
