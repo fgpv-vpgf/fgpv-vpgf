@@ -48,6 +48,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
         cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
                                                         : this._layerClass.MODE_ONDEMAND;
 
+        // if we have a definition at load, apply it here to avoid cancellation errors on 
+        if (this.config.initialFilteredQuery) {
+            cfg.definitionExpression = this.config.initialFilteredQuery;
+        }
+
         // TODO confirm this logic. old code mapped .options.snapshot.value to the button -- meaning if we were in snapshot mode,
         //      we would want the button disabled. in the refactor, the button may get it's enabled/disabled from a different source.
         // this.config.state.snapshot = !this.config.state.snapshot;
