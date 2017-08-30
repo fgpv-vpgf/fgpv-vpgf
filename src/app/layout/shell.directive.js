@@ -58,6 +58,8 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                     // set map coordinates
                     $rootScope.$on('rvMouseMove',
                         debounceService.registerDebounce(updateMapCoordinates, 100, false));
+                } else {
+                    el.find('.rv-map-coordinates').remove();    // mouseInfo disabled, remove element from DOM
                 }
             });
         });
@@ -87,8 +89,13 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         function updateMapCoordinates(evt, point) {
             const coords = mapToolService.mapCoordinates(point, outMouseSR);
             const coordElem = el.find('.rv-map-coordinates span');
-            coordElem[0].innerText = coords[0];
-            coordElem[1].innerText = coords[1];
+
+            // when switching from a sample with mouseInfo enabled to one with it disabled, this function is still called
+            // coordElem is not a valid element though
+            if (coordElem.length > 0) {
+                coordElem[0].innerText = coords[0];
+                coordElem[1].innerText = coords[1];
+            }
         }
 
         // set a resize listener on the root element to update it's layout styling based on the changed size

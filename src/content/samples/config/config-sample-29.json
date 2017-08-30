@@ -55,10 +55,7 @@
         "showInfo": true
       },
       "mouseInfo": {
-        "enabled": true,
-        "spatialReference": {
-          "wkid": 102100
-        }
+        "enabled": false
       },
       "northArrow": {
         "enabled": true
@@ -71,7 +68,7 @@
         "layerType": "imagery"
       },
       "scaleBar": {
-        "enabled": true
+        "enabled": false
       }
     },
     "extentSets": [
