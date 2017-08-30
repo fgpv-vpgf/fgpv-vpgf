@@ -27,7 +27,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         toggleLayerTablePanel,
 
         removeLayer,
-        reloadLayer
+        reloadLayer,
+
+        validMetadata: false
     };
 
     const ref = {
@@ -435,9 +437,15 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                     catalogueUrl: legendBlock.catalogueUrl
                 };
 
+                service.validMetadata = true;
+                referenceService.panes.metadata.find('md-toast').remove();      // remove any lingering toast message from before
+
                 resolve(metadataPackage);
 
             }).catch(error => {
+                service.validMetadata = false;
+                referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
+
                 errorService.display($translate.instant('toc.error.resource.loadfailed'),
                     referenceService.panes.metadata);
 

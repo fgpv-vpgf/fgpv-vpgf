@@ -30,8 +30,8 @@ function metadataService($q, $http, $translate, Geo) {
     * @return {Promise} a promise resolving with an HTML fragment
     */
     function loadFromURL(xmlUrl, params) {
-        if (cache.xmlUrl) {
-            return $q.resolve(cache.xmlUrl);
+        if (cache[xmlUrl]) {
+            return $q.resolve(cache[xmlUrl]);
         }
 
         return loadXmlFile(xmlUrl)
@@ -40,7 +40,7 @@ function metadataService($q, $http, $translate, Geo) {
                 XSLT.replace(/\{\{([\w\.]+)\}\}/g, (_, tag) => $translate.instant(tag)),
                 params))
             .then(transformedXMLData => {
-                cache.xmlUrl = transformedXMLData;
+                cache[xmlUrl] = transformedXMLData;
                 return transformedXMLData;
             });
     }

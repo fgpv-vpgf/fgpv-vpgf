@@ -17,7 +17,7 @@ angular
  * @function rvMetadataContent
  * @return {object} directive body
  */
-function rvMetadataContent($compile, $translate) {
+function rvMetadataContent($compile, $translate, tocService) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -36,8 +36,8 @@ function rvMetadataContent($compile, $translate) {
         // with rv-truncate directive.
         const maxTextLength = attr.maxTextLength > 0 ? attr.maxTextLength : 0;
         scope.$watch('self.display.data', metadataPackage => {
-            // abort if there is no document fragment
-            if (!metadataPackage) {
+            // abort if there is no document fragment or if we know the metadata is not valid and has thrown an error
+            if (!metadataPackage || !tocService.validMetadata) {
                 return;
             }
 
