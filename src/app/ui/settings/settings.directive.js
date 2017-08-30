@@ -50,7 +50,6 @@ function rvSettings($compile) {
                 contentPanel
                     .empty()
                     .append($compile(template)(scope));
-
             } else {
                 contentPanel.empty();
             }

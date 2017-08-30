@@ -371,6 +371,10 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         // prevent main panel from overlapping details panel in small/medium layouts
         } else if (panelToOpen.name === 'table') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 2);
+        } else if (panelToOpen.name === 'sideMetadata') {
+            $rootElement.find('rv-metadata-panel button.rv-close').rvFocus({ delay: 400 });
+        } else if (panelToOpen.name === 'sideSettings') {
+            $rootElement.find('rv-settings button.rv-close').rvFocus({ delay: 400 });
         }
 
         return typeof panelToOpen.item.parent === 'undefined' ?
