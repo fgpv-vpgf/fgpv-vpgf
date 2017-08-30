@@ -877,28 +877,6 @@ function cleanUpFields(geoJson, layerDefinition) {
 
 }
 
-/**
- * Makes an attempt to load and register a projection definition.
- * Returns promise resolving when process is complete
- * projModule - proj module from geoApi
- * projCode - the string or int epsg code we want to lookup
- * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
- */
-function projectionLookup(projModule, projCode, epsgLookup) {
-    // look up projection definitions if it's not already loaded and we have enough info
-    if (!projModule.getProjection(projCode) && epsgLookup && projCode) {
-        return epsgLookup(projCode).then(projDef => {
-            if (projDef) {
-                // register projection
-                projModule.addProjection(projCode, projDef);
-            }
-            return projDef;
-        });
-    } else {
-        return Promise.resolve(null);
-    }
-}
-
 function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
     /**
@@ -991,8 +969,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const destProj = 'EPSG:' + targetWkid;
 
         // look up projection definitions if they don't already exist and we have enough info
-        const srcLookup = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
-        const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
+        const srcLookup = geoApi.proj.checkProj(srcProj, opts.epsgLookup);
+        const destLookup =  geoApi.proj.checkProj(destProj, opts.epsgLookup);
 
         // make the layer
         const buildLayer = () => {
@@ -1030,8 +1008,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         };
 
         // call promises in order
-        return srcLookup
-            .then(() => destLookup)
+        return srcLookup.lookupPromise
+            .then(() => destLookup.lookupPromise)
             .then(() => buildLayer());
 
     };
