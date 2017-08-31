@@ -462,10 +462,6 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // apply filters on map
                 if (config.applyMap) {
                     tableService.applyFilters();
-
-                    // set applyMap to false so when table reopen, filter are not reapply to map.
-                    // they need to be apply only when table opens the first time
-                    config.applyMap = false;
                 }
             }
 
