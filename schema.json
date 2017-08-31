@@ -570,8 +570,7 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
-                "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
+                "state": { "$ref": "#/definitions/initialLayerSettings" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false

@@ -40,7 +40,7 @@
             width: 150px;
             right: 45%;
             z-index: 100;
-            top: 76px;
+            top: 80px;
             padding: 0;
         }
 
@@ -67,7 +67,6 @@
         }
 
         .chevron.bottom:before {
-            top: 0;
             top: 0.15em;
             transform: rotate(135deg);
         }
@@ -271,7 +270,7 @@
                 document.getElementById("header").style.display = "block";
                 document.getElementById("hideShow").classList.remove('bottom');
                 document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('76px');
+                document.getElementById("hideShow").style.top = ('80px');
             } else {
                 document.getElementById("header").style.display = "none";
                 document.getElementById("hideShow").classList.remove('top');
