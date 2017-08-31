@@ -206,9 +206,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
-            // apply filter if enabled
-
-             if (this.config.layerType === layerTypes.ESRI_DYNAMIC) {
+            if (this.config.layerType === layerTypes.ESRI_DYNAMIC) {
                 // walk through sub layers in dynamic layer
                 for (let i = 0; i < this.config.layerEntries.length; i++) {
                     if (this.config.layerEntries[i].table && this.config.layerEntries[i].table.applyMap) {
