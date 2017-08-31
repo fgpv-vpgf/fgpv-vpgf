@@ -218,7 +218,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             } else if (this.config.table && this.config.table.applyMap) {
                 const filterQuery = this._getassembledDefintion(this.config.table.columns);
                 this.config.filteredQuery = filterQuery;
-
             }
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
