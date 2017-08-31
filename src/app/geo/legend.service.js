@@ -439,7 +439,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                     const entryConfig = new ConfigObject.legend.Entry(item);
                     legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
-                    legendBlock.filter = item.proxyWrapper.layerConfig.table.applyMap;
+                    legendBlock.filter = item.proxyWrapper.layerConfig.table && item.proxyWrapper.layerConfig.table.applyMap;
                     legendBlock.applyInitialStateSettings();
                 }
 
@@ -651,7 +651,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             // map this legend block to the layerRecord
             node.layerRecordId = layerConfig.id;
-            node.filter = layerConfig.table.applyMap;
+            node.filter = layerConfig.table && layerConfig.table.applyMap;
 
             legendMappings[layerConfig.id].push({
                 legendBlockId: node.id,
