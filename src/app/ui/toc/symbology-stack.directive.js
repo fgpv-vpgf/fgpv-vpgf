@@ -135,6 +135,8 @@ function rvSymbologyStack($q, Geo, animationService) {
                 ref.expandTimeline.reverse();
                 ref.fanOutTimeline.play();
             }
+
+            self.symbology.expanded = value;
         }
 
         /**
@@ -160,6 +162,8 @@ function rvSymbologyStack($q, Geo, animationService) {
                     ref.fanOutTimeline.reverse();
                 }
             }
+
+            self.symbology.fannedOut = value;
         }
 
         // find and store references to relevant nodes
@@ -216,8 +220,8 @@ function rvSymbologyStack($q, Geo, animationService) {
         function makeExpandTimeline() {
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { self.isExpanded = self.symbology.expanded = true; },
-                onReverseComplete: () => { self.isExpanded = self.symbology.expanded = false }
+                onStart: () => { self.isExpanded = true; },
+                onReverseComplete: () => { self.isExpanded = false; }
             });
 
             // in pixels
@@ -265,8 +269,8 @@ function rvSymbologyStack($q, Geo, animationService) {
             // we only need one timeline since we can reuse it
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { ref.isFannedOut = self.symbology.fannedOut = true },
-                onReverseComplete: () => {ref.isFannedOut = self.symbology.fannedOut = false}
+                onStart: () => { ref.isFannedOut = true; },
+                onReverseComplete: () => { ref.isFannedOut = false; }
             });
 
             const displacement = 4;
