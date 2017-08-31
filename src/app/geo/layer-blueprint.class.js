@@ -131,8 +131,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          *
          * @function _assemble
          * @private
-         * @param {ProxyWrapper} the proxy wrapper of the layer
-         * @columns {array} the list of columns of the layer
+         * @param {array} an array of columns of a layer
+         * @return {string} the Assembled query definition of the layer
          */
         _getassembledDefintion(columns) {
             let defs = [];
