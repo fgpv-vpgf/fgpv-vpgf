@@ -435,7 +435,7 @@
               }]
             }
           },
-           {
+          {
             "index": 13,
             "table": {
               "applyMap": true,
@@ -450,6 +450,61 @@
           }
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "6",
+        "name": "Dynamic Layer with only one child with filter",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 14,
+            "table": {
+              "applyMap": true,
+              "columns": [{
+                  "data": "OBJECTID",
+                  "filter": {
+                      "type": "number",
+                      "value": "0,20"
+                  }
+              }]
+            }
+          },
+          {
+            "index": 15
+          }
+        ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "7",
+        "name": "3 columns with 2 filteres",
+        "layerType": "esriFeature",
+        "table": {
+            "applyMap": true,
+            "columns": [
+              {
+                "data": "OBJECTID",
+                "filter": {
+                    "type": "number",
+                    "value": "0,25"
+                }
+              },
+              {
+                "data": "Country",
+                "filter": {
+                    "type": "string",
+                    "value": "Canada"
+                }
+              },
+              {
+                "data": "Latitude",
+                "filter": {
+                    "type": "number"
+                }
+              }
+          ]
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
       }
     ],
     "tileSchemas": [
