@@ -207,16 +207,18 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          */
         generateLayer() {
             // apply filter if enabled
-            if (this.config.table && this.config.table.applyMap) {
+
+             if (this.config.layerType === layerTypes.ESRI_DYNAMIC) {
                 // walk through sub layers in dynamic layer
-                if (this.config.layerType === layerTypes.ESRI_DYNAMIC) {
-                    for (let i = 0; i < this.config.layerEntries.length; i++) {
+                for (let i = 0; i < this.config.layerEntries.length; i++) {
+                    if (this.config.layerEntries[i].table && this.config.layerEntries[i].table.applyMap) {
                         this.config.layerEntries[i].filterQuery = this._getassembledDefintion(this.config.layerEntries[i].table.columns);
                     }
-                } else {
-                    const filterQuery = this._getassembledDefintion(this.config.table.columns);
-                    this.config.filteredQuery = filterQuery;
                 }
+            } else if (this.config.table && this.config.table.applyMap) {
+                const filterQuery = this._getassembledDefintion(this.config.table.columns);
+                this.config.filteredQuery = filterQuery;
+
             }
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
