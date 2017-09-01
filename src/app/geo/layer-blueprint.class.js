@@ -129,36 +129,34 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
         /**
          * Assemble filters on map
          *
-         * @function _assemble
+         * @method _assemble
          * @private
          * @param {array} an array of columns of a layer
          * @return {string} the Assembled query definition of the layer
          */
-        _getassembledDefintion(columns) {
+        _getFilterDefintion(columns) {
             let defs = [];
 
             columns.forEach(column => {
                 if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
-                    defs = this._getFilterDefintion(defs, column);
+                    defs = this._getColumnFitlerDefintion(defs, column);
                 }
             });
 
-            defs = defs.join(' AND ');
-
-            return defs;
+            return defs.join(' AND ');
         }
 
 
         /**
          * Set the layer definition query
          *
-         * @function _getFilterDefintion
+         * @method _getColumnFitlerDefintion
          * @private
          * @param   {Array}   defs   array of definition queries
          * @param   {Object}   column   column object
          * @return {Array} defs definition queries array
          */
-        _getFilterDefintion(defs, column) {
+        _getColumnFitlerDefintion(defs, column) {
             /*jshint maxcomplexity:11 */
             if (column.filter.type === 'string') {
                 // replace ' by '' to be able to perform the search in the datatable
@@ -202,6 +200,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
         /**
          * Generates a layer from an online service based on the layer type.
          * Takes a layer in the config format and generates an appropriate layer object.
+         * Create a temporary property filteredQuery to store the computed results for dynamic layers
+         *
          * @param {Object} layerConfig a configuration fragment for a single layer
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
@@ -210,12 +210,12 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 // walk through sub layers in dynamic layer
                 for (let i = 0; i < this.config.layerEntries.length; i++) {
                     if (this.config.layerEntries[i].table && this.config.layerEntries[i].table.applyMap) {
-                        this.config.layerEntries[i].filterQuery = this._getassembledDefintion(this.config.layerEntries[i].table.columns);
+                        this.config.layerEntries[i].filteredQuery = this._getFilterDefintion(this.config.layerEntries[i].table.columns);
                     }
                 }
             } else if (this.config.table && this.config.table.applyMap) {
-                const filterQuery = this._getassembledDefintion(this.config.table.columns);
-                this.config.filteredQuery = filterQuery;
+                const filteredQuery = this._getFilterDefintion(this.config.table.columns);
+                this.config.filteredQuery = filteredQuery;
             }
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](

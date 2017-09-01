@@ -264,18 +264,17 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
     function _applyInitialDynamicLayerFilter() {
         ref.initialDynamicLayerFilter();
         ref.initialDynamicLayerFilter = events.$on(events.rvLayerRecordLoaded, (_, layerRecordId) => {
-            let layerRecord = layerRegistry.getLayerRecord(layerRecordId);
+            const layerRecord = layerRegistry.getLayerRecord(layerRecordId);
 
             if (layerRecord.layerType === 'esriDynamic') {
-                for (let i = 0; i < layerRecord.config.layerEntries.length; i ++) {
-                    let currentSubLayer = layerRecord.config.layerEntries[i];
+                layerRecord.config.layerEntries.forEach(currentSubLayer => {
                     if (currentSubLayer.table && currentSubLayer.table.applyMap) {
-                        let proxy = layerRecord.getChildProxy(currentSubLayer.index);
+                        const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
-                        proxy.setDefinitionQuery(currentSubLayer.filterQuery);
-                        delete currentSubLayer.filterQuery; // delete the temporary query variable
+                        proxy.setDefinitionQuery(currentSubLayer.filteredQuery);
+                        delete currentSubLayer.filteredQuery; // delete the temporary query variable
                     }
-                }
+                });
             }
         });
     }

@@ -310,7 +310,41 @@
       }
     ],
     "legend": {
-      "type": "autopopulate"
+      "type": "structured",
+      "root": {
+        "name": "root",
+        "children": [
+          {
+            "layerId": "0"
+          },
+            {
+            "layerId": "1"
+          },
+          {
+            "layerId": "2"
+          },
+          {
+            "layerId": "3"
+          },
+          {
+            "layerId": "4"
+          },
+          {
+            "name": "child",
+            "children": [
+                {
+                  "layerId": "5"
+                }
+            ]
+          },
+          {
+            "layerId": "6"
+          },
+          {
+            "layerId": "7"
+          }
+        ]
+      }
     },
     "layers": [
       {
