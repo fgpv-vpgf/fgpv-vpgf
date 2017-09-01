@@ -321,7 +321,7 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
                         // find object id field
                         // NOTE cannot use arrow functions here due to bug
-                        serviceResult.fields.every(function (elem) {
+                        const noFieldDefOid = serviceResult.fields.every(function (elem) {
                             if (elem.type === 'esriFieldTypeOID') {
                                 layerData.oidField = elem.name;
                                 return false; // break the loop
@@ -329,6 +329,12 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
                             return true; // keep looping
                         });
+
+                        if (noFieldDefOid) {
+                            // we encountered a service that does not mark a field as the object id.
+                            // attempt to use alternate definition. if neither exists, we are toast.
+                            layerData.oidField = serviceResult.objectIdField
+                        }
 
                         // ensure our attribute list contains the object id
                         if (attribs !== '*') {
