@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, geoService, events, referenceService, $rootElement, $interval, globalRegistry) {
+function rvInitMap($rootScope, geoService, events, referenceService, $rootElement, $interval, globalRegistry, identifyService) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -195,7 +195,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
                     event.mapPoint = mapPntCntr;
                     event.screenPoint = mapScrnCntr;
-                    geoService.state.identifyService.clickHandler(event);
+                    identifyService.identify(event);
                 }
                 break;
             // shift key pressed - pan distance increased

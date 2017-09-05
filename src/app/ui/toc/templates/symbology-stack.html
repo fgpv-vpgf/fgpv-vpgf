@@ -17,7 +17,7 @@
         ng-blur="self.fanOutSymbology(false)"
         ng-mouseover="self.fanOutSymbology(true)"
         ng-mouseout="self.fanOutSymbology(false)">
-        <md-tooltip md-direction="top">{{ self.isExpanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
+        <md-tooltip md-direction="top">{{ self.symbology.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>
 
