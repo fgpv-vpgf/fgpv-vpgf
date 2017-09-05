@@ -333,7 +333,8 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                         if (noFieldDefOid) {
                             // we encountered a service that does not mark a field as the object id.
                             // attempt to use alternate definition. if neither exists, we are toast.
-                            layerData.oidField = serviceResult.objectIdField
+                            layerData.oidField = serviceResult.objectIdField ||
+                                console.error(`Encountered service with no OID defined: ${layerUrl}`);
                         }
 
                         // ensure our attribute list contains the object id
