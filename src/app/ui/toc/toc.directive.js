@@ -223,7 +223,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
     }
 }
 
-function Controller($scope, tocService, layerRegistry, stateManager, geoService, keyNames, configService, $rootScope, events, layoutService) {
+function Controller($scope, tocService, layerRegistry, stateManager, geoService, keyNames, configService, $rootScope, events, layoutService, Geo) {
     'ngInject';
     const self = this;
 
@@ -266,13 +266,12 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
         ref.initialDynamicLayerFilter = events.$on(events.rvLayerRecordLoaded, (_, layerRecordId) => {
             const layerRecord = layerRegistry.getLayerRecord(layerRecordId);
 
-            if (layerRecord.layerType === 'esriDynamic') {
+            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
                 layerRecord.config.layerEntries.forEach(currentSubLayer => {
                     if (currentSubLayer.table && currentSubLayer.table.applyMap) {
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
-                        proxy.setDefinitionQuery(currentSubLayer.filteredQuery);
-                        delete currentSubLayer.filteredQuery; // delete the temporary query variable
+                        proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
                     }
                 });
             }

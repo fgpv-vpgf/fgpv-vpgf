@@ -157,7 +157,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Array} defs definition queries array
          */
         _getColumnFitlerDefintion(defs, column) {
-            /*jshint maxcomplexity:11 */
             if (column.filter.type === 'string') {
                 // replace ' by '' to be able to perform the search in the datatable
                 // relpace * wildcard and construct the query (add wildcard at the end)
@@ -200,7 +199,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
         /**
          * Generates a layer from an online service based on the layer type.
          * Takes a layer in the config format and generates an appropriate layer object.
-         * Create a temporary property filteredQuery to store the computed results for dynamic layers
          *
          * @param {Object} layerConfig a configuration fragment for a single layer
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
@@ -210,12 +208,12 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 // walk through sub layers in dynamic layer
                 for (let i = 0; i < this.config.layerEntries.length; i++) {
                     if (this.config.layerEntries[i].table && this.config.layerEntries[i].table.applyMap) {
-                        this.config.layerEntries[i].filteredQuery = this._getFilterDefintion(this.config.layerEntries[i].table.columns);
+                        this.config.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(this.config.layerEntries[i].table.columns);
                     }
                 }
             } else if (this.config.table && this.config.table.applyMap) {
                 const filteredQuery = this._getFilterDefintion(this.config.table.columns);
-                this.config.filteredQuery = filteredQuery;
+                this.config.initialFilteredQuery = filteredQuery;
             }
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](

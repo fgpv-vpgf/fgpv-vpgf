@@ -63,7 +63,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             item.config.id === legendBlock.layerRecordId).initialConfig.table;
 
         // reset filter flag
-        legendBlock.filter = config.applyMap;
+        legendBlock.filter = config.initialFilter;
+        config.applyMap =  config.initialFilter;
 
         stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
