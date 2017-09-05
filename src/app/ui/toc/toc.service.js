@@ -61,11 +61,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
         const config = configService.getSync.map.layerRecords.find(item =>
             item.config.id === legendBlock.layerRecordId).initialConfig.table;
-        const staticField = config.columns.find(col =>
-            col.filter.static === true);
 
         // reset filter flag
-        legendBlock.filter = (typeof staticField !== 'undefined' && config.applyMap) ? true : false;
+        legendBlock.filter = config.initialFilter;
+        config.applyMap =  config.initialFilter;
 
         stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);

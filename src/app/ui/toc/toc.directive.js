@@ -223,12 +223,13 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
     }
 }
 
-function Controller($scope, tocService, stateManager, geoService, keyNames, configService, $rootScope, events, layoutService) {
+function Controller($scope, tocService, layerRegistry, stateManager, geoService, keyNames, configService, $rootScope, events, layoutService, Geo) {
     'ngInject';
     const self = this;
 
     const ref = {
-        initialTableDeregister: angular.noop
+        initialTableDeregister: angular.noop,
+        initialDynamicLayerFilter: angular.noop
     };
 
     self.toggleTableFull = toggleTableFull;
@@ -249,8 +250,33 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
         }
     });
 
+    // apply filter for dynamic layers if any
+    _applyInitialDynamicLayerFilter();
+
     // reorder mode is off by default
     self.isReorder = false;
+
+    /**
+     * Apply filter to dynamic layer if was specified in the configuration file
+     * @private
+     * @function _applyInitialDynamicLayerFilter
+     */
+    function _applyInitialDynamicLayerFilter() {
+        ref.initialDynamicLayerFilter();
+        ref.initialDynamicLayerFilter = events.$on(events.rvLayerRecordLoaded, (_, layerRecordId) => {
+            const layerRecord = layerRegistry.getLayerRecord(layerRecordId);
+
+            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                layerRecord.config.layerEntries.forEach(currentSubLayer => {
+                    if (currentSubLayer.table && currentSubLayer.table.applyMap) {
+                        const proxy = layerRecord.getChildProxy(currentSubLayer.index);
+
+                        proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
+                    }
+                });
+            }
+        });
+    }
 
     function _openInitialTable(initialLayerRecordId) {
         ref.initialTableDeregister();

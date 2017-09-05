@@ -14,13 +14,13 @@
 
         #bookmarkURL {
             display: inline-block;
-            width: 79.5%;
+            width: 75.5%;
             padding: 0;
         }
 
         .btn {
             display: inline-block;
-            width: 9%;
+            width: 11%;
             float: right;
             margin-left: 1%;
             padding: 0;
@@ -40,7 +40,7 @@
             width: 150px;
             right: 45%;
             z-index: 100;
-            top: 76px;
+            top: 80px;
             padding: 0;
         }
 
@@ -67,7 +67,6 @@
         }
 
         .chevron.bottom:before {
-            top: 0;
             top: 0.15em;
             transform: rotate(135deg);
         }
@@ -141,6 +140,7 @@
                 <option value="config/config-sample-43.json">43. Map with custom title</option>
                 <option value="config/config-sample-44.json">44. Viewer with custom name and logo</option>
                 <option value="config/config-sample-45.json">45. Viewer defaulting to Mercator, with no layers</option>
+                <option value="config/config-sample-46.json">46. Layers with filter applied on load</option>
                 <option value="config/config-sample-47.json">47. Dynamic opacity controls for "not-true-dynamic" dynamic layers</option>
             </select>
         </div>
@@ -270,7 +270,7 @@
                 document.getElementById("header").style.display = "block";
                 document.getElementById("hideShow").classList.remove('bottom');
                 document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('76px');
+                document.getElementById("hideShow").style.top = ('80px');
             } else {
                 document.getElementById("header").style.display = "none";
                 document.getElementById("hideShow").classList.remove('top');

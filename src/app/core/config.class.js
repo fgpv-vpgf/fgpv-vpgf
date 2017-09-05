@@ -449,6 +449,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._maximize = source.maximize || false;
             this._search = source.search;
             this._applyMap = source.applyMap || false;
+            this._initialFilter = source.applyMap || false;
             this._columns = source.columns ?
                 source.columns.map(columnsSource =>
                     (new ColumnNode(columnsSource))) :
@@ -465,6 +466,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get applyMap () { return this._applyMap; }
         set applyMap (value) { this._applyMap = value; }
         get columns () { return this._columns; }
+        get initialFilter() { return this._initialFilter; }
 
         get JSON () {
             return {
@@ -505,6 +507,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._controls = defaultedSource.controls;
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
+            this._initialFilteredQuery = null;
 
             // remove metadata control if no metadata url is specified after applying defaults
             if (!source.metadataUrl) {
@@ -524,6 +527,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get metadataUrl () {            return this._metadataUrl; }
         get catalogueUrl () {           return this._catalogueUrl; }
         get extent () {                 return this._extent; }
+
+        get initialFilteredQuery() { return this._initialFilteredQuery; }
+        set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
 
         _hovertipEnabled = false;
         get hovertipEnabled () {        return this._hovertipEnabled; }
