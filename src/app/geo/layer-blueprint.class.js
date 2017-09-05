@@ -212,8 +212,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                     }
                 }
             } else if (this.config.table && this.config.table.applyMap) {
-                const filteredQuery = this._getFilterDefintion(this.config.table.columns);
-                this.config.initialFilteredQuery = filteredQuery;
+                this.config.initialFilteredQuery = this._getFilterDefintion(this.config.table.columns);
             }
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
