@@ -22,12 +22,14 @@ class FakeExtent {
     constructor (height, width) {
         if (height) { this._height = height; } else { this._height = 2; }
         if (width) { this._width = width; } else { this._width = 2; }
+        this._spatialReference = new FakeSpatialReference();
     }
 
     centerAt (point) { return new FakeExtent(point.x / 2, point.y / 2); }
     getWidth () { return this._width; }
     intersects () { return true; }
     getCenter (point) { return new FakeExtent(point.x / 2, point.y / 2); }
+    get spatialReference() { return this._spatialReference; }
 }
 
 // A class that mocks the Map class

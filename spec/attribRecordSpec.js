@@ -8,10 +8,12 @@ class FakeExtent {
     constructor (height, width) {
         if (height) { this._height = height; } else { this._height = 2; }
         if (width) { this._width = width; } else { this._width = 2; }
+        this._spatialReference = new FakeSpatialReference();
     }
 
     centerAt (point) { return new FakeExtent(point.x / 2, point.y / 2); }
     getWidth () { return this._width; }
+    get spatialReference() { return this._spatialReference; }
 }
 
 // A class that mocks the layer class from Esri
@@ -33,7 +35,11 @@ class FakeGeoApiEvents {
 
 // A class that mocks the SpatialReference class
 class FakeSpatialReference {
-    constructor () {}
+    constructor () {
+        this._wkid = 1123;
+    }
+
+    get wkid() { return this._wkid; }
 }
 
 // A class that mocks the proj module from geoApi
