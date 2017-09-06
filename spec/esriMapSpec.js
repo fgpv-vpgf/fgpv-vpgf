@@ -5,17 +5,41 @@ global.Element = { prototype: {} };
 global.Sizzle = {};
 const esriMap = require('../src/map/esriMap.js');
 
+// A class that mocks the ESRI bundle
+class FakeEsri {
+    constructor() {
+        this._esriConfig = { defaults: { io: {} } }
+    }
+    get esriConfig() {
+        return this._esriConfig;
+    }
+    Extent() {
+        if (arguments.length === 1 ) {
+            return { xmin: arguments[0].xmin, ymin: arguments[0].ymin, xmax: arguments[0].xmax, ymax: arguments[0].ymax,
+            spatialReference: { wkid: arguments[0].wkid } };
+        } else {
+            return { xmin: arguments[0], ymin: arguments[1], xmax: arguments[2], ymax: arguments[3],
+                spatialReference: { wkid: 3978 } };
+        }
+    }
+    Map() { return {
+        setExtent: () => { return Promise.resolve('done'); } };
+    }
+    BasemapGallery() { return { add: () => {}, startup: () => {}, on: () => {} }; }
+    BasemapLayer() { return {}; }
+    Basemap() { return {}; }
+}
+
 describe('ESRI Map', () => {
-    const fakeEsri = {
-        esriConfig: { defaults: { io: {} } },
-        Extent: fakeEsriExtent,
-        Map: function () { return {
-            setExtent: () => { return Promise.resolve('done'); } }; 
-        },
-        BasemapGallery: function () { return { add: () => {}, startup: () => {}, on: () => {} }; },
-        BasemapLayer: function () { return {}; },
-        Basemap: function () { return {}; }
-    };
+    const fakeEsri = new FakeEsri();
+
+    const fakeGeoApi = {
+        proj: {
+            localProjectExtent: () => {
+                return jsonExtent;
+            }
+        }
+    }
 
     const jsonExtent = {
         uid: 'gray',
@@ -40,7 +64,7 @@ describe('ESRI Map', () => {
             spatialReference: { wkid: json.wkid } };
     }
 
-    const Map = esriMap(fakeEsri);
+    const Map = esriMap(fakeEsri, fakeGeoApi);
 
     it('should allow the setting of a proxy', () => {
         const m = new Map(null, mapConfig);
@@ -71,11 +95,10 @@ describe('ESRI Map', () => {
         expect(result[1]).toBeCloseTo(-2681457);
     });
 
-    // TODO resolve why this test gives "Map.zoomToExtent is not a function"
-    //      it certainly appears to be a function
-    xit('should zoom the map to an extent', (done) => {
-        const result = Map.zoomToExtent(Map.getExtentFromJson(jsonExtent));
-        result.then( value => {
+    it('should zoom the map to an extent', (done) => {
+        const mapObj = new Map(fakeEsri, mapConfig);
+        const result = mapObj.zoomToExtent(Map.getExtentFromJson(jsonExtent));
+        result.then(value => {
             expect(value).toBe('done');
             done();
         })

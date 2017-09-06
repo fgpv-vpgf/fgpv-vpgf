@@ -36,7 +36,8 @@ describe('Attribute', () => {
     const fakeGapi = {
         symbology: {
             rendererToLegend: () => { return; },
-            enhanceRenderer: () => { return; }
+            enhanceRenderer: () => { return; },
+            cleanRenderer: () => { return; }
         }
     };
     let attribute;
