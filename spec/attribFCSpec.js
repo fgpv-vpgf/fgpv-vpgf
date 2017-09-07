@@ -317,113 +317,12 @@ describe('AttribFC', () => {
 
     });
 
-    describe('getServerFeatureInfo', () => {
-        beforeEach(() => {
-            spyOn(parent, '_esriRequest').and.callThrough();
-        });
-
-        it('should not make a call to the server if feature information already requested', (done) => {
-            attribFC._quickCache = {
-                1: {
-                    feature: {
-                        attributes: {
-                            OBJECTID: '5',
-                            NAME: 'name',
-                            LAT: 1,
-                            LONG: 2
-                        },
-                        geometry: {
-                            paths: [[
-                                [-94.7999999999999, 28.0000000000001],
-                                [-95.3999999999999, 28.0000000000001]
-                            ]]
-                        }
-                    }
-                }
-            };
-            const res = attribFC.getServerFeatureInfo(1);
-            res.then(x => {
-                expect(x.feature.attributes.OBJECTID).toEqual('5');
-                expect(x.feature.attributes.NAME).toEqual('name');
-                expect(x.feature.geometry.paths).not.toBeUndefined();
-                expect(parent._esriRequest).not.toHaveBeenCalled();
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
-        });
-
-        it('should request the information from server if it has not previously', (done) => {
-            const res = attribFC.getServerFeatureInfo(2);
-            res.then(x => {
-                expect(x.feature.attributes.OBJECTID).toEqual(1);
-                expect(x.feature.attributes.NAME).toEqual('fakeName');
-                expect(x.feature.geometry.paths).not.toBeUndefined();
-                expect(parent._esriRequest).toHaveBeenCalled();
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
-        });
-
-    });
-
     describe('fetchGraphic', () => {
-        beforeEach(() => {
-            spyOn(attribFC, 'getServerFeatureInfo').and.callThrough();
-            parent._layer.objectIdField = 'objId';
-        });
-
-        it('should return graphic if already loaded on the cilent', (done) => {
-            parent._layer.graphics = [
-                {
-                    attributes: { objId: 1 }
-                }
-            ];
-            const res = attribFC.fetchGraphic(1);
+        it('should return a prommise containing graphic', (done) => {
+            const res = attribFC.fetchGraphic(1, {});
             res.then(x => {
-                expect(x.graphic.attributes.objId).toEqual(1);
-                expect(x.source).toEqual('layer');
-                expect(attribFC.getServerFeatureInfo).not.toHaveBeenCalled();
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
-        });
-
-        it('should make a call to the server if unable to get a local copy', (done) => {
-            parent._layer.graphics = [
-                {
-                    attributes: { fake: 1 }
-                }
-            ];
-            const res = attribFC.fetchGraphic(2);
-            res.then(x => {
-                expect(x.graphic.attributes.OBJECTID).toEqual(1);
-                expect(x.graphic.attributes.NAME).toEqual('fakeName');
-                expect(x.source).toEqual('server');
-                expect(attribFC.getServerFeatureInfo).toHaveBeenCalled();
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
-        });
-
-        it('should make a call to the server and fetch information if ignoreLocal is true', (done) => {
-            const res = attribFC.fetchGraphic(5, true);
-            res.then(x => {
-                expect(x.graphic.attributes.OBJECTID).toEqual(1);
-                expect(x.graphic.attributes.NAME).toEqual('fakeName');
-                expect(x.source).toEqual('server');
-                expect(attribFC.getServerFeatureInfo).toHaveBeenCalled();
+                expect(x).not.toEqual(undefined);
+                expect(x.graphic).not.toEqual(undefined);
                 done();
             })
             .catch(e => {

@@ -11,7 +11,10 @@ describe('Layer', () => {
     const mockGapi = {
         proj: {
             getProjection: () => Promise.resolve(null),
-            projectGeojson: () => { return; }
+            projectGeojson: () => { return; },
+            checkProj: () => {
+                return { lookupPromise: Promise.resolve(null) };
+            }
         },
         shared: { generateUUID: () => 'layer0' },
         events: { wrapEvents: () => { return; } }
