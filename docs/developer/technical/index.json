@@ -1,7 +1,7 @@
 {
     "technical": {
         "title": "Technical Guides",
-        "children": ["datatables", "details", "bookmark_formats", "focus_manager"]
+        "children": ["datatables", "legend", "details", "bookmark_formats", "focus_manager"]
     },
 
     "datatables": {
