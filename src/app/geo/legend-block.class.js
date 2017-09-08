@@ -367,22 +367,24 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 this.mainProxy, blockConfig.symbologyStack, blockConfig.symbologyRenderStyle, true);
         }
 
+        get mainProxyWrapper () { return this._mainProxyWrapper; }
+
         /**
          * @return {Proxy} the main proxy connected to the legend block
          */
-        get mainProxy () { return this._mainProxyWrapper.proxy; }
+        get mainProxy () { return this.mainProxyWrapper.proxy; }
 
         addControlledProxyWrapper(proxyWrapper) {
             this._controlledProxyWrappers.push(proxyWrapper);
         }
 
         applyInitialStateSettings() {
-            if (!this._mainProxyWrapper.initialStateSettingsApplied) {
-                this._mainProxyWrapper.applyInitialStateSettings();
-                this._mainProxyWrapper.validateProjection(configService.getSync.map.selectedBasemap.spatialReference);
+            if (!this.mainProxyWrapper.initialStateSettingsApplied) {
+                this.mainProxyWrapper.applyInitialStateSettings();
+                this.mainProxyWrapper.validateProjection(configService.getSync.map.selectedBasemap.spatialReference);
 
                 // bounding box is not linked to a proxy, so we need to apply it separately
-                this.boundingBox = this._mainProxyWrapper.boundingBox;
+                this.boundingBox = this.mainProxyWrapper.boundingBox;
             }
         }
 
@@ -404,14 +406,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
 
         get blockType () {              return TYPES.NODE; }
 
-        get _allProxyWrappers () {      return [this._mainProxyWrapper].concat(this._controlledProxyWrappers); }
+        get _allProxyWrappers () {      return [this.mainProxyWrapper].concat(this._controlledProxyWrappers); }
 
-        get availableControls () {      return this._mainProxyWrapper.availableControls; }
-        get disabledControls () {       return this._mainProxyWrapper.disabledControls; }
-        get userDisabledControls () {   return this._mainProxyWrapper.userDisabledControls; }
+        get availableControls () {      return this.mainProxyWrapper.availableControls; }
+        get disabledControls () {       return this.mainProxyWrapper.disabledControls; }
+        get userDisabledControls () {   return this.mainProxyWrapper.userDisabledControls; }
 
         get state () {
-            if (!this._mainProxyWrapper.validProjection) {
+            if (!this.mainProxyWrapper.validProjection) {
                 return 'rv-bad-projection';
             }
 
@@ -440,18 +442,18 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             return state === 'rv-loading' || state === 'rv-refresh';
         }
 
-        get sortGroup () {          return Geo.Layer.SORT_GROUPS_[this._mainProxyWrapper.layerType]; }
+        get sortGroup () {          return Geo.Layer.SORT_GROUPS_[this.mainProxyWrapper.layerType]; }
 
-        get name () {               return this._mainProxyWrapper.name; }
-        get layerType () {          return this._mainProxyWrapper.layerType; }
-        get parentLayerType () {    return this._mainProxyWrapper.parentLayerType; }
-        get featureCount () {       return this._mainProxyWrapper.featureCount; }
-        get geometryType () {       return this._mainProxyWrapper.geometryType; }
+        get name () {               return this.mainProxyWrapper.name; }
+        get layerType () {          return this.mainProxyWrapper.layerType; }
+        get parentLayerType () {    return this.mainProxyWrapper.parentLayerType; }
+        get featureCount () {       return this.mainProxyWrapper.featureCount; }
+        get geometryType () {       return this.mainProxyWrapper.geometryType; }
         // on change, update the corresponding css rule to make bboxes click-through
         get bboxID () {             return this.layerRecordId + '_' + this.itemIndex + '_bbox'; }
-        get itemIndex () {          return this._mainProxyWrapper.itemIndex; }
+        get itemIndex () {          return this.mainProxyWrapper.itemIndex; }
 
-        get visibility () {         return this._mainProxyWrapper.visibility; }
+        get visibility () {         return this.mainProxyWrapper.visibility; }
         set visibility (value) {
             if (this.isControlSystemDisabled('visibility')) {
                 return;
@@ -467,7 +469,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
         }
 
-        get opacity () {            return this._mainProxyWrapper.opacity; }
+        get opacity () {            return this.mainProxyWrapper.opacity; }
         set opacity (value) {
             if (this.isControlSystemDisabled('opacity')) {
                 return;
@@ -479,22 +481,22 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
         }
 
         // since query is applied only on the main proxy wrapper, we don't need to do an extra check if this control is available; it will be checked in the proxy wrapper
-        get query () {              return this._mainProxyWrapper.query; }
-        set query (value) {         this._mainProxyWrapper.query = value; }
+        get query () {              return this.mainProxyWrapper.query; }
+        set query (value) {         this.mainProxyWrapper.query = value; }
 
         /**
          * Set definition query to filter feature layer or dynamic layer
          *
          * @param {String} value the definition query to set
          */
-        set definitionQuery (value) {   this._mainProxyWrapper.definitionQuery = value; }
+        set definitionQuery (value) {   this.mainProxyWrapper.definitionQuery = value; }
 
-        get snapshot () {           return this._mainProxyWrapper.snapshot; }
+        get snapshot () {           return this.mainProxyWrapper.snapshot; }
         /**
          * Setting snapshot to `true` is permanent - if a snapshoted layer is reloaded manually in the future, it reloads as a snapshoted layer.
          * @param {Boolean} value specified layer's snapshot value
          */
-        set snapshot (value) {      this._mainProxyWrapper.snapshot = value; }
+        set snapshot (value) {      this.mainProxyWrapper.snapshot = value; }
 
         /**
          * Creates and stores (if missing) a boundign box based on the full extent exposed by the proxy object.
@@ -507,13 +509,13 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
                 this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxID);
 
                 if (!this._bboxProxy) {
-                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this._mainProxyWrapper.extent);
+                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this.mainProxyWrapper.extent);
                 }
             }
         }
 
         get boundingBox () {
-            if (!this._mainProxyWrapper.extent) {
+            if (!this.mainProxyWrapper.extent) {
                 return false;
             }
 
@@ -536,24 +538,24 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             }
 
             this._bboxProxy.setVisibility(value);
-            this._mainProxyWrapper.boundingBox = value;
+            this.mainProxyWrapper.boundingBox = value;
         }
 
         get userAdded () {
-            return this._mainProxyWrapper.userAdded;
+            return this.mainProxyWrapper.userAdded;
         }
 
         get filter () {
-            return this._mainProxyWrapper.filter;
+            return this.mainProxyWrapper.filter;
         }
         set filter (value) {
-            this._mainProxyWrapper.filter = value;
+            this.mainProxyWrapper.filter = value;
         }
 
-        get queryUrl () { return this._mainProxyWrapper.queryUrl; }
+        get queryUrl () { return this.mainProxyWrapper.queryUrl; }
 
         get formattedData () {
-            return this._mainProxyWrapper.formattedAttributes;
+            return this.mainProxyWrapper.formattedAttributes;
         }
 
         // FIXME this can probably move directly into geoApi
@@ -567,7 +569,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          *
          * @return {Object} in the form of { offScale: <Boolean>, zoomIn: <Boolean> }
          */
-        get scale() { return this._mainProxyWrapper.isOffScale(); }
+        get scale() { return this.mainProxyWrapper.isOffScale(); }
 
         /**
          * Zooms the layer controlled by the main proxy object in or out so features are visible on the map.
@@ -575,14 +577,14 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @function zoomToScale
          * @return {Promise} resolving when the extent change has ended
          */
-        zoomToScale () { return this._mainProxyWrapper.zoomToScale(); }
+        zoomToScale () { return this.mainProxyWrapper.zoomToScale(); }
 
         /**
          * Zooms the layer controlled by the main proxy object to its bounding box.
          *
          * @function zoomToBoundary
          */
-        zoomToBoundary () { this._mainProxyWrapper.zoomToBoundary(); }
+        zoomToBoundary () { this.mainProxyWrapper.zoomToBoundary(); }
 
         /**
          * Zooms to a graphic with the specified oid.
@@ -591,7 +593,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @param {Object} offsetFraction fractions of the current extent occupied by main and data panels in the form of { x: <Number>, y: <Number> }
          * @return {Promise} a promise resolving when the extent change is comlete
          */
-        zoomToGraphic (oid, offsetFraction) { return this._mainProxyWrapper.zoomToGraphic(oid, offsetFraction); }
+        zoomToGraphic (oid, offsetFraction) { return this.mainProxyWrapper.zoomToGraphic(oid, offsetFraction); }
 
         /**
          * Retrieves a graphic object from the main connected layer given the object id.
@@ -599,12 +601,12 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
          * @param {Number} oid the object id
          * @return {Promise} a promise resolving with a graphic
          */
-        fetchGraphic(oid) {         return this._mainProxyWrapper.fetchGraphic(oid); }
+        fetchGraphic(oid) {         return this.mainProxyWrapper.fetchGraphic(oid); }
 
         get symbologyStack () {     return this._symbologyStack; }
 
-        get metadataUrl () {        return this._mainProxyWrapper.metadataUrl; }
-        get catalogueUrl () {       return this._mainProxyWrapper.catalogueUrl; }
+        get metadataUrl () {        return this.mainProxyWrapper.metadataUrl; }
+        get catalogueUrl () {       return this.mainProxyWrapper.catalogueUrl; }
     }
 
     // who is responsible for populating legend groups with entries? legend service or the legend group itself

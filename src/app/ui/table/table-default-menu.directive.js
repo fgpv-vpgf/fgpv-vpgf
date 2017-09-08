@@ -58,7 +58,7 @@ function Controller($scope, stateManager, events, tableService, appInfo, $rootSc
 
     function setMode(mode) {
         const requester = stateManager.display.table.requester;
-        const config = requester.legendEntry._mainProxyWrapper.layerConfig.table;
+        const config = requester.legendEntry.mainProxyWrapper.layerConfig.table;
         stateManager.setMorph('table', mode);
         if (mode === 'full') {
             config.maximize = true;
