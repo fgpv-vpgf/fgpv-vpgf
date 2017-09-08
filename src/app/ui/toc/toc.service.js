@@ -62,9 +62,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         const config = configService.getSync.map.layerRecords.find(item =>
             item.config.id === legendBlock.layerRecordId).initialConfig.table;
 
-        // reset filter flag
-        legendBlock.filter = config.initialFilter;
-        config.applyMap =  config.initialFilter;
+        // update filter flag
+        legendBlock.filter = config.applied;
 
         stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);

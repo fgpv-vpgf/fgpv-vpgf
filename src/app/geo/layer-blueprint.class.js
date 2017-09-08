@@ -28,6 +28,95 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          */
         constructor() { }
 
+        /**
+         * Get the layer definition query
+         *
+         * @method _getFilterDefintion
+         * @private
+         * @param {Array} columns an array of columns of a layer
+         * @return {String} the Assembled query definition of the layer
+         */
+        _getFilterDefintion(columns) {
+            let defs = [];
+
+            columns.forEach(column => {
+                if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
+                    defs = this._getColumnFilterDefintion(defs, column);
+                }
+            });
+
+            return defs.join(' AND ');
+        }
+
+        /**
+         * Set the layer definition query
+         *
+         * @method _getColumnFilterDefintion
+         * @private
+         * @param   {Array}   defs   array of definition queries
+         * @param   {Object}   column   column object
+         * @return {Array} defs definition queries array
+         */
+        _getColumnFilterDefintion(defs, column) {
+            if (column.filter.type === 'string') {
+                // replace ' by '' to be able to perform the search in the datatable
+                // relpace * wildcard and construct the query (add wildcard at the end)
+                const val = column.filter.value.replace(/'/g, /''/);
+                if (val !== '') {
+                    defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
+                }
+            } else if (column.filter.type === 'selector') {
+                const val =  column.filter.value.join(',').replace(/"/g, '\'');
+                if (val !== '') {
+                    defs.push(`${column.data} IN (${val})`);
+                }
+            } else if (column.filter.type === 'number') {
+                const values = column.filter.value.split(',');
+                const min = values[0];
+                const max = values[1];
+
+                if (min !== '') {
+                    defs.push(`${column.data} >= ${min}`);
+                }
+                if (max !== '') {
+                    defs.push(`${column.data} <= ${max}`);
+                }
+            } else if (column.type === 'rv-date') {
+                const min = column.filter.value.min;
+                const max = column.filter.value.max;
+
+                if (min) {
+                    const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
+                    defs.push(`${column.data} >= DATE \'${dateMin}\'`);
+                }
+                if (max) {
+                    const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
+                    defs.push(`${column.data} <= DATE \'${dateMax}\'`);
+                }
+            }
+            return defs;
+        }
+
+        /**
+         * Apply layer definition query on the layer node object
+         *
+         * @method _applyFilterQuery
+         * @private
+         * @param   {LayerNode}   node   layer node object
+         */
+        _applyFilterQuery(node) {
+            if (node.layerType === layerTypes.ESRI_DYNAMIC) {
+                // walk through sub layers in dynamic layer
+                for (let i = 0; i < node.layerEntries.length; i++) {
+                    if (node.layerEntries[i].table && (node.layerEntries[i].table.applyMap || node.layerEntries[i].table.applied)) {
+                        node.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(node.layerEntries[i].table.columns);
+                    }
+                }
+            } else if (node.table && (node.table.applyMap || node.table.applied)) {
+                node.initialFilteredQuery = this._getFilterDefintion(node.table.columns);
+            }
+        }
+
         set config(value) {
             if (this._config) {
                 console.warn('config is already set');
@@ -57,6 +146,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 console.warn('source is already set');
                 return;
             }
+
+            this._applyFilterQuery(value);
 
             this._source = value;
             this.config = new LayerBlueprint.LAYER_TYPE_TO_LAYER_NODE[this._source.layerType](this._source);
@@ -127,76 +218,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
         }
 
         /**
-         * Assemble filters on map
-         *
-         * @method _assemble
-         * @private
-         * @param {array} an array of columns of a layer
-         * @return {string} the Assembled query definition of the layer
-         */
-        _getFilterDefintion(columns) {
-            let defs = [];
-
-            columns.forEach(column => {
-                if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
-                    defs = this._getColumnFitlerDefintion(defs, column);
-                }
-            });
-
-            return defs.join(' AND ');
-        }
-
-
-        /**
-         * Set the layer definition query
-         *
-         * @method _getColumnFitlerDefintion
-         * @private
-         * @param   {Array}   defs   array of definition queries
-         * @param   {Object}   column   column object
-         * @return {Array} defs definition queries array
-         */
-        _getColumnFitlerDefintion(defs, column) {
-            if (column.filter.type === 'string') {
-                // replace ' by '' to be able to perform the search in the datatable
-                // relpace * wildcard and construct the query (add wildcard at the end)
-                const val = column.filter.value.replace(/'/g, /''/);
-                if (val !== '') {
-                    defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
-                }
-            } else if (column.filter.type === 'selector') {
-                const val =  column.filter.value.join(',').replace(/"/g, '\'');
-                if (val !== '') {
-                    defs.push(`${column.data} IN (${val})`);
-                }
-            } else {
-
-                const values = column.filter.value.split(',');
-                const min = values[0];
-                const max = values[1];
-
-                if (column.filter.type === 'number') {
-                    if (min !== '') {
-                        defs.push(`${column.data} >= ${min}`);
-                    }
-                    if (max !== '') {
-                        defs.push(`${column.data} <= ${max}`);
-                    }
-                } else if (column.type === 'rv-date') {
-                    if (min !== null) {
-                        const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
-                        defs.push(`${column.data} >= DATE \'${dateMin}\'`);
-                    }
-                    if (max !== null) {
-                        const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
-                        defs.push(`${column.data} <= DATE \'${dateMax}\'`);
-                    }
-                }
-            }
-            return defs;
-        }
-
-        /**
          * Generates a layer from an online service based on the layer type.
          * Takes a layer in the config format and generates an appropriate layer object.
          *
@@ -204,17 +225,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
-            if (this.config.layerType === layerTypes.ESRI_DYNAMIC) {
-                // walk through sub layers in dynamic layer
-                for (let i = 0; i < this.config.layerEntries.length; i++) {
-                    if (this.config.layerEntries[i].table && this.config.layerEntries[i].table.applyMap) {
-                        this.config.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(this.config.layerEntries[i].table.columns);
-                    }
-                }
-            } else if (this.config.table && this.config.table.applyMap) {
-                this.config.initialFilteredQuery = this._getFilterDefintion(this.config.table.columns);
-            }
-
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
                 this.config, undefined, epsgLookup);
         }

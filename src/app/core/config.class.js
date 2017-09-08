@@ -391,7 +391,10 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
 
         get type () { return this._type; }
+
         get value () { return this._value; }
+        set value (value) { this._value = value; }
+
         get static () { return this._static; }
 
         get JSON () {
@@ -449,7 +452,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._maximize = source.maximize || false;
             this._search = source.search;
             this._applyMap = source.applyMap || false;
-            this._initialFilter = source.applyMap || false;
+            this._applied = source.applyMap || false;
             this._columns = source.columns ?
                 source.columns.map(columnsSource =>
                     (new ColumnNode(columnsSource))) :
@@ -463,10 +466,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set maximize (value) { this._maximize = value; }
 
         get search () { return this._search; }
+
         get applyMap () { return this._applyMap; }
         set applyMap (value) { this._applyMap = value; }
+
         get columns () { return this._columns; }
-        get initialFilter() { return this._initialFilter; }
+        set columns (value) { this._columns = value; }
+
+        get applied() { return this._applied; }
+        set applied (value) { this._applied = value; }
 
         get JSON () {
             return {
@@ -478,6 +486,32 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 columns: this.columns.JSON
             }
         }
+    }
+
+    /**
+     * Creates column nodes for layers without pre-defined table property with columns (used for filters)
+     *
+     * @function createColumnNode
+     * @param {Object} column original column object
+     * @param {Object} displayData
+     * @return {ColumnNode} a ColumnNode with required values applied
+     */
+    function createColumnNode(column, fields) {
+        delete column.sort;
+        delete column.width;
+
+        switch (fields.find(field => field.name === column.data).type) {
+            case 'esriFieldTypeString':
+                column.filter.type = 'string';
+                break;
+            case 'esriFieldTypeDate':
+                column.filter.type = 'rv-date';
+                break;
+            default:
+                column.filter.type = 'number';
+        }
+
+        return new ColumnNode(column);
     }
 
     // abstract
@@ -507,7 +541,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._controls = defaultedSource.controls;
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
-            this._initialFilteredQuery = null;
+            this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
 
             // remove metadata control if no metadata url is specified after applying defaults
             if (!source.metadataUrl) {
@@ -623,6 +657,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._index = source.index;
             this._name = source.name;
 
+            this._initialFilteredQuery = source.initialFilteredQuery;
+
             // state and controls defaults cannot be applied here;
             // need to wait until dynamic/wms layer is loaded before parent/child defaulting can be applied; this is done in the legend service;
             this._indent = source.indent || '';
@@ -641,6 +677,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get userDisabledControls () { return this._userDisabledControls; }
         get indent () { return this._indent; }
         get state () { return this._state; }
+
+        get initialFilteredQuery() { return this._initialFilteredQuery; }
+        set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
 
         applyBookmark (value) {
             this._state = new InitialLayerSettings(value.state);
@@ -2262,6 +2301,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         },
 
         applyLayerNodeDefaults,
+
+        createColumnNode,
 
         TYPES,
         DEFAULTS

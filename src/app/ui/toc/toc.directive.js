@@ -268,7 +268,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
 
             if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
                 layerRecord.config.layerEntries.forEach(currentSubLayer => {
-                    if (currentSubLayer.table && currentSubLayer.table.applyMap) {
+                    if (currentSubLayer.table && (currentSubLayer.table.applyMap || currentSubLayer.table.applied)) {
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
                         proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);

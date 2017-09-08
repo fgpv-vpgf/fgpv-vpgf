@@ -70,7 +70,7 @@ angular
  */
 function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    tableService, events) {
+    tableService, events, ConfigObject) {
 
     const directive = {
         restrict: 'E',
@@ -288,8 +288,24 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             function initColumns() {
                 // if it is the first time table is initialize, set columns and table info
                 let order = stateManager.display.table.data.filter.order || [];
-                const config = requester.legendEntry._mainProxyWrapper.layerConfig.table;
+                const config = requester.legendEntry.mainProxyWrapper.layerConfig.table;
                 if (!displayData.filter.isInit) {
+                    // if there are no columns defined in config we know we need all of the columns
+                    // create column nodes for all of the columns and store them
+                    // now we are able to restore filters when reloading layers
+                    if (config.columns.length === 0) {
+                        config.columns = displayData.columns
+                            .filter(column =>
+                                column.data !== 'rvSymbol' && column.data !== 'rvInteractive')
+                            .map(col => new ConfigObject.createColumnNode(col, displayData.fields));
+                    }
+
+                    const initialFilters = config.columns.map(column => column.filter.value).filter(a => a);
+
+                    // update apply on map button based on whether the current filters are already applied if intended to
+                    tableService.filter.isApplied = stateManager.display.table.data.filter.isApplied =
+                        initialFilters.length === 0 || config.applied;
+
                     // add the column interactive buttons renderer
                     addColumnInteractivity();
                     // set width from field length if it is a string field type. If it is the oid field,
@@ -462,13 +478,14 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // apply filters on map
                 if (config.applyMap) {
                     const filters = stateManager.display.table;
+                    const query = filters.requester.legendEntry.mainProxyWrapper.layerConfig.initialFilteredQuery;
 
                     // set isApplied to hide apply filters on map button
                     tableService.filter.isApplied = true;
                     filters.data.filter.isApplied = tableService.filter.isApplied;  // set on layer so it can persist when we change layer
 
-                     // set filter flag (data is filtered)
-                    tableService.filter.isMapFiltered = true;
+                    // update filter flag ( if data is filtered)
+                    tableService.filter.isMapFiltered = query !== "";
                     filters.data.filter.isMapFiltered = tableService.filter.isMapFiltered;  // set on layer so it can persist when we change layer
                     filters.requester.legendEntry.filter = tableService.filter.isMapFiltered;
 
@@ -500,7 +517,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         column.position = columns.length;
 
                         // set title
-                        if (configCol.title) { column.title = configCol.title; }
+                        if (configCol.title) {
+                            column.title = configCol.title;
+                        }
 
                         // set field description
                         if (configCol.description) {
@@ -543,7 +562,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             * @function customizeFilter
             * @private
             * @param {Object} config    configuration file for filter
-            * @return {Object} column    column to apply the filter to
+            * @param {Object} column    column to apply the filter to
             */
             function customizeFilter(config, column) {
                 // set filter type, value and if it can be modified
@@ -558,14 +577,14 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     if (config.filter.value) {
                         if (column.type === 'string' || column.type === 'selector') {
                             column.filter.value = config.filter.value;
-                        } else {
+                        } else if (column.type === 'number') {
                             const values = config.filter.value.split(',');
                             column.filter.min = values[0];
                             column.filter.max = values[1];
+                        } else {
+                            column.filter.min = config.filter.value.min;
+                            column.filter.max = config.filter.value.max;
                         }
-
-                        // disable apply on map button
-                        tableService.filter.isApplied = false;
                     }
 
                     // set if filter can be modified
