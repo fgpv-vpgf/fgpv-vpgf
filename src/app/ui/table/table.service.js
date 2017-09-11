@@ -12,7 +12,7 @@ angular
     .factory('tableService', tableService);
 
 function tableService(stateManager, geoService, $rootScope, $q, gapiService, debounceService, $rootElement, $timeout,
-    referenceService, layerRegistry, configService) {
+    referenceService, layerRegistry, configService, Geo) {
 
     // timestamps can be watched for key changes to filter data
     const filterTimeStamps = {
@@ -217,7 +217,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
 
         // TODO: Modify when filtering capabilities added for other layers such as WMS
-        if (config.layerType === 'esriDynamic') {
+        if (config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             config = config.layerEntries.find(item => item.index === layerConfig.index)
         }
 
@@ -295,7 +295,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
 
         // TODO: Modify when filtering capabilities added for other layers such as WMS
-        if (config.layerType === 'esriDynamic') {
+        if (config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             config = config.layerEntries.find(item => item.index === layerConfig.index)
         }
 
@@ -590,8 +590,8 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // user added layer from server support definition expression and time defintion
         const layer = layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId);
         const layerType = layer.initialConfig.layerType; // stateManager.display.table.requester.legendEntry.layerType;
-        service.isFeatureLayer = (layerType === 'esriFeature' && !layer.isFileLayer());
-        service.isDynamicLayer = (layerType === 'esriDynamic');
+        service.isFeatureLayer = (layerType === Geo.Layer.Types.ESRI_FEATURE && !layer.isFileLayer());
+        service.isDynamicLayer = (layerType === Geo.Layer.Types.ESRI_DYNAMIC);
 
         filteredState().then(() => {
             filterTimeStamps.onCreated = Date.now();
