@@ -102,18 +102,18 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          *
          * @method _applyFilterQuery
          * @private
-         * @param   {LayerNode}   node   layer node object
+         * @param   {LayerNode}   layerSource   layer source object
          */
-        _applyFilterQuery(node) {
-            if (node.layerType === layerTypes.ESRI_DYNAMIC) {
+        _applyFilterQuery(layerSource) {
+            if (layerSource.layerType === layerTypes.ESRI_DYNAMIC) {
                 // walk through sub layers in dynamic layer
-                for (let i = 0; i < node.layerEntries.length; i++) {
-                    if (node.layerEntries[i].table && (node.layerEntries[i].table.applyMap || node.layerEntries[i].table.applied)) {
-                        node.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(node.layerEntries[i].table.columns);
+                for (let i = 0; i < layerSource.layerEntries.length; i++) {
+                    if (layerSource.layerEntries[i].table && (layerSource.layerEntries[i].table.applyMap || layerSource.layerEntries[i].table.applied)) {
+                        layerSource.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(layerSource.layerEntries[i].table.columns);
                     }
                 }
-            } else if (node.table && (node.table.applyMap || node.table.applied)) {
-                node.initialFilteredQuery = this._getFilterDefintion(node.table.columns);
+            } else if (layerSource.table && (layerSource.table.applyMap || layerSource.table.applied)) {
+                layerSource.initialFilteredQuery = this._getFilterDefintion(layerSource.table.columns);
             }
         }
 

@@ -473,7 +473,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get columns () { return this._columns; }
         set columns (value) { this._columns = value; }
 
-        get applied() { return this._applied; }
+        get applied () { return this._applied; }
         set applied (value) { this._applied = value; }
 
         get JSON () {
@@ -657,6 +657,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._index = source.index;
             this._name = source.name;
 
+            // the initial filters to be applied for the layer
+            // applied on source object so the property is not lost when applying layer node defaults
             this._initialFilteredQuery = source.initialFilteredQuery;
 
             // state and controls defaults cannot be applied here;

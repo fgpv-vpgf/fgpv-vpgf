@@ -192,8 +192,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             }
         });
 
+        const layerConfig = filters.requester.legendEntry.mainProxyWrapper.layerConfig;
+
         // store the reset filter values
-        filters.requester.legendEntry.mainProxyWrapper.layerConfig.table.columns.forEach(column => {
+        layerConfig.table.columns.forEach(column => {
             if (typeof column.filter !== 'undefined') {
                 if (!column.filter.static) {
                     if (column.filter.type === 'selector') {
@@ -211,8 +213,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         service.filter.isMapFiltered = false;
         filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
 
-        const config = configService.getSync.map.layerRecords.find(item =>
+        let config = configService.getSync.map.layerRecords.find(item =>
             item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
+
+        // TODO: Modify when filtering capabilities added for other layers such as WMS
+        if (config.layerType === 'esriDynamic') {
+            config = config.layerEntries.find(item => item.index === layerConfig.index)
+        }
 
         config.table.applyMap = false;
 
@@ -263,9 +270,11 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // set layer defintion query
         setDefinitionExpression(filters.requester.legendEntry, defs);
 
+        const layerConfig = filters.requester.legendEntry.mainProxyWrapper.layerConfig;
+
         if (defs.length === 0) {
             // store the reset filter values
-            filters.requester.legendEntry.mainProxyWrapper.layerConfig.table.columns.forEach(column => {
+            layerConfig.table.columns.forEach(column => {
                 if (typeof column.filter !== 'undefined') {
                     if (column.filter.type === 'selector') {
                         column.filter.value = [];
@@ -282,8 +291,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         service.filter.isMapFiltered = defs.length > 0;
         filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
 
-        const config = configService.getSync.map.layerRecords.find(item =>
+        let config = configService.getSync.map.layerRecords.find(item =>
             item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
+
+        // TODO: Modify when filtering capabilities added for other layers such as WMS
+        if (config.layerType === 'esriDynamic') {
+            config = config.layerEntries.find(item => item.index === layerConfig.index)
+        }
 
         // most recent 'filters' were applied (either no filters and no changes or updated filters applied)
         config.table.applyMap = config.table.applied = true;
