@@ -49,7 +49,8 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
-        const legendData = extractLegendTree(configService.getSync.map.legendBlocks);
+        const legendData = extractLegendTree(configService.getSync.map.legendBlocks)
+            .filter(entry => entry.items.length > 0);
 
         // resolve with an empty 0 x 0 canvas if there is not layers in the legend
         if (legendData.length === 0) {
@@ -425,14 +426,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         // TODO: decide if symbology from the controlled layers should be included in the export image
         // TODO: decide if symbology from the duplicated layer should be included in the export image
         // TODO: decide if unbound layers and info sections should be included in the export image
-        // FIXME: see why entry.scale is sometimes undefined, should always be defined
         const legendTreeData = legendBlock
             .walk(entry =>
-                entry.visibility &&
+                entry.visibility && entry.opacity !== 0 &&                                // opacity can be undefined or > 0
                 (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
-                (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?
+                (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?           // scale only defined for nodes
                     TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
-                entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entrys children if it's a group
+                entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entry's children if it's a group
             .filter(a =>
                 a !== null);
 
