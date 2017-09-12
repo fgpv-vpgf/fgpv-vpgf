@@ -49,8 +49,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
-        const legendData = extractLegendTree(configService.getSync.map.legendBlocks)
-            .filter(entry => entry.items.length > 0);
+        const legendData = extractLegendTree(configService.getSync.map.legendBlocks);
 
         // resolve with an empty 0 x 0 canvas if there is not layers in the legend
         if (legendData.length === 0) {
@@ -436,6 +435,6 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             .filter(a =>
                 a !== null);
 
-        return legendTreeData;
+        return legendTreeData.filter(entry => entry.items.length > 0);
     }
 }
