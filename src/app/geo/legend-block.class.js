@@ -758,7 +758,7 @@ function LegendBlockFactory($q, Geo, layerRegistry, gapiService, configService, 
             return this.state === 'rv-loading';
         }
 
-        get name () {                   return this._name; }
+        get name () {                   return this._name || this._rootProxyWrapper.name; }
 
         get visibility () {
             return this._observableEntries.some(entry =>

@@ -322,7 +322,6 @@
     "layers": [
       {
         "id": "refineries",
-        "name": "Refineries",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
