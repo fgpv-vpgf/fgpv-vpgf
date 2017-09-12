@@ -413,19 +413,28 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     name: entry.name,
                     items: entry.symbologyStack.stack
                 }),
-            [LegendBlock.TYPES.GROUP]: () => null,
+            [LegendBlock.TYPES.GROUP]: entry =>
+                ({
+                    name: entry.name,
+                    items: extractLegendTree(entry)
+                }),
             [LegendBlock.TYPES.SET]: () => null,
             [LegendBlock.TYPES.INFO]: () => null
         }
 
         // TODO: decide if symbology from the controlled layers should be included in the export image
         // TODO: decide if symbology from the duplicated layer should be included in the export image
+        // TODO: decide if unbound layers and info sections should be included in the export image
         const legendTreeData = legendBlock
             .walk(entry =>
-                entry.visibility ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null)
+                entry.visibility && entry.opacity !== 0 &&                                // opacity can be undefined or > 0
+                (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
+                (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?           // scale only defined for nodes
+                    TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
+                entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entry's children if it's a group
             .filter(a =>
                 a !== null);
 
-        return legendTreeData;
+        return legendTreeData.filter(entry => entry.items.length > 0);
     }
 }
