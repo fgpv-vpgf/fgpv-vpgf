@@ -413,16 +413,26 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     name: entry.name,
                     items: entry.symbologyStack.stack
                 }),
-            [LegendBlock.TYPES.GROUP]: () => null,
+            [LegendBlock.TYPES.GROUP]: entry =>
+                ({
+                    name: entry.name,
+                    items: extractLegendTree(entry)
+                }),
             [LegendBlock.TYPES.SET]: () => null,
             [LegendBlock.TYPES.INFO]: () => null
         }
 
         // TODO: decide if symbology from the controlled layers should be included in the export image
         // TODO: decide if symbology from the duplicated layer should be included in the export image
+        // TODO: decide if unbound layers and info sections should be included in the export image
+        // FIXME: see why entry.scale is sometimes undefined, should always be defined
         const legendTreeData = legendBlock
             .walk(entry =>
-                entry.visibility ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null)
+                entry.visibility &&
+                (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
+                (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?
+                    TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
+                entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entrys children if it's a group
             .filter(a =>
                 a !== null);
 
