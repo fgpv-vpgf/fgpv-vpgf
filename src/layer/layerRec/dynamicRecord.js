@@ -406,6 +406,19 @@ class DynamicRecord extends attribRecord.AttribRecord {
             this._layer.setVisibleLayers([-1]);
         }
 
+        // get mapName of the legend entry from the service to use as the name if not provided in config
+        if (!this.name) {
+            const defService = this._esriRequest({
+                url: this._layer.url + '?f=json',
+                callbackParamName: 'callback',
+                handleAs: 'json',
+            });
+            const setTitle = defService.then(serviceResult => {
+                this.name = serviceResult.mapName;
+            });
+            loadPromises.push(setTitle);
+        }
+
         Promise.all(loadPromises).then(() => {
             this._stateChange(shared.states.LOADED);
         });
@@ -494,7 +507,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
     /**
      * Retrieves attributes from a layer for a specified feature index
-     * 
+     *
      * @function getFormattedAttributes
      * @param {String}  childIndex  index of the child layer to get attributes for
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
