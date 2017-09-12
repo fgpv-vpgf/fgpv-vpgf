@@ -362,8 +362,8 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
                 if (val && !isNaN(val.getTime())) {
                     // set date to filter values or minimum / maximum date value
                     // remove the time part from the filter values
-                    let min = (filter.min !== null) ? filter.min.toDateString() : new Date(-8640000000000000);
-                    let max = (filter.max !== null) ? filter.max.toDateString() : new Date(8640000000000000);
+                    let min = filter.min ? filter.min.toDateString() : new Date(-8640000000000000);
+                    let max = filter.max ? filter.max.toDateString() : new Date(8640000000000000);
 
                     // create a new date object with the time set to beginning of the day
                     min = new Date(min);
