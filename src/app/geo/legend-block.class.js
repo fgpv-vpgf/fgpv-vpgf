@@ -269,6 +269,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          */
         get controlled () {             return this._controlled; }
 
+        get hidden () {                 return this.blockConfig.hidden || false; }
+
         _parent = null;
         set parent (value) {            this._parent = value; }
         /**
@@ -750,7 +752,6 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 })
         }
 
-        _hiddenEntries = [];
         _entries = [];
 
         get availableControls () {      return this._availableControls; }
@@ -943,15 +944,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         addEntry (entry, position = this._entries.length) {
-            // all hidden entries are added into a separate collection so they are not rendered in the UI,
-            // and can't be access by the regular walk function;
-            // since hidden entries cannot be interacted with, the legend order is not preserved
-            // if they need to be accesses by new functionality, the `hiddenEntries` property needs to be exposed
-            if (entry.blockConfig.hidden) {
-                this._hiddenEntries.push(entry);
-            } else {
-                this._entries.splice(position, 0, entry);
-            }
+            this._entries.splice(position, 0, entry);
 
             entry.parent = this;
 
@@ -959,13 +952,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         removeEntry (entry) {
-            // decide which collection the entry should be removed from
-            const collection = entry.blockConfig.hidden ? this._hiddenEntries : this._entries;
-
-            const index = collection.indexOf(entry);
+            const index = this._entries.indexOf(entry);
 
             if (index !== -1) {
-                collection.splice(index, 1);
+                this._entries.splice(index, 1);
             }
 
             return index;

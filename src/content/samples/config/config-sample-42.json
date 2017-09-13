@@ -317,6 +317,9 @@
           {
             "layerId": "0",
             "hidden": true
+          },
+          {
+            "layerId": "powerplant100mw-naturalGas"
           }
         ]
       }
@@ -327,6 +330,12 @@
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "powerplant100mw-naturalGas",
+        "name": "Natural Gas Pipeline",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
       }
     ],
     "tileSchemas": [
