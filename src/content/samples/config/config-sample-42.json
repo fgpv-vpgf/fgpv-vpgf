@@ -315,11 +315,17 @@
         "name": "root",
         "children": [
           {
-            "layerId": "0",
-            "hidden": true
-          },
-          {
-            "layerId": "powerplant100mw-naturalGas"
+            "name": "A Group with a hidden layer",
+            "expanded": true,
+            "children": [
+              {
+                "layerId": "0",
+                "hidden": true
+              },
+              {
+                "layerId": "powerplant100mw-naturalGas"
+              }
+            ]
           }
         ]
       }

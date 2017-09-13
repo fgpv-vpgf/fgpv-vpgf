@@ -396,7 +396,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         /**
-         * Synchonizes opacity and visiblity values of the controlled proxies to the main proxy connected to this legend block.
+         * Synchronizes opacity and visiblity values of the controlled proxies to the main proxy connected to this legend block.
          *
          * @function synchronizeControlledProxyWrappers
          */
@@ -929,12 +929,13 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get entries () {                return this._entries; }
 
         // active entries are legend blocks that directly or indirectly control map data, namely legend nodes, groups, and sets
+        // active entries do not include hidden nodes
         get _activeEntries () {
             return this.entries
                 .filter(entry =>
                     entry.blockType === TYPES.SET ||
                     entry.blockType === TYPES.GROUP ||
-                    entry.blockType === TYPES.NODE);
+                    (entry.blockType === TYPES.NODE && !entry.hidden));
         }
         get _observableEntries () {
             // observable entries are a subset of active entries which are not controlled blocks and are rendered in the UI

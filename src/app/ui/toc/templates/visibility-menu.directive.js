@@ -66,7 +66,7 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
 
         // TODO: think about if this should toggle visiblity of legend blocks whose controls are disabled/userdisabled
         function _walkAction(block) {
-            if (block.isInteractive) {
+            if (block.isInteractive && !block.hidden) {
                 block.visibility = value
             }
         }
@@ -92,7 +92,7 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
         const mapConfig = configService.getSync.map;
         const isAllVisible = mapConfig.legendBlocks
             .walk(block => {
-                if (!block.isInteractive) {
+                if (!block.isInteractive || block.hidden) {
                     return null;
                 }
 
