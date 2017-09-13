@@ -427,7 +427,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         // TODO: decide if unbound layers and info sections should be included in the export image
         const legendTreeData = legendBlock
             .walk(entry =>
-                entry.visibility && entry.opacity !== 0 &&                                // opacity can be undefined or > 0
+                entry.visibility && !entry.hidden && entry.opacity !== 0 &&               // opacity can be undefined or > 0
                 (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
                 (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?           // scale only defined for nodes
                     TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
