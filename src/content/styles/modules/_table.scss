@@ -403,6 +403,13 @@ rv-table-setting-panel {
                     color: $primary-color-text;
                 }
 
+                button {
+                    background: transparent;
+                    border: 0;
+                    padding: 0;
+                    display: flex;
+                }
+
                 .rv-filter-settting-reorder {
                     flex: 0 0 40px;
                 }
@@ -414,12 +421,14 @@ rv-table-setting-panel {
 
                 .rv-filter-settting-item {
                     flex: 1 0 30%;
-                    margin-top: 20px;
-                    height: 40px;
 
                     .rv-filter-number, .rv-filter-selector, .rv-filter-string, .rv-filter-date {
                         height: 40px;
                         align-items: center;
+                    }
+
+                    .md-errors-spacer {
+                        display: none;
                     }
                 }
 
