@@ -156,6 +156,13 @@ function Controller($scope, events, tableService, stateManager) {
         $scope.columns = self.columns;
         self.title = stateManager.display.table.data.filter.title;
         self.tableService.isSettingOpen = false;
+
+        self.sortStatus = sortStatus;
+        self.sortAll = sortAll;
+
+        self.displayStatus = displayStatus;
+        self.displayAll = displayAll;
+
         init();
     });
 
@@ -214,6 +221,49 @@ function Controller($scope, events, tableService, stateManager) {
     }
 
     /**
+     * Check current sort state of all columns
+     *
+     * @function sortStatus
+     * @return {String} asc if all columns ascending, desc if all columns descending, otherwise none
+     */
+    function sortStatus() {
+        const sort = self.columns[2].sort;
+
+        if (self.columns.some((col, index) => index > 2 && col.sort !== sort)) {
+            return 'none';
+        }
+
+        return sort;
+    }
+
+    /**
+     * On sort click, apply sort value to all columns then sort the table
+     *
+     * @function sortAll
+     */
+    function sortAll() {
+        let newSort;
+
+        switch (self.sortStatus()) {
+            case 'asc':
+                newSort = 'desc';
+                break;
+            case 'desc':
+                newSort = 'none';
+                break;
+            default:
+                newSort = 'asc';
+        }
+
+        self.columns.forEach((col, index) => {
+            if (index > 1) {
+                col.sort = newSort;
+            }
+        });
+        sortColumns();
+    }
+
+    /**
      * On display click, show/hide the column
      *
      * @function onDisplay
@@ -226,6 +276,38 @@ function Controller($scope, events, tableService, stateManager) {
         // toggle the visibility and class name use to show/hide collumn when export or print
         column.visible(columnInfo.display);
         column.header().classList.toggle('rv-filter-noexport');
+    }
+
+    /**
+     * Check current display state of all columns
+     *
+     * @function displayStatus
+     * @return {Boolean|String} true if all columns shown, false if none shown, otherwise 'indeterminate'
+     */
+    function displayStatus() {
+        const display = self.columns[2].display;
+
+        if (self.columns.some((col, index) => index > 2 && col.display !== display)) {
+            return 'indeterminate';
+        }
+
+        return display;
+    }
+
+    /**
+     * On display click, show/hide all columns
+     *
+     * @function displayAll
+     */
+    function displayAll() {
+        const newDisplay = !(self.displayStatus() === true);
+
+        self.columns.forEach((col, index) => {
+            if (index > 1) {
+                col.display = newDisplay;
+                onDisplay(col);
+            }
+        });
     }
 }
 
