@@ -94,7 +94,8 @@
                 aria-label="{{ filter.table.reset.tooltip | translate }}"
                 class="primary"
                 rv-help="table-clear-button"
-                ng-click="self.tableService.clearFilters()">
+                ng-click="self.tableService.clearFilters()"
+                ng-disabled="(self.tableService.filter.isApplied && !self.tableService.filter.isMapFiltered) || !(self.tableService.isFeatureLayer || self.tableService.isDynamicLayer)">
                 {{ 'filter.table.reset.tooltip' | translate }}
             </md-button>
 
