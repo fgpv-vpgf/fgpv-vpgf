@@ -39,9 +39,10 @@
 
                     <button class="rv-filter-settting-display md-subhead rv-icon-16" ng-click="self.displayAll()">
                         {{ 'filter.settings.label.show' | translate }}
-                        <md-icon md-svg-src="toggle:check_box" ng-show="self.displayStatus() === true"></md-icon>
-                        <md-icon md-svg-src="toggle:check_box_outline_blank" ng-show="self.displayStatus() === false"></md-icon>
-                        <md-icon md-svg-src="toggle:indeterminate_check_box" ng-show="self.displayStatus() === 'indeterminate'"></md-icon>
+                        <md-icon md-svg-src="toggle:{{ self.displayStatus() === true ?
+                            'check_box' :
+                            (!self.displayStatus() ? 'check_box_outline_blank' : 'indeterminate_check_box') }}" >
+                        </md-icon>
                     </button>
 
                 </li>

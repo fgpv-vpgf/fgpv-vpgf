@@ -227,6 +227,7 @@ function Controller($scope, events, tableService, stateManager) {
      * @return {String} asc if all columns ascending, desc if all columns descending, otherwise none
      */
     function sortStatus() {
+        // use the third column here because the first two are the always hidden ones: symbology and interactive buttons
         const sort = self.columns[2].sort;
 
         if (self.columns.some((col, index) => index > 2 && col.sort !== sort)) {
@@ -285,6 +286,7 @@ function Controller($scope, events, tableService, stateManager) {
      * @return {Boolean|String} true if all columns shown, false if none shown, otherwise 'indeterminate'
      */
     function displayStatus() {
+        // use the third column here because the first two are the always hidden ones: symbology and interactive buttons
         const display = self.columns[2].display;
 
         if (self.columns.some((col, index) => index > 2 && col.display !== display)) {
