@@ -432,6 +432,10 @@ To change a name of a `node`, you need to modify the its _layer_ definition, so 
 ]
 ```
 
+#### Hidden legend blocks
+
+There is an option to provide hidden legend blocks from the UI and therefore, disable all its controls. These hidden legend blocks can be nested inside groups, however they should not be put inside visibility sets. Hiding a legend block in a visibility set will result in undefined behaviour due to this invalidating the fundamental functionality of these sets.
+
 #### With a lot of power
 
 There are probably many ways to screw up config and either get undefined behaviour or runtime errors with a valid config. One way would be to cross-control layers. Observe:

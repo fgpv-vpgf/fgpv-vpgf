@@ -39,8 +39,9 @@
         <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.config.map.legendBlocks"
             rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.config.map.legendBlocks.entries">
 
-            <!-- filter: { controlled: false } will filter out layer controled by a dynamic layer which is rendered as a group -->
-            <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false } track by block.id"
+            <!-- filter: controlled: false will filter out layer controled by a dynamic layer which is rendered as a group -->
+            <!-- filter: hidden: false will filter out layer intentionally hidden from legend -->
+            <li ng-repeat="block in $dxPrior.entries | filter: { controlled: false, hidden: false } track by block.id"
                 class="rv-toggle-slide"
                 data-sort-group="{{ ::block.sortGroup }}"
                 legend-block-id="{{ block.id }}">

@@ -161,7 +161,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                     return panelName;
                 }
                 else if (panelDisplay.requester && legendBlock.entries) {
-                    // walk thruogh the children of the current block to see if there's an open panel being removed
+                    // walk through the children of the current block to see if there's an open panel being removed
                     return legendBlock
                         .walk(lb => lb.id === panelDisplay.requester.id ? lb.id : null)
                         .filter(a => a)[0] ? panelName : null;
