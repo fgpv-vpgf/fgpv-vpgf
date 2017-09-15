@@ -1,473 +1,1012 @@
 {
-  "ui": {
-    "title": "BC Critical Habitat",
-    "navBar": {
-      "zoom": "buttons",
-      "extra": [
+  "ui":{
+    "title":"BC Critical Habitat",
+    "navBar":{
+      "zoom":"buttons",
+      "extra":[
         "fullscreen",
         "geoLocator",
         "home",
         "help"
       ]
     },
-    "sideMenu": {
-      "logo": true
+    "sideMenu":{
+      "logo":true
     },
-    "help": {
-      "folderName": "default"
+    "help":{
+      "folderName":"default"
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
+    "legendIsOpen":{
+      "large":false,
+      "medium":false,
+      "small":false
     }
   },
-  "version": "2.0",
-  "language": "en",
-  "services": {
-    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-    "exportMapUrl": "http://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
-    "export": {
-      "title": {
-        "value": "Title"
+  "version":"2.0",
+  "language":"en",
+  "services":{
+    "proxyUrl":"http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+    "exportMapUrl":"http://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+    "export":{
+      "title":{
+        "value":"Title"
       },
-      "map": {},
-      "mapElements": {},
-      "legend":{},
-      "footnote": {
-        "value": "BC Critical Habitat"
+      "map":{
+
+      },
+      "mapElements":{
+
+      },
+      "legend":{
+
+      },
+      "footnote":{
+        "value":"BC Critical Habitat"
       }
     },
-    "search": {
-      "serviceUrls": {
-        "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
-        "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
-        "geoSuggest": "http://geogratis.gc.ca/services/geolocation/en/suggest?q=",
-        "provinces": "http://geogratis.gc.ca/services/geoname/en/codes/province.json",
-        "types": "http://geogratis.gc.ca/services/geoname/en/codes/concise.json"
+    "search":{
+      "serviceUrls":{
+        "geoNames":"http://geogratis.gc.ca/services/geoname/en/geonames.json",
+        "geoLocation":"http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+        "geoSuggest":"http://geogratis.gc.ca/services/geolocation/en/suggest?q=",
+        "provinces":"http://geogratis.gc.ca/services/geoname/en/codes/province.json",
+        "types":"http://geogratis.gc.ca/services/geoname/en/codes/concise.json"
       }
     }
   },
-  "map": {
-    "initialBasemapId": "baseNrCan",
-    "components": {
-      "geoSearch": {
-        "enabled": true,
-        "showGraphic": true,
-        "showInfo": true
+  "map":{
+    "initialBasemapId":"baseNrCan",
+    "components":{
+      "geoSearch":{
+        "enabled":true,
+        "showGraphic":true,
+        "showInfo":true
       },
-      "mouseInfo": {
-        "enabled": true,
-        "spatialReference": {
-          "wkid": 102100
+      "mouseInfo":{
+        "enabled":true,
+        "spatialReference":{
+          "wkid":102100
         }
       },
-      "northArrow": {
-        "enabled": true
+      "northArrow":{
+        "enabled":true
       },
-      "basemap": {
-        "enabled": true
+      "basemap":{
+        "enabled":true
       },
-      "overviewMap": {
-        "enabled": true,
-        "layerType": "imagery"
+      "overviewMap":{
+        "enabled":true,
+        "layerType":"imagery"
       },
-      "scaleBar": {
-        "enabled": true
+      "scaleBar":{
+        "enabled":true
       }
     },
-    "extentSets": [
+    "extentSets":[
       {
-        "id": "EXT_NRCAN_Lambert_3978",
-        "default": {
-          "xmax": 3549492,
-          "xmin": -2681457,
-          "ymax": 3482193,
-          "ymin": -883440
+        "id":"EXT_NRCAN_Lambert_3978",
+        "default":{
+          "xmax":3549492,
+          "xmin":-2681457,
+          "ymax":3482193,
+          "ymin":-883440
         },
-        "spatialReference": {
-          "wkid": 3978
+        "spatialReference":{
+          "wkid":3978
         }
       },
       {
-        "id": "EXT_ESRI_World_AuxMerc_3857",
-        "default": {
-          "xmax": -5007771.626060756,
-          "xmin": -16632697.354854,
-          "ymax": 10015875.184845109,
-          "ymin": 5022907.964742964
+        "id":"EXT_ESRI_World_AuxMerc_3857",
+        "default":{
+          "xmax":-5007771.626060756,
+          "xmin":-16632697.354854,
+          "ymax":10015875.184845109,
+          "ymin":5022907.964742964
         },
-        "spatialReference": {
-          "wkid": 102100,
-          "latestWkid": 3857
+        "spatialReference":{
+          "wkid":102100,
+          "latestWkid":3857
         }
       }
     ],
-    "lodSets": [
+    "lodSets":[
       {
-        "id": "LOD_NRCAN_Lambert_3978",
-        "lods": [
+        "id":"LOD_NRCAN_Lambert_3978",
+        "lods":[
           {
-            "level": 0,
-            "resolution": 38364.660062653464,
-            "scale": 145000000
+            "level":0,
+            "resolution":38364.660062653464,
+            "scale":145000000
           },
           {
-            "level": 1,
-            "resolution": 22489.62831258996,
-            "scale": 85000000
+            "level":1,
+            "resolution":22489.62831258996,
+            "scale":85000000
           },
           {
-            "level": 2,
-            "resolution": 13229.193125052918,
-            "scale": 50000000
+            "level":2,
+            "resolution":13229.193125052918,
+            "scale":50000000
           },
           {
-            "level": 3,
-            "resolution": 7937.5158750317505,
-            "scale": 30000000
+            "level":3,
+            "resolution":7937.5158750317505,
+            "scale":30000000
           },
           {
-            "level": 4,
-            "resolution": 4630.2175937685215,
-            "scale": 17500000
+            "level":4,
+            "resolution":4630.2175937685215,
+            "scale":17500000
           },
           {
-            "level": 5,
-            "resolution": 2645.8386250105837,
-            "scale": 10000000
+            "level":5,
+            "resolution":2645.8386250105837,
+            "scale":10000000
           },
           {
-            "level": 6,
-            "resolution": 1587.5031750063501,
-            "scale": 6000000
+            "level":6,
+            "resolution":1587.5031750063501,
+            "scale":6000000
           },
           {
-            "level": 7,
-            "resolution": 926.0435187537042,
-            "scale": 3500000
+            "level":7,
+            "resolution":926.0435187537042,
+            "scale":3500000
           },
           {
-            "level": 8,
-            "resolution": 529.1677250021168,
-            "scale": 2000000
+            "level":8,
+            "resolution":529.1677250021168,
+            "scale":2000000
           },
           {
-            "level": 9,
-            "resolution": 317.50063500127004,
-            "scale": 1200000
+            "level":9,
+            "resolution":317.50063500127004,
+            "scale":1200000
           },
           {
-            "level": 10,
-            "resolution": 185.20870375074085,
-            "scale": 700000
+            "level":10,
+            "resolution":185.20870375074085,
+            "scale":700000
           },
           {
-            "level": 11,
-            "resolution": 111.12522225044451,
-            "scale": 420000
+            "level":11,
+            "resolution":111.12522225044451,
+            "scale":420000
           },
           {
-            "level": 12,
-            "resolution": 66.1459656252646,
-            "scale": 250000
+            "level":12,
+            "resolution":66.1459656252646,
+            "scale":250000
           },
           {
-            "level": 13,
-            "resolution": 38.36466006265346,
-            "scale": 145000
+            "level":13,
+            "resolution":38.36466006265346,
+            "scale":145000
           },
           {
-            "level": 14,
-            "resolution": 22.48962831258996,
-            "scale": 85000
+            "level":14,
+            "resolution":22.48962831258996,
+            "scale":85000
           },
           {
-            "level": 15,
-            "resolution": 13.229193125052918,
-            "scale": 50000
+            "level":15,
+            "resolution":13.229193125052918,
+            "scale":50000
           },
           {
-            "level": 16,
-            "resolution": 7.9375158750317505,
-            "scale": 30000
+            "level":16,
+            "resolution":7.9375158750317505,
+            "scale":30000
           },
           {
-            "level": 17,
-            "resolution": 4.6302175937685215,
-            "scale": 17500
+            "level":17,
+            "resolution":4.6302175937685215,
+            "scale":17500
           }
         ]
       },
       {
-        "id": "LOD_ESRI_World_AuxMerc_3857",
-        "lods": [
+        "id":"LOD_ESRI_World_AuxMerc_3857",
+        "lods":[
           {
-            "level": 0,
-            "resolution": 19567.87924099992,
-            "scale": 73957190.948944
+            "level":0,
+            "resolution":19567.87924099992,
+            "scale":73957190.948944
           },
           {
-            "level": 1,
-            "resolution": 9783.93962049996,
-            "scale": 36978595.474472
+            "level":1,
+            "resolution":9783.93962049996,
+            "scale":36978595.474472
           },
           {
-            "level": 2,
-            "resolution": 4891.96981024998,
-            "scale": 18489297.737236
+            "level":2,
+            "resolution":4891.96981024998,
+            "scale":18489297.737236
           },
           {
-            "level": 3,
-            "resolution": 2445.98490512499,
-            "scale": 9244648.868618
+            "level":3,
+            "resolution":2445.98490512499,
+            "scale":9244648.868618
           },
           {
-            "level": 4,
-            "resolution": 1222.992452562495,
-            "scale": 4622324.434309
+            "level":4,
+            "resolution":1222.992452562495,
+            "scale":4622324.434309
           },
           {
-            "level": 5,
-            "resolution": 611.4962262813797,
-            "scale": 2311162.217155
+            "level":5,
+            "resolution":611.4962262813797,
+            "scale":2311162.217155
           },
           {
-            "level": 6,
-            "resolution": 305.74811314055756,
-            "scale": 1155581.108577
+            "level":6,
+            "resolution":305.74811314055756,
+            "scale":1155581.108577
           },
           {
-            "level": 7,
-            "resolution": 152.87405657041106,
-            "scale": 577790.554289
+            "level":7,
+            "resolution":152.87405657041106,
+            "scale":577790.554289
           },
           {
-            "level": 8,
-            "resolution": 76.43702828507324,
-            "scale": 288895.277144
+            "level":8,
+            "resolution":76.43702828507324,
+            "scale":288895.277144
           },
           {
-            "level": 9,
-            "resolution": 38.21851414253662,
-            "scale": 144447.638572
+            "level":9,
+            "resolution":38.21851414253662,
+            "scale":144447.638572
           },
           {
-            "level": 10,
-            "resolution": 19.10925707126831,
-            "scale": 72223.819286
+            "level":10,
+            "resolution":19.10925707126831,
+            "scale":72223.819286
           },
           {
-            "level": 11,
-            "resolution": 9.554628535634155,
-            "scale": 36111.909643
+            "level":11,
+            "resolution":9.554628535634155,
+            "scale":36111.909643
           },
           {
-            "level": 12,
-            "resolution": 4.77731426794937,
-            "scale": 18055.954822
+            "level":12,
+            "resolution":4.77731426794937,
+            "scale":18055.954822
           },
           {
-            "level": 13,
-            "resolution": 2.388657133974685,
-            "scale": 9027.977411
+            "level":13,
+            "resolution":2.388657133974685,
+            "scale":9027.977411
           },
           {
-            "level": 14,
-            "resolution": 1.1943285668550503,
-            "scale": 4513.988705
+            "level":14,
+            "resolution":1.1943285668550503,
+            "scale":4513.988705
           },
           {
-            "level": 15,
-            "resolution": 0.5971642835598172,
-            "scale": 2256.994353
+            "level":15,
+            "resolution":0.5971642835598172,
+            "scale":2256.994353
           },
           {
-            "level": 16,
-            "resolution": 0.29858214164761665,
-            "scale": 1128.497176
+            "level":16,
+            "resolution":0.29858214164761665,
+            "scale":1128.497176
           },
           {
-            "level": 17,
-            "resolution": 0.14929107082380833,
-            "scale": 564.248588
+            "level":17,
+            "resolution":0.14929107082380833,
+            "scale":564.248588
           },
           {
-            "level": 18,
-            "resolution": 0.07464553541190416,
-            "scale": 282.124294
+            "level":18,
+            "resolution":0.07464553541190416,
+            "scale":282.124294
           },
           {
-            "level": 19,
-            "resolution": 0.03732276770595208,
-            "scale": 141.062147
+            "level":19,
+            "resolution":0.03732276770595208,
+            "scale":141.062147
           },
           {
-            "level": 20,
-            "resolution": 0.01866138385297604,
-            "scale": 70.5310735
+            "level":20,
+            "resolution":0.01866138385297604,
+            "scale":70.5310735
           }
         ]
       }
     ],
-    "legend": {
-      "type": "autopopulate"
+    "legend":{
+      "type":"autopopulate"
     },
-    "layers": [{"id":"0","name":"Fragrant Popcornflower - CH #1007","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/0"},{"id":"1","name":"Lindley's False Silverpuffs - CH #1010","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/1"},{"id":"2","name":"Muhlenberg's Centaury - CH #1011","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/2"},{"id":"3","name":"Foothill Sedge - CH #1014","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/3"},{"id":"4","name":"Rayless Goldfields - CH #1015","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/4"},{"id":"5","name":"California Buttercup - CH #1025","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/5"},{"id":"6","name":"Gray’s Desert-parsley - CH #1027","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/6"},{"id":"7","name":"Seaside Bone Lichen - CH #127","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/7"},{"id":"8","name":"Pacific Water Shrew - CH #141","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/8"},{"id":"9","name":"Townsend's Mole - CH #142","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/9"},{"id":"10","name":"Southern Maidenhair Fern - CH #195","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/10"},{"id":"11","name":"Macoun's Meadowfoam - CH #259","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/11"},{"id":"12","name":"Rigid Apple Moss - CH #290","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/12"},{"id":"13","name":"Sage Thrasher - CH #32","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/13"},{"id":"14","name":"Marbled Murrelet - CH #39","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/14"},{"id":"15","name":"Yellow-breasted Chat auricollis subspecies (Southern Mountain population) - CH #42","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/15"},{"id":"16","name":"Toothcup - CH #576","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/16"},{"id":"17","name":"Scarlet Ammannia - CH #577","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/17"},{"id":"18","name":"Lewis's Woodpecker - CH #589","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/18"},{"id":"19","name":"Oregon Spotted Frog - CH #614","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/19"},{"id":"20","name":"Rocky Mountain Tailed Frog - CH #632","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/20"},{"id":"21","name":"Woodland Caribou Boreal population - CH #636","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/21"},{"id":"22","name":"Woodland Caribou South Mountain population - CH #638","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/22"},{"id":"23","name":"Behr's Hairstreak - CH #650","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/23"},{"id":"24","name":"Haller's Apple Moss - CH #689","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/24"},{"id":"25","name":"Poor Pocket Moss - CH #690","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/25"},{"id":"26","name":"Oregan Forestsnailt - CH #745","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/26"},{"id":"27","name":"Streambank Lupine - CH #746","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/27"},{"id":"28","name":"Stoloniferous Pussytoes - CH #751","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/28"},{"id":"29","name":"Slender Collomia - CH #760","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/29"},{"id":"30","name":"Lemmon's Holly Fern - CH #772","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/30"},{"id":"31","name":"Dwarf Woolly heads - CH #773","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/31"},{"id":"32","name":"Sand-verbena Moth - CH #789","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/32"},{"id":"33","name":"Porsild's Bryum - CH #795","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/33"},{"id":"34","name":"Rusty Cord-moss - CH #809","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/34"},{"id":"35","name":"Pink Sand-verbena - CH #821","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/35"},{"id":"36","name":"Cliff Paintbrush - CH #844","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/36"},{"id":"37","name":"Dense Spike-primrose - CH #849","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/37"},{"id":"38","name":"Dense-flowered Lupine - CH #856","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/38"},{"id":"39","name":"White Meconella - CH #857","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/39"},{"id":"40","name":"Nugget Moss - CH #859","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/40"},{"id":"41","name":"Grand Coulee Owl-clover - CH #862","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/41"},{"id":"42","name":"Branched Phacelia - CH #863","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/42"},{"id":"43","name":"Spalding's Campion - CH #867","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/43"},{"id":"44","name":"Williamson's Sapsucker - CH #869","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/44"},{"id":"45","name":"Northern Saw-whet Owl brooksi subspecies - CH #883","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/45"},{"id":"46","name":"Contorted-pod Evening-primrose - CH #898","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/46"},{"id":"47","name":"Coast Microseris - CH #910","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/47"},{"id":"48","name":"Vesper Sparrow affinis subspecies - CH #924","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/48"},{"id":"49","name":"Half moon Hairstreak - CH #937","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/49"},{"id":"50","name":"Short-rayed Alkali Aster - CH #940","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/50"},{"id":"51","name":"Brook Spike-primrose - CH #944","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/51"},{"id":"52","name":"Tall Bugbane - CH #673","layerType":"esriFeature","url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/52"}],
-    "tileSchemas": [
+    "layers":[
       {
-        "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "name": "Lambert Maps",
-        "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "id":"0",
+        "name":"Fragrant Popcornflower - CH #1007",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/0"
       },
       {
-        "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
-        "name": "Web Mercator Maps",
-        "extentSetId": "EXT_ESRI_World_AuxMerc_3857",
-        "lodSetId": "LOD_ESRI_World_AuxMerc_3857"
+        "id":"1",
+        "name":"Lindley's False Silverpuffs - CH #1010",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/1"
+      },
+      {
+        "id":"2",
+        "name":"Muhlenberg's Centaury - CH #1011",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/2"
+      },
+      {
+        "id":"3",
+        "name":"Foothill Sedge - CH #1014",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/3"
+      },
+      {
+        "id":"4",
+        "name":"Rayless Goldfields - CH #1015",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/4"
+      },
+      {
+        "id":"5",
+        "name":"California Buttercup - CH #1025",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/5"
+      },
+      {
+        "id":"6",
+        "name":"Gray’s Desert-parsley - CH #1027",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/6"
+      },
+      {
+        "id":"7",
+        "name":"Seaside Bone Lichen - CH #127",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/7"
+      },
+      {
+        "id":"8",
+        "name":"Pacific Water Shrew - CH #141",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/8"
+      },
+      {
+        "id":"9",
+        "name":"Townsend's Mole - CH #142",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/9"
+      },
+      {
+        "id":"10",
+        "name":"Southern Maidenhair Fern - CH #195",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/10"
+      },
+      {
+        "id":"11",
+        "name":"Macoun's Meadowfoam - CH #259",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/11"
+      },
+      {
+        "id":"12",
+        "name":"Rigid Apple Moss - CH #290",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/12"
+      },
+      {
+        "id":"13",
+        "name":"Sage Thrasher - CH #32",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/13"
+      },
+      {
+        "id":"14",
+        "name":"Marbled Murrelet - CH #39",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/14"
+      },
+      {
+        "id":"15",
+        "name":"Yellow-breasted Chat auricollis subspecies (Southern Mountain population) - CH #42",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/15"
+      },
+      {
+        "id":"16",
+        "name":"Toothcup - CH #576",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/16"
+      },
+      {
+        "id":"17",
+        "name":"Scarlet Ammannia - CH #577",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/17"
+      },
+      {
+        "id":"18",
+        "name":"Lewis's Woodpecker - CH #589",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/18"
+      },
+      {
+        "id":"19",
+        "name":"Oregon Spotted Frog - CH #614",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/19"
+      },
+      {
+        "id":"20",
+        "name":"Rocky Mountain Tailed Frog - CH #632",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/20"
+      },
+      {
+        "id":"21",
+        "name":"Woodland Caribou Boreal population - CH #636",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/21"
+      },
+      {
+        "id":"22",
+        "name":"Woodland Caribou South Mountain population - CH #638",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/22"
+      },
+      {
+        "id":"23",
+        "name":"Behr's Hairstreak - CH #650",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/23"
+      },
+      {
+        "id":"24",
+        "name":"Haller's Apple Moss - CH #689",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/24"
+      },
+      {
+        "id":"25",
+        "name":"Poor Pocket Moss - CH #690",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/25"
+      },
+      {
+        "id":"26",
+        "name":"Oregan Forestsnailt - CH #745",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/26"
+      },
+      {
+        "id":"27",
+        "name":"Streambank Lupine - CH #746",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/27"
+      },
+      {
+        "id":"28",
+        "name":"Stoloniferous Pussytoes - CH #751",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/28"
+      },
+      {
+        "id":"29",
+        "name":"Slender Collomia - CH #760",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/29"
+      },
+      {
+        "id":"30",
+        "name":"Lemmon's Holly Fern - CH #772",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/30"
+      },
+      {
+        "id":"31",
+        "name":"Dwarf Woolly heads - CH #773",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/31"
+      },
+      {
+        "id":"32",
+        "name":"Sand-verbena Moth - CH #789",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/32"
+      },
+      {
+        "id":"33",
+        "name":"Porsild's Bryum - CH #795",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/33"
+      },
+      {
+        "id":"34",
+        "name":"Rusty Cord-moss - CH #809",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/34"
+      },
+      {
+        "id":"35",
+        "name":"Pink Sand-verbena - CH #821",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/35"
+      },
+      {
+        "id":"36",
+        "name":"Cliff Paintbrush - CH #844",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/36"
+      },
+      {
+        "id":"37",
+        "name":"Dense Spike-primrose - CH #849",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/37"
+      },
+      {
+        "id":"38",
+        "name":"Dense-flowered Lupine - CH #856",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/38"
+      },
+      {
+        "id":"39",
+        "name":"White Meconella - CH #857",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/39"
+      },
+      {
+        "id":"40",
+        "name":"Nugget Moss - CH #859",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/40"
+      },
+      {
+        "id":"41",
+        "name":"Grand Coulee Owl-clover - CH #862",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/41"
+      },
+      {
+        "id":"42",
+        "name":"Branched Phacelia - CH #863",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/42"
+      },
+      {
+        "id":"43",
+        "name":"Spalding's Campion - CH #867",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/43"
+      },
+      {
+        "id":"44",
+        "name":"Williamson's Sapsucker - CH #869",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/44"
+      },
+      {
+        "id":"45",
+        "name":"Northern Saw-whet Owl brooksi subspecies - CH #883",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/45"
+      },
+      {
+        "id":"46",
+        "name":"Contorted-pod Evening-primrose - CH #898",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/46"
+      },
+      {
+        "id":"47",
+        "name":"Coast Microseris - CH #910",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/47"
+      },
+      {
+        "id":"48",
+        "name":"Vesper Sparrow affinis subspecies - CH #924",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/48"
+      },
+      {
+        "id":"49",
+        "name":"Half moon Hairstreak - CH #937",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/49"
+      },
+      {
+        "id":"50",
+        "name":"Short-rayed Alkali Aster - CH #940",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/50"
+      },
+      {
+        "id":"51",
+        "name":"Brook Spike-primrose - CH #944",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/51"
+      },
+      {
+        "id":"52",
+        "name":"Tall Bugbane - CH #673",
+        "layerType":"esriFeature",
+        "url":"http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/52"
+      },
+      {
+        "id":"fire_note_pts",
+        "name":"Fire of Note Points",
+        "layerType":"esriFeature",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/EGS/FiresOfNote/MapServer/0",
+        "state":{
+          "visibility":true,
+          "opacity":1
+        }
+      },
+      {
+        "id":"fire_note_poly",
+        "name":"Fire of Note Polygons",
+        "layerType":"esriFeature",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/EGS/FiresOfNote/MapServer/1",
+        "state":{
+          "visibility":true,
+          "opacity":0.5
+        }
+      },
+      {
+        "id":"active_fires",
+        "name":"Active Fires",
+        "layerType":"ogcWms",
+        "url":"http://maps.nofc.cfs.nrcan.gc.ca/geoserver/public/wms",
+        "layerEntries":[
+          {
+            "id":"activefires_current"
+          }
+        ],
+        "featureInfoMimeType":"text/plain",
+        "state":{
+          "visibility":true
+        }
+      },
+      {
+        "id":"hotspots_last24hrs",
+        "name":"Hot Spots Last 24hrs",
+        "layerType":"ogcWms",
+        "url":"http://maps.nofc.cfs.nrcan.gc.ca/geoserver/public/wms",
+        "layerEntries":[
+          {
+            "id":"hotspots_last24hrs3class"
+          }
+        ],
+        "featureInfoMimeType":"text/plain",
+        "state":{
+          "visibility":false
+        }
+      },
+      {
+        "id":"bigfoot",
+        "name":"Bigfoot Model",
+        "layerType":"ogcWms",
+        "url":"http://s-edm-schubert.nofc.cfs.nrcan.gc.ca/geoserver/wms",
+        "layerEntries":[
+          {
+            "id":"goc:bigfoot_fgp_current"
+          }
+        ],
+        "featureInfoMimeType":"text/plain",
+        "state":{
+          "visibility":true,
+          "opacity":0.6
+        }
+      },
+      {
+        "id":"fire_perem_estim",
+        "name":"Fire Perimeter Estimate",
+        "layerType":"ogcWms",
+        "url":"http://maps.nofc.cfs.nrcan.gc.ca/geoserver/public/wms",
+        "layerEntries":[
+          {
+            "id":"m3_polygons_current"
+          }
+        ],
+        "featureInfoMimeType":"text/plain",
+        "state":{
+          "visibility":true,
+          "opacity":0.6
+        }
+      },
+      {
+        "id":"smoke_forecast",
+        "name":"Today's Smoke Forecast",
+        "layerType":"ogcWms",
+        "url":"http://s-edm-schubert.nofc.cfs.nrcan.gc.ca/geoserver/wms",
+        "layerEntries":[
+          {
+            "id":"bluesky_fcst_today"
+          }
+        ],
+        "state":{
+          "visibility":false,
+          "opacity":0.5
+        }
+      },
+      {
+        "id":"fire_danger_for",
+        "name":"Fire Danger Forecast",
+        "layerType":"ogcWms",
+        "url":"http://maps.nofc.cfs.nrcan.gc.ca/geoserver/public/wms",
+        "layerEntries":[
+          {
+            "id":"fdr_current"
+          }
+        ],
+        "state":{
+          "visibility":false,
+          "opacity":0.3
+        }
+      },
+      {
+        "id":"fbp_fuels",
+        "name":"Forest Fire Behavior Prediction",
+        "layerType":"ogcWms",
+        "url":"http://maps.nofc.cfs.nrcan.gc.ca/geoserver/public/wms",
+        "layerEntries":[
+          {
+            "id":"nat_fbpfuels"
+          }
+        ],
+        "state":{
+          "visibility":false,
+          "opacity":0.3
+        }
+      },
+      {
+        "id":"mills",
+        "name":"Mills",
+        "layerType":"esriFeature",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/FGP/forest_industry_hotspots_en/MapServer/0",
+        "state":{
+          "visibility":false
+        }
+      },
+      {
+        "id":"og_e",
+        "name":"Oil and Gas",
+        "layerType":"esriDynamic",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/MMS/OG_E/MapServer",
+        "layerEntries":[
+          {
+            "index":0
+          }
+        ],
+        "singleEntryCollapse":true,
+        "state":{
+          "visibility":false
+        }
+      },
+      {
+        "id":"pm_e",
+        "name":"Producing Mines",
+        "layerType":"esriDynamic",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/MMS/PM_E/MapServer",
+        "layerEntries":[
+          {
+            "index":0
+          },
+          {
+            "index":1
+          },
+          {
+            "index":2
+          },
+          {
+            "index":3
+          }
+        ],
+        "singleEntryCollapse":true,
+        "state":{
+          "visibility":false
+        }
+      },
+      {
+        "id":"mw_e",
+        "name":"Metallurgical Works",
+        "layerType":"esriDynamic",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/MMS/MW_E/MapServer",
+        "layerEntries":[
+          {
+            "index":0
+          },
+          {
+            "index":1
+          },
+          {
+            "index":2
+          },
+          {
+            "index":3
+          }
+        ],
+        "singleEntryCollapse":true,
+        "state":{
+          "visibility":false
+        }
+      },
+      {
+        "id":"t100ep_e",
+        "name":"Top 100 Exploration Projects",
+        "layerType":"esriDynamic",
+        "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/MMS/T100EP_E/MapServer",
+        "layerEntries":[
+          {
+            "index":0
+          }
+        ],
+        "singleEntryCollapse":true,
+        "state":{
+          "visibility":false
+        }
       }
     ],
-    "baseMaps": [
+    "tileSchemas":[
       {
-        "id": "baseNrCan",
-        "name": "Canada Base Map - Transportation (CBMT)",
-        "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-        "altText": "altText - The Canada Base Map - Transportation (CBMT)",
-        "layers": [
-          {
-            "id": "CBMT",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "id":"EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "name":"Lambert Maps",
+        "extentSetId":"EXT_NRCAN_Lambert_3978",
+        "lodSetId":"LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseSimple",
-        "name": "Canada Base Map - Simple",
-        "description": "Canada Base Map - Simple",
-        "altText": "altText - Canada base map - Simple",
-        "layers": [
+        "id":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+        "name":"Web Mercator Maps",
+        "extentSetId":"EXT_ESRI_World_AuxMerc_3857",
+        "lodSetId":"LOD_ESRI_World_AuxMerc_3857"
+      }
+    ],
+    "baseMaps":[
+      {
+        "id":"baseNrCan",
+        "name":"Canada Base Map - Transportation (CBMT)",
+        "description":"The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+        "altText":"altText - The Canada Base Map - Transportation (CBMT)",
+        "layers":[
           {
-            "id": "SMR",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+            "id":"CBMT",
+            "layerType":"esriFeature",
+            "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId":"EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseCBME_CBCE_HS_RO_3978",
-        "name": "Canada Base Map - Elevation (CBME)",
-        "description": "The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-        "altText": "altText - Canada Base Map - Elevation (CBME)",
-        "layers": [
+        "id":"baseSimple",
+        "name":"Canada Base Map - Simple",
+        "description":"Canada Base Map - Simple",
+        "altText":"altText - Canada base map - Simple",
+        "layers":[
           {
-            "id": "CBME_CBCE_HS_RO_3978",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+            "id":"SMR",
+            "layerType":"esriFeature",
+            "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId":"EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseCBMT_CBCT_GEOM_3978",
-        "name": "Canada Base Map - Transportation (CBMT)",
-        "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-        "altText": "altText - Canada Base Map - Transportation (CBMT)",
-        "layers": [
+        "id":"baseCBME_CBCE_HS_RO_3978",
+        "name":"Canada Base Map - Elevation (CBME)",
+        "description":"The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
+        "altText":"altText - Canada Base Map - Elevation (CBME)",
+        "layers":[
           {
-            "id": "CBMT_CBCT_GEOM_3978",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+            "id":"CBME_CBCE_HS_RO_3978",
+            "layerType":"esriFeature",
+            "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId":"EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseEsriWorld",
-        "name": "World Imagery",
-        "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
-        "altText": "altText - World Imagery",
-        "layers": [
+        "id":"baseCBMT_CBCT_GEOM_3978",
+        "name":"Canada Base Map - Transportation (CBMT)",
+        "description":" The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+        "altText":"altText - Canada Base Map - Transportation (CBMT)",
+        "layers":[
           {
-            "id": "World_Imagery",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+            "id":"CBMT_CBCT_GEOM_3978",
+            "layerType":"esriFeature",
+            "url":"http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseEsriPhysical",
-        "name": "World Physical Map",
-        "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
-        "altText": "altText - World Physical Map",
-        "layers": [
+        "id":"baseEsriWorld",
+        "name":"World Imagery",
+        "description":"World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
+        "altText":"altText - World Imagery",
+        "layers":[
           {
-            "id": "World_Physical_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+            "id":"World_Imagery",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
       },
       {
-        "id": "baseEsriRelief",
-        "name": "World Shaded Relief",
-        "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
-        "altText": "altText - World Shaded Relief",
-        "layers": [
+        "id":"baseEsriPhysical",
+        "name":"World Physical Map",
+        "description":"This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
+        "altText":"altText - World Physical Map",
+        "layers":[
           {
-            "id": "World_Shaded_Relief",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+            "id":"World_Physical_Map",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
       },
       {
-        "id": "baseEsriStreet",
-        "name": "World Street Map",
-        "description": "This worldwide street map presents highway-level data for the world.",
-        "altText": "altText - ESWorld Street Map",
-        "layers": [
+        "id":"baseEsriRelief",
+        "name":"World Shaded Relief",
+        "description":"This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
+        "altText":"altText - World Shaded Relief",
+        "layers":[
           {
-            "id": "World_Street_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+            "id":"World_Shaded_Relief",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
       },
       {
-        "id": "baseEsriTerrain",
-        "name": "World Terrain Base",
-        "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
-        "altText": "altText - World Terrain Base",
-        "layers": [
+        "id":"baseEsriStreet",
+        "name":"World Street Map",
+        "description":"This worldwide street map presents highway-level data for the world.",
+        "altText":"altText - ESWorld Street Map",
+        "layers":[
           {
-            "id": "World_Terrain_Base",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+            "id":"World_Street_Map",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
       },
       {
-        "id": "baseEsriTopo",
-        "name": "World Topographic Map",
-        "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
-        "altText": "altText - World Topographic Map",
-        "layers": [
+        "id":"baseEsriTerrain",
+        "name":"World Terrain Base",
+        "description":"This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
+        "altText":"altText - World Terrain Base",
+        "layers":[
           {
-            "id": "World_Topo_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+            "id":"World_Terrain_Base",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
+      },
+      {
+        "id":"baseEsriTopo",
+        "name":"World Topographic Map",
+        "description":"This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
+        "altText":"altText - World Topographic Map",
+        "layers":[
+          {
+            "id":"World_Topo_Map",
+            "layerType":"esriFeature",
+            "url":"http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+          }
+        ],
+        "tileSchemaId":"EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
       }
     ]
   }
