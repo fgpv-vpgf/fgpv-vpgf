@@ -24,7 +24,7 @@
         aria-label="{{ filter.table.setting.tooltip | translate }}"
         class="md-icon-button primary"
         rv-help="table-setting-button"
-        ng-click="self.tableService.toggleSetting()">
+        ng-click="self.tableService.openSettings()">
         <md-tooltip>{{ 'filter.table.setting.tooltip' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:settings"></md-icon>
     </md-button>
