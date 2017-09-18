@@ -13,7 +13,7 @@ angular
 
 function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
     geoService, metadataService, errorService, LegendBlock, configService, legendService, layoutService) {
-        
+
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
@@ -54,11 +54,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      */
     function reloadLayer(legendBlock) {
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
-        const config = configService.getSync.map.layerRecords.find(item =>
+        const tableConfig = configService.getSync.map.layerRecords.find(item =>
             item.config.id === legendBlock.layerRecordId).initialConfig.table;
 
         // update filter flag
-        legendBlock.filter = config.applied;
+        if (tableConfig) {
+            legendBlock.filter = tableConfig.applied;
+        }
 
         stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
