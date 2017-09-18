@@ -7,7 +7,7 @@
         title-value="{{ 'filter.title' | translate }} {{ self.title }}"
         is-loading="self.display.isLoading"
         hide-when-loading="false"
-        ng-hide="self.tableService.isSettingOpen">
+        ng-class="{ 'rv-transparent-class': self.tableService.isSettingOpen }">
 
         <div class="rv-table-splash rv-hide-animate"
             ng-if="!self.display.requester.error"
@@ -28,7 +28,7 @@
         <div class="rv-table rv-hide-animate" ng-class="{ 'rv-hide': self.display.isLoading }">
 
             <!--md-button ng-click="self.draw()">click this button if you don't see the table below</md-button-->
-            <div class="rv-table-data-container" rv-table-definition info="columns" ng-show="!self.tableService.isSettingOpen"></div>
+            <div class="rv-table-data-container" rv-table-definition info="columns"></div>
 
             <rv-table-setting-panel ng-cloak ng-show="self.tableService.isSettingOpen"></rv-table-setting-panel>
 
