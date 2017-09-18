@@ -40,7 +40,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         getTable,
         clearFilters,
         applyFilters,
-        toggleSetting,
+        openSettings,
         onFilterStringChange: debounceService.registerDebounce(onFilterStringChange, 700, false),
         onFilterSelectorChange: onFilterSelectorChange,
         onFilterNumberChange: debounceService.registerDebounce(onFilterNumberChange, 700, false),
@@ -378,11 +378,11 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
     }
 
     /**
-     * Toggle settings info section
+     * Open settings info section
      *
-     * @function toggleSetting
+     * @function openSettings
      */
-    function toggleSetting() {
+    function openSettings() {
         service.isSettingOpen = !service.isSettingOpen;
 
         // show filters if setting is open
