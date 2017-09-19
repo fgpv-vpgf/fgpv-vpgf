@@ -1495,17 +1495,20 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._maximizeButton = source.maximizeButton;
             this._layerType = source.layerType;
             this._expandFactor = source.expandFactor || 2;
+            this._initiallyExpanded = typeof source.initiallyExpanded !== 'undefined' ? source.initiallyExpanded : true;
         }
 
         get maximizeButton () { return this._maximizeButton; }
         get layerType () { return this._layerType; }
         get expandFactor () { return this._expandFactor; }
+        get initiallyExpanded () { return this._initiallyExpanded; }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 maximizeButton: this.maximizeButton,
                 layerType: this.layerType,
-                expandFactor: this.expandFactor
+                expandFactor: this.expandFactor,
+                initiallyExpanded: this.initiallyExpanded
             });
         }
     }

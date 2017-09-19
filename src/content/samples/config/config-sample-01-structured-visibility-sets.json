@@ -72,7 +72,8 @@
       },
       "overviewMap": {
         "enabled": true,
-        "layerType": "imagery"
+        "layerType": "imagery",
+        "initiallyExpanded": false
       },
       "scaleBar": {
         "enabled": true
