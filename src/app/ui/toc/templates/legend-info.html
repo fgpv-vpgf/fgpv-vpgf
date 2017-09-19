@@ -2,7 +2,7 @@
 
     <h3 ng-switch-when="title" class="md-subhead">{{ self.block.content }}</h3>
 
-    <p ng-switch-when="text">{{ self.block.content }}</p>
+    <p ng-switch-when="text" ng-bind-html="self.block.content | markdown: { sanitize: false }"></p>
 
     <img ng-switch-when="image" ng-src="{{ self.block.content }}" alt="">
 

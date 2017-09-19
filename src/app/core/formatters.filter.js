@@ -3,6 +3,7 @@
 import linkifyStr from 'linkifyjs/string';
 import linkifyHtml from 'linkifyjs/html';
 import * as moment from 'moment-timezone';
+import marked from 'marked';
 
 /**
  * @name autolink
@@ -16,7 +17,8 @@ angular
     .module('app.core')
     .filter('autolink', autolink)
     .filter('dateTimeZone', dateTimeZone)
-    .filter('picture', picture);
+    .filter('picture', picture)
+    .filter('markdown', markdown);
 
 function dateTimeZone() {
     const userTimeZone = moment.tz.guess();
@@ -132,5 +134,40 @@ function picture() {
             return isPicture ?
                 `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
         }
+    }
+}
+
+function markdown($sce) {
+    const defaultOptions = {
+        renderer: new marked.Renderer(),
+        gfm: true,
+        tables: true,
+        breaks: false,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false
+    };
+
+    return markdown;
+
+    /**
+     * Converts markdown into html.
+     *
+     * @function autolink
+     * @param {String} text a text string containing markdown
+     * @param {Object} [userOptions={}] options to override defaults
+     * @return {String} html representing the original markdown text
+     */
+    function markdown(text, userOptions = {}) {
+        const options = angular.extend({}, defaultOptions, userOptions);
+        let markdownHtml = marked(text, options);
+
+        // if sanitized is set to false, any html included with the markup is added as is
+        if (!options.sanitize) {
+            markdownHtml = $sce.trustAsHtml(markdownHtml);
+        }
+
+        return markdownHtml;
     }
 }
