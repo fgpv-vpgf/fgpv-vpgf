@@ -12,10 +12,12 @@
     "sideMenu": {
       "logo": true
     },
-    "legendIsOpen": {
-      "large": true,
-      "medium": true,
-      "small": false
+    "legend": {
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      }
     }
   },
   "version": "2.0",
