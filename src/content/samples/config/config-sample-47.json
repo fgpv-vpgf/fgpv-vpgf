@@ -325,7 +325,7 @@
             "children": [
               {
                 "infoType": "text",
-                "content": "If a dynamic layer does not support children opacity, all children will have their opacity controls disabled and display a jump link to its parent unless it's single entry collapsed. Jump link should never point to group blocks not belonging to this layer record."
+                "content": "If a <abbr title='ESRI Dynamic Lyaer'>Dynamic layer</abbr> does not support children _opacity_ it is not a [not-true-dynamic Dynamic Layer](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049), and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed. \n\n #### Note \n\n Jump link should never point to group blocks not belonging to this layer record."
               },
               {
                 "infoType": "image",
@@ -339,7 +339,7 @@
             "children": [
               {
                   "infoType": "text",
-                  "content": "Opacity only enabled at the 'Test Data' group block; all children should have opacity disabled and display a jump link to that group."
+                  "content": "_Opacity_ only enabled at the __`Test Data`__ group block; all children should have _opacity_ disabled and display a jump link to that group."
               },
               {
                   "layerId": "blah"
@@ -352,7 +352,7 @@
             "children": [
               {
                   "infoType": "text",
-                  "content": "Opacity should be enabled on the single entry collapsed child since the layer root (its parent) is hidden."
+                  "content": "_Opacity_ should be enabled on the single entry collapsed child since the layer root (its parent) is hidden."
               },
               {
                   "layerId": "blah2"
@@ -365,7 +365,7 @@
             "children": [
               {
                   "infoType": "text",
-                  "content": "Opacity should be enabled at the 'Group 2' group block; its single child should have opacity disabled and display a jump link to that group."
+                  "content": "_Opacity_ should be enabled at the __`Group 2`__ group block; its single child should have _opacity_ disabled and display a jump link to that group."
               },
               {
                   "layerId": "blah3"
@@ -378,7 +378,7 @@
             "children": [
               {
                   "infoType": "text",
-                  "content": "'Group with opacity disabled' has the opacity control disabled :D Both its children are single entry collapsed."
+                  "content": "__`Group with opacity disabled`__ has the opacity control disabled :D \n Both its children are single entry collapsed."
               },
               {
                 "name": "Group with opacity disabled",
@@ -386,14 +386,14 @@
                 "children": [
                   {
                     "infoType": "text",
-                    "content": "1 This layer has the opacity control disabled in the config using 'disabledControls'; should not have a jump link to its visual (real parent is hidden) parent group."
+                    "content": "1: This layer has the _opacity_ control disabled in the config using `disabledControls`; should not have a jump link to its visual (real parent is hidden) parent group."
                   },
                   {
                       "layerId": "blah4"
                   },
                   {
                     "infoType": "text",
-                    "content": "2 This layer has the opacity control enabled since it's single entry collapsed."
+                    "content": "2: This layer has the _opacity_ control enabled since it's single entry collapsed."
                   },
                   {
                       "layerId": "blah5"
