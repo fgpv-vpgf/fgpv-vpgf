@@ -1588,11 +1588,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class ExportComponent
      */
     class ExportComponent {
-        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false }) {
+        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false, showSymbology: false }) {
             this._isSelected = source.isSelected;
             this._isSelectable = source.isSelectable;
             this._isVisible = source.isVisible;
             this._value = source.value;
+            this._showSymbology = source.showSymbology || false;
         }
 
         get isSelected () {         return this._isSelected; }
@@ -1603,6 +1604,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set isVisible (value) {     this._isVisible = value; }
         get value () {              return this._value; }
         set value (value) {         this._value = value; }
+        get showSymbology () {      return this._showSymbology; }
+        set showSymbology (value) { this._showSymbology = value; }
 
         _generators = [];
         _graphicOrder = null;
@@ -1617,7 +1620,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 isSelected: this.isSelected,
                 isSelectable: this.isSelectable,
                 isVisible: this.isVisible,
-                value: this.value
+                value: this.value,
+                showSymbology: this.showSymbology
             };
         }
     }

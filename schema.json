@@ -148,6 +148,11 @@
                 "value": {
                     "type": "string",
                     "description": "Value to be passed to the generation function of this export component."
+                },
+                "showSymbology": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates whether symbology from controlled layers and info sections to be included in export legend"
                 }
             },
             "description": "This is the initial configuration for an export component.",

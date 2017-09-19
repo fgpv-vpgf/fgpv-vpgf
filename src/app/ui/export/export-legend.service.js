@@ -419,22 +419,45 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     items: extractLegendTree(entry)
                 }),
             [LegendBlock.TYPES.SET]: () => null,
-            [LegendBlock.TYPES.INFO]: () => null
+            [LegendBlock.TYPES.INFO]: entry =>
+                ({
+                    name: entry.layerName || entry.content,
+                    items: entry.symbologyStack.stack || [],
+                    blockType: LegendBlock.TYPES.INFO
+                })
         }
 
-        // TODO: decide if symbology from the controlled layers should be included in the export image
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        // TODO: decide if unbound layers and info sections should be included in the export image
         const legendTreeData = legendBlock
-            .walk(entry =>
-                entry.visibility && !entry.hidden && entry.opacity !== 0 &&               // opacity can be undefined or > 0
-                (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
-                (typeof entry.scale === 'undefined' || !entry.scale.offScale) ?           // scale only defined for nodes
+            .walk(entry => _showBlock(entry) ?
                     TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
                 entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entry's children if it's a group
             .filter(a =>
                 a !== null);
+        return legendTreeData.filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0);
+    }
 
-        return legendTreeData.filter(entry => entry.items.length > 0);
+    /**
+     * Identifies if legend block should be shown in export legend
+     *
+     * @function _showBlock
+     * @private
+     * @param {LegendBlock} entry the legend block to be checked whether it should be shown
+     * @return {Boolean} true if block should be shown in export legend
+     */
+    function _showBlock(entry) {
+        const showSymbology = configService.getSync.services.export.legend.showSymbology;
+
+        const visibility = entry.visibility && !entry.hidden && entry.opacity !== 0 &&      // opacity can be undefined or > 0
+            (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
+            (typeof entry.scale === 'undefined' || !entry.scale.offScale)                   // scale only defined for nodes
+
+        if (entry.blockType === LegendBlock.TYPES.INFO) {
+            return showSymbology
+        } else if (entry.controlled) {
+            return showSymbology && visibility;
+        }
+
+        return visibility;
     }
 }
