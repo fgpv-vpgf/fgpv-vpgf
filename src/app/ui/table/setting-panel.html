@@ -29,8 +29,22 @@
                     <span class="rv-filter-settting-reorder"></span>
                     <span class="rv-filter-settting-name md-subhead">{{ 'filter.settings.label.name' | translate }}</span>
                     <span class="rv-filter-settting-item md-subhead">{{ 'filter.settings.label.filter' | translate }}</span>
-                    <span class="rv-filter-settting-sort md-subhead">{{ 'filter.settings.label.sort' | translate }}</span>
-                    <span class="rv-filter-settting-display md-subhead">{{ 'filter.settings.label.show' | translate }}</span>
+
+                    <button class="rv-filter-settting-sort md-subhead rv-icon-16" ng-click="self.sortAll()">
+                        {{ 'filter.settings.label.sort' | translate }}
+                        <md-icon md-svg-src="navigation:arrow_downward" ng-show="self.sortStatus() === 'desc'"></md-icon>
+                        <md-icon md-svg-src="navigation:arrow_upward" ng-show="self.sortStatus() === 'asc'"></md-icon>
+                        <md-icon md-svg-src="content:remove" ng-show="self.sortStatus() === 'none'"></md-icon>
+                    </button>
+
+                    <button class="rv-filter-settting-display md-subhead rv-icon-16" ng-click="self.displayAll()">
+                        {{ 'filter.settings.label.show' | translate }}
+                        <md-icon md-svg-src="toggle:{{ self.displayStatus() === true ?
+                            'check_box' :
+                            (!self.displayStatus() ? 'check_box_outline_blank' : 'indeterminate_check_box') }}" >
+                        </md-icon>
+                    </button>
+
                 </li>
                 <!--only create the element when columns is set. If not, the dragula directive fired and scope is not set -->
                 <ul class="rv-filter-list"
@@ -81,7 +95,8 @@
                 aria-label="{{ filter.table.reset.tooltip | translate }}"
                 class="primary"
                 rv-help="table-clear-button"
-                ng-click="self.tableService.clearFilters()">
+                ng-click="self.tableService.clearFilters()"
+                ng-disabled="(self.tableService.filter.isApplied && !self.tableService.filter.isMapFiltered) || !(self.tableService.isFeatureLayer || self.tableService.isDynamicLayer)">
                 {{ 'filter.table.reset.tooltip' | translate }}
             </md-button>
 
