@@ -24,10 +24,12 @@
   "about": {
       "folderName": "indexOne"
   },
-  "legendIsOpen": {
-    "large": true,
-    "medium": true,
-    "small": false
+  "legend": {
+      "isOpen": {
+        "large": true,
+        "medium": true,
+        "small": false
+      }
   },
   "map": {
     "components": {
