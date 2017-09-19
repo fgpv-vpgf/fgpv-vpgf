@@ -7,7 +7,7 @@
         title-value="{{ 'filter.title' | translate }} {{ self.title }}"
         is-loading="self.display.isLoading"
         hide-when-loading="false"
-        ng-class="{ 'rv-transparent-class': self.tableService.isSettingOpen }">
+        ng-class="{ 'rv-transparent': self.tableService.isSettingOpen }">
 
         <div class="rv-table-splash rv-hide-animate"
             ng-if="!self.display.requester.error"
