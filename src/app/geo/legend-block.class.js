@@ -312,6 +312,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get description () {            return this.blockConfig.description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
+
+        get isVisibleOnExport () {
+            return configService.getSync.services.export.legend.showInfoAndControlledSymbology;
+        }
     }
 
     // can be node or group
@@ -700,6 +704,12 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
         get metadataUrl () {        return this.mainProxyWrapper.metadataUrl; }
         get catalogueUrl () {       return this.mainProxyWrapper.catalogueUrl; }
+
+        get isVisibleOnExport () {
+            return this.visibility && !this.hidden && this.opacity !== 0 &&
+                (this.state === 'rv-refresh' || this.state === 'rv-loaded') &&
+                !this.scale.offscale;
+        }
     }
 
     // who is responsible for populating legend groups with entries? legend service or the legend group itself
@@ -965,6 +975,12 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         walk (...args) {
             return this._walk(...args);
         }
+
+        get isVisibleOnExport () {
+            return !this.hidden && this.opacity !== 0 &&
+                (this.state === 'rv-refresh' || this.state === 'rv-loaded') &&
+                this.entries.some(entry => entry.isVisibleOnExport);
+        }
     }
 
     class LegendSet extends LegendEntry {
@@ -1075,6 +1091,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
         walk (...args) {
             return this._walk(...args);
+        }
+
+        get isVisibleOnExport () {
+            return !this.hidden && this.opacity !== 0 &&
+                this.entries.some(entry => entry.isVisibleOnExport);
         }
     }
 

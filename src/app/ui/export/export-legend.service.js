@@ -419,12 +419,22 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     items: extractLegendTree(entry)
                 }),
             [LegendBlock.TYPES.SET]: () => null,
-            [LegendBlock.TYPES.INFO]: entry =>
-                ({
-                    name: entry.layerName || entry.content,
-                    items: entry.symbologyStack.stack || [],
-                    blockType: LegendBlock.TYPES.INFO
-                })
+            [LegendBlock.TYPES.INFO]: entry => {
+                if (entry.infoType === 'image') {
+                    const svgCode = _createSVGCode(entry.content);
+                    return {
+                        name: '',
+                        items: [{ name: '', svgcode: svgCode }],
+                        blockType: LegendBlock.TYPES.INFO
+                    }
+                } else {
+                    return {
+                        name: entry.layerName || entry.content,
+                        items: entry.symbologyStack.stack || [],
+                        blockType: LegendBlock.TYPES.INFO
+                    }
+                }
+            }
         }
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
@@ -446,18 +456,38 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Boolean} true if block should be shown in export legend
      */
     function _showBlock(entry) {
-        const showSymbology = configService.getSync.services.export.legend.showSymbology;
-
-        const visibility = entry.visibility && !entry.hidden && entry.opacity !== 0 &&      // opacity can be undefined or > 0
-            (entry.state === 'rv-refresh' || entry.state === 'rv-loaded') &&
-            (typeof entry.scale === 'undefined' || !entry.scale.offScale)                   // scale only defined for nodes
+        const showInfoAndControlledSymbology = configService.getSync.services.export.legend.showInfoAndControlledSymbology;
 
         if (entry.blockType === LegendBlock.TYPES.INFO) {
-            return showSymbology
+            return showInfoAndControlledSymbology
         } else if (entry.controlled) {
-            return showSymbology && visibility;
+            return showInfoAndControlledSymbology && entry.isVisibleOnExport;
         }
 
-        return visibility;
+        return entry.isVisibleOnExport;
+    }
+
+    /**
+     * Helper function to get HTML fragment of SVG element provided a URL
+     *
+     * @function _createSVGCode
+     * @private
+     * @param {String} link the link of an image
+     * @return {String} the HTML fragment of the SVG element created
+     */
+    function _createSVGCode(link) {
+        let svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
+        svg.setAttribute('height','105');
+        svg.setAttribute('width','345');
+
+        let svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
+        svgimg.setAttribute('height','105');
+        svgimg.setAttribute('width','345');
+        svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', link);
+
+        svg.appendChild(svgimg);
+
+        return svg.outerHTML;
     }
 }

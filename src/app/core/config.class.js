@@ -1588,12 +1588,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
      * @class ExportComponent
      */
     class ExportComponent {
-        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false, showSymbology: false }) {
+        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false, showInfoAndControlledSymbology: false }) {
             this._isSelected = source.isSelected;
             this._isSelectable = source.isSelectable;
             this._isVisible = source.isVisible;
             this._value = source.value;
-            this._showSymbology = source.showSymbology || false;
+            this._showInfoAndControlledSymbology = source.showInfoAndControlledSymbology || false;
         }
 
         get isSelected () {         return this._isSelected; }
@@ -1604,8 +1604,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set isVisible (value) {     this._isVisible = value; }
         get value () {              return this._value; }
         set value (value) {         this._value = value; }
-        get showSymbology () {      return this._showSymbology; }
-        set showSymbology (value) { this._showSymbology = value; }
+        get showInfoAndControlledSymbology () {      return this._showInfoAndControlledSymbology; }
+        set showInfoAndControlledSymbology (value) { this._showInfoAndControlledSymbology = value; }
 
         _generators = [];
         _graphicOrder = null;
@@ -1621,7 +1621,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 isSelectable: this.isSelectable,
                 isVisible: this.isVisible,
                 value: this.value,
-                showSymbology: this.showSymbology
+                showInfoAndControlledSymbology: this.showInfoAndControlledSymbology
             };
         }
     }
