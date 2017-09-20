@@ -260,57 +260,55 @@ function pokeEsriService(url, esriBundle, hint) {
 // - serviceType : the type of file (CSV, Shape, GeoJSON, Unknown)
 // - fileData : if the file is located on a server, will xhr
 function pokeFile(url, hint) {
+        // reaction functions to different files
+        // overkill right now, as files just identify the type right now
+        // but structure will let us enhance for custom things if we need to
+        const fileHandler = {};
 
-    // reaction functions to different files
-    // overkill right now, as files just identify the type right now
-    // but structure will let us enhance for custom things if we need to
-    const fileHandler = {};
+        // csv
+        fileHandler[serviceType.CSV] = () => {
+            return makeInfo(serviceType.CSV);
+        };
 
-    // csv
-    fileHandler[serviceType.CSV] = () => {
-        return makeInfo(serviceType.CSV);
-    };
+        // geojson
+        fileHandler[serviceType.GeoJSON] = () => {
+            return makeInfo(serviceType.GeoJSON);
+        };
 
-    // geojson
-    fileHandler[serviceType.GeoJSON] = () => {
-        return makeInfo(serviceType.GeoJSON);
-    };
+        // csv
+        fileHandler[serviceType.Shapefile] = () => {
+            return makeInfo(serviceType.Shapefile);
+        };
 
-    // csv
-    fileHandler[serviceType.Shapefile] = () => {
-        return makeInfo(serviceType.Shapefile);
-    };
+        // couldnt figure it out
+        fileHandler[serviceType.Unknown] = () => {
+            // dont supply url, as we don't want to download random files
+            return makeInfo(serviceType.Unknown);
+        };
 
-    // couldnt figure it out
-    fileHandler[serviceType.Unknown] = () => {
-        // dont supply url, as we don't want to download random files
-        return makeInfo(serviceType.Unknown);
-    };
+        return new Promise(resolve => {
+            if (hint) {
+                // force the data extraction of the hinted format
+                resolve(fileHandler[hint]());
+            } else {
+                // inspect the url for file extensions
+                let guessType = serviceType.Unknown;
+                switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
 
-    return new Promise(resolve => {
-        if (hint) {
-            // force the data extraction of the hinted format
-            resolve(fileHandler[hint]());
-        } else {
-            // inspect the url for file extensions
-            let guessType = serviceType.Unknown;
-            switch (url.substr(url.lastIndexOf('.') + 1).toLowerCase()) {
-
-                // check for file extensions
-                case 'csv':
-                    guessType = serviceType.CSV;
-                    break;
-                case 'zip':
-                    guessType = serviceType.Shapefile;
-                    break;
-
-                case 'json':
-                    guessType = serviceType.GeoJSON;
-                    break;
+                    // check for file extensions
+                    case 'csv':
+                        guessType = serviceType.CSV;
+                        break;
+                    case 'zip':
+                        guessType = serviceType.Shapefile;
+                        break;
+                    default:
+                        guessType = serviceType.GeoJSON;
+                        break;
+                }
+                resolve(fileHandler[guessType]());
             }
-            resolve(fileHandler[guessType]());
-        }
-    });
+        });
 }
 
 // tests a URL to see if the value is a wms
@@ -323,6 +321,22 @@ function pokeWms(url, esriBundle) {
     console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
 
     return Promise.resolve(makeInfo(serviceType.WMS));
+}
+
+/**
+  * @method predictFileUrlBuilder
+  * @param {String} url a url to something that is hopefully a map service
+  * @returns {Promise} a promise resolving with an infomation object
+  */
+function predictFileUrlBuilder(esriBundle) {
+    return (url) => {
+        return new Promise(resolve => {
+            // it was a file. rejoice.
+            pokeFile(url).then(infoFile => {
+                resolve(infoFile);
+            });
+        });
+    }
 }
 
 function predictLayerUrlBuilder(esriBundle) {
@@ -362,9 +376,6 @@ function predictLayerUrlBuilder(esriBundle) {
             const flavourToHandler = {};
 
             // hint type to hint flavour
-            hintToFlavour[serviceType.CSV] = 'F_FILE';
-            hintToFlavour[serviceType.GeoJSON] = 'F_FILE';
-            hintToFlavour[serviceType.Shapefile] = 'F_FILE';
             hintToFlavour[serviceType.FeatureLayer] = 'F_ESRI';
             hintToFlavour[serviceType.RasterLayer] = 'F_ESRI';
             hintToFlavour[serviceType.GroupLayer] = 'F_ESRI';
@@ -372,11 +383,6 @@ function predictLayerUrlBuilder(esriBundle) {
             hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
             hintToFlavour[serviceType.ImageService] = 'F_ESRI';
             hintToFlavour[serviceType.WMS] = 'F_WMS';
-
-            // hint flavour to flavour-handler
-            flavourToHandler.F_FILE = () => {
-                return pokeFile(url, hint);
-            };
 
             flavourToHandler.F_ESRI = () => {
                 return pokeEsriService(url, esriBundle, hint);
@@ -389,70 +395,58 @@ function predictLayerUrlBuilder(esriBundle) {
 
             // execute handler.  hint -> flavour -> handler -> run it -> promise
             return flavourToHandler[hintToFlavour[hint]]();
-
         } else {
-
-            // TODO restructure.  this approach cleans up the pyramid of doom.
-            //      Needs to add check for empty tests, resolve as unknown.
-            //      Still a potential to take advantage of the nice structure.  Will depend
-            //      what comes first:  WMS logic (adding a 3rd test), or changing the request
-            //      library, meaning we get the type early from the head request.
-            /*
-            tests = [pokeFile, pokeService];
-
-            function runTests() {
-                test = tests.pop();
-                test(url, esriBundle).then(info => {
-                    if (info.serviceType !== serviceType.Unknown) {
-                        resolve(info);
-                        return;
-                    }
-                    runTests();
-                });
-            }
-
-            runTests();
-            */
-
             return new Promise(resolve => {
                 // no hint. run tests until we find a match.
-                // test for file
-                pokeFile(url).then(infoFile => {
-                    if (infoFile.serviceType === serviceType.Unknown ||
-                        infoFile.serviceType === serviceType.Error) {
+                // not a file, test for ESRI
+                pokeEsriService(url, esriBundle).then(infoEsri => {
+                    if (infoEsri.serviceType === serviceType.Unknown ||
+                        infoEsri.serviceType === serviceType.Error) {
 
-                        // not a file, test for ESRI
-                        pokeEsriService(url, esriBundle).then(infoEsri => {
-                            if (infoEsri.serviceType === serviceType.Unknown ||
-                                infoEsri.serviceType === serviceType.Error) {
-
-                                // FIXME REAL LOGIC COMING SOON
-                                // pokeWMS
-                                resolve(infoEsri);
-                            } else {
-                                // it was a esri service. rejoice.
-
-                                // shortlived rejoice because grouped layers lul
-                                if (infoEsri.serviceType === serviceType.GroupLayer) {
-                                    const lastSlash = url.lastIndexOf('/');
-                                    const layerIdx = parseInt(url.substring(lastSlash + 1));
-                                    url = url.substring(0, lastSlash);
-                                    pokeEsriService(url, esriBundle).then(infoDynamic => {
-                                        infoDynamic.groupIdx = layerIdx;
-                                        resolve(infoDynamic);
-                                    });
-                                } else {
-                                    resolve(infoEsri);
-                                }
-                            }
-                        });
+                        // FIXME REAL LOGIC COMING SOON
+                        // pokeWMS
+                        resolve(infoEsri);
                     } else {
-                        // it was a file. rejoice.
-                        resolve(infoFile);
+                        // it was a esri service. rejoice.
+
+                        // shortlived rejoice because grouped layers lul
+                        if (infoEsri.serviceType === serviceType.GroupLayer) {
+                            const lastSlash = url.lastIndexOf('/');
+                            const layerIdx = parseInt(url.substring(lastSlash + 1));
+                            url = url.substring(0, lastSlash);
+                            pokeEsriService(url, esriBundle).then(infoDynamic => {
+                                infoDynamic.groupIdx = layerIdx;
+                                resolve(infoDynamic);
+                            });
+                        } else {
+                            resolve(infoEsri);
+                        }
                     }
                 });
             });
         }
+
+        // TODO restructure.  this approach cleans up the pyramid of doom.
+        //      Needs to add check for empty tests, resolve as unknown.
+        //      Still a potential to take advantage of the nice structure.  Will depend
+        //      what comes first:  WMS logic (adding a 3rd test), or changing the request
+        //      library, meaning we get the type early from the head request.
+        /*
+        tests = [pokeFile, pokeService];
+
+        function runTests() {
+            test = tests.pop();
+            test(url, esriBundle).then(info => {
+                if (info.serviceType !== serviceType.Unknown) {
+                    resolve(info);
+                    return;
+                }
+                runTests();
+            });
+        }
+
+        runTests();
+        */
     };
 }
 
@@ -488,6 +482,10 @@ function validateGeoJson(geoJson) {
         Polygon: 'esriGeometryPolygon',
         MultiPolygon: 'esriGeometryPolygon'
     };
+
+    if (! geoJson.features) {
+        return Promise.reject(new Error('File is missing the attribute "features"'));
+    }
 
     const fields = extractFields(geoJson);
     const oid = 'OBJECTID';
@@ -532,9 +530,9 @@ function validateCSV(data) {
     let errorMessage; // error message if any to return
 
     // validations
-    if (rows.length === 0) {
-        // fail, no rows
-        errorMessage = 'File has no rows';
+    if (rows.length < 2) {
+        // fail, not enough rows
+        errorMessage = 'File does not have enough rows';
     } else {
         // field count of first row.
         const fc = rows[0].length;
@@ -542,12 +540,38 @@ function validateCSV(data) {
             // fail not enough columns
             errorMessage = 'File has less than two columns';
         } else {
+            if ((new Set(rows[0])).size < rows[0].length) {
+                errorMessage = 'File has duplicate column names';
             // check field counts of each row
-            if (rows.every(rowArr => rowArr.length === fc)) {
+            } else if (rows.every(rowArr => rowArr.length === fc)) {
+                // regex values
+                const latValueRegex = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+                const longValueRegex = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+
+                // candidate fields for latitude and longitude
+                const latCandidates = findCandidates(rows, latValueRegex);
+                const longCandidates = findCandidates(rows, longValueRegex);
+
+                // reject if no latitude or longitude candidates were found
+                if (latCandidates.length === 0 || longCandidates.length === 0) {
+                    return Promise.reject(new Error('Invalid csv format'));
+                }
 
                 const res = {
                     formattedData,
-                    smartDefaults: guessCSVfields(rows), // calculate smart defaults
+
+                    // default display fields
+                    smartDefaults: guessCSVfields(rows, latCandidates, longCandidates),
+
+                    // candidate fields for latitude and longitude wrapped in an object with an esri type
+                    latFields: latCandidates.map(field => ({
+                        name: field,
+                        type: 'esriFieldTypeString'
+                    })),
+                    longFields: longCandidates.map(field => ({
+                            name: field,
+                            type: 'esriFieldTypeString'
+                    })),
 
                     // make field list esri-ish for consistancy
                     fields: rows[0].map(field => ({
@@ -601,33 +625,37 @@ function validateFile(type, data) {
 }
 
 /**
- * From provided CSV data, guesses which columns are long and lat. If guessing is no successful, returns null for one or both fields.
+ * From provided CSV data, guesses which columns are long and lat with in the canadidates.
+ * If guessing is no successful, returns null for one or both fields.
  *
  * @method guessCSVfields
  * @private
  * @param  {Array} rows csv data
+ * @param  {Array} latCandidates list of all the valid latitude fields
+ * @param  {Array} longCandidates list of all the valid longitude fields
  * @return {Object}      an object with lat and long string properties indicating corresponding field names
  */
-function guessCSVfields(rows) {
-    // magic regexes
-    // TODO: in case of performance issues with running regexes on large csv files, limit to, say, the first hundred rows
-    // TODO: explain regexes
-    const latValueRegex = new RegExp(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/); // filters by field value
-    const longValueRegex = new RegExp(/^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/);
-    const latNameRegex = new RegExp(/^.*(y|la).*$/i); // filters by field name
-    const longNameRegex = new RegExp(/^.*(x|lo).*$/i);
+function guessCSVfields(rows, latCandidates, longCandidates) {
+    const latNameRegex = new RegExp(/^.*(y|lat).*$/i);
+    const longNameRegex = new RegExp(/^.*(x|long).*$/i);
 
-    const latCandidates = findCandidates(rows, latValueRegex, latNameRegex); // filter out all columns that are not lat based on row values
-    const longCandidates = findCandidates(rows, longValueRegex, longNameRegex); // filter out all columns that are not long based on row values
+    // pick the candidate most likely to be the latitude
+    let lat = latCandidates[0] || null;
+    for (let i in latCandidates) {
+        if (latNameRegex.test(latCandidates[i])) {
+            lat = latCandidates[i];
+            break;
+        }
+    }
 
-    // console.log(latCandidates);
-    // console.log(longCandidates);
-
-    // pick the first lat guess or null
-    const lat = latCandidates[0] || null;
-
-    // pick the first long guess or null
-    const long = longCandidates.find(field => field !== lat) || null;
+    // pick the candidate most likely to be the longitude
+    let long = longCandidates.find(field => field !== lat) || null;
+    for (let j in longCandidates) {
+        if (longNameRegex.test(longCandidates[j]) && longCandidates[j] !== lat) {
+            long = longCandidates[j];
+            break;
+        }
+    }
 
     // for primary field, pick the first on that is not lat or long field or null
     const primary = rows[0].find(field => field !== lat && field !== long) || null;
@@ -637,18 +665,26 @@ function guessCSVfields(rows) {
         long,
         primary
     };
+}
 
-    function findCandidates(rows, valueRegex, nameRegex) {
-        const fields = rows[0]; // first row must be headers
+/**
+ * Find the suitable candidate fields that passes the regular expressions specified
+ *
+ * @method findCandidates
+ * @private
+ * @param  {Array} rows csv data
+ * @param {RegExp} regular expression for the value of the field
+ * @return {Array} a list of suitable candidate fields
+ */
+function findCandidates(rows, valueRegex) {
+    const fields = rows[0]; // first row must be headers
 
-        const candidates =
-            fields.filter((field, index) =>
-                rows.every((row, rowIndex) =>
-                    rowIndex === 0 || valueRegex.test(row[index]))) // skip first row as its just headers
-            .filter(field => nameRegex.test(field));
+    const candidates =
+        fields.filter((field, index) =>
+            rows.every((row, rowIndex) =>
+                rowIndex === 0 || valueRegex.test(row[index]))); // skip first row as its just headers
 
-        return candidates;
-    }
+    return candidates;
 }
 
 function serverLayerIdentifyBuilder(esriBundle) {
@@ -841,28 +877,6 @@ function cleanUpFields(geoJson, layerDefinition) {
 
 }
 
-/**
- * Makes an attempt to load and register a projection definition.
- * Returns promise resolving when process is complete
- * projModule - proj module from geoApi
- * projCode - the string or int epsg code we want to lookup
- * epsgLookup - function that will do the epsg lookup, taking code and returning promise of result or null
- */
-function projectionLookup(projModule, projCode, epsgLookup) {
-    // look up projection definitions if it's not already loaded and we have enough info
-    if (!projModule.getProjection(projCode) && epsgLookup && projCode) {
-        return epsgLookup(projCode).then(projDef => {
-            if (projDef) {
-                // register projection
-                projModule.addProjection(projCode, projDef);
-            }
-            return projDef;
-        });
-    } else {
-        return Promise.resolve(null);
-    }
-}
-
 function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
 
     /**
@@ -955,8 +969,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const destProj = 'EPSG:' + targetWkid;
 
         // look up projection definitions if they don't already exist and we have enough info
-        const srcLookup = projectionLookup(geoApi.proj, srcProj, opts.epsgLookup);
-        const destLookup = projectionLookup(geoApi.proj, destProj, opts.epsgLookup);
+        const srcLookup = geoApi.proj.checkProj(srcProj, opts.epsgLookup);
+        const destLookup =  geoApi.proj.checkProj(destProj, opts.epsgLookup);
 
         // make the layer
         const buildLayer = () => {
@@ -994,8 +1008,8 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         };
 
         // call promises in order
-        return srcLookup
-            .then(() => destLookup)
+        return srcLookup.lookupPromise
+            .then(() => destLookup.lookupPromise)
             .then(() => buildLayer());
 
     };
@@ -1224,6 +1238,7 @@ module.exports = function (esriBundle, geoApi) {
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
         makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
         serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
+        predictFileUrl: predictFileUrlBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
         validateFile,
         csvPeek,

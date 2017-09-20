@@ -152,55 +152,116 @@ function localProjectExtent(extent, sr) {
 /**
  * Check whether or not a spatialReference is supported by proj4 library.
  *
- * @param {Object} spatialReference to be checked to see if it's supported by proj4
+ * @param {Object} spatialReference to be checked to see if it's supported by proj4. Can be ESRI SR object or a EPSG string.
  * @param {Function} epsgLookup an optional lookup function for EPSG codes which are not loaded
  * in the proj4 definitions, the function should take a numeric EPSG code and return a Promise
  * resolving with a proj4 style definition string
  * @returns {Object} with the structure {
- *  foundProj: (bool) indicates if the projection was found,
+ *  foundProj: (bool) indicates if the projection was found without a web lookup,
  *  message: (string) provides a reason why the projection was not found,
- *  lookupPromise: (Promise) an optional promise resolving with true or false if a lookup function was provided and had to be invoked
+ *  lookupPromise: (Promise) an promise resolving after any web lookups. Resolves with true or false overall success.
  * }
  */
 function checkProj(spatialReference, epsgLookup) {
     let srcProj;
-
-    // find the source extent (either from wkid or wkt)
-    if (spatialReference.wkid) {
-        srcProj = 'EPSG:' + spatialReference.wkid;
-    } else if (spatialReference.wkt) {
-        srcProj = spatialReference.wkt;
-    } else {
-        return {
-            foundProj: false,
-            message: 'No WKT or WKID specified on extent.spatialReference'
-        };
-    }
-
-    if (spatialReference.wkid && !proj4.defs(srcProj)) {
-        if (epsgLookup) {
-            return {
-                foundProj: false,
-                message: 'Attempting to lookup WKID',
-                lookupPromise: epsgLookup(spatialReference.wkid).then(def => {
-                    if (def === null) {
-                        return false;
-                    }
-                    proj4.defs(srcProj, def);
-                    return true;
-                })
-            };
-        }
-        return {
-            foundProj: false,
-            message: 'Source projection in WKID and not recognized by proj4 library'
-        };
-    }
-
-    return {
-        foundProj: true,
-        message: 'Source projection OK.'
+    let latestProj;
+    let epsgKey = true; // indicates we are dealing with an EPSG key
+    const res = {
+        foundProj: false,
+        message: 'Source projection OK',
+        lookupPromise: Promise.resolve(true)
     };
+
+    const addCode = idnum => {
+        return `EPSG:${idnum}`;
+    };
+
+    // determine what our parameter is
+    if (spatialReference.wkid) {
+        // esri SR with wkid.  also check if it has a latestWkid
+        srcProj = addCode(spatialReference.wkid);
+        if (spatialReference.latestWkid) {
+            latestProj = addCode(spatialReference.latestWkid);
+        }
+
+    } else if (spatialReference.wkt) {
+        // esri SR with wkt. it is good to go.
+        res.foundProj = true;
+        epsgKey = false;
+    } else if (typeof spatialReference === 'string') {
+        srcProj = spatialReference;
+    } else if (typeof spatialReference === 'number') {
+        srcProj = addCode(String(spatialReference));
+    } else {
+        // dont know what we got.
+        res.message = 'No WKT, WKID, or EPSG code specified on input';
+        res.lookupPromise = Promise.resolve(false);
+        epsgKey = false;
+    }
+
+    if (epsgKey) {
+        // dealing with an epsg key. check for a definition
+
+        // worker function. if we had to get latest wkid from internet,
+        // need to also map that result to the normal wkid. but only
+        // if the two wkids are different.
+        const applyLatest = (latestDef, normalDef) => {
+            if (latestDef !== normalDef) {
+                proj4.defs(normalDef, proj4.defs(latestDef));
+            }
+        };
+
+        if (proj4.defs(srcProj)) {
+            // already defined in proj4. good.
+            res.foundProj = true;
+        } else {
+            // we currently don't have this in proj4
+            if (latestProj && proj4.defs(latestProj)) {
+                // we have the latestWkid projection defined.
+                applyLatest(latestProj, srcProj);
+                res.foundProj = true;
+            } else {
+                // need to find a definition
+
+                if (epsgLookup) {
+                    res.message = 'Attempting to lookup WKID';
+
+                    // function to execute a lookup & store result if success
+                    const doLookup = epsgStr => {
+                        return epsgLookup(epsgStr).then(def => {
+                            if (def === null) {
+                                return false;
+                            }
+                            proj4.defs(epsgStr, def);
+                            return true;
+                        });
+                    };
+
+                    // check the latestWkid first, if it exists (as that wkid is usally the EPSG friendly one)
+                    // otherwise make a dummy promise that will just cause the standard wkid promise to run.
+                    const latestLookup = latestProj ? doLookup(latestProj) : Promise.resolve(false);
+
+                    res.lookupPromise = latestLookup.then(latestSuccess => {
+                        if (latestSuccess) {
+                            // found the latestWkid code
+                            applyLatest(latestProj, srcProj);
+                            return true;
+                        } else {
+                            // no luck with latestWkid, so lookup on normal code
+                            return doLookup(srcProj);
+                        }
+                    });
+
+                } else {
+                    // no lookup function. no projections for you.
+                    res.lookupPromise = Promise.resolve(false);
+                    res.message = 'Source projection not recognized by proj4 library';
+                }
+            }
+        }
+    }
+
+    return res;
 }
 
 function projectEsriExtentBuilder(esriBundle) {

@@ -17,7 +17,7 @@ describe('DynamicFC', () => {
             setLayerDrawingOptions: (x) => { parent.testField = x; },
             setVisibleLayers: (x) => { parent.visibleLayers = x; },
             setVisibility: () => { return; },
-            refresh: () => { return; }
+            refresh: () => {}
         },
         synchOpacity: () => { return; },
         testField: [ ]

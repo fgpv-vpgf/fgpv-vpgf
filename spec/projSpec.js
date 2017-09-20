@@ -17,7 +17,7 @@ function makeFakeEsriExtent(o) {
 }
 
 function mockEpsgLookup(code) {
-    if (String(code) === '26914') {
+    if (code === 'EPSG:26914') {
         return Promise.resolve('+proj=utm +zone=14 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
     }
     return Promise.resolve(null);
@@ -195,7 +195,7 @@ describe('Check valid source projection', () => {
     });
 
     it('should attempt to lookup unknown references if lookup callback is provided (lookup found case)', (done) => {
-        const res = proj.checkProj({ wkid: 26914 }, mockEpsgLookup);
+        const res = proj.checkProj({ wkid: 26914, latestWkid: 26914 }, mockEpsgLookup);
         expect(res.foundProj).toBe(false);
         res.lookupPromise
             .then(found => {

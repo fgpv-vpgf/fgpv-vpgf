@@ -18,32 +18,32 @@
 
             // lets test some paths
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.csv').then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.csv').then(data => {
                 console.log('local file CSV, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.csv', api.layer.serviceType.CSV).then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.csv', api.layer.serviceType.CSV).then(data => {
                 console.log('local file CSV, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.json', api.layer.serviceType.GeoJSON).then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.json', api.layer.serviceType.GeoJSON).then(data => {
                 console.log('local file GeoJSON, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.json').then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.json').then(data => {
                 console.log('local file GeoJSON, no hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.zip', api.layer.serviceType.Shapefile).then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.zip', api.layer.serviceType.Shapefile).then(data => {
                 console.log('local file shape, hint');
                 console.log(data);
             });
 
-            api.layer.predictLayerUrl('c:\dogguts\dash.zip').then(data => {
+            api.layer.predictFileUrl('c:\dogguts\dash.zip').then(data => {
                 console.log('local file shape, no hint');
                 console.log(data);
             });

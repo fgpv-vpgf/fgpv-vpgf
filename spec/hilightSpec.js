@@ -99,27 +99,6 @@ function FakeJsonUtils() {
 }
 
 describe('hilight', () => {
-    describe('cloneBuilder', () => {
-        const fakeBundle = { // mock-up esri bundle
-            Graphic: (properties) => { return new FakeGraphic(properties); }
-        };
-        const fakeGraphicObject = new FakeGraphic('point');
-        let hilight;    // the higliht module  from geoApi
-
-        beforeEach(() => {
-            spyOn(fakeBundle, 'Graphic').and.callThrough();
-            hilight = hilightModule(fakeBundle);
-        });
-
-        it('should construct a clone for a graphic from a map-bound layer', () => {
-            const clone = hilight.cloneLayerGraphic(fakeGraphicObject);
-            expect(fakeBundle.Graphic).toHaveBeenCalled();
-
-            expect(clone.geometry).toEqual(fakeGraphicObject.geometry);
-            expect(clone.symbol).toEqual(fakeGraphicObject.getLayer().renderer.getSymbol(fakeGraphicObject));
-        });
-    });
-
     describe('graphicBuilder', () => {
         const fakeBundle = { // mock-up esri bundle
             Graphic: (properties) => { return new FakeGraphic(properties); },
@@ -185,7 +164,7 @@ describe('hilight', () => {
         it('should return the local graphic because source is not server', () => {
             const graphicBundles = [
                 {
-                    graphic: (properties) => { return new FakeGraphic(properties); },
+                    graphic: new FakeGraphic(),
                     source: 'local',
                     layerFC: new FakeGeoApiLayerFC(),
                     featureIdx: 0

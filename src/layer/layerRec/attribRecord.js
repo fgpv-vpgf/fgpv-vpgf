@@ -94,12 +94,15 @@ class AttribRecord extends layerRecord.LayerRecord {
      * Will attempt local copy (unless overridden), will hit the server if not available.
      *
      * @function fetchGraphic
-     * @param  {Integer} objId          ID of object being searched for
-     * @param  {Boolean} ignoreLocal    indicates if we should ignore any local graphic in the layer. cached or server value will be used. defaults to false.
-     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .source is where it came from - 'layer' or 'server'; also .layerFC for convenience
+     * @param  {Integer} objId         ID of object being searched for
+     * @param {Object} opts            object containing option parametrs
+     *                 - map           map wrapper object of current map. only required if requesting geometry
+     *                 - geom          boolean. indicates if return value should have geometry included. default to false
+     *                 - attribs       boolean. indicates if return value should have attributes included. default to false
+     * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (objId, ignoreLocal = false) {
-        return this._featClasses[this._defaultFC].fetchGraphic(objId, ignoreLocal);
+    fetchGraphic (objId, opts) {
+        return this._featClasses[this._defaultFC].fetchGraphic(objId, opts);
     }
 
     /**
