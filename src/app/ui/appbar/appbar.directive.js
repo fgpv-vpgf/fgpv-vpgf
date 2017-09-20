@@ -64,7 +64,7 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
         // debounce the toggle toc button to avoid wierd behaviour
         return debounceService.registerDebounce(() => {
             stateManager.setActive({ side: false }, 'mainToc');
-        });
+        }, 250);
     }
 
     function toggleToolbox() {
