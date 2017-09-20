@@ -708,7 +708,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get isVisibleOnExport () {
             return this.visibility && !this.hidden && this.opacity !== 0 &&
                 (this.state === 'rv-refresh' || this.state === 'rv-loaded') &&
-                !this.scale.offscale;
+                !this.scale.offScale;
         }
     }
 
