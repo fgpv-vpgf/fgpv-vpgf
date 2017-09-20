@@ -329,7 +329,7 @@
             "children": [
               {
                 "infoType": "text",
-                "content": "If a <abbr title='ESRI Dynamic Lyaer'>Dynamic layer</abbr> does not support children _opacity_ it is not a [not-true-dynamic Dynamic Layer](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049), and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed. \n\n #### Note \n\n Jump link should never point to group blocks not belonging to this layer record."
+                "content": "If a <abbr title='ESRI Dynamic Layer'>Dynamic layer</abbr> does not support children _opacity_ it is not a [not-true-dynamic Dynamic Layer](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049), and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed. \n\n #### Note \n\n Jump link should never point to group blocks not belonging to this layer record."
               },
               {
                 "infoType": "image",
