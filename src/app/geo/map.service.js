@@ -10,7 +10,7 @@ angular
     .module('app.geo')
     .factory('mapService', mapServiceFactory);
 
-function mapServiceFactory($timeout, referenceService, gapiService, configService, identifyService, events, $translate, errorService, layoutService) {
+function mapServiceFactory($timeout, referenceService, gapiService, configService, identifyService, events, $translate, errorService) {
     const service = {
         destroyMap,
         makeMap,
@@ -380,7 +380,7 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
             const toast = {
                 textContent: $translate.instant('toc.boundaryZoom.badzoom'),
                 action: $translate.instant('toc.boundaryZoom.undo'),
-                parent: layoutService.panels.shell
+                parent: referenceService.panels.shell
             };
 
             // promise resolves with 'ok' when user clicks 'undo'
