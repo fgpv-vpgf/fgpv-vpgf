@@ -476,14 +476,16 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {String} the HTML fragment of the SVG element created
      */
     function _createSVGCode(link) {
-        let svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-        svg.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
-        svg.setAttribute('height','105');
-        svg.setAttribute('width','345');
+        const img = $rootElement.find(`[src="${link}"]`)[0];
 
-        let svgimg = document.createElementNS('http://www.w3.org/2000/svg','image');
-        svgimg.setAttribute('height','105');
-        svgimg.setAttribute('width','345');
+        let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+        svg.setAttribute('height', img.naturalHeight);
+        svg.setAttribute('width', img.naturalWidth);
+
+        let svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+        svgimg.setAttribute('height', img.naturalHeight);
+        svgimg.setAttribute('width', img.naturalWidth);
         svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', link);
 
         svg.appendChild(svgimg);
