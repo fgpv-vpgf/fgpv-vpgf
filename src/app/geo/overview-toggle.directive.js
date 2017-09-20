@@ -54,12 +54,11 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationS
         });
 
         const self = scope.self;
+        self.overviewActive = true;
 
         configService.getAsync.then(config => {
             if (config.map.components.overviewMap.enabled) {
                 self.overviewActive = config.map.components.overviewMap.initiallyExpanded;
-            } else {
-                self.overviewActive = true;
             }
         });
 
