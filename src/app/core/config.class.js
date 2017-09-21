@@ -1624,27 +1624,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
     /**
      * Typed representation of the `services.export.legend` section of the config.
-     * @class ExportComponent
+     * @class LegendExportComponent
      */
-    class LegendExportComponent {
-        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false,
-                showInfoSymbology: false, showControlledSymbology: false }) {
-            this._isSelected = source.isSelected;
-            this._isSelectable = source.isSelectable;
-            this._isVisible = source.isVisible;
-            this._value = source.value;
+    class LegendExportComponent extends ExportComponent {
+        constructor (source) {
+            super(source);
+
             this._showInfoSymbology = source.showInfoSymbology || false;
             this._showControlledSymbology = source.showControlledSymbology || false;
         }
-
-        get isSelected () {         return this._isSelected; }
-        set isSelected (value) {    this._isSelected = value; }
-        get isSelectable () {       return this._isSelectable; }
-        set isSelectable (value) {  this._isSelectable = value; }
-        get isVisible () {          return this._isVisible; }
-        set isVisible (value) {     this._isVisible = value; }
-        get value () {              return this._value; }
-        set value (value) {         this._value = value; }
 
         get showInfoSymbology () {      return this._showInfoSymbology; }
         set showInfoSymbology (value) { this._showInfoSymbology = value; }
@@ -1652,23 +1640,11 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get showControlledSymbology () {      return this._showControlledSymbology; }
         set showControlledSymbology (value) { this._showControlledSymbology = value; }
 
-        _generators = [];
-        _graphicOrder = null;
-
-        get generators () { return this._generators; }
-        set generators(value = []) { this._generators = value; }
-        get graphicOrder () { return this._graphicOrder; }
-        set graphicOrder(value = null) { this._graphicOrder = value; }
-
         get JSON() {
-            return {
-                isSelected: this.isSelected,
-                isSelectable: this.isSelectable,
-                isVisible: this.isVisible,
-                value: this.value,
+            return angular.merge(super.JSON, {
                 showInfoSymbology: this.showInfoSymbology,
                 showControlledSymbology: this.showControlledSymbology
-            };
+            });
         }
     }
 
