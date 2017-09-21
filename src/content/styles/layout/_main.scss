@@ -189,6 +189,11 @@ rv-panel[type='main'] {
         .rv-panel {
             background: transparent !important;
 
+            > * {
+                // without pointer events, newly generated or updated tooltips don't have a place to attach to and they end up attached to the edges of the parent container
+                pointer-events: all;
+            }
+
             &:after {
                 box-shadow: none !important;
             }
