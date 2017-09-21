@@ -1584,16 +1584,15 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
-     * Typed representation of the `services.export.[components]` section of the config.
+     * Typed representation of the `services.export.[components]` section of the config (excluding the legend).
      * @class ExportComponent
      */
     class ExportComponent {
-        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false, showInfoAndControlledSymbology: false }) {
+        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false }) {
             this._isSelected = source.isSelected;
             this._isSelectable = source.isSelectable;
             this._isVisible = source.isVisible;
             this._value = source.value;
-            this._showInfoAndControlledSymbology = source.showInfoAndControlledSymbology || false;
         }
 
         get isSelected () {         return this._isSelected; }
@@ -1604,8 +1603,54 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set isVisible (value) {     this._isVisible = value; }
         get value () {              return this._value; }
         set value (value) {         this._value = value; }
-        get showInfoAndControlledSymbology () {      return this._showInfoAndControlledSymbology; }
-        set showInfoAndControlledSymbology (value) { this._showInfoAndControlledSymbology = value; }
+
+        _generators = [];
+        _graphicOrder = null;
+
+        get generators () { return this._generators; }
+        set generators(value = []) { this._generators = value; }
+        get graphicOrder () { return this._graphicOrder; }
+        set graphicOrder(value = null) { this._graphicOrder = value; }
+
+        get JSON() {
+            return {
+                isSelected: this.isSelected,
+                isSelectable: this.isSelectable,
+                isVisible: this.isVisible,
+                value: this.value
+            };
+        }
+    }
+
+    /**
+     * Typed representation of the `services.export.legend` section of the config.
+     * @class ExportComponent
+     */
+    class LegendExportComponent {
+        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false,
+                showInfoSymbology: false, showControlledSymbology: false }) {
+            this._isSelected = source.isSelected;
+            this._isSelectable = source.isSelectable;
+            this._isVisible = source.isVisible;
+            this._value = source.value;
+            this._showInfoSymbology = source.showInfoSymbology || false;
+            this._showControlledSymbology = source.showControlledSymbology || false;
+        }
+
+        get isSelected () {         return this._isSelected; }
+        set isSelected (value) {    this._isSelected = value; }
+        get isSelectable () {       return this._isSelectable; }
+        set isSelectable (value) {  this._isSelectable = value; }
+        get isVisible () {          return this._isVisible; }
+        set isVisible (value) {     this._isVisible = value; }
+        get value () {              return this._value; }
+        set value (value) {         this._value = value; }
+
+        get showInfoSymbology () {      return this._showInfoSymbology; }
+        set showInfoSymbology (value) { this._showInfoSymbology = value; }
+
+        get showControlledSymbology () {      return this._showControlledSymbology; }
+        set showControlledSymbology (value) { this._showControlledSymbology = value; }
 
         _generators = [];
         _graphicOrder = null;
@@ -1621,7 +1666,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 isSelectable: this.isSelectable,
                 isVisible: this.isVisible,
                 value: this.value,
-                showInfoAndControlledSymbology: this.showInfoAndControlledSymbology
+                showInfoSymbology: this.showInfoSymbology,
+                showControlledSymbology: this.showControlledSymbology
             };
         }
     }
@@ -1636,7 +1682,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._title.isVisible = false; // rendered export title should not be visible in the ui
             this._map = new ExportComponent(source.map);
             this._mapElements = new ExportComponent(source.mapElements);
-            this._legend = new ExportComponent(source.legend);
+            this._legend = new LegendExportComponent(source.legend);
             this._footnote = new ExportComponent(source.footnote);
             this._timestamp = new ExportComponent(source.timestamp);
         }

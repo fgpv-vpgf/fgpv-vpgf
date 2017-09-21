@@ -456,12 +456,12 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Boolean} true if block should be shown in export legend
      */
     function _showBlock(entry) {
-        const showInfoAndControlledSymbology = configService.getSync.services.export.legend.showInfoAndControlledSymbology;
+        const exportLegend = configService.getSync.services.export.legend;
 
         if (entry.blockType === LegendBlock.TYPES.INFO) {
-            return showInfoAndControlledSymbology
+            return exportLegend.showInfoSymbology;
         } else if (entry.controlled) {
-            return showInfoAndControlledSymbology && entry.isVisibleOnExport;
+            return exportLegend.showControlledSymbology && entry.isVisibleOnExport;
         }
 
         return entry.isVisibleOnExport;

@@ -314,7 +314,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
 
         get isVisibleOnExport () {
-            return configService.getSync.services.export.legend.showInfoAndControlledSymbology;
+            return configService.getSync.services.export.legend.showInfoSymbology;
         }
     }
 
