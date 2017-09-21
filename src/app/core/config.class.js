@@ -1495,17 +1495,20 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._maximizeButton = source.maximizeButton;
             this._layerType = source.layerType;
             this._expandFactor = source.expandFactor || 2;
+            this._initiallyExpanded = typeof source.initiallyExpanded !== 'undefined' ? source.initiallyExpanded : true;
         }
 
         get maximizeButton () { return this._maximizeButton; }
         get layerType () { return this._layerType; }
         get expandFactor () { return this._expandFactor; }
+        get initiallyExpanded () { return this._initiallyExpanded; }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 maximizeButton: this.maximizeButton,
                 layerType: this.layerType,
-                expandFactor: this.expandFactor
+                expandFactor: this.expandFactor,
+                initiallyExpanded: this.initiallyExpanded
             });
         }
     }
@@ -1581,7 +1584,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
-     * Typed representation of the `services.export.[components]` section of the config.
+     * Typed representation of the `services.export.[components]` section of the config (excluding the legend).
      * @class ExportComponent
      */
     class ExportComponent {
@@ -1620,6 +1623,32 @@ function ConfigObjectFactory(Geo, gapiService, common) {
     }
 
     /**
+     * Typed representation of the `services.export.legend` section of the config.
+     * @class LegendExportComponent
+     */
+    class LegendExportComponent extends ExportComponent {
+        constructor (source) {
+            super(source);
+
+            this._showInfoSymbology = source.showInfoSymbology || false;
+            this._showControlledSymbology = source.showControlledSymbology || false;
+        }
+
+        get showInfoSymbology () {      return this._showInfoSymbology; }
+        set showInfoSymbology (value) { this._showInfoSymbology = value; }
+
+        get showControlledSymbology () {      return this._showControlledSymbology; }
+        set showControlledSymbology (value) { this._showControlledSymbology = value; }
+
+        get JSON() {
+            return angular.merge(super.JSON, {
+                showInfoSymbology: this.showInfoSymbology,
+                showControlledSymbology: this.showControlledSymbology
+            });
+        }
+    }
+
+    /**
      * Typed representation of the `services.export` section of the config.
      * @class ExportService
      */
@@ -1629,7 +1658,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._title.isVisible = false; // rendered export title should not be visible in the ui
             this._map = new ExportComponent(source.map);
             this._mapElements = new ExportComponent(source.mapElements);
-            this._legend = new ExportComponent(source.legend);
+            this._legend = new LegendExportComponent(source.legend);
             this._footnote = new ExportComponent(source.footnote);
             this._timestamp = new ExportComponent(source.timestamp);
         }
