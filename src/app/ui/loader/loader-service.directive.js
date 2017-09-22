@@ -61,9 +61,16 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             onContinue: connectOnContinue,
             onCancel: () => onCancel(self.connect.step),
             onKeypress: event => {
-                if (event.keyCode === keyNames.ENTER) {
+                const connect = self.connect;
+                // prevent enter presses from triggering service handshake if the input value is not validated
+                if (event.keyCode === keyNames.ENTER &&
+                    connect.form.$valid &&
+                    connect.step.isContinueEnabled &&
+                    !connect.step.isThinking) {
+                    // check if enter key have been pressed and call the next step if so
                     connectOnContinue();
-                }}, // check if enter key have been pressed and call the next step if so
+                }
+            },
             reset: connectReset
         },
         form: null,

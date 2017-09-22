@@ -51,7 +51,16 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 onCancel(self.upload.step);
             },
             onKeypress: event => {
-                if (event.keyCode === keyNames.ENTER) { uploadOnContinue(); } }, // check if enter key have been pressed and call the next step if so
+                const upload = self.upload;
+                // prevent enter presses from triggering upload if the input value is not validated
+                if (event.keyCode === keyNames.ENTER &&
+                    upload.form.$valid &&
+                    upload.step.isContinueEnabled &&
+                    !upload.step.isThinking) {
+                    // check if enter key have been pressed and call the next step if so
+                    uploadOnContinue();
+                }
+            },
             reset: uploadReset
         },
         form: null,
@@ -59,6 +68,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         fileData: null,
         fileUrl: null,
         filesSubmitted: uploadFilesSubmitted,
+        fileUploadAbort: angular.noop,
 
         fileReset,
         fileResetValidation,
@@ -152,11 +162,27 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function uploadOnContinue
      */
     function uploadOnContinue() {
+        let isFileUploadAborted = false;
+
         self.upload.httpProgress = true;
+
+        // set `httpProgress` to false to hide the progress bar immediately as the Cancel button is clicked
+        self.upload.fileUploadAbort = () => {
+            self.upload.httpProgress = false;
+            isFileUploadAborted = true;
+        };
+
         _loadFile(self.upload.fileUrl).then(arrayBuffer =>
-            onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer)
+            isFileUploadAborted ?
+                $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
+                onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer)
         ).catch(error => {
-            RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error);
+            if (error.reason === 'abort') {
+                RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                return;
+            }
+
+            RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
             toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
         }).finally(() => (self.upload.httpProgress = false));
 
@@ -172,7 +198,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 response.data
             ).catch(error => {
                 console.log(error);
-                throw new Error('Cannot retrieve file data');
+                return $q.reject({ reason: 'error', message: 'Cannot retrieve file data' });
             });
 
             return promise;
@@ -189,10 +215,22 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             const file = files[0];
             self.upload.file = file; // store the first file from the array;
 
-            _readFile(file.file, _updateProgress).then(arrayBuffer =>
+            const reader = new FileReader();
+
+            // to cancel the file upload, stop the file reader
+            // after `abort` is called, `onabort` event is fired which rejects `_readFile` promise
+            self.upload.fileUploadAbort = () =>
+                reader.abort();
+
+            _readFile(reader, file.file, _updateProgress).then(arrayBuffer =>
                 onLayerBlueprintReady(file.name, arrayBuffer)
             ).catch(error => {
-                RV.logger.error('loaderFileDirective', 'file upload has failed with error', error);
+                if (error.reason === 'abort') {
+                    RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                    return;
+                }
+
+                RV.logger.error('loaderFileDirective', 'file upload has failed with error', error.message);
                 toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
             });
         }
@@ -201,20 +239,24 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
          * Reads HTML5 File object data.
          * @private
          * @param {File} file a file object to read
+         * @param {FileReader} reader an instance of HTML5 fire reader
          * @param {Function} progressCallback a function which is called during the process of reading file indicating how much of the total data has been read
          * @return {Promise} promise resolving with file's data
          */
-        function _readFile(file, progressCallback) {
+        function _readFile(reader, file, progressCallback) {
             const dataPromise = $q((resolve, reject) => {
-                const reader = new FileReader();
+
                 reader.onerror = () => {
                     RV.logger.error('layerBlueprint', 'failed to read a file');
-                    reject('Failed to read a file');
+                    reject({ reason: 'error', message: 'Failed to read a file' });
                 };
                 reader.onload = () =>
                     resolve(reader.result);
                 reader.onprogress = event =>
-                    progressCallback(event);
+                    progressCallback(event, reader);
+
+                reader.onabort = event =>
+                    reject({ reason: 'abort', message: 'User canceled file upload.' });
 
                 reader.readAsArrayBuffer(file);
             });
@@ -228,7 +270,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
          * @private
          * @param  {Object} event ProgressEvent object
          */
-        function _updateProgress(event) {
+        function _updateProgress(event, reader) {
+
             // indicates if the resource concerned by the ProgressEvent has a length that can be calculated.
             if (event.lengthComputable) {
                 const percentLoaded = Math.round((event.loaded / event.total) * 100);
@@ -271,6 +314,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function uploadReset
      */
     function uploadReset() {
+        self.upload.fileUploadAbort();
+
         fileReset();
         fileUrlReset();
     }
