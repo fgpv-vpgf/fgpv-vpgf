@@ -75,8 +75,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             stateManager.display.table.data.filter.isActive = value; // set on layer so it can persist when we change layer
 
             // filter flag
-            stateManager.display.table.requester.legendEntry.filter =
-                service.filter.isActive || service.filter.isMapFiltered;
+            stateManager.display.table.requester.legendEntry.filter = service.filter.isMapFiltered;
 
             filteredState().then(() => {
                 filterTimeStamps.onChanged = Date.now();
@@ -231,7 +230,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // get filters configuration and check if static field were used. If so, filters can't be remove and flag need to stay
         stateManager.display.table.requester.legendEntry.filter =
-            service.filter.isActive || service.filter.isMapFiltered || filter;
+            service.filter.isMapFiltered || filter;
 
         // if filter by extent is enable, manually trigger the on extentChange event to refresh the table
         if (service.filter.isActive) { onExtentChange(); }
@@ -254,9 +253,6 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // set isApplied to hide apply filters on map button
         service.filter.isApplied = true;
         filters.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
-
-        // TODO: fix because we dont use flag anymore... show filter flag
-        // filters.requester.legendEntry.flags.filter.visible = true;
 
         // loop trought all the filters to construct the array queries
         let defs = [];
