@@ -82,7 +82,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         fileUrlResetValidation,
 
         httpProgress: false, // shows progress loading file using $http
-        progress: 0
+        progress: 0,
+        fileStatus: 'Loading ...'
     };
 
     self.select = {
@@ -199,7 +200,19 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
          * @return {Promise} a promise resolving with file arraybuffer if successful
          */
         function _loadFile(url) {
-            const promise = $http.get(url, { responseType: 'arraybuffer' }).then(response =>
+            const promise = $http.get(url, {
+                responseType: 'arraybuffer',
+                eventHandlers: {
+                    progress: event => {
+                        if (event.lengthComputable) {
+                            const loaded = Math.round(event.loaded / 1000);
+                            const total = Math.round(event.total / 1000);
+
+                            self.upload.fileStatus = `Loaded ${loaded}kb of ${total}kb`;
+                        }
+                    }
+                }
+            }).then(response =>
                 response.data
             ).catch(error => {
                 console.log(error);
@@ -360,6 +373,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         upload.fileUrl = '';
         upload.form.fileUrl.$setPristine();
         upload.form.fileUrl.$setUntouched();
+        upload.fileStatus = 'Loading ...';
 
         fileUrlResetValidation();
     }

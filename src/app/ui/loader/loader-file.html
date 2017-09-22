@@ -77,6 +77,8 @@
                     </div>
                 </md-input-container>
 
+                <div class="fileProgress" ng-class="{ 'rv-hide': !self.upload.httpProgress }">{{ self.upload.fileStatus }}</div>
+
             </rv-stepper-item>
 
             <rv-stepper-item
