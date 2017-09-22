@@ -53,12 +53,17 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             onKeypress: event => {
                 const upload = self.upload;
                 // prevent enter presses from triggering upload if the input value is not validated
-                if (event.keyCode === keyNames.ENTER &&
-                    upload.form.$valid &&
-                    upload.step.isContinueEnabled &&
-                    !upload.step.isThinking) {
-                    // check if enter key have been pressed and call the next step if so
-                    uploadOnContinue();
+                if (event.keyCode === keyNames.ENTER) {
+                    if (upload.form.$valid &&
+                        upload.step.isContinueEnabled &&
+                        !upload.step.isThinking) {
+                        // check if enter key have been pressed and call the next step if so
+                        uploadOnContinue();
+                    }
+
+                    if (!upload.form.$valid) {
+                        toggleErrorMessage(upload.form, 'fileUrl', 'url', false);
+                    }
                 }
             },
             reset: uploadReset
