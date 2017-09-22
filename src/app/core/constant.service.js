@@ -65,7 +65,8 @@ function events($rootScope) {
         rvBasemapChange: 'rvBasemapChange', // Fired when basemap is changed
         rvHighlightDetailsItem: 'rvHighlightDetailsItem',
         rvGeosearchClose: 'rvGeosearchClose', // Fire when geosearch close
-        rvTableReady: 'rvTableReady'
+        rvTableReady: 'rvTableReady',
+        rvFeatureMouseOver: 'rvFeatureMouseOver'
     };
 }
 

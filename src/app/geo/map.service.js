@@ -219,7 +219,15 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
         const gapi = gapiService.gapi;
         let mapLoadingTimeout;
 
+        // a flag indicating if a feature is being hover over
+        let isFeatureMousedOver = false;
+
         _setLoadingFlag(true);
+
+        events.$on(events.rvFeatureMouseOver, (event, value) => {
+            isFeatureMousedOver = value;
+            mapConfig.instance.setMapCursor(value ? 'pointer' : '');
+        });
 
         gapi.events.wrapEvents(mapConfig.instance, {
             load: () => {
@@ -252,9 +260,16 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
                 _setLoadingFlag(false, 100);
             },
             click: clickEvent => {
-                clearHighlight();
-                addMarkerHighlight(clickEvent.mapPoint);
-                identifyService.identify(clickEvent);
+                // if the user hovers over a feature and clicks, trigger identify directly after clearing the highlight
+                if (isFeatureMousedOver) {
+                    clearHighlight();
+                    identifyService.identify(clickEvent);
+                } else if (mapConfig.highlightLayer.graphics.length === 0) {
+                    addMarkerHighlight(clickEvent.mapPoint);
+                    identifyService.identify(clickEvent);
+                } else {
+                    clearHighlight(false);
+                }
             }
         });
 
@@ -314,7 +329,7 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
      * Removes the highlighted features and markers.
      *
      * @function clearHighlight
-     * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+     * @param {Boolean | null} [showHaze = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
      */
     function clearHighlight(showHaze = null) {
         const mapConfig = configService.getSync.map;

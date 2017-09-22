@@ -425,6 +425,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             // for tooltips that are no longer active.
             const typeMap = {
                 mouseOver: e => {
+                    events.$broadcast(events.rvFeatureMouseOver, true);
 
                     // make the content and display the hovertip
                     tipContent = {
@@ -444,9 +445,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     }
                     tooltipService.refreshHoverTooltip();
                 },
-                mouseOut: e =>
-                    tooltipService.removeHoverTooltip()
-                ,
+                mouseOut: e => {
+                    events.$broadcast(events.rvFeatureMouseOver, false);
+                    tooltipService.removeHoverTooltip();
+                },
                 // TODO: reattach this
                 forceClose: () => {
                     // if there is a hovertip, get rid of it
