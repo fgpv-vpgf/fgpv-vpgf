@@ -4,6 +4,10 @@
         "children": ["layer_import", "symbology", "legend_generation"]
     },
 
+    "scale_dependent_layers": {
+        "title": "Scale Dependent Layers"
+    },
+
     "layer_import": {
         "title": "User-Added Layers"
     },
