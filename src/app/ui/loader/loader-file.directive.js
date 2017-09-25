@@ -208,12 +208,18 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 eventHandlers: {
                     progress: event => {
                         if (self.upload.loadFile && event.lengthComputable) {
-                            const loaded = Math.round(event.loaded / 1000000);
-                            const total = Math.round(event.total / 1000000);
+                            const units = event.loaded < 1048576 ? "KB" : "MB";
+
+                            let loaded = Math.round(event.loaded / (units === 'KB' ? 1024 : 1048576));
+                            const total = Math.round(event.total / 1048576);
+
+                            self.upload.fileStatus = `${loaded}${units} / ${total}MB`;
+
+                            if (units === 'KB') {
+                                loaded = loaded / 1024;
+                            }
 
                             self.upload.progress = Math.round((loaded / total) * 100);
-
-                            self.upload.fileStatus = `${loaded}mb / ${total}mb`;
                         }
                     }
                 }

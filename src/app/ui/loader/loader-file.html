@@ -73,13 +73,12 @@
                     </div>
                 </md-input-container>
 
-                <div class="fileURLStatus" ng-class="{ 'rv-hide': !self.upload.httpProgress, 'hideBar': self.upload.fileStatus }">
+                <div class="fileURLStatus" ng-class="{ 'rv-hide': !self.upload.httpProgress }">
                     <md-progress-linear
-                    md-mode="{{ self.upload.fileStatus ? 'determinate' : 'indeterminate' }}"
-                    value="{{ self.upload.progress }}"
-                    ng-class="{ 'fileDeterminateProgress': self.upload.fileStatus }"></md-progress-linear>
+                        md-mode="{{ self.upload.fileStatus ? 'determinate' : 'indeterminate' }}"
+                        value="{{ self.upload.progress }}"></md-progress-linear>
 
-                    <span class="fileLoaded">{{ self.upload.fileStatus }}</span>
+                    <span class="fileLoaded">{{ self.upload.fileStatus || 'Loading ...' }}</span>
                 </div>
 
             </rv-stepper-item>
