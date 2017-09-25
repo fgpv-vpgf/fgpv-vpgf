@@ -10,7 +10,7 @@ angular
     .module('app.core')
     .factory('reloadService', reloadService);
 
-function reloadService(events, bookmarkService, geoService, configService, stateManager, $rootElement, exportService) {
+function reloadService(events, bookmarkService, geoService, configService, stateManager, exportService) {
     const service = {
         // loadNewProjection,
         loadWithExtraKeys,
