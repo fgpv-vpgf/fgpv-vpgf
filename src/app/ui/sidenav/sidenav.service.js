@@ -41,8 +41,8 @@ angular
     .factory('sideNavigationService', sideNavigationService);
 
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager, 
-    basemapService, fullScreenService, exportService, referenceService, helpService, reloadService, 
+function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
+    basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
     translations, $mdDialog, pluginService, geosearchService) {
 
     const service = {
@@ -273,8 +273,13 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         configService.onEveryConfigLoad(config => {
             if (config.ui.about.content) {
                 self.about = config.ui.about.content;
+                self.parent.css('text-align', '');
             } else if (config.ui.about.folderName) {
-                useMarkdown(config.ui.about.folderName).then(html => { self.about = html; });
+                useMarkdown(config.ui.about.folderName).then(html => {
+                    self.about = html;
+                }).catch(error => {
+                    self.parent.css('text-align', 'center');
+                });
             }
         });
 

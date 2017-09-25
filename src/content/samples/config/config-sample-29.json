@@ -18,6 +18,12 @@
       "medium": true,
       "small": false
       }
+    },
+    "help": {
+      "folderName": "none"
+    },
+    "about": {
+      "folderName": "none"
     }
   },
   "version": "2.0",
@@ -344,7 +350,7 @@
         "id": "noMetadata",
         "name": "No metadata layer",
         "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
+        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/",
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
       }
     ],

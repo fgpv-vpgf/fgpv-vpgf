@@ -653,6 +653,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             $rootElement,
                             debounceService.registerDebounce(self.table.columns.adjust)
                         );
+                    } else {
+                        self.loadPanda = true;
                     }
                 });
             }

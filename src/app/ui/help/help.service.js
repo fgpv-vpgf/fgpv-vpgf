@@ -234,6 +234,10 @@ function helpService($mdDialog, $translate, translations, referenceService) {
                         isExpanded: false
                     });
                 }
+                self.parent.css('text-align', '');
+            }).catch(error => {
+                self.hasNoHelp = true;
+                self.parent.css('text-align', 'center');
             });
         }
 

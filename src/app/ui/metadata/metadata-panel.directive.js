@@ -37,9 +37,10 @@ function rvMetadataPanel(referenceService) {
     }
 }
 
-function Controller(stateManager) {
+function Controller(stateManager, tocService) {
     'ngInject';
     const self = this;
 
     self.display = stateManager.display.metadata;
+    self.tocService = tocService;
 }
