@@ -83,8 +83,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
 
         httpProgress: false, // shows progress loading file using $http
         progress: 0,
-        fileStatus: null,
-        loadFile: false
+        fileStatus: null
     };
 
     self.select = {
@@ -179,12 +178,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             isFileUploadAborted = true;
         };
 
-        self.upload.loadFile = true;
-
         _loadFile(self.upload.fileUrl).then(arrayBuffer =>
             isFileUploadAborted ?
                 $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
-                onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer)
+                onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
         ).catch(error => {
             if (error.reason === 'abort') {
                 RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
@@ -193,7 +190,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
 
             RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
             toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
-        }).finally(() => (self.upload.httpProgress = false));
+        });
 
         /**
          * Tries to load a file specified using $http service.
@@ -207,8 +204,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 responseType: 'arraybuffer',
                 eventHandlers: {
                     progress: event => {
-                        if (self.upload.loadFile && event.lengthComputable) {
-                            const units = event.loaded < 1048576 ? "KB" : "MB";
+                        if (!isFileUploadAborted && event.lengthComputable) {
+                            const units = event.loaded < 1048576 ? 'KB' : 'MB';
 
                             let loaded = Math.round(event.loaded / (units === 'KB' ? 1024 : 1048576));
                             const total = Math.round(event.total / 1048576);
@@ -387,7 +384,6 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
 
         upload.progress = 0;
         upload.fileStatus = null;
-        upload.loadFile = false;
 
         fileUrlResetValidation();
     }
