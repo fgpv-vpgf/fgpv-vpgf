@@ -11,6 +11,25 @@
         &.ng-hide {
             opacity: 0;
         }
+
+        &.fileDeterminateProgress {
+            width: 65%;
+        }
+    }
+
+    .fileLoaded {
+        margin-left: 13px;
+        position: relative;
+        bottom: 7px;
+    }
+
+    .fileURLStatus {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .hideBar {
+        margin-bottom: -15px;
     }
 
     %progress {

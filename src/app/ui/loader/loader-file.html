@@ -66,10 +66,6 @@
                         ng-keypress="self.upload.step.onKeypress($event)"
                         required>
 
-                    <md-progress-linear
-                        md-mode="indeterminate"
-                        ng-class="{ 'rv-hide': !self.upload.httpProgress }"></md-progress-linear>
-
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <div ng-messages="self.upload.form.fileUrl.$error">
                         <div ng-message="url">{{ 'import.file.upload.invalid' | translate }}</div>
@@ -77,7 +73,14 @@
                     </div>
                 </md-input-container>
 
-                <div class="fileProgress" ng-class="{ 'rv-hide': !self.upload.httpProgress }">{{ self.upload.fileStatus }}</div>
+                <div class="fileURLStatus" ng-class="{ 'rv-hide': !self.upload.httpProgress, 'hideBar': self.upload.fileStatus }">
+                    <md-progress-linear
+                    md-mode="{{ self.upload.fileStatus ? 'determinate' : 'indeterminate' }}"
+                    value="{{ self.upload.progress }}"
+                    ng-class="{ 'fileDeterminateProgress': self.upload.fileStatus }"></md-progress-linear>
+
+                    <span class="fileLoaded">{{ self.upload.fileStatus }}</span>
+                </div>
 
             </rv-stepper-item>
 

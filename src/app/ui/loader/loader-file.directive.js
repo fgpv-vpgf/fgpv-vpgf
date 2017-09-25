@@ -83,7 +83,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
 
         httpProgress: false, // shows progress loading file using $http
         progress: 0,
-        fileStatus: 'Loading ...'
+        fileStatus: null,
+        loadFile: false
     };
 
     self.select = {
@@ -178,6 +179,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             isFileUploadAborted = true;
         };
 
+        self.upload.loadFile = true;
+
         _loadFile(self.upload.fileUrl).then(arrayBuffer =>
             isFileUploadAborted ?
                 $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
@@ -204,11 +207,13 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 responseType: 'arraybuffer',
                 eventHandlers: {
                     progress: event => {
-                        if (event.lengthComputable) {
-                            const loaded = Math.round(event.loaded / 1000);
-                            const total = Math.round(event.total / 1000);
+                        if (self.upload.loadFile && event.lengthComputable) {
+                            const loaded = Math.round(event.loaded / 1000000);
+                            const total = Math.round(event.total / 1000000);
 
-                            self.upload.fileStatus = `Loaded ${loaded}kb of ${total}kb`;
+                            self.upload.progress = Math.round((loaded / total) * 100);
+
+                            self.upload.fileStatus = `${loaded}mb / ${total}mb`;
                         }
                     }
                 }
@@ -373,7 +378,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         upload.fileUrl = '';
         upload.form.fileUrl.$setPristine();
         upload.form.fileUrl.$setUntouched();
-        upload.fileStatus = 'Loading ...';
+
+        upload.progress = 0;
+        upload.fileStatus = null;
+        upload.loadFile = false;
 
         fileUrlResetValidation();
     }
