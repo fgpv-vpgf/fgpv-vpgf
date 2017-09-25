@@ -13,6 +13,21 @@
         }
     }
 
+    .fileLoaded {
+        margin-left: 13px;
+        position: relative;
+        bottom: 7px;
+    }
+
+    .fileURLStatus {
+        display: flex;
+        flex-direction: row;
+
+        md-progress-linear {
+            width: 60%;
+        }
+    }
+
     %progress {
         position: absolute;
         padding: 0;

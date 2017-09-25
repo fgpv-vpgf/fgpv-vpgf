@@ -88,7 +88,9 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
             const toPanel = panels.reverse().find(item =>
                 item === 'mainToc' || item === 'mainDetails');
 
-            stateManager.setActive({ [toPanel]: true });
+            if (toPanel) {
+                stateManager.setActive({ [toPanel]: true });
+            }
         } else {
             stateManager.setActive({ main: false })
                 .then(() => {
