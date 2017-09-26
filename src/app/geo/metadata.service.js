@@ -14,11 +14,9 @@ angular
 function metadataService($q, $http, $translate, Geo) {
 
     const cache = {};
-    let metaExits = true;
 
     const service = {
         loadFromURL,
-        metaExits
     };
 
     return service;
@@ -100,7 +98,6 @@ function metadataService($q, $http, $translate, Geo) {
         return $http.get(url)
             .then(response => response.data)
             .catch(error => {
-                metaExits = false;
                 console.error('Metadata XHR request failed.');
                 throw error;
             });
