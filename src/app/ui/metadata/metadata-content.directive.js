@@ -17,7 +17,7 @@ angular
  * @function rvMetadataContent
  * @return {object} directive body
  */
-function rvMetadataContent($rootScope, $compile, $translate, tocService) {
+function rvMetadataContent($rootScope, $compile, $translate, tocService, configService) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -38,12 +38,15 @@ function rvMetadataContent($rootScope, $compile, $translate, tocService) {
         scope.$watch('self.display.data', metadataPackage => {
             // abort if there is no document fragment or if we know the metadata is not valid and has thrown an error
             if (!metadataPackage || !tocService.validMetadata) {
-                const sadPanda = '<md-icon style="width: 45%; height: 45%;" md-svg-src="sadpanda"></md-icon>';
-                el.append($compile(sadPanda)($rootScope.$new()));   // append a sad panda
-                el.parent().css('text-align', 'center');
-                return;
-            } else {
-                el.parent().css('text-align', '');  // remove previous value
+                // configService.onEveryConfigLoad(config => {
+                    const config = configService.getSync;
+                    const failureImageUrl = config.ui.failureImageUrl;
+                    let image = '<md-icon class="rv-meta-content-data-failure-default" md-svg-src="sadpanda"></md-icon>';
+                    if (failureImageUrl) {
+                        image = `<img class="rv-meta-content-data-failure-custom" src="${failureImageUrl}">`;
+                    }
+                    el.append($compile(image)($rootScope.$new()));
+                    return;
             }
 
             const metadataElem = angular.element(angular.copy(metadataPackage.metadata));

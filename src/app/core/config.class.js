@@ -2177,6 +2177,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._appBar = new AppBar(uiSource.appBar);
             this._navBar = new NavBar(uiSource.navBar, uiSource.help);
             this._logoUrl = uiSource.logoUrl || null;
+            this._failureImageUrl = uiSource.failureImageUrl || null;
             this._title = uiSource.title || null;
             this._restrictNavigation = uiSource.restrictNavigation === true;
             this._sideMenu = new SideMenu(uiSource.sideMenu, uiSource.help);
@@ -2192,6 +2193,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get appBar () {                 return this._appBar; }
         get navBar () {                 return this._navBar; }
         get logoUrl () {                return this._logoUrl; }
+        get failureImageUrl () {        return this._failureImageUrl; }
         get title () {                  return this._title; }
         get restrictNavigation () {     return this._restrictNavigation; }
         get sideMenu () {               return this._sideMenu; }
@@ -2206,6 +2208,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 appBar: this.appBar.JSON,
                 navBar: this.navBar.JSON,
                 logoUrl: this.logoUrl,
+                failureImageUrl: this.failureImageUrl,
                 title: this.title,
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,

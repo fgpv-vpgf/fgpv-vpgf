@@ -142,6 +142,8 @@
                 <option value="config/config-sample-45.json">45. Viewer defaulting to Mercator, with no layers</option>
                 <option value="config/config-sample-46.json">46. Layers with filter applied on load</option>
                 <option value="config/config-sample-47.json">47. Dynamic opacity controls for "not-true-dynamic" dynamic layers</option>
+                <option value="config/config-sample-48.json">48. failure testing</option>
+                <option value="config/config-sample-49.json">49. failure testing with custom url</option>
             </select>
         </div>
 

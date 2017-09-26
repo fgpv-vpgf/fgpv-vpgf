@@ -654,7 +654,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             debounceService.registerDebounce(self.table.columns.adjust)
                         );
                     } else {
-                        self.loadPanda = true;
+                        self.noData = true;
                     }
                 });
             }
@@ -922,6 +922,10 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     self.tableService = tableService;
 
     self.closePanel = closePanel();
+
+    configService.onEveryConfigLoad(config => {
+        self.failureImageUrl = config.ui.failureImageUrl;
+    });
 
     const languageObjects = {};
 

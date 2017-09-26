@@ -273,12 +273,12 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         configService.onEveryConfigLoad(config => {
             if (config.ui.about.content) {
                 self.about = config.ui.about.content;
-                self.parent.css('text-align', '');
             } else if (config.ui.about.folderName) {
                 useMarkdown(config.ui.about.folderName).then(html => {
                     self.about = html;
                 }).catch(error => {
-                    self.parent.css('text-align', 'center');
+                    self.failureImageUrl = config.ui.failureImageUrl;
+                    RV.logger.warn(error);
                 });
             }
         });

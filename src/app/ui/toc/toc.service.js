@@ -431,14 +431,12 @@ function tocService($q, $rootScope, $mdToast, $translate, $compile, referenceSer
                 };
 
                 service.validMetadata = true;
-                referenceService.panes.metadata.css('text-align', '');
                 referenceService.panes.metadata.find('md-toast').remove();      // remove any lingering toast message from before
 
                 resolve(metadataPackage);
 
             }).catch(error => {
                 service.validMetadata = false;
-                referenceService.panes.metadata.css('text-align', 'center');
                 referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
 
                 errorService.display({

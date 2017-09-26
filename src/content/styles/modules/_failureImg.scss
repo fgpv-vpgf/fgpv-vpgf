@@ -1,0 +1,65 @@
+@mixin failureImg {
+    .rv-data-failure {
+        display: flex;
+    }
+
+    .rv-about-data-failure-default {
+        @extend .rv-data-failure;
+        width: 28%;
+        height: 28%;
+    }
+
+    .rv-about-data-failure-custom {
+        @extend .rv-data-failure;
+        max-width: 1000px;
+        max-height: 400px;
+    }
+
+    .rv-help-data-failure-default {
+        @extend .rv-data-failure;
+        width: 45%;
+        height: 45%;
+    }
+
+    .rv-help-data-failure-custom {
+        @extend .rv-data-failure;
+        max-width: 1000px;
+        max-height: 400px;
+    }
+
+    .rv-meta-panel-data-failure-default {
+        @extend .rv-data-failure;
+        width: 80%;
+        height: 80%;
+    }
+
+    .rv-meta-panel-data-failure-custom {
+        @extend .rv-data-failure;
+        max-width: 300px;
+        max-height: 600px;
+    }
+
+    .rv-meta-content-data-failure-default {
+        @extend .rv-data-failure;
+        width: 45%;
+        height: 45%;
+    }
+
+    .rv-meta-content-data-failure-custom {
+        @extend .rv-data-failure;
+        max-width: 1000px;
+        max-height: 400px;
+    }
+
+    .rv-table-data-failure-default {
+        @extend .rv-data-failure;
+        width: 25%;
+        height: 25%;
+    }
+
+    .rv-table-data-failure-custom {
+        @extend .rv-data-failure;
+        max-width: 1000px;
+        max-height: 265px;
+    }
+}

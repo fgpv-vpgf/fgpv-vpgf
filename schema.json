@@ -743,6 +743,7 @@
                 "fullscreen": { "type": "boolean", "default": false, "description": "Indicates viewer takes up entire viewport" },
                 "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
                 "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+                "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image"},
                 "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
                 "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the all default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
                 "navBar": { "$ref": "#/definitions/navBarNode" },
@@ -798,7 +799,14 @@
                     "additionalProperties": false,
                     "required": ["id"]
                 },
-                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "dataFailureImage": {
+                    "type": "string",
+                    "description": "Data failure properties",
+                    "properties": {
+                        "path": { "type": "string", "description": "Help folder name contain the help description and images" }
+                    }
+                }
             }
         },
 

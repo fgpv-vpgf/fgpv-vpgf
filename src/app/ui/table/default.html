@@ -7,7 +7,8 @@
         title-value="{{ 'filter.title' | translate }} {{ self.title }}"
         is-loading="self.display.isLoading"
         hide-when-loading="false"
-        ng-class="{ 'rv-transparent': self.tableService.isSettingOpen }">
+        ng-class="{ 'rv-transparent': self.tableService.isSettingOpen }"
+        ng-if="!self.noData">
 
         <div class="rv-table-splash rv-hide-animate"
             ng-if="!self.display.requester.error"
@@ -35,4 +36,14 @@
             <rv-table-setting-cluster></rv-table-setting-cluster>
         </div>
     </rv-content-pane>
+
+    <rv-content-pane
+        ng-if="self.noData"
+        close-panel="self.closePanel()"
+        title-style="title"
+        title-value="{{ 'filter.title' | translate }} {{ self.title }}">
+        <md-icon class="rv-table-data-failure-default" ng-if="!self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
+        <img class="rv-table-data-failure-custom" ng-if="self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
+    </rv-content-pane>
+
 </div>

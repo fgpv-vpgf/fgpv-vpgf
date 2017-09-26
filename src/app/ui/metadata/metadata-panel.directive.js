@@ -37,10 +37,13 @@ function rvMetadataPanel(referenceService) {
     }
 }
 
-function Controller(stateManager, tocService) {
+function Controller(stateManager, tocService, configService) {
     'ngInject';
     const self = this;
 
     self.display = stateManager.display.metadata;
     self.tocService = tocService;
+    configService.onEveryConfigLoad(config => {
+        self.failureImageUrl = config.ui.failureImageUrl;
+    });
 }
