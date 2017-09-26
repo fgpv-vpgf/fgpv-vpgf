@@ -799,14 +799,7 @@
                     "additionalProperties": false,
                     "required": ["id"]
                 },
-                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" },
-                "dataFailureImage": {
-                    "type": "string",
-                    "description": "Data failure properties",
-                    "properties": {
-                        "path": { "type": "string", "description": "Help folder name contain the help description and images" }
-                    }
-                }
+                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
             }
         },
 

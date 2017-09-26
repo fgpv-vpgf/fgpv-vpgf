@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<html>
+    <body>
+        <script>
+            const origin = 'http://intranet.ec.gc.ca/arcgis/rest/services/BC_CriticalHabitat_CB_HabitatEssentiel/MapServer/';
+            const requestType = '?f=json';
+            const serviceURL =  origin + requestType;
+
+            let layers = [];
+
+            $.getJSON(serviceURL, data => {
+                const l = data.layers.length;
+                for (let i = 0; i < data.layers.length; i++) {
+                    let currentLayerURL = origin + i + requestType;
+                    $.getJSON(currentLayerURL, data => {
+                        let layerType = 'esriFeature';
+                        layers[i] = {
+                            "id": data.name,
+                            "name": nameParser(data.name),
+                            "layerType": layerType,
+                            "url": origin + i
+                        };
+
+                        if (i === l - 1) {
+                            console.log(JSON.stringify(layers));
+                        }
+                    });
+                }
+            });
+
+            function nameParser(name) {
+                let title = '';
+                let code = '';
+                let num = '';
+                let US_occur = 0;
+                let lastUSPos = -1;
+                for (let i = 0; i < name.length; i++) {
+                    if (name[i] === '_') {
+                        if (US_occur === 0) {
+                            code = name.slice(lastUSPos + 1, i);
+                        } else if (US_occur === 1) {
+                            num = name.slice(lastUSPos + 1, i);
+                        } else if (US_occur === 2) {
+                            title =  name.slice(lastUSPos + 1, i) + ' ' + name.slice(i + 1, name.length);
+
+                        }
+                        US_occur++;
+                        lastUSPos = i;
+                    }
+                }
+
+                return title + ' - ' + code + ' #' + num;
+            }
+        </script>
+    </body>
+</html>
