@@ -614,7 +614,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @private
      */
     function onExtentChange() {
-        if (!service.filter.isActive) { // no DataTable is active - ignore
+        if (!service.filter.isActive || !stateManager.display.table.requester) { // filter by extent disabled or no DataTable is active - ignore
             return;
         }
 
@@ -666,7 +666,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function queryMapserver(lastOID = 0) {
         const state = stateManager.display.table;
-        const legEntry =state.requester.legendEntry;
+        const legEntry = state.requester.legendEntry;
         const layerRecId = layerRegistry.getLayerRecord(legEntry.layerRecordId);
 
         const queryOpts = {
@@ -675,10 +675,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         };
 
         // query the layer itself instead of making a mapserver request
-        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature') {
-            queryOpts.featureLayer = layerRecId._layer;
+        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.isFileLayer()) {
+            queryOpts.featureLayer = layerRecId._layer;         // file based layer
         } else {
-            queryOpts.url = legEntry.mainProxy.queryUrl;
+            queryOpts.url = legEntry.mainProxy.queryUrl;        // server based layer
         }
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
