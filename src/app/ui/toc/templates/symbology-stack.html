@@ -11,6 +11,17 @@
         <div class="rv-symbol-label-container">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
         </div>
+        
+        <md-button
+            class="md-icon-button rv-icon-20"
+            ng-class="{ selected: self.uiControl.isSelected }"
+            ng-click="self.toggleSymbology.onClick()"
+            ng-show="self.isExpanded">
+        
+            <md-icon md-svg-src="{{self.toggleSymbology.icon()}}"></md-icon>
+    
+        </md-button>
+
     </div>
 
     <md-button
