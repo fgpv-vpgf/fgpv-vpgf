@@ -38,15 +38,9 @@ function rvMetadataContent($rootScope, $compile, $translate, tocService, configS
         scope.$watch('self.display.data', metadataPackage => {
             // abort if there is no document fragment or if we know the metadata is not valid and has thrown an error
             if (!metadataPackage || !tocService.validMetadata) {
-                // configService.onEveryConfigLoad(config => {
-                    const config = configService.getSync;
-                    const failureImageUrl = config.ui.failureImageUrl;
-                    let image = '<md-icon class="rv-meta-content-data-failure-default" md-svg-src="sadpanda"></md-icon>';
-                    if (failureImageUrl) {
-                        image = `<img class="rv-meta-content-data-failure-custom" src="${failureImageUrl}">`;
-                    }
-                    el.append($compile(image)($rootScope.$new()));
-                    return;
+                const image = '<rv-failure-image class="rv-failure-image-large"></rv-failure-image>';
+                el.append($compile(image)($rootScope.$new()));
+                return;
             }
 
             const metadataElem = angular.element(angular.copy(metadataPackage.metadata));

@@ -1,0 +1,41 @@
+@mixin failure-image {
+    rv-failure-image {
+        display: flex;
+    }
+
+    .rv-failure-image-small {
+        md-icon {
+            width: 300px;
+            height: 300px;
+        }
+
+        img {
+            max-width: 300px;
+            max-height: 300px;
+        }
+    }
+
+    .rv-failure-image-medium {
+        md-icon {
+            width: 1200px;
+            height: 400px;
+        }
+
+        img {
+            max-width: 1200px;
+            max-height: 400px;
+        }
+    }
+
+    .rv-failure-image-large {
+        md-icon {
+            width: 1200px;
+            height: 500px;
+        }
+
+        img {
+            max-width: 1200px;
+            max-height: 500px;
+        }
+    }
+}

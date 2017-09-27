@@ -11,6 +11,7 @@ import './common/dialog.decorator.js';
 import './common/dragula.directive.js';
 import './common/error.service.js';
 import './common/full-screen.service.js';
+import './common/failure-image.directive.js';
 import './common/icon.decorator.js';
 import './common/menu.decorator.js';
 import './common/menuItem.decorator.js';

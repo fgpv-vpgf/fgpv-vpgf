@@ -7,8 +7,7 @@
         header-controls="rv-help-search"
         header-controls-scope="self.scope">
 
-        <md-icon class="rv-help-data-failure-default" ng-if="self.hasNoHelp && !self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
-        <img class="rv-help-data-failure-custom" ng-if="self.hasNoHelp && self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
+        <rv-failure-image class="rv-failure-image-large" ng-if="self.hasNoHelp"></rv-failure-image>
 
         <!-- <br> tags in translation strings only get interpreted with the directive, not the filter -->
         <div class="rv-subsection" ng-if="self.searchTerm && self.filteredSections.length === 0">

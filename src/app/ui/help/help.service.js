@@ -236,7 +236,6 @@ function helpService($mdDialog, $translate, translations, referenceService) {
                 }
             }).catch(error => {
                 self.hasNoHelp = true;
-                self.failureImageUrl = conf.ui.failureImageUrl;
                 RV.logger.warn(error);
             });
         }

@@ -277,7 +277,6 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
                 useMarkdown(config.ui.about.folderName).then(html => {
                     self.about = html;
                 }).catch(error => {
-                    self.failureImageUrl = config.ui.failureImageUrl;
                     RV.logger.warn(error);
                 });
             }

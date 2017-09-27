@@ -16,7 +16,7 @@ function metadataService($q, $http, $translate, Geo) {
     const cache = {};
 
     const service = {
-        loadFromURL,
+        loadFromURL
     };
 
     return service;

@@ -923,10 +923,6 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
 
     self.closePanel = closePanel();
 
-    configService.onEveryConfigLoad(config => {
-        self.failureImageUrl = config.ui.failureImageUrl;
-    });
-
     const languageObjects = {};
 
     let isFullyOpen = false; // flag inicating that table panel fully opened

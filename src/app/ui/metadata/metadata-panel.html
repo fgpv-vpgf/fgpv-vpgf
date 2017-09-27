@@ -4,8 +4,7 @@
         <div class="rv-subsection">
             <div class="rv-subcontent">
                 <rv-metadata-content max-text-length="250"></rv-metadata-content>
-                <md-icon class="rv-meta-panel-data-failure-default" ng-if="!self.tocService.validMetadata && !self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
-                <img class="rv-meta-panel-data-failure-custom" ng-if="!self.tocService.validMetadata && self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
+                <rv-failure-image  class="rv-failure-image-small" ng-if="!self.tocService.validMetadata"></rv-failure-image>
             </div>
         </div>
     </div>

@@ -42,8 +42,7 @@
         close-panel="self.closePanel()"
         title-style="title"
         title-value="{{ 'filter.title' | translate }} {{ self.title }}">
-        <md-icon class="rv-table-data-failure-default" ng-if="!self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
-        <img class="rv-table-data-failure-custom" ng-if="self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
+        <rv-failure-image class="rv-failure-image-small"></rv-failure-image>
     </rv-content-pane>
 
 </div>

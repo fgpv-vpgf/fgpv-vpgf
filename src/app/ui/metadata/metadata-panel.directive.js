@@ -43,7 +43,4 @@ function Controller(stateManager, tocService, configService) {
 
     self.display = stateManager.display.metadata;
     self.tocService = tocService;
-    configService.onEveryConfigLoad(config => {
-        self.failureImageUrl = config.ui.failureImageUrl;
-    });
 }
