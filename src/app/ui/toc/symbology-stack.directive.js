@@ -66,6 +66,13 @@ function rvSymbologyStack($q, Geo, animationService) {
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
+        // see stateManager.display.table.requester.legendEntry.definitionQuery = OBJECTID >= 1 AND OBJECTID <= 2
+        self.toggleSymbology = {
+            isSelected: false,
+            onClick: () => {this.isSelected = !this.isSelected},
+            icon: () => this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"
+        };
+
         const ref = {
             isReady: false,
 

@@ -12,6 +12,10 @@
         position: relative;
         z-index: 0; // set up new stacking context
 
+        .md-button.md-icon-button {
+            margin: 0 5px;
+        }
+
         .rv-description-container {
             display: none;
             opacity: 0;
