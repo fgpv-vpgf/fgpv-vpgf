@@ -17,7 +17,7 @@ angular
  * @function rvMetadataContent
  * @return {object} directive body
  */
-function rvMetadataContent($rootScope, $compile, $translate, tocService, configService) {
+function rvMetadataContent($rootScope, $compile, $translate, tocService) {
     const directive = {
         restrict: 'E',
         scope: {
