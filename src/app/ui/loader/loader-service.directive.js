@@ -153,8 +153,13 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
     function onCancel(step) {
         if (step.isThinking) {
             stepper.cancelMove();
+            stepper.currentStep.reset();
         } else {
             stepper.previousStep(); // going to the previous step will auto-reset the current one (even if there is no previous step to go to)
+
+            if (stepper.currentStep.stepNumber !== 1) {
+                stepper.previousStep().reset();
+            }
         }
     }
 

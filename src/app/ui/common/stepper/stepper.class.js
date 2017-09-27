@@ -156,8 +156,11 @@ function StepperFactory($q) {
                     this.currentStep = this.steps[stepNumber];
                     this._configureStep(this.currentStep, false, true);
                 }
-            })).finally(() =>
-                this._think(currentStep, false)); // in any outcome, restore `continue` button to default state
+            })).finally(() => {
+                if (!isMoveCanceled) {
+                    this._think(currentStep, false); // restore `continue` button to default state if move was not cancelled
+                }
+            });
 
             return this;
         }
