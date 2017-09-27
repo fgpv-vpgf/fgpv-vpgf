@@ -154,7 +154,7 @@ function StepperFactory($q) {
          * @param  {Number} stepNumber                step id to jump to
          * @param  {Promise} isMoveCanceled [optional = false] true if the move was cancelled
          */
-        _moveStep(stepNumber, isMoveCanceled = false, ) {
+        _moveStep(stepNumber, isMoveCanceled = false) {
             const currentStepNumber = this.currentStep._index;
 
             if (!isMoveCanceled) {
