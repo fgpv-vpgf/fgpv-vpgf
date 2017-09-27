@@ -37,7 +37,7 @@ function rvMetadataPanel(referenceService) {
     }
 }
 
-function Controller(stateManager, tocService, configService) {
+function Controller(stateManager, tocService) {
     'ngInject';
     const self = this;
 
