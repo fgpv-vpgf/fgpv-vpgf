@@ -242,6 +242,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      */
     function uploadFilesSubmitted(files) {
         if (files.length > 0) {
+            // reset any fields and move back to the first step (in the case where we drag-and-drop from a different step)
+            // after moving back to the first step, we can continue with the file uploading
+            uploadReset();
+            stepper.moveToStep(0);
+
             const file = files[0];
             self.upload.file = file; // store the first file from the array;
 

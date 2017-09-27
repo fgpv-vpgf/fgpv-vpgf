@@ -102,67 +102,80 @@ function StepperFactory($q) {
         /**
          * Set a specified step as active, completing or resetting all intermediate steps depending on directive of the move.
          * @param  {Number} stepNumber                step id to jump to
-         * @param  {Promise} continuePromise [optional = $q.resolve()] the move will happen only after this promise resolves
+         * @param  {Promise} continuePromise [optional = null] the move will happen only after this promise resolves (if a promise is provided)
          * @return {Object}            itself for chaining
          */
-        moveToStep(stepNumber, continuePromise = $q.resolve()) {
+        moveToStep(stepNumber, continuePromise = null) {
             this.start().cancelMove();
-            // start stepper if not started; cancel any pedning moves as there is no use case for chaining them
-
-            const currentStepNumber = this.currentStep._index;
-            const currentStep = this.currentStep;
+            // start stepper if not started; cancel any pending moves as there is no use case for chaining them
 
             if (stepNumber > this.steps.length - 1 || stepNumber < 0) {
                 RV.logger.error('stepperClass', `step number is out of bounds: ${stepNumber}`);
                 return this;
             }
 
-            if (stepNumber === currentStepNumber) {
+            if (stepNumber === this.currentStep._index) {
                 return this;
             }
 
             this._think(); // set "thinking" mode to block `continue` button from further clicks
 
             let isMoveCanceled = false;
-            // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
-            // technically, it's a deferred
-            const cancelPromise = $q(resolve => (this._resolveCancelPromise = resolve))
+
+            if (continuePromise !== null) {
+                // create a cancel promise for the move can be canceled by calling `cancelMove` on the stepper instance
+                // technically, it's a deferred
+                const cancelPromise = $q(resolve => (this._resolveCancelPromise = resolve))
                 .then(() => {
                     isMoveCanceled = true;
-                    this._think(currentStep, false);
+                    this._think(this.currentStep, false);
                 });
 
-            // TODO: switch to $q.race when we update to Angular 1.5+
-            // wraps regular promise in $q since Promise doesn't have `finally`
-            // can't use Promise.race - it resolves on reject: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-            $q.when(continuePromise.then(() => {
-                if (!isMoveCanceled) {
-
-                    // TODO: it's possible to click the `cancel/continue` button at the moment when the transition to a differnt step starts and this will yo-yo stepper in place
-                    // one solution would be to disable `cancel/continue` buttons when transition starts
-                    if (stepNumber > currentStepNumber) { // move forward
-                        for (let i = currentStepNumber; i < stepNumber; i++) {
-                            const step = this.steps[i];
-                            this._configureStep(step, true, false);
-                        }
-                    } else { // move backward
-                        for (let i = currentStepNumber; i > stepNumber; i--) {
-                            const step = this.steps[i];
-                            this._reset(step) // reset intermediate steps when going backward
-                                ._configureStep(step, false, false);
-                        }
+                // TODO: switch to $q.race when we update to Angular 1.5+
+                // wraps regular promise in $q since Promise doesn't have `finally`
+                // can't use Promise.race - it resolves on reject: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+                $q.when(continuePromise.then(() => {
+                    this._moveStep(stepNumber, isMoveCanceled);
+                })).finally(() => {
+                    if (!isMoveCanceled) {
+                        this._think(this.currentStep, false); // restore `continue` button to default state if move was not cancelled
                     }
-
-                    this.currentStep = this.steps[stepNumber];
-                    this._configureStep(this.currentStep, false, true);
-                }
-            })).finally(() => {
-                if (!isMoveCanceled) {
-                    this._think(currentStep, false); // restore `continue` button to default state if move was not cancelled
-                }
-            });
+                });
+            } else {
+                this._moveStep(stepNumber);
+                this._think(this.currentStep, false); // restore `continue` button to default state if move was not cancelled
+            }
 
             return this;
+        }
+
+        /**
+         * Helper function to complete the step movement
+         * @param  {Number} stepNumber                step id to jump to
+         * @param  {Promise} isMoveCanceled [optional = false] true if the move was cancelled
+         */
+        _moveStep(stepNumber, isMoveCanceled = false, ) {
+            const currentStepNumber = this.currentStep._index;
+
+            if (!isMoveCanceled) {
+                // TODO: it's possible to click the `cancel/continue` button at the moment when the transition to a differnt step starts and this will yo-yo stepper in place
+                // one solution would be to disable `cancel/continue` buttons when transition starts
+                if (stepNumber > currentStepNumber) { // move forward
+                    for (let i = currentStepNumber; i < stepNumber; i++) {
+                        const step = this.steps[i];
+                        this._configureStep(step, true, false);
+                    }
+                } else { // move backward
+                    for (let i = currentStepNumber; i > stepNumber; i--) {
+                        const step = this.steps[i];
+                        this._reset(step) // reset intermediate steps when going backward
+                            ._configureStep(step, false, false);
+                    }
+                }
+
+                this.currentStep = this.steps[stepNumber];
+                this._configureStep(this.currentStep, false, true);
+            }
         }
 
         /**
