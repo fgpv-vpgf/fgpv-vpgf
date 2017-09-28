@@ -66,8 +66,8 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
 
         _debouncedAction = debounceService.registerDebounce(
             value => { 
+                events.$broadcast('vischgd', this.block);
                 this.block.visibility = value; 
-                events.$broadcast('vischgd');
             }, 300);
     }
 

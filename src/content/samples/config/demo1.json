@@ -659,13 +659,7 @@
           {
             "exclusiveVisibility": [
               {
-                "layerId": "extreme_verycold_2051_2080_less",
-                "controlledIds": [
-                  "extreme_verycold_baseline",
-                  "extreme_verycold_2021_2050_less",
-                  "extreme_verycold_2021_2050_more",
-                  "extreme_verycold_2051_2080_more"
-                ],
+                "layerId": "extreme_verycold_baseline",
                 "description": "Average number of very cold days (-30 ˚C or colder) per year.\n\nCold days are an indicator of how severe winters are. Very cold temperatures are necessary to kill invasive species and other pests. Reliably cold weather is critical to life in Canada's north because it ensures the stability of the permafrost underlying much of the built environment and the ability to create snow and ice roads for transportation.\n\nMany places in Canada are well adapted to these cold temperatures. Changing winter weather conditions affect how we build and heat our homes, what winter activities we can pursue, and how well local plants and animals survive and thrive. Warming winters also disrupt our experience of normal seasonal change. ",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -836,6 +830,18 @@
           },
           {
             "layerId": "thegrid"
+          },
+          {
+            "layerId": "extreme_verycold_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_verycold_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_verycold_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_verycold_2021_2050_more"
           }
         ]
       }
@@ -885,6 +891,17 @@
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"
       },
+
+      {
+        "id": "extreme_verycold_2051_2080_less",
+        "name": "",
+        "layerType": "esriTile",
+        "state": {
+          "visibility": true,
+          "boundingBox": false
+        },
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_45/MapServer"
+      },
       {
         "id": "extreme_verycold_2021_2050_less",
         "name": "",
@@ -895,18 +912,16 @@
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_45/MapServer"
       },
-
       {
-        "id": "extreme_verycold_2051_2080_less",
-        "name": "Very cold days",
+        "id": "extreme_verycold_2051_2080_more",
+        "name": "",
         "layerType": "esriTile",
         "state": {
           "visibility": true,
           "boundingBox": false
         },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_45/MapServer"
+        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_85/MapServer"
       },
-
       {
         "id": "extreme_verycold_2021_2050_more",
         "name": "",
@@ -919,19 +934,8 @@
       },
 
       {
-        "id": "extreme_verycold_2051_2080_more",
-        "name": "",
-        "layerType": "esriTile",
-        "state": {
-          "visibility": true,
-          "boundingBox": false
-        },
-        "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_85/MapServer"
-      },
-
-      {
         "id": "extreme_verycold_baseline",
-        "name": "",
+        "name": "Very cold days",
         "layerType": "esriTile",
         "state": {
           "visibility": true,

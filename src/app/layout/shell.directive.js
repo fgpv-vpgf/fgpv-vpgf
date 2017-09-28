@@ -85,18 +85,39 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         scope.toggleVal = false;
         scope.$watch('sliderVal', doSomeWorkEh);
         scope.$watch('toggleVal', doSomeWorkEh);
-        events.$on('vischgd', doSomeWorkEh);
+        events.$on('vischgd', (event, block) => doSomeWorkEh(block));
 
+        let savedBlock;
 
-        function doSomeWorkEh() {
-            if (scope.sliderVal === 0) {
+        function doSomeWorkEh(block) {
+
+            let lr;
+
+            try {
+                lr = configService.getSync.map.layerRecords;
+            } catch (e) {
                 return;
             }
 
-            const visibleLayers = configService.getSync.map.layerRecords.filter(lr => lr.visible && lr.layerId !== 'thegrid');
-            const lessSevereLayers = visibleLayers.filter(lr => /less/g.test(lr.layerId));
-            const moreSevereLayers = visibleLayers.filter(lr => /more/g.test(lr.layerId));
-            const baseline = visibleLayers.find(lr => /baseline/g.test(lr.layerId));
+            const visibleLayers = lr.filter(layer => layer.visible && layer.layerId !== 'thegrid');
+
+
+            if (typeof block === 'object') {
+                visibleLayers.forEach(layer => layer.setVisibility(false));
+                savedBlock = block;
+            } else {
+                block = savedBlock;
+            }
+            
+            const baseName = block._layerRecordId.split('_', 2).join('_');
+
+            const toBeVisible = lr.filter(layer => (new RegExp(baseName, 'g')).test(layer.layerId));
+
+            toBeVisible.forEach(lr => lr.setVisibility(true));
+
+            const lessSevereLayers = toBeVisible.filter(lr => /less/g.test(lr.layerId));
+            const moreSevereLayers = toBeVisible.filter(lr => /more/g.test(lr.layerId));
+            const baseline = toBeVisible.find(lr => /baseline/g.test(lr.layerId));
 
             let layers;
 
@@ -120,6 +141,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 layerByType.baseline.setOpacity(1);
                 layerByType[2050].setOpacity(Math.max(0, scope.sliderVal/100));
                 layerByType[2080].setOpacity(0);
+
             } else {
                 layerByType.baseline.setOpacity(0);
                 layerByType[2050].setOpacity(1);
