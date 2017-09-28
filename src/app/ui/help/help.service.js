@@ -234,6 +234,9 @@ function helpService($mdDialog, $translate, translations, referenceService) {
                         isExpanded: false
                     });
                 }
+            }).catch(error => {
+                self.hasNoHelp = true;
+                RV.logger.warn(error);
             });
         }
 

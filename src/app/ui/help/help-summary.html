@@ -7,6 +7,8 @@
         header-controls="rv-help-search"
         header-controls-scope="self.scope">
 
+        <rv-failure-image ng-if="self.hasNoHelp"></rv-failure-image>
+
         <!-- <br> tags in translation strings only get interpreted with the directive, not the filter -->
         <div class="rv-subsection" ng-if="self.searchTerm && self.filteredSections.length === 0">
 

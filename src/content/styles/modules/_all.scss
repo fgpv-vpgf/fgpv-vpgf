@@ -34,6 +34,7 @@
 @import "_truncate.scss";
 @import "_effects.scss";
 @import "_lightbox.scss";
+@import "_failure-image.scss";
 
 @include core;
 @include loading;
@@ -67,3 +68,4 @@
 @include truncate;
 @include effects;
 @include lightbox;
+@include failure-image;
