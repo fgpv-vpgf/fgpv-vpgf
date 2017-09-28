@@ -550,9 +550,9 @@ $(document)
  * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
  */
 function noSourceLink(targetElemSet) {
-    // similar to focusout, we wait a short time as determined by focusoutDelay in milliseconds so that
+    /* // similar to focusout, we wait a short time as determined by focusoutDelay in milliseconds so that
     // any immediate animations that hide history elements happen first (such as md-menu actions)
-    setTimeout(() => link(lastVisibleHistoryElement(), targetElemSet), focusoutDelay + 10);
+    setTimeout(() => link(lastVisibleHistoryElement(), targetElemSet), focusoutDelay + 10); */
 }
 
 /**
@@ -588,12 +588,12 @@ $.extend({
 });
 
 $.fn.link = function (targetElement) {
-    link($(this), $(targetElement));
+    /* link($(this), $(targetElement)); */
 };
 
 // sets focus on the next focusable element starting at the currently scoped element
 $.fn.nextFocus = function () {
-    focusableSearch($(this), true).rvFocus();
+    /* focusableSearch($(this), true).rvFocus(); */
 };
 
 // move original focus implementation to new prototype property for later use for approved movement
@@ -608,7 +608,7 @@ HTMLElement.prototype.origfocus = HTMLElement.prototype.focus;
  * @param   {Object}    opts    configuration obect for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
  */
 HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
-    const jqueryElem = $(this);
+    /* const jqueryElem = $(this);
     const elem = jqueryElem[0];
 
     if (!viewerGroup.trapped(jqueryElem) && !opts.exempt) {
@@ -641,7 +641,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
             // applying focus didn't work, try going back to a history element
             shiftFocus(false, true);
         }
-    }, focusDelay);
+    }, focusDelay); */
 };
 
 /**
@@ -652,7 +652,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
  * @function focus
  */
 HTMLElement.prototype.focus = $.fn.focus = function () {
-    const el = $(this);
+    /* const el = $(this);
 
     const initElem = el.closest('[rv-focus-init]');
     const exemptElem = el.closest('[rv-focus-exempt]');
@@ -672,15 +672,15 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
         return;
     } else {
         el[0].origfocus();
-    }
+    } */
 };
 
 // these event functions are disabled for events stemming from within a viewer. Angular material was, for
 // example, preventing mouse clicks from bubbling for mouse clicks on menu items. In general we want to always
 // see events then decide if they require action
-jQuery.Event.prototype.stopImmediatePropagation = disableCommonPrototypes('stopImmediatePropagation');
+/* jQuery.Event.prototype.stopImmediatePropagation = disableCommonPrototypes('stopImmediatePropagation');
 jQuery.Event.prototype.stopPropagation = disableCommonPrototypes('stopPropagation');
-jQuery.Event.prototype.preventDefault = disableCommonPrototypes('preventDefault');
+jQuery.Event.prototype.preventDefault = disableCommonPrototypes('preventDefault'); */
 
 /**
  * Sets focus on the provided element and updates focus history.
