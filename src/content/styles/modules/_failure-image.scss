@@ -1,0 +1,32 @@
+@mixin failure-image {
+    rv-failure-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        .rv-fail-before {
+            flex: 1;
+        }
+
+        .rv-fail-after {
+            flex: 3;
+        }
+
+        img, p {
+            flex: 1;
+            max-width: 60%;
+            max-height: 70%;
+        }
+
+        md-icon {
+            width: 80%;
+            height: 80%;
+        }
+    }
+}

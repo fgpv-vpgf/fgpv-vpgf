@@ -25,7 +25,10 @@
     "about": {
       "folderName": "none"
     },
-    "failureImageUrl": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png"
+    "failureFeedback": {
+      "failureMessage": "This is a custom message",
+      "failureImageUrl": "https://files.gitter.im/AleksueiR/eR5s/dinoscream.gif"
+    }
   },
   "version": "2.0",
   "language": "en",

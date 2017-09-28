@@ -38,7 +38,7 @@ function rvMetadataContent($rootScope, $compile, $translate, tocService) {
         scope.$watch('self.display.data', metadataPackage => {
             // abort if there is no document fragment or if we know the metadata is not valid and has thrown an error
             if (!metadataPackage || !tocService.validMetadata) {
-                const image = '<rv-failure-image class="rv-failure-image-large"></rv-failure-image>';
+                const image = '<rv-failure-image></rv-failure-image>';
                 el.append($compile(image)($rootScope.$new()));
                 return;
             }

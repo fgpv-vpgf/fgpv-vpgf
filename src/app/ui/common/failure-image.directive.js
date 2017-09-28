@@ -25,7 +25,8 @@ function rvFailureImage(configService) {
     function link (scope) {
         const self = scope.self;
         configService.onEveryConfigLoad(config => {
-            self.failureImageUrl = config.ui.failureImageUrl;
+            self.failureImageUrl = config.ui.failureFeedback.failureImageUrl;
+            self.failureMessage = config.ui.failureFeedback.failureMessage;
         });
     }
 }

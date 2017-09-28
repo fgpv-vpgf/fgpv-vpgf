@@ -2137,6 +2137,24 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         }
     }
 
+    class FaliureFeedback {
+        constructor(source = {}) {
+            this._source = source;
+            this._failureMessage = source.failureMessage;
+            this._failureImageUrl = source.failureImageUrl;
+        }
+
+        get failureMessage () { return this._failureMessage; }
+        get failureImageUrl () { return this._failureImageUrl; }
+
+        get JSON () {
+            return {
+                failureMessage: this.failureMessage,
+                failureImageUrl: this.failureImageUrl
+            }
+        }
+    }
+
     /**
      * Typed representation of the `ui.legend` section of the config.
      * @class UILegend
@@ -2177,7 +2195,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._appBar = new AppBar(uiSource.appBar);
             this._navBar = new NavBar(uiSource.navBar, uiSource.help);
             this._logoUrl = uiSource.logoUrl || null;
-            this._failureImageUrl = uiSource.failureImageUrl || null;
+            this._failureFeedback = new FaliureFeedback(uiSource.failureFeedback);
             this._title = uiSource.title || null;
             this._restrictNavigation = uiSource.restrictNavigation === true;
             this._sideMenu = new SideMenu(uiSource.sideMenu, uiSource.help);
@@ -2193,7 +2211,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get appBar () {                 return this._appBar; }
         get navBar () {                 return this._navBar; }
         get logoUrl () {                return this._logoUrl; }
-        get failureImageUrl () {        return this._failureImageUrl; }
+        get failureFeedback() {         return this._failureFeedback; }
         get title () {                  return this._title; }
         get restrictNavigation () {     return this._restrictNavigation; }
         get sideMenu () {               return this._sideMenu; }
@@ -2208,7 +2226,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 appBar: this.appBar.JSON,
                 navBar: this.navBar.JSON,
                 logoUrl: this.logoUrl,
-                failureImageUrl: this.failureImageUrl,
+                failureFeedback: this.failureFeedback.JSON,
                 title: this.title,
                 restrictNavigation: this.restrictNavigation,
                 sideMenu: this.sideMenu.JSON,
