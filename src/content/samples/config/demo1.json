@@ -84,10 +84,10 @@
       {
         "id": "EXT_ESRI_World_AuxMerc_3857",
         "default": {
-          "xmax": -2870783.5488011576,
-          "xmin": -21655947.62016108,
-          "ymax": 13061993.369807262,
-          "ymin": 4011849.2208448006
+          "xmax": -5007771.626060756,
+          "xmin": -16632697.354854,
+          "ymax": 10015875.184845109,
+          "ymin": 5022907.964742964
         },
         "spatialReference": {
           "wkid": 102100,
@@ -308,6 +308,286 @@
         "name": "root",
         "children": [
           {
+            "layerId": "extreme_verycold_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_verycold_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_verycold_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_verycold_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "annual_mintemp_2051_2080_less"
+          },
+          {
+            "layerId": "annual_mintemp_2021_2050_less"
+          },
+          {
+            "layerId": "annual_mintemp_2051_2080_more"
+          },
+          {
+            "layerId": "annual_mintemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "spring_mintemp_2051_2080_less"
+          },
+          {
+            "layerId": "spring_mintemp_2021_2050_less"
+          },
+          {
+            "layerId": "spring_mintemp_2051_2080_more"
+          },
+          {
+            "layerId": "spring_mintemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "summer_mintemp_2051_2080_less"
+          },
+          {
+            "layerId": "summer_mintemp_2021_2050_less"
+          },
+          {
+            "layerId": "summer_mintemp_2051_2080_more"
+          },
+          {
+            "layerId": "summer_mintemp_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "fall_mintemp_2051_2080_less"
+          },
+          {
+            "layerId": "fall_mintemp_2021_2050_less"
+          },
+          {
+            "layerId": "fall_mintemp_2051_2080_more"
+          },
+          {
+            "layerId": "fall_mintemp_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "winter_mintemp_2051_2080_less"
+          },
+          {
+            "layerId": "winter_mintemp_2021_2050_less"
+          },
+          {
+            "layerId": "winter_mintemp_2051_2080_more"
+          },
+          {
+            "layerId": "winter_mintemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "annual_meantemp_2051_2080_less"
+          },
+          {
+            "layerId": "annual_meantemp_2021_2050_less"
+          },
+          {
+            "layerId": "annual_meantemp_2051_2080_more"
+          },
+          {
+            "layerId": "annual_meantemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "spring_meantemp_2051_2080_less"
+          },
+          {
+            "layerId": "spring_meantemp_2021_2050_less"
+          },
+          {
+            "layerId": "spring_meantemp_2051_2080_more"
+          },
+          {
+            "layerId": "spring_meantemp_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "summer_meantemp_2051_2080_less"
+          },
+          {
+            "layerId": "summer_meantemp_2021_2050_less"
+          },
+          {
+            "layerId": "summer_meantemp_2051_2080_more"
+          },
+          {
+            "layerId": "summer_meantemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "fall_meantemp_2051_2080_less"
+          },
+          {
+            "layerId": "fall_meantemp_2021_2050_less"
+          },
+          {
+            "layerId": "fall_meantemp_2051_2080_more"
+          },
+          {
+            "layerId": "fall_meantemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "winter_meantemp_2051_2080_less"
+          },
+          {
+            "layerId": "winter_meantemp_2021_2050_less"
+          },
+          {
+            "layerId": "winter_meantemp_2051_2080_more"
+          },
+          {
+            "layerId": "winter_meantemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "annual_maxtemp_2051_2080_less"
+          },
+          {
+            "layerId": "annual_maxtemp_2021_2050_less"
+          },
+          {
+            "layerId": "annual_maxtemp_2051_2080_more"
+          },
+          {
+            "layerId": "annual_maxtemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "spring_maxtemp_2051_2080_less"
+          },
+          {
+            "layerId": "spring_maxtemp_2021_2050_less"
+          },
+          {
+            "layerId": "spring_maxtemp_2051_2080_more"
+          },
+          {
+            "layerId": "spring_maxtemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "summer_maxtemp_2051_2080_less"
+          },
+          {
+            "layerId": "summer_maxtemp_2021_2050_less"
+          },
+          {
+            "layerId": "summer_maxtemp_2051_2080_more"
+          },
+          {
+            "layerId": "summer_maxtemp_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "fall_maxtemp_2051_2080_less"
+          },
+          {
+            "layerId": "fall_maxtemp_2021_2050_less"
+          },
+          {
+            "layerId": "fall_maxtemp_2051_2080_more"
+          },
+          {
+            "layerId": "fall_maxtemp_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "winter_maxtemp_2051_2080_less"
+          },
+          {
+            "layerId": "winter_maxtemp_2021_2050_less"
+          },
+          {
+            "layerId": "winter_maxtemp_2051_2080_more"
+          },
+          {
+            "layerId": "winter_maxtemp_2021_2050_more"
+          },
+
+          {
+            "layerId": "extreme_veryhot_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_veryhot_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_veryhot_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_veryhot_2021_2050_more"
+          },
+
+          {
+            "layerId": "extreme_maxmax_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_maxmax_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_maxmax_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_maxmax_2021_2050_more"
+          },
+
+
+          {
+            "layerId": "extreme_minmin_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_minmin_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_minmin_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_minmin_2021_2050_more"
+          },
+
+          {
+            "layerId": "extreme_25C_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_25C_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_25C_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_25C_2021_2050_more"
+          },
+
+          {
+            "layerId": "extreme_tropicalnights_2051_2080_less"
+          },
+          {
+            "layerId": "extreme_tropicalnights_2021_2050_less"
+          },
+          {
+            "layerId": "extreme_tropicalnights_2051_2080_more"
+          },
+          {
+            "layerId": "extreme_tropicalnights_2021_2050_more"
+          },
+
+          {
             "exclusiveVisibility": [
               {
                 "name": "Minimum Temperatures",
@@ -316,14 +596,8 @@
                   {
                     "exclusiveVisibility": [
                       {
-                        "layerId": "annual_mintemp_2051_2080_less",
+                        "layerId": "annual_mintemp_baseline",
                         "description": "This map displays the average daily minimum temperature over a 30 year period. The minimum temperature is the lowest temperature recorded in a day.",
-                        "controlledIds": [
-                          "annual_mintemp_2021_2050_baseline",
-                          "annual_mintemp_2021_2050_less",
-                          "annual_mintemp_2021_2050_more",
-                          "annual_mintemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -337,14 +611,8 @@
                         ]
                       },
                       {
-                        "layerId": "spring_mintemp_2051_2080_less",
+                        "layerId": "spring_mintemp_baseline",
                         "description": "This map displays the average daily minimum temperature over a 30 year period. The minimum temperature is the lowest temperature recorded in a day.",
-                        "controlledIds": [
-                          "spring_mintemp_2021_2050_baseline",
-                          "spring_mintemp_2021_2050_less",
-                          "spring_mintemp_2021_2050_more",
-                          "spring_mintemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -358,14 +626,8 @@
                         ]
                       },
                       {
-                        "layerId": "summer_mintemp_2051_2080_less",
+                        "layerId": "summer_mintemp_baseline",
                         "description": "This map displays the average daily minimum temperature over a 30 year period. The minimum temperature is the lowest temperature recorded in a day.",
-                        "controlledIds": [
-                          "summer_mintemp_2021_2050_baseline",
-                          "summer_mintemp_2021_2050_less",
-                          "summer_mintemp_2021_2050_more",
-                          "summer_mintemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -379,14 +641,8 @@
                         ]
                       },
                       {
-                        "layerId": "fall_mintemp_2051_2080_less",
+                        "layerId": "fall_mintemp_baseline",
                         "description": "This map displays the average daily minimum temperature over a 30 year period. The minimum temperature is the lowest temperature recorded in a day.",
-                        "controlledIds": [
-                          "fall_mintemp_2021_2050_baseline",
-                          "fall_mintemp_2021_2050_less",
-                          "fall_mintemp_2021_2050_more",
-                          "fall_mintemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -400,14 +656,8 @@
                         ]
                       },
                       {
-                        "layerId": "winter_mintemp_2051_2080_less",
+                        "layerId": "winter_mintemp_baseline",
                         "description": "This map displays the average daily minimum temperature over a 30 year period. The minimum temperature is the lowest temperature recorded in a day.",
-                        "controlledIds": [
-                          "winter_mintemp_2021_2050_baseline",
-                          "winter_mintemp_2021_2050_less",
-                          "winter_mintemp_2021_2050_more",
-                          "winter_mintemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -431,14 +681,8 @@
                   {
                     "exclusiveVisibility": [
                       {
-                        "layerId": "annual_meantemp_2021_2050_less",
+                        "layerId": "annual_meantemp_baseline",
                         "description": "The daily mean temperature is the average of the daily maximum temperature and the daily minimum temperature.",
-                        "controlledIds": [
-                          "annual_meantemp_2021_2050_baseline",
-                          "annual_meantemp_2021_2050_less",
-                          "annual_meantemp_2021_2050_more",
-                          "annual_meantemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -452,14 +696,8 @@
                         ]
                       },
                       {
-                        "layerId": "spring_meantemp_2051_2080_less",
+                        "layerId": "spring_meantemp_baseline",
                         "description": "The daily mean temperature is the average of the daily maximum temperature and the daily minimum temperature.",
-                        "controlledIds": [
-                          "spring_meantemp_2021_2050_baseline",
-                          "spring_meantemp_2021_2050_less",
-                          "spring_meantemp_2021_2050_more",
-                          "spring_meantemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -473,14 +711,8 @@
                         ]
                       },
                       {
-                        "layerId": "summer_meantemp_2051_2080_less",
+                        "layerId": "summer_meantemp_baseline",
                         "description": "The daily mean temperature is the average of the daily maximum temperature and the daily minimum temperature.",
-                        "controlledIds": [
-                          "summer_meantemp_2021_2050_baseline",
-                          "summer_meantemp_2021_2050_less",
-                          "summer_meantemp_2021_2050_more",
-                          "summer_meantemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -494,14 +726,8 @@
                         ]
                       },
                       {
-                        "layerId": "fall_meantemp_2051_2080_less",
+                        "layerId": "fall_meantemp_baseline",
                         "description": "The daily mean temperature is the average of the daily maximum temperature and the daily minimum temperature.",
-                        "controlledIds": [
-                          "fall_meantemp_2021_2050_baseline",
-                          "fall_meantemp_2021_2050_less",
-                          "fall_meantemp_2021_2050_more",
-                          "fall_meantemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -515,14 +741,8 @@
                         ]
                       },
                       {
-                        "layerId": "winter_meantemp_2051_2080_less",
+                        "layerId": "winter_meantemp_baseline",
                         "description": "The daily mean temperature is the average of the daily maximum temperature and the daily minimum temperature.",
-                        "controlledIds": [
-                          "winter_meantemp_2021_2050_baseline",
-                          "winter_meantemp_2021_2050_less",
-                          "winter_meantemp_2021_2050_more",
-                          "winter_meantemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -546,14 +766,8 @@
                   {
                     "exclusiveVisibility": [
                       {
-                        "layerId": "annual_maxtemp_2051_2080_less",
+                        "layerId": "annual_maxtemp_baseline",
                         "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
-                        "controlledIds": [
-                          "annual_maxtemp_2021_2050_baseline",
-                          "annual_maxtemp_2021_2050_less",
-                          "annual_maxtemp_2021_2050_more",
-                          "annual_maxtemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -567,14 +781,8 @@
                         ]
                       },
                       {
-                        "layerId": "spring_maxtemp_2051_2080_less",
+                        "layerId": "spring_maxtemp_baseline",
                         "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
-                        "controlledIds": [
-                          "spring_maxtemp_2021_2050_baseline",
-                          "spring_maxtemp_2021_2050_less",
-                          "spring_maxtemp_2021_2050_more",
-                          "spring_maxtemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -588,14 +796,8 @@
                         ]
                       },
                       {
-                        "layerId": "summer_maxtemp_2051_2080_less",
+                        "layerId": "summer_maxtemp_baseline",
                         "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
-                        "controlledIds": [
-                          "summer_maxtemp_2021_2050_baseline",
-                          "summer_maxtemp_2021_2050_less",
-                          "summer_maxtemp_2021_2050_more",
-                          "summer_maxtemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -609,14 +811,8 @@
                         ]
                       },
                       {
-                        "layerId": "fall_maxtemp_2051_2080_less",
+                        "layerId": "fall_maxtemp_baseline",
                         "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
-                        "controlledIds": [
-                          "fall_maxtemp_2021_2050_baseline",
-                          "fall_maxtemp_2021_2050_less",
-                          "fall_maxtemp_2021_2050_more",
-                          "fall_maxtemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -630,14 +826,8 @@
                         ]
                       },
                       {
-                        "layerId": "winter_maxtemp_2051_2080_less",
+                        "layerId": "winter_maxtemp_baseline",
                         "description": "These maps show the average daily maximum temperature over a 30 year period. The maximum temperature is the warmest temperature recorded in a day.",
-                        "controlledIds": [
-                          "winter_maxtemp_2021_2050_baseline",
-                          "winter_maxtemp_2021_2050_less",
-                          "winter_maxtemp_2021_2050_more",
-                          "winter_maxtemp_2051_2080_more"
-                        ],
                         "symbologyRenderStyle": "images",
                         "symbologyStack": [
                           {
@@ -674,13 +864,7 @@
                 ]
               },
               {
-                "layerId": "extreme_veryhot_2051_2080_less",
-                "controlledIds": [
-                  "extreme_veryhot_baseline",
-                  "extreme_veryhot_2021_2050_less",
-                  "extreme_veryhot_2021_2050_more",
-                  "extreme_veryhot_2051_2080_more"
-                ],
+                "layerId": "extreme_veryhot_baseline",
                 "description": "Average number of hot days (30 °C or hotter) per year.\n\n People - especially the elderly - are much more likely to suffer from heat exhaustion and heat stroke, especially in urban environments which amplify the heat. Many outdoor activities become dangerous or impossible in such high temperatures. In general, Canadians aren't used to extremely hot summers, and increases in hot days will bring new and unusual risks as well as a very different experience of summertime.  \n\nHigh, persistent temperatures increases the risk of drought, which can severely impact food production and increases the risk of wildfire. Hot temperatures lead to more thunderstorms, which means increased risks of flash flooding, lightning, hail and tornadoes. ",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -695,13 +879,7 @@
                 ]
               },
               {
-                "layerId": "extreme_maxmax_2051_2080_less",
-                "controlledIds": [
-                  "extreme_maxmax_baseline",
-                  "extreme_maxmax_2021_2050_less",
-                  "extreme_maxmax_2021_2050_more",
-                  "extreme_maxmax_2051_2080_more"
-                ],
+                "layerId": "extreme_maxmax_baseline",
                 "description": "This map depicts the average annual warmest temperature (max maximum temperature).",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -716,13 +894,7 @@
                 ]
               },
               {
-                "layerId": "extreme_minmin_2051_2080_less",
-                "controlledIds": [
-                  "extreme_minmin_baseline",
-                  "extreme_minmin_2021_2050_less",
-                  "extreme_minmin_2021_2050_more",
-                  "extreme_minmin_2051_2080_more"
-                ],
+                "layerId": "extreme_minmin_baseline",
                 "description": "This map depicts the average annual coldest temperature (min minimum temperature).",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -737,13 +909,7 @@
                 ]
               },
               {
-                "layerId": "extreme_25C_2051_2080_less",
-                "controlledIds": [
-                  "extreme_25C_baseline",
-                  "extreme_25C_2021_2050_less",
-                  "extreme_25C_2021_2050_more",
-                  "extreme_25C_2051_2080_more"
-                ],
+                "layerId": "extreme_25C_baseline",
                 "description": "Average number of summer days (+25 ˚C or warmer) per year.",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -758,13 +924,7 @@
                 ]
               },
               {
-                "layerId": "extreme_tropical_nights_2051_2080_less",
-                "controlledIds": [
-                  "extreme_tropical_nights_baseline",
-                  "extreme_tropical_nights_2021_2050_less",
-                  "extreme_tropical_nights_2021_2050_more",
-                  "extreme_tropical_nights_2051_2080_more"
-                ],
+                "layerId": "extreme_tropicalnights_baseline",
                 "description": "A tropical night occurs when the overnight minimum temperature remains above 20 °C.",
                 "symbologyRenderStyle": "images",
                 "symbologyStack": [
@@ -830,18 +990,6 @@
           },
           {
             "layerId": "thegrid"
-          },
-          {
-            "layerId": "extreme_verycold_2051_2080_less"
-          },
-          {
-            "layerId": "extreme_verycold_2021_2050_less"
-          },
-          {
-            "layerId": "extreme_verycold_2051_2080_more"
-          },
-          {
-            "layerId": "extreme_verycold_2021_2050_more"
           }
         ]
       }
@@ -886,7 +1034,7 @@
         "name": "This must be visible for hover",
         "layerType": "esriFeature",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"
@@ -897,7 +1045,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_45/MapServer"
@@ -907,7 +1055,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_45/MapServer"
@@ -917,7 +1065,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2060_85/MapServer"
@@ -927,7 +1075,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_2030_85/MapServer"
@@ -938,7 +1086,7 @@
         "name": "Very cold days",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minus30_baseline/MapServer"
@@ -950,7 +1098,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2030_45/MapServer"
@@ -961,7 +1109,7 @@
         "name": "Very hot days",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2060_45/MapServer"
@@ -972,7 +1120,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2030_85/MapServer"
@@ -983,7 +1131,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer"
@@ -994,7 +1142,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/plus30_baseline/MapServer"
@@ -1006,7 +1154,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2030_45/MapServer"
@@ -1017,7 +1165,7 @@
         "name": "Warmest Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2060_45/MapServer"
@@ -1028,7 +1176,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2030_85/MapServer"
@@ -1039,7 +1187,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_2060_85/MapServer"
@@ -1050,7 +1198,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/maxmax_baseline/MapServer"
@@ -1062,7 +1210,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2030_45/MapServer"
@@ -1073,7 +1221,7 @@
         "name": "Coldest Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2060_45/MapServer"
@@ -1084,7 +1232,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2030_85/MapServer"
@@ -1095,7 +1243,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_2060_85/MapServer"
@@ -1106,7 +1254,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/minmin_baseline/MapServer"
@@ -1118,7 +1266,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_45/MapServer"
@@ -1129,7 +1277,7 @@
         "name": "Summer Days",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_45/MapServer"
@@ -1140,7 +1288,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_85/MapServer"
@@ -1151,7 +1299,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_85/MapServer"
@@ -1162,7 +1310,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_baseline/MapServer"
@@ -1171,11 +1319,11 @@
 
 
       {
-        "id": "annual_maxtemp_2021_2050_baseline",
+        "id": "annual_maxtemp_baseline",
         "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_baseline/MapServer"
@@ -1185,7 +1333,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2030_45/MapServer"
@@ -1195,7 +1343,7 @@
         "name": "Annual",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_45/MapServer"
@@ -1205,7 +1353,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2030_85/MapServer"
@@ -1215,17 +1363,17 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "annual_mintemp_2021_2050_baseline",
+        "id": "annual_mintemp_baseline",
         "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_baseline/MapServer"
@@ -1235,7 +1383,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2030_45/MapServer"
@@ -1245,7 +1393,7 @@
         "name": "Annual",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2060_45/MapServer"
@@ -1255,7 +1403,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2030_85/MapServer"
@@ -1265,17 +1413,17 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2060_85/MapServer"
       },
       {
-        "id": "annual_meantemp_2021_2050_baseline",
+        "id": "annual_meantemp_baseline",
         "name": "Mean Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_baseline/MapServer"
@@ -1285,7 +1433,7 @@
         "name": "Annual",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2030_45/MapServer"
@@ -1295,7 +1443,7 @@
         "name": "Annual",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2060_45/MapServer"
@@ -1305,7 +1453,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2030_85/MapServer"
@@ -1315,7 +1463,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_meantemp_2060_85/MapServer"
@@ -1325,11 +1473,11 @@
 
 
       {
-        "id": "fall_maxtemp_2021_2050_baseline",
+        "id": "fall_maxtemp_baseline",
         "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_baseline/MapServer"
@@ -1339,7 +1487,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2030_45/MapServer"
@@ -1349,7 +1497,7 @@
         "name": "Fall",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2060_45/MapServer"
@@ -1359,7 +1507,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2030_85/MapServer"
@@ -1369,17 +1517,17 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "fall_mintemp_2021_2050_baseline",
+        "id": "fall_mintemp_baseline",
         "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_baseline/MapServer"
@@ -1389,7 +1537,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2030_45/MapServer"
@@ -1399,7 +1547,7 @@
         "name": "Fall",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2060_45/MapServer"
@@ -1409,7 +1557,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2030_85/MapServer"
@@ -1419,17 +1567,17 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2060_85/MapServer"
       },
       {
-        "id": "fall_meantemp_2021_2050_baseline",
+        "id": "fall_meantemp_baseline",
         "name": "Mean Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_baseline/MapServer"
@@ -1439,7 +1587,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2030_45/MapServer"
@@ -1449,7 +1597,7 @@
         "name": "Fall",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2060_45/MapServer"
@@ -1459,7 +1607,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2030_85/MapServer"
@@ -1469,7 +1617,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_meantemp_2060_85/MapServer"
@@ -1479,11 +1627,11 @@
 
 
       {
-        "id": "spring_maxtemp_2021_2050_baseline",
+        "id": "spring_maxtemp_baseline",
         "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_baseline/MapServer"
@@ -1493,7 +1641,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2030_45/MapServer"
@@ -1503,7 +1651,7 @@
         "name": "Spring",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2060_45/MapServer"
@@ -1513,7 +1661,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2030_85/MapServer"
@@ -1523,17 +1671,17 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "spring_mintemp_2021_2050_baseline",
+        "id": "spring_mintemp_baseline",
         "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_baseline/MapServer"
@@ -1543,7 +1691,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2030_45/MapServer"
@@ -1553,7 +1701,7 @@
         "name": "Spring",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2060_45/MapServer"
@@ -1563,7 +1711,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2030_85/MapServer"
@@ -1573,17 +1721,17 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2060_85/MapServer"
       },
       {
-        "id": "spring_meantemp_2021_2050_baseline",
+        "id": "spring_meantemp_baseline",
         "name": "Mean Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_baseline/MapServer"
@@ -1593,7 +1741,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2030_45/MapServer"
@@ -1603,7 +1751,7 @@
         "name": "Spring",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2060_45/MapServer"
@@ -1613,7 +1761,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2030_85/MapServer"
@@ -1623,7 +1771,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_meantemp_2060_85/MapServer"
@@ -1633,11 +1781,11 @@
 
 
       {
-        "id": "summer_maxtemp_2021_2050_baseline",
+        "id": "summer_maxtemp_baseline",
         "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_baseline/MapServer"
@@ -1647,7 +1795,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2030_45/MapServer"
@@ -1657,7 +1805,7 @@
         "name": "Summer",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2060_45/MapServer"
@@ -1667,7 +1815,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2030_85/MapServer"
@@ -1677,17 +1825,17 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "summer_mintemp_2021_2050_baseline",
+        "id": "summer_mintemp_baseline",
         "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_baseline/MapServer"
@@ -1697,7 +1845,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2030_45/MapServer"
@@ -1707,7 +1855,7 @@
         "name": "Summer",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2060_45/MapServer"
@@ -1717,7 +1865,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2030_85/MapServer"
@@ -1727,17 +1875,17 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2060_85/MapServer"
       },
       {
-        "id": "summer_meantemp_2021_2050_baseline",
+        "id": "summer_meantemp_baseline",
         "name": "Mean Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_baseline/MapServer"
@@ -1747,7 +1895,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2030_45/MapServer"
@@ -1757,7 +1905,7 @@
         "name": "Summer",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2060_45/MapServer"
@@ -1767,7 +1915,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2030_85/MapServer"
@@ -1777,7 +1925,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_meantemp_2060_85/MapServer"
@@ -1786,11 +1934,11 @@
 
 
       {
-        "id": "winter_maxtemp_2021_2050_baseline",
+        "id": "winter_maxtemp_baseline",
         "name": "Maximum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_baseline/MapServer"
@@ -1800,7 +1948,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2030_45/MapServer"
@@ -1810,7 +1958,7 @@
         "name": "Winter",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2060_45/MapServer"
@@ -1820,7 +1968,7 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2030_85/MapServer"
@@ -1830,17 +1978,17 @@
         "name": "Maximum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_maxtemp_2060_85/MapServer"
       },
       {
-        "id": "winter_mintemp_2021_2050_baseline",
+        "id": "winter_mintemp_baseline",
         "name": "Minimum Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_baseline/MapServer"
@@ -1850,7 +1998,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2030_45/MapServer"
@@ -1860,7 +2008,7 @@
         "name": "Winter",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2060_45/MapServer"
@@ -1870,7 +2018,7 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2030_85/MapServer"
@@ -1880,17 +2028,17 @@
         "name": "Minimum Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_mintemp_2060_85/MapServer"
       },
       {
-        "id": "winter_meantemp_2021_2050_baseline",
+        "id": "winter_meantemp_baseline",
         "name": "Mean Temperature Base",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_baseline/MapServer"
@@ -1900,7 +2048,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2030_45/MapServer"
@@ -1910,7 +2058,7 @@
         "name": "Winter",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2060_45/MapServer"
@@ -1920,7 +2068,7 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2030_85/MapServer"
@@ -1930,57 +2078,57 @@
         "name": "Mean Temperature",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/winter_meantemp_2060_85/MapServer"
       },
       {
-        "id": "extreme_tropical_nights_2051_2080_more",
+        "id": "extreme_tropicalnights_2051_2080_more",
         "name": "Tropical Nights",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2060_85/MapServer"
       },
       {
-        "id": "extreme_tropical_nights_2021_2050_more",
+        "id": "extreme_tropicalnights_2021_2050_more",
         "name": "Tropical Nights",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2030_85/MapServer"
       },
       {
-        "id": "extreme_tropical_nights_2051_2080_less",
+        "id": "extreme_tropicalnights_2051_2080_less",
         "name": "Tropical Nights",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2060_45/MapServer"
       },
       {
-        "id": "extreme_tropical_nights_2021_2050_less",
+        "id": "extreme_tropicalnights_2021_2050_less",
         "name": "Tropical Nights",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_2030_45/MapServer"
       },
       {
-        "id": "extreme_tropical_nights_baseline",
+        "id": "extreme_tropicalnights_baseline",
         "name": "Tropical Nights",
         "layerType": "esriTile",
         "state": {
-          "visibility": true,
+          "visibility": false,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/tropicalnights_baseline/MapServer"
