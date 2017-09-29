@@ -137,12 +137,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function reloadBoundLegendBlocks
      * @param {String} layerRecordId the layer record id
+     * @return {Promise} resolving to legend block parent of block reloaded
      */
     function reloadBoundLegendBlocks(layerRecordId) {
         // reset mapping for this layer blueprint
         const legendMappings = configService.getSync.map.legendMappings;
         const mappings = legendMappings[layerRecordId];
         legendMappings[layerRecordId] = [];
+
+        let promise;
 
         // create a new record from its layer blueprint
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
@@ -177,10 +180,27 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             const index = legendBlockParent.removeEntry(legendBlock);
 
-            _boundingBoxRemoval(legendBlock);
+            const layerRecord = layerRegistry.getLayerRecord(legendBlockConfig.layerId);
 
-            legendBlockParent.addEntry(reloadedLegendBlock, index);
+            // need time to reload children for Dynamic layers
+            promise = common.$q(resolve => {
+                layerRecord.addStateListener(_onLayerRecordLoad);
+
+                function _onLayerRecordLoad(state) {
+                    if (state === 'rv-loaded') {
+                        layerRecord.removeStateListener(_onLayerRecordLoad);
+
+                        _boundingBoxRemoval(legendBlock);
+
+                        legendBlockParent.addEntry(reloadedLegendBlock, index);
+
+                        resolve(legendBlockParent);
+                    }
+                }
+            });
         });
+
+        return promise;
     }
 
     /**
@@ -797,7 +817,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 proxyPromise = common.$q.resolve([proxyWrapper]);
             }
 
-            return proxyPromise;
+            return proxyPromise;        //
 
             function _flattenTree(tree) {
                 const result = [].concat.apply([], tree.map(item => {
