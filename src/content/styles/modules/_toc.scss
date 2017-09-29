@@ -41,6 +41,10 @@ $layer-item-height-touch: rem(7.2);
         @extend %base-list;
         @extend %grouped-list;
 
+        &.rv-legend-root {
+            margin-top: 16px;
+        }
+
         > li {
             overflow: hidden; // prevents the progress bar from sticking to the bottom of the legend entry when the symbology stack is expanded
         }

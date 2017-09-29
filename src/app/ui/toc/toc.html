@@ -2,9 +2,9 @@
     title-value="{{ self.config.ui.appBar.enabled ? '' : 'appbar.tooltip.layers' | translate }}"
     title-style="title">
 
-    <div class="rv-toc" ng-keydown="self.tocKeyDownHandler($event)">
+    <div-- class="rv-toc" ng-keydown="self.tocKeyDownHandler($event)">
 
-        <div layout="row" class="rv-toc-tools">
+        <!--div layout="row" class="rv-toc-tools">
 
             <rv-loader-menu ng-if="self.config.ui.legend.allowImport"></rv-loader-menu>
 
@@ -34,7 +34,7 @@
             <rv-toc-expand-menu ng-if="!self.isReorder"></rv-toc-expand-menu>
             <rv-toc-visibility-menu ng-if="!self.isReorder"></rv-toc-visibility-menu>
 
-        </div>
+        </div-->
 
         <ul class="rv-legend-list rv-legend-root rv-legend-level-0" dx-start-with="self.config.map.legendBlocks"
             rv-dragula="toc-bag" rv-dragula-options="dragulaOptions" rv-dragula-model="self.config.map.legendBlocks.entries">
