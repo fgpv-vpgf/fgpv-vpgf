@@ -1139,7 +1139,7 @@
 
       {
         "id": "extreme_veryhot_baseline",
-        "name": "",
+        "name": "Very hot days",
         "layerType": "esriTile",
         "state": {
           "visibility": false,
@@ -1195,7 +1195,7 @@
 
       {
         "id": "extreme_maxmax_baseline",
-        "name": "",
+        "name": "Warmest Maximum",
         "layerType": "esriTile",
         "state": {
           "visibility": false,
