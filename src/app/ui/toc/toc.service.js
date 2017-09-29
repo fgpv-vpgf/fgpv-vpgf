@@ -12,7 +12,7 @@ angular
     .factory('tocService', tocService);
 
 function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
-    geoService, metadataService, errorService, LegendBlock, configService, legendService) {
+    geoService, metadataService, errorService, LegendBlock, configService, legendService, Geo) {
 
     const service = {
         // method called by the options and flags set on the layer item
@@ -34,6 +34,22 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         selecteLegendBlockLog: {}
     };
 
+    // name mapping between true panel names and their short names
+    const panelSwitch = {
+        table: {
+            panel: 'tableFulldata',
+            action: toggleLayerTablePanel
+        },
+        metadata: {
+            panel: 'sideMetadata',
+            action: toggleMetadata
+        },
+        settings: {
+            panel: 'sideSettings',
+            action: toggleSettings
+        }
+    };
+
     let errorToast;
 
     // set state change watches on metadata, settings and table panel
@@ -47,8 +63,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * This will reload the layer records referenced by the specified legend block and all other legend blocks attached to that record;
      * will also reload all controlled layer records.
      *
-     * For simplicity, this will close all open panels even if they are not affected by the reload
-     * // TODO: close and reopen only the panel which is connected with the layer record being reloaded
+     * This will close and reopen a panel if it is connected with the layer record being reloaded
+     * Otherwise, any open panel will be closed
      * @function reloadLayer
      * @param {LegendBlock} legendBlock legend block to be reloaded
      */
@@ -62,8 +78,83 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             legendBlock.filter = tableConfig.applied;
         }
 
-        stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
-        legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId);
+        // search for open panels from the top-most parent (excluding the root level)
+        let topLevelBlock = legendBlock;
+        while (topLevelBlock.parent.parent) {
+            topLevelBlock = topLevelBlock.parent;
+        }
+
+        const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
+
+        // displayManagers 'toggleDisplayPanel' requires an argument called 'dataPromise', for settings 'dataPromise' is LegendNode
+        // if the table is being toggled, 'dataPromise is an object with 'data' key
+        // 'data' for table consists of columns, rows, etc.
+        // if the metadata is being toggled, 'dataPromise is an object with multiple properties
+        // example of properties are metadata, metadataUrl, etc.
+        let data, panel;
+        if (openPanel) {
+            panel = panelSwitch[openPanel.name].panel;
+            stateManager.setActive({ [panel]: false });
+
+            if (openPanel.name === 'table') {
+                data = { data: stateManager.display[openPanel.name].data };
+            } else if (openPanel.name === 'metadata') {
+                data = stateManager.display[openPanel.name].data;
+            }
+        } else {    // open panel not being reloaded, close any open panel
+            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+        }
+
+        legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
+            if (openPanel) {
+                const findBlock = block
+                    .walk(entry =>
+                        entry.id === openPanel.requester.id ?
+                            entry : null)
+                    .filter(a => a)[0];
+
+                if (findBlock) {        // open panel not reloaded, close any open panel
+                    stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+                    return;
+                }
+
+                // for the table, panel data is columns, rows, etc. instead of the actual entry
+                // thus, we need to take the legend entry in those cases
+                // for settings and metadata, if data exists it is the correct entry
+                const node = openPanel.name !== 'table' && openPanel.data ?
+                    openPanel.data :
+                    openPanel.requester.legendEntry ?
+                        openPanel.requester.legendEntry : legendBlock;
+
+                // find reloaded legend block
+                // if there are multiple instances of the same layer, reloading any record other than the first one will still
+                // return the first legend block and open the panel for that one instead (they are identical though)
+                legendBlock = block
+                    .walk(entry =>
+                        (node.parentLayerType ===  Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
+                        entry.layerRecordId === node.layerRecordId) ?
+                            entry : null)
+                    .filter(a => a)[0];
+
+                // update the requester accordingly for the reloaded legend block
+                openPanel.requester.id = legendBlock.id;
+                openPanel.requester.name = legendBlock.name;
+
+                if (openPanel.data && openPanel.name !== 'table') {
+                    openPanel.data = legendBlock;
+                }
+
+                if (openPanel.requester.layerId) {
+                    openPanel.requester.layerId = legendBlock.id;
+                }
+
+                if (openPanel.requester.legendEntry) {
+                    openPanel.requester.legendEntry = legendBlock;
+                }
+
+                stateManager.toggleDisplayPanel(panel, data || legendBlock, openPanel.requester, 0);
+            }
+        });
     }
 
     /**
@@ -77,22 +168,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      */
     function removeLayer(legendBlock) {
         let resolve, reject, openPanelName;
-
-        // name mapping between true panel names and their short names
-        const panelSwitch = {
-            table: {
-                panel: 'tableFulldata',
-                action: toggleLayerTablePanel
-            },
-            metadata: {
-                panel: 'sideMetadata',
-                action: toggleMetadata
-            },
-            settings: {
-                panel: 'sideSettings',
-                action: toggleSettings
-            }
-        };
 
         // legendBlock is the only child in the group, remove parent instead of just child
         if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
@@ -111,7 +186,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         }
 
         if (openPanelName) {
-            stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
+            stateManager.setActive({ [panelSwitch[openPanelName.name].panel]: false });
         }
 
         // let the layer know that the block has been deselected due to removal
@@ -137,25 +212,33 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     }
 
     /**
-    * Find if any panels are open matching the legendBlock being removed
+    * Find any open panels matching the legendBlock
     * @private
     * @function _findOpenPanel
     * @param {Object} panelSwitch name mapping between true panel names and their short names
     * @param {LegendBlock} legendBlock legend block to be searched for open panel
-    * @return {String} type of open panel
+    * @return {Object} requester, data and name of open panel (if any)
     */
     function _findOpenPanel(panelSwitch, legendBlock) {
         return Object.keys(panelSwitch)
             .map(panelName => {
                 const panelDisplay = stateManager.display[panelName];
                 if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
-                    return panelName;
+                    return {
+                        requester: panelDisplay.requester,
+                        data: panelDisplay.data,
+                        name: panelName
+                    };
                 }
                 else if (panelDisplay.requester && legendBlock.entries) {
                     // walk through the children of the current block to see if there's an open panel being removed
                     return legendBlock
                         .walk(lb => lb.id === panelDisplay.requester.id ? lb.id : null)
-                        .filter(a => a)[0] ? panelName : null;
+                        .filter(a => a)[0] ? {
+                            requester: panelDisplay.requester,
+                            data: panelDisplay.data,
+                            name: panelName
+                        } : null;
                 } else {
                     return null;
                 }
