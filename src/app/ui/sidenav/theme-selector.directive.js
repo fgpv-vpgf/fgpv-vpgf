@@ -43,7 +43,11 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Very Hot Days (+30C)',
                     'Very Cold Days (-30C)'
                 ],
-                action: () => themeService.showSomething('extremes'),
+                action: () => {
+                    document.getElementById('mobile-map').setAttribute('rv-config', 'config/demo1.json');
+                    RV.getMap('mobile-map').reInitialize();
+                    //themeService.showSomething('extremes');
+                },
                 expanded: false
             },
             {
@@ -55,7 +59,11 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Maximum Temperature',
                     'Mean Temperature'
                 ],
-                action: () => themeService.showSomething('temperature'),
+                action: () => {
+                    document.getElementById('mobile-map').setAttribute('rv-config', 'config/demo2.json');
+                    RV.getMap('mobile-map').reInitialize();
+                    //themeService.showSomething('temperature');
+                },
                 expanded: false
             },
             {

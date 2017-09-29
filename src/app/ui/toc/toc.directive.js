@@ -33,7 +33,13 @@ function rvToc($timeout, layoutService, layerRegistry, dragulaService, geoServic
     function link(scope, directiveElement) {
         const self = scope.self;
 
-        themeService.showSomething('extremes');
+        configService.onEveryConfigLoad(cfg => {
+            if (document.getElementById('mobile-map').getAttribute('rv-config') === 'config/demo1.json') {
+                themeService.showSomething('extremes');
+            } else {
+                themeService.showSomething('temperature');
+            }
+        });
 
         self.toggleSortGroups = toggleSortGroups;
 
@@ -247,9 +253,9 @@ function Controller($scope, tocService, stateManager, geoService, keyNames, conf
         self.config = cfg
 
         // check if we need to open a table panel by default
-        if (self.config.ui.tableIsOpen[layoutService.currentLayout()]) {
+        /* if (self.config.ui.tableIsOpen[layoutService.currentLayout()]) {
             _openInitialTable(self.config.ui.tableIsOpen.id);
-        }
+        } */
     });
 
     // reorder mode is off by default

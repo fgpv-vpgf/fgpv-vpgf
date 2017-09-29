@@ -36,7 +36,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         // open legend panel if option is set in config for current viewport
         configService.onEveryConfigLoad(config => {
             if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
-                stateManager.setActive({ side: false }, 'mainToc');
+                stateManager.setActive({ side: false }, { mainToc: true });
             }
             scope.self.config = config;
 
@@ -112,7 +112,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             }
 
             const visibleLayers = lr.filter(
-                layer => layer.visible && 
+                layer => layer.visible &&
                 layer.layerId !== 'thegrid' &&
                 layer.layerId !== 'provinces' &&
                 layer.layerId !== 'municipalities' &&
@@ -128,7 +128,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             } else {
                 block = savedBlock;
             }
-            
+
             const baseName = block._layerRecordId.split('_', 2).join('_');
 
             const toBeVisible = lr.filter(layer => (new RegExp(baseName, 'g')).test(layer.layerId));

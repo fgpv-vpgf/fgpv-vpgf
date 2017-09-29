@@ -197,10 +197,10 @@ function reloadService(events, bookmarkService, geoService, configService, state
      * @private
      */
     function _closeOpenPanels() {
-        stateManager.setActive({
+        /* stateManager.setActive({
             side: false
         }, {
             table: false
-        });
+        }); */
     }
 }
