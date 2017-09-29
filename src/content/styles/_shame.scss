@@ -87,6 +87,15 @@ md-card {
 
         md-card-title-text {
             z-index: 1;
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+
+            .rv-sub {
+                flex: 1;
+                text-align: right;
+                color: #f3f3f3;
+            }
         }
 
         &:before {
