@@ -19,7 +19,9 @@
                             <span class="md-subhead">Sub header</span>
                         </md-card-header-text>
                     </md-card-header-->
-                    <img  ng-src="{{ theme.image }}" class="md-card-image" ng-click="self.rootScope.selectedTheme = theme; theme.action(); self.close();">
+
+                    <img ng-if="theme.action" ng-src="{{ theme.image }}" class="md-card-image" ng-click="self.rootScope.selectedTheme = theme; theme.action(); self.close();">
+                    <img ng-if="!theme.action" ng-src="{{ theme.image }}">
                     <md-card-title>
                         <md-card-title-text>
                             <span class="md-title">{{ theme.name }}</span>

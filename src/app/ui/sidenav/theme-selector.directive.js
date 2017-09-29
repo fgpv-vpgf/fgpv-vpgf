@@ -67,7 +67,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Heavy Precipitation Days (10mm)',
                     'Precipitation'
                 ],
-                action: () => themeService.showSomething('extremes'),
+                action: null,
                 expanded: false
             },
             {
@@ -86,7 +86,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Date of First Fall Frost',
                     'Frost-Free Season'
                 ],
-                action: () => themeService.showSomething('extremes'),
+                action: null,
                 expanded: false
             },
             {
@@ -99,7 +99,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                     'Frost Days',
                     'Freeze-Thaw Days'
                 ],
-                action: () => themeService.showSomething('extremes'),
+                action: null,
                 expanded: false
             },
             {
@@ -109,7 +109,7 @@ function Controller(sideNavigationService, version, configService, $mdSidenav, $
                 items: [
                     'trends in Mean Temperature'
                 ],
-                action: () => themeService.showSomething('extremes'),
+                action: null,
                 expanded: false
             }
         ]
