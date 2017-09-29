@@ -46,10 +46,6 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
     function demo_hacks() {
         let tipRef;
 
-        $rootElement.on('mouseover', '#flicks_layer > image', event => {
-
-        });
-
         const template = `
             <div class="rv-tooltip-content">
                 <span class="rv-tooltip-text md-subhead" ng-bind-html="self.name"></span>

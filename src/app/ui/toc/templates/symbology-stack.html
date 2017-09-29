@@ -26,9 +26,7 @@
         ng-if="self.symbology.isInteractive"
         ng-click="self.expandSymbology()"
         ng-focus="self.fanOutSymbology(true)"
-        ng-blur="self.fanOutSymbology(false)"
-        ng-mouseover="self.fanOutSymbology(true)"
-        ng-mouseout="self.fanOutSymbology(false)">
+        ng-blur="self.fanOutSymbology(false)">
         <md-tooltip md-direction="top">{{ self.isExpanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
     </md-button>

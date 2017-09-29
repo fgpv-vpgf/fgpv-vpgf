@@ -297,7 +297,7 @@ function rvSymbologyStack($q, Geo, animationService) {
                     (ref.isFannedOut = false)
             });
 
-            const displacement = 4;
+            /* const displacement = 4;
 
             // if there is just one icon, don't do on-hover animation
             if (ref.symbolItems.length > 1) {
@@ -317,7 +317,7 @@ function rvSymbologyStack($q, Geo, animationService) {
                         y: `+=${displacement}px`,
                         ease: RV_SWIFT_IN_OUT_EASE
                     }, 0);
-            }
+            } */
 
             return timeline;
         }
