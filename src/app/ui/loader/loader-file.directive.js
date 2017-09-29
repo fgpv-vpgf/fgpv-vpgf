@@ -38,7 +38,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
     self.closeLoaderFile = closeLoaderFile;
     self.dropActive = false; // flag to indicate if file drop zone is active
 
-    // create three steps: upload data, selecct data type, and configure layer
+    // create three steps: upload data, select data type, and configure layer
     self.upload = {
         step: {
             titleValue: 'import.file.upload.title',
@@ -178,19 +178,23 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             isFileUploadAborted = true;
         };
 
-        _loadFile(self.upload.fileUrl).then(arrayBuffer =>
-            isFileUploadAborted ?
-                $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
-                onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
-        ).catch(error => {
-            if (error.reason === 'abort') {
-                RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
-                return;
-            }
+        const loaderPromise = _loadFile(self.upload.fileUrl).then(arrayBuffer =>
+                isFileUploadAborted ?
+                    $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
+                    onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
+            ).catch(error => {
+                if (error.reason === 'abort') {
+                    RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                    return;
+                }
 
-            RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
-            toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
-        });
+                RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
+                toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+            });
+
+        // add some delay before going to the next step
+        stepper.nextStep($timeout(() =>
+            loaderPromise, 300));
 
         /**
          * Tries to load a file specified using $http service.
@@ -208,7 +212,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                             const units = event.loaded < 1048576 ? 'KB' : 'MB';
 
                             let loaded = Math.round(event.loaded / (units === 'KB' ? 1024 : 1048576));
-                            const total = Math.round(event.total / 1048576);
+                            const total = Math.ceil(event.total / 1048576);
 
                             self.upload.fileStatus = `${loaded}${units} / ${total}MB`;
 
@@ -238,6 +242,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      */
     function uploadFilesSubmitted(files) {
         if (files.length > 0) {
+            // reset any fields and move back to the first step (in the case where we drag-and-drop from a different step)
+            // after moving back to the first step, we can continue with the file uploading
+            uploadReset();
+            stepper.moveToStep(0);
+
             const file = files[0];
             self.upload.file = file; // store the first file from the array;
 
@@ -248,17 +257,22 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             self.upload.fileUploadAbort = () =>
                 reader.abort();
 
-            _readFile(reader, file.file, _updateProgress).then(arrayBuffer =>
-                onLayerBlueprintReady(file.name, arrayBuffer)
-            ).catch(error => {
-                if (error.reason === 'abort') {
-                    RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
-                    return;
-                }
+            const readerPromise = _readFile(reader, file.file, _updateProgress).then(arrayBuffer =>
+                    onLayerBlueprintReady(file.name, arrayBuffer)
+                ).catch(error => {
+                    if (error.reason === 'abort') {
+                        RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                        return;
+                    }
 
-                RV.logger.error('loaderFileDirective', 'file upload has failed with error', error.message);
-                toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
-            });
+                    RV.logger.error('loaderFileDirective', 'file upload has failed with error', error.message);
+                    toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
+                });
+
+            // add some delay before going to the next step
+            // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
+            stepper.moveToStep(1, $timeout(() =>
+                readerPromise, 300));
         }
 
         /**
@@ -326,11 +340,6 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 self.layerSourceOptions = layerSourceOptions;
                 self.layerSource = layerSourceOptions[preselectedIndex];
             });
-
-        // add some delay before going to the next step
-        // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
-        stepper.moveToStep(1, $timeout(() =>
-            layerSourcePromise, 300));
 
         return layerSourcePromise;
     }

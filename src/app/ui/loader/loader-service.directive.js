@@ -59,7 +59,10 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             isActive: false,
             isCompleted: false,
             onContinue: connectOnContinue,
-            onCancel: () => onCancel(self.connect.step),
+            onCancel: () => {
+                connectReset();
+                onCancel(self.connect.step);
+            },
             onKeypress: event => {
                 const connect = self.connect;
                 // prevent enter presses from triggering service handshake if the input value is not validated
