@@ -11,6 +11,11 @@ function themeService(configService, $interval) {
     const visibleElements = {
         temperature: [
             'Temperatures',
+            'Annual',
+            'Summer',
+            'Spring',
+            'Fall',
+            'Winter',
             'Cities',
             'Treaties',
             'Municipalities',
