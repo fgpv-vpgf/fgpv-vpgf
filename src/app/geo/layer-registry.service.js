@@ -183,6 +183,10 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
             layerRecords.push(layerRecord);
         }
 
+        if (layerRecord.layerId === 'extreme_25C_baseline') {
+            $timeout(() => events.$broadcast('vischgd', {'_layerRecordId': layerRecord.layerId}), 5000);
+        }
+
         return layerRecord;
     }
 

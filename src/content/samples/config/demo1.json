@@ -1266,7 +1266,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_45/MapServer"
@@ -1277,7 +1277,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_45/MapServer"
@@ -1288,7 +1288,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2030_85/MapServer"
@@ -1299,7 +1299,7 @@
         "name": "",
         "layerType": "esriTile",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_2060_85/MapServer"
@@ -1310,7 +1310,7 @@
         "name": "Summer Days",
         "layerType": "esriTile",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_baseline/MapServer"
