@@ -91,6 +91,18 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
 
         function doSomeWorkEh(block) {
 
+            if (
+                block && (
+                block._layerRecordId === 'thegrid' ||
+                block._layerRecordId === 'provinces' ||
+                block._layerRecordId === 'municipalities' ||
+                block._layerRecordId === 'treaties' ||
+                block._layerRecordId === 'cities' ||
+                block._layerRecordId === 'flicks'
+              )) {
+                return;
+            }
+
             let lr;
 
             try {
@@ -99,7 +111,15 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 return;
             }
 
-            const visibleLayers = lr.filter(layer => layer.visible && layer.layerId !== 'thegrid');
+            const visibleLayers = lr.filter(
+                layer => layer.visible && 
+                layer.layerId !== 'thegrid' &&
+                layer.layerId !== 'provinces' &&
+                layer.layerId !== 'municipalities' &&
+                layer.layerId !== 'treaties' &&
+                layer.layerId !== 'cities' &&
+                layer.layerId !== 'flicks'
+            );
 
 
             if (typeof block === 'object') {

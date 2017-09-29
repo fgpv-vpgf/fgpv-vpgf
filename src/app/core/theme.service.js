@@ -29,10 +29,6 @@ function themeService(configService, $interval) {
             'Provinces'
         ]
     };
-    const visibleLayers = {
-        temperature: ['annual_mintemp_2051_2080_less', 'cities', 'thegrid', 'flicks'],
-        extremes: ['extreme_verycold_2051_2080_less', 'cities', 'thegrid', 'flicks']
-    };
 
     let config;
 
@@ -44,17 +40,6 @@ function themeService(configService, $interval) {
                 el.css('display', 'block');
                 el.find('li').css('display', 'block');
             });
-            assembleLayers(type).forEach(lr => lr.setVisibility(true));
-        });
-    }
-
-    function assembleLayers(type) {
-        return visibleLayers[type].map(rule => {
-            if (typeof rule === 'object') {
-                return config.map.layerRecords.find(lr => rule.test(lr.layerId));
-            } else {
-                return config.map.layerRecords.find(lr => lr.layerId === rule);
-            }
         });
     }
 
