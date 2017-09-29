@@ -84,10 +84,10 @@
       {
         "id": "EXT_ESRI_World_AuxMerc_3857",
         "default": {
-          "xmax": -5007771.626060756,
-          "xmin": -16632697.354854,
-          "ymax": 10015875.184845109,
-          "ymin": 5022907.964742964
+          "xmax": -2870783.5488011576,
+          "xmin": -21655947.62016108,
+          "ymax": 13061993.369807262,
+          "ymin": 4011849.2208448006
         },
         "spatialReference": {
           "wkid": 102100,
@@ -855,7 +855,7 @@
         },
         "url": "http://arcgis.climateatlas.ca:88/arcgis/rest/services/climateatlas/25C_baseline/MapServer"
       },
-      
+
       {
         "id": "extreme_tropicalnights_2051_2080_more",
         "name": "",
