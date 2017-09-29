@@ -1,5 +1,5 @@
-const THROTTLE_COUNT = 2;
-const THROTTLE_TIMEOUT = 3000;
+const THROTTLE_COUNT = 1;
+const THROTTLE_TIMEOUT = 5000;
 
 /**
  *
@@ -180,6 +180,10 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
         }
 
         if (layerRecord.layerId === 'extreme_25C_baseline') {
+            $timeout(() => events.$broadcast('vischgd', {'_layerRecordId': layerRecord.layerId}), 5000);
+        }
+
+        if (layerRecord.layerId === 'annual_mintemp_baseline') {
             $timeout(() => events.$broadcast('vischgd', {'_layerRecordId': layerRecord.layerId}), 5000);
         }
 
