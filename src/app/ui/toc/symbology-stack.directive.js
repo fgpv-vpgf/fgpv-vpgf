@@ -82,11 +82,20 @@ function rvSymbologyStack($q, Geo, animationService) {
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
+        function atLeastOneSymbolVisible() {
+            return Object.keys(self.toggleList)
+                .filter(key => self.toggleList[key].isSelected)
+                .length > 0;
+        }
+
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
         self.toggleList = {};
         // triggered when the user clicks on a checkbox in the symbology stack
         self.onToggleClick = name => {
             self.toggleList[name].click();
+
+            self.block.visibility = atLeastOneSymbolVisible();
+
             console.error(self.block);
             self.block.definitionQuery = Object.keys(self.toggleList)
                 .map(key => self.toggleList[key].query)
@@ -99,7 +108,7 @@ function rvSymbologyStack($q, Geo, animationService) {
                 self.toggleList[s.name] = new ToggleSymbol(self.block, s.name);
             }
         });
-        
+
         //const proxy = layerRecord.getChildProxy(currentSubLayer.index);
         //proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
 
