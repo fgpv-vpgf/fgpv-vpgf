@@ -134,7 +134,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                         (node.parentLayerType ===  Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
                         entry.layerRecordId === node.layerRecordId) ?
                             entry : null)
-                    .filter(a => a)[0];
+                    .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
                 // update the requester accordingly for the reloaded legend block
                 openPanel.requester.id = legendBlock.id;
