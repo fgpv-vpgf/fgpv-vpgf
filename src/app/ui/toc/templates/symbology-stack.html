@@ -14,11 +14,10 @@
         
         <md-button
             class="md-icon-button rv-icon-20"
-            ng-class="{ selected: self.uiControl.isSelected }"
-            ng-click="self.toggleSymbology.onClick()"
+            ng-click="self.onToggleClick(symbol.name)"
             ng-show="self.isExpanded">
         
-            <md-icon md-svg-src="{{self.toggleSymbology.icon()}}"></md-icon>
+            <md-icon md-svg-src="{{self.toggleList[symbol.name].icon}}"></md-icon>
     
         </md-button>
 
