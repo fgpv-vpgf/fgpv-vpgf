@@ -9,6 +9,21 @@ const RV_DESCRIPTION_ITEM = '.rv-description-container';
 const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
 
+class ToggleSymbol {
+    constructor(block, name) {
+        this.block = block;
+        this.nameField = this.block.mainProxyWrapper._proxy._source.nameField;
+        this.name = name;
+        this.isSelected = this.block.visibility;
+    }
+
+    click() { this.isSelected = !this.isSelected; }
+
+    get icon() { return this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"; }
+
+    get query() { return this.isSelected ? `${this.nameField}='${this.name}'` : null; }
+}
+
 /**
  * @module rvSymbologyStack
  * @memberof app.ui
@@ -43,6 +58,7 @@ function rvSymbologyStack($q, Geo, animationService) {
         templateUrl,
         scope: {
             symbology: '=',
+            block: '=',
             description: '=?',
             container: '=?'
         },
@@ -66,12 +82,29 @@ function rvSymbologyStack($q, Geo, animationService) {
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
-        // see stateManager.display.table.requester.legendEntry.definitionQuery = OBJECTID >= 1 AND OBJECTID <= 2
-        self.toggleSymbology = {
-            isSelected: false,
-            onClick: () => {this.isSelected = !this.isSelected},
-            icon: () => this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"
+        // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
+        self.toggleList = {};
+        // triggered when the user clicks on a checkbox in the symbology stack
+        self.onToggleClick = name => {
+            self.toggleList[name].click();
+            console.error(self.block);
+            self.block.definitionQuery = Object.keys(self.toggleList)
+                .map(key => self.toggleList[key].query)
+                .filter(q => q !== null)
+                .join(' OR ');
         };
+        // create a ToggleSymbol instance for each symbol
+        self.symbology.stack.forEach(s => {
+            if (s.name && self.block.mainProxyWrapper) {
+                self.toggleList[s.name] = new ToggleSymbol(self.block, s.name);
+            }
+        });
+        
+        //const proxy = layerRecord.getChildProxy(currentSubLayer.index);
+        //proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
+
+        // see stateManager.display.table.requester.legendEntry.definitionQuery = OBJECTID >= 1 AND OBJECTID <= 2
+
 
         const ref = {
             isReady: false,
