@@ -817,7 +817,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 proxyPromise = common.$q.resolve([proxyWrapper]);
             }
 
-            return proxyPromise;        //
+            return proxyPromise;
 
             function _flattenTree(tree) {
                 const result = [].concat.apply([], tree.map(item => {
