@@ -46,11 +46,12 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
         // because esri logo and liks are the default values
         if (typeof cfgAtt !== 'undefined') {
             if (cfgAtt.text.enabled && cfgAtt.text.value) {
-                // loop through node keys to replace value with content from configuration file
-                // TODO: test when will we have a base map with multiple layers
-                for (let [key] of Object.entries(mapInstance.attribution.itemNodes)) {
-                    mapInstance.attribution.itemNodes[key].innerText = cfgAtt.text.value;
+                if (Object.keys(mapInstance.attribution.itemNodes).length === 0) {
+                    const attributionNode = document.createElement('span');
+                    attributionNode.innerText = cfgAtt.text.value + ' | ';
+                    mapInstance.attribution.listNode.appendChild(attributionNode);
                 }
+                // TODO: test when will we have a base map with multiple layers
                 attNode.show();
             } else if (!cfgAtt.text.enabled) {
                 attNode.hide();

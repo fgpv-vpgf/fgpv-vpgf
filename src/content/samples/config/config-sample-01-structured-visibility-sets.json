@@ -418,7 +418,16 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "attribution": {
+          "text": {
+            "enabled": true,
+            "value": "Custom Attribution"
+          },
+          "logo": {
+            "enabled": true
+          }
+        }
       },
       {
         "id": "baseSimple",
