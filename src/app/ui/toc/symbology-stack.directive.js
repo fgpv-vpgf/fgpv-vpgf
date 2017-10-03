@@ -51,7 +51,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -91,23 +91,26 @@ function rvSymbologyStack($q, Geo, animationService) {
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
         self.toggleList = {};
         // triggered when the user clicks on a checkbox in the symbology stack
+
+        const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+        console.error('A layer record', layerRecord);
+        console.error('A legend block', self.block);
         self.onToggleClick = name => {
             self.toggleList[name].click();
-
             self.block.visibility = atLeastOneSymbolVisible();
 
-            console.error(self.block);
             self.block.definitionQuery = Object.keys(self.toggleList)
                 .map(key => self.toggleList[key].query)
                 .filter(q => q !== null)
                 .join(' OR ');
         };
-        // create a ToggleSymbol instance for each symbol
-        self.symbology.stack.forEach(s => {
-            if (s.name && self.block.mainProxyWrapper) {
+
+        if (layerRecord.config.toggleSymbology) {
+            // create a ToggleSymbol instance for each symbol
+            self.symbology.stack.forEach(s => {
                 self.toggleList[s.name] = new ToggleSymbol(self.block, s.name);
-            }
-        });
+            });
+        }
 
         //const proxy = layerRecord.getChildProxy(currentSubLayer.index);
         //proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
