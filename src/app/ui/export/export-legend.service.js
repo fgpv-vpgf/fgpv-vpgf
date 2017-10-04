@@ -1,4 +1,5 @@
 import marked from 'marked';
+import removeMd from 'remove-markdown';
 
 // margin of the legend container
 const LEGEND_MARGIN = {
@@ -431,6 +432,15 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     }
                 } else {
                     const content = entry.layerName || entry.content;
+
+                    // ie can't handle fancy markdown image rendering so we strip markdown entirely
+                    if (RV.isIE) {
+                        return {
+                            name: removeMd(content),
+                            items: entry.symbologyStack.stack || [],
+                            blockType: LegendBlock.TYPES.INFO
+                        }
+                    }
                     const contentToHtml = marked(content);
 
                     // if no markdown was parsed, return as text
@@ -444,7 +454,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
                     const canvas = service.canvas || (service.canvas = document.createElement('canvas'));
                     const ctx = canvas.getContext('2d');
-                
+
                     // compute the actual width of content HTML if it were a single line
                     let actualWidth = ctx.measureText(contentToHtml).width;
                     // reduce width to 300 if actual width exceeds this - this avoids one long line being scaled down to ant man sized text
@@ -470,10 +480,10 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                       ctx.drawImage(this, 0, 0);
                       DOMURL.revokeObjectURL(url);
                     }
-                    
+
                     img.src = url;
 
-                    // we now have a local image and URL that we can wrap in a legend generator supported svg element 
+                    // we now have a local image and URL that we can wrap in a legend generator supported svg element
                     return {
                         name: '',
                         items: [{ name: '', svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${url}"></image></svg>` }].concat(entry.symbologyStack.stack || []),
