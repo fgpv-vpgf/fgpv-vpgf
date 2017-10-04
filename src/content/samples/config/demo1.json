@@ -571,10 +571,10 @@
       },
       {
         "id": "thegrid",
-        "name": "This must be visible for hover",
+        "name": "",
         "layerType": "esriFeature",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"

@@ -89,7 +89,17 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
 
         let savedBlock;
 
+        const settingVisibilityGroup = ['provinces', 'municipalities', 'treaties', 'cities'];
+
         function doSomeWorkEh(block) {
+
+            let lr;
+
+            try {
+                lr = configService.getSync.map.layerRecords;
+            } catch (e) {
+                return;
+            }
 
             if (
                 block && (
@@ -100,14 +110,10 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                 block._layerRecordId === 'cities' ||
                 block._layerRecordId === 'flicks'
               )) {
-                return;
-            }
-
-            let lr;
-
-            try {
-                lr = configService.getSync.map.layerRecords;
-            } catch (e) {
+                // setting visibility group broken, manual correction needed
+                lr
+                    .filter(layer => settingVisibilityGroup.indexOf(layer.layerId) !== -1)
+                    .forEach(layer => layer.setVisibility(false));
                 return;
             }
 

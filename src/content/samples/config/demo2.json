@@ -711,7 +711,7 @@
         "name": "This must be visible for hover",
         "layerType": "esriFeature",
         "state": {
-          "visibility": false,
+          "visibility": true,
           "boundingBox": false
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/plus30_2060_85/MapServer/3"
@@ -817,7 +817,7 @@
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/annual_mintemp_2060_85/MapServer"
       },
-    
+
       {
         "id": "fall_maxtemp_baseline",
         "name": "Fall",
@@ -918,7 +918,7 @@
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/fall_mintemp_2060_85/MapServer"
       },
-      
+
 
       {
         "id": "spring_maxtemp_baseline",
@@ -1020,7 +1020,7 @@
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/spring_mintemp_2060_85/MapServer"
       },
-      
+
       {
         "id": "summer_maxtemp_baseline",
         "name": "Summer",
@@ -1121,7 +1121,7 @@
         },
         "url": "http://arcgis.climateatlas.ca:8080/arcgis/rest/services/climateatlas/summer_mintemp_2060_85/MapServer"
       },
-      
+
       {
         "id": "winter_maxtemp_baseline",
         "name": "Winter",
