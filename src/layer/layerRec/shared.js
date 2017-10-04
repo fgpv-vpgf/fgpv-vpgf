@@ -36,7 +36,8 @@ function makeSymbologyArray(legendData) {
 
         const symbologyItem = {
             svgcode: null,
-            name: null
+            name: null,
+            definitionClause: null
         };
 
         // file-based layers don't have symbology labels, default to ''
@@ -44,6 +45,7 @@ function makeSymbologyArray(legendData) {
         item.then(data => {
             symbologyItem.svgcode = data.svgcode;
             symbologyItem.name = data.label || '';
+            symbologyItem.definitionClause = data.definitionClause;
         });
 
         return symbologyItem;
