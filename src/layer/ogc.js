@@ -114,6 +114,7 @@ function parseCapabilitiesBuilder(esriBundle) {
 
         // find all <Layer> nodes under the given XML node
         // pick title, name and queryable nodes/attributes
+        // also have a list of all styles and the current style
         // recursively called on all child <Layer> nodes
         function getLayers(xmlNode) {
             if (! xmlNode) {
@@ -124,10 +125,15 @@ function parseCapabilitiesBuilder(esriBundle) {
                 const titleNode = getImmediateChild(layer, 'Title');
 
                 let allStyles = [];
+                let styleToURL = {};
                 const style = getImmediateChildren(layer, 'Style');
                 for (let i = 0; i < style.length; i++) {
                     const name = getImmediateChild(style[i], 'Name').textContent;
                     allStyles.push(name);
+
+                    const legendURL = getImmediateChild(style[i], 'LegendURL');
+                    const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
+                    styleToURL[name] = url;
                 }
 
                 return {
@@ -136,6 +142,7 @@ function parseCapabilitiesBuilder(esriBundle) {
                     queryable: layer.getAttribute('queryable') === '1',
                     layers: getLayers(layer),
                     allStyles: allStyles,
+                    styleToURL, styleToURL,
                     currentStyle: allStyles[0]
                 };
             });
@@ -164,34 +171,14 @@ function parseCapabilitiesBuilder(esriBundle) {
 }
 
 /**
- * Recursively crawl a wms layer info structure. Store any legends in the provided map object.
- *
- * @private
- * @param {Array} layerInfos array of ESRI WMSLayerInfo objects
- * @param {Map} urlMap a Map of sublayer names to legend urls
- */
-function crawlLayerInfos(layerInfos, urlMap) {
-    layerInfos.forEach(li => {
-        if (li.name) {
-            urlMap.set(li.name, li.legendURL);
-        }
-        if (li.subLayers.length > 0) {
-            crawlLayerInfos(li.subLayers, urlMap);
-        }
-    });
-}
-
-/**
  * Finds the appropriate legend URLs for WMS layers.
  *
  * @param {WMSLayer} wmsLayer an ESRI WMSLayer object to be queried
- * @param {Array} layerList a list of strings identifying the WMS layers to be queried
+ * @param {Array} layerList a list of objects identifying the WMS layers to be queried
  * @returns {Array} a list of strings containing URLs for specified layers (order is preserved)
  */
 function getLegendUrls(wmsLayer, layerList) {
-    const liMap = new Map(); // use Map in case someone clever uses a WMS layer name that matches an Object's default properties
-    crawlLayerInfos(wmsLayer.layerInfos, liMap);
-    return layerList.map(l => liMap.get(l));
+    return layerList.map(l => l.styleToURL[l.currentStyle]);
 }
 
 module.exports = esriBundle => {
