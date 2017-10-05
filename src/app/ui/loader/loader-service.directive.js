@@ -269,6 +269,14 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function configureOnContinue
      */
     function configureOnContinue() {
+        const config = self.layerSource.config;
+
+        if (config.layerType === Geo.Layer.Types.OGC_WMS) {
+            const selectedLayers = config.layerEntries;
+
+            config.currentStyle = selectedLayers[0].currentStyle;
+        }
+
         const layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
 
         legendService.importLayerBlueprint(layerBlueprint);

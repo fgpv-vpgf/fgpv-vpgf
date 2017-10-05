@@ -73,11 +73,13 @@ function rvSettingsContent(layerRegistry) {
     }
 }
 
-function Controller(common) {
+function Controller(common, Geo) {
     'ngInject';
     const self = this;
 
     self.checkAvailableControls = checkAvailableControls;
+    self.checkWMS = checkWMS;
+    self.getStyles = getStyles;
 
     /**
      * @function checkAvailableControls
@@ -87,5 +89,25 @@ function Controller(common) {
      */
     function checkAvailableControls(names) {
         return common.intersect(self.block.availableControls, names.split('|')).length > 0;
+    }
+
+    /**
+     * @function checkWMS
+     * @private
+     * @return {Boolean} true if the block is a WMS layer
+     */
+    function checkWMS() {
+        return self.block.layerType === Geo.Layer.Types.OGC_WMS;
+    }
+
+    /**
+     * @function getStyles
+     * @private
+     * @return {Array} all the possible styles for the layer (only for WMS)
+     */
+    function getStyles() {
+        return self.block.mainProxyWrapper.layerConfig.layerEntries.map(entry =>
+            entry.allStyles).reduce((a,b) =>
+                a.concat(b));
     }
 }

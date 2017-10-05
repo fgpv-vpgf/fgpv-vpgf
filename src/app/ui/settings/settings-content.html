@@ -32,6 +32,24 @@
     </div>
 </div>
 
+<div class="rv-subsection" ng-if="self.checkWMS() && self.getStyles().length > 1">
+    <div class="rv-subheader">
+        <h4 translate class="md-subhead">settings.label.styles</h4>
+    </div>
+    <div class="rv-subcontent">
+
+        <md-divider class="rv-settings-divider"></md-divider>
+        <md-input-container>
+            <md-select ng-model="self.block.mainProxyWrapper.layerConfig.currentStyle">
+                <md-option ng-value="style" ng-repeat="style in self.getStyles()">{{ style }}</md-option>
+            </md-select>
+            <div class="rv-hint">{{ 'settings.label.stylereload' | translate }}</div>
+        </md-input-container>
+        <md-divider class="rv-settings-divider"></md-divider>
+
+    </div>
+</div>
+
 <div class="rv-subsection">
     <div class="rv-subcontent">
         <!--span translate>settings.reload.description</span-->

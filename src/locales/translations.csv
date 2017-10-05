@@ -140,6 +140,8 @@ Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
 Settings data header label,settings.label.data,Data,1,Données,1
+Settings styles header for WMS,settings.label.styles,Styles,1,Styles,0
+Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger le calque pour changer de style,0
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,1,Mode copie instantanée,1
 Settings snapshot mode enable label,settings.label.enable,Enable,1,Activer,1
 Settings snapshot mode enable label,settings.label.enabled,Enabled,1,Activée,1
