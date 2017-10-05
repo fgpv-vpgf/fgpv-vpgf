@@ -40,6 +40,11 @@ class WmsRecord extends layerRecord.LayerRecord {
     makeLayerConfig () {
         const cfg = super.makeLayerConfig();
         cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
+
+        cfg.customLayerParameters = {
+            styles: this.config.currentStyle
+        };
+
         return cfg;
     }
 

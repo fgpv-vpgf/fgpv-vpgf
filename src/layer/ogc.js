@@ -102,6 +102,16 @@ function parseCapabilitiesBuilder(esriBundle) {
             return undefined;
         }
 
+        function getImmediateChildren(node, childName) {
+            let children = [];
+            for (let i = 0; i < node.childNodes.length; ++i) {
+                if (node.childNodes[i].nodeName === childName) {
+                    children.push(node.childNodes[i]);
+                }
+            }
+            return children;
+        }
+
         // find all <Layer> nodes under the given XML node
         // pick title, name and queryable nodes/attributes
         // recursively called on all child <Layer> nodes
@@ -112,11 +122,21 @@ function parseCapabilitiesBuilder(esriBundle) {
             return query('> Layer', xmlNode).map(layer => {
                 const nameNode = getImmediateChild(layer, 'Name');
                 const titleNode = getImmediateChild(layer, 'Title');
+
+                let allStyles = [];
+                const style = getImmediateChildren(layer, 'Style');
+                for (let i = 0; i < style.length; i++) {
+                    const name = getImmediateChild(style[i], 'Name').textContent;
+                    allStyles.push(name);
+                }
+
                 return {
                     name: nameNode ? nameNode.textContent : null,
                     desc: titleNode.textContent,
                     queryable: layer.getAttribute('queryable') === '1',
-                    layers: getLayers(layer)
+                    layers: getLayers(layer),
+                    allStyles: allStyles,
+                    currentStyle: allStyles[0]
                 };
             });
         }
