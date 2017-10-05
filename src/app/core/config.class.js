@@ -721,7 +721,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get layerType () { return layerTypes.OGC_WMS; }
 
         get allStyles () { return this._allStyles; }
+
         get currentStyle () { return this._currentStyle; }
+        set currentStyle (value) { this._currentStyle = value; }
 
         get JSON() {
             return angular.merge(super.JSON, {
