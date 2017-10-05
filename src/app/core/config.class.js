@@ -711,6 +711,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._desc = source.desc;
             this._id = source.id;
             this._allStyles = source.allStyles;
+            this._styleToURL = source.styleToURL;
             this._currentStyle = source.currentStyle;
         }
 
@@ -721,6 +722,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get layerType () { return layerTypes.OGC_WMS; }
 
         get allStyles () { return this._allStyles; }
+        get styleToURL () { return this._styleToURL; }
 
         get currentStyle () { return this._currentStyle; }
         set currentStyle (value) { this._currentStyle = value; }
@@ -729,6 +731,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             return angular.merge(super.JSON, {
                 id: this.id,
                 allStyles: this.allStyles,
+                styleToURL: this.styleToURL,
                 currentStyle: this.currentStyle
             });
         }
