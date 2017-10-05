@@ -161,6 +161,7 @@
     <div class="myMap" id="mobile-map" is="rv-map"
         rv-config="config/config-sample-01-structured-visibility-sets.json"
         rv-langs='["en-CA", "fr-CA"]'
+        rv-service-endpoint="http://section917.cloudapp.net:8000/"
         rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
