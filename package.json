@@ -1,6 +1,10 @@
 {
   "name": "geoApi",
+<<<<<<< HEAD
   "version": "2.1.0-16",
+=======
+  "version": "2.1.0-15",
+>>>>>>> fix(wms): one-to-one layers to styles
   "description": "",
   "main": "src/index.js",
   "dependencies": {
