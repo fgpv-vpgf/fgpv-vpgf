@@ -9,19 +9,20 @@ const RV_DESCRIPTION_ITEM = '.rv-description-container';
 const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
 
+/**
+ * An instance maintains the state of one toggle symbology checkox. This includes if its checked, and the query to use
+ */
 class ToggleSymbol {
-    constructor(block, name) {
-        this.block = block;
-        this.nameField = this.block.mainProxyWrapper._proxy._source.nameField;
-        this.name = name;
-        this.isSelected = this.block.visibility;
+    constructor(block, symbol) {
+        this.isSelected = block.visibility;
+        this.symbol = symbol;
     }
 
     click() { this.isSelected = !this.isSelected; }
 
     get icon() { return this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"; }
 
-    get query() { return this.isSelected ? `${this.nameField}='${this.name}'` : null; }
+    get query() { return this.isSelected ? this.symbol.definitionClause : null; }
 }
 
 /**
@@ -51,7 +52,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -82,6 +83,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry) {
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
+        // returns true if there is one or more toggle symbology checkboxes that are checked, false otherwise
         function atLeastOneSymbolVisible() {
             return Object.keys(self.toggleList)
                 .filter(key => self.toggleList[key].isSelected)
@@ -90,33 +92,38 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry) {
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
         self.toggleList = {};
-        // triggered when the user clicks on a checkbox in the symbology stack
-
         const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
-        console.error('A layer record', layerRecord);
-        console.error('A legend block', self.block);
+
         self.onToggleClick = name => {
             self.toggleList[name].click();
-            self.block.visibility = atLeastOneSymbolVisible();
 
-            self.block.definitionQuery = Object.keys(self.toggleList)
+            const oneOrMoreVisible = atLeastOneSymbolVisible();
+
+            const defClause = Object.keys(self.toggleList)
                 .map(key => self.toggleList[key].query)
                 .filter(q => q !== null)
                 .join(' OR ');
+
+            // apply to block so changes reflect on map
+            self.block.definitionQuery = defClause;
+
+            // if block is not visible make it visible if one or more symbols are selected. Likewise, turn off visibility if all symbols are deselected.
+            self.block.visibility = oneOrMoreVisible;
+
+            // save `definitionClause` on layer
+            layerRecord.definitionClause = oneOrMoreVisible ? defClause : undefined;
+
+            // trigger event which table uses to update
+            events.$broadcast('definitionClauseChgd');
         };
 
+        // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
         if (layerRecord.config.toggleSymbology) {
             // create a ToggleSymbol instance for each symbol
             self.symbology.stack.forEach(s => {
-                self.toggleList[s.name] = new ToggleSymbol(self.block, s.name);
+                self.toggleList[s.name] = new ToggleSymbol(self.block, s);
             });
         }
-
-        //const proxy = layerRecord.getChildProxy(currentSubLayer.index);
-        //proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
-
-        // see stateManager.display.table.requester.legendEntry.definitionQuery = OBJECTID >= 1 AND OBJECTID <= 2
-
 
         const ref = {
             isReady: false,
