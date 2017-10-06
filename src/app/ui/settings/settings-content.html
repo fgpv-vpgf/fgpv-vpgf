@@ -39,13 +39,12 @@
     <div class="rv-subcontent">
 
         <md-divider class="rv-settings-divider"></md-divider>
-        <md-input-container>
-            <md-select ng-model="self.block.mainProxyWrapper.layerConfig.currentStyle" ng-change="self.updateStyles()">
-                <md-optgroup ng-repeat="entry in self.block.mainProxyWrapper.layerConfig.layerEntries" label="{{ entry.name }}">
-                    <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
-                </md-optgroup>
+        <div class="rv-hint">{{ 'settings.label.stylereload' | translate }}</div>
+        <md-input-container ng-repeat="entry in self.block.mainProxyWrapper.layerConfig.layerEntries">
+            <label>{{ entry.name }}</label>
+            <md-select ng-model="entry.currentStyle">
+                <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
             </md-select>
-            <div class="rv-hint">{{ 'settings.label.stylereload' | translate }}</div>
         </md-input-container>
         <md-divider class="rv-settings-divider"></md-divider>
 

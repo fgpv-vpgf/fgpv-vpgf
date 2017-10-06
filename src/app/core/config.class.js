@@ -745,7 +745,6 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                 (new WMSLayerEntryNode(layerEntry)));
             this._featureInfoMimeType = source.featureInfoMimeType;
             this._legendMimeType = source.legendMimeType || "image/png";
-            this._currentStyle = source.currentStyle;
         }
 
         get layerEntries () { return this._layerEntries; }
@@ -758,16 +757,12 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         get featureInfoMimeType () { return this._featureInfoMimeType; }
         get legendMimeType () { return this._legendMimeType; }
 
-        get currentStyle () { return this._currentStyle; }
-        set currentStyle (value) { this._currentStyle = value; }
-
         get JSON() {
             return angular.merge(super.JSON, {
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 featureInfoMimeType: this.featureInfoMimeType,
-                legendMimeType: this.legendMimeType,
-                currentStyle: this.currentStyle
+                legendMimeType: this.legendMimeType
             });
         }
     }

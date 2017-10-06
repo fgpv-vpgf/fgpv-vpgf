@@ -80,7 +80,6 @@ function Controller(common, Geo) {
     self.checkAvailableControls = checkAvailableControls;
     self.checkWMS = checkWMS;
     self.getStylesLength = getStylesLength;
-    self.updateStyles = updateStyles;
 
     /**
      * @function checkAvailableControls
@@ -110,26 +109,5 @@ function Controller(common, Geo) {
         return self.block.mainProxyWrapper.layerConfig.layerEntries.map(entry =>
             entry.allStyles).reduce((a,b) =>
                 a.concat(b)).length;
-    }
-
-    /**
-     * Update the current style for each of the layer entries
-     * If the current style is available for the entry, set it to that value
-     * Otherwise, set the current style to the default style (the first value in allStyles)
-     *
-     * @function updateStyles
-     * @private
-     */
-    function updateStyles() {
-        const config = self.block.mainProxyWrapper.layerConfig;
-        const currentStyle = config.currentStyle;
-
-        config.layerEntries.forEach(entry => {
-            if (entry.allStyles.indexOf(currentStyle) !== -1) {
-                entry.currentStyle = currentStyle;
-            } else {
-                entry.currentStyle = entry.allStyles[0];
-            }
-        });
     }
 }
