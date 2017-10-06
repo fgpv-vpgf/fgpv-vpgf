@@ -653,7 +653,8 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // we're not filtering by either symbology or extent, so resolve with all oid's as valid
         if (!service.filter.isActive && typeof layerRecId.definitionClause !== 'string') {
-            return $q.resolve(stateManager.display.table.data.rows.map(row => parseInt(row[stateManager.display.table.data.oidField])));
+            validOIDs = stateManager.display.table.data.rows.map(row => parseInt(row[stateManager.display.table.data.oidField]));
+            return $q.resolve();
         }
 
         return queryMapserver().then(oids => (validOIDs = oids));
