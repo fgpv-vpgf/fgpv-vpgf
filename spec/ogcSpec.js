@@ -185,12 +185,33 @@ describe('ogc', () => {
         let ogc;
         const fakeBundle = {}; // mock-up esri bundle
         const fakeWMSLayerObject = new FakeWMSLayer();
-        const layerList = ['street', 'traffic', 'transit'];
+        const layerList = [
+            {
+                id: 'street',
+                styleToURL: {
+                    'default': 'www.street.io'
+                },
+                currentStyle: 'default'
+            },
+            {
+                id: 'traffic',
+                styleToURL: {
+                    'default': 'www.traffic.io'
+                },
+                currentStyle: 'default'
+            },
+            {
+                id: 'transit',
+                styleToURL: {
+                    'default': 'www.transit.io'
+                },
+                currentStyle: 'default'
+            }];
 
         // layerInfos that belong to the layer in layerList
         const street = new FakeWMSLayerInfo('street', 'www.street.io');
         const traffic = new FakeWMSLayerInfo('traffic', 'www.traffic.io');
-        const transit = new FakeWMSLayerInfo('transit', ' www.transit.io');
+        const transit = new FakeWMSLayerInfo('transit', 'www.transit.io');
 
         beforeEach(() => {
             ogc = ogcModule(fakeBundle);
