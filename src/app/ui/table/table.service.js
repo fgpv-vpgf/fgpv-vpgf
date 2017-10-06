@@ -12,7 +12,7 @@ angular
     .factory('tableService', tableService);
 
 function tableService(stateManager, geoService, $rootScope, $q, gapiService, debounceService, $rootElement, $timeout,
-    referenceService, layerRegistry, configService, Geo) {
+    referenceService, layerRegistry, configService, Geo, events) {
 
     // timestamps can be watched for key changes to filter data
     const filterTimeStamps = {
@@ -90,6 +90,15 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @private
      */
     function init() {
+
+        events.$on('definitionClauseChgd', () => {
+            if (filterTimeStamps.onCreated !== null) {
+                filteredState().then(() => {
+                    filterTimeStamps.onChanged = Date.now();
+                });
+            }
+        });
+
         $rootScope.$on('extentChange', debounceService.registerDebounce(onExtentChange, 300, false));
 
         // DataTable is either being created or destroyed
@@ -633,27 +642,21 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
     }
 
     /**
-     * Determines the type of filters to apply and sets validOIDs.
+     * Applies validOIDs returned from queryMap or all oids if no query is applied.
      *
      * @function filteredState
      * @private
      * @return  {Promise}   resolves to undefined when the filtering is complete
      */
     function filteredState() {
-        return $q(resolve => {
-            if (service.filter.isActive) {
-                queryMapserver().then(oids => {
-                    validOIDs = oids;
-                    resolve();
-                });
-            } else {
-                // convert existing rows into a validOIDs list (no filtering applied)
-                validOIDs = stateManager.display.table.data.rows.map(
-                    row => parseInt(row[stateManager.display.table.data.oidField])
-                );
-                resolve();
-            }
-        });
+        const layerRecId = layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId);
+
+        // we're not filtering by either symbology or extent, so resolve with all oid's as valid
+        if (!service.filter.isActive && typeof layerRecId.definitionClause !== 'string') {
+            return $q.resolve(stateManager.display.table.data.rows.map(row => parseInt(row[stateManager.display.table.data.oidField])));
+        }
+
+        return queryMapserver().then(oids => (validOIDs = oids));
     }
 
     /**
@@ -669,10 +672,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         const legEntry = state.requester.legendEntry;
         const layerRecId = layerRegistry.getLayerRecord(legEntry.layerRecordId);
 
-        const queryOpts = {
-            geometry: geoService.map.extent,
-            outFields: [state.data.oidField]
-        };
+        const filterByExtent = service.filter.isActive;
+        const filterBySymbology = typeof layerRecId.definitionClause === 'string';
+
+        const queryOpts = { outFields: [state.data.oidField] };
+        if (filterByExtent) {
+            queryOpts.geometry = geoService.map.extent;
+        }
 
         // query the layer itself instead of making a mapserver request
         if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.isFileLayer()) {
@@ -683,7 +689,18 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
         if (lastOID > 0) {
-            queryOpts.where = `${state.data.oidField} > ${lastOID}`;
+            queryOpts.where = `(${state.data.oidField} > ${lastOID})`;
+
+            if (filterBySymbology) {
+                queryOpts.where += ` AND `;
+            }
+        } else {
+            queryOpts.where = ''; // this is needed for our string concatenation below, else its undefined
+        }
+
+
+        if (filterBySymbology) {
+            queryOpts.where += `(${layerRecId.definitionClause})`;
         }
 
         return gapiService.gapi.query.queryGeometry(queryOpts).then(featureSet => {
