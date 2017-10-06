@@ -144,6 +144,7 @@
                 <option value="config/config-sample-47.json">47. Dynamic opacity controls for "not-true-dynamic" dynamic layers</option>
                 <option value="config/config-sample-48.json">48. failure testing</option>
                 <option value="config/config-sample-49.json">49. failure testing with custom url</option>
+                <option value="config/config-sample-50.json">50. Layer entry with description beneath layer title</option>
             </select>
         </div>
 
