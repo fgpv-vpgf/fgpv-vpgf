@@ -124,17 +124,17 @@ function parseCapabilitiesBuilder(esriBundle) {
                 const nameNode = getImmediateChild(layer, 'Name');
                 const titleNode = getImmediateChild(layer, 'Title');
 
-                let allStyles = [];
-                let styleToURL = {};
-                const style = getImmediateChildren(layer, 'Style');
-                for (let i = 0; i < style.length; i++) {
-                    const name = getImmediateChild(style[i], 'Name').textContent;
+                const allStyles = [];
+                const styleToURL = {};
+                const styles = getImmediateChildren(layer, 'Style');
+                styles.forEach(style => {
+                    const name = getImmediateChild(style, 'Name').textContent;
                     allStyles.push(name);
 
-                    const legendURL = getImmediateChild(style[i], 'LegendURL');
+                    const legendURL = getImmediateChild(style, 'LegendURL');
                     const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
                     styleToURL[name] = url;
-                }
+                });
 
                 return {
                     name: nameNode ? nameNode.textContent : null,

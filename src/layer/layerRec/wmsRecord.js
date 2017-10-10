@@ -41,9 +41,7 @@ class WmsRecord extends layerRecord.LayerRecord {
         const cfg = super.makeLayerConfig();
         cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
 
-        let styles = '';
-        this.config.layerEntries.forEach(entry => styles = styles + entry.currentStyle + ",")
-        styles = styles.slice(0, -1);
+        const styles = this.config.layerEntries.map(e => e.currentStyle).join();
 
         cfg.customLayerParameters = {
             styles: styles
