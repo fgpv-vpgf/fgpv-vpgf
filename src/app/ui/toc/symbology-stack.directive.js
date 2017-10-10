@@ -13,8 +13,8 @@ const RV_SWIFT_IN_OUT_EASE = Power1;
  * An instance maintains the state of one toggle symbology checkox. This includes if its checked, and the query to use
  */
 class ToggleSymbol {
-    constructor(block, symbol) {
-        this.isSelected = block.visibility;
+    constructor(symbol) {
+        this.isSelected = true;
         this.symbol = symbol;
     }
 
@@ -83,11 +83,20 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
-        // returns true if there is one or more toggle symbology checkboxes that are checked, false otherwise
-        function atLeastOneSymbolVisible() {
+        // returns true if all toggle symbology checkboxes are checked, false otherwise
+        function allSymbolsVisible() {
+            const toggleListKeys = Object.keys(self.toggleList);
+
+            return toggleListKeys
+                .filter(key => self.toggleList[key].isSelected)
+                .length === toggleListKeys.length;
+        }
+
+        // returns true if no toggle symbology checkboxes are checked, false otherwise
+        function noSymbolsVisible() {
             return Object.keys(self.toggleList)
                 .filter(key => self.toggleList[key].isSelected)
-                .length > 0;
+                .length === 0;
         }
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
@@ -97,33 +106,31 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         self.onToggleClick = name => {
             self.toggleList[name].click();
 
-            const oneOrMoreVisible = atLeastOneSymbolVisible();
+            let defClause;
 
-            const defClause = Object.keys(self.toggleList)
-                .map(key => self.toggleList[key].query)
-                .filter(q => q !== null)
-                .join(' OR ');
+            // when all symbols are checked, clearing the query is the same as trying to match all of them
+            if (allSymbolsVisible()) {
+                defClause = undefined;
+            // when no symbols are checked, make a query that is never true so no symbols are shown
+            } else if (noSymbolsVisible()) {
+                defClause = '1=2'
+            //otherwise proceed with joining geoApi definitionClauses
+            } else {
+                defClause = Object.keys(self.toggleList)
+                    .map(key => self.toggleList[key].query)
+                    .filter(q => q !== null)
+                    .join(' OR ');
+            }
 
             // apply to block so changes reflect on map
             self.block.definitionQuery = defClause;
 
-            // if block is not visible make it visible if one or more symbols are selected. Likewise, turn off visibility if all symbols are deselected.
-            self.block.visibility = oneOrMoreVisible;
-
             // save `definitionClause` on layer
-            layerRecord.definitionClause = oneOrMoreVisible ? defClause : undefined;
+            layerRecord.definitionClause = defClause;
 
             // trigger event which table uses to update
             events.$broadcast('definitionClauseChgd');
         };
-
-        // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
-        if (layerRecord.config.toggleSymbology) {
-            // create a ToggleSymbol instance for each symbol
-            self.symbology.stack.forEach(s => {
-                self.toggleList[s.name] = new ToggleSymbol(self.block, s);
-            });
-        }
 
         const ref = {
             isReady: false,
@@ -156,6 +163,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 // collapse the stack when underlying collection of the symbology changes as the expanded ui stack might initialy had a different number of items
                 if (self.isExpanded) {
                     self.expandSymbology(false);
+                }
+
+                // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
+                if (layerRecord.config.toggleSymbology) {
+
+                    // create a ToggleSymbol instance for each symbol
+                    self.symbology.stack.forEach(s => {
+                        self.toggleList[s.name] = new ToggleSymbol(s);
+                    });
                 }
             }
         });
@@ -250,11 +266,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     ...ref.symbolItems.map(symbolItem =>
                         Math.max(
                             symbolItem.image.find('svg')[0].viewBox.baseVal.width,
-
-                            // TODO: need to use current font size
-                            // need to account for letter spacing (use 10 for now)
-                            // 32 accounts for paddding, need to get that from styles as well
-                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto') + 32 + 10
+                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
                         ))),
                 ref.containerWidth
             );
