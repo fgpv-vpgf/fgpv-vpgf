@@ -101,7 +101,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
         self.toggleList = {};
-        const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+
+        let layerRecord;
+
+        // opening details panel creates a symbology stack, but we don't do symbology toggling there so ignore error
+        try {
+            layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+        } catch (e) {
+            // do nothing
+        }
 
         self.onToggleClick = name => {
             self.toggleList[name].click();
@@ -129,7 +137,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             layerRecord.definitionClause = defClause;
 
             // trigger event which table uses to update
-            events.$broadcast('definitionClauseChgd');
+            events.$broadcast(events.rvLayerDefinitionClauseChanged);
         };
 
         const ref = {
@@ -166,12 +174,16 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 }
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
-                if (layerRecord.config.toggleSymbology) {
+                if (layerRecord.config.toggleSymbology && self.symbology.stack.length > 1) {
 
                     // create a ToggleSymbol instance for each symbol
                     self.symbology.stack.forEach(s => {
                         self.toggleList[s.name] = new ToggleSymbol(s);
                     });
+
+                    // Manually correct symbology boxes so they align with all other layer visibility boxes
+                    const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
+                    element.find('.md-icon-button').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
                 }
             }
         });
@@ -286,8 +298,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         function makeExpandTimeline() {
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { self.isExpanded = true; },
-                onReverseComplete: () => { self.isExpanded = false; }
+                onStart: () => { self.isExpanded = true; scope.$digest(); },
+                onReverseComplete: () => { self.isExpanded = false; scope.$digest(); }
             });
 
             // in pixels
