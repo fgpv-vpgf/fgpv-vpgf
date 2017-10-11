@@ -91,7 +91,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function init() {
 
-        events.$on('definitionClauseChgd', () => {
+        events.$on(events.rvLayerDefinitionClauseChanged, () => {
             if (filterTimeStamps.onCreated !== null) {
                 filteredState().then(() => {
                     filterTimeStamps.onChanged = Date.now();
