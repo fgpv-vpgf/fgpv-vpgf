@@ -114,6 +114,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             stateManager.setActive({ [panelSwitch[openPanelName].panel]: false });
         }
 
+        // let the layer know that the block has been deselected due to removal
+        legendBlock.isSelected = false;
+
         // create notification toast
         const undoToast = $mdToast.simple()
             .textContent($translate.instant('toc.label.state.remove'))
