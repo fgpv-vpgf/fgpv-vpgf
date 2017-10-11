@@ -66,7 +66,9 @@ function events($rootScope) {
         rvHighlightDetailsItem: 'rvHighlightDetailsItem',
         rvGeosearchClose: 'rvGeosearchClose', // Fire when geosearch close
         rvTableReady: 'rvTableReady',
-        rvFeatureMouseOver: 'rvFeatureMouseOver'
+        rvFeatureMouseOver: 'rvFeatureMouseOver',
+
+        rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged'
     };
 }
 
