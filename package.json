@@ -33,6 +33,7 @@
     "jquery-hoverintent": "1.8.2",
     "linkifyjs": "2.1.4",
     "marked": "0.3.6",
+    "moment": "~2.18",
     "moment-timezone": "0.5.13",
     "rcolor": "1.0.1",
     "screenfull": "3.3.1",
