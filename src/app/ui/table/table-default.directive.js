@@ -472,23 +472,23 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
                 }
 
+                const filters = stateManager.display.table;
+                const query = filters.requester.legendEntry.mainProxyWrapper.layerConfig.initialFilteredQuery;
+
                 // apply filters on map
                 if (config.applyMap) {
-                    const filters = stateManager.display.table;
-                    const query = filters.requester.legendEntry.mainProxyWrapper.layerConfig.initialFilteredQuery;
-
                     // set isApplied to hide apply filters on map button
                     tableService.filter.isApplied = true;
                     filters.data.filter.isApplied = tableService.filter.isApplied;  // set on layer so it can persist when we change layer
 
-                    // update filter flag ( if data is filtered)
-                    tableService.filter.isMapFiltered = query !== "";
-                    filters.data.filter.isMapFiltered = tableService.filter.isMapFiltered;  // set on layer so it can persist when we change layer
-                    filters.requester.legendEntry.filter = tableService.filter.isMapFiltered;
-
                     // prevent entering to this block again
                     config.applyMap = false;
                 }
+
+                // update filter flag (if data is filtered)
+                tableService.filter.isMapFiltered = query ? query !== "" : false;
+                filters.data.filter.isMapFiltered = tableService.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+                filters.requester.legendEntry.filter = tableService.filter.isMapFiltered;
             }
 
             /**
