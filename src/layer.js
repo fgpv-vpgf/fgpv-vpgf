@@ -682,7 +682,7 @@ function findCandidates(rows, valueRegex) {
     const candidates =
         fields.filter((field, index) =>
             rows.every((row, rowIndex) =>
-                rowIndex === 0 || valueRegex.test(row[index]))); // skip first row as its just headers
+                rowIndex === 0 || valueRegex.test(row[index]) || valueRegex.test(Math.round(row[index] * 1000000) / 1000000))); // skip first row as its just headers
 
     return candidates;
 }
