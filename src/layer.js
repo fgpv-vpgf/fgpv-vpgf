@@ -544,13 +544,12 @@ function validateCSV(data) {
                 errorMessage = 'File has duplicate column names';
             // check field counts of each row
             } else if (rows.every(rowArr => rowArr.length === fc)) {
-                // regex values
-                const latValueRegex = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/);
-                const longValueRegex = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/);
+                const latRange = [-90, 90];
+                const longRange = [-180, 180];
 
                 // candidate fields for latitude and longitude
-                const latCandidates = findCandidates(rows, latValueRegex);
-                const longCandidates = findCandidates(rows, longValueRegex);
+                const latCandidates = findNumbericalCandidates(rows, latRange);
+                const longCandidates = findNumbericalCandidates(rows, longRange);
 
                 // reject if no latitude or longitude candidates were found
                 if (latCandidates.length === 0 || longCandidates.length === 0) {
@@ -674,15 +673,17 @@ function guessCSVfields(rows, latCandidates, longCandidates) {
  * @private
  * @param  {Array} rows csv data
  * @param {RegExp} regular expression for the value of the field
+ * @param {Array} range the range of the candidate cell values should be within.  range[0] is the lower limit and
+ * range[1] is the upper limit.
  * @return {Array} a list of suitable candidate fields
  */
-function findCandidates(rows, valueRegex) {
+function findNumbericalCandidates(rows, range) {
     const fields = rows[0]; // first row must be headers
-
     const candidates =
         fields.filter((field, index) =>
             rows.every((row, rowIndex) =>
-                rowIndex === 0 || valueRegex.test(row[index]) || valueRegex.test(Math.round(row[index] * 1000000) / 1000000))); // skip first row as its just headers
+                // skip first row since it's the header
+                rowIndex === 0 || !isNaN(Number(row[index])) && range[0] <= row[index] && row[index] <= range[1]));
 
     return candidates;
 }
