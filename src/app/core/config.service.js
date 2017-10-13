@@ -118,7 +118,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
         get config() { return this._config; }
 
-        set rcsKeys(keys) { this._rcsKeys = keys; }
+        set rcsKeys(keys) { this._rcsKeys = keys; this.processRCS(); }
 
         /**
          * Processes RCS keys if any are present
