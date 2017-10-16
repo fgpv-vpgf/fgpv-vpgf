@@ -45,6 +45,10 @@ module.exports = function (env) {
                     }]
                 },
                 {
+                    test: /\.ts$/,
+                    loader: 'ts-loader'
+                },
+                {
                     test: /\.css$/,
                     use: ExtractTextPlugin.extract({
                         use: ['style-loader', 'css-loader']
@@ -80,6 +84,10 @@ module.exports = function (env) {
                 context: 'src/content/samples/config',
                 from: '**/*.json',
                 to: 'samples/config'
+            },{
+                context: 'src/content/samples/extensions',
+                from: '**/*.js',
+                to: 'samples/extensions'
             },{
                 context: 'src/content/samples',
                 from: '**/*.json',
@@ -124,8 +132,10 @@ module.exports = function (env) {
             modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')],
             alias: {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
-                jquery: 'jquery/src/jquery' // so webpack builds from src and not dist - optional but good to have
-            }
+                jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
+                api: path.resolve(__dirname, 'api/src/'),
+            },
+            extensions: ['.ts', '.js', 'css', 'scss']
         },
 
         watchOptions: {
