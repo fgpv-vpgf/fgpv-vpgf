@@ -1,26 +1,26 @@
 export class Accessor{
     constructor(public target: MVCObject, public targetKey: string){};
   }
-  
+
   let getterNameCache = {};
   let setterNameCache = {};
   let ooid = 0;
   let bindings = '__o_bindings';
   let accessors = '__o_accessors';
   let oid = '__o_oid';
-  
+
   function capitalize(str: string) {
     return str.substr(0, 1).toUpperCase() + str.substr(1);
   }
-  
+
   function getOid(obj: MVCObject) {
     return obj[oid] || (obj[oid] = ++ooid);
   }
-  
+
   function toKey(key: string) {
     return '_' + key;
   }
-  
+
   function getGetterName(key: string) {
     if (getterNameCache.hasOwnProperty(key)) {
       return getterNameCache[key];
@@ -28,7 +28,7 @@ export class Accessor{
       return getterNameCache[key] = 'get' + capitalize(key);
     }
   }
-  
+
   function getSetterName(key: string) {
     if (setterNameCache.hasOwnProperty(key)) {
       return setterNameCache[key];
@@ -36,7 +36,7 @@ export class Accessor{
       return setterNameCache[key] = 'set' + capitalize(key);
     }
   }
-  
+
 
   function triggerChange(target: MVCObject, targetKey: string) {
     var evt = targetKey + '_changed';
@@ -46,7 +46,7 @@ export class Accessor{
     } else if (typeof target.changed === 'function') {
       target.changed(targetKey);
     }
-  
+
     if (target[bindings] && target[bindings][targetKey]) {
       var ref = target[bindings][targetKey];
       var bindingObj, bindingUid;
@@ -58,9 +58,9 @@ export class Accessor{
       }
     }
   }
-  
+
   export class MVCObject{
-  
+
     get<T>(key: string): T{
       var self = this;
       if (self[accessors] && self[accessors].hasOwnProperty(key)) {
@@ -98,7 +98,7 @@ export class Accessor{
       }
       return self;
     }
-  
+
     changed(...args: any[]): any{}
     notify(key: string): MVCObject{
       var self = this;
@@ -112,7 +112,7 @@ export class Accessor{
       }
       return self;
     }
-  
+
     setValues(values): MVCObject{
       var self = this;
       var key, setterName, value;
@@ -133,24 +133,24 @@ export class Accessor{
     bindTo(key: string, target: MVCObject, targetKey: string = key, noNotify?: boolean): MVCObject{
       var self = this;
       self.unbind(key);
-  
+
       self[accessors] || (self[accessors] = {});
       target[bindings] || (target[bindings] = {});
       target[bindings][targetKey] || (target[bindings][targetKey] = {});
-  
+
       var binding = new Accessor(self, key);
       var accessor = new Accessor(target, targetKey);
-  
+
       self[accessors][key] = accessor;
       target[bindings][targetKey][getOid(self)] = binding;
-  
+
       if (!noNotify) {
         triggerChange(self, key);
       }
-  
+
       return self;
     }
-  
+
     unbind(key: string): MVCObject{
       var self = this;
       if (self[accessors]) {
@@ -165,7 +165,7 @@ export class Accessor{
       }
       return self;
     }
-  
+
     unbindAll(): MVCObject{
       var self = this;
       if (self[accessors]) {
@@ -179,5 +179,5 @@ export class Accessor{
       return self;
     }
   }
-  
+
   export default MVCObject;
