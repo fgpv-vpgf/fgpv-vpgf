@@ -36,6 +36,15 @@
             overflow: hidden;
             box-shadow: $icon-shadow;
 
+            > .md-icon-button {
+                opacity: 0;
+                transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.show {
+                    opacity: 1;
+                }
+            }
+
             .rv-symbol-graphic {
                 flex-shrink: 0;
                 background-color: white;
@@ -55,6 +64,7 @@
 
                 // symbology label
                 span {
+                    width: calc(100% - 40px);
                     display: none;
                     opacity: 0;
                     font-size: 14px;
