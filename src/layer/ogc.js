@@ -132,8 +132,10 @@ function parseCapabilitiesBuilder(esriBundle) {
                     allStyles.push(name);
 
                     const legendURL = getImmediateChild(style, 'LegendURL');
-                    const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
-                    styleToURL[name] = url;
+                    if (legendURL) {
+                        const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
+                        styleToURL[name] = url;
+                    }
                 });
 
                 return {
