@@ -79,6 +79,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         // if render style is not specified, symbology stack will not be interactive
         // self.isInteractive = typeof self.symbology.renderStyle !== 'undefined';
         self.isExpanded = false; // holds the state of symbology section
+        self.showSymbologyToggle = false;
 
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
@@ -160,6 +161,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             maxItemWidth: 350
         };
 
+        scope.$watch('self.showSymbologyToggle', value => {
+            if (value) {
+                element.find('.md-icon-button').addClass('show');
+            } else {
+                element.find('.md-icon-button').removeClass('show');
+            }
+        });
+
         // description persist, so need to store reference only once
         ref.descriptionItem = element.find(RV_DESCRIPTION_ITEM);
         ref.descriptionItem.css('width', ref.containerWidth)
@@ -183,7 +192,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                     // Manually correct symbology boxes so they align with all other layer visibility boxes
                     const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
-                    element.find('.md-icon-button').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
+                    element.find('.md-icon-button').not('.rv-symbol-trigger').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
                 }
             }
         });
@@ -215,6 +224,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             } else {
                 // collapse symbology items and forward play wiggle
                 ref.expandTimeline.reverse();
+                self.showSymbologyToggle = false;
                 ref.fanOutTimeline.play();
             }
 
@@ -283,10 +293,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 ref.containerWidth
             );
 
-            // set label width to maximum which was calculated
-            ref.symbolItems.forEach(symbolItem =>
-                symbolItem.label.css('width', ref.maxItemWidth));
-
             // console.log('ref.maxItemWidth', ref.maxItemWidth);
 
             ref.expandTimeline = makeExpandTimeline();
@@ -299,6 +305,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const timeline = animationService.timeLineLite({
                 paused: true,
                 onStart: () => { self.isExpanded = true; scope.$digest(); },
+                onComplete: () => { self.showSymbologyToggle = true; scope.$digest(); },
                 onReverseComplete: () => { self.isExpanded = false; scope.$digest(); }
             });
 

@@ -36,6 +36,15 @@
             overflow: hidden;
             box-shadow: $icon-shadow;
 
+            > .md-icon-button {
+                opacity: 0;
+                transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.show {
+                    opacity: 1;
+                }
+            }
+
             .rv-symbol-graphic {
                 flex-shrink: 0;
                 background-color: white;
@@ -55,6 +64,7 @@
 
                 // symbology label
                 span {
+                    width: calc(100% - 40px);
                     display: none;
                     opacity: 0;
                     font-size: 14px;
@@ -107,7 +117,7 @@
             // button which opens symbology section
             // transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
-            margin: 0;
+            margin: 0 !important;
         }
 
         // renders symbology as a list of icon-name pairs when expanded; symbol items remain 32x32 regardless of their actual size
