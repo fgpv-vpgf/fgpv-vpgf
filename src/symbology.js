@@ -172,7 +172,7 @@ function searchRenderer(attributes, renderer) {
             // TODO investigate possibility of problems due to falsey logic.
             //      e.g. if we had a field2 with empty string, would app expect
             //           'value1, ' or 'value1'
-            //      need to brew up some samples to see what is possible in ArcMap 
+            //      need to brew up some samples to see what is possible in ArcMap
             if (renderer.field2) {
                 const delim = renderer.fieldDelimiter || ', ';
                 graphicKey = graphicKey + delim + attributes[renderer.field2];
@@ -825,14 +825,23 @@ function buildRendererToLegend(window) {
 
         switch (renderer.type) {
             case SIMPLE:
+                renderer.symbol.size = Math.round(renderer.symbol.size * 1.33333);  // increase the size of the symbol
                 legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label, window));
                 break;
 
             case UNIQUE_VALUE:
+                // increase the size of each symbol
+                renderer.uniqueValueInfos.forEach(val => {
+                    val.symbol.size = Math.round(val.symbol.size * 1.33333);
+                });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos, window);
                 break;
 
             case CLASS_BREAKS:
+                // increase the size of each symbol
+                renderer.classBreakInfos.forEach(val => {
+                    val.symbol.size = Math.round(val.symbol.size * 1.33333);
+                });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
                 break;
 
