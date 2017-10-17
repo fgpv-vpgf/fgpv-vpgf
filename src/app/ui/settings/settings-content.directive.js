@@ -81,7 +81,7 @@ function Controller(common, Geo) {
 
     self.checkAvailableControls = checkAvailableControls;
     self.checkWMS = checkWMS;
-    self.getStylesLength = getStylesLength;
+    self.checkStylesLength = checkStylesLength;
 
     /**
      * @function checkAvailableControls
@@ -103,13 +103,12 @@ function Controller(common, Geo) {
     }
 
     /**
-     * @function getStylesLength
+     * @function checkStylesLength
      * @private
-     * @return {Number} length of all the possible styles for the layer (only for WMS)
+     * @return {Boolean} true if some sublayer has more than 1 style (only for WMS)
      */
-    function getStylesLength() {
+    function checkStylesLength() {
         return self.block.mainProxyWrapper.layerConfig.layerEntries.map(entry =>
-            entry.allStyles).reduce((a,b) =>
-                a.concat(b)).length;
+            entry.allStyles.length).some(length => length > 1);
     }
 }
