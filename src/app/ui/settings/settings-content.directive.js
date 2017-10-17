@@ -47,6 +47,8 @@ function rvSettingsContent(layerRegistry) {
             self.valueParentBlock = findOpacityParentBlock(self.block);
         }
 
+        self.cachedStyles = self.block.mainProxyWrapper.layerConfig.layerEntries.map(le => le.currentStyle);
+
         /**
          * Finds the closes parent group which enabled and visible opacity control.
          *
