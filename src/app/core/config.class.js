@@ -113,7 +113,8 @@ function ConfigObjectFactory(Geo, gapiService, common) {
                     'remove',
                     'settings',
                     // 'data',
-                    'symbology'
+                    'symbology',
+                    'styles'
                 ],
                 disabledControls: [],
                 userDisabledControls: [],
