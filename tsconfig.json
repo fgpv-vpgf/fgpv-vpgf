@@ -1,5 +1,10 @@
 {
     "compilerOptions": {
-        "allowJs": true
+        "allowJs": true,
+        "baseUrl": ".",
+        "target": "ES2016",
+        "paths": {
+            "api/*": ["./api/src/*"]
+          }
     }
 }
