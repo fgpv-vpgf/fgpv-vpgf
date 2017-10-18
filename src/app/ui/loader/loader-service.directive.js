@@ -359,7 +359,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @return {Boolean} true if at least one with multiple styles
      */
     function isWMSLayerWithMultipleStyles() {
-        return self.layerSource && self.layerSource.config.layerEntries.some((entry) => entry.allStyles.length > 1);
+        return self.layerSource && self.layerSource.config.layerType === Geo.Layer.Types.OGC_WMS &&
+            self.layerSource.config.layerEntries.some((entry) => entry.allStyles.length > 1);
     }
 
     /**
