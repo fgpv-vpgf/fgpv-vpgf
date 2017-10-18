@@ -44,7 +44,7 @@
             <md-select ng-model="entry.currentStyle">
                 <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
             </md-select>
-            <div class="rv-hint" ng-if="entry.currentStyle !== self.cachedStyles[$index]">{{ 'settings.label.stylereload' | translate }}</div>
+            <div class="rv-hint" ng-if="entry.currentStyle !== entry.cachedStyle">{{ 'settings.label.stylereload' | translate }}</div>
         </md-input-container>
         <md-divider class="rv-settings-divider"></md-divider>
 

@@ -666,6 +666,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             // all wms layer default to image-style symbology, regardless of what the config says
             if (layerConfig.layerType === Geo.Layer.Types.OGC_WMS) {
                 blockConfig.symbologyRenderStyle = ConfigObject.legend.Entry.IMAGES;
+
+                layerConfig.layerEntries.forEach(entry => (entry.cachedStyle = entry.currentStyle))
             }
 
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
