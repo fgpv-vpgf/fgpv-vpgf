@@ -815,6 +815,10 @@ function buildRendererToLegend(window) {
     * @return {Object} an object matching the form of an ESRI REST API legend
     */
     return (renderer, index) => {
+        // SVG Legend symbology uses pixels instead of points from ArcGIS Server, thus we need
+        // to multply it by a factor to correct the values.  96 DPI from ArcGIS Server is assumed.
+        const ptFactor = 1.33333; // points to pixel factor
+
         // make basic shell object with .layers array
         const legend = {
             layers: [{
@@ -825,22 +829,26 @@ function buildRendererToLegend(window) {
 
         switch (renderer.type) {
             case SIMPLE:
-                renderer.symbol.size = Math.round(renderer.symbol.size * 1.33333);  // increase the size of the symbol
+                renderer.symbol.size = Math.round(renderer.symbol.size * ptFactor);
                 legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label, window));
                 break;
 
             case UNIQUE_VALUE:
-                // increase the size of each symbol
+                if (renderer.defaultSymbol) {
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol * ptFactor);
+                }
                 renderer.uniqueValueInfos.forEach(val => {
-                    val.symbol.size = Math.round(val.symbol.size * 1.33333);
+                    val.symbol.size = Math.round(val.symbol.size * ptFactor);
                 });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos, window);
                 break;
 
             case CLASS_BREAKS:
-                // increase the size of each symbol
+                if (renderer.defaultSymbol) {
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol * ptFactor);
+                }
                 renderer.classBreakInfos.forEach(val => {
-                    val.symbol.size = Math.round(val.symbol.size * 1.33333);
+                    val.symbol.size = Math.round(val.symbol.size * ptFactor);
                 });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
                 break;
