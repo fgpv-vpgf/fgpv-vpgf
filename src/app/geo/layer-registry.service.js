@@ -247,7 +247,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
     /**
      * Synchronizes the layer order as seen by the user in the layer selector and the internal layer map stack order.
-     * This should be used everytime a new layer is added to the map or legend nodes in the layer selector are reordered.
+     * This should be used every time a new layer is added to the map or legend nodes in the layer selector are reordered.
      *
      * @function synchronizeLayerOrder
      */
@@ -257,11 +257,15 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const highlightLayer = configService.getSync.map.highlightLayer;
 
         // an array of layer records ordered as visible to the user in the layer selector UI component
-        const orderedLayerRecords = configService.getSync.map.legendBlocks
+        const layerRecordIDsInLegend = configService.getSync.map.legendBlocks
             .walk(lb => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
             .filter(id => id) // this will strip all falsy values like `undefined` and `null` since ids should be strings; filter out artificial groups that don't have ids set to null and legend info elements
             .reduce((a, b) =>
-                a.concat(a.indexOf(b) < 0 ? b : []), []) // remove duplicates (dynamic group and its children with have the same layer id)
+                a.concat(a.indexOf(b) < 0 ? b : []), []); // remove duplicates (dynamic group and its children with have the same layer id)
+
+        const orderedLayerRecords = configService.getSync.map.layers
+            .map(layer => layer.id)
+            .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
             .map(getLayerRecord); // get appropriate layer records
 
         const mapLayerStacks = {
