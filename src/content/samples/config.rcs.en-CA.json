@@ -58,7 +58,7 @@
         "showInfo": true
       },
       "mouseInfo": {
-        "enabled": false,
+        "enabled": true,
         "spatialReference": {
           "wkid": 102100
         }
