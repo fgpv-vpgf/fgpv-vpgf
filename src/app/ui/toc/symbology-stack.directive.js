@@ -164,8 +164,11 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
                 element.find('.md-icon-button').addClass('show');
+                $.link(element.find('.md-icon-button'));
+                element.find('button').not('.rv-symbol-trigger').removeAttr('nofocus');
             } else {
                 element.find('.md-icon-button').removeClass('show');
+                element.find('button').not('.rv-symbol-trigger').attr('nofocus', true);
             }
         });
 
@@ -349,7 +352,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             };
 
             // loop over ref.symbolItems, generate timeline for each one, increase total height
-            ref.symbolItems.reverse().forEach((symbolItem, index) => {
+            ref.symbolItems.forEach((symbolItem, index) => {
                 const heightIncrease = legendItemTLgenerator[self.symbology.renderStyle](timeline, symbolItem, totalHeight,
                     index === ref.symbolItems.length - 1);
 
