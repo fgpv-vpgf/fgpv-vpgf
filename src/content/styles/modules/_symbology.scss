@@ -91,14 +91,33 @@
             visibility: hidden;
 
             // the following arranges the first three items in a visible stack
-            &:nth-of-type(2) {
+            /* &:nth-of-type(2) {
                 top: 3px;
                 left: 3px;
                 opacity: 1;
                 visibility: visible;
             }
-
             &:nth-of-type(3) {
+                top: 1px;
+                left: 1px;
+                opacity: 1;
+                visibility: visible;
+            }
+            &:last-of-type {
+                top: -1px;
+                left: -1px;
+                opacity: 1;
+                visibility: visible;
+            } */
+
+            &:nth-of-type(2) {
+                top: -1px;
+                left: -1px;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            &:nth-last-of-type(2) {
                 top: 1px;
                 left: 1px;
                 opacity: 1;
@@ -106,8 +125,8 @@
             }
 
             &:last-of-type {
-                top: -1px;
-                left: -1px;
+                top: 3px;
+                left: 3px;
                 opacity: 1;
                 visibility: visible;
             }
