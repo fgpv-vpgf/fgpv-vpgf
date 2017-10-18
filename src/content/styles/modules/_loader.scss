@@ -47,9 +47,25 @@
                 color: rgb(221,44,0); /*color needs to be tied to theme*/
             }
 
-            .styles-header {
-                margin-top: 10px;
-                margin-bottom: 10px;
+            .rv-subheader {
+                border-bottom: 1px solid $divider-color-light;
+                display: flex;
+
+                h4, h5, h6 {
+                    color: darken(#00BCD4, 20%);
+                }
+
+                @include include-size(rv-gt-sm) {
+                    margin: {
+                        top: rem(0.6);
+                        bottom: rem(0.6);
+                    }
+                }
+                padding: {
+                    top: 0;
+                    bottom: 0;
+                }
+                @include pane-title;
             }
 
             .wms-styles {
