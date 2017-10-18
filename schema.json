@@ -252,6 +252,29 @@
             "uniqueItems": true,
             "description": "A list of all controls to be enabled on the specified layer"
         },
+        "wmslegendEntryControls": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "opacity",
+                    "visibility",
+                    "boundingBox",
+                    "query",
+                    "snapshot",
+                    "metadata",
+                    "boundaryZoom",
+                    "refresh",
+                    "reload",
+                    "remove",
+                    "settings",
+                    "data",
+                    "styles"
+                ]
+            },
+            "uniqueItems": true,
+            "description": "A list of all controls to be enabled on the specified wms layer"
+        },
         "initialLayerSettings": {
             "type": "object",
             "properties": {
@@ -269,6 +292,9 @@
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
                 "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
+                "allStyles": { "type": "array", "description": "All the styles for the layer entry in the WMS" },
+                "styleToURL": { "type": "object", "description": "A mapping of all the styles to their respective URL"},
+                "currentStyle": { "type": "string", "description": "The current style for the layer entry in the WMS" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" }
             },
@@ -580,8 +606,8 @@
                 "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
                 "legendMimeType": { "type": "string", "enum": [ "image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml" ], "description": "If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
-                "controls": { "$ref": "#/definitions/legendEntryControls" },
-                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "controls": { "$ref": "#/definitions/wmslegendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/wmslegendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],

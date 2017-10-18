@@ -78,6 +78,7 @@ function Controller(common, Geo) {
     const self = this;
 
     self.checkAvailableControls = checkAvailableControls;
+    self.checkDisabledControls = checkDisabledControls;
     self.checkWMS = checkWMS;
     self.checkStylesLength = checkStylesLength;
 
@@ -89,6 +90,16 @@ function Controller(common, Geo) {
      */
     function checkAvailableControls(names) {
         return common.intersect(self.block.availableControls, names.split('|')).length > 0;
+    }
+
+    /**
+     * @function checkDisabledControls
+     * @private
+     * @param {String} names
+     * @return {Boolean} true if at least one of the supplied control names is disabled in block
+     */
+    function checkDisabledControls(names) {
+        return common.intersect(self.block.disabledControls, names.split('|')).length > 0;
     }
 
     /**
