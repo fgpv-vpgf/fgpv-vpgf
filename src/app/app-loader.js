@@ -23,6 +23,7 @@ import 'datatables.net-scroller';
 import 'datatables.net-select';
 
 // APPLICATION MAIN IMPORTS
+import './api-loader';
 import './bootstrap.js';
 import './global-registry.js';
 import './geo/geo.module.js';
