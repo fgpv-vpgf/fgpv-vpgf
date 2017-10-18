@@ -36,6 +36,23 @@
                 display: block;
             }
         }
+
+        md-input-container {
+            width: 100%;
+            padding: rem(1.2) 0;
+        }
+
+        .rv-hint {
+            /* Position the hint */
+            position: relative;
+            left: rem(0.2);
+            right: auto;
+            top: rem(0.3);
+            /* Copy styles from ng-messages */
+            font-size: 12px;
+            line-height: 14px;
+            color: $secondary-text-color;
+        }
     }
 }
 

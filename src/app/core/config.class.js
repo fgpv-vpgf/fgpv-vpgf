@@ -710,6 +710,9 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._level = source.level;
             this._desc = source.desc;
             this._id = source.id;
+            this._allStyles = source.allStyles;
+            this._styleToURL = source.styleToURL;
+            this._currentStyle = source.currentStyle;
         }
 
         get level () { return this._level; }
@@ -718,12 +721,20 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get layerType () { return layerTypes.OGC_WMS; }
 
+        get allStyles () { return this._allStyles; }
+        get styleToURL () { return this._styleToURL; }
+
+        get currentStyle () { return this._currentStyle; }
+        set currentStyle (value) { this._currentStyle = value; }
+
         get JSON() {
             return angular.merge(super.JSON, {
-                id: this.id
+                id: this.id,
+                allStyles: this.allStyles,
+                styleToURL: this.styleToURL,
+                currentStyle: this.currentStyle
             });
         }
-
     }
 
     class WMSLayerNode extends LayerNode {
