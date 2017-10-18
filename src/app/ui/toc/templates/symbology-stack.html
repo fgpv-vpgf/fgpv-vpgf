@@ -6,7 +6,7 @@
         <span class="rv-description">{{ ::self.description }}</span>
     </div>
 
-    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack | rvReverse">
+    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index }">
         <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
         <div class="rv-symbol-label-container">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
@@ -23,6 +23,7 @@
     </div>
 
     <md-button
+        ng-style="{'z-index': 100 + self.symbology.stack.length + 1 }"
         class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
         ng-if="self.symbology.isInteractive"
         ng-click="self.expandSymbology()"

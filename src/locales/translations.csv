@@ -215,11 +215,13 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by filters,1,Certaines fonctionnalités sont cachées par des filtres,0
+Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,
+Certaines fonctionnalités sont masquées par des filtres de table,0
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
 Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,Le calque ne peut pas être affiché dans votre projection actuelle et/ou les filtres,1
 Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection actuelle non prise en charge,1
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by filters,1,Certaines fonctionnalités sont cachées par des filtres,0
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,
+Certaines fonctionnalités sont masquées par des filtres de table,0
 Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
 Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
 Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
