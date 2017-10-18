@@ -46,6 +46,15 @@
                 padding-top: 5px;
                 color: rgb(221,44,0); /*color needs to be tied to theme*/
             }
+
+            .styles-header {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .wms-styles {
+                width: 100%;
+            }
         }
 
         // TODO: this is horrible; need to organize it better
