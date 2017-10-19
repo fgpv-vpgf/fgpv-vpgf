@@ -4,7 +4,7 @@ Also known as a grid view, this component uses the [DataTables](https://datatabl
 
 ### table-default.directive.js
 
-All aspects of table rendering happen here. Given some data we initialize a DataTable instance. For every row we also add two buttons; details and zoom. You can see these buttons rendered visually in the screenshot above (orange box). We also need to handle focus management (for accessibility) and language support. Lastly, we implement a scrolling extention for pageination, and employ some minor alterations on the data so that it is visually appealing.
+All aspects of table rendering happen here. Given some data we initialize a DataTable instance. For every row we also add two buttons; details and zoom. You can see these buttons rendered visually in the screenshot above (orange box). We also need to handle focus management (for accessibility) and language support. Lastly, we implement a scrolling extension for pageination, and employ some minor alterations on the data so that it is visually appealing.
 
 This file may seem more complex than it actually is; and perhaps a refactor is in order in the future. But the main takeaway here is that there are challenges coordinating large amounts of data, allowing data to be filtered, supporting multiple languages, and implementing custom row buttons. By and large, the order in which these actions happen is vitally important. I encourage you to glance over the code a few times first, then read over the inline documentation. You'll start to see all the parts (albeit spread out) to come together.
 
