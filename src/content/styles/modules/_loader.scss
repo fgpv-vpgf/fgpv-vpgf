@@ -47,12 +47,18 @@
                 color: rgb(221,44,0); /*color needs to be tied to theme*/
             }
 
-            .rv-subheader {
-                border-bottom: 1px solid $divider-color-light;
-                display: flex;
-
-                h4, h5, h6 {
+            .rv-styles-list {
+                .style-title {
                     color: darken(#00BCD4, 20%);
+                    text-align: left;
+                    padding: 0;
+                    margin: 0;
+                    border-bottom: 1px solid $divider-color-light;
+                    width: 100%;
+
+                    .rv-icon-24 {
+                        float: right;
+                    }
                 }
 
                 @include include-size(rv-gt-sm) {
@@ -66,10 +72,15 @@
                     bottom: 0;
                 }
                 @include pane-title;
+
+                .rv-toggled.md-toggle-icon {
+                    transform: rotate(180deg) !important;
+                }
             }
 
             .wms-styles {
                 width: 100%;
+                margin-top: 25px;
             }
         }
 
