@@ -1,1 +1,1 @@
-// I do nothing
+console.log('extension Loaded', mapInstance);

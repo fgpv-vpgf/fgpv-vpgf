@@ -1,3 +1,5 @@
+import Map from 'api/map';
+
 /**
  * @restrict A
  * @module rvInitMap
@@ -56,7 +58,26 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 .on('keyup', keyUpHandler)
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
+
+                const apiMap = new Map($rootElement);
+                loadExtensions(apiMap);
+                window.RZ.map_added.next(apiMap); // push api map instance through the Observable stream
         });
+
+        /**
+         * Fetches any `rv-extensions` scripts and evals them with the api map instance scoped in.
+
+         * @param {Object} apiMap the api map instance
+         */
+        function loadExtensions(apiMap) {
+            const rvextensions = el.closest('[is=rv-map]').attr('rv-extensions');
+            const extensionList = rvextensions ? rvextensions.split(',') : [];
+
+            extensionList.forEach(url => {
+                $.ajax({method: 'GET', dataType: 'text', url})
+                    .then(data => eval(`(function(mapInstance) { ${data} })(apiMap);`));
+            });
+        }
 
         /**
          * Track mousedown events on the map that start map pan.
