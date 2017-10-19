@@ -25,8 +25,30 @@ const CONTENT_PADDING = (CONTAINER_SIZE - CONTENT_SIZE) / 2;
  * for app on each renderer item.
  *
  * @param {Object} renderer an ESRI renderer object in server JSON form. Param is modified in place
+ * @param  {Array} fields Optional. Array of field definitions for the layer the renderer belongs to. If missing, all fields are assumed as String
  */
-function filterifyRenderer(renderer) {
+function filterifyRenderer(renderer, fields) {
+
+    // worker function. determines if a field value should be wrapped in
+    // any character and returns the character. E.g. string would return ', numbers return empty string.
+    const getFieldDelimiter = fieldName => {
+
+        let delim = `'`;
+
+        // no field definition means we assume strings.
+        if (!fields || fields.length === 0) {
+            return delim;
+        }
+
+        // attempt to find our field, and a data type for it.
+        const f = fields.find(ff => ff.name === fieldName);
+        if (f && f.type && f.type !== 'esriFieldTypeString') {
+            // we found a field, with a type on it, but it's not a string. remove the delimiters
+            delim = '';
+        }
+
+        return delim;
+    };
 
     switch (renderer.type) {
         case SIMPLE:
@@ -46,13 +68,15 @@ function filterifyRenderer(renderer) {
                     .map(fn => renderer[fn]) // extract field names
                     .filter(fn => fn);       // remove any undefined names
     
+                const fieldDelims = keyFields.map(fn => getFieldDelimiter(fn));
+
                 renderer.uniqueValueInfos.forEach(uvi => {
                     // unpack .value into array
                     const keyValues = uvi.value.split(delim);
     
                     // convert fields/values into sql clause
                     const clause = keyFields
-                        .map((kf, i) =>  `${kf} = '${keyValues[i]}'`)
+                        .map((kf, i) =>  `${kf} = ${fieldDelims[i]}${keyValues[i]}${fieldDelims[i]}`)
                         .join(' AND ');
     
                     uvi.definitionClause = `(${clause})`;
@@ -899,13 +923,14 @@ function scrapeListRenderer(renderer, childList, window) {
 
 function buildRendererToLegend(window) {
     /**
-    * Generate a legend object based on an ESRI renderer.
-    * @private
-    * @param  {Object} renderer an ESRI renderer object in server JSON form
-    * @param  {Integer} index the layer index of this renderer
-    * @return {Object} an object matching the form of an ESRI REST API legend
-    */
-    return (renderer, index) => {
+     * Generate a legend object based on an ESRI renderer.
+     * @private
+     * @param  {Object} renderer an ESRI renderer object in server JSON form
+     * @param  {Integer} index the layer index of this renderer
+     * @param  {Array} fields Optional. Array of field definitions for the layer the renderer belongs to. If missing, all fields are assumed as String
+     * @return {Object} an object matching the form of an ESRI REST API legend
+     */
+    return (renderer, index, fields) => {
         // SVG Legend symbology uses pixels instead of points from ArcGIS Server, thus we need
         // to multply it by a factor to correct the values.  96 DPI from ArcGIS Server is assumed.
         const ptFactor = 1.33333; // points to pixel factor
@@ -919,7 +944,7 @@ function buildRendererToLegend(window) {
         };
 
         // calculate symbology filter logic
-        filterifyRenderer(renderer);
+        filterifyRenderer(renderer, fields);
 
         switch (renderer.type) {
             case SIMPLE:
