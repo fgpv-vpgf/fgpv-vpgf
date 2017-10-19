@@ -835,7 +835,7 @@ function buildRendererToLegend(window) {
 
             case UNIQUE_VALUE:
                 if (renderer.defaultSymbol) {
-                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol * ptFactor);
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol.size * ptFactor);
                 }
                 renderer.uniqueValueInfos.forEach(val => {
                     val.symbol.size = Math.round(val.symbol.size * ptFactor);
@@ -845,7 +845,7 @@ function buildRendererToLegend(window) {
 
             case CLASS_BREAKS:
                 if (renderer.defaultSymbol) {
-                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol * ptFactor);
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol.size * ptFactor);
                 }
                 renderer.classBreakInfos.forEach(val => {
                     val.symbol.size = Math.round(val.symbol.size * ptFactor);
