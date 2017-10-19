@@ -265,6 +265,11 @@ nodes.forEach(node => {
 
     let appId = node.getAttribute('id');
 
+    $(node)
+        .attr('rv-extensions')
+        .split(',')
+        .forEach($.getScript);
+
     // TODO v2.0: Remove the following deprecation warning
     // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
     if (node.classList.contains('fgpv')) {

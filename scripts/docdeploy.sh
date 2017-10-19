@@ -4,6 +4,7 @@ set -e
 
 if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ] && [ -n "$TRAVIS_TAG" ]; then
     npm run doc
+    npm run apidoc
     # this section assumes the id_rsa key has already been decrypted
     # devdeploy.sh should run before this script
     echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
@@ -12,6 +13,7 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ] && [ -n "$TRAVIS_TAG" ]; the
     git clone --depth=1 git@github.com:fgpv-vpgf/fgpv-vpgf.github.io.git ghdocs
     mkdir -p ghdocs/fgpv-vpgf/$TRAVIS_TAG
     rsync -av --delete "docbuild/" "ghdocs/fgpv-vpgf/$TRAVIS_TAG"
+    rsync -av "apidocs/" "ghdocs/fgpv-vpgf/$TRAVIS_BRANCH"
     bash scripts/make_doc_index.sh ghdocs/fgpv-vpgf/ > ghdocs/fgpv-vpgf/index.html
     cd ghdocs
     git add fgpv-vpgf/$TRAVIS_TAG
