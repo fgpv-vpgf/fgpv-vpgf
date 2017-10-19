@@ -172,7 +172,7 @@ function searchRenderer(attributes, renderer) {
             // TODO investigate possibility of problems due to falsey logic.
             //      e.g. if we had a field2 with empty string, would app expect
             //           'value1, ' or 'value1'
-            //      need to brew up some samples to see what is possible in ArcMap 
+            //      need to brew up some samples to see what is possible in ArcMap
             if (renderer.field2) {
                 const delim = renderer.fieldDelimiter || ', ';
                 graphicKey = graphicKey + delim + attributes[renderer.field2];
@@ -815,6 +815,10 @@ function buildRendererToLegend(window) {
     * @return {Object} an object matching the form of an ESRI REST API legend
     */
     return (renderer, index) => {
+        // SVG Legend symbology uses pixels instead of points from ArcGIS Server, thus we need
+        // to multply it by a factor to correct the values.  96 DPI from ArcGIS Server is assumed.
+        const ptFactor = 1.33333; // points to pixel factor
+
         // make basic shell object with .layers array
         const legend = {
             layers: [{
@@ -825,14 +829,27 @@ function buildRendererToLegend(window) {
 
         switch (renderer.type) {
             case SIMPLE:
+                renderer.symbol.size = Math.round(renderer.symbol.size * ptFactor);
                 legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label, window));
                 break;
 
             case UNIQUE_VALUE:
+                if (renderer.defaultSymbol) {
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol.size * ptFactor);
+                }
+                renderer.uniqueValueInfos.forEach(val => {
+                    val.symbol.size = Math.round(val.symbol.size * ptFactor);
+                });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.uniqueValueInfos, window);
                 break;
 
             case CLASS_BREAKS:
+                if (renderer.defaultSymbol) {
+                    renderer.defaultSymbol.size = Math.round(renderer.defaultSymbol.size * ptFactor);
+                }
+                renderer.classBreakInfos.forEach(val => {
+                    val.symbol.size = Math.round(val.symbol.size * ptFactor);
+                });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
                 break;
 
