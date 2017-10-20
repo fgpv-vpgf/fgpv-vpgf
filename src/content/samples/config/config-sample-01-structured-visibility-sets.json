@@ -402,12 +402,6 @@
             {
               "id": "GDPS.ETA_UU",
               "allStyles": [ "WINDARROW", "WINDARROWKMH", "WINDSPEED", "WINDSPEEDKMH" ],
-              "styleToURL": {
-                "WINDARROW": "http://geo.weather.gc.ca/geomet//?LANG=E%26SERVICE=WMS%26VERSION=1.1.1%26REQUEST=GetLegendGraphic%26STYLE=WINDARROW%26LAYER=GDPS.ETA_UU%26format=image/png",
-                "WINDARROWKMH": "http://geo.weather.gc.ca/geomet//?LANG=E%26SERVICE=WMS%26VERSION=1.1.1%26REQUEST=GetLegendGraphic%26STYLE=WINDARROWKMH%26LAYER=GDPS.ETA_UU%26format=image/png",
-                "WINDSPEED": "http://geo.weather.gc.ca/geomet//?LANG=E%26SERVICE=WMS%26VERSION=1.1.1%26REQUEST=GetLegendGraphic%26STYLE=WINDSPEED%26LAYER=GDPS.ETA_UU%26format=image/png",
-                "WINDSPEEDKMH": "http://geo.weather.gc.ca/geomet//?LANG=E%26SERVICE=WMS%26VERSION=1.1.1%26REQUEST=GetLegendGraphic%26STYLE=WINDSPEEDKMH%26LAYER=GDPS.ETA_UU%26format=image/png"
-              },
               "currentStyle": "WINDSPEEDKMH"
             }
         ],
