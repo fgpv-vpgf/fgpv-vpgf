@@ -1,4 +1,5 @@
 import marked from 'marked';
+import removeMd from 'remove-markdown';
 
 // margin of the legend container
 const LEGEND_MARGIN = {
@@ -431,6 +432,16 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     }
                 } else {
                     const content = entry.layerName || entry.content;
+
+                    // ie can't handle fancy markdown image rendering so we strip markdown entirely
+                    if (RV.isIE) {
+                        return {
+                            name: removeMd(content),
+                            items: entry.symbologyStack.stack || [],
+                            blockType: LegendBlock.TYPES.INFO
+                        }
+                    }
+
                     const contentToHtml = marked(content);
 
                     // if no markdown was parsed, return as text
