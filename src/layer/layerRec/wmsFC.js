@@ -63,7 +63,13 @@ class WmsFC extends basicFC.BasicFC {
         const configLayerEntries =  this._parent.config.layerEntries;
         const gApi = this._parent._apiRef;
         const legendArray = gApi.layer.ogc
-            .getLegendUrls(this._parent._layer, configLayerEntries.map(le => le.id))
+            .getLegendUrls(this._parent._layer, configLayerEntries.map(le => {
+                return {
+                    id: le.id,
+                    styleToURL: le.styleToURL,
+                    currentStyle: le.currentStyle
+                }
+            }))
             .map((imageUri, idx) => {
 
                 const symbologyItem = {

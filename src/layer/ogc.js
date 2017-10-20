@@ -102,8 +102,19 @@ function parseCapabilitiesBuilder(esriBundle) {
             return undefined;
         }
 
+        function getImmediateChildren(node, childName) {
+            let children = [];
+            for (let i = 0; i < node.childNodes.length; ++i) {
+                if (node.childNodes[i].nodeName === childName) {
+                    children.push(node.childNodes[i]);
+                }
+            }
+            return children;
+        }
+
         // find all <Layer> nodes under the given XML node
         // pick title, name and queryable nodes/attributes
+        // also have a list of all styles and the current style
         // recursively called on all child <Layer> nodes
         function getLayers(xmlNode) {
             if (! xmlNode) {
@@ -112,11 +123,29 @@ function parseCapabilitiesBuilder(esriBundle) {
             return query('> Layer', xmlNode).map(layer => {
                 const nameNode = getImmediateChild(layer, 'Name');
                 const titleNode = getImmediateChild(layer, 'Title');
+
+                const allStyles = [];
+                const styleToURL = {};
+                const styles = getImmediateChildren(layer, 'Style');
+                styles.forEach(style => {
+                    const name = getImmediateChild(style, 'Name').textContent;
+                    allStyles.push(name);
+
+                    const legendURL = getImmediateChild(style, 'LegendURL');
+                    if (legendURL) {
+                        const url = getImmediateChild(legendURL, 'OnlineResource').getAttribute('xlink:href');
+                        styleToURL[name] = url;
+                    }
+                });
+
                 return {
                     name: nameNode ? nameNode.textContent : null,
                     desc: titleNode.textContent,
                     queryable: layer.getAttribute('queryable') === '1',
-                    layers: getLayers(layer)
+                    layers: getLayers(layer),
+                    allStyles: allStyles,
+                    styleToURL, styleToURL,
+                    currentStyle: allStyles[0]
                 };
             });
         }
@@ -165,13 +194,23 @@ function crawlLayerInfos(layerInfos, urlMap) {
  * Finds the appropriate legend URLs for WMS layers.
  *
  * @param {WMSLayer} wmsLayer an ESRI WMSLayer object to be queried
- * @param {Array} layerList a list of strings identifying the WMS layers to be queried
+ * @param {Array} layerList a list of objects identifying the WMS layers to be queried
  * @returns {Array} a list of strings containing URLs for specified layers (order is preserved)
  */
 function getLegendUrls(wmsLayer, layerList) {
-    const liMap = new Map(); // use Map in case someone clever uses a WMS layer name that matches an Object's default properties
+    const liMap = new Map();
     crawlLayerInfos(wmsLayer.layerInfos, liMap);
-    return layerList.map(l => liMap.get(l));
+
+    const legendURLs = layerList.map(l =>
+        typeof l.styleToURL !== 'undefined' ? l.styleToURL[l.currentStyle] : undefined
+    );
+    legendURLs.forEach((entry, index) => {
+        if (!entry) {
+            legendURLs[index] = liMap.get(layerList[index].id)
+        }
+    });
+
+    return legendURLs;
 }
 
 module.exports = esriBundle => {
