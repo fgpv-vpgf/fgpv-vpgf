@@ -67,18 +67,18 @@ function filterifyRenderer(renderer, fields) {
                 const keyFields = ['field1', 'field2', 'field3']
                     .map(fn => renderer[fn]) // extract field names
                     .filter(fn => fn);       // remove any undefined names
-    
+
                 const fieldDelims = keyFields.map(fn => getFieldDelimiter(fn));
 
                 renderer.uniqueValueInfos.forEach(uvi => {
                     // unpack .value into array
                     const keyValues = uvi.value.split(delim);
-    
+
                     // convert fields/values into sql clause
                     const clause = keyFields
                         .map((kf, i) =>  `${kf} = ${fieldDelims[i]}${keyValues[i]}${fieldDelims[i]}`)
                         .join(' AND ');
-    
+
                     uvi.definitionClause = `(${clause})`;
                 });
             }

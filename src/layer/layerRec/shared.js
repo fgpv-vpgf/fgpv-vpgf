@@ -34,19 +34,18 @@ const clientLayerType = {
 function makeSymbologyArray(legendData) {
     return legendData.map(item => {
 
+        // items are promises. they resolve when the svg has been renderer.
+        // after that happens, we update the internal properties of the symbologyItem
         const symbologyItem = {
             svgcode: null,
             name: null,
-            definitionClause: null
+            definitionClause: null,
+            drawPromise: item.then(data => {
+                symbologyItem.svgcode = data.svgcode;
+                symbologyItem.name = data.label || '';
+                symbologyItem.definitionClause = data.definitionClause;
+            })
         };
-
-        // file-based layers don't have symbology labels, default to ''
-        // legend items are promises
-        item.then(data => {
-            symbologyItem.svgcode = data.svgcode;
-            symbologyItem.name = data.label || '';
-            symbologyItem.definitionClause = data.definitionClause;
-        });
 
         return symbologyItem;
     });
