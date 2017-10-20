@@ -246,7 +246,8 @@
                     "reload",
                     "remove",
                     "settings",
-                    "data"
+                    "data",
+                    "styles"
                 ]
             },
             "uniqueItems": true,
@@ -269,6 +270,12 @@
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
                 "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
+                "allStyles": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "All the styles for the layer entry in the WMS"
+                },
+                "currentStyle": { "type": "string", "description": "The current style for the layer entry in the WMS" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" }
             },

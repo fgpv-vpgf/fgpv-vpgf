@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<div class="rv-subsection" ng-if="::(self.checkWMS() && self.checkStylesLength())">
+<div class="rv-subsection" ng-if="::(self.checkWMS() && !self.checkDisabledControls('styles') && self.checkStylesLength())">
     <div class="rv-subheader">
         <h4 translate class="md-subhead">settings.label.styles</h4>
     </div>
@@ -40,7 +40,7 @@
 
         <md-divider class="rv-settings-divider"></md-divider>
         <md-input-container ng-repeat="entry in self.block.mainProxyWrapper.layerConfig.layerEntries" ng-if="::(entry.allStyles.length > 1)">
-            <label>{{ entry.name }}</label>
+            <label>{{ entry.desc }}</label>
             <md-select ng-model="entry.currentStyle">
                 <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
             </md-select>

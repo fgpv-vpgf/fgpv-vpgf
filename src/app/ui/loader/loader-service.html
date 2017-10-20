@@ -174,6 +174,29 @@
                 </div-->
             </md-input-container>
 
+            <div ng-if="self.isWMSLayerWithMultipleStyles()" class="rv-styles-list">
+                <md-button
+                    class="rv-group-body-button rv-button-square style-title"
+                    ng-click="section.isExpanded = !section.isExpanded">
+
+                    {{ 'settings.label.styles' | translate }}
+
+                    <div class="rv-icon-24 rv-group-toggle-icon">
+                        <md-icon
+                            class="md-toggle-icon"
+                            ng-class="{ 'rv-toggled' : section.isExpanded }"
+                            md-svg-src="hardware:keyboard_arrow_down"></md-icon>
+                    </div>
+                </md-button>
+
+                <md-input-container ng-show="section.isExpanded" class="wms-styles" ng-repeat="entry in self.layerSource.config.layerEntries" ng-if="::(entry.allStyles.length > 1)">
+                    <label>{{ entry.desc }}</label>
+                    <md-select ng-model="entry.currentStyle">
+                        <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
             <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
 
         </rv-stepper-item>

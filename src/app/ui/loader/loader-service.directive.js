@@ -34,6 +34,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
     const self = this;
 
     self.closeLoaderService = closeLoaderService;
+    self.isWMSLayerWithMultipleStyles = isWMSLayerWithMultipleStyles;
 
     self.serviceTypes = [
         Geo.Service.Types.FeatureLayer,
@@ -349,6 +350,17 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         } else if (selectedLayers.length >= 0) {
             self.layerSource.config.layerEntries = self.layerSource.layers.slice(0);
         }
+    }
+
+    /**
+     * Checks if any of the selected wms layers have more than one style
+     *
+     * @function isWMSLayerWithMultipleStyles
+     * @return {Boolean} true if at least one with multiple styles
+     */
+    function isWMSLayerWithMultipleStyles() {
+        return self.layerSource && self.layerSource.config.layerType === Geo.Layer.Types.OGC_WMS &&
+            self.layerSource.config.layerEntries.some((entry) => entry.allStyles.length > 1);
     }
 
     /**
