@@ -1,3 +1,5 @@
+import marked from 'marked';
+
 // margin of the legend container
 const LEGEND_MARGIN = {
     t: 20,
@@ -428,9 +430,53 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         blockType: LegendBlock.TYPES.INFO
                     }
                 } else {
+                    const content = entry.layerName || entry.content;
+                    const contentToHtml = marked(content);
+
+                    // if no markdown was parsed, return as text
+                    if (content === contentToHtml) {
+                        return {
+                            name: entry.layerName || entry.content,
+                            items: entry.symbologyStack.stack || [],
+                            blockType: LegendBlock.TYPES.INFO
+                        }
+                    }
+
+                    const canvas = service.canvas || (service.canvas = document.createElement('canvas'));
+                    const ctx = canvas.getContext('2d');
+
+                    // compute the actual width of content HTML if it were a single line
+                    let actualWidth = ctx.measureText(contentToHtml).width;
+                    // reduce width to 300 if actual width exceeds this - this avoids one long line being scaled down to ant man sized text
+                    let correctedWidth = Math.min(300, actualWidth);
+                    // estimate the rendered height
+                    let approxHeight = Math.ceil(actualWidth / correctedWidth) * 25 + 25;
+
+                    // draw an image to the canvas using this XML SVG wrapper
+                    const data = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="${correctedWidth}" height="${approxHeight}">
+                            <foreignObject width="100%" height="100%">
+                                <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Roboto, 'Helvetica Neue', sans-serif;font-size: 14px;font-weight: 400;letter-spacing: 0.010em;line-height: 20px;">${contentToHtml}</div>
+                            </foreignObject>
+                        </svg>
+                    `;
+
+                    const DOMURL = window.URL || window.webkitURL || window;
+                    const img = new Image();
+                    const svg = new Blob([data], {type: 'image/svg+xml'});
+                    const url = DOMURL.createObjectURL(svg);
+
+                    img.onload = function() {
+                      ctx.drawImage(this, 0, 0);
+                      DOMURL.revokeObjectURL(url);
+                    }
+
+                    img.src = url;
+
+                    // we now have a local image and URL that we can wrap in a legend generator supported svg element
                     return {
-                        name: entry.layerName || entry.content,
-                        items: entry.symbologyStack.stack || [],
+                        name: '',
+                        items: [{ name: '', svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${url}"></image></svg>` }].concat(entry.symbologyStack.stack || []),
                         blockType: LegendBlock.TYPES.INFO
                     }
                 }
