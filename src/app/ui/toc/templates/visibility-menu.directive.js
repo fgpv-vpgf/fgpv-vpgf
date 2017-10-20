@@ -120,8 +120,9 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
             return false;
         }
 
-        const mapConfig = configService.getSync.map;
-        if (mapConfig.legendBlocks === null) {
+        const config = configService.getSync;
+
+        if (typeof config === 'undefined' || config.map.legendBlocks === null) {
             return false;
         }
 
