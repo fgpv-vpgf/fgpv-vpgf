@@ -201,7 +201,9 @@ function getLegendUrls(wmsLayer, layerList) {
     const liMap = new Map();
     crawlLayerInfos(wmsLayer.layerInfos, liMap);
 
-    const legendURLs = layerList.map(l => l.styleToURL[l.currentStyle]);
+    const legendURLs = layerList.map(l =>
+        typeof l.styleToURL !== 'undefined' ? l.styleToURL[l.currentStyle] : undefined
+    );
     legendURLs.forEach((entry, index) => {
         if (!entry) {
             legendURLs[index] = liMap.get(layerList[index].id)
