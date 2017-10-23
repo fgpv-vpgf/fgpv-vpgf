@@ -187,15 +187,18 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
                 if (layerRecord.config.toggleSymbology && self.symbology.stack.length > 1) {
+                    const drawPromises = self.symbology.stack.map(s => s.drawPromise);
 
-                    // create a ToggleSymbol instance for each symbol
-                    self.symbology.stack.forEach(s => {
-                        self.toggleList[s.name] = new ToggleSymbol(s);
+                    $q.all(drawPromises).then(() => {
+                        // create a ToggleSymbol instance for each symbol
+                        self.symbology.stack.forEach(s => {
+                            self.toggleList[s.name] = new ToggleSymbol(s);
+                        });
+
+                        // Manually correct symbology boxes so they align with all other layer visibility boxes
+                        const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
+                        element.find('.md-icon-button').not('.rv-symbol-trigger').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
                     });
-
-                    // Manually correct symbology boxes so they align with all other layer visibility boxes
-                    const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
-                    element.find('.md-icon-button').not('.rv-symbol-trigger').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
                 }
             }
         });
