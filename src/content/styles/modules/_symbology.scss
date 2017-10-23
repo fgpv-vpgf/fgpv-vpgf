@@ -12,6 +12,10 @@
         position: relative;
         z-index: 0; // set up new stacking context
 
+        .md-button.md-icon-button {
+            margin: 0 5px;
+        }
+
         .rv-description-container {
             display: none;
             opacity: 0;
@@ -32,6 +36,15 @@
             overflow: hidden;
             box-shadow: $icon-shadow;
 
+            > .md-icon-button {
+                opacity: 0;
+                transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.show {
+                    opacity: 1;
+                }
+            }
+
             .rv-symbol-graphic {
                 flex-shrink: 0;
                 background-color: white;
@@ -51,6 +64,7 @@
 
                 // symbology label
                 span {
+                    width: calc(100% - 40px);
                     display: none;
                     opacity: 0;
                     font-size: 14px;
@@ -77,14 +91,33 @@
             visibility: hidden;
 
             // the following arranges the first three items in a visible stack
-            &:nth-of-type(2) {
+            /* &:nth-of-type(2) {
                 top: 3px;
                 left: 3px;
                 opacity: 1;
                 visibility: visible;
             }
-
             &:nth-of-type(3) {
+                top: 1px;
+                left: 1px;
+                opacity: 1;
+                visibility: visible;
+            }
+            &:last-of-type {
+                top: -1px;
+                left: -1px;
+                opacity: 1;
+                visibility: visible;
+            } */
+
+            &:nth-of-type(2) {
+                top: -1px;
+                left: -1px;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            &:nth-last-of-type(2) {
                 top: 1px;
                 left: 1px;
                 opacity: 1;
@@ -92,8 +125,8 @@
             }
 
             &:last-of-type {
-                top: -1px;
-                left: -1px;
+                top: 3px;
+                left: 3px;
                 opacity: 1;
                 visibility: visible;
             }
@@ -103,7 +136,7 @@
             // button which opens symbology section
             // transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
-            margin: 0;
+            margin: 0 !important;
         }
 
         // renders symbology as a list of icon-name pairs when expanded; symbol items remain 32x32 regardless of their actual size

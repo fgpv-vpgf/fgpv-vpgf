@@ -10,6 +10,22 @@ const RV_DURATION = 0.3;
 const RV_SWIFT_IN_OUT_EASE = Power1;
 
 /**
+ * An instance maintains the state of one toggle symbology checkox. This includes if its checked, and the query to use
+ */
+class ToggleSymbol {
+    constructor(symbol) {
+        this.isSelected = true;
+        this.symbol = symbol;
+    }
+
+    click() { this.isSelected = !this.isSelected; }
+
+    get icon() { return this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"; }
+
+    get query() { return this.isSelected ? this.symbol.definitionClause : null; }
+}
+
+/**
  * @module rvSymbologyStack
  * @memberof app.ui
  * @restrict E
@@ -36,13 +52,14 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
         templateUrl,
         scope: {
             symbology: '=',
+            block: '=',
             description: '=?',
             container: '=?'
         },
@@ -62,9 +79,67 @@ function rvSymbologyStack($q, Geo, animationService) {
         // if render style is not specified, symbology stack will not be interactive
         // self.isInteractive = typeof self.symbology.renderStyle !== 'undefined';
         self.isExpanded = false; // holds the state of symbology section
+        self.showSymbologyToggle = false;
 
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
+
+        // returns true if all toggle symbology checkboxes are checked, false otherwise
+        function allSymbolsVisible() {
+            const toggleListKeys = Object.keys(self.toggleList);
+
+            return toggleListKeys
+                .filter(key => self.toggleList[key].isSelected)
+                .length === toggleListKeys.length;
+        }
+
+        // returns true if no toggle symbology checkboxes are checked, false otherwise
+        function noSymbolsVisible() {
+            return Object.keys(self.toggleList)
+                .filter(key => self.toggleList[key].isSelected)
+                .length === 0;
+        }
+
+        // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
+        self.toggleList = {};
+
+        let layerRecord;
+
+        // opening details panel creates a symbology stack, but we don't do symbology toggling there so ignore error
+        try {
+            layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+        } catch (e) {
+            // do nothing
+        }
+
+        self.onToggleClick = name => {
+            self.toggleList[name].click();
+
+            let defClause;
+
+            // when all symbols are checked, clearing the query is the same as trying to match all of them
+            if (allSymbolsVisible()) {
+                defClause = undefined;
+            // when no symbols are checked, make a query that is never true so no symbols are shown
+            } else if (noSymbolsVisible()) {
+                defClause = '1=2'
+            //otherwise proceed with joining geoApi definitionClauses
+            } else {
+                defClause = Object.keys(self.toggleList)
+                    .map(key => self.toggleList[key].query)
+                    .filter(q => q !== null)
+                    .join(' OR ');
+            }
+
+            // apply to block so changes reflect on map
+            self.block.definitionQuery = defClause;
+
+            // save `definitionClause` on layer
+            layerRecord.definitionClause = defClause;
+
+            // trigger event which table uses to update
+            events.$broadcast(events.rvLayerDefinitionClauseChanged);
+        };
 
         const ref = {
             isReady: false,
@@ -86,6 +161,17 @@ function rvSymbologyStack($q, Geo, animationService) {
             maxItemWidth: 350
         };
 
+        scope.$watch('self.showSymbologyToggle', value => {
+            if (value) {
+                element.find('.md-icon-button').addClass('show');
+                $.link(element.find('.md-icon-button'));
+                element.find('button').not('.rv-symbol-trigger').removeAttr('nofocus');
+            } else {
+                element.find('.md-icon-button').removeClass('show');
+                element.find('button').not('.rv-symbol-trigger').attr('nofocus', true);
+            }
+        });
+
         // description persist, so need to store reference only once
         ref.descriptionItem = element.find(RV_DESCRIPTION_ITEM);
         ref.descriptionItem.css('width', ref.containerWidth)
@@ -97,6 +183,22 @@ function rvSymbologyStack($q, Geo, animationService) {
                 // collapse the stack when underlying collection of the symbology changes as the expanded ui stack might initialy had a different number of items
                 if (self.isExpanded) {
                     self.expandSymbology(false);
+                }
+
+                // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
+                if (layerRecord.config.toggleSymbology && self.symbology.stack.length > 1) {
+                    const drawPromises = self.symbology.stack.map(s => s.drawPromise);
+
+                    $q.all(drawPromises).then(() => {
+                        // create a ToggleSymbol instance for each symbol
+                        self.symbology.stack.forEach(s => {
+                            self.toggleList[s.name] = new ToggleSymbol(s);
+                        });
+
+                        // Manually correct symbology boxes so they align with all other layer visibility boxes
+                        const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
+                        element.find('.md-icon-button').not('.rv-symbol-trigger').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
+                    });
                 }
             }
         });
@@ -128,6 +230,7 @@ function rvSymbologyStack($q, Geo, animationService) {
             } else {
                 // collapse symbology items and forward play wiggle
                 ref.expandTimeline.reverse();
+                self.showSymbologyToggle = false;
                 ref.fanOutTimeline.play();
             }
 
@@ -191,18 +294,10 @@ function rvSymbologyStack($q, Geo, animationService) {
                     ...ref.symbolItems.map(symbolItem =>
                         Math.max(
                             symbolItem.image.find('svg')[0].viewBox.baseVal.width,
-
-                            // TODO: need to use current font size
-                            // need to account for letter spacing (use 10 for now)
-                            // 32 accounts for paddding, need to get that from styles as well
-                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto') + 32 + 10
+                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
                         ))),
                 ref.containerWidth
             );
-
-            // set label width to maximum which was calculated
-            ref.symbolItems.forEach(symbolItem =>
-                symbolItem.label.css('width', ref.maxItemWidth));
 
             // console.log('ref.maxItemWidth', ref.maxItemWidth);
 
@@ -215,8 +310,9 @@ function rvSymbologyStack($q, Geo, animationService) {
         function makeExpandTimeline() {
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { self.isExpanded = true; },
-                onReverseComplete: () => { self.isExpanded = false; }
+                onStart: () => { self.isExpanded = true; scope.$digest(); },
+                onComplete: () => { self.showSymbologyToggle = true; scope.$digest(); },
+                onReverseComplete: () => { self.isExpanded = false; scope.$digest(); }
             });
 
             // in pixels
@@ -259,7 +355,7 @@ function rvSymbologyStack($q, Geo, animationService) {
             };
 
             // loop over ref.symbolItems, generate timeline for each one, increase total height
-            ref.symbolItems.reverse().forEach((symbolItem, index) => {
+            ref.symbolItems.forEach((symbolItem, index) => {
                 const heightIncrease = legendItemTLgenerator[self.symbology.renderStyle](timeline, symbolItem, totalHeight,
                     index === ref.symbolItems.length - 1);
 

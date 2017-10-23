@@ -20,7 +20,7 @@ const focusSelector = [
     'md-switch:not([disabled])',
     'md-slider:not([disabled])',
     'textarea:not([disabled])',
-    'button:not([disabled])',
+    'button:not([disabled]):not([nofocus])',
     '.rv-esri-map',
     '[tabindex=-2]',
     '[tabindex=-3]'
@@ -331,7 +331,8 @@ function elemIsFocusable(index, element) {
         el.css('opacity') !== 0 &&
         // avoid setting focus on closing menu items
         !el.parents().hasClass('md-leave') &&
-        !el.parents().hasClass('md-leave-add');
+        !el.parents().hasClass('md-leave-add') &&
+        !el.is('[nofocus]');
 }
 
 /**

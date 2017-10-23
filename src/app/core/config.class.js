@@ -547,6 +547,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
             this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
+            this._toggleSymbology = typeof source.toggleSymbology === 'boolean' ? source.toggleSymbology : true;
 
             // remove metadata control if no metadata url is specified after applying defaults
             if (!source.metadataUrl) {
@@ -569,6 +570,7 @@ function ConfigObjectFactory(Geo, gapiService, common) {
 
         get initialFilteredQuery() { return this._initialFilteredQuery; }
         set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
+        get toggleSymbology() { return this._toggleSymbology; }
 
         _hovertipEnabled = false;
         get hovertipEnabled () {        return this._hovertipEnabled; }
