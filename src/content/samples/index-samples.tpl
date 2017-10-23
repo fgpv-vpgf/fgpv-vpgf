@@ -145,6 +145,7 @@
                 <option value="config/config-sample-48.json">48. failure testing</option>
                 <option value="config/config-sample-49.json">49. failure testing with custom url</option>
                 <option value="config/config-sample-50.json">50. Layer entry with description beneath layer title</option>
+                <option value="config/config-sample-51.json">51. Physical layer order must match config layer order</option>
             </select>
         </div>
 
