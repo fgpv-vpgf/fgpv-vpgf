@@ -15,6 +15,7 @@ typings/
 tsd.json
 .vagrant/
 apidocs/
+.vscode/
 
 # VIM files
 *~
