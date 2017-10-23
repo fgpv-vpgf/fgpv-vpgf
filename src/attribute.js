@@ -348,7 +348,8 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                         layerData.renderer = geoApi.symbology.cleanRenderer(serviceResult.drawingInfo.renderer,
                             serviceResult.fields);
 
-                        layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx);
+                        layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx,
+                            serviceResult.fields);
                         geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
 
                         // temporarily store things for delayed attributes

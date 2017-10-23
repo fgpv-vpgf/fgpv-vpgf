@@ -20,6 +20,92 @@ const CONTAINER_CENTER = CONTAINER_SIZE / 2;
 const CONTENT_PADDING = (CONTAINER_SIZE - CONTENT_SIZE) / 2;
 
 /**
+ * Will add extra properties to a renderer to support filtering by symbol.
+ * New property .definitionClause contains sql where fragment valid for symbol
+ * for app on each renderer item.
+ *
+ * @param {Object} renderer an ESRI renderer object in server JSON form. Param is modified in place
+ * @param  {Array} fields Optional. Array of field definitions for the layer the renderer belongs to. If missing, all fields are assumed as String
+ */
+function filterifyRenderer(renderer, fields) {
+
+    // worker function. determines if a field value should be wrapped in
+    // any character and returns the character. E.g. string would return ', numbers return empty string.
+    const getFieldDelimiter = fieldName => {
+
+        let delim = `'`;
+
+        // no field definition means we assume strings.
+        if (!fields || fields.length === 0) {
+            return delim;
+        }
+
+        // attempt to find our field, and a data type for it.
+        const f = fields.find(ff => ff.name === fieldName);
+        if (f && f.type && f.type !== 'esriFieldTypeString') {
+            // we found a field, with a type on it, but it's not a string. remove the delimiters
+            delim = '';
+        }
+
+        return delim;
+    };
+
+    switch (renderer.type) {
+        case SIMPLE:
+            renderer.definitionClause = '1=1';
+            break;
+
+        case UNIQUE_VALUE:
+            if (renderer.bypassDefinitionClause) {
+                // we are working with a renderer that we generated from a server legend.
+                // just set dumb basic things.
+                renderer.uniqueValueInfos.forEach(uvi => {
+                    uvi.definitionClause = '1=1';
+                });
+            } else {
+                const delim = renderer.fieldDelimiter || ', ';
+                const keyFields = ['field1', 'field2', 'field3']
+                    .map(fn => renderer[fn]) // extract field names
+                    .filter(fn => fn);       // remove any undefined names
+
+                const fieldDelims = keyFields.map(fn => getFieldDelimiter(fn));
+
+                renderer.uniqueValueInfos.forEach(uvi => {
+                    // unpack .value into array
+                    const keyValues = uvi.value.split(delim);
+
+                    // convert fields/values into sql clause
+                    const clause = keyFields
+                        .map((kf, i) =>  `${kf} = ${fieldDelims[i]}${keyValues[i]}${fieldDelims[i]}`)
+                        .join(' AND ');
+
+                    uvi.definitionClause = `(${clause})`;
+                });
+            }
+
+            break;
+        case CLASS_BREAKS:
+
+            const f = renderer.field;
+            let lastMinimum = renderer.minValue;
+
+            // figure out ranges of each break.
+            // minimum is optional, so we have to keep track of the previous max as fallback
+            renderer.classBreakInfos.forEach(cbi => {
+                const minval = isNaN(cbi.classMinValue) ? lastMinimum : cbi.classMinValue;
+                cbi.definitionClause = `(${f} > ${minval} AND ${f} <= ${cbi.classMaxValue})`;
+                lastMinimum = cbi.classMaxValue;
+            });
+
+            break;
+        default:
+
+            // Renderer we dont support
+            console.warn('encountered unsupported renderer type: ' + renderer.type);
+    }
+}
+
+/**
  * Will add extra properties to a renderer to support images.
  * New properties .svgcode and .defaultsvgcode contains image source
  * for app on each renderer item.
@@ -415,14 +501,15 @@ function generatePlaceholderSymbology(name, colour = '#000') {
 }
 
 /**
-* Generate a legend item for an ESRI symbol.
-* @private
-* @param  {Object} symbol an ESRI symbol object in server format
-* @param  {String} label label of the legend item
-* @param  {Object} window reference to the browser window
-* @return {Object} a legend object populated with the symbol and label
-*/
-function symbolToLegend(symbol, label, window) {
+ * Generate a legend item for an ESRI symbol.
+ * @private
+ * @param  {Object} symbol an ESRI symbol object in server format
+ * @param  {String} label label of the legend item
+ * @param  {String} definitionClause sql clause to filter on this legend item
+ * @param  {Object} window reference to the browser window
+ * @return {Object} a legend object populated with the symbol and label
+ */
+function symbolToLegend(symbol, label, definitionClause, window) {
     // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
     const container = window.document.createElement('div');
     container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
@@ -693,7 +780,7 @@ function symbolToLegend(symbol, label, window) {
 
             // remove element from the page
             window.document.body.removeChild(container);
-            return { label, svgcode: draw.svg() };
+            return { label, definitionClause, svgcode: draw.svg() };
         }).catch(error => console.log(error));
 
     /**
@@ -785,36 +872,65 @@ function scrapeListRenderer(renderer, childList, window) {
     // entry.
 
     const preLegend = childList.map(child => {
-        return { symbol: child.symbol, label: child.label };
+        return { symbol: child.symbol, label: child.label,
+            definitionClause: child.definitionClause };
     });
 
     if (renderer.defaultSymbol) {
+        // calculate fancy sql clause to select "everything else"
+        const elseClauseGuts = preLegend
+            .map(pl => pl.definitionClause)
+            .join(' OR ');
+
+        const elseClause = `(NOT (${elseClauseGuts})`;
+
         // class breaks dont have default label
         // TODO perhaps put in a default of "Other", would need to be in proper language
-        preLegend.push({ symbol: renderer.defaultSymbol, label: renderer.defaultLabel || '' });
+        preLegend.push({
+            symbol: renderer.defaultSymbol,
+            definitionClause: elseClause,
+            label: renderer.defaultLabel || ''
+        });
     }
 
     // filter out duplicate lables, then convert remaining things to legend items
     return preLegend
         .filter((item, index, inputArray) => {
-           return index === inputArray.findIndex(dupItem => {
+            const firstFindIdx = inputArray.findIndex(dupItem => {
                 return item.label === dupItem.label;
-           });
+            });
+
+            if (index === firstFindIdx) {
+                // first time encountering the label. done thanks
+                return true;
+            } else {
+                // not first time encountering the label.
+                // drop from legend, but tack definition clause onto first one
+                const firstItem = inputArray[firstFindIdx];
+                firstItem.isCompound = true;
+                firstItem.definitionClause += ` OR ${item.definitionClause}`;
+                return false;
+            }
+
         })
         .map(item => {
-            return symbolToLegend(item.symbol, item.label, window);
+            if (item.isCompound) {
+                item.definitionClause = `(${item.definitionClause})`; // wrap compound expression in brackets
+            }
+            return symbolToLegend(item.symbol, item.label, item.definitionClause, window);
         });
 }
 
 function buildRendererToLegend(window) {
     /**
-    * Generate a legend object based on an ESRI renderer.
-    * @private
-    * @param  {Object} renderer an ESRI renderer object in server JSON form
-    * @param  {Integer} index the layer index of this renderer
-    * @return {Object} an object matching the form of an ESRI REST API legend
-    */
-    return (renderer, index) => {
+     * Generate a legend object based on an ESRI renderer.
+     * @private
+     * @param  {Object} renderer an ESRI renderer object in server JSON form
+     * @param  {Integer} index the layer index of this renderer
+     * @param  {Array} fields Optional. Array of field definitions for the layer the renderer belongs to. If missing, all fields are assumed as String
+     * @return {Object} an object matching the form of an ESRI REST API legend
+     */
+    return (renderer, index, fields) => {
         // SVG Legend symbology uses pixels instead of points from ArcGIS Server, thus we need
         // to multply it by a factor to correct the values.  96 DPI from ArcGIS Server is assumed.
         const ptFactor = 1.33333; // points to pixel factor
@@ -827,10 +943,14 @@ function buildRendererToLegend(window) {
             }]
         };
 
+        // calculate symbology filter logic
+        filterifyRenderer(renderer, fields);
+
         switch (renderer.type) {
             case SIMPLE:
                 renderer.symbol.size = Math.round(renderer.symbol.size * ptFactor);
-                legend.layers[0].legend.push(symbolToLegend(renderer.symbol, renderer.label, window));
+                legend.layers[0].legend.push(symbolToLegend(renderer.symbol,
+                    renderer.label, renderer.definitionClause, window));
                 break;
 
             case UNIQUE_VALUE:
@@ -919,6 +1039,7 @@ function mapServerLegendToRenderer(serverLegend, layerIndex) {
     // make the mock renderer
     return {
         type: 'uniqueValue',
+        bypassDefinitionClause: true,
         uniqueValueInfos: layerLegend.legend.map(ll => {
             return {
                 label: ll.label,
@@ -960,6 +1081,7 @@ function mapServerLegendToRendererAll(serverLegend) {
 
     return {
         type: 'uniqueValue',
+        bypassDefinitionClause: true,
         uniqueValueInfos: [].concat(...layerRenders)
     };
 }
@@ -1010,6 +1132,7 @@ module.exports = (esriBundle, geoApi, window) => {
         listToImageSymbology: list => _listToSymbology(renderSymbologyImage, list),
         enhanceRenderer,
         cleanRenderer,
+        filterifyRenderer,
         mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
     };
 };
