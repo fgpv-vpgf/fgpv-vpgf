@@ -59,7 +59,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
 
-                const apiMap = new Map($rootElement);
+                const apiMap = new Map($($rootElement));
                 loadExtensions(apiMap);
                 window.RZ.map_added.next(apiMap); // push api map instance through the Observable stream
         });
