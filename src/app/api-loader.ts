@@ -1,7 +1,8 @@
-import Map from 'api/map';
-import * as EVENT from 'api/event';
+import Map from 'api/Map';
 import { Subject } from 'rxjs/Rx';
 import * as $ from "jquery";
+
+const mapInstances: Array<Map> = [];
 
 class RZ {
     /** Emits an instance of the map class whenever a new map is added to the viewer. */
@@ -12,10 +13,13 @@ class RZ {
     }
     /** Returns the map class */
     get Map(): typeof Map { return Map; }
+    get mapInstances(): Array<Map> { return mapInstances; }
 }
 
+const RZInstance = new RZ();
 interface EnhancedWindow extends Window {
     RZ: RZ
 };
 
-(<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : new RZ();
+(<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : RZInstance;
+RZInstance.map_added.subscribe(mi => mapInstances.push(mi));
