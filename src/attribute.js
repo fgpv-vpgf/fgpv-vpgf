@@ -309,8 +309,8 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                     // properties for all endpoints
                     layerData.layerType = serviceResult.type;
                     layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
-                    layerData.minScale = serviceResult.minScale;
-                    layerData.maxScale = serviceResult.maxScale;
+                    layerData.minScale = serviceResult.effectiveMinScale || serviceResult.minScale;
+                    layerData.maxScale = serviceResult.effectiveMaxScale || serviceResult.maxScale;
                     layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
                     layerData.extent = serviceResult.extent;
 

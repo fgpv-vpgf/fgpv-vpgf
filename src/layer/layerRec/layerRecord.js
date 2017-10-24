@@ -285,8 +285,6 @@ class LayerRecord extends root.Root {
      * @returns {Object} a level of detail (lod) object for the appropriate scale to zoom to
      */
     findZoomScale (lods, scaleSet, zoomIn = true) {
-        // TODO rename function to getZoomScale?
-        // TODO determine if this function ever gets called when a layer is on-scale visible
         // TODO optional. add quick check...if our minScale/maxScale we are comparing against is 0,
         //      then no need to search array, just take first item.
 
@@ -297,8 +295,8 @@ class LayerRecord extends root.Root {
         const scaleLod = modLods.find(currentLod => zoomIn ? currentLod.scale < scaleSet.minScale :
                 currentLod.scale > scaleSet.maxScale);
 
-        // if we did not encounter a boundary go to first
-        return scaleLod || modLods[0];
+        // if we did not encounter a boundary go to last
+        return scaleLod || modLods[modLods.length - 1];
     }
 
     /**
