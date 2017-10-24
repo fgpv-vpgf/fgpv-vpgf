@@ -14,4 +14,8 @@ class RZ {
     get Map(): typeof Map { return Map; }
 }
 
-(<any>window).RZ = (<any>window).RZ ? (<any>window).RZ : new RZ();
+interface EnhancedWindow extends Window {
+    RZ: RZ
+};
+
+(<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : new RZ();

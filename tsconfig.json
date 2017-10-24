@@ -5,6 +5,9 @@
         "target": "ES2016",
         "paths": {
             "api/*": ["../api/src/*"]
-          }
+          },
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true
     }
 }

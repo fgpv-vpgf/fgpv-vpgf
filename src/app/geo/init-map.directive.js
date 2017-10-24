@@ -70,7 +70,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
          * @param {Object} apiMap the api map instance
          */
         function loadExtensions(apiMap) {
-            const rvextensions = el.closest('[is=rv-map]').attr('rv-extensions');
+            const rvextensions = $rootElement.attr('rv-extensions');
             const extensionList = rvextensions ? rvextensions.split(',') : [];
 
             extensionList.forEach(url => {

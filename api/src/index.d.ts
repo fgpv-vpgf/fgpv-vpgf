@@ -191,9 +191,9 @@ export declare module RV {
     export class MVCArray<A> extends MVCObject {
         constructor(array?: Array<A>);
         /** Removes all elements from the array. */
-        clear();
+        clear(): void;
         /** Iterate over each element, calling the provided callback. The callback is called for each element like: callback(element, index). */
-        forEach(callback: (element: A, index: number) => void);
+        forEach(callback: (element: A, index: number) => void): void;
         /** Returns a reference to the underlying Array. Warning: if the Array is mutated, no events will be fired by this object. */
         getArray(): Array<A>;
         /** Returns the element at the specified index. */
@@ -201,7 +201,7 @@ export declare module RV {
         /** Returns the number of elements in this array. */
         getLength(): number;
         /** Inserts an element at the specified index. */
-        insertAt(i: number, elem: A);
+        insertAt(i: number, elem: A): void;
         /** Removes the last element of the array and returns that element. */
         pop(): A;
         /** Adds one element to the end of the array and returns the new length of the array. */
@@ -209,7 +209,7 @@ export declare module RV {
         /** Removes an element from the specified index. */
         removeAt(i:number): A;
         /** Sets an element at the specified index. */
-        setAt(i:number, elem: A);
+        setAt(i:number, elem: A): void;
 
         /**
          * This event is fired when insertAt() is called. The event passes the index that was passed to insertAt().
@@ -305,7 +305,7 @@ export declare module RV {
             /** Returns y in deciamal degrees. */
             y(): number;
             /** Returns the longitude in degrees. */
-            x();
+            x(): number;
             /** Converts to JSON representation. This function is intended to be used via JSON.stringify. */
             toJSON(): XYLiteral;
             /** Converts to string representation. */
@@ -327,7 +327,7 @@ export declare module RV {
         export class BaseGeometry {
             constructor(id: string);
             /** Repeatedly invokes the given function, passing a point from the geometry to the function on each invocation. */
-            forEachXY(callback: (xy: XY) => void)
+            forEachXY(callback: (xy: XY) => void): void;
             /** Returns the type of the geometry object. Possibilities are "Point", "MultiPoint", "LineString", or "MultiLineString". */
             getType(): string;
             /** Returns the geometry id. */
@@ -397,7 +397,7 @@ export declare module RV {
         }
 
         export class Annotation extends BaseGeometry {
-            constructor(id: string | number, number, xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral, text: string);
+            constructor(id: string | number, xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral, text: string);
             /** Returns the string "Annotation". */
             getType(): string;
         }
@@ -1040,13 +1040,13 @@ export declare module RV {
         /** Like addListener, but the handler removes itself after handling the first event. */
         export function addListenerOnce(instance:Object, eventName:string, handler:Function): MapsEventListener;
         /** Removes all listeners for all events for the given instance. */
-        export function clearInstanceListeners(instance: Object);
+        export function clearInstanceListeners(instance: Object): void;
         /** Removes all listeners for the given event for the given instance. */
-        export function clearListeners(instance: Object, eventName: string);
+        export function clearListeners(instance: Object, eventName: string): void;
         /** Removes the given listener, which should have been returned by addListener above. Equivalent to calling listener.remove(). */
-        export function removeListener(listener: MapsEventListener);
+        export function removeListener(listener: MapsEventListener): void;
         /** Triggers the given event. All arguments after eventName are passed as arguments to the listeners. */
-        export function trigger(instance: Object, eventName: string, ...var_args: Array<any>);
+        export function trigger(instance: Object, eventName: string, ...var_args: Array<any>): void;
 
         export class MouseEvent extends StoppableEvent {
             /** The y/x that was below the cursor when the event occurred. */

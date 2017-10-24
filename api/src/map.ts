@@ -5,6 +5,6 @@ export default class Map {
 
     constructor(mapDiv: HTMLElement, opts?: Object | JSON | string) {
         this.mapDiv = mapDiv;
-        this.opts = opts;
+        this.opts = opts || {};
     }
 }
