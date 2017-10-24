@@ -14,7 +14,7 @@ FOOTER="
 "
 
 makeLi () {
-  echo "$2<li><a href=\"$1/\">$1</a></li>"
+  echo "$2<li><a href=\"$1/\">$1</a> [<a href=\"$1/api/\">API DOCS</a>]</li>"
 }
 
 makeUl () {
