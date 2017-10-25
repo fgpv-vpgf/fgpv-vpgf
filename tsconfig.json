@@ -1,5 +1,13 @@
 {
     "compilerOptions": {
-        "allowJs": true
+        "allowJs": true,
+        "baseUrl": "./node_modules",
+        "target": "ES2016",
+        "paths": {
+            "api/*": ["../api/src/*"]
+          },
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true
     }
 }

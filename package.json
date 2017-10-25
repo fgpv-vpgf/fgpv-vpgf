@@ -36,11 +36,13 @@
     "moment-timezone": "0.5.13",
     "rcolor": "1.0.1",
     "remove-markdown": "^0.2.2",
+    "rxjs": "^5.5.0",
     "screenfull": "3.3.1",
     "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js",
     "text-encoding": "0.6.4"
   },
   "devDependencies": {
+    "@types/jquery": "^3.2.15",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
     "babel-loader": "7.1.1",
