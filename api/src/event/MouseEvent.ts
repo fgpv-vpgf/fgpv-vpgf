@@ -16,8 +16,13 @@ export class MouseEvent {
         } catch (e) {
             this.xy = null;
         }
+<<<<<<< HEAD
         this.screenY = event.screenY;
         this.screenX = event.screenX;
+=======
+        this.pageY = event.pageY;
+        this.pageX = event.pageX;
+>>>>>>> Enable all map instance events
     }
 }
 
