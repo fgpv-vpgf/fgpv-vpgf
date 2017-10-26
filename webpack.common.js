@@ -11,6 +11,11 @@ const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const WebpackShellPlugin    = require('webpack-shell-plugin');
 
+const babelPresets = {
+    presets: ['es2015', 'stage-2'],
+    cacheDirectory: true
+}
+
 module.exports = function (env) {
 
     const geoPath = env.geoLocal ?
@@ -39,14 +44,19 @@ module.exports = function (env) {
                         loader: 'ng-annotate-loader'
                     }, {
                         loader: 'babel-loader',
-                        options: { presets: ['es2015', 'stage-2'], cacheDirectory: true }
+                        options: babelPresets
                     }, {
                         loader: 'eslint-loader'
                     }]
                 },
                 {
                     test: /\.ts$/,
-                    loader: 'ts-loader'
+                    use: [{
+                        loader: 'babel-loader',
+                        options: babelPresets
+                    }, {
+                        loader: 'ts-loader'
+                    }]
                 },
                 {
                     test: /\.css$/,
