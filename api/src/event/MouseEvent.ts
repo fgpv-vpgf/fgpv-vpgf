@@ -3,16 +3,21 @@ import XY from 'api/geometry/XY';
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {
     /** Geographic point information */
-    xy: XY;
+    xy: XY | null;
     /** The number of pixels from the top of the viewport. */
-    pageY: number;
+    screenY: number;
     /** The number of pixels from the left edge of the viewport. */
-    pageX: number;
+    screenX: number;
 
     constructor(event: esriMouseEvent) {
-        this.xy = new XY(event.mapPoint.y, event.mapPoint.x);
-        this.pageY = event.pageY;
-        this.pageX = event.pageX;
+        // mapPoint is specific to esri and is not available for all event types
+        try {
+            this.xy = new XY(event.mapPoint.y, event.mapPoint.x);
+        } catch (e) {
+            this.xy = null;
+        }
+        this.screenY = event.screenY;
+        this.screenX = event.screenX;
     }
 }
 
