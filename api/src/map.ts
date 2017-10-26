@@ -3,8 +3,10 @@ import * as $ from "jquery";
 import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
 
 export default class Map {
+    /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
-    opts: Object | JSON | string;
+
+    private opts: Object | JSON | string;
 
     /**
      * Emits when a user clicks anywhere on the map.
@@ -43,10 +45,24 @@ export default class Map {
     /**
      * Emits whenever a user lifts a previous down left click.
      *
-     * It **will emit** for mouse lifts **on overlaying panels or map controls**.
+     * It **does not** emit for mouse lifts over overlaying panels or map controls.
      * @event mouseUp
     */
     mouseUp: Observable<MouseEvent>;
+
+    /**
+     * Emits whenever the map zoom level changes.
+     * @event zoomChanged
+    */
+    zoomChanged: Observable<number>;
+
+    /**
+     * Emits whenever the map center has changed.
+     *
+     * @todo does not yet work when panning with your mouse. Either hook into ESRI event or confer a center change if there is a mouse down and movement. TBD
+     * @event centerChanged
+    */
+    centerChanged: Observable<MouseEvent>;
 
     /**
      * Creates a new map inside of the given HTML container, which is typically a DIV element. If opts is a string then it is considered to be
@@ -56,16 +72,16 @@ export default class Map {
         this.mapDiv = $(mapDiv);
         this.opts = opts || {};
 
-        const clickStream = Observable.fromEvent(this.mapDiv.find('.rv-esri-map')[0], 'click');
-
-        this.click = generateMouseClickObservable(clickStream, true);
-        this.doubleClick = generateMouseClickObservable(clickStream, false);
+        initObservables.apply(this);
     }
 }
 
-function generateMouseClickObservable(clickStream: Observable<{}>, singleClick: boolean) {
-    return clickStream
-        .buffer(clickStream.debounceTime(250))
-        .filter(list => list.length === (singleClick ? 1 : 2))
-        .map(evt => new MouseEvent(<esriMouseEvent>evt[0]));
+function initObservables(this: Map) {
+    const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
+
+    this.click = Observable.fromEvent(esriMapElement, 'click').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.mouseUp = Observable.fromEvent(esriMapElement, 'mouseup').map(evt => new MouseEvent(<esriMouseEvent>evt));
 }
