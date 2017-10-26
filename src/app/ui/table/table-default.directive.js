@@ -130,16 +130,18 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 onTableProcess
             };
 
+            self.noData = false;
+
             // TODO: move hardcoded stuff in consts
             containerNode = containerNode || el.find('.rv-table-data-container');
             self.destroyTable();
 
-            const requester = stateManager.display.table.requester;
+            const { requester, requestId } = stateManager.display.table;
             const displayData = stateManager.display.table.data;
 
             // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
             const forcedDelay = $q(fulfill =>
-                $timeout(() => fulfill(), 100)
+                $timeout(() => fulfill(requestId), 100)
             );
 
             // create a new table node
@@ -166,23 +168,25 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             const order = initColumns();
 
             // define pre-deformatting function for date columns
-            $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g,''));
+            $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g, ''));
 
             // Reset datatable to initial state if all sorts are removed
             // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2119
             // Modified from: https://datatables.net/plug-ins/api/fnSortNeutral
-            $.fn.dataTable.Api.register( 'fnSortNeutral()', oSettings => {
+            $.fn.dataTable.Api.register('fnSortNeutral()', oSettings => {
                 /* Remove any current sorting */
                 oSettings.aaSorting = [];
 
                 /* Sort display arrays so we get them in numerical order */
-                oSettings.aiDisplay.sort((x,y) => x-y);
+                oSettings.aiDisplay.sort((x, y) => x - y);
 
-                oSettings.aiDisplayMaster.sort((x,y) => x-y);
+                oSettings.aiDisplayMaster.sort((x, y) => x - y);
 
                 /* Redraw */
                 oSettings.oApi._fnReDraw(oSettings);
             });
+
+            $.fn.dataTable.ext.search = [];
 
             self.table = tableNode
                 .on('init.dt', callbacks.onTableInit)
@@ -328,7 +332,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                                 // convert each date cell to a better format
                                 displayData.rows.forEach(r => { r[field.name] = $filter('dateTimeZone')(r[field.name]) });
                                 const width = getColumnWidth(column.title, 0, 400, 375);
-                                column.width =  `${width}px`;
+                                column.width = `${width}px`;
                                 column.type = 'rv-date';
                             } else {
                                 const width = getColumnWidth(column.title, 0, 250, 120);
@@ -504,7 +508,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 if (config.columns && config.columns.length > 0) {
                     // create an array for columns (add symbol and interactive column first)
                     const columns = [displayData.columns.find(column => column.data === 'rvSymbol'),
-                        displayData.columns.find(column => column.data === 'rvInteractive')];
+                    displayData.columns.find(column => column.data === 'rvInteractive')];
 
                     config.columns.forEach(configCol => {
                         // find the data column who match the one in the config file
@@ -598,7 +602,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
              */
             function onTableInit() {
                 // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
-                forcedDelay.then(() => {
+                forcedDelay.then(requestId => {
+                    // do not init table with older request ids
+                    if (requestId !== stateManager.display.table.requestId) {
+                        return;
+                    }
+
                     if (self.tableBody) {
                         // TODO: these ought to be moved to a helper function in displayManager
                         stateManager.display.table.isLoading = false;
@@ -678,7 +687,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         const row = item.attr('row'); // get the row number of the button
 
                         const template = ROW_BUTTON_TEMPLATE(row, button.disabledArg);
-                        const rowButtonDirective =  $compile(template)(button.scope);
+                        const rowButtonDirective = $compile(template)(button.scope);
 
                         item.replaceWith(rowButtonDirective);
                     });
@@ -873,7 +882,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 const interactiveColumnExist = displayData.columns.find(column =>
                     column.data === 'rvInteractive');
 
-                interactiveColumnExist.render =  (data, type, row, meta) => {
+                interactiveColumnExist.render = (data, type, row, meta) => {
                     const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS).map(button =>
                         `<${button.name} row="${meta.row}"></${button.name}>`)
                         .join('');
@@ -900,7 +909,10 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // reset index and reference to tablebody for keytable navigation
                 index = undefined;
                 self.tableBody = undefined;
-                self.onResizeDelistener();
+
+                if (self.onResizeDelistener) {
+                    self.onResizeDelistener();
+                }
             }
         }
     }

@@ -8,7 +8,9 @@
         is-loading="self.display.isLoading"
         hide-when-loading="false"
         ng-class="{ 'rv-transparent': self.tableService.isSettingOpen }"
-        ng-if="!self.noData">
+        ng-show="!self.noData">
+
+        <!-- ng-show must be used here; if ng-if is used, datatable plugin refuses to render the table after `self.noData` cycles through `false` -->
 
         <div class="rv-table-splash rv-hide-animate"
             ng-if="!self.display.requester.error"
@@ -38,7 +40,7 @@
     </rv-content-pane>
 
     <rv-content-pane
-        ng-if="self.noData"
+        ng-show="self.noData"
         close-panel="self.closePanel()"
         title-style="title"
         title-value="{{ 'filter.title' | translate }} {{ self.title }}">

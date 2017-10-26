@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "bbox"
-    ]
+        "bbox",
+        "hardcoded"
+    ],
+    "editor.formatOnSave": false
 }
