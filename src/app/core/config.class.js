@@ -1,4 +1,6 @@
 import screenfull from 'screenfull';
+import { Observable } from 'rxjs/Rx';
+import XY from 'api/geometry/XY';
 
 /**
  * @module ConfigObject
@@ -25,7 +27,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common) {
+function ConfigObjectFactory(Geo, gapiService, common, events) {
 
     const ref = {
         legendElementCounter: 0,
@@ -1858,6 +1860,26 @@ function ConfigObjectFactory(Geo, gapiService, common) {
         set isLoaded (value) {          this._isLoaded = value; }
 
         storeMapReference(instance) {
+
+            // Begin hooking API into instance functions -------------------------------
+            events.$on(events.rvApiMapAdded, (_, mapInstance) => {
+                mapInstance.zoomChanged = Observable.create(subscriber => {
+                    const originalSetZoom = instance.setZoom;
+                    instance.setZoom = function() {
+                        subscriber.next(arguments[0]);
+                        return originalSetZoom.apply(this, arguments);
+                    }
+                });
+
+                mapInstance.centerChanged = Observable.create(subscriber => {
+                    const originalCenterAt = instance.centerAt;
+                    instance.centerAt = function() {
+                        subscriber.next(new XY(arguments[0].y, arguments[0].x));
+                        return originalCenterAt.apply(this, arguments);
+                    }
+                });
+            });
+
             this._instance = instance;
             this._isLoaded = false;
         }

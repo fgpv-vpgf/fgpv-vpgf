@@ -68,7 +68,9 @@ function events($rootScope) {
         rvTableReady: 'rvTableReady',
         rvFeatureMouseOver: 'rvFeatureMouseOver',
 
-        rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged'
+        rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
+
+        rvApiMapAdded: 'rvApiMapAdded'
     };
 }
 
@@ -76,8 +78,8 @@ function events($rootScope) {
 // to have it per instance, the appInfo service needs to have some initialization logic
 function appInfo() {
     const service = {
-        id: null
-        // something else ?
+        id: null,
+        apiMap: null
     };
 
     return service;
