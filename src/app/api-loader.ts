@@ -5,8 +5,10 @@ import * as $ from "jquery";
 const mapInstances: Array<Map> = [];
 
 class RZ {
-    /** Emits an instance of the map class whenever a new map is added to the viewer. */
-    map_added = new Subject();
+    /**
+     * Emits an instance of the map class whenever a new map is added to the viewer.
+     * */
+    mapAdded: Subject<Map> = new Subject();
     /** Loads and executes a javascript file from the provided url. */
     loadExtension(url: string): void {
         $.getScript(url);
@@ -22,4 +24,4 @@ interface EnhancedWindow extends Window {
 };
 
 (<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : RZInstance;
-RZInstance.map_added.subscribe(mi => mapInstances.push(mi));
+RZInstance.mapAdded.subscribe(mapInstance => mapInstances.push(mapInstance));
