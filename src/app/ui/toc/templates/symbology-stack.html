@@ -14,7 +14,8 @@
 
         <md-button
             class="md-icon-button rv-icon-20"
-            ng-click="self.onToggleClick(symbol.name)">
+            ng-click="self.onToggleClick(symbol.name)"
+            ng-if="self.toggleList[symbol.name]">
 
             <md-icon md-svg-src="{{self.toggleList[symbol.name].icon}}"></md-icon>
 
