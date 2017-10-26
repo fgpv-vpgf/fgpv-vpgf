@@ -1,16 +1,26 @@
-import YX from 'api/geometry/YX';
+import XY from 'api/geometry/XY';
 
-export default class MouseEvent {
-    private _yx: YX;
-    private _pageY: number;
-    private _pageX: number;
+/** Provides screen and geographic point information for most observable mouse actions. */
+export class MouseEvent {
+    /** Geographic point information */
+    xy: XY;
+    /** The number of pixels from the top of the viewport. */
+    pageY: number;
+    /** The number of pixels from the left edge of the viewport. */
+    pageX: number;
 
-
-    constructor(event: any) {
-        this._yx = new YX(event.mapPoint.y, event.mapPoint.x);
-        this._pageY = event.pageY;
-        this._pageX = event.pageX;
+    constructor(event: esriMouseEvent) {
+        this.xy = new XY(event.mapPoint.y, event.mapPoint.x);
+        this.pageY = event.pageY;
+        this.pageX = event.pageX;
     }
+}
 
-    get YX(): YX { return this._yx; }
+/** ESRI wraps the standard mouse event with spatial data that we want to preserve. */
+export interface esriMouseEvent extends MouseEvent {
+    /** Decimal degrees in y,x form */
+    mapPoint: {
+        y: number,
+        x: number
+    };
 }
