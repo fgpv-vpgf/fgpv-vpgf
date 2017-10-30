@@ -154,6 +154,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
                 stateManager.toggleDisplayPanel(panel, data || legendBlock, openPanel.requester, 0);
             }
+        }, (layerName) => {
+            console.error('Failed to reload layer:', layerName);
         });
     }
 

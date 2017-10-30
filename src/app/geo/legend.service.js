@@ -183,18 +183,23 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const layerRecord = layerRegistry.getLayerRecord(legendBlockConfig.layerId);
 
             // need time to reload children for Dynamic layers
-            promise = common.$q(resolve => {
+            promise = common.$q((resolve, reject) => {
                 layerRecord.addStateListener(_onLayerRecordLoad);
 
                 function _onLayerRecordLoad(state) {
-                    if (state === 'rv-loaded') {
+                    // add back entry
+                    if (state === 'rv-loaded' || state === 'rv-error') {
                         layerRecord.removeStateListener(_onLayerRecordLoad);
 
                         _boundingBoxRemoval(legendBlock);
 
                         legendBlockParent.addEntry(reloadedLegendBlock, index);
+                    }
 
+                    if (state === 'rv-loaded') {
                         resolve(legendBlockParent);
+                    } else if (state === 'rv-error') {
+                        reject(layerRecord.name);
                     }
                 }
             });
