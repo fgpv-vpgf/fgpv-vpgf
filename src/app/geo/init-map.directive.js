@@ -15,7 +15,7 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, geoService, events, referenceService, $rootElement, $interval, globalRegistry, identifyService, appInfo) {
+function rvInitMap($rootScope, geoService, events, referenceService, $rootElement, $interval, globalRegistry, identifyService, appInfo, gapiService) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -59,10 +59,11 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
 
-                const apiMap = new Map($rootElement);
+                const apiMap = new Map($rootElement, mapInstance);
                 appInfo.apiMap = apiMap;
                 loadExtensions(apiMap);
                 window.RZ.mapAdded.next(apiMap); // push api map instance through the Observable stream
+                window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
                 events.$broadcast(events.rvApiMapAdded, apiMap);
         });
 
