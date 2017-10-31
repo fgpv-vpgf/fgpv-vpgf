@@ -100,7 +100,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
 
         // set a resize listener on the root element to update it's layout styling based on the changed size
         _updateShallLayoutClass();
-        layoutService.onResize($rootElement,
+        referenceService.onResize($rootElement,
             debounceService.registerDebounce(_updateShallLayoutClass, 350, false));
 
         // FIXME: remove; opens the main panel for easier dev work

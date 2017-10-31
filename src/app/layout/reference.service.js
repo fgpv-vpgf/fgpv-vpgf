@@ -9,13 +9,18 @@ angular
     .module('app.layout')
     .factory('referenceService', referenceService);
 
-function referenceService($rootElement) {
+function referenceService($rootElement, $rootScope) {
+
+    const ref = {
+        onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
+    };
 
     const service = {
         panels: {},
         panes: {}, // registry for content pane nodes,
 
         peekAtMap,
+        onResize,
 
         _mapNode: null,
         set mapNode (value) {
@@ -87,5 +92,65 @@ function referenceService($rootElement) {
         };
 
         return offsetFraction;
+    }
+
+    /**
+     * Registers a size change listener against a supplied node element.
+     *
+     * @function onResize
+     * @param {Object} element a node to watch for size changes
+     * @param {Function} callback a function to call on size changes; the callback is called with { oldDimensions, newDimensions }; dimension objects specify element's height and width { width: <Number>, height: <Number> };
+     * @return {Function} a function to deregister listener
+     */
+    function onResize(element, callback) {
+
+        let subscription = ref.onResizeSubscriptions.find(s =>
+            s.element === element);
+
+        if (subscription) {
+            subscription.listeners.push(callback);
+        } else {
+            subscription = {
+                element,
+                listeners: [callback]
+            };
+
+            ref.onResizeSubscriptions.push(subscription);
+
+            $rootScope.$watch(watchBBoxChangesBuilder(element), (newDimensions, oldDimensions) => {
+                ref.onResizeSubscriptions
+                    .find(s => s.element === element)
+                    .listeners.forEach(l => l(newDimensions, oldDimensions));
+            }, true);
+        }
+
+        // build a deregister function
+        // TODO: the watch on the element can be also removed to improve performance
+        return () => {
+            const callbackIndex = subscription.listeners.indexOf(callback);
+
+            if (callbackIndex) {
+                subscription.listeners.splice(callbackIndex, 1);
+            }
+        };
+
+        /**
+         * Watches dimension change on the element node.
+         *
+         * @function watchBBoxChanges
+         * @private
+         * @param {Object} element element to watch for changes
+         * @return {Object} object in the form of { width: <Number>, height: <Number> } which reflects the size of the node
+         */
+        function watchBBoxChangesBuilder(element) {
+            return () => {
+                const br = element[0].getBoundingClientRect(); // jquery.width/height functions round pixel sizes :(
+
+                return {
+                    width: br.width,
+                    height: br.height
+                };
+            };
+        }
     }
 }
