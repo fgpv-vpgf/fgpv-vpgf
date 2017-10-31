@@ -1,12 +1,28 @@
 import { Observable } from 'rxjs/Rx';
 import * as $ from "jquery";
 import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
+import * as geo from 'api/geometry';
+import { seeder } from 'app/app-seed';
 
+/**
+ * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
+ *
+ * @example #### Acting on a double click event
+ *
+ * ```js
+ * mapInstance.doubleClick.subscribe(mouseEvent => {
+ *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
+ * });
+ * ```
+ */
 export default class Map {
+
+    private _center: geo.XY;
+
+    get center() { return this._center }
+
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
-
-    private opts: Object | JSON | string;
 
     /**
      * Emits when a user clicks anywhere on the map.
@@ -65,16 +81,46 @@ export default class Map {
     centerChanged: Observable<MouseEvent>;
 
     /**
-     * Creates a new map inside of the given HTML node.
-     *
-     * @param mapDiv DOM node to contain the map, usually a div node but not strictly required
-     * @param opts a schema valid map config snippet if opts is in an Object or JSON format
-     */
-    constructor(mapDiv: HTMLElement, opts?: Object | JSON) {
-        this.mapDiv = $(mapDiv);
-        this.opts = opts || {};
+    * Emits whenever the viewable map boundaries change, usually caused by a change to the viewport or going fullscreen.
+    * @event boundsChanged
+    */
+    boundsChanged: Observable<geo.XYBounds>;
 
+   /** Pans the map to the center point provided. */
+   setCenter(xy: geo.XY | geo.XYLiteral): void {
+       if(geo.isXYLiteral(xy)) {
+           this._center = new geo.XY(xy[0], xy[1]);
+       } else {
+           this._center = xy;
+       }
+   }
+
+   /** Returns the position displayed at the center of the map.  */
+    //setCenter(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
+    //setZoom(zoom: number) : void;
+    /** Changes the center of the map to the given XY. If the change is less than both the width and height of the map, the transition will be smoothly animated. */
+    //panTo(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
+    /** Changes the center of the map by the given distance in pixels. If the distance is less than both the width and height of the map, the transition will be smoothly animated.  */
+    //panBy(x: number, y: number) : void;
+    //getZoom(): number;
+    //getDiv(): HTMLElement;
+    //getCenter(): RV.GEOMETRY.XY;
+    //getBounds(): RV.GEOMETRY.XYBounds;
+    /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
+    //fullscreen(enabled: boolean) : void;
+
+    /**
+     * Creates a new map inside of the given HTML container, which is typically a DIV element.
+    */
+    constructor(mapDiv: HTMLElement, rvMap?: Object) {
+        this.mapDiv = $(mapDiv);
         initObservables.apply(this);
+        console.error(rvMap);
+        console.error(gapi);
+
+        if (!rvMap) {
+            seeder(this.mapDiv);
+        }
     }
 }
 
