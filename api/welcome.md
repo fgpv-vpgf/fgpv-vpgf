@@ -1,26 +1,3 @@
-### Quick Links
-
-|{@link RV}|
-|---------|
-|{@link RV.Map}|{@link RV.GEOMETRY}|
-|{@link RV.LAYER} | {@link RV.LAYER.ConfigLayer} | {@link RV.LAYER.SimpleLayer} |
-
-### What's new October 19
-- New guide on extension loading (below)
-- extension loading implementation and general API startup
-
-### What's new October 13
-- Completed introduction guide (creating extensions)
-- Removed projection support until its needed
-- Expanded documentation on creating and registering extensions
-- Created 'map_added' event to `RV`
-- Added `addListener` and `addListenerOnce` to RV for extension registration`
-- Renamed LatLng and similar classes to XY
-- Added `Polygon`, `MultiPolygon`, `Annotation`, `MultiAnnotation`, and `LinearRing` geometry types
-- Added `fetchData` and `setLayerDefinitions` on `configLayer`
-- Added a `Popup` class to `RV.UI` available through `mapInstance.popup`
-- Added partial config loading on mapInstance
-
 ### Introduction
 
 This guide is intented for developers. It outlines the entire viewers API and provides examples throughout.
