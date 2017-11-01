@@ -122,6 +122,7 @@ export default class Map {
 
         if (!rvMap) {
             seeder(mapDiv);
+            this.mapDiv.attr('is', 'rv-map');
         }
     }
 }

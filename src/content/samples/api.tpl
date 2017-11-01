@@ -14,7 +14,7 @@
     <% } %>
 
     <style>
-        main div.myMap {
+        div.myMap {
             height: 700px;
         }
     </style>
@@ -25,13 +25,6 @@
     <main role="main" property="mainContentOfPage" class="container">
         <section style="overflow: hidden;padding: 20px;">
           <h1 property="name" id="wb-cont" class="fgp-h1-top">Federal Geospatial Platform Visualiser</h1>
-          <div id="fgpmap" class="myMap" rv-config="config.rcs.[lang].json" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-extensions="extensions/hello-world.js">
-                        <noscript>
-                            <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
-
-                            <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
-                        </noscript>
-                    </div>
         </section>
     </main>
 
@@ -61,8 +54,6 @@
         <% } %>
     <% } %>
 
-    <script>
-        const mapInstance = new RZ.Map(document.getElementById('fgpmap'));
-    </script>
+    <script src="extensions/self-loader.js"></script>
 </body>
 </html>
