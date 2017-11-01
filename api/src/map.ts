@@ -18,8 +18,11 @@ import { seeder } from 'app/app-seed';
 export default class Map {
 
     private _center: geo.XY;
+    private _id: string;
 
     get center() { return this._center }
+
+    get id(): string { return this._id; }
 
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
@@ -114,12 +117,11 @@ export default class Map {
     */
     constructor(mapDiv: HTMLElement, rvMap?: Object) {
         this.mapDiv = $(mapDiv);
+        this._id = this.mapDiv.attr('id') || '';
         initObservables.apply(this);
-        console.error(rvMap);
-        console.error(gapi);
 
         if (!rvMap) {
-            seeder(this.mapDiv);
+            seeder(mapDiv);
         }
     }
 }

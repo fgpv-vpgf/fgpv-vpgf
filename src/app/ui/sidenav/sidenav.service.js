@@ -223,9 +223,11 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         function getLongLink() {
             if (typeof URLS.long === 'undefined') { // no cached url exists
                 // eslint-disable-next-line no-return-assign
-                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
-                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
-                    .then(() => (selectURL()));
+                //APITODO: made it go away
+                //globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
+                    //URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
+                    //.then(() => (selectURL()));
+                return '';
             } else { // cache exists
                 self.url = URLS.long;
                 selectURL();
