@@ -1,4 +1,4 @@
-import Map from 'api/Map';
+import Map from 'api/map';
 import { Subject } from 'rxjs/Rx';
 import * as $ from "jquery";
 
