@@ -17,9 +17,12 @@ class RZ {
     /** Returns the map class */
     get Map(): typeof Map { return Map; }
     get mapInstances(): Array<Map> { return mapInstances; }
-
     /** Contains all geography related classes. */
     get GEO() { return GEO };
+
+    mapById(id: string): Map | undefined {
+        return this.mapInstances.find(mi => mi.id === id);
+    }
 }
 
 const RZInstance = new RZ();

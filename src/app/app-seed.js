@@ -1,11 +1,5 @@
-'use strict';
+const appIdCounter = 0;
 
-/**
- * @function app.core.seed
- * @inner
- * @desc `seed` is an implicit function which runs on application startup to
- * initialize all marked DOM nodes to map instances
- */
 angular.element(document).ready(() => window.RV._nodes.forEach(seeder));
 
 export function seeder(node) {
