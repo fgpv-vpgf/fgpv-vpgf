@@ -32,6 +32,28 @@
     </div>
 </div>
 
+<div class="rv-subsection">
+    <div class="rv-subheader">
+        <h4 translate class="md-subhead">settings.label.refresh</h4>
+    </div>
+    <div class="rv-subcontent">
+
+        <md-divider class="rv-settings-divider"></md-divider>
+        <form name="refreshForm">
+            <md-input-container>
+                <label>{{ 'settings.label.refreshHint' | translate }}</label>
+                <input type="number" name="interval" min="0" max="100" ng-model="self.block.mainProxyWrapper.layerConfig.refreshInterval">
+                <div class="rv-hint refresh-hint" ng-if="refreshForm.interval.$valid">{{ 'settings.label.refreshOff' | translate }}</div>
+                <div ng-messages="refreshForm.interval.$error" md-auto-hide="false">
+                    <div ng-message="max">{{ 'settings.label.refreshError' | translate }}</div>
+                </div>
+            </md-input-container>
+        </form>
+        <md-divider class="rv-settings-divider"></md-divider>
+
+    </div>
+</div>
+
 <div class="rv-subsection" ng-if="::(self.checkWMS() && !self.checkDisabledControls('styles') && self.checkStylesLength())">
     <div class="rv-subheader">
         <h4 translate class="md-subhead">settings.label.styles</h4>

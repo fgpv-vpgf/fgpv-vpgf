@@ -539,6 +539,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._extent = source.extent ?
                 gapiService.gapi.Map.getExtentFromJson(source.extent) :
                 undefined;
+            this._refreshInterval = source.refreshInterval;
 
             const defaults = DEFAULTS.layer[this.layerType];
 
@@ -569,6 +570,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get metadataUrl () {            return this._metadataUrl; }
         get catalogueUrl () {           return this._catalogueUrl; }
         get extent () {                 return this._extent; }
+
+        get refreshInterval () {        return this._refreshInterval; }
+        set refreshInterval (value) {   this._refreshInterval = value; }
 
         get initialFilteredQuery() { return this._initialFilteredQuery; }
         set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
@@ -613,6 +617,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                 catalogueUrl: this.catalogueUrl,
                 layerType: this.layerType,
                 extent: this.source.extent,
+                refreshInterval: this.refreshInterval,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 state: this.state.JSON
