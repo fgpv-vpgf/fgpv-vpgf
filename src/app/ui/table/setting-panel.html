@@ -26,18 +26,18 @@
 
             <ul>
                 <li>
-                    <span class="rv-filter-settting-reorder"></span>
-                    <span class="rv-filter-settting-name md-subhead">{{ 'filter.settings.label.name' | translate }}</span>
-                    <span class="rv-filter-settting-item md-subhead">{{ 'filter.settings.label.filter' | translate }}</span>
+                    <span class="rv-filter-setting-reorder"></span>
+                    <span class="rv-filter-setting-name md-subhead">{{ 'filter.settings.label.name' | translate }}</span>
+                    <span class="rv-filter-setting-item md-subhead">{{ 'filter.settings.label.filter' | translate }}</span>
 
-                    <button class="rv-filter-settting-sort md-subhead rv-icon-16" ng-click="self.sortAll()">
+                    <button class="rv-filter-setting-sort md-subhead rv-icon-16" ng-click="self.sortAll()">
                         {{ 'filter.settings.label.sort' | translate }}
                         <md-icon md-svg-src="navigation:arrow_downward" ng-show="self.sortStatus() === 'desc'"></md-icon>
                         <md-icon md-svg-src="navigation:arrow_upward" ng-show="self.sortStatus() === 'asc'"></md-icon>
                         <md-icon md-svg-src="content:remove" ng-show="self.sortStatus() === 'none'"></md-icon>
                     </button>
 
-                    <button class="rv-filter-settting-display md-subhead rv-icon-16" ng-click="self.displayAll()">
+                    <button class="rv-filter-setting-display md-subhead rv-icon-16" ng-click="self.displayAll()">
                         {{ 'filter.settings.label.show' | translate }}
                         <md-icon md-svg-src="toggle:{{ self.displayStatus() === true ?
                             'check_box' :
@@ -55,17 +55,17 @@
                         <div rv-drag-handle ng-if="$index>1">  <!-- no rv-drag-handle so they will not be use when reorder -->
                         <md-button
                                 aria-label="{{ filter.settings.reorder | translate }}"
-                                class="rv-filter-settting-reorder md-icon-button">
+                                class="rv-filter-setting-reorder md-icon-button">
                                     <md-tooltip>{{ 'filter.settings.reorder' | translate }}</md-tooltip>
                                     <md-icon md-svg-src="editor:drag_handle"></md-icon>
                             </md-button>
                         </div>
 
-                        <span class="rv-filter-settting-name">{{ column.title }}</span>
+                        <span class="rv-filter-setting-name">{{ column.title }}</span>
 
-                        <div rv-table-definition class="rv-filter-settting-item" info="column"></div>
+                        <div rv-table-definition class="rv-filter-setting-item" info="column"></div>
 
-                        <div class="rv-filter-settting-sort">
+                        <div class="rv-filter-setting-sort">
                             <md-button
                                 aria-label="{{ filter.settings.sort | translate }}"
                                 class="md-icon-button"
@@ -77,7 +77,7 @@
                             </md-button>
                         </div>
 
-                        <div class="rv-filter-settting-display">
+                        <div class="rv-filter-setting-display">
                             <md-checkbox
                                 aria-label="{{ filter.settings.label.show | translate }}"
                                 ng-model="column.display"
