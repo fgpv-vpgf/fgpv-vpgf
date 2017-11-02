@@ -140,6 +140,10 @@ Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
 Settings data header label,settings.label.data,Data,1,Données,1
+Settings refresh header label,settings.label.refresh,Refresh Interval,1,Intervalle de rafraîchissement,0
+Settings refresh hint,settings.label.refreshHint,Refresh interval of the layer in minutes,1,Intervalle d'actualisation de la couche en minutes,0
+Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank to turn off automatic refresh,1,Recharger requis. Laissez vide pour désactiver le rafraîchissement automatique,0
+Settings refresh error message,settings.label.refreshError,Interval must be between 0 and 100,1,L'intervalle doit être compris entre 0 et 100,0
 Settings styles header for WMS,settings.label.styles,Styles,1,Styles,0
 Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger le calque pour changer de style,0
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,1,Mode copie instantanée,1
