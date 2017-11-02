@@ -52,7 +52,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -200,7 +200,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                             // Manually correct symbology boxes so they align with all other layer visibility boxes
                             const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
-                            element.find('.md-icon-button').not('.rv-symbol-trigger').css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
+
+                            // angular is not rendering the nestled buttons fast enough so keep checking until they're ready
+                            const stopSymbolInterval = $interval(() => {
+                                const symbolButtons = element.find('.md-icon-button').not('.rv-symbol-trigger');
+                                if (symbolButtons.length > 0) {
+                                    symbolButtons.css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
+                                    $interval.cancel(stopSymbolInterval);
+                                }
+                            }, 100);
                         });
                 }
             }
