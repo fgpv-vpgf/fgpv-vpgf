@@ -407,6 +407,18 @@ rv-table-setting-panel {
                     color: $primary-color-text;
                 }
 
+                md-icon {
+                    margin-left: rem(0.5);
+                }
+
+                div.rv-filter-setting-sort {
+                    padding-left: rem(2.7);
+                }
+
+                div.rv-filter-setting-display {
+                    padding-left: rem(4.4);
+                }
+
                 button {
                     background: transparent;
                     border: 0;
@@ -414,16 +426,16 @@ rv-table-setting-panel {
                     display: flex;
                 }
 
-                .rv-filter-settting-reorder {
+                .rv-filter-setting-reorder {
                     flex: 0 0 40px;
                 }
 
-                .rv-filter-settting-name {
+                .rv-filter-setting-name {
                     flex: 2 0 30%;
                     padding-left: 25px;
                 }
 
-                .rv-filter-settting-item {
+                .rv-filter-setting-item {
                     flex: 1 0 30%;
 
                     .rv-filter-number, .rv-filter-selector, .rv-filter-string, .rv-filter-date {
@@ -436,12 +448,12 @@ rv-table-setting-panel {
                     }
                 }
 
-                .rv-filter-settting-sort {
+                .rv-filter-setting-sort {
                     flex: 0 1 10%;
                     min-width: 60px;
                 }
 
-                .rv-filter-settting-display {
+                .rv-filter-setting-display {
                     flex: 0 1 10%;
                     min-width: 60px;
 

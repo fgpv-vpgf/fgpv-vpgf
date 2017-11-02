@@ -45,7 +45,7 @@
                 <input type="number" name="interval" min="0" max="100" ng-model="self.block.mainProxyWrapper.layerConfig.refreshInterval">
                 <div class="rv-hint refresh-hint" ng-if="refreshForm.interval.$valid">{{ 'settings.label.refreshOff' | translate }}</div>
                 <div ng-messages="refreshForm.interval.$error" md-auto-hide="false">
-                    <div ng-message="max">{{ 'settings.label.refreshError' | translate }}</div>
+                    <div ng-message="min, max">{{ 'settings.label.refreshError' | translate }}</div>
                 </div>
             </md-input-container>
         </form>
