@@ -3,6 +3,7 @@ import * as $ from "jquery";
 import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
+import { FgpvConfigSchema } from 'api/schema';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -19,10 +20,19 @@ export default class Map {
 
     private _center: geo.XY;
     private _id: string;
+    private _fgpMap: Object;
 
     get center() { return this._center }
 
     get id(): string { return this._id; }
+
+    /**
+     * Once set, we know the map instance is ready.
+     */
+    set fgpMap(fgpMap: Object) {
+        this._fgpMap = fgpMap;
+        initObservables.apply(this);
+    }
 
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
@@ -85,6 +95,7 @@ export default class Map {
 
     /**
     * Emits whenever the viewable map boundaries change, usually caused by a change to the viewport or going fullscreen.
+    * @todo not yet bound to esri event
     * @event boundsChanged
     */
     boundsChanged: Observable<geo.XYBounds>;
@@ -115,16 +126,29 @@ export default class Map {
     /**
      * Creates a new map inside of the given HTML container, which is typically a DIV element.
     */
-    constructor(mapDiv: HTMLElement, rvMap?: Object) {
+    constructor(mapDiv: HTMLElement, config?: FgpvConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
-        initObservables.apply(this);
 
-        if (!rvMap) {
+        // config set implies viewer loading via API
+        if (config) {
+            // type guard for cases where config object is given, store on window for config.service to find
+            if (isConfigSchema(config)) {
+                (<any>window)[`rzConfig${this._id}`] = config;
+                this.mapDiv.attr('rv-config', `rzConfig${this._id}`);
+            } else {
+                this.mapDiv.attr('rv-config', config);
+            }
+
+            // startup the map
             seeder(mapDiv);
-            this.mapDiv.attr('is', 'rv-map');
+            this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
         }
     }
+}
+
+function isConfigSchema(config: FgpvConfigSchema | string): config is FgpvConfigSchema {
+    return (<FgpvConfigSchema>config).version !== undefined;
 }
 
 function initObservables(this: Map) {

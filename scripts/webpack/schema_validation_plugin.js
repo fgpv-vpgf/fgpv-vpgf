@@ -1,3 +1,4 @@
+const schemaToTs = require( 'json-schema-to-typescript');
 const ZSchema   = require("z-schema");
 const fs        = require('fs');
 
@@ -8,6 +9,8 @@ class SchemaValidatorPlugin {
         this.configPath = opts.configPath ? opts.configPath : 'src/content/samples/config';
         this.schemaFile = opts.schemaFile ? opts.schemaFile : 'schema.json';
         this.hasError = false;
+
+        schemaToTs.compileFromFile(this.schemaFile).then(ts => fs.writeFileSync('api/src/schema.d.ts', ts));
     }
 
     apply (compiler) {
