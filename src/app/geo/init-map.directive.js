@@ -59,11 +59,14 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
 
-                const apiMap = new Map($rootElement, mapInstance);
+                // API related initialization ------------------
+                window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
+                const apiMap = new Map($rootElement);
+                apiMap.fgpMap = mapInstance;
                 appInfo.apiMap = apiMap;
                 loadExtensions(apiMap);
-                window.RZ.mapAdded.next(apiMap); // push api map instance through the Observable stream
-                window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
+                window.RZ.mapAdded.next(apiMap);
+
                 events.$broadcast(events.rvApiMapAdded, apiMap);
         });
 
