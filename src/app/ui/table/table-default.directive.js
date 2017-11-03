@@ -897,6 +897,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
          */
         function destroyTable() {
             if (self.table) {
+                // close the settings panel to allow for the new table loading to be viewed
+                self.tableService.isSettingOpen = false
+
                 // destroy table with all events
                 self.table.destroy(true); // https://datatables.net/reference/api/destroy()
                 delete self.table; // kill the reference
