@@ -466,6 +466,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get loadedFeatureCount () {
             if (this._mainProxyWrapper.featureCount === this._mainProxyWrapper.loadedFeatureCount) {
                 common.$interval.cancel(this._stopFeatureCountInterval);
+                this._stopFeatureCountInterval = null;
+                this._derivedLoadedFeatureCount = 0;
                 return this._mainProxyWrapper.loadedFeatureCount;
             }
 
@@ -635,6 +637,12 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                     this._derivedLoadedFeatureCount = Math.max(
                         this._derivedLoadedFeatureCount,
                         this._mainProxyWrapper.loadedFeatureCount);
+
+                    if (this._derivedLoadedFeatureCount > this._mainProxyWrapper.featureCount) {
+                        this._derivedLoadedFeatureCount = this._mainProxyWrapper.featureCount;
+                    } else if (this._derivedLoadedFeatureCount < 0) {
+                        this._derivedLoadedFeatureCount = 0;
+                    }
                 }
 
 
@@ -696,6 +704,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         abortAttribLoad () {
             common.$interval.cancel(this._stopFeatureCountInterval);
             this._stopFeatureCountInterval = null;
+            this._derivedLoadedFeatureCount = 0;
             this._mainProxyWrapper.abortAttribLoad();
         }
 
