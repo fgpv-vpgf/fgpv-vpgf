@@ -270,7 +270,8 @@ class LayerRecord extends root.Root {
         return {
             id: this.config.id,
             opacity: this.config.state.opacity,
-            visible: this.config.state.visibility
+            visible: this.config.state.visibility,
+            refreshInterval: this.config.refreshInterval
         };
     }
 
@@ -389,7 +390,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Zoom to layer boundary of the layer specified by layerId
-     * 
+     *
      * @function zoomToBoundary
      * @param {Object} map  esriMap object we want to execute the zoom on
      * @return {Promise} resolves when map is done zooming
@@ -400,7 +401,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Returns the visible scale values of the layer
-     * 
+     *
      * @function getVisibleScales
      * @returns {Object} has properties .minScale and .maxScale
      */
@@ -416,7 +417,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Returns the feature count
-     * 
+     *
      * @function getFeatureCount
      * @returns {Promise} resolves feature count
      */
@@ -429,7 +430,7 @@ class LayerRecord extends root.Root {
 
     /**
      * Create an extent centered around a point, that is appropriate for the current map scale.
-     * 
+     *
      * @function makeClickBuffer
      * @param {Object} point       point on the map for extent center
      * @param {Object} map         map object the extent is relevant for
