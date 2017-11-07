@@ -73,7 +73,7 @@ function rvSettingsContent(layerRegistry) {
     }
 }
 
-function Controller(common, Geo) {
+function Controller(common, Geo, LegendBlock) {
     'ngInject';
     const self = this;
 
@@ -81,6 +81,8 @@ function Controller(common, Geo) {
     self.checkDisabledControls = checkDisabledControls;
     self.checkWMS = checkWMS;
     self.checkStylesLength = checkStylesLength;
+
+    self.isNode = () => self.block.blockType === LegendBlock.TYPES.NODE;
 
     /**
      * @function checkAvailableControls
