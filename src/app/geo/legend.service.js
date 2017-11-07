@@ -677,6 +677,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 layerConfig.layerEntries.forEach(entry => (entry.cachedStyle = entry.currentStyle))
             }
 
+            layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
+
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
 
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);

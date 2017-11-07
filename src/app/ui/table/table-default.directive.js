@@ -42,6 +42,13 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
 
     </md-button>`;
 
+const TABLE_UPDATE_TEMPALATE =
+    `<md-toast class="table-toast">
+        <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
+        <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
+        <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
+    </md-toast>`;
+
 // max field length accepted
 const fieldLength = 500;
 
@@ -58,7 +65,8 @@ let index; // keep the current selected cell information
  */
 angular
     .module('app.ui')
-    .directive('rvTableDefault', rvTableDefault);
+    .directive('rvTableDefault', rvTableDefault)
+    .controller('ToastCtrl', ToastController);
 
 /**
  * `rvTableDefault` directive displays the datatable with layer data.
@@ -68,7 +76,7 @@ angular
  */
 function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    tableService, events, ConfigObject) {
+    tableService, events, ConfigObject, $mdToast) {
 
     const directive = {
         restrict: 'E',
@@ -89,6 +97,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
      * @param  {Object} el    node element
      */
     function link(scope, el) { // scope, el, attr, ctrl) {
+
         const self = scope.self;
         let containerNode;
 
@@ -662,6 +671,20 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             $rootElement,
                             debounceService.registerDebounce(self.table.columns.adjust)
                         );
+
+                        const refreshInterval = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.cachedRefreshInterval;
+
+                        if (refreshInterval) {
+                            // create notification toast
+                            // promise resolves with 'ok' when user clicks 'undo'
+                            const tableToast = $mdToast.show({
+                                template: TABLE_UPDATE_TEMPALATE,
+                                parent: referenceService.panes.table,
+                                position: 'bottom rv-flex-global',
+                                hideDelay: false,
+                                controller: 'ToastCtrl'
+                            });
+                        }
                     } else {
                         self.noData = true;
                     }
@@ -916,6 +939,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 if (self.onResizeDelistener) {
                     self.onResizeDelistener();
                 }
+
+                $mdToast.hide();
             }
         }
     }
@@ -1136,4 +1161,23 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
             self.display.requester.legendEntry.abortAttribLoad();
         });
     }
+}
+
+/**
+ * ToastController watches for changes to the toast; either reloading the table or closing the toast
+ *
+ * @function ToastController
+ */
+function ToastController($scope, $mdToast, $timeout, stateManager, tocService) {
+    $scope.closeToast = () => $mdToast.hide();
+
+    $scope.reloadTable = () => {
+        const legendBlock = stateManager.display.table.requester.legendEntry;
+
+        stateManager.setActive({ tableFulldata: false }).then(() =>{
+            $timeout(() => {
+                tocService.toggleLayerTablePanel(legendBlock);
+            });
+        });
+    };
 }
