@@ -347,6 +347,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         function _makeDynamicGroupBlock(blockConfig, blueprints) {
             const layerConfig = blueprints.main.config;
 
+            layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = entry.refreshInterval))
+
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
             // convention:

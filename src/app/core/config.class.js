@@ -789,12 +789,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
+            this._refreshInterval = source.refreshInterval;
         }
 
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
         get extent () { return this._extent; }
         get table () { return this._table; }
+
+        get refreshInterval () {        return this._refreshInterval; }
+        set refreshInterval (value) {   this._refreshInterval = value; }
 
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
 
@@ -803,7 +807,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent,
-                table: this.table.JSON
+                table: this.table.JSON,
+                refreshInterval: this.refreshInterval
             });
         }
     }
