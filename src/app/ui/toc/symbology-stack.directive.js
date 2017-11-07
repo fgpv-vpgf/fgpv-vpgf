@@ -199,7 +199,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                             });
 
                             // Manually correct symbology boxes so they align with all other layer visibility boxes
-                            const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 28;
+                            const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 30;
 
                             // angular is not rendering the nestled buttons fast enough so keep checking until they're ready
                             const stopSymbolInterval = $interval(() => {
