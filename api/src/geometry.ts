@@ -2,12 +2,14 @@
  * Represents a geographical point in decimal degrees.
  */
 export class XY {
-    /** Longitude in decimal degrees, bounded by ±180° */
+    /** Longitude in decimal degrees, bounded by ±360° */
     x: number;
     /** Latitude in decimal degrees, bounded by ±90° */
     y: number;
 
     constructor(x: number, y: number) {
+        x = x <= 180 && x >= -180 ? x : 360 % Math.abs(x) * (x < 0 ? 1 : -1);
+
         if (x > 180 || x < -180) {
             throw new Error(`Longitude (x) provided is bounded to ±180°, ${x} given.`);
         } else if (y > 90 || y < -90) {
