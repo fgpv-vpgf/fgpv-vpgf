@@ -4,7 +4,7 @@
 export class XY {
     /** Longitude in decimal degrees, bounded by ±360° */
     x: number;
-    /** Latitude in decimal degrees, bounded by ±90° */
+    /** Latitude in decimal degrees, bounded by ±180° */
     y: number;
 
     constructor(x: number, y: number) {
