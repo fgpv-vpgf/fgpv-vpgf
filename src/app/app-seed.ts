@@ -1,8 +1,10 @@
+import * as angular from 'angular';
+
 const appIdCounter = 0;
 
-angular.element(document).ready(() => window.RV._nodes.forEach(seeder));
+angular.element(document).ready(() => (<any>window).RV._nodes.forEach(seeder));
 
-export function seeder(node) {
+export function seeder(node: HTMLElement) {
     // load shell template into the node
     // we need to create an explicit child under app's root node, otherwise animation
     // doesn't work; see this plunk: http://plnkr.co/edit/7EIM71IOwC8h1HdguIdD
@@ -17,8 +19,8 @@ export function seeder(node) {
     });
 
     // only do this if there is another version present - protractor needs angular reference otherwise
-    if (existingWindowDotAngular) {
-        delete window.angular;
-        window.angular = existingWindowDotAngular;
+    if ((<any>window).existingWindowDotAngular) {
+        delete (<any>window).angular;
+        (<any>window).angular = (<any>window).existingWindowDotAngular;
     }
 }
