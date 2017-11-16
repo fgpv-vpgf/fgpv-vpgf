@@ -4,20 +4,24 @@
 export class XY {
     /** Longitude in decimal degrees, bounded by ±360° */
     x: number;
-    /** Latitude in decimal degrees, bounded by ±180° */
+    /** Latitude in decimal degrees, bounded by ±90° */
     y: number;
 
     constructor(x: number, y: number) {
         x = x <= 180 && x >= -180 ? x : 360 % Math.abs(x) * (x < 0 ? 1 : -1);
 
-        if (x > 180 || x < -180) {
+        if (typeof x !== 'number' || x > 180 || x < -180) {
             throw new Error(`Longitude (x) provided is bounded to ±180°, ${x} given.`);
-        } else if (y > 90 || y < -90) {
+        } else if (typeof y !== 'number' || y > 90 || y < -90) {
             throw new Error(`Latitude (y) provided is bounded to ±90°, ${y} given.`);
         }
 
         this.x = x;
         this.y = y;
+    }
+
+    static confirm(maybeXY: XY | XYLiteral): XY {
+        return isXYLiteral(maybeXY) ? new XY(maybeXY[0], maybeXY[1]) : maybeXY;
     }
 
     /**
@@ -75,22 +79,41 @@ export class XYBounds {
     northEast: XY;
     southWest: XY;
 
-    constructor(northEast: XY | XYLiteral, southWest: XY | XYLiteral) {
-        if (isXYLiteral(southWest)) {
-            this.southWest = new XY(southWest[0], southWest[1]);
+    constructor(northEast: XY | XYLiteral | Extent, southWest?: XY | XYLiteral | undefined) {
+        if (isExtent(northEast)) {
+            const xy = (<any>window).RZ.GAPI.proj.localProjectExtent(northEast, 4326);
+            this.northEast = new XY(xy.x1, xy.y1);
+            this.southWest = new XY(xy.x0, xy.y0);
         } else {
-            this.southWest = southWest;
-        }
+            if (isXYLiteral(southWest)) {
+                this.southWest = new XY(southWest[0], southWest[1]);
+            } else if (typeof southWest === 'undefined') {
+                throw new Error("southWest parameter is required if northEast is not an extent");
+            } else {
+                this.southWest = southWest;
+            }
 
-        if (isXYLiteral(northEast)) {
-            this.northEast = new XY(northEast[0], northEast[1]);
-        } else {
-            this.northEast = northEast;
+            if (isXYLiteral(northEast)) {
+                this.northEast = new XY(northEast[0], northEast[1]);
+            } else {
+                this.northEast = northEast;
+            }
         }
 
         const centerX = this.southWest.x + ((this.northEast.x - this.southWest.x)/2);
         const centerY = this.southWest.y + ((this.northEast.y - this.southWest.y)/2);
         this.center = new XY(centerX, centerY);
+    }
+
+    get extent(): Extent {
+        const extentObj = {
+            xmin: this.southWest.x,
+            xmax: this.northEast.x,
+            ymax: this.southWest.y,
+            ymin: this.northEast.y,
+            spatialReference: { wkid: 4326 }
+        };
+        return (<any>window).RZ.GAPI.Map.getExtentFromJson(extentObj);
     }
 
     /** Returns true if the given XY point is contained within this boundary. */
@@ -120,6 +143,18 @@ export class XYBounds {
     toString(): string {
         return `${this.southWest.x},${this.southWest.y},${this.northEast.x},${this.northEast.y}`;
     }
+}
+
+export interface Extent {
+    xmin: number,
+    xmax: number,
+    ymax: number,
+    ymin: number,
+    spatialReference: { wkid: number }
+}
+
+export function isExtent(x: any): x is Extent {
+    return x.type === "extent";
 }
 
 export interface XYLiteral {
