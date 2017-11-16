@@ -17,12 +17,31 @@ import { FgpvConfigSchema } from 'api/schema';
  * ```
  */
 export default class Map {
-
-    private _center: geo.XY;
     private _id: string;
     private _fgpMap: Object;
+    private _bounds: geo.XYBounds;
+    private _boundsChanged: Observable<geo.XYBounds>;
 
-    get center() { return this._center }
+    get center(): geo.XY { return this.bounds.center; }
+
+    /**
+     * Changes the map boundaries based on the given extent. Any projection supported by Proj4 can be provided.
+     *
+     * The `bounds` property cannot be defined with a setter since their types mismatch (Extent vs. XYBounds - a TS issue)
+     */
+    setBounds(bounds: geo.XYBounds | geo.Extent, propagate: boolean = true): void {
+        this._bounds = geo.isExtent(bounds) ? new geo.XYBounds(bounds) : bounds;
+
+        if (propagate) {
+            console.error('Passing Bounds', this._bounds);
+            (<any>this._fgpMap).setExtent(this.bounds.extent);
+        }
+    }
+
+    /**
+     * Returns the boundary of the map, similar to extent
+     */
+    get bounds(): geo.XYBounds { return this._bounds; }
 
     get id(): string { return this._id; }
 
@@ -31,6 +50,7 @@ export default class Map {
      */
     set fgpMap(fgpMap: Object) {
         this._fgpMap = fgpMap;
+        this.setBounds((<any>fgpMap).extent, false);
         initObservables.apply(this);
     }
 
@@ -87,39 +107,42 @@ export default class Map {
 
     /**
      * Emits whenever the map center has changed.
-     *
-     * @todo does not yet work when panning with your mouse. Either hook into ESRI event or confer a center change if there is a mouse down and movement. TBD
      * @event centerChanged
     */
     centerChanged: Observable<MouseEvent>;
 
+    set boundsChanged(observable: Observable<geo.XYBounds>) {
+        this._boundsChanged = observable;
+        this._boundsChanged.subscribe(xyBounds => {
+            this.setBounds(xyBounds, false);
+        });
+    }
+
     /**
-    * Emits whenever the viewable map boundaries change, usually caused by a change to the viewport or going fullscreen.
-    * @todo not yet bound to esri event
+    * Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.
     * @event boundsChanged
     */
-    boundsChanged: Observable<geo.XYBounds>;
+    get boundsChanged(): Observable<geo.XYBounds> {
+        return this._boundsChanged;
+    }
 
-   /** Pans the map to the center point provided. */
+   /** Pans the map to the center point provided.
+    * @TODO James/Aly to fix - esri throwing `TypeError: a.isWebMercator is not a function`
+   */
    setCenter(xy: geo.XY | geo.XYLiteral): void {
-       if(geo.isXYLiteral(xy)) {
-           this._center = new geo.XY(xy[0], xy[1]);
-       } else {
-           this._center = xy;
-       }
+        xy = geo.XY.confirm(xy);
+        const zoomPoint = (<any>window).RZ.GAPI.proj.Point(xy.x, xy.y, {wkid: 4326});
+        (<any>this._fgpMap).centerAt(zoomPoint);
    }
 
-   /** Returns the position displayed at the center of the map.  */
-    //setCenter(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
-    //setZoom(zoom: number) : void;
-    /** Changes the center of the map to the given XY. If the change is less than both the width and height of the map, the transition will be smoothly animated. */
-    //panTo(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
-    /** Changes the center of the map by the given distance in pixels. If the distance is less than both the width and height of the map, the transition will be smoothly animated.  */
-    //panBy(x: number, y: number) : void;
-    //getZoom(): number;
-    //getDiv(): HTMLElement;
-    //getCenter(): RV.GEOMETRY.XY;
-    //getBounds(): RV.GEOMETRY.XYBounds;
+   get zoom(): number {
+       return (<any>this._fgpMap).zoomCounter;
+   }
+
+   set zoom(to: number) {
+        (<any>this._fgpMap).setZoom(to);
+   }
+
     /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
     //fullscreen(enabled: boolean) : void;
 
