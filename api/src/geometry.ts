@@ -20,8 +20,12 @@ export class XY {
         this.y = y;
     }
 
-    static confirm(maybeXY: XY | XYLiteral): XY {
-        return isXYLiteral(maybeXY) ? new XY(maybeXY[0], maybeXY[1]) : maybeXY;
+    /** Returns a projection Point */
+    projectToPoint(targetProjection: number) {
+        const proj = (<any>window).RZ.GAPI.proj;
+
+        let zoomPoint = proj.localProjectPoint(targetProjection, 4326, [this.x, this.y]);
+        return proj.Point(zoomPoint[0], zoomPoint[1], {wkid: targetProjection});
     }
 
     /**
@@ -100,9 +104,8 @@ export class XYBounds {
             }
         }
 
-        const centerX = this.southWest.x + ((this.northEast.x - this.southWest.x)/2);
-        const centerY = this.southWest.y + ((this.northEast.y - this.southWest.y)/2);
-        this.center = new XY(centerX, centerY);
+        const centerPoint = this.extent.getCenter();
+        this.center = new XY(centerPoint.x, centerPoint.y);
     }
 
     get extent(): Extent {
@@ -145,21 +148,33 @@ export class XYBounds {
     }
 }
 
+// Descriptors -----------------------
+export function XYLiteral(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(maybeXY: XY | XYLiteral): XY {
+        return originalMethod.apply(this, [isXYLiteral(maybeXY) ? new XY(maybeXY[0], maybeXY[1]) : maybeXY]);
+    };
+    return descriptor;
+}
+
+// Interfaces -------------------------
 export interface Extent {
     xmin: number,
     xmax: number,
     ymax: number,
     ymin: number,
-    spatialReference: { wkid: number }
-}
-
-export function isExtent(x: any): x is Extent {
-    return x.type === "extent";
+    spatialReference: { wkid: number },
+    getCenter: Function
 }
 
 export interface XYLiteral {
     0: number,
     1: number
+}
+
+// Type guards ------------------------
+export function isExtent(x: any): x is Extent {
+    return !!x.spatialReference;
 }
 
 export function isXYLiteral(x: any): x is XYLiteral {
