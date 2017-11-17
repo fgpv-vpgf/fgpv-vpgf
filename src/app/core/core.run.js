@@ -68,7 +68,9 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
             start
         };
 
-        globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
+        if (globalRegistry.getMap(appInfo.id)) {
+            globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
+        }
 
         /******************/
 
@@ -100,7 +102,9 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
                 reloadService.loadWithExtraKeys(bookmark, keys);
                 sessionStorage.removeItem(appInfo.id);
             } else {
-                globalRegistry.getMap(appInfo.id).loadRcsLayers(keys);
+                if (globalRegistry.getMap(appInfo.id)) {
+                    globalRegistry.getMap(appInfo.id).loadRcsLayers(keys);
+                }
                 start();
             }
         }
@@ -170,17 +174,20 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
     };
 
     // Attaches a promise to the appRegistry which resolves with apiService
-    $rootScope.$on(events.rvApiReady, () => {
-        globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
-        globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
-        RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
+    if (globalRegistry.getMap(appInfo.id)) {
+        $rootScope.$on(events.rvApiReady, () => {
+            globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
+            globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
+            RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
 
-        globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
-    });
+            globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+        });
 
-    $rootScope.$on(events.rvApiHalt, () => {
-        globalRegistry.getMap(appInfo.id)._deregisterMap();
-    });
+        $rootScope.$on(events.rvApiHalt, () => {
+
+            globalRegistry.getMap(appInfo.id)._deregisterMap();
+        });
+    }
 
     /**
      * Sets the translation language and reloads the map
@@ -292,7 +299,7 @@ function debugBlock($rootElement, appInfo, geoService) {
     appInfo.id = $rootElement.attr('id');
 
     // expose guts for debug purposes
-    angular.extend(window.RV.debug[appInfo.id], {
+    angular.extend(window.RV.debug[appInfo.id] || {}, {
         geoService
     });
 }

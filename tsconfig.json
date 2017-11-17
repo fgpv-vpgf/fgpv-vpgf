@@ -4,10 +4,12 @@
         "baseUrl": "./node_modules",
         "target": "ES2016",
         "paths": {
-            "api/*": ["../api/src/*"]
+            "api/*": ["../api/src/*"],
+            "app/*": ["../src/app/*"]
           },
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true
     }
 }

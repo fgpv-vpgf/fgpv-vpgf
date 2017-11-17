@@ -1,4 +1,4 @@
-import XY from 'api/geometry/XY';
+import { XY } from 'api/geometry';
 
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {
@@ -12,7 +12,7 @@ export class MouseEvent {
     constructor(event: esriMouseEvent) {
         // mapPoint is specific to esri and is not available for all event types
         try {
-            this.xy = new XY(event.mapPoint.y, event.mapPoint.x);
+            this.xy = new XY(event.mapPoint.x, event.mapPoint.y);
         } catch (e) {
             this.xy = null;
         }

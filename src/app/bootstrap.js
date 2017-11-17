@@ -250,11 +250,8 @@ const mapProxy = {
     }
 };
 
-// convert html collection to array:
-// https://babeljs.io/docs/learn-es2015/#math-number-string-object-apis
-const nodes = [].slice.call(document.getElementsByClassName('fgpv'));
-const isAttrNodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
-isAttrNodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
+const nodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
+nodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
 
 // store nodes to use in app-seed; avoids a second DOM traversal
 RV._nodes = nodes;
@@ -264,13 +261,6 @@ let counter = 0;
 nodes.forEach(node => {
 
     let appId = node.getAttribute('id');
-
-    // TODO v2.0: Remove the following deprecation warning
-    // deprecating class fgpv on node for 2.0 release - use is="fgpv" instead
-    if (node.classList.contains('fgpv')) {
-        console.warn('Using class fgpv on the map DOM node is deprecated' +
-            'and will be removed on v2.0 release. Use is="fgpv" instead.');
-    }
 
     customAttrs
         .filter(attrName => node.getAttribute(`data-rv-${attrName}`))

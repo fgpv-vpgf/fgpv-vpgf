@@ -144,6 +144,8 @@ module.exports = function (env) {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
                 jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
                 api: path.resolve(__dirname, 'api/src/'),
+                src: path.resolve(__dirname, 'src/'),
+                app: path.resolve(__dirname, 'src/app/')
             },
             extensions: ['.ts', '.js', 'css', 'scss']
         },
