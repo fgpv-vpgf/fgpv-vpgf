@@ -30,11 +30,18 @@ export default class Map {
      * The `bounds` property cannot be defined with a setter since their types mismatch (Extent vs. XYBounds - a TS issue)
      */
     setBounds(bounds: geo.XYBounds | geo.Extent, propagate: boolean = true): void {
-        this._bounds = geo.isExtent(bounds) ? new geo.XYBounds(bounds) : bounds;
+        if (geo.isExtent(bounds)) {
+            if (bounds.spatialReference.wkid !== 4326) {
+                const weirdExtent = (<any>window).RZ.GAPI.proj.localProjectExtent(bounds, 4326);
+
+                this._bounds = new geo.XYBounds([weirdExtent.x1, weirdExtent.y1], [weirdExtent.x0, weirdExtent.y0]);
+            }
+        } else {
+            this._bounds = bounds;
+        }
 
         if (propagate) {
-            console.error('Passing Bounds', this._bounds);
-            (<any>this._fgpMap).setExtent(this.bounds.extent);
+            this.mapI.setExtent(this.bounds.extent);
         }
     }
 
@@ -50,7 +57,7 @@ export default class Map {
      */
     set fgpMap(fgpMap: Object) {
         this._fgpMap = fgpMap;
-        this.setBounds((<any>fgpMap).extent, false);
+        this.setBounds(this.mapI.extent, false);
         initObservables.apply(this);
     }
 
@@ -126,21 +133,22 @@ export default class Map {
         return this._boundsChanged;
     }
 
-   /** Pans the map to the center point provided.
-    * @TODO James/Aly to fix - esri throwing `TypeError: a.isWebMercator is not a function`
-   */
-   setCenter(xy: geo.XY | geo.XYLiteral): void {
-        xy = geo.XY.confirm(xy);
-        const zoomPoint = (<any>window).RZ.GAPI.proj.Point(xy.x, xy.y, {wkid: 4326});
-        (<any>this._fgpMap).centerAt(zoomPoint);
-   }
+    get mapI(): any {
+        return (<any>this._fgpMap);
+    }
 
-   get zoom(): number {
-       return (<any>this._fgpMap).zoomCounter;
-   }
+   /** Pans the map to the center point provided. */
+    @geo.XYLiteral
+    setCenter(xy: geo.XY | geo.XYLiteral): void {
+        this.mapI.centerAt((<geo.XY>xy).projectToPoint(3978));
+    }
+
+    get zoom(): number {
+        return this.mapI.zoomCounter;
+    }
 
    set zoom(to: number) {
-        (<any>this._fgpMap).setZoom(to);
+        this.mapI.setZoom(to);
    }
 
     /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
