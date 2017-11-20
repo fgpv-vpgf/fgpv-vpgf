@@ -27,7 +27,6 @@ class AttribFC extends basicFC.BasicFC {
             attribs: {},
             geoms: {}
         };
-        this._refreshInterval = config.cachedRefreshInterval;
     }
 
     get geomType () { return this._geometryType; }
@@ -124,10 +123,8 @@ class AttribFC extends basicFC.BasicFC {
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
     getFormattedAttributes () {
-        if (this._formattedAttributes && !this._refreshInterval) {
+        if (this._formattedAttributes) {
             return this._formattedAttributes;
-        } else if (this._refreshInterval) {
-            delete this._layerPackage._attribData;
         }
 
         // TODO after refactor, consider changing this to a warning and just return some dummy value
