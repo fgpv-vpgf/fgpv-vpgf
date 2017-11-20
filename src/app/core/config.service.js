@@ -200,10 +200,9 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         get remoteConfig() { return _remoteConfig; }
         get loadingState() { return _loadingState; }
         get getSync() {
-            // TODO: Get rid of this getter and use getAsync instead
-            // if (_loadingState < States.LOADED) {
-            //     throw new Error('Attempted to access config synchronously before loading completed.  Either use the promise based API or wait for rvReady.');
-            // }
+            if (_loadingState < States.LOADED) {
+                throw new Error('Attempted to access config synchronously before loading completed.  Either use the promise based API or wait for rvReady.');
+            }
             return getConfigByLanguage(currentLang()).config;
         }
         get getAsync() { return getConfigByLanguage(currentLang()).promise; }
@@ -312,6 +311,11 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         $q.all([gapiService.isReady, configList[0].promise]).then(() => {
             _loadingState = States.LOADED;
             events.$broadcast(events.rvCfgInitialized);
+        });
+
+        // For switching Config
+        gapiService.isReady.then(function() {
+            _loadingState = States.LOADED;
         });
     }
 
