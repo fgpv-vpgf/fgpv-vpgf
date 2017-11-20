@@ -76,7 +76,7 @@ angular
  */
 function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    tableService, events, ConfigObject, $mdToast) {
+    tableService, events, ConfigObject, $mdToast, common) {
 
     const directive = {
         restrict: 'E',
@@ -672,18 +672,22 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             debounceService.registerDebounce(self.table.columns.adjust)
                         );
 
-                        const refreshInterval = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.cachedRefreshInterval;
+                        const legendEntry = stateManager.display.table.requester.legendEntry;
+                        const refreshInterval = legendEntry.mainProxyWrapper.layerConfig.cachedRefreshInterval;
 
                         if (refreshInterval) {
-                            // create notification toast
-                            // promise resolves with 'ok' when user clicks 'undo'
-                            const tableToast = $mdToast.show({
-                                template: TABLE_UPDATE_TEMPALATE,
-                                parent: referenceService.panes.table,
-                                position: 'bottom rv-flex-global',
-                                hideDelay: false,
-                                controller: 'ToastCtrl'
-                            });
+                            self.toastInterval = common.$interval(() => {
+                                if ($rootElement.find('.table-toast').length === 0) {
+                                    // create notification toast
+                                    $mdToast.show({
+                                        template: TABLE_UPDATE_TEMPALATE,
+                                        parent: referenceService.panes.table,
+                                        position: 'bottom rv-flex-global',
+                                        hideDelay: false,
+                                        controller: 'ToastCtrl'
+                                    });
+                                }
+                            }, refreshInterval * 60000);
                         }
                     } else {
                         self.noData = true;
@@ -941,6 +945,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 }
 
                 $mdToast.hide();
+
+                common.$interval.cancel(self.toastInterval);
             }
         }
     }

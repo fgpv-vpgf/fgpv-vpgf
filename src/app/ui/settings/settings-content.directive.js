@@ -40,22 +40,29 @@ function rvSettingsContent(layerRegistry) {
         const self = scope.self;
 
         const opacityName = 'opacity';
+        const intervalName = 'interval';
         const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
 
         // only search for opacity parent if the control is userDisabled on non-true-dynamic dynamic layers
         if (self.block.isControlUserDisabled(opacityName) && !layerRecord.isTrueDynamic) {
-            self.valueParentBlock = findOpacityParentBlock(self.block);
+            self.valueParentBlock = findParentBlock(self.block, opacityName);
+        }
+
+        // only search for interval parent if the control is userDisabled on non-true-dynamic dynamic layers
+        if (self.block.isControlUserDisabled(intervalName) && !layerRecord.isTrueDynamic) {
+            self.refreshValueParentBlock = findParentBlock(self.block, intervalName);
         }
 
         /**
-         * Finds the closes parent group which enabled and visible opacity control.
+         * Finds the closes parent group which enabled and visible given control.
          *
-         * @function findOpacityParentBlock
+         * @function findParentBlock
          * @private
          * @param {LegendBlock} block
+         * @param {String} control
          * @return {LegendBlock|null} a LegendBlock group or null if the parent doesn't exist
          */
-        function findOpacityParentBlock(block) {
+        function findParentBlock(block, control) {
 
             const parent = block.visualParent;
 
@@ -64,16 +71,16 @@ function rvSettingsContent(layerRegistry) {
                 return null;
             }
 
-            if (!parent.isControlDisabled(opacityName) && parent.isControlVisible(opacityName)) {
+            if (!parent.isControlDisabled(control) && parent.isControlVisible(control)) {
                 return parent;
             } else {
-                return findOpacityParentBlock(parent);
+                return findParentBlock(parent, control);
             }
         }
     }
 }
 
-function Controller(common, Geo, LegendBlock) {
+function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
     'ngInject';
     const self = this;
 
@@ -82,7 +89,7 @@ function Controller(common, Geo, LegendBlock) {
     self.checkWMS = checkWMS;
     self.checkStylesLength = checkStylesLength;
 
-    self.isNode = () => self.block.blockType === LegendBlock.TYPES.NODE;
+    self.isFileLayer = () => layerRegistry.getLayerRecord(self.block.layerRecordId).isFileLayer();
 
     /**
      * @function checkAvailableControls

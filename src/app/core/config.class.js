@@ -57,9 +57,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                     'query',
 
                     'symbology',
-                    // 'reload', // reload control is not allowed on groups, but since dynamic layer is represented by a group, it will be show up on the dynamic layer placeholder and error templates
+                    'reload',
                     'remove',
-                    'settings'
+                    'settings',
+                    'interval'
                 ],
                 disabledControls: [],
                 userDisabledControls: []
@@ -88,7 +89,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                     'remove',
                     'settings',
                     'data',
-                    'symbology'
+                    'symbology',
+                    'interval'
                 ],
                 disabledControls: [],
                 userDisabledControls: []
@@ -116,7 +118,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                     'settings',
                     // 'data',
                     'symbology',
-                    'styles'
+                    'styles',
+                    'interval'
                 ],
                 disabledControls: [],
                 userDisabledControls: [],
@@ -149,7 +152,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                     'remove',
                     'settings',
                     'data',
-                    'symbology'
+                    'symbology',
+                    'interval'
                 ],
                 disabledControls: [],
                 userDisabledControls: [],
@@ -177,7 +181,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                         'remove',
                         'settings',
                         'data',
-                        'symbology'
+                        'symbology',
+                        'interval'
                     ],
                     disabledControls: [],
                     userDisabledControls: []
@@ -789,17 +794,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
-            this._refreshInterval = source.refreshInterval;
         }
 
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
         get extent () { return this._extent; }
         get table () { return this._table; }
-
-        get refreshInterval () {        return this._refreshInterval; }
-        set refreshInterval (value) {   this._refreshInterval = value; }
-
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
 
         get JSON() {
@@ -807,8 +807,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent,
-                table: this.table.JSON,
-                refreshInterval: this.refreshInterval
+                table: this.table.JSON
             });
         }
     }
