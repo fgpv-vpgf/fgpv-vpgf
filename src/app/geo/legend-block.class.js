@@ -638,6 +638,9 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                         this._derivedLoadedFeatureCount,
                         this._mainProxyWrapper.loadedFeatureCount);
 
+                    // if the estimate overshoots the total feature count, set it to the total feature count
+                    // if the estimate is somehow less than 0, set it to 0
+                    // this is to prevent the value display to be in the negatives or higher than the total amount required to load
                     if (this._derivedLoadedFeatureCount > this._mainProxyWrapper.featureCount) {
                         this._derivedLoadedFeatureCount = this._mainProxyWrapper.featureCount;
                     } else if (this._derivedLoadedFeatureCount < 0) {
@@ -807,7 +810,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                     return 'placeholder';
                 },
                 'rv-loaded': () => {
-                    _removeReload();
+                    // only remove reload if it is not the dynamic root or the top-most visible level of a dynamic layer (if root collapsed)
+                    if (!this._isDynamicRoot && !(this.parent.blockType === LegendBlock.GROUP && this.parent.collapsed)) {
+                         _removeReload();
+                    }
                     return _collapsedCheck(super.template);
                 },
                 'rv-refresh': () => {

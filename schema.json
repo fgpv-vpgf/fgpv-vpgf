@@ -292,8 +292,7 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel"},
-                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes." }
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel"}
             },
             "required": ["index"],
             "additionalProperties": false
@@ -541,7 +540,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes." },
+                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
@@ -560,7 +559,7 @@
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes." },
+                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
@@ -581,7 +580,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes." },
+                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerEntries": {
@@ -606,7 +605,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
-                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes." },
+                "refreshInterval": { "type": "number", "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },

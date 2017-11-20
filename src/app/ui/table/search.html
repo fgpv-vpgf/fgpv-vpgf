@@ -2,7 +2,7 @@
     class="rv-table-search md-block"
     ng-if="self.service.isGlobalSearch">
     <input
-        aria-label={{ filter.aria.table.search | translate }}"
+        aria-label="{{ filter.aria.table.search | translate }}"
         ng-model="self.searchText"
         ng-keyup="self.search()"
         placeholder="{{ 'filter.search.placeholder' | translate }}">

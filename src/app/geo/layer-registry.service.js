@@ -18,7 +18,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService) {
+function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -72,6 +72,32 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             layerRecords.push(layerRecord);
         }
 
+        layerRecord._invalidateAttribs = _attribsInvalidation(layerRecord);
+
+        /**
+         * @function _attribsInvalidation
+         * @private
+         * @param {LayerRecord} layerRecord a layer record to set the interval of deleting attributes
+         * @return {Function} a function to invalidate pre-loaded attributes after certain time period
+         */
+        function _attribsInvalidation(layerRecord) {
+            const refreshInterval = layerBlueprint.config.refreshInterval;
+            let updateAttributes;
+            if (refreshInterval) {
+                updateAttributes = common.$interval(() => {
+                    Object.keys(layerRecord._featClasses).forEach(fc => {
+                        delete layerRecord._featClasses[fc]._formattedAttributes;
+
+                        if (layerRecord._featClasses[fc]._layerPackage) {
+                            delete layerRecord._featClasses[fc]._layerPackage._attribData;
+                        }
+                    })
+                }, refreshInterval * 60000);
+            }
+
+            return updateAttributes;
+        }
+
         return layerRecord;
     }
 
@@ -90,6 +116,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const index = layerRecords.indexOf(layerRecord);
 
         if (index !== -1) {
+            common.$interval.cancel(layerRecord._invalidateAttribs);
             map.removeLayer(layerRecord._layer);
             layerRecord = layerBlueprint.generateLayer();
             layerRecords[index] = layerRecord;
@@ -111,6 +138,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const index = layerRecords.indexOf(layerRecord);
 
         if (index !== -1) {
+            common.$interval.cancel(layerRecord._invalidateAttribs);
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
         }
