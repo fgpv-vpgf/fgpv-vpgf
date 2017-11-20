@@ -328,7 +328,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
             this._controlName = 'interval';
         }
 
-        get label () {   return 'settings.label.interval'; }
+        get label () {   return 'settings.label.refreshHint'; }
 
         get isDynamicChild () {
             return this.block.isControlUserDisabled('interval') && !layerRegistry.getLayerRecord(this.block.layerRecordId).isTrueDynamic;
