@@ -24,7 +24,7 @@
   "language": "en",
   "services": {
     "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-    "exportMapUrl": "http://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+    "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."

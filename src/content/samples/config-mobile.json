@@ -5,7 +5,7 @@
   "fullscreen": true,
   "services": {
     "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-    "exportMapUrl": "http://webservices.maps.canada.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+    "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
   },
 "search": {
     "serviceUrls": {
