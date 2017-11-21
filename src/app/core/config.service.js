@@ -51,7 +51,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
     let _loadingState = States.NEW;
     let _remoteConfig = false;
     let languages;
-    const configList = [];
+    let configList = [];
 
     /**
      * Each language has an instance of this class. However, it is only populated when you call `configInstance.promise`. At this point
@@ -300,6 +300,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
      */
     function configLoader(configAttr, svcAttr, langs) {
         _loadingState = States.LOADING;
+        configList = [];    // empty previous configs
 
         // create initial config objects
         langs.forEach(lang => {
@@ -310,6 +311,11 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         $q.all([gapiService.isReady, configList[0].promise]).then(() => {
             _loadingState = States.LOADED;
             events.$broadcast(events.rvCfgInitialized);
+        });
+
+        // For switching Config
+        gapiService.isReady.then(function() {
+            _loadingState = States.LOADED;
         });
     }
 
