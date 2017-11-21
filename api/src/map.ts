@@ -22,7 +22,33 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
 
-    get center(): geo.XY { return this.bounds.center; }
+    /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
+    constructor(mapDiv: HTMLElement, config?: FgpvConfigSchema | string) {
+        this.mapDiv = $(mapDiv);
+        this._id = this.mapDiv.attr('id') || '';
+
+        // config set implies viewer loading via API
+        if (config) {
+            // type guard for cases where config object is given, store on window for config.service to find
+            if (isConfigSchema(config)) {
+                (<any>window)[`rzConfig${this._id}`] = config;
+                this.mapDiv.attr('rv-config', `rzConfig${this._id}`);
+            } else {
+                this.mapDiv.attr('rv-config', config);
+            }
+
+            // startup the map
+            seeder(mapDiv);
+            this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
+        }
+    }
+
+    /** Once set, we know the map instance is ready. */
+    set fgpMap(fgpMap: Object) {
+        this._fgpMap = fgpMap;
+        this.setBounds(this.mapI.extent, false);
+        initObservables.apply(this);
+    }
 
     /**
      * Changes the map boundaries based on the given extent. Any projection supported by Proj4 can be provided.
@@ -45,21 +71,25 @@ export default class Map {
         }
     }
 
-    /**
-     * Returns the boundary of the map, similar to extent
-     */
+    set boundsChanged(observable: Observable<geo.XYBounds>) {
+        this._boundsChanged = observable;
+        this._boundsChanged.subscribe(xyBounds => {
+            this.setBounds(xyBounds, false);
+        });
+    }
+
+    /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
+    fullscreen(enabled: boolean): void {
+        this.mapI.fullscreen(enabled);
+    }
+
+    /** Returns the boundary of the map, similar to extent. */
     get bounds(): geo.XYBounds { return this._bounds; }
 
+    /** Returns the id assigned to the viewer. */
     get id(): string { return this._id; }
 
-    /**
-     * Once set, we know the map instance is ready.
-     */
-    set fgpMap(fgpMap: Object) {
-        this._fgpMap = fgpMap;
-        this.setBounds(this.mapI.extent, false);
-        initObservables.apply(this);
-    }
+    get center(): geo.XY { return this.bounds.center; }
 
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
@@ -118,13 +148,6 @@ export default class Map {
     */
     centerChanged: Observable<MouseEvent>;
 
-    set boundsChanged(observable: Observable<geo.XYBounds>) {
-        this._boundsChanged = observable;
-        this._boundsChanged.subscribe(xyBounds => {
-            this.setBounds(xyBounds, false);
-        });
-    }
-
     /**
     * Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.
     * @event boundsChanged
@@ -133,48 +156,30 @@ export default class Map {
         return this._boundsChanged;
     }
 
+    /** Returns the viewer map instance as an `any` type for convenience.  */
     get mapI(): any {
         return (<any>this._fgpMap);
     }
 
-   /** Pans the map to the center point provided. */
+    /** Pans the map to the center point provided. */
     @geo.XYLiteral
     setCenter(xy: geo.XY | geo.XYLiteral): void {
         this.mapI.centerAt((<geo.XY>xy).projectToPoint(3978));
     }
 
+    /** Returns the current zoom level applied on the map */
     get zoom(): number {
         return this.mapI.zoomCounter;
     }
 
+    /** Zooms to the level provided. */
    set zoom(to: number) {
         this.mapI.setZoom(to);
    }
 
-    /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
-    //fullscreen(enabled: boolean) : void;
-
-    /**
-     * Creates a new map inside of the given HTML container, which is typically a DIV element.
-    */
-    constructor(mapDiv: HTMLElement, config?: FgpvConfigSchema | string) {
-        this.mapDiv = $(mapDiv);
-        this._id = this.mapDiv.attr('id') || '';
-
-        // config set implies viewer loading via API
-        if (config) {
-            // type guard for cases where config object is given, store on window for config.service to find
-            if (isConfigSchema(config)) {
-                (<any>window)[`rzConfig${this._id}`] = config;
-                this.mapDiv.attr('rv-config', `rzConfig${this._id}`);
-            } else {
-                this.mapDiv.attr('rv-config', config);
-            }
-
-            // startup the map
-            seeder(mapDiv);
-            this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
-        }
+   /** Returns the jQuery element of the main viewer.  */
+    get div(): JQuery<HTMLElement> {
+        return this.mapDiv;
     }
 }
 
