@@ -162,9 +162,10 @@ export default class Map {
     }
 
     /** Pans the map to the center point provided. */
+    setCenter(xy: geo.XY | geo.XYLiteral): void;
     @geo.XYLiteral
-    setCenter(xy: geo.XY | geo.XYLiteral): void {
-        this.mapI.centerAt((<geo.XY>xy).projectToPoint(3978));
+    setCenter(xy: geo.XY): void {
+        this.mapI.centerAt(xy.projectToPoint(3978));
     }
 
     /** Returns the current zoom level applied on the map */
