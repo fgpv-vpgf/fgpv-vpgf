@@ -544,7 +544,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._extent = source.extent ?
                 gapiService.gapi.Map.getExtentFromJson(source.extent) :
                 undefined;
-            this._refreshInterval = source.refreshInterval;
+            this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
 
             const defaults = DEFAULTS.layer[this.layerType];
 

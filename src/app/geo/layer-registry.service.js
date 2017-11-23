@@ -87,13 +87,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             let updateAttributes;
             if (refreshInterval) {
                 updateAttributes = common.$interval(() => {
-                    Object.keys(layerRecord._featClasses).forEach(fc => {
-                        delete layerRecord._featClasses[fc]._formattedAttributes;
-
-                        if (layerRecord._featClasses[fc]._layerPackage) {
-                            delete layerRecord._featClasses[fc]._layerPackage._attribData;
-                        }
-                    })
+                    layerRecord.cleanUpAttribs();
                 }, refreshInterval * 60000);
             }
 
