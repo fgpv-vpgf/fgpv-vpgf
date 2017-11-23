@@ -354,6 +354,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         function _makeDynamicGroupBlock(blockConfig, blueprints) {
             const layerConfig = blueprints.main.config;
 
+            layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
+
+            layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = (entry.refreshInterval = layerConfig.refreshInterval)));
+
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
             // convention:
@@ -624,6 +628,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                         derivedChildLayerConfigSource.index === layerConfig.layerEntries[0].index)) {
 
                         derivedChildLayerConfigSource.userDisabledControls.push('opacity');
+                        derivedChildLayerConfigSource.userDisabledControls.push('interval');
                     }
 
                     const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
@@ -676,6 +681,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
                 layerConfig.layerEntries.forEach(entry => (entry.cachedStyle = entry.currentStyle))
             }
+
+            layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
 
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
 

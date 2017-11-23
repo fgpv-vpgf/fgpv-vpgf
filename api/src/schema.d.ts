@@ -188,7 +188,7 @@ export interface FgpvConfigSchema {
      */
   proxyUrl?: string;
       /**
-     * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask.
+     * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous
      */
   exportMapUrl?: string;
       /**
@@ -531,6 +531,10 @@ export interface TileSchemaNode {
      */
   url: string;
       /**
+     * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+     */
+  refreshInterval?: number;
+      /**
      * The metadata url of the layer service
      */
   metadataUrl?: string;
@@ -658,6 +662,10 @@ export interface BasicLayerNode {
    */
   url: string;
   /**
+   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+   */
+  refreshInterval?: number;
+  /**
    * The metadata url of the layer service
    */
   metadataUrl?: string;
@@ -691,6 +699,10 @@ export interface FeatureLayerNode {
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
   url: string;
+  /**
+   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+   */
+  refreshInterval?: number;
   /**
    * The metadata url of the layer service
    */
@@ -809,6 +821,10 @@ export interface WmsLayerNode {
    */
   url: string;
   /**
+   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+   */
+  refreshInterval?: number;
+  /**
    * The metadata url of the layer service
    */
   metadataUrl?: string;
@@ -867,6 +883,10 @@ export interface DynamicLayerNode {
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
   url: string;
+  /**
+   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+   */
+  refreshInterval?: number;
   /**
    * The metadata url of the layer service
    */

@@ -5,6 +5,8 @@ const templateUrl = {
     menu: require('./templates/legend-control-menu.html'),
     slider: require('./templates/legend-control-slider.html'),
     switch: require('./templates/legend-control-switch.html'),
+    input: require('./templates/legend-control-input.html'),
+    select: require('./templates/legend-control-select.html'),
     'toggle-button': require('./templates/legend-control-toggle-button.html')
 };
 

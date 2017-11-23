@@ -42,6 +42,13 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
 
     </md-button>`;
 
+const TABLE_UPDATE_TEMPALATE =
+    `<md-toast class="table-toast">
+        <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
+        <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
+        <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
+    </md-toast>`;
+
 // max field length accepted
 const fieldLength = 500;
 
@@ -58,7 +65,8 @@ let index; // keep the current selected cell information
  */
 angular
     .module('app.ui')
-    .directive('rvTableDefault', rvTableDefault);
+    .directive('rvTableDefault', rvTableDefault)
+    .controller('ToastCtrl', ToastController);
 
 /**
  * `rvTableDefault` directive displays the datatable with layer data.
@@ -68,7 +76,7 @@ angular
  */
 function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
     detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    tableService, events, ConfigObject) {
+    tableService, events, ConfigObject, $mdToast, common) {
 
     const directive = {
         restrict: 'E',
@@ -89,6 +97,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
      * @param  {Object} el    node element
      */
     function link(scope, el) { // scope, el, attr, ctrl) {
+
         const self = scope.self;
         let containerNode;
 
@@ -662,6 +671,24 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             $rootElement,
                             debounceService.registerDebounce(self.table.columns.adjust)
                         );
+
+                        const legendEntry = stateManager.display.table.requester.legendEntry;
+                        const refreshInterval = legendEntry.mainProxyWrapper.layerConfig.cachedRefreshInterval;
+
+                        if (refreshInterval) {
+                            self.toastInterval = common.$interval(() => {
+                                if ($rootElement.find('.table-toast').length === 0) {
+                                    // create notification toast
+                                    $mdToast.show({
+                                        template: TABLE_UPDATE_TEMPALATE,
+                                        parent: referenceService.panes.table,
+                                        position: 'bottom rv-flex-global',
+                                        hideDelay: false,
+                                        controller: 'ToastCtrl'
+                                    });
+                                }
+                            }, refreshInterval * 60000);
+                        }
                     } else {
                         self.noData = true;
                     }
@@ -897,6 +924,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
          */
         function destroyTable() {
             if (self.table) {
+                // close the settings panel to allow for the new table loading to be viewed
+                self.tableService.isSettingOpen = false
+
                 // destroy table with all events
                 self.table.destroy(true); // https://datatables.net/reference/api/destroy()
                 delete self.table; // kill the reference
@@ -913,6 +943,10 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 if (self.onResizeDelistener) {
                     self.onResizeDelistener();
                 }
+
+                $mdToast.hide();
+
+                common.$interval.cancel(self.toastInterval);
             }
         }
     }
@@ -1133,4 +1167,23 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
             self.display.requester.legendEntry.abortAttribLoad();
         });
     }
+}
+
+/**
+ * ToastController watches for changes to the toast; either reloading the table or closing the toast
+ *
+ * @function ToastController
+ */
+function ToastController($scope, $mdToast, $timeout, stateManager, tocService) {
+    $scope.closeToast = () => $mdToast.hide();
+
+    $scope.reloadTable = () => {
+        const legendBlock = stateManager.display.table.requester.legendEntry;
+
+        stateManager.setActive({ tableFulldata: false }).then(() =>{
+            $timeout(() => {
+                tocService.toggleLayerTablePanel(legendBlock);
+            });
+        });
+    };
 }

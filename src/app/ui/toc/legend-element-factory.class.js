@@ -14,7 +14,8 @@ angular
     .module('app.ui')
     .factory('LegendElementFactory', LegendElementFactory);
 
-function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService, mapService) {
+// eslint-disable-next-line max-statements
+function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounceService, configService, mapService, layerRegistry) {
     const ref = {
         get autoLegendEh() {
             return configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
@@ -310,6 +311,41 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         }
     }
 
+    class StylesControl extends BaseControl {
+        constructor (...args) {
+            super(...args);
+
+            this._controlName = 'styles';
+        }
+
+        get label () {   return 'settings.label.styles'; }
+    }
+
+    class IntervalControl extends BaseControl {
+        constructor (...args) {
+            super(...args);
+
+            this._controlName = 'interval';
+        }
+
+        get label () {   return 'settings.label.refreshHint'; }
+
+        get isDynamicChild () {
+            return this.block.isControlUserDisabled('interval') && !layerRegistry.getLayerRecord(this.block.layerRecordId).isTrueDynamic;
+        }
+
+        get clearAndReload() {
+            if (this.block._rootProxyWrapper && this.block._rootProxyWrapper.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                this.block._rootProxyWrapper.layerConfig.refreshInterval = 0;
+                this.block._rootProxyWrapper.layerConfig.layerEntries.forEach(entry => (entry.refreshInterval = 0));
+            } else {
+                this.block.mainProxyWrapper.layerConfig.refreshInterval = 0;
+            }
+
+            tocService.reloadLayer(this.block);
+        }
+    }
+
     class BaseFlag extends BaseElement {
         get data () { return {}; }
         get style () { return ''; }
@@ -533,7 +569,9 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
             data: DataControl,
             remove: RemoveControl,
             reorder: ReorderControl,
-            symbology: SymbologyControl
+            symbology: SymbologyControl,
+            styles: StylesControl,
+            interval: IntervalControl
         }
     };
 

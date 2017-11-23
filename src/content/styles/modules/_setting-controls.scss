@@ -53,6 +53,50 @@
             line-height: 14px;
             color: $secondary-text-color;
         }
+
+        form {
+            .interval-value {
+                padding-right: 36px;
+            }
+
+            .refresh-hint {
+                margin-top: 28px;
+            }
+
+            .rv-close {
+                position: absolute;
+                left: 280px;
+                padding-bottom: 10px !important;
+            }
+        }
+
+        .rv-input-footer {
+            display: flex;
+            margin-top: rem(1.0);
+
+            .rv-input-changeat {
+                .rv-control-name {
+                    text-transform: lowercase;
+                }
+            }
+
+            rv-legend-control {
+                padding: 0;
+                margin: 0 rem(0.4);
+
+                .rv-link-button {
+                    color: $primary-color-dark;
+                    font-size: rem(1.2);
+                    line-height: rem(1.2);
+                    min-height: rem(1.2);
+                    text-transform: none;
+                    min-width: auto;
+                    margin: 0;
+                    padding: 0 rem(0.4);
+                    height: rem(2);
+                }
+            }
+        }
     }
 }
 

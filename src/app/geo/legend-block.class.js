@@ -466,6 +466,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get loadedFeatureCount () {
             if (this._mainProxyWrapper.featureCount === this._mainProxyWrapper.loadedFeatureCount) {
                 common.$interval.cancel(this._stopFeatureCountInterval);
+                this._stopFeatureCountInterval = null;
+                this._derivedLoadedFeatureCount = 0;
                 return this._mainProxyWrapper.loadedFeatureCount;
             }
 
@@ -635,6 +637,15 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                     this._derivedLoadedFeatureCount = Math.max(
                         this._derivedLoadedFeatureCount,
                         this._mainProxyWrapper.loadedFeatureCount);
+
+                    // if the estimate overshoots the total feature count, set it to the total feature count
+                    // if the estimate is somehow less than 0, set it to 0
+                    // this is to prevent the value display to be in the negatives or higher than the total amount required to load
+                    if (this._derivedLoadedFeatureCount > this._mainProxyWrapper.featureCount) {
+                        this._derivedLoadedFeatureCount = this._mainProxyWrapper.featureCount;
+                    } else if (this._derivedLoadedFeatureCount < 0) {
+                        this._derivedLoadedFeatureCount = 0;
+                    }
                 }
 
 
@@ -696,6 +707,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         abortAttribLoad () {
             common.$interval.cancel(this._stopFeatureCountInterval);
             this._stopFeatureCountInterval = null;
+            this._derivedLoadedFeatureCount = 0;
             this._mainProxyWrapper.abortAttribLoad();
         }
 
@@ -793,18 +805,17 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // only add `reload` control to the available controls when the dynamic layer is loading or already failed
             const stateToTemplate = {
-                'rv-loading': () => {
-                    _addReload();
-                    return 'placeholder';
-                },
+                'rv-loading': () => 'placeholder',
                 'rv-loaded': () => {
-                    _removeReload();
+                    // only remove reload if it is not the dynamic root or the top-most visible level of a dynamic layer (if root collapsed)
+                    if (!this._isDynamicRoot && !(this.parent.blockType === LegendBlock.GROUP && this.parent.collapsed)) {
+                         _removeReload();
+                    } else {
+                        _addReload();
+                    }
                     return _collapsedCheck(super.template);
                 },
-                'rv-refresh': () => {
-                    _removeReload();
-                    return _collapsedCheck(super.template);
-                },
+                'rv-refresh': () => _collapsedCheck(super.template),
                 'rv-error': () => {
                     _addReload();
                     return 'error';
@@ -824,7 +835,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
              * @private
              */
             function _addReload() {
-                availableControls.push('reload');
+                const index = availableControls.indexOf('reload');
+
+                if (index === -1) {
+                    availableControls.push('reload');
+                }
             }
 
             /**
