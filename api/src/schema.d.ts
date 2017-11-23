@@ -188,7 +188,7 @@ export interface FgpvConfigSchema {
      */
   proxyUrl?: string;
       /**
-     * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask.
+     * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous
      */
   exportMapUrl?: string;
       /**

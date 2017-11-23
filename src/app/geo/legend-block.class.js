@@ -805,21 +805,17 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // only add `reload` control to the available controls when the dynamic layer is loading or already failed
             const stateToTemplate = {
-                'rv-loading': () => {
-                    _addReload();
-                    return 'placeholder';
-                },
+                'rv-loading': () => 'placeholder',
                 'rv-loaded': () => {
                     // only remove reload if it is not the dynamic root or the top-most visible level of a dynamic layer (if root collapsed)
                     if (!this._isDynamicRoot && !(this.parent.blockType === LegendBlock.GROUP && this.parent.collapsed)) {
                          _removeReload();
+                    } else {
+                        _addReload();
                     }
                     return _collapsedCheck(super.template);
                 },
-                'rv-refresh': () => {
-                    _removeReload();
-                    return _collapsedCheck(super.template);
-                },
+                'rv-refresh': () => _collapsedCheck(super.template),
                 'rv-error': () => {
                     _addReload();
                     return 'error';
@@ -839,7 +835,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
              * @private
              */
             function _addReload() {
-                availableControls.push('reload');
+                const index = availableControls.indexOf('reload');
+
+                if (index === -1) {
+                    availableControls.push('reload');
+                }
             }
 
             /**

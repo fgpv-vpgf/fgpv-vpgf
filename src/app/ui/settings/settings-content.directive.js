@@ -45,7 +45,7 @@ function rvSettingsContent(layerRegistry) {
 
         // only search for opacity parent if the control is userDisabled on non-true-dynamic dynamic layers
         if (self.block.isControlUserDisabled(opacityName) && !layerRecord.isTrueDynamic) {
-            self.valueParentBlock = findParentBlock(self.block, opacityName);
+            self.opacityValueParentBlock = findParentBlock(self.block, opacityName);
         }
 
         // only search for interval parent if the control is userDisabled on non-true-dynamic dynamic layers

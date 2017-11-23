@@ -41,7 +41,6 @@ function rvLegendControl(LegendElementFactory) {
         scope: {
             block: '=',
             valueParentBlock: '=',
-            refreshValueParentBlock: '=',
             name: '@'
         },
         link: {

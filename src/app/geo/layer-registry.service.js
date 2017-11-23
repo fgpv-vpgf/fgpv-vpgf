@@ -38,7 +38,9 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         mapLoadingWaitHandle: null,
 
         loadingQueue: [],
-        loadingCount: 0
+        loadingCount: 0,
+
+        refreshAttributes: {}
     };
 
     /**
@@ -72,7 +74,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             layerRecords.push(layerRecord);
         }
 
-        layerRecord._invalidateAttribs = _attribsInvalidation(layerRecord);
+        ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord);
 
         /**
          * @function _attribsInvalidation
@@ -116,7 +118,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const index = layerRecords.indexOf(layerRecord);
 
         if (index !== -1) {
-            common.$interval.cancel(layerRecord._invalidateAttribs);
+            common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
             map.removeLayer(layerRecord._layer);
             layerRecord = layerBlueprint.generateLayer();
             layerRecords[index] = layerRecord;
@@ -138,7 +140,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const index = layerRecords.indexOf(layerRecord);
 
         if (index !== -1) {
-            common.$interval.cancel(layerRecord._invalidateAttribs);
+            common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
         }
