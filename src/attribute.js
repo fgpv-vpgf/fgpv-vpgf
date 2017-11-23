@@ -94,6 +94,7 @@ function newLayerPackage(featureIdx, esriBundle) {
         }
 
         // first request for data. create the promise
+        layerPackage.loadIsDone = false;
         layerPackage.loadAbortFlag = false;
         layerPackage.loadedFeatureCount = 0;
         layerPackage._attribData = new Promise((resolve, reject) => {
@@ -120,7 +121,6 @@ function newLayerPackage(featureIdx, esriBundle) {
 
                 // after all data has been loaded
                 defFinished.promise.then(features => {
-                    delete layerData.load; // no longer need this info
                     layerPackage.loadIsDone = true;
 
                     // resolve the promise with the attribute set
