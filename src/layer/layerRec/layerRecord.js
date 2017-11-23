@@ -512,6 +512,21 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Deletes any pre-loaded attributes when the layer automatically refreshes to ensure up-to-date attributes are loaded next time
+     *
+     * @function cleanUpAttribs
+     */
+    cleanUpAttribs () {
+        Object.keys(this._featClasses).forEach(fc => {
+            delete this._featClasses[fc]._formattedAttributes;
+
+            if (this._featClasses[fc]._layerPackage) {
+                delete this._featClasses[fc]._layerPackage._attribData;
+            }
+        });
+    }
+
+    /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
      * will not apply any defaults).
