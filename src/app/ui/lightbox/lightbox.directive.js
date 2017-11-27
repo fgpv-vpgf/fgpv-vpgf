@@ -27,6 +27,11 @@ function rvLightbox($mdDialog, referenceService) {
     function link(scope, element) {
 
         element.on('click', event => {
+            // exit if the element is a link but not an image since they should be able to open
+            if (event.target.nodeName === 'A') {
+                return;
+            }
+
             // prevent the link from opening
             event.preventDefault(true);
             event.stopPropagation(true);
