@@ -243,7 +243,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         const itemStore = [];
         const lineSet = container.set();
 
-        items.forEach(item => makeLayer(item));
+        items.forEach(item => makeLayer(item, sectionWidth));
 
         return {
             container,
@@ -258,11 +258,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} item legend tree item to use
          */
-        function makeLegendElement(item) {
+        function makeLegendElement(item, sectionWidth) {
             if (item.hasOwnProperty('items')) {
-                makeGroup(item);
+                makeGroup(item, sectionWidth);
             } else {
-                makeItem(item);
+                makeItem(item, sectionWidth);
             }
         }
 
@@ -271,13 +271,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @function makeLayer
          * @param {Object} layer layer symbology from the legend tree
          */
-        function makeLayer(layer) {
+        function makeLayer(layer, sectionWidth) {
             const startHeight = runningHeight;
 
             makeHeader(layer, 18);
 
             layer.items.forEach(item => {
-                makeLegendElement(item);
+                makeLegendElement(item, sectionWidth);
             });
 
             layer.height = runningHeight - startHeight;
@@ -291,14 +291,14 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} group group symbology from the legend tree
          */
-        function makeGroup(group) {
+        function makeGroup(group, sectionWidth) {
             makeHeader(group, 16);
 
             const startHeight = runningHeight;
             runningIndent++;
 
             group.items.forEach(item => {
-                makeLegendElement(item);
+                makeLegendElement(item, sectionWidth);
             });
 
             runningIndent--;
@@ -320,9 +320,10 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} item item symbology from the legend tree
          */
-        function makeItem(item) {
+        function makeItem(item, sectionWidth) {
             const { name, svgcode } = item;
             const legendItem = container.group().remember('self', item);
+            const facotredSectionWidth = sectionWidth * 0.9; // So we would have space on left and right for visual look
             let flow;
 
             const flowAttributes = {
@@ -334,6 +335,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
             const imageItem = legendItem.group().svg(svgcode).first();
             const imageItemViewbox = imageItem.viewbox();
+
+            /// use the width that is greater
+            if (imageItemViewbox.width > facotredSectionWidth){
+                imageItemViewbox.width = facotredSectionWidth;
+            }
 
             if (imageItemViewbox.height > SYMBOL_SIZE || imageItemViewbox.width > SYMBOL_SIZE) {
 
