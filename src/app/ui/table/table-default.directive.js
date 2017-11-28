@@ -772,42 +772,46 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     index = self.table.cell(event.currentTarget).index();
                 });
 
-                // handle keyboard navigation
-                self.tableBody.on('keydown', 'td', event => {
-                    // get index value of currrent cell
-                    index = self.table.cell(event.currentTarget).index();
-
-                    if (!index) {
-                        return;
-                    }
-
-                    // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
-                    // get the number of columns
-                    const indexes = self.table.rows().indexes();
-                    const indexOf = indexes.indexOf(index.row);
-                    const columns = self.table.columns()[0].length - 1;
-
-                    let node;
-                    if (event.keyCode === keyNames.LEFT_ARROW) {
-                        // if try to move before first column, stay on it
-                        node = self.table.cell(index.row, (index.column !== 0) ? index.column - 1 : 0).node();
-                        node.rvFocus();
-                    } else if (event.keyCode === keyNames.RIGHT_ARROW) {
-                        // if try to move after last column, stay on it
-                        node = self.table.cell(index.row, (index.column !== columns) ?
-                            index.column + 1 : index.column).node();
-                        node.rvFocus();
-                    } else if (event.keyCode === keyNames.UP_ARROW) {
-                        node = self.table.cell(indexes[indexOf - 1], index.column).node();
-                        node.rvFocus();
-                    } else if (event.keyCode === keyNames.DOWN_ARROW) {
-                        node = self.table.cell(indexes[indexOf + 1], index.column).node();
-                        node.rvFocus();
-                    }
-
-                    // set index values. It will be use to blur the cell on mouse scroll
-                    index = self.table.cell(node).index();
-                });
+                /**
+                 * Deactivating for performance, tabbing too slow with large tables.
+                 *
+                 * // handle keyboard navigation
+                 *  self.tableBody.on('keydown', 'td', event => {
+                    *  // get index value of currrent cell
+                    *  index = self.table.cell(event.currentTarget).index();
+                    *
+                    * if (!index) {
+                    *  return;
+                    * }
+                    *
+                    * // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
+                    * // get the number of columns
+                    * const indexes = self.table.rows().indexes();
+                    * const indexOf = indexes.indexOf(index.row);
+                    * const columns = self.table.columns()[0].length - 1;
+                    *
+                    * let node;
+                    * // if try to move before first column, stay on it
+                    * if (event.keyCode === keyNames.LEFT_ARROW) {
+                    *      node = self.table.cell(index.row, (index.column !== 0) ? index.column - 1 : 0).node();
+                    *      node.rvFocus();
+                    * } else if (event.keyCode === keyNames.RIGHT_ARROW) {
+                    *  // if try to move after last column, stay on it
+                    *      node = self.table.cell(index.row, (index.column !== columns) ?
+                    *          index.column + 1 : index.column).node();
+                    *          node.rvFocus();
+                    * } else if (event.keyCode === keyNames.UP_ARROW) {
+                    *      node = self.table.cell(indexes[indexOf - 1], index.column).node();
+                    *      node.rvFocus();
+                    * } else if (event.keyCode === keyNames.DOWN_ARROW) {
+                    *      node = self.table.cell(indexes[indexOf + 1], index.column).node();
+                    *      node.rvFocus();
+                    * }
+                    *
+                    * // set index values. It will be use to blur the cell on mouse scroll
+                    * index = self.table.cell(node).index();
+                 * });
+                 */
             }
 
             /**
