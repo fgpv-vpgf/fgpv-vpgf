@@ -13,9 +13,9 @@
             aria-label="{{ 'settings.label.refreshInterval.close' | translate }}"
             class="rv-close md-icon-button black rv-icon-20"
             ng-click="self.uiControl.clearAndReload"
-            ng-disabled="self.block._rootProxyWrapper ?
+            ng-disabled="(self.block._rootProxyWrapper ?
                 !self.block._rootProxyWrapper.layerConfig.refreshInterval :
-                !self.block.mainProxyWrapper.layerConfig.refreshInterval || self.uiControl.isDynamicChild">
+                !self.block.mainProxyWrapper.layerConfig.refreshInterval || self.uiControl.isDynamicChild) && refreshForm.interval.$valid">
             <md-tooltip>{{ 'settings.label.refreshInterval.close' | translate }}</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>
         </md-button>
