@@ -335,6 +335,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             const imageItem = legendItem.group().svg(svgcode).first();
             const imageItemViewbox = imageItem.viewbox();
 
+            /// Use the narrower width as the bound for the image
+            if (imageItemViewbox.width > sectionWidth){
+                const imgLookFactor = 0.9; // So it'd have space on left and right for the visual look
+                imageItemViewbox.height *= ((sectionWidth / imageItemViewbox.width) * imgLookFactor);
+                imageItemViewbox.width = sectionWidth * imgLookFactor;
+            }
+
             if (imageItemViewbox.height > SYMBOL_SIZE || imageItemViewbox.width > SYMBOL_SIZE) {
 
                 flow = legendItem
@@ -359,7 +366,8 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             }
 
             legendItem.move(runningIndent * indentD, runningHeight);
-            runningHeight += legendItem.rbox().height + ITEM_GUTTER;
+            const heightToAppend = (legendItem.rbox().height > imageItemViewbox.height) ? legendItem.rbox().height : imageItemViewbox.height;
+            runningHeight += heightToAppend + ITEM_GUTTER;
 
             item.height = legendItem.rbox().height;
             item.y = legendItem.y();
