@@ -243,7 +243,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         const itemStore = [];
         const lineSet = container.set();
 
-        items.forEach(item => makeLayer(item, sectionWidth));
+        items.forEach(item => makeLayer(item));
 
         return {
             container,
@@ -258,11 +258,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} item legend tree item to use
          */
-        function makeLegendElement(item, sectionWidth) {
+        function makeLegendElement(item) {
             if (item.hasOwnProperty('items')) {
-                makeGroup(item, sectionWidth);
+                makeGroup(item);
             } else {
-                makeItem(item, sectionWidth);
+                makeItem(item);
             }
         }
 
@@ -271,13 +271,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @function makeLayer
          * @param {Object} layer layer symbology from the legend tree
          */
-        function makeLayer(layer, sectionWidth) {
+        function makeLayer(layer) {
             const startHeight = runningHeight;
 
             makeHeader(layer, 18);
 
             layer.items.forEach(item => {
-                makeLegendElement(item, sectionWidth);
+                makeLegendElement(item);
             });
 
             layer.height = runningHeight - startHeight;
@@ -291,14 +291,14 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} group group symbology from the legend tree
          */
-        function makeGroup(group, sectionWidth) {
+        function makeGroup(group) {
             makeHeader(group, 16);
 
             const startHeight = runningHeight;
             runningIndent++;
 
             group.items.forEach(item => {
-                makeLegendElement(item, sectionWidth);
+                makeLegendElement(item);
             });
 
             runningIndent--;
@@ -320,10 +320,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} item item symbology from the legend tree
          */
-        function makeItem(item, sectionWidth) {
+        function makeItem(item) {
             const { name, svgcode } = item;
             const legendItem = container.group().remember('self', item);
-            const facotredSectionWidth = sectionWidth * 0.9; // So we would have space on left and right for visual look
             let flow;
 
             const flowAttributes = {
@@ -336,9 +335,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             const imageItem = legendItem.group().svg(svgcode).first();
             const imageItemViewbox = imageItem.viewbox();
 
-            /// use the width that is greater
-            if (imageItemViewbox.width > facotredSectionWidth){
-                imageItemViewbox.width = facotredSectionWidth;
+            /// Use the greater width as the bound for the image
+            if (imageItemViewbox.width > sectionWidth){
+                const imgLookFactor = 0.9; // So it'd have space on left and right for the visual look
+                imageItemViewbox.height *= ((sectionWidth / imageItemViewbox.width) * imgLookFactor);
+                imageItemViewbox.width = sectionWidth * imgLookFactor;
             }
 
             if (imageItemViewbox.height > SYMBOL_SIZE || imageItemViewbox.width > SYMBOL_SIZE) {
@@ -365,7 +366,8 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             }
 
             legendItem.move(runningIndent * indentD, runningHeight);
-            runningHeight += legendItem.rbox().height + ITEM_GUTTER;
+            const heightToAppend = (legendItem.rbox().height > imageItemViewbox.height) ? legendItem.rbox().height : imageItemViewbox.height;
+            runningHeight += heightToAppend + ITEM_GUTTER;
 
             item.height = legendItem.rbox().height;
             item.y = legendItem.y();
