@@ -335,7 +335,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             const imageItem = legendItem.group().svg(svgcode).first();
             const imageItemViewbox = imageItem.viewbox();
 
-            /// Use the greater width as the bound for the image
+            /// Use the norrower width as the bound for the image
             if (imageItemViewbox.width > sectionWidth){
                 const imgLookFactor = 0.9; // So it'd have space on left and right for the visual look
                 imageItemViewbox.height *= ((sectionWidth / imageItemViewbox.width) * imgLookFactor);
