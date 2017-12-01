@@ -6,16 +6,16 @@ Les commandes de navigation suivantes se trouvent dans le coin inférieur droit 
 
 |Symbol|Nom|Touche clavier|Description|
 |----|----|----|----|
-|![](navigation/fullscreen.png)| Plein écran | | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option Plein écran n'est disponible que lorsque la carte est incorporée dans une autre page  |
+|![](navigation/fullscreen.png)| Plein écran | | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page  |
 |![](navigation/zoomin.png)| Zoom avant | Plus (+) | Zoom avant d'un niveau sur la carte pour afficher un contenu plus détaillé |
-|![](navigation/zoomout.png)| Zoom arrière | Minus (-) | Zoom arrière d'un niveau sur la carte pour afficher un contenu moins détaillé |
+|![](navigation/zoomout.png)| Zoom arrière | Moins (-) | Zoom arrière d'un niveau sur la carte pour afficher un contenu moins détaillé |
 |![](navigation/geolocation.png)| Géolocalisation | | Zoom et se déplace à votre position géographique actuelle |
 |![](navigation/canada.png)| Étendue initiale | | Zoom et déplace la carte afin que l'étendue initiale soit visible |
 |![](navigation/help.png)| Aide | | Ouvre la fenêtre d'aide |
 
-Vous pouvez également parcourir la carte en utilisant les touches fléchées gauche, droite, haut et bas ou en cliquant sur la carte et en la faisant glisser. L'utilisation la molette de défilement de la souris, en parcourant la carte, va zoomer celle-ci d'en avant ou d'en arrière.
+Vous pouvez également parcourir la carte en utilisant les touches fléchées gauche, droite, haut et bas ou en cliquant sur la carte et en la faisant glisser. L'utilisation de la molette de la souris zoomera la carte en avant ou en arrière.
 
-Notez que la carte doit avoir le focus pour que les touches clavier fonctionnent. La carte à le focus lorsqu'il y a une bordure bleue autour d'elle.
+Notez que la carte doit être la zone active (avoir le « focus ») pour que les touches clavier fonctionnent. La carte devient la zone active lorsqu'il y a une bordure bleue autour d'elle.
 
 
 # Information de navigation
@@ -26,15 +26,15 @@ Les coordonnées de positionnement peuvent être en degrés minutes secondes (DM
 
 # Cartes de base
 
-Le sélecteur de cartes de base modifie le fond de carte sous-jacent pour afficher une variété de contextes géographiques
+Le sélecteur de « Cartes de base » modifie le fond de carte sous-jacent pour afficher une variété de contextes géographiques
 
 __Pour ouvrir le sélecteur de cartes de base:__
 
 ![](basemap/open.png)
 
-Ouvrez d'abord le panneau des couches en sélectionnant le bouton couche (montré ci-dessus en rouge). Vous verrez alors le sélecteur de cartes de base apparaître à gauche du bouton couche (montré ci-dessus en bleu). Vous pouvez également ouvrir le sélecteur de cartes de base à partir du menu principal.
+Ouvrez d'abord le panneau des couches en sélectionnant le bouton « Couches » (montré ci-dessus en rouge). Vous verrez alors le sélecteur de cartes de base apparaître à gauche du bouton couche (montré ci-dessus en bleu). Vous pouvez également ouvrir le sélecteur de cartes de base à partir du menu principal.
 
-Vous aurez à choisir parmis une ou plusieurs cartes de base, séparées par leurs types de projection (mercator versus lambert). La carte sera chargée de nouveau si vous modifiez la projections, mais elle ne le sera pas si vous sélectionnez une carte de base de la même projection.
+Vous aurez à choisir parmi une ou plusieurs cartes de base, groupées par type de projection (Mercator ou Lambert). La carte sera chargée de nouveau si vous modifiez la projection, mais elle ne le sera pas si vous sélectionnez une carte de base de la même projection.
 
 
 # Carte d'aperçu
@@ -48,64 +48,63 @@ Cliquez sur la carte d'aperçu et faites-la glisser pour modifier l'étendue de 
 
 ![](menu/menu.png) Accédez au menu en cliquant sur le bouton de menu en haut à gauche du visualiseur.
 
-Il existe une variété d'options et elle sont décrites ci-dessous. Notez que certaines options peuvent ne pas être disponibles ou être présélectionnées en fonction de divers facteurs.
+Il existe une variété d'options et elles sont décrites ci-dessous. Notez que certaines options peuvent ne pas être disponibles ou être présélectionnées en fonction de divers facteurs.
 
 |Symbol|Nom|Description|
 |----|----|----|
 | ![](menu/layers.png) | Couches | Ouvre le panneau des couches |
 | ![](menu/basemap.png) | Cartes de base | Ouvre le panneau de sélection des cartes de base |
-| ![](menu/fullscreen.png) | Plein écran | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option Plein écran n'est disponible que lorsque la carte est incorporée dans une autre page|
-| ![](menu/export.png) | Exporter | Ouvre la fênetre pour exporter une image  |
-| ![](menu/share.png) | Partager | Ouvre la fênetre pour partager un URL |
+| ![](menu/fullscreen.png) | Plein écran | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page|
+| ![](menu/export.png) | Exporter | Ouvre une boîte de dialogue permettant d'exporter la carte sous forme d'image |
+| ![](menu/share.png) | Partager | Ouvre une fenêtre contenant une URL pouvant être partagée|
 | ![](menu/touch.png) | Mode tactile | Augmente la taille des boutons et améliore l'expérience des utilisateurs tactiles |
 | ![](menu/about.png) | À propos de la carte | Ouvre une fenêtre qui donne de l'information supplémentaire sur la carte |
 | ![](menu/help.png) | Aide | Ouvre la fenêtre d'aide |
-| ![](menu/language.png) | Langue | Affiche la liste des langues, prises en charge, que vous pouvez choisir |
+| ![](menu/language.png) | Langue | Affiche la liste des langues prises en charge |
 
 
 # Partager
 
-L'option partager est utilisé pour générer une URL partageable de la carte dans son état actuel avec les jeux de données sélectionnés. Elle est accessible dans le menu principal. Si une clé "Google API" est configurée pour la carte, vous aurez également la possibilité de générer un lien court. Une fois que vous mettez en surbrillance le lien, copiez-le comme vous copiez normalement du texte (clic droit -> copier ou Ctrl+C)
+L'option « Partager » est utilisée pour générer une URL partageable de la carte dans son état actuel avec les jeux de données sélectionnés. Elle est accessible dans le menu principal. Si une clé « Google API » est configurée pour la carte, vous aurez également la possibilité de générer un lien court. Une fois que vous mettez en surbrillance le lien, copiez-le comme vous copiez normalement du texte (clic droit -> copier ou Ctrl+C)
 
 
 # Couches
 
-La liste déroulante Couches sert de légende pour carte et répertorie les couches disponibles pour à afficher sur celle-ci.
+La liste déroulante « Couches » sert de légende à la carte et liste les couches pouvant être visualisées.
 
-![](layer/layer.png) Accédez à la liste des couches en cliquant sur le bouton couche en haut, à gauche de la partie centrale du visualiseur.
+![](layer/layer.png) Accédez à la liste des couches en cliquant sur le bouton « Couches » en haut, à gauche de la partie centrale du visualiseur.
 
-Une symbologie est associée chaque couche. Pour les couches simple (feature layer), une seule icône sera présente à côté du nom de la couche. Pour les couches d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche), les icônes s'affichent sous la forme d'une pile pouvant être agrandie et réduite. Une fois agrandie, les icônes se retrouvent sous le nom de la couche. Les couches SCW (WMS) peuvent optionnellement possèder une légende graphique qui sera, de la même manière, affichée sous la couche associée.
+Une symbologie est associée à chaque couche. Pour les couches simples (feature layer), une seule icône sera présente à côté du nom de la couche. Pour les couches d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche), les icônes s'affichent sous la forme d'une pile pouvant être agrandie et réduite. Une fois agrandies, les icônes se retrouvent sous le nom de la couche. Les couches SCW (WMS) peuvent optionnellement posséder une légende graphique qui sera, de la même manière, affichée sous la couche associée.
 
-Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis ![](layer/scale.png)) et offrira une action (![](layer/zoom.png)) afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant ou un zoom arrière).
+Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis ![](layer/scale.png)) et offrira une action (![](layer/zoom.png)) afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant, soit un zoom arrière).
 
-Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (! [] (Layer / eye.png)) à côté de chaque couche.
+Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (![](layer/eye.png)) à côté de chaque couche.
 
-Il existe cinq types de couches qui
-Cinq types de couches peuvent être présentes dans la liste déroulante Couche:
+Il existe cinq types de couches qui peuvent être présentes dans la liste déroulante « Couches » :
 
-|Type de couche|Interactivité|Rendu du serveur|Support des tables|Notes|
+|Type de couches|Interactivité|Rendu du serveur|Support des tables|Notes|
 |----|----|----|----|----|
 | Élement | Oui | Non | Oui | Rapide et efficace - rendu local pour les ensembles de géométrie de petite à moyenne taille |
-| Dynamique | Oui | Oui | Oui | Bon choix pour les ensembles de géométrie importante et complexe qui seraintt lente à rendre localement |
+| Dynamique | Oui | Oui | Oui | Bon choix pour les ensembles de géométrie importante et complexe qui seraient lentes à rendre localement |
 | Image | Non | Oui | Non | Support des fichiers Raster et Image |
-| Tuile | Non | Oui | Non | Rapide et efficace - le serveur contient une mosaïque, pré-rendues, des tuiles de la cartes |
+| Tuile | Non | Oui | Non | Rapide et efficace - le serveur contient une mosaïque au rendu pré travaillé des tuiles |
 | SCW (WMS) | Oui | Oui | Non | Cartes image géoréférencées que le serveur génère en utilisant des données d'une base de données SIG |
 
-Si une couche ne se charge pas correctement, elle sera identifiée par un avis d'erreur. Au lieu des actions de couche standard, vous pouvez sélectionner soit: recharger la couche (ce qui est particulièrement utile s'il ya un problème de connectivité réseau temporaire) ou retirer la couche. Si une couche est retirée, elle sera également retirée de la liste déroulante des couches. Si elle est ajoutée de nouveau à l'aide du bouton "Annuler", elle perdra toutes les personnalisations prédéfinies.
+Si une couche ne se charge pas correctement, elle sera identifiée par un avis d'erreur. Au lieu des actions de couche standard, vous pouvez choisir de soit recharger la couche, soit de la retirer.  Recharger la couche est particulièrement utile s’il y a un problème temporaire de connectivité réseau. Si une couche est retirée, elle sera également retirée de la liste déroulante des couches. Si elle est ajoutée de nouveau à l'aide du bouton « Annuler », elle perdra toutes les personnalisations prédéfinies.
 
 
 # Options des couches
 
-Survolez le nom d'une couche ou mettez le focus sur celle-ci à l'aide des touches clavier et sélectionnez l'icône de trois points ![](layer_settings/ellipses.png) pour accéder aux options supplémentaires de celle-ci.
+Survolez le nom d'une couche ou activez-la (mettre le « focus ») à l'aide des touches clavier et sélectionnez l'icône de trois points ![](layer_settings/ellipses.png) pour accéder aux options supplémentaires de celle-ci.
 
-Notez que certaines options peuvent ne pas être disponibles en fonction de divers facteurs tels que le type de couche ou la configuration.
+Notez que certaines options peuvent ne pas être offertes en fonction de divers facteurs tels que le type de couche ou la configuration.
 
-|Symbol|Nom|Description|
+|Symbole|Nom|Description|
 |----|----|----|
-| ![](layer_settings/metadata.png) | Métadonnées | Affiche les métadonnées dans un panneau coulissant|
-| ![](layer_settings/settings.png) | Paramètres | Ouvre un panneau coulissant où: l'opacité de la couche peut être ajustée,  la zone de délimitation peut être affiché et permettre ou non les requêtes peut être basculées |
-| ![](layer_settings/datatable.png) | Tableau de données | Select to view data in table format |
-| ![](layer_settings/layer.png) | Afficher la légende | Agrandit / réduit la liste d'images de légende |
+| ![](layer_settings/metadata.png) | Métadonnées | Affiche les métadonnées dans un panneau coulissant |
+| ![](layer_settings/settings.png) | Paramètres | Ouvre un panneau coulissant où l’opacité et la zone de délimitation peuvent être ajustées de même que la possibilité d’activer ou non les requêtes |
+| ![](layer_settings/datatable.png) | Tableau de données | Sélectionner pour visualiser les données sous forme de table |
+| ![](layer_settings/layer.png) | Afficher la légende | Agrandit / réduit la liste d'images de la légende |
 | ![](layer_settings/zoomto.png) | Zoomer à la limite | Déplace et zoom la carte afin que la limite de la couche soit en vue |
 | ![](layer_settings/reload.png) | Recharger | Recharge la couche |
 | ![](layer_settings/remove.png) | Retirer | Retire la couche de la carte et de la liste déroulante Couches |
@@ -115,13 +114,13 @@ Notez que certaines options peuvent ne pas être disponibles en fonction de dive
 
 ![](layer_submenu/menu.png)
 
-Fournit des options supplémentaires lorsque la liste déroulante Couches ouverte. Le sous-menu est montré en rouge ci-dessus et il a les options suivantes:
+Fournit des options supplémentaires lorsque la liste déroulante « Couches » ouverte. Le sous-menu est montré en rouge ci-dessus et il a les options suivantes:
 
 |Symbol|Nom|Description|
 |----|----|----|
 | ![](layer_submenu/add.png) | Ajouter une couche | Ajouter une couche basée sur un fichier ou un service |
-| ![](layer_submenu/reorder.png) | Réorganiser les couches | Fournit une alternative à l'utilisation de la souris pour réorganiser les couches. Lorsque cette option est sélectionnée, les couches ne peuvent réorganiser avec la souris qu'en maintenant l'icône de poignée à côté de chaque couche. Utiles pour les appareils tactiles et les utilisateurs du clavier |
-| ![](layer_submenu/expand.png) | Basculer les groupes | Ouvre ou ferme tout les groupes |
+| ![](layer_submenu/reorder.png) | Réorganiser les couches | Fournit une solution de remplacement à l'utilisation de la souris pour réorganiser les couches. Lorsque cette option est sélectionnée, les couches ne peuvent être réorganisées avec la souris qu'en maintenant l'icône de poignée à côté de chaque couche. Utile pour les appareils tactiles et les utilisateurs du clavier |
+| ![](layer_submenu/expand.png) | Basculer les groupes | Ouvre ou ferme tous les groupes |
 | ![](layer_submenu/view.png) | Basculer la visibilité | Active ou désactive la visibilité de toutes les couches |
 
 
@@ -147,11 +146,11 @@ Utilisation:
 
 Vous pouvez exporter une image de la carte et de ses couches visibles avec: une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée et une estampille temporelle.
 
-Sélectionnez le bouton EXPORTER dans le menu de gauche pour faire apparaître une boîte de dialogue contenant une image de la carte ainsi qu'une zone d'édition vous permettant de saisir un titre si vous le souhaitez.
+Sélectionnez le bouton « Exporter » dans le menu de gauche pour faire apparaître une boîte de dialogue contenant une image de la carte ainsi qu'une zone d'édition vous permettant de saisir un titre si vous le souhaitez.
 
 Si vous désirez ajouter ou supprimer des sections de l'image exportée telle que la légende, cliquez sur la roue dentée dans l'en-tête. Vous pourrez ainsi sélectionner / désélectionner les sections à afficher dans l'image exportée.
 
-Pour modifier la taille du canvas de la carte, vous pouvez le faire à partir de la liste déroulante située dans l'en-tête. Sélectionnez une valeur prédéfinie (Par défaut/Petit/Médium) ou spécifiez votre propre taille en choisissant l'option taille personnalisée. Notez que les tailles affectent uniquement l'image de la carte, l'image exportée réelle peut être plus grande.
+Pour modifier la taille du canevas de la carte, vous pouvez le faire à partir de la liste déroulante située dans l'en-tête. Sélectionnez une valeur prédéfinie (Par défaut/Petit/Médium) ou spécifiez votre propre taille en choisissant l'option taille personnalisée. Notez que les tailles affectent uniquement l'image de la carte, l'image exportée réelle peut être plus grande.
 
 Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image de carte finale.
 
@@ -167,10 +166,10 @@ Le panneau __tableau de données__ est affiché ci-dessus dans son état initial
 - De se déplacer dans la table à l'aide des flèches de navigation
 - D’ouvrir le panneau de détails correspondant à une ligne donnée en sélectionnant l'icône Détails ![](datatable/details.png)
 - De déplacer la carte et de faire un zoom sur l'élément correspondant à une ligne donnée en sélectionnant l'icône Zoom ![](datatable/zoomto.png)
-- De déplacer les colonnes en cliquant sur l'en-tête lorsque l'icône du curseur devient une main et en la déplaçant près des icônes de tri de l'endroit ou elle doit se déplacer
+- De déplacer les colonnes en cliquant sur l'en-tête lorsque l'icône du curseur devient une main et en la déplaçant près des icônes de tri de la destination
 - De filtrer les colonnes par étendue numérique, texte, sélection ou date (si la configuration le permet)
 
-Si le nombre de caractères saisis dépasse la largeur de la boîte de texte, seuls les caractères visibles seront affichés, suivis de points de suspension (…). En sélectionnant  le champ à l’aide de la souris ou du clavier, le texte complet s’affichera dans une infobulle.
+Si le nombre de caractères saisis dépasse la largeur de la boîte de texte, seuls les caractères visibles seront affichés, suivis de points de suspension (…). En sélectionnant le champ à l’aide de la souris ou du clavier, le texte complet s’affichera dans une infobulle.
 
 Le nombre d’entités dans la couche s’affiche dans le coin inférieur gauche : Affichage de l'élément 1 à 4 sur 247 éléments.
 
@@ -189,7 +188,7 @@ Ce groupe de contrôle se trouve dans le coin inférieur droit et il permet de f
 
 ### Filtrer les données
 
-On peut filtrer les données par colonne. Une colonne est interrogeable s'il y un champ de saisie sous le titre de l’en-tête. Comme mentionné précédemment, il existe 4 types de filtres:
+On peut filtrer les données par colonne. Une colonne est interrogeable s'il y a un champ de saisie sous le titre de l’en-tête. Comme mentionné précédemment, il existe 4 types de filtres:
 - __Texte__ : Champ de saisie de type caractère. Utiliser le caractère générique \* pour remplacer une séquence de zéro ou plusieurs caractères (p. ex. _*levo_ va trouver Charlevoix)
     - _Remarque, sans caractère générique, la recherche ne trouvera que les éléments où le mot cherché débute  la phrase._
 - __Numérique__ : Champs de saisie qui n'accepte que les nombres
@@ -205,14 +204,14 @@ Certains filtres ne sont pas éditables; leur valeur ne peut donc pas être chan
 Ce contrôle, que l'on retrouve dans le coin supérieur droit du tableau de données, permet de filtrer le tableau de données de manière globale.
 - Si on saisit la valeur _Brook_, le tableau de données sélectionnera les données qui contiennent _Brook_ à n'importe quel endroit (p. ex. _Corner Brook_ sera sélectionné)
 
-Lorsque que l'on sélectionne le champ de saisie, les noms des colonnes peuvent changer car ils reflètent les noms internes de la donnée. Ces noms permettent de préciser des recherches, par exemple :
+Lorsque l'on sélectionne le champ de saisie, les noms des colonnes peuvent changer car ils reflètent les noms internes de la donnée. Ces noms permettent de préciser des recherches, par exemple :
 - Rechercher un texte: _nom du champ:valeur_ (p. ex. Type:'mon type')
 - Rechercher un nombre ou une date:
     - Simple valeur: _nom du champ:[operateteur]valeur_  (p. ex. OBJECTID:<30). Les opérateurs suivants peuvent être utilisés: <, <=, >, >=.
     - Étendue: _nom du champ:[valeur..valeur]_ (p. ex. OBJECTID:[30..50])
 - On peut également combiner des champs avec _&&_ (p. ex. Type:'mon type' && OBJECTID:<30)
 
-_Remarque: On ne peut appliquer à la carte les filtres définies à l'aide de ce contrôle. Ils ne s’appliquents qu'au tableau de données._
+_Remarque: On ne peut appliquer à la carte les filtres définis à l'aide de ce contrôle. Ils ne s’appliquent qu'au tableau de données._
 
 ### Panneau de configuration
 
@@ -239,33 +238,31 @@ Le menu permet les actions suivantes:
 - Imprimer les données​
 
 
-# Panneau d’information (Point)
+# Panneau d'information de la sélection interactive
 
-Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon in a data table.
-
-Affiche les données associées à l’élément interactif sélectionné. Vous pouvez y accéder en effectuant une requête d'identification sur la carte et en sélectionnant la couche dans la liste des couches disponibles ou en cliquant sur l'icône détails ![](datatable/details.png) dans une table de données.
+Affiche les données associées à l’élément interactif sélectionné. Vous pouvez y accéder en effectuant une requête d'identification sur la carte et en sélectionnant la couche dans la liste des couches offertes ou en cliquant sur l'icône détails ![](datatable/details.png) dans une table de données.
 
 
 # Accessibilité
 
 Cette page respecte les règles pour l’accessibilité des contenus Web WCAG 2.0 AA.
 
-Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant qu’alternative pour les utilisateurs qui sont dans l'impossibilité d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches « Majuscule+Tabulation » pour revenir un pas en arrière. Utilisez la touche « Entrée » ou la barre d’espacement pour activer les liens et les contrôles.
+Accessibilité au clavier - La fonctionnalité du clavier est offerte en tant que solution de rechange pour les utilisateurs qui sont dans l'impossibilité d’utiliser une souris. Utilisez la touche de tabulation pour naviguer vers les liens et les contrôles sur la page. Appuyez simultanément sur les touches « Majuscule+Tabulation » pour revenir un pas en arrière. Utilisez la touche « Entrée » ou la barre d’espacement pour activer les liens et les contrôles.
 
 
 # Durée du chargement / Comportement imprévu
 
 La durée des chargements peut varier selon:
-- l’emplacement réseau
-- la disponibilité de la bande passante
-- le nombre de couches chargées
-- types de couches et leur taille
+- L’emplacement réseau
+- La disponibilité de la bande passante
+- Le nombre de couches chargées
+- Les types de couches et leur taille
 
-Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez permettre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.
+Un comportement imprévu peut survenir lorsque des interactions avec la carte ont lieu avant la conclusion du chargement des données. Veuillez attendre le chargement complet de la page Web avant d’activer d’autres fonctions sur la carte.
 
 **Remarque**: Si l'indicateur de chargement de ligne de défilement apparaît au bas de la carte ou dans la légende, ou lorsque le tableau de données affiche un message de chargement en cours, attendez que l’indicateur de chargement disparaisse avant d’activer d’autres fonctions sur la carte.
 
 
 # Flèche Nord
 
-La carte principale contient une flèche du nord. On la trouve en haut de la carte. Elle se déplace horizontalement sur l'écran de sorte qu'elle traverse toujours une ligne droite imaginaire qui passe par le centre de la carte et le pôle nord.
+La carte principale contient une flèche du nord. Celle-ci se situe dans la partie supérieure de la carte. Elle se déplace horizontalement sur l'écran de sorte qu'elle traverse toujours une ligne droite imaginaire qui passe par le centre de la carte et le pôle Nord.
