@@ -205,7 +205,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                             const stopSymbolInterval = $interval(() => {
                                 const symbolButtons = element.find('.md-icon-button').not('.rv-symbol-trigger');
                                 if (symbolButtons.length > 0) {
-                                    symbolButtons.css({'position': 'absolute', 'right': `${symbolButtonOffset}px`});
+                                    symbolButtons.css('right', `${symbolButtonOffset}px`);
                                     $interval.cancel(stopSymbolInterval);
                                 }
                             }, 100);
