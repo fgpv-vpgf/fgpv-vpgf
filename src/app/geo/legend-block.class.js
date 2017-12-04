@@ -532,9 +532,13 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          */
         _makeBbox () {
             if (!this._bboxProxy) {
+                const currentWkid = configService.getSync.map.selectedBasemap.spatialReference.wkid;
                 this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxID);
 
-                if (!this._bboxProxy) {
+                if (!this._bboxProxy) { // no cached bounding box found
+                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this.mainProxyWrapper.extent);
+                } else if (this._bboxProxy.spatialReference.wkid !== currentWkid) { // cached bbox projection not compatible
+                    this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxID);
                     this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this.mainProxyWrapper.extent);
                 }
             }
@@ -555,7 +559,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         set boundingBox (value) {
-            if (!this._bboxProxy) {
+            const currentWkid = configService.getSync.map.selectedBasemap.spatialReference.wkid;
+            if (!this._bboxProxy || this._bboxProxy.spatialReference.wkid !== currentWkid) {
                 if (value) {
                     this._makeBbox();
                 } else {
