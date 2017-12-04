@@ -31,14 +31,15 @@ function ExportComponentFactory($q, graphicsService) {
          */
         constructor(id, { value = {}, generators = [], graphicOrder = null, isVisible = true,
             isSelectable = true, isSelected = true }) {
+            const validToSelect = typeof value !== 'string' || value.length !== 0;
             this._id = id;
             this._config = {
                 value,
                 generators,
                 graphicOrder: graphicOrder || generators.map((v, i) => i),
                 isVisible,
-                isSelectable,
-                isSelected
+                isSelectable: isSelectable && validToSelect,
+                isSelected: isSelected && validToSelect
             };
 
             this._graphic = null;
