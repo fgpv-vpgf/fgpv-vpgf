@@ -149,6 +149,8 @@ export class XYBounds {
 }
 
 // Descriptors -----------------------
+
+/** Guarantees functions with a parameter of type `XY | XYLiteral` to be of type XY. */
 export function XYLiteral(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
     const originalMethod = descriptor.value;
     descriptor.value = function(maybeXY: XY | XYLiteral): XY {

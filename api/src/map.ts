@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
-import { FgpvConfigSchema } from 'api/schema';
+import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -23,7 +23,7 @@ export default class Map {
     private _boundsChanged: Observable<geo.XYBounds>;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
-    constructor(mapDiv: HTMLElement, config?: FgpvConfigSchema | string) {
+    constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
 
@@ -184,8 +184,8 @@ export default class Map {
     }
 }
 
-function isConfigSchema(config: FgpvConfigSchema | string): config is FgpvConfigSchema {
-    return (<FgpvConfigSchema>config).version !== undefined;
+function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerConfigSchema {
+    return (<ViewerConfigSchema>config).version !== undefined;
 }
 
 function initObservables(this: Map) {
