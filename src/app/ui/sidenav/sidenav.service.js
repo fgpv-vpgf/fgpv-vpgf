@@ -137,7 +137,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             label: 'sidenav.label.fullscreen',
             icon: 'navigation:fullscreen',
             isChecked: fullScreenService.isExpanded,
-            action: () => fullScreenService.toggle(false)
+            action: () => fullScreenService.toggle()
         },
         touch: {
             type: 'link',
