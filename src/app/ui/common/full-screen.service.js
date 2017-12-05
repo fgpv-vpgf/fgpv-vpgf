@@ -18,7 +18,7 @@ angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
 
-function fullScreenService($rootElement, configService, $interval) {
+function fullScreenService($rootElement, configService, $interval, events) {
     const service = {
         toggle,
         isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is($rootElement)
@@ -29,6 +29,14 @@ function fullScreenService($rootElement, configService, $interval) {
     let stopInterval;
 
     screenfull.on('change', onChange);
+
+    events.$on(events.rvMapLoaded, (_, i) => {
+        configService.getSync.map.instance.fullscreen = fs => {
+            if ((service.isExpanded() && !fs) || (!service.isExpanded() && fs)) {
+                service.toggle();
+            }
+        };
+    });
 
     return service;
 

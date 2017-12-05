@@ -1,6 +1,6 @@
 import screenfull from 'screenfull';
 import { Observable } from 'rxjs/Rx';
-import { XY } from 'api/geometry';
+import { XY, XYBounds } from 'api/geometry';
 
 /**
  * @module ConfigObject
@@ -1880,14 +1880,28 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                     }
                 });
 
+                mapInstance.boundsChanged = Observable.create(subscriber => {
+                    events.$on(events.rvExtentChange, (_, d) => subscriber.next(extentToApi(d.extent)));
+                });
+
                 mapInstance.centerChanged = Observable.create(subscriber => {
-                    const originalCenterAt = instance.centerAt;
-                    instance.centerAt = function() {
-                        subscriber.next(new XY(arguments[0].x, arguments[0].y));
-                        return originalCenterAt.apply(this, arguments);
-                    }
+                    events.$on(events.rvExtentChange, (_, d) => {
+                        const centerXY = d.extent.getCenter();
+
+                        subscriber.next(pointToApi(centerXY.x, centerXY.y));
+                    });
                 });
             });
+
+            function extentToApi(extent) {
+                const xy = gapiService.gapi.proj.localProjectExtent(extent, 4326);
+                return new XYBounds([xy.x1, xy.y1], [xy.x0, xy.y0]);
+            }
+
+            function pointToApi(x, y) {
+                const xy = gapiService.gapi.proj.localProjectPoint(instance.spatialReference.wkid, 4326, [x, y]);
+                return new XY(xy[0], xy[1]);
+            }
 
             this._instance = instance;
             this._isLoaded = false;
