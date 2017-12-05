@@ -8,7 +8,7 @@ The following attributes are defined on the application's DOM node (e.g. `<div i
   (example: `data-rv-config="config.${lang}.json"`)
 > Either a global variable structured with one key per language, and an object under each key representing the full configuration or a relative URL to a configuration file, it should contain the token `${lang}` which will be replaced by the currently configured language code
 
-  (example: `window.config={ ... } and data-rv-config="config"`)
+  (example: `window.config={}` and `data-rv-config="config"`)
 > Set the attribute as the name of the property added on the window object. Set the window object to the full configuration. For example, if `window.config` is set as the configuration, then `data-rv-config="config"`. NOTE: No quotations around the object
 
   (example: `data-rv-config='{ ... }'`)
