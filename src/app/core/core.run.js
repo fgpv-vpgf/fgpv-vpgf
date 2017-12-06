@@ -154,6 +154,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         setLanguage,
         getCurrentLang,
         loadRcsLayers,
+        resetMap,
         getBookmark,
         centerAndZoom,
         useBookmark,
@@ -221,6 +222,17 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
     function loadRcsLayers(keys) {
         // trigger RCS web call
         configService.rcsAddKeys(keys);
+    }
+
+    /**
+     * Reset the map by removing all layers after the map has been instantiated
+     *
+     * @memberof app.core
+     * @function
+     * @inner
+     */
+    function resetMap() {
+        configService.resetMap();
     }
 
     /**

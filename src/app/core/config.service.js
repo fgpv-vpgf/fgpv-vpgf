@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
+function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject, stateManager) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {
@@ -230,6 +230,44 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
          */
         rcsAddKeys(keys) {
             configList.forEach(conf => { conf.rcsKeys = keys; });
+        }
+
+        /**
+         * Reset the map by removing all layers after the map has been instantiated.
+         *
+         * @memberof app.core
+         * @function resetMap
+         */
+        resetMap() {
+            configList.forEach(conf => {
+                if (conf.config) {
+                    const map = conf.config.map;
+                    const rootGroup = map.legendBlocks;
+                    let layerRecords = map.layerRecords;
+                    let boundingBoxRecords = map.boundingBoxRecords;
+
+                    // remove all layers from legend
+                    while (rootGroup.entries.length > 0) {
+                        rootGroup.removeEntry(rootGroup.entries[0]);
+                    }
+
+                    // remove all layers from map
+                    layerRecords.forEach(layerRecord => {
+                        map.instance.removeLayer(layerRecord._layer);
+                    });
+
+                    layerRecords = [];
+
+                    // remove all bounding boxes
+                    boundingBoxRecords.forEach(boundingRecord => {
+                        map.instance.removeLayer(boundingRecord);
+                    });
+
+                    boundingBoxRecords = [];
+
+                    stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+                }
+            });
         }
 
         /**
