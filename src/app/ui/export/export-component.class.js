@@ -31,7 +31,7 @@ function ExportComponentFactory($q, graphicsService) {
          */
         constructor(id, { value = {}, generators = [], graphicOrder = null, isVisible = true,
             isSelectable = true, isSelected = true }) {
-            const validToSelect = typeof value !== 'string' || value.length !== 0;
+            const validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and emtpy, the component would become unselectable
             this._id = id;
             this._config = {
                 value,
