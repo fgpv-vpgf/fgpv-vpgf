@@ -242,29 +242,31 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
             configList.forEach(conf => {
                 if (conf.config) {
                     const map = conf.config.map;
-                    const rootGroup = map.legendBlocks;
-                    let layerRecords = map.layerRecords;
-                    let boundingBoxRecords = map.boundingBoxRecords;
 
                     // remove all layers from legend
-                    while (rootGroup.entries.length > 0) {
-                        rootGroup.removeEntry(rootGroup.entries[0]);
+                    while (map.legendBlocks.entries.length > 0) {
+                        map.legendBlocks.removeEntry(map.legendBlocks.entries[0]);
                     }
 
+                    map.legendMappings = {};
+
                     // remove all layers from map
-                    layerRecords.forEach(layerRecord => {
+                    map.layerRecords.forEach(layerRecord => {
                         map.instance.removeLayer(layerRecord._layer);
                     });
 
-                    layerRecords = [];
+                    map.layerRecords = [];
+                    map.layerBlueprints = [];
+                    map.layers = [];
 
                     // remove all bounding boxes
-                    boundingBoxRecords.forEach(boundingRecord => {
+                    map.boundingBoxRecords.forEach(boundingRecord => {
                         map.instance.removeLayer(boundingRecord);
                     });
 
-                    boundingBoxRecords = [];
+                    map.boundingBoxRecords = [];
 
+                    // close any open panels
                     stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
                 }
             });
