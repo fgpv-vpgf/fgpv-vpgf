@@ -30,7 +30,7 @@ function mapNavigationService(stateManager, geoService, $rootScope, locateServic
             label: 'sidenav.label.fullscreen',
             icon: 'navigation:fullscreen',
             tooltip: 'sidenav.label.fullscreen',
-            action: () => fullScreenService.toggle(false)
+            action: () => fullScreenService.toggle()
         },
         zoomIn: {
             label: 'nav.label.zoomIn',

@@ -21,7 +21,7 @@ angular
 function fullScreenService($rootElement, configService, $interval, events) {
     const service = {
         toggle,
-        isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is($rootElement)
+        isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body'))
     };
 
     let lastChangedElement = $rootElement;
@@ -54,7 +54,6 @@ function fullScreenService($rootElement, configService, $interval, events) {
             angular.element('body').removeClass('rv-full-screen');
         } else {
             angular.element('body').addClass('rv-full-screen');
-
         }
 
         screenfull.toggle(body[0]);
@@ -64,7 +63,7 @@ function fullScreenService($rootElement, configService, $interval, events) {
         // since this event fires for all viewers on a page, we keep track of the last element that went fullscreen
         lastChangedElement = screenfull.isFullscreen ? $(screenfull.element) : lastChangedElement;
         // only execute changes if this map instance was the last fullscreen map
-        if (lastChangedElement.is(angular.element('body'), $rootElement)) {
+        if (lastChangedElement.is(angular.element('body'))) {
             // give browser/esri some time to update center, time it will take is unknown (roughly 0.5s to 1s)
             stopInterval = $interval(centerMap, 100);
             centerMap(); // invoke immediately just in case the transition was faster than 100ms
