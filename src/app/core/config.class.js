@@ -1835,7 +1835,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get basemaps () { return this._basemaps; }
         get extentSets () { return this._extentSets; }
         get lodSets () { return this._lodSets; }
-        get layers () { return this._layers; }
+
+        get layers () {         return this._layers; }
+        set layers (value) {    this._layers = value; }
+
         get legend () { return this._legend; }
         get components () { return this._components; }
 
@@ -1852,21 +1855,29 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         _legendMappings = {};
         _highlightLayer = null;
 
-        get layerRecords () {           return this._layerRecords; }
-        get layerBlueprints () {        return this._layerBlueprints; }
-        get boundingBoxRecords () {     return this._boundingBoxRecords; }
-        get legendBlocks () {           return this._legendBlocks; }
-        set legendBlocks (lb) {         this._legendBlocks = lb; }
-        get legendMappings () {         return this._legendMappings; }
+        get layerRecords () {               return this._layerRecords; }
+        set layerRecords (value) {          this._layerRecords = value; }
 
-        get highlightLayer () {         return this._highlightLayer; }
-        set highlightLayer (value) {    this._highlightLayer = value; }
+        get layerBlueprints () {            return this._layerBlueprints; }
+        set layerBlueprints (value) {       this._layerBlueprints = value; }
 
-        get instance () {               return this._instance; }
+        get boundingBoxRecords () {         return this._boundingBoxRecords; }
+        set boundingBoxRecords (value) {    this._boundingBoxRecords = value; }
+
+        get legendBlocks () {               return this._legendBlocks; }
+        set legendBlocks (lb) {             this._legendBlocks = lb; }
+
+        get legendMappings () {             return this._legendMappings; }
+        set legendMappings (value) {        this._legendMappings = value; }
+
+        get highlightLayer () {             return this._highlightLayer; }
+        set highlightLayer (value) {        this._highlightLayer = value; }
+
+        get instance () {                   return this._instance; }
 
         // this indicates that the map finished loading the initial basemap and data layers can be safely added
-        get isLoaded () {               return this._isLoaded; }
-        set isLoaded (value) {          this._isLoaded = value; }
+        get isLoaded () {                   return this._isLoaded; }
+        set isLoaded (value) {              this._isLoaded = value; }
 
         storeMapReference(instance) {
 

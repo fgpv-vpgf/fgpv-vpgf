@@ -79,6 +79,15 @@ const mapProxy = {
     },
 
     /**
+     * Reset the map by removing all layers after the map has been instantiated
+     *
+     * @function    resetMap
+     */
+    resetMap() {
+        this._proxy('resetMap');
+    },
+
+    /**
      * Sets the translation language and reloads the map.
      *
      * @function    setLanguage

@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
+function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject, stateManager) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {
@@ -230,6 +230,46 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
          */
         rcsAddKeys(keys) {
             configList.forEach(conf => { conf.rcsKeys = keys; });
+        }
+
+        /**
+         * Reset the map by removing all layers after the map has been instantiated.
+         *
+         * @memberof app.core
+         * @function resetMap
+         */
+        resetMap() {
+            configList.forEach(conf => {
+                if (conf.config) {
+                    const map = conf.config.map;
+
+                    // remove all layers from legend
+                    while (map.legendBlocks.entries.length > 0) {
+                        map.legendBlocks.removeEntry(map.legendBlocks.entries[0]);
+                    }
+
+                    map.legendMappings = {};
+
+                    // remove all layers from map
+                    map.layerRecords.forEach(layerRecord => {
+                        map.instance.removeLayer(layerRecord._layer);
+                    });
+
+                    map.layerRecords = [];
+                    map.layerBlueprints = [];
+                    map.layers = [];
+
+                    // remove all bounding boxes
+                    map.boundingBoxRecords.forEach(boundingRecord => {
+                        map.instance.removeLayer(boundingRecord);
+                    });
+
+                    map.boundingBoxRecords = [];
+
+                    // close any open panels
+                    stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+                }
+            });
         }
 
         /**
