@@ -34,7 +34,7 @@ __To open the basemap selector:__
 
 First open the layers panel by selecting the layer button (shown above in red). You will then see the basemap selector appear to the left of the layer button (shown above in blue). You can also open the basemap selector from within the main menu.
 
-You'll be presented with one or more basemaps to chose from, separated by their projection types (mercator vs lambert). The map will reload if you change projections, but won't if you switch basemaps within the same projection.
+You'll be presented with one or more basemaps to choose from, separated by their projection types (mercator vs lambert). The map will reload if you change projections, but won't if you switch basemaps within the same projection.
 
 
 # Overview Map
@@ -58,14 +58,14 @@ There are a variety of options described below. Note that some options may not b
 | ![](menu/export.png) | Export | Opens the export image dialog  |
 | ![](menu/share.png) | Share | Opens the share a url dialog |
 | ![](menu/touch.png) | Touch Mode | Increases button sizes and generally improves the experience for touch users |
-| ![](menu/about.png) | About Map | Opens a dialog window who provides additional information on the map  |
+| ![](menu/about.png) | About Map | Opens a dialog window that provides additional information on the map  |
 | ![](menu/help.png) | Help | Opens the help dialog |
 | ![](menu/language.png) | Language | Displays a list of supported languages you can switch to |
 
 
 # Share
 
-Share is used to generate a shareable URL of the current map state with selected datasets. It can be accessed in the main menu. If a Google API Key is configured for the map, you will also have the option to generate a short link. Once you highlight the link copy it as you normally would copy text (right click -> copy or Ctrl+C)
+Share is used to generate a shareable URL of the current map state with selected datasets. It can be accessed in the main menu. If a Google API Key is configured for the map, you will also have the option to generate a short link. Once you highlight the link, copy it as you normally would copy text (right click -> copy or Ctrl+C)
 
 
 # Layers
@@ -102,7 +102,7 @@ Note that some settings may not be available depending on various factors such a
 |Symbol|Name|Description|
 |----|----|----|
 | ![](layer_settings/metadata.png) | Metadata | Display relevant metadata in a slideout panel |
-| ![](layer_settings/settings.png) | Settings | Opens slideout panel where opacity amount, bounding box visibility, and queryable data can be toggled |
+| ![](layer_settings/settings.png) | Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
 | ![](layer_settings/datatable.png) | Datatable | Select to view data in table format |
 | ![](layer_settings/layer.png) | Show legend | Expands/Collapses the legend image stack  |
 | ![](layer_settings/zoomto.png) | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
