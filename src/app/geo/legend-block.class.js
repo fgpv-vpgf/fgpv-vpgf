@@ -560,12 +560,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
         set boundingBox (value) {
             const currentWkid = configService.getSync.map.selectedBasemap.spatialReference.wkid;
-            if (!this._bboxProxy || this._bboxProxy.spatialReference.wkid !== currentWkid) {
-                if (value) {
-                    this._makeBbox();
-                } else {
-                    return;
-                }
+            if (!value && !this._bboxProxy) {
+                return;
+            } else if (!this._bboxProxy || this._bboxProxy.spatialReference.wkid !== currentWkid) {
+                this._makeBbox();
             }
 
             this._bboxProxy.setVisibility(value);
