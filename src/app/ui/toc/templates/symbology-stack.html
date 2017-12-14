@@ -15,10 +15,13 @@
         <md-button
             class="md-icon-button rv-icon-20"
             ng-click="self.onToggleClick(symbol.name)"
-            ng-if="self.toggleList[symbol.name]">
-
+            ng-if="self.toggleList[symbol.name]"
+            aria-pressed = "{{ self.toggleList[symbol.name].isSelected }}"
+            aria-label="{{ (self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.on' | translate)) ||
+                (!self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.off' | translate)) }}">
             <md-icon md-svg-src="{{self.toggleList[symbol.name].icon}}"></md-icon>
-
+            <md-tooltip md-direction="top">{{ (self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.on' | translate)) ||
+                (!self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.off' | translate)) }}</md-tooltip>
         </md-button>
 
     </div>

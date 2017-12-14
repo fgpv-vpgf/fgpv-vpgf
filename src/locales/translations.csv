@@ -185,8 +185,10 @@ Table of Content query label,toc.label.query,Toggle query,1,Basculer la requête
 Table of Content query tootlip,toc.tooltip.query,Toggle query,1,Basculer la requête,1
 Table of Content settings label,toc.label.settings,Settings,1,Paramètres,1
 Table of Content settings tootlip,toc.tooltip.settings,Settings,1,Paramètres,1
+Table of Content visibilty off aria label,toc.aria.visibility.off,Show layer,1,Afficher la couche,1
 Table of Content visibilty off label,toc.label.visibility.off,Show layer,1,Afficher la couche,1
 Table of Content visibilty off tootlip,toc.tooltip.visibility.off,Show layer,1,Afficher la couche,1
+Table of Content visibilty on aria label,toc.aria.visibility.on,Hide layer,1,Masquer la couche,1
 Table of Content visibilty on label,toc.label.visibility.on,Hide layer,1,Masquer la couche,1
 Table of Content visibilty on tootlip,toc.tooltip.visibility.on,Hide layer,1,Masquer la couche,1
 Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to details,1,Zoom avant,1
