@@ -43,7 +43,7 @@ angular
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
     basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, pluginService, geosearchService) {
+    translations, $mdDialog, pluginService, geosearchService, appInfo) {
 
     const service = {
         open,
@@ -221,13 +221,13 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         * @function getLongLink
         */
         function getLongLink() {
-            if (typeof URLS.long === 'undefined') { // no cached url exists
+            if (typeof URLS.long === 'undefined' && globalRegistry.getMap(appInfo.id)) { // no cached url exists
                 // eslint-disable-next-line no-return-assign
-                //APITODO: made it go away
-                //globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark =>
-                    //URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark))
-                    //.then(() => (selectURL()));
-                return '';
+                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
+                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+                }).then(() => {
+                    selectURL();
+                });
             } else { // cache exists
                 self.url = URLS.long;
                 selectURL();
