@@ -25,7 +25,8 @@ Running a local build:
 
 We use a fork and pull model for contributions, see our [contributing guidelines](https://github.com/fgpv-vpgf/fgpv-vpgf/blob/develop/CONTRIBUTING.md) for more details.
 
-## Gulp Tasks
+### [Schema Reader](https://milesap.github.io/schema-to-docs/)
+
 
 ### Generating Local Builds
 
