@@ -187,7 +187,7 @@
 
                             // ellipsis renderer when text is longer then field width
                             .rv-render-ellipsis {
-                                height: rem(2);
+                                max-height: rem(8.8); // enough to display at most 2 lines
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
