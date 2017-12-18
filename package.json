@@ -30,7 +30,7 @@
     "geoApi": "github:fgpv-vpgf/geoApi#v2.2.0",
     "gsap": "1.20.3",
     "jquery": "2.2.4",
-    "jquery-hoverintent": "1.9.0",
+    "jquery-hoverintent": "1.8.2",
     "linkifyjs": "2.1.5",
     "marked": "0.3.7",
     "moment-timezone": "0.5.14",
