@@ -1,4 +1,5 @@
 import { XY } from 'api/geometry';
+import { Observable } from 'rxjs/Rx';
 
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {
@@ -19,6 +20,17 @@ export class MouseEvent {
         this.screenY = event.screenY;
         this.screenX = event.screenX;
     }
+}
+
+/**
+ * @TODO: finish once supported by ESRI
+ */
+export class StoppableEvent extends MouseEvent {
+    /**
+     * Prevents this event from propagating further, and in some case preventing viewer action.
+     * @event stop
+    */
+    stop: Observable<Event>;
 }
 
 /** ESRI wraps the standard mouse event with spatial data that we want to preserve. */
