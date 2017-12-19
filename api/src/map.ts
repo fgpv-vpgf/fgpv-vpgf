@@ -4,6 +4,7 @@ import { MouseEvent, esriMouseEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
+import { UI } from 'api/ui';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -21,11 +22,13 @@ export default class Map {
     private _fgpMap: Object;
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
+    private _ui: UI;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
+        this._ui = new UI(this);
 
         // config set implies viewer loading via API
         if (config) {
@@ -181,6 +184,10 @@ export default class Map {
    /** Returns the jQuery element of the main viewer.  */
     get div(): JQuery<HTMLElement> {
         return this.mapDiv;
+    }
+
+    get ui (): UI {
+        return this._ui;
     }
 }
 
