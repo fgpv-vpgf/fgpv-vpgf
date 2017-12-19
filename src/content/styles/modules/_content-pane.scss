@@ -118,10 +118,6 @@
             @include pane-title;
         }
 
-        &.hide-labels md-input-container label {
-            display: none;
-        }
-
         .rv-subcontent {
             .rv-sub-subhead {
                 margin: 0;
