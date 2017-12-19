@@ -1,3 +1,5 @@
+import { Panel } from 'api/ui';
+
 const templateUrls = {
     table: require('./table-panel.html'),
     main: require('./main-panel.html'),
@@ -55,13 +57,17 @@ function rvPanel(referenceService) {
  * Skeleton controller function.
  * @function Controller
  */
-function Controller($attrs, stateManager, referenceService, $element, debounceService) {
+function Controller($attrs, stateManager, referenceService, $element, debounceService, appInfo) {
     'ngInject';
     const self = this;
 
     referenceService.panels[$attrs.type] = $element;
 
     self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
+
+    appInfo.apiMap.subscribe(mapi => {
+        mapi.ui.panels.add(new Panel($attrs.type, $element));
+    });
 
     /**
      * Temporary function to close the panel.

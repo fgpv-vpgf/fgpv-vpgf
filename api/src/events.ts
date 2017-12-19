@@ -25,12 +25,34 @@ export class MouseEvent {
 /**
  * @TODO: finish once supported by ESRI
  */
-export class StoppableEvent extends MouseEvent {
+export class StoppableEvent {
     /**
      * Prevents this event from propagating further, and in some case preventing viewer action.
      * @event stop
     */
-    stop: Observable<Event>;
+    stop(): void {
+        // @TODO
+    }
+}
+
+export class PanelEvent extends StoppableEvent {
+    _name: string;
+    _content: Node;
+
+    constructor(name: string, node: Node) {
+        super();
+
+        this._name = name;
+        this._content = node;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    get content(): Node {
+        return this._content;
+    }
 }
 
 /** ESRI wraps the standard mouse event with spatial data that we want to preserve. */
