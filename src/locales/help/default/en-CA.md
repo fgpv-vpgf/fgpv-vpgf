@@ -163,7 +163,6 @@ The panel __Data Table__ is shown above in its initial state.
 
 In addition to scrolling data, it is possible to:
 - Sort the data by selecting the header of the column
-- Move around the table using the navigation arrows
 - Open the detail panel corresponding to a given line by selecting the Details icon ![](datatable/details.png)
 - Move the map and zoom the item corresponding to a given line by selecting the Zoom Icon ![](datatable/zoomto.png)
 - Move the columns by clicking on the header when the cursor icon becomes a hand and moving it around the sorting icons of the place where it should move
