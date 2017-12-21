@@ -91,24 +91,20 @@ export class Panel extends BasePanel {
 }
 
 /**
- * @todo Discuss if we should add more panel locations?
+ * A collection of panels with helper methods to make managing them easier.
  *
- * <br><br>
+ * For example, using `panelRegistry.opening.subscribe(...)` will trigger when any panel in the collection is opening.
+ *
  * ```text
  * Panel types:
- *  sideMenu    -   Left siding menu panel
- *  legend      -   Legend panel
- *  import      -   Import wizard
- *  details     -   Layer details
- *  basemap     -   Basemap selector slider menu
- *
- * There are also top level types:
- *  left    -   contains legend, import, details
- *  center  -   datatables
+ *  table    -   Large, right to legend content panel
+ *  main     -   Legend panel
+ *  other    -   Equal size, right to legend panel (settings)
+ *  side     -   Slide out menu panel
  * ```
  */
 export class PanelRegistry extends BasePanel {
-    _panels: Array<Panel>;
+    private _panels: Array<Panel>;
 
     constructor() {
         super();
@@ -116,21 +112,31 @@ export class PanelRegistry extends BasePanel {
         this._panels = [];
     }
 
-    get panels(): Array<Panel> {
-        return this._panels;
+    /**
+     * Rebroadcasts `to` with the PanelEvent
+     *
+     * @param to the internal event name, one of ['_opening', '_opened', '_closing', '_closed']
+     */
+    private subscription (to: string, panelEvent: PanelEvent) {
+        (<any>this)[to].next(panelEvent);
     }
 
     byId (id: string): Panel | null {
-        const panel = this.panels.find(p => p.id === id);
+        const panel = this._panels.find(p => p.id === id);
 
         return panel ? panel : null;
     }
 
+    forEach(cb: (panel: Panel) => void): void {
+        this._panels.forEach(cb);
+    }
+
     add (panel: Panel): void {
-        this.closing.merge(panel.closing);
-        this.closed.merge(panel.closed);
-        this.opening.merge(panel.opening);
-        this.opened.merge(panel.opened);
+        // subscribe to panel and to rebroadcast any of its PanelEvents
+        ['_opening', '_opened', '_closing', '_closed'].forEach(to => {
+            (<any>panel)[to].subscribe(this.subscription.bind(this, to));
+        });
+
         this._panels.push(panel);
     }
 }
