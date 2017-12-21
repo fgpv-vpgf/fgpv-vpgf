@@ -57,7 +57,7 @@ function rvPanel(referenceService) {
  * Skeleton controller function.
  * @function Controller
  */
-function Controller($attrs, stateManager, referenceService, $element, debounceService, appInfo) {
+function Controller($attrs, stateManager, referenceService, $element, debounceService, events) {
     'ngInject';
     const self = this;
 
@@ -65,7 +65,7 @@ function Controller($attrs, stateManager, referenceService, $element, debounceSe
 
     self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
 
-    appInfo.apiMap.subscribe(mapi => {
+    events.$on(events.rvApiMapAdded, (_, mapi) => {
         mapi.ui.panels.add(new Panel($attrs.type, $element));
     });
 

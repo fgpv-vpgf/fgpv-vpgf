@@ -30,8 +30,10 @@ export class StoppableEvent {
      * Prevents this event from propagating further, and in some case preventing viewer action.
      * @event stop
     */
+    _stop: boolean = false;
+
     stop(): void {
-        // @TODO
+        this._stop = true;
     }
 }
 

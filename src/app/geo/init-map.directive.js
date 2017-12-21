@@ -1,5 +1,4 @@
 import Map from 'api/map';
-import { Subject } from 'rxjs/Rx';
 
 /**
  * @restrict A
@@ -41,9 +40,6 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
             deRegister();
         });
 
-        const appInfoSubject = new Subject();
-        appInfo.apiMap = appInfoSubject.asObservable();
-
         $rootScope.$on(events.rvMapLoaded, (_, i) => {
             mapInstance = i;
             mapInstance.disableKeyboardNavigation();
@@ -67,7 +63,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
-                appInfo.apiMap = appInfoSubject.next(apiMap);
+                appInfo.mapi = apiMap;
                 loadExtensions(apiMap);
                 window.RZ.mapAdded.next(apiMap);
 
