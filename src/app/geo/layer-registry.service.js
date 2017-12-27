@@ -18,7 +18,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common) {
+function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -287,9 +287,16 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             .reduce((a, b) =>
                 a.concat(a.indexOf(b) < 0 ? b : []), []); // remove duplicates (dynamic group and its children with have the same layer id)
 
-        const orderedLayerRecords = configService.getSync.map.layers
-            .map(layer => layer.id)
-            .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
+        // if structured legend, take the layer order from the config as the authoritative source
+        // TODO:? user-added layers are not added to `configService.getSync.map.layers`; they will be always added at the top of the stack for structured legend, so this is not an immediate concern;
+        // if auto legend, take the legend block order from the legend panel
+        const orderedLayerRecords =
+            (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE ?
+                layerRecordIDsInLegend :
+                configService.getSync.map.layers
+                    .map(layer => layer.id)
+                    .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
+            )
             .map(getLayerRecord); // get appropriate layer records
 
         const mapLayerStacks = {
