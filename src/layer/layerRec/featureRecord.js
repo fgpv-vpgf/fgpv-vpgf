@@ -228,6 +228,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 const loadBundle = {
                     type: 'tipLoaded',
                     name: this.getFeatureName(oid, featAttribs),
+                    attribs: featAttribs,
                     target: e.target,
                     svgcode
                 };
