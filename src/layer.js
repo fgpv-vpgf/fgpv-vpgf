@@ -1227,6 +1227,7 @@ module.exports = function (esriBundle, geoApi) {
         ScreenPoint: esriBundle.ScreenPoint,
         Query: esriBundle.Query,
         TileLayer: esriBundle.ArcGISTiledMapServiceLayer,
+        ImageParameters: esriBundle.ImageParameters,
         ogc: ogc(esriBundle),
         bbox: bbox(esriBundle, geoApi),
         createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
