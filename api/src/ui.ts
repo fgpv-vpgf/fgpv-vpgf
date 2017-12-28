@@ -1,6 +1,7 @@
 import { Observable, Subject } from 'rxjs/Rx';
 import { StoppableEvent, PanelEvent } from 'api/events';
 import Map from 'api/map';
+import { ObserveOnMessage } from 'rxjs/operators/observeOn';
 
 class BasePanel {
 
@@ -56,6 +57,7 @@ export class Panel extends BasePanel {
 
     private _id: string;
     private _node: JQuery<HTMLElement>;
+    private _stateStream: Subject<boolean> = new Subject();
 
     constructor(id: string, node: JQuery<HTMLElement>) {
         super();
@@ -63,7 +65,6 @@ export class Panel extends BasePanel {
         this._id = id;
         this._node = node;
     }
-
 
     /** Returns the panel identifier, can be "featureDetails", "legend", ... */
     get id (): string {
@@ -74,19 +75,23 @@ export class Panel extends BasePanel {
         return true;
     }
 
+    get stateObservable(): Observable<boolean> {
+        return this._stateStream.asObservable();
+    }
+
     /** Returns the dom node of the panel content. */
     get node(): JQuery<HTMLElement> {
         return this._node;
     }
 
     /** Closes this panel. */
-    close () {
-
+    close (): void {
+        this._stateStream.next(false);
     }
 
     /** Opens this panel. */
-    open () {
-
+    open (): void {
+        this._stateStream.next(true);
     }
 }
 

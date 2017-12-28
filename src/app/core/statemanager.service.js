@@ -114,6 +114,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                 one = getItem(oneName);
             }
 
+            console.error('a', oneTargetValue, one);
             if (oneTargetValue) {
                 return openPanel(one).then(() => setActive(...items));
             } else {
@@ -398,6 +399,40 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             openChildPanel(panelToOpen, propagate);
     }
 
+    function closeParent(panelToClose, propagate) {
+        let panel;
+        let panelEvent;
+
+        if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToClose.name))) {
+            panelEvent = new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`));
+            panel._closing.next(panelEvent);
+        }
+
+        if (panelEvent && panelEvent._stop) {
+            return $q.resolve(true);
+        } else {
+            return setItemProperty(panelToClose.name, 'active', false)
+                .then(() =>
+                    // wait for all child transition promises to resolve
+                    propagate ?
+                        $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
+                        true
+                ).then(() => {
+                    if (panel) {
+                        panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
+                    }
+                });
+        }
+    }
+
+    function closeChild(panelToClose, propagate) {
+        if (propagate) {
+            closePanel(getParent(panelToClose.name), false);
+        }
+        modifyHistory(panelToClose, false);
+        return setItemProperty(panelToClose.name, 'active', false, true);
+    }
+
     /**
      * Closes a panel from display.
      *
@@ -422,40 +457,11 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
 
         // closing parent panel
         if (typeof panelToClose.item.parent === 'undefined') {
-            let panel;
-            let panelEvent;
-
-            if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToClose.name))) {
-                panelEvent = new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`));
-                panel._closing.next(panelEvent);
-            }
-
-            if (panelEvent && panelEvent._stop) {
-                animationPromise = new Promise(resolve => true);
-            } else {
-                animationPromise = setItemProperty(panelToClose.name, 'active', false)
-                    .then(() =>
-                        // wait for all child transition promises to resolve
-                        propagate ?
-                            $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
-                            true
-                    ).then(() => {
-                        if (panel) {
-                            panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
-                        }
-                    });
-            }
-
+            return closeParent(panelToClose, propagate);
         // closing child panel
         } else {
-            if (propagate) {
-                closePanel(getParent(panelToClose.name), false);
-            }
-            modifyHistory(panelToClose, false);
-            animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
+            return closeChild(panelToClose, propagate);
         }
-
-        return animationPromise;
     }
 
     /**
