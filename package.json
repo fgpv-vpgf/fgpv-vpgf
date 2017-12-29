@@ -94,6 +94,6 @@
     "protractor": "node scripts/protractor/run.js",
     "doc": "./node_modules/.bin/jsdoc -p -r -c .jsdoc.json -t node_modules/docdash -R README.md -d ./docbuild -u ./docs ./src/app",
     "svgcache": "node scripts/svgCache.js",
-    "apidoc": "typedoc --readme api/welcome.md --theme api/theme --excludeExternals --module commonjs --target ES6 --out apidocs api/src"
+    "apidoc": "typedoc --ignoreCompilerErrors --readme api/welcome.md --theme api/theme --excludeExternals --exclude **/*.d.ts --module commonjs --target ES6 --out apidocs api/src"
   }
 }

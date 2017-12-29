@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Rx';
 import $ from 'jquery';
-import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
+import { MouseEvent, esriMouseEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
