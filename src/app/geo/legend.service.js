@@ -356,7 +356,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
             layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
 
-            layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = (entry.refreshInterval = layerConfig.refreshInterval)));
+            if (!layerConfig.singleEntryCollapse || layerConfig.layerEntries.length > 1) {
+                layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = (entry.refreshInterval = layerConfig.cachedRefreshInterval)));
+            } else {
+                layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = entry.refreshInterval));
+            }
 
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
