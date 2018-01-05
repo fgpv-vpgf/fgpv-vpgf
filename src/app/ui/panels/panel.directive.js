@@ -22,7 +22,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(referenceService) {
+function rvPanel(referenceService, stateManager, debounceService, events) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {
@@ -31,7 +31,7 @@ function rvPanel(referenceService) {
         scope: {
             closeButton: '@closeButton'
         },
-        controller: Controller,
+        controller: angular.noop,
         controllerAs: 'self',
         bindToController: true,
         link
@@ -48,35 +48,33 @@ function rvPanel(referenceService) {
      * @param {Object} element directive's node
      * @param {Array} attr directive's attributes
      */
-    function link(scope, element, attr) {
-        referenceService.panels[attr.type] = element;
-    }
-}
+    function link(scope, element, attrs) {
+        const self = scope.self;
+        const pName = attrs.type;
 
-/**
- * Skeleton controller function.
- * @function Controller
- */
-function Controller($attrs, stateManager, referenceService, $element, debounceService, events) {
-    'ngInject';
-    const self = this;
+        referenceService.panels[pName] = element;
 
-    referenceService.panels[$attrs.type] = $element;
+        self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
 
-    self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
+        events.$on(events.rvApiMapAdded, (_, mapi) => {
+            const panelObj = new Panel(pName, element.find('> div').first());
+            panelObj.stateObservable.subscribe(open => {
+                stateManager.setActive({[pName]: open});
+                scope.$applyAsync();
+            });
 
-    events.$on(events.rvApiMapAdded, (_, mapi) => {
-        mapi.ui.panels.add(new Panel($attrs.type, $element));
-    });
-
-    /**
-     * Temporary function to close the panel.
-     * @function closePanel
-     * @return {function} a function that debounces when closingPanel was invoked more than once
-     */
-    function closePanel() {
-        return debounceService.registerDebounce(() => {
-            stateManager.setActive($attrs.type);
+            mapi.ui.panels.add(panelObj);
         });
+
+        /**
+         * Temporary function to close the panel.
+         * @function closePanel
+         * @return {function} a function that debounces when closingPanel was invoked more than once
+         */
+        function closePanel() {
+            return debounceService.registerDebounce(() => {
+                stateManager.setActive(pName);
+            });
+        }
     }
 }

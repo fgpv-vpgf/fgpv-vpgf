@@ -405,6 +405,7 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
     const service = {
         addHoverTooltip,
+        addTooltip,
         removeHoverTooltip,
         refreshHoverTooltip
     };
@@ -442,6 +443,26 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
         ref.hoverTooltip.position(point.x, point.y);
 
         return ref.hoverTooltip;
+    }
+
+    /**
+     * Similar to the `addHoverTooltip` function. The key difference is that this function allows for the creation of several tooltips on the map.
+     *
+     * Strictly follows the `followMapStrategy` pattern.
+     *
+     * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
+     * @param {Object} self a self object that will be available on the tooltip directive scope
+     * @param {String} content tooltips content template that will be transcluded by the tooltip directive; should be valid HTML
+     * @return {Tooltip} a Tooltip instance
+     */
+    function addTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
+        const tooltipScope = $rootScope.$new();
+        tooltipScope.self = self;
+
+        const toolTip = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, content, tooltipScope);
+        referenceService.panels.shell.append(toolTip.node);
+        toolTip.position(point.x, point.y);
+        return toolTip;
     }
 
     /**

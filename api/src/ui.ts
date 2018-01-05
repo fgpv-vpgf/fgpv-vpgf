@@ -3,6 +3,9 @@ import { StoppableEvent, PanelEvent } from 'api/events';
 import Map from 'api/map';
 import { ObserveOnMessage } from 'rxjs/operators/observeOn';
 
+/**
+ * Creates the default panel streams for opening, opened, closing, and closed stream events
+ */
 class BasePanel {
 
     _closing: Subject<PanelEvent>;
@@ -52,7 +55,22 @@ class BasePanel {
     }
 }
 
-/** Note that opening legend when details is open will close details first. Events will be fired for auto closed panels. */
+/**
+ * A panel represents a top level viewer panel (is an `rv-panel` node).
+ *
+ * There are currently three panels:
+ * - main
+ * - side
+ * - table
+ *
+ * @example #### Opening a panel
+ *
+ * ```js
+ * panel.open();
+ * ```
+ *
+ * Note that `panel` refers to an instance of a panel object, which you'll see how to get from a `PanelRegistry`
+ */
 export class Panel extends BasePanel {
 
     private _id: string;
@@ -71,15 +89,11 @@ export class Panel extends BasePanel {
         return this._id;
     }
 
-    get isOpen(): boolean {
-        return true;
-    }
-
     get stateObservable(): Observable<boolean> {
         return this._stateStream.asObservable();
     }
 
-    /** Returns the dom node of the panel content. */
+    /** Returns the dom node of the panel content, not the panel node itself. Currently this is the first direct div element of a panel. */
     get node(): JQuery<HTMLElement> {
         return this._node;
     }
@@ -144,20 +158,76 @@ export class PanelRegistry extends BasePanel {
 
         this._panels.push(panel);
     }
+
+    remove (panel: Panel): void {
+        // unsubscribe the panel
+        ['_opening', '_opened', '_closing', '_closed'].forEach(to => {
+            (<any>panel)[to].unsubscribe();
+        });
+
+        this._panels = this._panels.filter(x => x !== panel);
+    }
+}
+
+/**
+ * Each map instance contains one ToolTip instance which handles the addition of new tooltips and the event streams
+ * 
+ * TODO: move mouse over/out to layer objects once implemented in the API. 
+ */
+class ToolTip {
+    _mouseOver: Subject<Event> = new Subject();
+    _mouseOut: Subject<Event> = new Subject();
+    _added: Subject<Object> = new Subject();
+
+    mouseOver: Observable<Event>;
+    mouseOut: Observable<Event>;
+    added: Observable<Object>;
+
+    constructor() {
+        this.mouseOver = this._mouseOver.asObservable();
+        this.mouseOut = this._mouseOut.asObservable();
+        this.added = this._added.asObservable();
+    }
+
+    /**
+     * Adds tooltip at specified position, and follows the map strategy.
+     * 
+     * @param screenPosition    {x: number, y: number} for placement
+     * @param content           string content or jQuery element
+     */
+    add(screenPosition: ScreenPosition, content: JQuery<HTMLElement>) {
+        const tt = {
+            screenPosition,
+            content,
+            toolTip: null
+        };
+
+        this._added.next(tt);
+        return tt.toolTip;
+    }
 }
 
 export class UI {
     _mapI: Map;
     _panels: PanelRegistry;
+    _tooltip: ToolTip = new ToolTip();
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
         this._panels = new PanelRegistry();
-
     }
 
     get panels(): PanelRegistry {
         return this._panels;
     }
 
+    get tooltip(): ToolTip {
+        return this._tooltip;
+    }
+
+}
+
+interface ScreenPosition {
+    x: number,
+    y: number
 }
