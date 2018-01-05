@@ -708,6 +708,7 @@
 
         "navBarNode": {
             "type": "object",
+            "description": "Provides configuration to the nav bar. If not supplied the default nav bar buttons are shown.",
             "properties": {
                 "zoom": { "type": "string", "enum": [ "all", "buttons", "slider" ], "default": "buttons" },
                 "extra": { "$ref": "#/definitions/navBarButtons", "default": [ "fullscreen", "geoLocator", "home", "help" ] }
@@ -787,7 +788,7 @@
                     "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image"}
                 },
                 "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
-                "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the all default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
+                "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
                 "navBar": { "$ref": "#/definitions/navBarNode" },
                 "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
                 "restrictNavigation": {
