@@ -405,6 +405,7 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
     const service = {
         addHoverTooltip,
+        addTooltip,
         removeHoverTooltip,
         refreshHoverTooltip
     };
@@ -432,16 +433,37 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
     function addHoverTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
         const tooltipScope = $rootScope.$new();
         tooltipScope.self = self;
+        tooltipScope.self.strategy = tooltipScope.self.strategy ? tooltipScope.self.strategy : 'followMouseStrategy';
 
         // destroy the previous hover tooltip since there shouldn't be more than one at the same time
         removeHoverTooltip();
 
-        ref.hoverTooltip = new Tooltip(ref.followMouseStrategy, ref.containInsideStrategy, content, tooltipScope);
+        ref.hoverTooltip = new Tooltip(ref[tooltipScope.self.strategy], ref.containInsideStrategy, content, tooltipScope);
         referenceService.panels.shell.append(ref.hoverTooltip.node);
 
         ref.hoverTooltip.position(point.x, point.y);
 
         return ref.hoverTooltip;
+    }
+
+    /**
+     * Similar to the `addHoverTooltip` function. The key difference is that this function allows for the creation of several tooltips on the map.
+     *
+     * Strictly follows the `followMapStrategy` pattern.
+     *
+     * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
+     * @param {Object} self a self object that will be available on the tooltip directive scope
+     * @param {String} content tooltips content template that will be transcluded by the tooltip directive; should be valid HTML
+     * @return {Tooltip} a Tooltip instance
+     */
+    function addTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
+        const tooltipScope = $rootScope.$new();
+        tooltipScope.self = self;
+
+        const toolTip = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, content, tooltipScope);
+        referenceService.panels.shell.append(toolTip.node);
+        toolTip.position(point.x, point.y);
+        return toolTip;
     }
 
     /**
