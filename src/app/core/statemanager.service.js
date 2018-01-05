@@ -114,7 +114,6 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                 one = getItem(oneName);
             }
 
-            console.error('a', oneTargetValue, one);
             if (oneTargetValue) {
                 return openPanel(one).then(() => setActive(...items));
             } else {
@@ -408,21 +407,17 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             panel._closing.next(panelEvent);
         }
 
-        if (panelEvent && panelEvent._stop) {
-            return $q.resolve(true);
-        } else {
-            return setItemProperty(panelToClose.name, 'active', false)
-                .then(() =>
-                    // wait for all child transition promises to resolve
-                    propagate ?
-                        $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
-                        true
-                ).then(() => {
-                    if (panel) {
-                        panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
-                    }
-                });
-        }
+        return setItemProperty(panelToClose.name, 'active', false)
+            .then(() =>
+                // wait for all child transition promises to resolve
+                propagate ?
+                    $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
+                    true
+            ).then(() => {
+                if (panel) {
+                    panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
+                }
+            });
     }
 
     function closeChild(panelToClose, propagate) {
