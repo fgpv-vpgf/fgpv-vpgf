@@ -2,7 +2,7 @@
 
 set -e
 
-if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ] && [ -n "$TRAVIS_TAG" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ] && [ -n "$TRAVIS_TAG" ] && [ "$mProc" == "prod" ]; then
     npm run doc
     npm run apidoc
     # this section assumes the id_rsa key has already been decrypted
