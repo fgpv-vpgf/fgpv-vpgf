@@ -822,7 +822,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._table = new TableNode(source.table);
 
             this._singleEntryCollapse = source.singleEntryCollapse === true;
-            this._imageFormat = source.imageFormat ? source.imageFormat : 'png32';
+            this._imageFormat = source.imageFormat || 'png32';
         }
 
         get layerEntries () { return this._layerEntries; }
