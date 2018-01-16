@@ -822,6 +822,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._table = new TableNode(source.table);
 
             this._singleEntryCollapse = source.singleEntryCollapse === true;
+            this._imageFormat = source.imageFormat ? source.imageFormat : 'png32';
         }
 
         get layerEntries () { return this._layerEntries; }
@@ -839,6 +840,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         _singleEntryCollapse = false;
         set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
         get singleEntryCollapse () {        return this._singleEntryCollapse; }
+
+        get imageFormat() { return this._imageFormat; }
 
         _isResolved = false;
         /**
@@ -873,6 +876,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
         get JSON () {
             return angular.merge(super.JSON, {
+                imageFormat: this.imageFormat,
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
