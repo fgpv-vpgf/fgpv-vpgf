@@ -397,7 +397,9 @@
             ],
             "required": [ "infoType", "content" ]
         },
-
+        "mapLegend": { 
+            "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ]
+        },
         "legendAuto": {
             "type": "object",
             "properties": {
@@ -636,7 +638,7 @@
 
         "layerList": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/definitions/layerNode" } ] },
+            "items": { "$ref": "#/definitions/layerNode" },
             "minItems": 0
         },
 
@@ -749,11 +751,21 @@
             "additionalProperties": false
         },
         "about": {
+            "type": "object",
+            "properties": {
+                "content": { "type": "string", "description": "The content of the about section" },
+                "folderName": { "type": "string", "description": "The folder which contains the content for the about section" }
+            },
             "oneOf": [
-                { "type": "object", "properties": { "content": { "type": "string", "description": "The content of the about section" } }, "required": [ "content" ], "additionalProperties": false },
-                { "type": "object", "properties": { "folderName": { "type": "string", "description": "The folder which contains the content for the about section" } }, "required": [ "folderName" ], "additionalProperties": false }
+                {
+                    "required": [ "content" ]
+                },
+                {
+                    "required": [ "folderName" ]
+                }
             ],
-            "description": "Specifies the location/content of the about section"
+            "description": "Specifies the location/content of the about section",
+            "additionalProperties": false
         },
         "legendUI": {
             "type": "object",
@@ -773,6 +785,43 @@
                 }
             },
             "additionalProperties": false
+        },
+        "searchService": {
+            "type": "object",
+            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+            "properties": {
+                "disabledSearches": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                },
+                "serviceUrls": {
+                    "type": "object",
+                    "description": "Service endpoint urls",
+                    "properties": {
+                        "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                        "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                        "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                        "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                        "types": { "type": "string", "description": "Endpoint url for types service" }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "geoNames", "geoLocation", "geoSuggest", "provinces", "types" ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [ "serviceUrls" ]
+        },
+        "help": {
+            "type": "object",
+            "description": "Specifies details for the Help section",
+            "properties": {
+                "folderName": { "type": "string", "description": "Help folder name which contains the help description and images" }
+            },
+            "required": [ "folderName" ],
+            "additionalProperties": false
         }
     },
 
@@ -788,8 +837,8 @@
                 "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
                 "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
                 "failureFeedback": {
-                    "failureMessage": { "type": "string", "description": "An optional message to be used in place of the failure message"},
-                    "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image"}
+                    "failureMessage": { "type": "string", "description": "An optional message to be used in place of the failure message" },
+                    "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image" }
                 },
                 "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
                 "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
@@ -801,15 +850,7 @@
                     "description": "Will restrict the user from panning beyond the maximum extent."
                 },
                 "about": { "$ref": "#/definitions/about" },
-                "help": {
-                    "type": "object",
-                    "description": "Specifies details for the Help section",
-                    "properties": {
-                        "folderName": { "type": "string", "description": "Help folder name which contains the help description and images" }
-                    },
-                    "required": [ "folderName" ],
-                    "additionalProperties": false
-                },
+                "help": { "$ref": "#/definitions/help" },
                 "legend": {
                     "$ref": "#/definitions/legendUI"
                 },
@@ -823,7 +864,7 @@
                         "small": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for small viewports" }
                     },
                     "additionalProperties": false,
-                    "required": ["id"]
+                    "required": [ "id" ]
                 }
             }
         },
@@ -840,32 +881,7 @@
                 "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "print": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "search": {
-                    "type": "object",
-                    "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
-                    "properties": {
-                        "disabledSearches": {
-                            "type": "array",
-                            "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
-                            "minItems": 1,
-                            "uniqueItems": true,
-                            "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
-                        },
-                        "serviceUrls": {
-                            "type": "object",
-                            "description": "Service endpoint urls",
-                            "properties": {
-                                "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
-                                "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
-                                "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
-                                "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
-                                "types": { "type": "string", "description": "Endpoint url for types service" }
-                            },
-                            "additionalProperties": false,
-                            "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": ["serviceUrls"]
+                    "$ref": "#/definitions/searchService"
                 },
                 "export": {
                     "type": "object",
@@ -876,7 +892,7 @@
                         "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
                         "legend": { "$ref": "#/definitions/legendExportComponent", "description": "Legend component." },
                         "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
-                        "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+                        "timestamp": { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
                     },
                     "additionalProperties": false
                 }
@@ -923,11 +939,11 @@
                     "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
                 },
                 "legend": {
-                    "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+                    "$ref":  "#/definitions/mapLegend",
                     "description": "A structured or automatically generated legend"
                 }
             },
-            "required": ["tileSchemas", "baseMaps"]
+            "required": [ "tileSchemas", "baseMaps" ]
         }
     },
 
