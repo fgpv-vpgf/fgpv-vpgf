@@ -43,6 +43,25 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         refreshAttributes: {}
     };
 
+    let mApiObjects = null;
+
+    // lets us know the API is ready
+    events.$on(events.rvApiMapAdded, (_, mApi) => {
+        const tt = mApi.ui.tooltip;
+
+        mApiObjects = {
+            mouseOver: tt._mouseOver, // subject
+            mouseOut: tt._mouseOut, // subject
+            add: tt.add.bind(tt) // tt.add is a function pointer, need to bind tt back into its scope
+        };
+
+        // when tooltip is added via the api, we create it here
+        tt.added.subscribe(x => {
+            x.toolTip = tooltipService.addTooltip(x.screenPosition, {}, x.content);
+        });
+    });
+
+
     /**
      * Finds and returns the layer record using the id specified.
      *
@@ -462,27 +481,54 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 mouseOver: e => {
                     events.$broadcast(events.rvFeatureMouseOver, true);
 
-                    // make the content and display the hovertip
-                    tipContent = {
-                        name: null,
-                        svgcode: '<svg></svg>',
-                        graphic: e.target
+                    // a "fake" event preventDefault that disables default behavior
+                    e.preventDefault = function() {
+                        this._prevented = true;
                     };
 
-                    const tipRef = tooltipService.addHoverTooltip(e.point, tipContent);
+                    mApiObjects.mouseOver.next({
+                        event: e,
+                        // attribs is a promise, which resolves on the `mApiTipLoaded` event fired in the tipLoaded event
+                        attribs: new Promise(resolve => events.$on('mApiTipLoaded', (_, tip) => resolve(tip.attribs))),
+                        // shortcut to add a tooltip with point information already applied
+                        add: content => tooltipService.addHoverTooltip(e.point, {}, content)
+                    });
+                    
+                    if (!e._prevented) {
+                        // make the content and display the hovertip
+                        tipContent = {
+                            name: null,
+                            svgcode: '<svg></svg>',
+                            graphic: e.target
+                        };
+
+                        const tipRef = tooltipService.addHoverTooltip(e.point, tipContent);
+                    }
                 },
+
                 tipLoaded: e => {
+                    events.$broadcast('mApiTipLoaded', e);
                     // update the content of the tip with real data.
                     if (tipContent && tipContent.graphic === e.target) {
                         tipContent.name = e.name;
                         tipContent.name = $filter('picture')(e.name);
                         tipContent.svgcode = e.svgcode;
                     }
+
                     tooltipService.refreshHoverTooltip();
                 },
                 mouseOut: e => {
                     events.$broadcast(events.rvFeatureMouseOver, false);
-                    tooltipService.removeHoverTooltip();
+
+                    e.preventDefault = function() {
+                        this._prevented = true;
+                    };
+
+                    mApiObjects.mouseOut.next(e);
+
+                    if (!e._prevented) {
+                        tooltipService.removeHoverTooltip();
+                    }
                 },
                 // TODO: reattach this
                 forceClose: () => {

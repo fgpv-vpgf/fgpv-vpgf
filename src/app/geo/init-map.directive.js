@@ -63,7 +63,7 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
-                appInfo.apiMap = apiMap;
+                appInfo.mapi = apiMap;
                 loadExtensions(apiMap);
                 window.RZ.mapAdded.next(apiMap);
 
