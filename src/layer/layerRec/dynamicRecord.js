@@ -84,7 +84,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
     makeLayerConfig () {
         const cfg = super.makeLayerConfig();
         cfg.imageParameters = new this._apiRef.layer.ImageParameters();
-        cfg.imageParameters.format = 'png32';
+        cfg.imageParameters.format = this.config.imageFormat || 'png32';
 
         return cfg;
     }
