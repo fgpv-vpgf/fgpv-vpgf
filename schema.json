@@ -91,7 +91,7 @@
         "symbolNode": {
             "type": "object",
             "properties": {
-                "label": { "type": "string", "description": "description" },
+                "label": { "type": "string", "description": "Label for the symbol" },
                 "icon": { "type": "string", "description": "Graphical symbol as a URL (data URLs are encouraged for smaller symbols)" }
             },
             "required": [ "label", "icon" ],
@@ -128,7 +128,7 @@
                 "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
                 "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" }
             },
-            "required": ["extentSetId", "lodSetId", "id", "name"],
+            "required": [ "extentSetId", "lodSetId", "id", "name" ],
             "additionalProperties": false
         },
 
@@ -279,7 +279,7 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" }
             },
-            "required": ["id"],
+            "required": [ "id" ],
             "additionalProperties": false
         },
         "dynamicLayerEntryNode": {
@@ -292,16 +292,16 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel"}
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel" }
             },
-            "required": ["index"],
+            "required": [ "index" ],
             "additionalProperties": false
         },
 
         "entryGroup": {
             "type": "object",
             "properties": {
-                "name" : { "type": "string", "description": "Title of the group" },
+                "name": { "type": "string", "description": "Title of the group" },
                 "expanded": { "type": "boolean", "default": true },
                 "children": {
                     "type": "array",
@@ -311,7 +311,7 @@
                 "controls": { "$ref": "#/definitions/legendGroupControls" },
                 "disabledControls": { "$ref": "#/definitions/legendGroupControls" }
             },
-            "required": ["name", "children"],
+            "required": [ "name", "children" ],
             "additionalProperties": false
         },
         "visibilitySet": {
@@ -323,7 +323,7 @@
                     "minItems": 1
                 }
             },
-            "required": ["exclusiveVisibility"],
+            "required": [ "exclusiveVisibility" ],
             "additionalProperties": false
         },
         "symbologyStack": {
@@ -331,7 +331,7 @@
             "items": {
                 "type": "object",
                 "properties": { "image": { "type": "string" }, "text": { "type": "string" } },
-                "required":[ "image", "text" ],
+                "required": [ "image", "text" ],
                 "additionalProperties": false
             },
             "minItems": 1
@@ -340,21 +340,21 @@
             "type": "object",
             "description": "",
             "properties": {
-                "layerId": {"type": "string", "description": "Link to a layer defined in the layers section"},
-                "hidden": {"type": "boolean", "default": false, "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user." },
+                "layerId": { "type": "string", "description": "Link to a layer defined in the layers section" },
+                "hidden": { "type": "boolean", "default": false, "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user." },
                 "controlledIds": {
                     "type": "array",
                     "items": { "type": "string", "description": "Additional layer ids which are controlled by this layer" },
-                    "default": []
+                    "default": [ ]
                 },
-                "entryIndex": {"type": "integer", "description": "Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true ."},
-                "entryId": {"type": "string", "description": "Id of the 'sublayer' in the case of an OGC WMS layer"},
-                "coverIcon": {"type": "string", "description": "An optional icon, if present it will be used to primarily represent the layer"},
-                "description": {"type": "string", "default": "", "description": "Optional description displayed above the symbology stack."},
+                "entryIndex": { "type": "integer", "description": "Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true ." },
+                "entryId": { "type": "string", "description": "Id of the 'sublayer' in the case of an OGC WMS layer" },
+                "coverIcon": { "type": "string", "description": "An optional icon, if present it will be used to primarily represent the layer" },
+                "description": { "type": "string", "default": "", "description": "Optional description displayed above the symbology stack." },
                 "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
-                "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
+                "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" }
             },
-            "required": ["layerId"],
+            "required": [ "layerId" ],
             "additionalProperties": false
         },
         "infoSection": {
@@ -379,10 +379,10 @@
                     "type": "object",
                     "properties": {
                         "infoType": { "type": "string", "enum": [ "unboundLayer" ] },
-                        "layerName": {"type": "string", "description": "Name to display in legend"},
-                        "description": {"type": "string", "default": "", "description": "Optional description displayed above the symbology stack."},
+                        "layerName": { "type": "string", "description": "Name to display in legend" },
+                        "description": { "type": "string", "default": "", "description": "Optional description displayed above the symbology stack." },
                         "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
-                        "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
+                        "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" }
                     },
                     "additionalProperties": false
                 },
@@ -395,15 +395,17 @@
                     "additionalProperties": false
                 }
             ],
-            "required": ["infoType", "content"]
+            "required": [ "infoType", "content" ]
         },
-
+        "mapLegend": { 
+            "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ]
+        },
         "legendAuto": {
             "type": "object",
             "properties": {
                 "type": { "type": "string", "enum": [ "autopopulate" ] }
             },
-            "required": ["type"],
+            "required": [ "type" ],
             "additionalProperties": false
         },
         "legendStructured": {
@@ -412,7 +414,7 @@
                 "type": { "type": "string", "enum": [ "structured" ] },
                 "root": { "$ref": "#/definitions/entryGroup" }
             },
-            "required": ["type", "root"],
+            "required": [ "type", "root" ],
             "additionalProperties": false
         },
 
@@ -481,7 +483,7 @@
                 },
                 "sort": {
                     "type": "string",
-                    "enum": ["asc", "desc"],
+                    "enum": [ "asc", "desc" ],
                     "description": "Specifies if column is sort. If missing, no sort is applied."
                 },
                 "searchable": {
@@ -493,7 +495,7 @@
                     "$ref": "#/definitions/filterNode"
                 }
             },
-            "required": ["data"],
+            "required": [ "data" ],
             "additionalProperties": false,
             "description": "Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array."
         },
@@ -504,7 +506,7 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "enum": ["string", "number", "date", "selector"],
+                    "enum": [ "string", "number", "date", "selector" ],
                     "description": "Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails."
                 },
                 "value": {
@@ -518,7 +520,7 @@
                     "description": "Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified."
                 }
             },
-            "required": ["type"],
+            "required": [ "type" ],
             "additionalProperties": false
         },
 
@@ -529,7 +531,7 @@
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
-                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off."},
+                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off." },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
             },
             "required": [ "id", "layerType", "url" ]
@@ -563,13 +565,13 @@
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
-                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off."},
+                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off." },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -609,7 +611,7 @@
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
-                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off."},
+                "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off." },
                 "singleEntryCollapse": { "type": "boolean", "default": false, "description": "Indicates that the dynamic layer with a single layer entry should be rendered without the root group." },
                 "layerEntries": {
                     "type": "array",
@@ -636,7 +638,7 @@
 
         "layerList": {
             "type": "array",
-            "items": { "oneOf": [ { "$ref": "#/definitions/layerNode" } ] },
+            "items": { "$ref": "#/definitions/layerNode" },
             "minItems": 0
         },
 
@@ -656,12 +658,12 @@
                         "type": "object",
                         "properties": {
                             "id": { "type": "string", "default": "" },
-                            "layerType": { "type": "string", "default": ""},
+                            "layerType": { "type": "string", "default": "" },
                             "url": { "type": "string", "default": "" }
                         },
                         "additionalProperties": false,
-                        "required": ["id", "layerType", "url"]
-                     },
+                        "required": [ "id", "layerType", "url" ]
+                    },
                     "minItems": 1,
                     "description": "A set of URLs which should be composited to form a basemap entry"
                 },
@@ -684,7 +686,7 @@
             "type": "object",
             "properties": {
                 "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
-                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [["layers","basemap"],["fullscreen","export","share","touch","help","about"],["language"],["plugins"]] }
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [ [ "layers", "basemap" ], [ "fullscreen", "export", "share", "touch", "help", "about" ], [ "language" ], [ "plugins" ] ] }
             },
             "additionalProperties": false,
             "description": "Specifies which options are available in the left side menu."
@@ -695,7 +697,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "geoSearch", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
+                "enum": [ "layers", "basemap", "geoSearch", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins" ]
             }
         },
 
@@ -712,9 +714,10 @@
 
         "navBarNode": {
             "type": "object",
+            "description": "Provides configuration to the nav bar. If not supplied the default nav bar buttons are shown.",
             "properties": {
-                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
-                "extra": { "$ref": "#/definitions/navBarButtons", "default": ["fullscreen", "geoLocator", "home", "help"] }
+                "zoom": { "type": "string", "enum": [ "all", "buttons", "slider" ], "default": "buttons" },
+                "extra": { "$ref": "#/definitions/navBarButtons", "default": [ "fullscreen", "geoLocator", "home", "help" ] }
             },
             "required": [ "zoom" ],
             "additionalProperties": false
@@ -725,23 +728,99 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen", "geoSearch", "sideMenu", "layers"]
+                "enum": [ "geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen", "geoSearch", "sideMenu", "layers" ]
             }
         },
 
         "mapComponentsNode": {
             "type": "object",
             "properties": {
-                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
-                "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" } } },
+                "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } } },
                 "northArrow": { "type": "object" },
-                "overviewMap": { "type": "object",
+                "overviewMap": {
+                    "type": "object",
                     "properties": {
                         "enabled": { "type": "boolean" },
-                        "expandFactor": { "type": "number", "default": 2 }}},
+                        "expandFactor": { "type": "number", "default": 2 }
+                    }
+                },
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" }
             },
+            "additionalProperties": false
+        },
+        "about": {
+            "type": "object",
+            "properties": {
+                "content": { "type": "string", "description": "The content of the about section" },
+                "folderName": { "type": "string", "description": "The folder which contains the content for the about section" }
+            },
+            "oneOf": [
+                {
+                    "required": [ "content" ]
+                },
+                {
+                    "required": [ "folderName" ]
+                }
+            ],
+            "description": "Specifies the location/content of the about section",
+            "additionalProperties": false
+        },
+        "legendUI": {
+            "type": "object",
+            "description": "Specifies options for the legend like reordering, importing, etc.",
+            "properties": {
+                "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
+                "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
+                "isOpen": {
+                    "type": "object",
+                    "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+                    "properties": {
+                        "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                        "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                        "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "searchService": {
+            "type": "object",
+            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+            "properties": {
+                "disabledSearches": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                },
+                "serviceUrls": {
+                    "type": "object",
+                    "description": "Service endpoint urls",
+                    "properties": {
+                        "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                        "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                        "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                        "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                        "types": { "type": "string", "description": "Endpoint url for types service" }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "geoNames", "geoLocation", "geoSuggest", "provinces", "types" ]
+                }
+            },
+            "additionalProperties": false,
+            "required": [ "serviceUrls" ]
+        },
+        "help": {
+            "type": "object",
+            "description": "Specifies details for the Help section",
+            "properties": {
+                "folderName": { "type": "string", "description": "Help folder name which contains the help description and images" }
+            },
+            "required": [ "folderName" ],
             "additionalProperties": false
         }
     },
@@ -758,11 +837,11 @@
                 "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
                 "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
                 "failureFeedback": {
-                    "failureMessage": { "type": "string", "description": "An optional message to be used in place of the failure message"},
-                    "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image"}
+                    "failureMessage": { "type": "string", "description": "An optional message to be used in place of the failure message" },
+                    "failureImageUrl": { "type": "string", "description": "An optional image to be used in place of the failure Image" }
                 },
                 "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
-                "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the all default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
+                "appBar": { "$ref": "#/definitions/appBarNode", "default": { "sideMenu": true, "geoSearch": true, "layers": true }, "description": "Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }." },
                 "navBar": { "$ref": "#/definitions/navBarNode" },
                 "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
                 "restrictNavigation": {
@@ -770,39 +849,10 @@
                     "default": false,
                     "description": "Will restrict the user from panning beyond the maximum extent."
                 },
-                "about": {
-                    "description": "About properties from configuration file or Markdown folder",
-                    "oneOf": [
-                        { "type": "object", "properties": { "content": { "type": "string" } }, "required": ["content"], "additionalProperties": false },
-                        { "type": "object", "properties": { "folderName": { "type": "string" } }, "required": ["folderName"], "additionalProperties": false }
-                    ]
-                },
-                "help": {
-                    "type": "object",
-                    "description": "Help properties",
-                    "properties": {
-                        "folderName": { "type": "string", "description": "Help folder name who contain the help description and images" }
-                    },
-                    "required": [ "folderName" ],
-                    "additionalProperties": false
-                },
+                "about": { "$ref": "#/definitions/about" },
+                "help": { "$ref": "#/definitions/help" },
                 "legend": {
-                    "type": "object",
-                    "properties": {
-                        "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
-                        "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
-                        "isOpen": {
-                            "type": "object",
-                            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
-                            "properties": {
-                                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
-                                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
-                                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
+                    "$ref": "#/definitions/legendUI"
                 },
                 "tableIsOpen": {
                     "type": "object",
@@ -814,9 +864,8 @@
                         "small": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for small viewports" }
                     },
                     "additionalProperties": false,
-                    "required": ["id"]
-                },
-                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+                    "required": [ "id" ]
+                }
             }
         },
 
@@ -832,32 +881,7 @@
                 "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "print": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "search": {
-                    "type": "object",
-                    "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
-                    "properties": {
-                        "disabledSearches": {
-                            "type": "array",
-                            "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
-                            "minItems": 1,
-                            "uniqueItems": true,
-                            "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
-                        },
-                        "serviceUrls": {
-                            "type": "object",
-                            "description": "Service endpoint urls",
-                            "properties": {
-                                "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
-                                "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
-                                "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
-                                "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
-                                "types": { "type": "string", "description": "Endpoint url for types service" }
-                            },
-                            "additionalProperties": false,
-                            "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
-                        }
-                    },
-                    "additionalProperties": false,
-                    "required": ["serviceUrls"]
+                    "$ref": "#/definitions/searchService"
                 },
                 "export": {
                     "type": "object",
@@ -868,7 +892,7 @@
                         "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
                         "legend": { "$ref": "#/definitions/legendExportComponent", "description": "Legend component." },
                         "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
-                        "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+                        "timestamp": { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
                     },
                     "additionalProperties": false
                 }
@@ -915,11 +939,11 @@
                     "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
                 },
                 "legend": {
-                    "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+                    "$ref":  "#/definitions/mapLegend",
                     "description": "A structured or automatically generated legend"
                 }
             },
-            "required": ["tileSchemas", "baseMaps"]
+            "required": [ "tileSchemas", "baseMaps" ]
         }
     },
 
