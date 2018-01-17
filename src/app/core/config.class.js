@@ -583,7 +583,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                 });
 
                 layerInstance.stateChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerStateChanged, (_, layer) => subscriber.next(layer));
+                    events.$on(events.rvLayerStateChanged, (_, layer, state) => subscriber.next({ layer: layer, state: state }));
                 });
             });
         }
