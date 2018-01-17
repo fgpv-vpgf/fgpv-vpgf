@@ -17,6 +17,12 @@ import { Subject } from 'rxjs/Subject';
  *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
  * });
  * ```
+ * 
+ * @example #### Disable identify feature
+ * 
+ * ```js
+ * mapInstance.identify = false;
+ * ```
  */
 export default class Map {
     private _id: string;
@@ -107,14 +113,16 @@ export default class Map {
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
 
+    /** @ignore */
+    _clickSubject: Subject<MapClickEvent> = new Subject();
+
     /**
      * Emits when a user clicks anywhere on the map.
      *
      * It **does not** emit for clicks on overlaying panels or map controls.
      * @event click
     */
-    _clickSubject = new Subject();
-    click = this._clickSubject.asObservable();
+    click: Observable<MapClickEvent>;
 
     /**
      * Emits when a user double clicks anywhere on the map.
@@ -209,6 +217,7 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
 
+    this.click = this._clickSubject.asObservable();
     this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));

@@ -23,9 +23,27 @@ export class MouseEvent {
     }
 }
 
+/**
+ * Adds a `features` Observable to map clicks for supporting identify through the API
+ * 
+ * @example #### Subscribe to feature list
+ * 
+ * ```js
+ * RZ.mapInstances[0].click.subscribe(a => {
+ *     a.features.subscribe(featureList => {...});
+ * });
+ * ```
+ */
 export class MapClickEvent extends MouseEvent {
-    _featureSubject = new Subject();
-    features = this._featureSubject.asObservable();
+    /** @ignore */
+    _featureSubject: Subject<Object>;
+    features: Observable<Object>;
+
+    constructor(event: esriMouseEvent) {
+        super(event);
+        this._featureSubject = new Subject();
+        this.features = this._featureSubject.asObservable();
+    }
 }
 
 export class PanelEvent {
