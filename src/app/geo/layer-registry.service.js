@@ -38,7 +38,6 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
 
     const ref = {
         mapLoadingWaitHandle: null,
-        layerState: null,
 
         loadingQueue: [],
         loadingCount: 0,
@@ -179,18 +178,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
         const layerRecord = getLayerRecord(id);
         const map = configService.getSync.map.instance;
 
-        if (ref.layerState) {
-            ref.layerState();
-            ref.layerState = null;
-        }
-
         if (layerRecord) {
-            ref.layerState = $rootScope.$watch(() => layerRecord.state, (newValue, oldValue) => {
-                if (newValue !== oldValue) {
-                    events.$broadcast(events.rvLayerStateChanged, layerRecord);
-                }
-            });
-
             const alreadyLoading = ref.loadingQueue.some(lr =>
                 lr === layerRecord);
             const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds)
@@ -272,6 +260,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
             }
 
             _createApiLayer(layerRecord);
+            events.$broadcast(events.rvLayerStateChanged, layerRecord, state);
         }
 
         /**
@@ -513,7 +502,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                         // shortcut to add a tooltip with point information already applied
                         add: content => tooltipService.addHoverTooltip(e.point, {}, content)
                     });
-                    
+
                     if (!e._prevented) {
                         // make the content and display the hovertip
                         tipContent = {
