@@ -263,10 +263,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         }
 
         get opacity () {            return this._opacity; }
-        set opacity (value) {       this._opacity = value; }
+        set opacity (value) {
+            this._opacity = value;
+            events.$broadcast(events.rvLayerOpacityChanged);
+        }
 
         get visibility () {         return this._visibility; }
-        set visibility (value) {    this._visibility = value; }
+        set visibility (value) {
+            this._visibility = value;
+            events.$broadcast(events.rvLayerVisibilityChanged);
+        }
 
         get boundingBox () {        return this._boundingBox; }
         set boundingBox (value) {   this._boundingBox = value; }
@@ -561,6 +567,25 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             if (!source.metadataUrl) {
                 common.removeFromArray(this._controls, 'metadata');
             }
+
+            // Integrating with API
+            events.$on(events.rvApiLayerAdded, (_, layerInstance) => {
+                layerInstance.nameChanged = Observable.create(subscriber => {
+                    events.$on(events.rvLayerNameChanged, () => subscriber.next(this));
+                });
+
+                layerInstance.opacityChanged = Observable.create(subscriber => {
+                    events.$on(events.rvLayerOpacityChanged, () =>  subscriber.next(this));
+                });
+
+                layerInstance.visibilityChanged = Observable.create(subscriber => {
+                    events.$on(events.rvLayerVisibilityChanged, () => subscriber.next(this));
+                });
+
+                layerInstance.stateChanged = Observable.create(subscriber => {
+                    events.$on(events.rvLayerStateChanged, (_, layer) => subscriber.next(layer));
+                });
+            });
         }
 
         get source () {                 return this._source; }
@@ -569,7 +594,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get layerType () {              return this._layerType; }
 
         get name () {                   return this._name; }
-        set name (value) {              this._name = value; }
+        set name (value) {
+            this._name = value;
+            events.$broadcast(events.rvLayerNameChanged);
+        }
 
         get url () {                    return this._url; }
         get metadataUrl () {            return this._metadataUrl; }

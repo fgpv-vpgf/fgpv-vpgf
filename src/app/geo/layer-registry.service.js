@@ -1,3 +1,5 @@
+import ConfigLayer from 'api/layer/ConfigLayer';
+
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
 
@@ -18,7 +20,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
+function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -36,6 +38,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
     const ref = {
         mapLoadingWaitHandle: null,
+        layerState: null,
 
         loadingQueue: [],
         loadingCount: 0,
@@ -156,6 +159,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
+
+            const mapId = $rootElement.attr('id');
+
+            window.RZ.layerRemoved.next({ layer: layerRecord, mapId: mapId });
         }
 
         return index;
@@ -172,7 +179,18 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const layerRecord = getLayerRecord(id);
         const map = configService.getSync.map.instance;
 
+        if (ref.layerState) {
+            ref.layerState();
+            ref.layerState = null;
+        }
+
         if (layerRecord) {
+            ref.layerState = $rootScope.$watch(() => layerRecord.state, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    events.$broadcast(events.rvLayerStateChanged, layerRecord);
+                }
+            });
+
             const alreadyLoading = ref.loadingQueue.some(lr =>
                 lr === layerRecord);
             const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds)
@@ -252,6 +270,8 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
             }
+
+            _createApiLayer(layerRecord);
         }
 
         /**
@@ -562,4 +582,35 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     return service;
+
+    /**
+     * Create API ConfigLayer using the layerRecord and config provided.
+     *
+     * @function _createApiLayer
+     * @private
+     * @param {LayerRecord} layerRecord a layer record to use when creating ConfigLayer
+     */
+    function _createApiLayer(layerRecord) {
+        const mapId = $rootElement.attr('id');
+        let apiLayer;
+
+        // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
+        if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            Object.keys(layerRecord._featClasses).forEach(idx => {
+                const proxy = layerRecord.getChildProxy(idx);
+                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map);
+                apiLayer.layerI = proxy;
+                apiLayer.dynamicLayerIndex = idx;
+
+                window.RZ.layerAdded.next({ layer: apiLayer, mapId: mapId });
+                events.$broadcast(events.rvApiLayerAdded, apiLayer);
+            });
+        } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
+            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map);
+            apiLayer.layerI = layerRecord;
+
+            window.RZ.layerAdded.next({ layer: apiLayer, mapId: mapId });
+            events.$broadcast(events.rvApiLayerAdded, apiLayer);
+        }
+    }
 }
