@@ -68,7 +68,6 @@ export default class ConfigLayer extends BaseLayer {
         this._stateChanged.subscribe(layer => {
             if (this.id === layer.layerId && this._state !== layer.state) {
                 this._state = layer.state;
-                console.log(layer);
             }
         });
     }
