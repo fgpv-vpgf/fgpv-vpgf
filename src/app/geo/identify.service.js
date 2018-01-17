@@ -1,3 +1,5 @@
+import { MapClickEvent } from 'api/events';
+
 /**
  * @module identifyService
  * @memberof app.geo
@@ -9,10 +11,13 @@ angular
     .module('app.geo')
     .factory('identifyService', identifyService);
 
-function identifyService($q, configService, stateManager) {
+function identifyService($q, configService, stateManager, events) {
     const service = {
         identify
     };
+
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
 
     return service;
 
@@ -73,9 +78,17 @@ function identifyService($q, configService, stateManager) {
             return;
         }
 
+        const mapClickEvent = new MapClickEvent(clickEvent);
+        mApi._clickSubject.next(mapClickEvent);
+
         const details = {
             data: allIdentifyResults,
-            isLoaded: $q.all(allLoadingPromises).then(() => true)
+            isLoaded: $q.all(allLoadingPromises).then(() => {
+                if (allIdentifyResults[0].data.length > 0) {
+                    mapClickEvent._featureSubject.next(allIdentifyResults[0].data);
+                }
+                return true;
+            })
         };
 
         // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
@@ -84,7 +97,9 @@ function identifyService($q, configService, stateManager) {
         };
 
         // show details panel only when there is data
-        stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        if (mApi.identify) {
+            stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        }
 
         /**
          * Modifies identify promises to always resolve, never reject.

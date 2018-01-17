@@ -1,10 +1,11 @@
 import { Observable } from 'rxjs/Rx';
 import $ from 'jquery';
-import { MouseEvent, esriMouseEvent } from 'api/events';
+import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
+import { Subject } from 'rxjs/Subject';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -23,6 +24,7 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
+    private _allowIdentify = true;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -51,6 +53,14 @@ export default class Map {
         this._fgpMap = fgpMap;
         this.setBounds(this.mapI.extent, false);
         initObservables.apply(this);
+    }
+
+    set identify(allow: boolean) {
+        this._allowIdentify = allow;
+    }
+
+    get identify(): boolean {
+        return this._allowIdentify;
     }
 
     /**
@@ -103,7 +113,8 @@ export default class Map {
      * It **does not** emit for clicks on overlaying panels or map controls.
      * @event click
     */
-    click: Observable<MouseEvent>;
+    _clickSubject = new Subject();
+    click = this._clickSubject.asObservable();
 
     /**
      * Emits when a user double clicks anywhere on the map.
@@ -198,7 +209,6 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
 
-    this.click = Observable.fromEvent(esriMapElement, 'click').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));

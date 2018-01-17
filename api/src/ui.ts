@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs/Rx';
-import { StoppableEvent, PanelEvent } from 'api/events';
+import { PanelEvent } from 'api/events';
 import Map from 'api/map';
 import { ObserveOnMessage } from 'rxjs/operators/observeOn';
 
