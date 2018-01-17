@@ -52,6 +52,8 @@ class LayerInterface {
     // fetches attributes for use in the datatable
     get formattedAttributes () { return undefined; } // returns Promise of Object
 
+    get attribs () { return undefined; } // returns Promise of Object
+
     get queryUrl () { return undefined; } // returns String
 
     // returns a feature name of an attribute set
@@ -137,6 +139,7 @@ class LayerInterface {
 
         newProp(this, 'snapshot', featureGetSnapshot);
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
+        newProp(this, 'attribs', standardGetAttribs);
         newProp(this, 'geometryType', featureGetGeometryType);
         newProp(this, 'featureCount', featureGetFeatureCount);
         newProp(this, 'loadedFeatureCount', featureGetLoadedFeatureCount);
@@ -165,6 +168,7 @@ class LayerInterface {
         newProp(this, 'opacity', dynamicLeafGetOpacity);
         newProp(this, 'query', dynamicLeafGetQuery);
         newProp(this, 'formattedAttributes', dynamicLeafGetFormattedAttributes);
+        newProp(this, 'attribs', dynamicLeafGetAttribs);
 
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
@@ -332,6 +336,21 @@ function dynamicLeafGetFormattedAttributes() {
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
     return this._source.getFormattedAttributes();
+}
+
+function standardGetAttribs() {
+    /* jshint validthis: true */
+
+    return this._source.getAttribs();
+}
+
+function dynamicLeafGetAttribs() {
+     /* jshint validthis: true */
+
+     // TODO code-wise this looks identical to standardGetAttribs.
+    //      however in this case, ._source is a DynamicFC, not a LayerRecord.
+    //      This is safer. Deleting this would avoid the duplication. Decide.
+    return this._source.getAttribs();
 }
 
 function standardGetSymbology() {
