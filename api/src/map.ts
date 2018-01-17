@@ -86,6 +86,11 @@ export default class Map {
         this.mapI.fullscreen(enabled);
     }
 
+    /** Triggers the map export screen. */
+    export(): void {
+        this.mapI.export();
+    }
+
     /** Returns the boundary of the map, similar to extent. */
     get bounds(): geo.XYBounds { return this._bounds; }
 
