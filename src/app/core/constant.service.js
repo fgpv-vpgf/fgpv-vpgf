@@ -70,7 +70,14 @@ function events($rootScope) {
 
         rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
 
-        rvApiMapAdded: 'rvApiMapAdded'
+        rvLayerNameChanged: 'rvLayerNameChanged',
+        rvLayerOpacityChanged: 'rvLayerOpacityChanged',
+        rvLayerVisibilityChanged: 'rvLayerVisibilityChanged',
+
+        rvApiMapAdded: 'rvApiMapAdded',
+        rvApiLayerAdded: 'rvApiLayerAdded',
+
+        rvLayerStateChanged: 'rvLayerStateChanged'
     };
 }
 
