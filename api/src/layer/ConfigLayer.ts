@@ -49,7 +49,7 @@ export default class ConfigLayer extends BaseLayer {
     private _layerType: string;
 
     private _state: string;
-    private _stateChanged: Observable<any>      // type any because 'layerid' does not exist on instance 'LayerNode'
+    private _stateChanged: Observable<LayerAndState>
 
     /** Requires a schema valid JSON config layer snippet and a map instance where the layer is added */
     constructor(config: JSONConfig, mapInstance: any) {
@@ -63,11 +63,14 @@ export default class ConfigLayer extends BaseLayer {
         this._layerType = config.layerType;
     }
 
-    set stateChanged(observable: Observable<any>) {
+    /** Returns the state of the layer.  */
+    get state(): string { return this._state; }
+
+    set stateChanged(observable: Observable<LayerAndState>) {
         this._stateChanged = observable;
-        this._stateChanged.subscribe(layer => {
-            if (this.id === layer.layerId && this._state !== layer.state) {
-                this._state = layer.state;
+        this._stateChanged.subscribe(layerAndState => {
+            if (this.id === layerAndState.layer.layerId && layerAndState.state && this._state !== layerAndState.state) {
+                this._state = layerAndState.state;
             }
         });
     }
@@ -80,7 +83,7 @@ export default class ConfigLayer extends BaseLayer {
      *
      * @event nameChanged
     */
-    get stateChanged(): Observable<any> {
+    get stateChanged(): Observable<LayerAndState> {
         return this._stateChanged;
     }
 
@@ -183,4 +186,9 @@ interface JSONConfig {
     catalogueUrl?: string;
     layerType: string;
     state?: InitialLayerSettings;
+}
+
+interface LayerAndState {
+    layer: any,     // can't use type 'LayerNode' because 'layerid' does not exist on instance
+    state: string
 }
