@@ -55,6 +55,9 @@ function identifyService($q, configService, stateManager, events) {
         const allIdentifyResults = [].concat(...
             identifyInstances.map(({ identifyResults }) => identifyResults));
 
+        const mapClickEvent = new MapClickEvent(clickEvent);
+        mApi._clickSubject.next(mapClickEvent);
+
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.
             const loadingPromise = identifyPromise.catch(error => {
@@ -71,6 +74,20 @@ function identifyService($q, configService, stateManager, events) {
             });
 
             const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
+
+            infallibleLoadingPromise.then(() => {
+                identifyResults.forEach( idResult => {
+                    const result = { data: idResult.data || [] };
+                    // return stream if there was an error, or there was at least one data item
+                    if (idResult.error) {
+                        result.error = idResult.error;
+                        mapClickEvent._featureSubject.next(result);
+                    } else if (result.data.length > 0) {
+                        mapClickEvent._featureSubject.next(result);
+                    }
+                });
+            });
+
             return infallibleLoadingPromise;
         });
 
@@ -78,17 +95,9 @@ function identifyService($q, configService, stateManager, events) {
             return;
         }
 
-        const mapClickEvent = new MapClickEvent(clickEvent);
-        mApi._clickSubject.next(mapClickEvent);
-
         const details = {
             data: allIdentifyResults,
-            isLoaded: $q.all(allLoadingPromises).then(() => {
-                if (allIdentifyResults[0].data.length > 0) {
-                    mapClickEvent._featureSubject.next(allIdentifyResults[0].data);
-                }
-                return true;
-            })
+            isLoaded: $q.all(allLoadingPromises).then(() => true)
         };
 
         // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
