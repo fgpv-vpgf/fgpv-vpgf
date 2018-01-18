@@ -243,9 +243,8 @@ export class BaseLayer {
             let dataIndex: number = this._dataArray.findIndex(el => el.name === key);
 
             if (dataIndex !== -1) {
-                const value: string | number = (<any>this._dataArray)[key];
+                const value: string | number = this._dataArray[dataIndex].value;
                 allData.splice(dataIndex, 1);
-
                 this._dataRemoved.next([{ name: key, value: value }]);
             }
         } else {
