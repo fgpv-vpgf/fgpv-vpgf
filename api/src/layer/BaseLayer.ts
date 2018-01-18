@@ -102,7 +102,7 @@ export class BaseLayer {
         }
     }
 
-    /** Forces a data download. Function implemention in subclasses */
+    /** Forces a data download. Function implementation in subclasses */
     fetchData(): void { }
 
     /** Sets the value of a data item by key. */
@@ -114,29 +114,23 @@ export class BaseLayer {
     /** Sets the value of a data item by key or for each key-value pair in the provided object. */
     setData(keyOrKeyValuePair: string | Object, newValue?: string | number | undefined): void {
         if (typeof keyOrKeyValuePair === 'string') {
-            let dataValue: string | number | undefined = this.getData(keyOrKeyValuePair);
+            let dataValue: DataItem | undefined = this._dataArray.find(data => data.name === keyOrKeyValuePair);
 
             if (typeof dataValue !== 'undefined') {
-                const oldValue: string | number = dataValue;
-                dataValue = newValue;
+                const oldValue: DataItem | undefined = Object.assign({}, dataValue);
+                dataValue.value = <string | number>newValue;
 
-                this._dataChanged.next([
-                    { name: keyOrKeyValuePair, value: (<string | number>oldValue) },
-                    { name: keyOrKeyValuePair, value: (<string | number>dataValue) }
-                ]);
+                this._dataChanged.next([ oldValue, dataValue ]);
             }
         } else {
             for (let key in keyOrKeyValuePair) {
-                let dataValue: string | number | undefined = this.getData(key);
+                let dataValue: DataItem | undefined = this._dataArray.find(data => data.name === key);
 
                 if (typeof dataValue !== 'undefined') {
-                    const oldValue: string | number = dataValue;
-                    dataValue = (<any>keyOrKeyValuePair)[key];
+                    const oldValue: DataItem | undefined = Object.assign({}, dataValue);
+                    dataValue.value = (<any>keyOrKeyValuePair)[key];
 
-                    this._dataChanged.next([
-                        { name: key, value: (<string | number>oldValue) },
-                        { name: key, value: (<string | number>dataValue) }
-                    ]);
+                    this._dataChanged.next([ oldValue, dataValue ]);
                 }
             }
         }
@@ -158,7 +152,7 @@ export class BaseLayer {
 
     /** Sets the name of the layer. This updates the name throughout the viewer. */
     set name(name: string) {
-        // TODO: currently does not work for dynamic children. need to decide how to move forward with this.
+        // TODO: currently does not work for dynamic children. need to decide how to move forward with this  ?
         // Setting the name seems to be more legend based than directly layer based and may possibly need to be moved
         // to a different part of the API as opposed to a layer modification
         // http://fgpv-vpgf.github.io/fgpv-vpgf/api/classes/_index_d_.rv.ui.legendentry.html#settitle (appropriate place it seems)

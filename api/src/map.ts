@@ -23,13 +23,14 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
-    private _layers: Array<any>;    // type change after when LayerGroup implemented  ?
+    private _layers: Array<any>;    // TODO: type change after when LayerGroup implemented  ?
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
+        this._layers = [];  // TODO: need to instantiate LayerGroup when implemented  ?
 
         // config set implies viewer loading via API
         if (config) {
@@ -45,11 +46,9 @@ export default class Map {
             seeder(mapDiv);
             this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
         }
-
-        this._layers = [];  // need to instantiate LayerGroup when implemented  ?
     }
 
-    get layers(): Array<any> { return this._layers; }  // change type after to LayerGroup when implemented  ?
+    get layers(): Array<any> { return this._layers; }  // TODO: change type after to LayerGroup when implemented  ?
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
