@@ -84,9 +84,9 @@ RZInstance.layerAdded.subscribe((layerAndMap) => {
         }
 
         if (index !== -1) {
-            map.layers[index] = layerAndMap.layer;      // modify this after when LayerGroup completed  ?
+            map.layers[index] = layerAndMap.layer;      // TODO: modify this after when LayerGroup completed  ?
         } else {
-            map.layers.push(layerAndMap.layer);     // modify this after when LayerGroup completed  ?
+            map.layers.push(layerAndMap.layer);     // TODO: modify this after when LayerGroup completed  ?
         }
     }
 });
@@ -105,7 +105,7 @@ RZInstance.layerRemoved.subscribe((layerAndMap) => {
         }
 
         if (index !== -1) {
-            map.layers.splice(index, 1);    // modify this after when LayerGroup completed  ?
+            map.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
         }
     }
 });
