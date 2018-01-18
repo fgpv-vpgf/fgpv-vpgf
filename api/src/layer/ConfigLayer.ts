@@ -79,7 +79,7 @@ export default class ConfigLayer extends BaseLayer {
      * Emits whenever the layer state changes.
      *
      * The state can be one of 'rv-error', 'rv-bad-projection', 'rv-loading', 'rv-refresh', and 'rv-loaded'.
-     * This event is always fired at least once with 'rv-loading' as the first state type.
+     * This event is always fired at least once with 'rv-loaded' or 'rv-error' as the first state type.
      *
      * @event nameChanged
     */
@@ -137,7 +137,7 @@ export default class ConfigLayer extends BaseLayer {
      * ```
     */
     setLayerConditions(layerDefinition: string): void {
-        // need to see how to apply values in table correctly  ?
+        // TODO: need to see how to apply values in table correctly  ?
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
             const parentNode = this.layerI._source._parent;
             if (!parentNode.isFileLayer() && parentNode.config.table) {
