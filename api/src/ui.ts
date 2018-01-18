@@ -207,6 +207,13 @@ class ToolTip {
     }
 }
 
+/**
+ * @example #### Using an anchor point to remove context map
+ * 
+ * ```js
+ * RZ.mapInstances[0].ui.anchors.CONTEXT_MAP.remove();
+ * ```
+ */
 export class UI {
     _mapI: Map;
     _panels: PanelRegistry;
@@ -225,9 +232,21 @@ export class UI {
         return this._tooltip;
     }
 
+    get anchors(): anchorPoints {
+        return {
+            CONTEXT_MAP: this._mapI.div.find('div.esriOverviewMap')
+        };
+    }
 }
 
 interface ScreenPosition {
     x: number,
     y: number
+}
+
+interface anchorPoints {
+    /**
+     * The contextual map found in the top right corner of the viewer.
+     */
+    CONTEXT_MAP: JQuery<HTMLElement>
 }
