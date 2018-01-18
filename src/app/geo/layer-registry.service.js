@@ -220,6 +220,10 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
         let isRefreshed = false;
         layerRecord.addStateListener(_onLayerRecordLoad);
 
+        // TODO: there's probably a better way to do this; broadcast 'rv-loading' here and then it
+        // will broadcast 'rv-refresh' / 'rv-loading' when the record is loaded in function below  ?
+        events.$broadcast(events.rvLayerStateChanged, layerRecord, layerRecord.state);
+
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount ++;
 
@@ -259,6 +263,7 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
                 _advanceLoadingQueue();
             }
 
+            // if a layer errors, do we still want to add it to the list  ?
             _createApiLayer(layerRecord);
             events.$broadcast(events.rvLayerStateChanged, layerRecord, state);
         }
