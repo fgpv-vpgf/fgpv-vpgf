@@ -29,6 +29,9 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
         checkForBadZoom
     };
 
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
+
     return service;
 
     function setAttribution(config) {
@@ -321,9 +324,10 @@ function mapServiceFactory($timeout, referenceService, gapiService, configServic
      */
     function addMarkerHighlight(mapPoint, showHaze = null) {
         const mapConfig = configService.getSync.map;
-        mapConfig.highlightLayer.addMarker(mapPoint);
-
-        _toggleHighlightHaze(showHaze);
+        if (mApi.identify) {
+            mapConfig.highlightLayer.addMarker(mapPoint);
+            _toggleHighlightHaze(showHaze);
+        }
     }
 
     /**

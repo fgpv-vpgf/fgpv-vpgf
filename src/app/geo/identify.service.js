@@ -1,3 +1,5 @@
+import { MapClickEvent } from 'api/events';
+
 /**
  * @module identifyService
  * @memberof app.geo
@@ -9,10 +11,13 @@ angular
     .module('app.geo')
     .factory('identifyService', identifyService);
 
-function identifyService($q, configService, stateManager) {
+function identifyService($q, configService, stateManager, events) {
     const service = {
         identify
     };
+
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
 
     return service;
 
@@ -50,6 +55,9 @@ function identifyService($q, configService, stateManager) {
         const allIdentifyResults = [].concat(...
             identifyInstances.map(({ identifyResults }) => identifyResults));
 
+        const mapClickEvent = new MapClickEvent(clickEvent);
+        mApi._clickSubject.next(mapClickEvent);
+
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.
             const loadingPromise = identifyPromise.catch(error => {
@@ -66,6 +74,16 @@ function identifyService($q, configService, stateManager) {
             });
 
             const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
+
+            infallibleLoadingPromise.then(() => {
+                identifyResults.forEach(idResult => {
+                    const featureList = idResult.data || [];
+                    featureList.forEach(feat => {
+                        mapClickEvent._featureSubject.next(feat);
+                    });
+                });
+            });
+
             return infallibleLoadingPromise;
         });
 
@@ -84,7 +102,9 @@ function identifyService($q, configService, stateManager) {
         };
 
         // show details panel only when there is data
-        stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        if (mApi.identify) {
+            stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        }
 
         /**
          * Modifies identify promises to always resolve, never reject.

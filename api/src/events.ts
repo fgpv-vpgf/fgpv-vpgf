@@ -1,5 +1,6 @@
 import { XY } from 'api/geometry';
 import { Observable } from 'rxjs/Rx';
+import { Subject } from 'rxjs/Subject';
 
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {
@@ -23,27 +24,33 @@ export class MouseEvent {
 }
 
 /**
- * @TODO: finish once supported by ESRI
+ * Adds a `features` Observable to map clicks for supporting identify through the API
+ * 
+ * @example #### Subscribe to feature list
+ * 
+ * ```js
+ * RZ.mapInstances[0].click.subscribe(a => {
+ *     a.features.subscribe(featureList => {...});
+ * });
+ * ```
  */
-export class StoppableEvent {
-    /**
-     * Prevents this event from propagating further, and in some case preventing viewer action.
-     * @event stop
-    */
-    _stop: boolean = false;
+export class MapClickEvent extends MouseEvent {
+    /** @ignore */
+    _featureSubject: Subject<Object>;
+    features: Observable<Object>;
 
-    stop(): void {
-        this._stop = true;
+    constructor(event: esriMouseEvent) {
+        super(event);
+        this._featureSubject = new Subject();
+        this.features = this._featureSubject.asObservable();
     }
 }
 
-export class PanelEvent extends StoppableEvent {
+export class PanelEvent {
     _name: string;
     _content: Node;
 
     constructor(name: string, node: Node) {
-        super();
-
         this._name = name;
         this._content = node;
     }
