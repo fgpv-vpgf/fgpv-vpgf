@@ -76,15 +76,11 @@ function identifyService($q, configService, stateManager, events) {
             const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
 
             infallibleLoadingPromise.then(() => {
-                identifyResults.forEach( idResult => {
-                    const result = { data: idResult.data || [] };
-                    // return stream if there was an error, or there was at least one data item
-                    if (idResult.error) {
-                        result.error = idResult.error;
-                        mapClickEvent._featureSubject.next(result);
-                    } else if (result.data.length > 0) {
-                        mapClickEvent._featureSubject.next(result);
-                    }
+                identifyResults.forEach(idResult => {
+                    const featureList = idResult.data || [];
+                    featureList.forEach(feat => {
+                        mapClickEvent._featureSubject.next(feat);
+                    });
                 });
             });
 
