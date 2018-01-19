@@ -20,11 +20,18 @@ angular
     .module('app.ui')
     .service('exportService', exportService);
 
-function exportService($mdDialog, $mdToast, referenceService) {
+function exportService($mdDialog, $mdToast, referenceService, configService, events) {
     const service = {
         open,
         close
     };
+
+    // wire in a hook to any map for exporting.  this makes it available on the API
+    events.$on(events.rvMapLoaded, (_, i) => {
+        configService.getSync.map.instance.export = () => {
+            service.open();
+        };
+    });
 
     return service;
 
