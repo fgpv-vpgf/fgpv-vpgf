@@ -65,6 +65,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/ArcGISTiledMapServiceLayer', 'ArcGISTiledMapServiceLayer'],
         ['esri/layers/FeatureLayer', 'FeatureLayer'],
         ['esri/layers/GraphicsLayer', 'GraphicsLayer'],
+        ['esri/layers/ImageParameters', 'ImageParameters'],
         ['esri/layers/LayerDrawingOptions', 'LayerDrawingOptions'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
         ['esri/map', 'Map'],

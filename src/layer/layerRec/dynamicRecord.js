@@ -76,6 +76,20 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     /**
+     * Creates an options object for the map API object
+     *
+     * @function makeLayerConfig
+     * @returns {Object} an object with api options
+     */
+    makeLayerConfig () {
+        const cfg = super.makeLayerConfig();
+        cfg.imageParameters = new this._apiRef.layer.ImageParameters();
+        cfg.imageParameters.format = this.config.imageFormat || 'png32';
+
+        return cfg;
+    }
+
+    /**
      * Return a proxy interface for a child layer
      *
      * @param {Integer} featureIdx    index of child entry (leaf or group)

@@ -48,11 +48,12 @@ class DynamicFC extends attribFC.AttribFC {
             if (this.supportsOpacity) {
                 // only attempt to set the layer if we support that kind of magic.
                 // instead of being consistent, esri using value from 0 to 100 for sublayer transparency where 100 is fully transparent
-                const optionsArray = [];
-                const drawingOptions = new this._parent._apiRef.layer.LayerDrawingOptions();
+                const realLayer = this._parent._layer;
+                const optionsArray = realLayer.layerDrawingOptions || [];
+                const drawingOptions = optionsArray[this._idx] || new this._parent._apiRef.layer.LayerDrawingOptions();
                 drawingOptions.transparency = (value - 1) * -100;
                 optionsArray[this._idx] = drawingOptions;
-                this._parent._layer.setLayerDrawingOptions(optionsArray);
+                realLayer.setLayerDrawingOptions(optionsArray);
             } else {
                 // update the opacity on the parent and any sibling children
                 this._parent.synchOpacity(value);
