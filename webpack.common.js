@@ -96,7 +96,7 @@ module.exports = function (env) {
                 to: 'samples/config'
             },{
                 context: 'src/content/samples/extensions',
-                from: '**/*.js',
+                from: '**/*',
                 to: 'samples/extensions'
             },{
                 context: 'src/content/samples',

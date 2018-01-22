@@ -1,0 +1,45 @@
+div.mApiOverViewMap {
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    right: 0;
+}
+
+div.mApiOverViewMap > div:before {
+    content: "";
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    border-top: 40px solid rgba(250, 250, 250, 0.8);
+    border-left: 40px solid transparent;
+    z-index: 1;
+    right: 0;
+    top: 0;
+}
+
+div.mApiOverViewMap > div div.contents {
+    overflow: hidden;
+    height: 140px;
+}
+
+div.mApiOverViewMap > div {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 200px;
+    height: 200px;
+    max-width: 200px;
+    max-height: 200px;
+    padding: 10px;
+}
+
+div.mApiOverViewMap > div:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+}
