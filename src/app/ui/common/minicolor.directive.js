@@ -1,4 +1,4 @@
-import '@claviska/jquery-minicolors';
+import 'script-loader!@claviska/jquery-minicolors';
 import nameToHex from './names-to-hex.js';
 
 /**
