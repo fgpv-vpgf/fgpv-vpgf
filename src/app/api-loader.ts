@@ -1,7 +1,7 @@
 import Map from 'api/map';
 import * as GEO from 'api/geometry';
 import { Subject } from 'rxjs/Rx';
-import * as $ from "jquery";
+// import * as $ from "jquery";
 
 const mapInstances: Array<Map> = [];
 

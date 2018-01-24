@@ -11,6 +11,7 @@ const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const WebpackShellPlugin    = require('webpack-shell-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var nodeExternals           = require('webpack-node-externals');
 
 const babelPresets = {
     presets: ['es2015', 'stage-2'],
@@ -30,7 +31,9 @@ module.exports = function (env) {
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
             'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js')
         },
-
+        
+        //externals: [nodeExternals({ whitelist: [/^((?!jquery).)*$/gm]} )], 
+        
         output: {
             path: path.resolve(__dirname, 'build'),
             filename: '[name].js'
@@ -88,6 +91,8 @@ module.exports = function (env) {
         },
 
         plugins: [
+            // new webpack.IgnorePlugin(/^jquery$/),
+
             new webpack.PrefetchPlugin(geoPath),
             new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
@@ -117,11 +122,11 @@ module.exports = function (env) {
 
             new ExtractTextPlugin('rv-styles.css'),
 
-            new webpack.ProvidePlugin({
+            /* new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery',
                 'window.jQuery': 'jquery'
-            }),
+            }), */
 
             new TranslationPlugin('./src/locales/translations.csv'),
 
@@ -142,8 +147,9 @@ module.exports = function (env) {
         resolve: {
             modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')],
             alias: {
+                minicolors: path.resolve(__dirname, 'node_modules/@claviska/jquery-minicolors/jquery.minicolors.js'),
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
-                jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
+                // jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
                 api: path.resolve(__dirname, 'api/src/'),
                 src: path.resolve(__dirname, 'src/'),
                 app: path.resolve(__dirname, 'src/app/')

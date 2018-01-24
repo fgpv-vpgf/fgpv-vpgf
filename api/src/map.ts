@@ -16,7 +16,7 @@
 
 
 import { Observable } from 'rxjs/Rx';
-import $ from 'jquery';
+// import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
