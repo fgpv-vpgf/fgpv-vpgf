@@ -47,8 +47,8 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
+    private _layers: Array<BaseLayer>;    // type change after when LayerGroup implemented  ?
     private _allowIdentify = true;
-    private _layers: Array<any>;    // type change after when LayerGroup implemented  ?
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
