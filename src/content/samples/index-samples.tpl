@@ -148,6 +148,7 @@
                 <option value="config/config-sample-51.json">51. Physical layer order must match config layer order</option>
                 <option value="config/config-sample-52.json">52. Disabled Overview Map</option>
                 <option value="config/config-sample-53.json">53. Layer Refresh Interval</option>
+                <option value="config/config-sample-54.json">54. True Dynamic Layers with different image format</option>
             </select>
         </div>
 

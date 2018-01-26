@@ -622,7 +622,9 @@
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
-                "state": { "$ref": "#/definitions/initialLayerSettings" }
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "imageFormat": { "type": "string", "enum": [ "png", "png8", "png24", "png32", "jpg", "pdf", "bmp", "gif", "svg" ],
+                    "default": "png32", "description": "The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
