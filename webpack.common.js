@@ -10,6 +10,7 @@ const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const WebpackShellPlugin    = require('webpack-shell-plugin');
+const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const babelPresets = {
     presets: ['es2015', 'stage-2'],
@@ -174,8 +175,12 @@ module.exports = function (env) {
     config.plugins.push(...htmlInjectPlugins());
 
     // not supported while doing hmr - causes memory leaks and slows build time by ~40%
-    if (!env.hmr) {
+    if (!env.hmr && !env.inspect) {
         config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+    }
+    
+    if (env.inspect) {
+        config.plugins.push(new BundleAnalyzerPlugin({openAnalyzer: false, generateStatsFile: true}));
     }
 
     if (env.geoLocal) {

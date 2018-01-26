@@ -1,3 +1,20 @@
+/**
+ *               __
+ *              /    \
+ *             | STOP |
+ *              \ __ /
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *              ~~~~~~~
+ * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+ * 
+ * THIS API IS NOT SUPPORTED.
+ */
+
+
 import { Observable } from 'rxjs/Rx';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';

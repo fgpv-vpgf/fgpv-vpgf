@@ -1,4 +1,22 @@
 /**
+ *               __
+ *              /    \
+ *             | STOP |
+ *              \ __ /
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *              ~~~~~~~
+ * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+ * 
+ * THIS API IS NOT SUPPORTED.
+ */
+
+
+
+/**
  * Represents a geographical point in decimal degrees.
  */
 export class XY {

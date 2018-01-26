@@ -253,8 +253,7 @@ const mapProxy = {
 const nodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
 nodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
 
-// store nodes to use in app-seed; avoids a second DOM traversal
-RV._nodes = nodes;
+export const rvNodes = nodes;
 
 let counter = 0;
 
