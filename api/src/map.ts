@@ -10,19 +10,19 @@
  *                ||
  *              ~~~~~~~
  * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- * 
+ *
  * THIS API IS NOT SUPPORTED.
  */
 
 
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
-import { Subject } from 'rxjs/Subject';
+import { BaseLayer } from 'api/layer/BaseLayer';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -73,7 +73,7 @@ export default class Map {
         }
     }
 
-    get layers(): Array<any> { return this._layers; }  // TODO: change type after to LayerGroup when implemented  ?
+    get layers(): Array<BaseLayer> { return this._layers; }  // TODO: change type after to LayerGroup when implemented  ?
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
