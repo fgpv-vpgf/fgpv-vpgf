@@ -128,7 +128,7 @@ export class BaseLayer {
     /** Returns the layer ID. */
     get id(): string { return this._id; }
 
-    /** Returns the dynamic layer index. */
+    /** Returns the layer index. */
     get layerIndex(): number | undefined { return this._layerIndex; }
 
     /** Returns the name of the layer.  */
