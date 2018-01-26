@@ -1,18 +1,17 @@
-import { Observable } from 'rxjs/Rx';
-import { Subject } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import { LayerNode } from 'api/schema';
 
 /**
  * Represents a base layer implementation that will be extended by ConfigLayer and SimpleLayer
  */
 export class BaseLayer {
-    private _mapInstance: any;
+    protected _mapInstance: any;
 
-    protected _dataArray: Array<DataItem>;
+    protected _attributeArray: Array<Attribute>;
     protected _id: string;
 
-    // index required when reloading dynamic layers to differentiate between them since id is same for all children
-    private _dynamicLayerIndex: string;
+    // index required when reloading dynamic layers to differentiate between children since id is same for all of them
+    protected _layerIndex: number | undefined;
 
     protected _name: string;
     private _nameChanged: Observable<LayerNode>;
@@ -25,47 +24,43 @@ export class BaseLayer {
 
     // slight inconsistency between dynamic layers and other types of layers
     // the viewerLayer for dynamics is the 'LayerInterface' whereas for others its the 'LayerRecord'
-    private _viewerLayer: LayerNode;
+    protected _viewerLayer: any;
 
-    protected _dataAdded: Subject<Array<DataItem>>;
-    protected _dataChanged: Subject<Array<DataItem>>;
-    protected _dataRemoved: Subject<Array<DataItem>>;
+    protected _attributesAdded: Subject<Array<Attribute>>;
+    protected _attributesChanged: Subject<Array<Attribute>>;
+    protected _attributesRemoved: Subject<Array<Attribute>>;
 
+    /** Sets the layers viewer map instance. */
     constructor(mapInstance: any) {
         this._mapInstance = mapInstance;
-        this._dataArray = [];
-        this._dataAdded = new Subject();
-        this._dataChanged = new Subject();
-        this._dataRemoved = new Subject();
+        this._attributeArray = [];
+        this._attributesAdded = new Subject();
+        this._attributesChanged = new Subject();
+        this._attributesRemoved = new Subject();
     }
 
     /**
-     * Emits whenever one or more data items are added.
-     * @event dataAdded
-    */
-    get dataAdded(): Observable<Array<DataItem>> {
-        return this._dataAdded.asObservable();
+     * Emits whenever one or more attributes are added.
+     * @event attributesAdded
+     */
+    get attributesAdded(): Observable<Array<Attribute>> {
+        return this._attributesAdded.asObservable();
     }
 
     /**
-     * Emits whenever an existing data entry is updated.
-     * @event dataChanged
-    */
-    get dataChanged(): Observable<Array<DataItem>> {
-        return this._dataChanged.asObservable();
+     * Emits whenever an existing attribute entry is updated.
+     * @event attributesChanged
+     */
+    get attributesChanged(): Observable<Array<Attribute>> {
+        return this._attributesChanged.asObservable();
     }
 
     /**
-     * Emits whenever data is removed.
-     * @event dataRemoved
-    */
-    get dataRemoved(): Observable<Array<DataItem>> {
-        return this._dataRemoved.asObservable();
-    }
-
-    /** Returns the viewer map instance. Type any for convenience */
-    get mapI(): any {
-        return this._mapInstance;
+     * Emits whenever attributes are removed.
+     * @event attributesRemoved
+     */
+    get attributesRemoved(): Observable<Array<Attribute>> {
+        return this._attributesRemoved.asObservable();
     }
 
     /** Returns the viewer layer instance. Type any for convenience  */
@@ -73,64 +68,58 @@ export class BaseLayer {
         return this._viewerLayer;
     }
 
-    set layerI(value: any) {
-        this._viewerLayer = value;
-    }
+    /** Returns all values of the requested attribute by id, or an empty array if the attribute id does not exist. */
+    getAttributes(key: string): Array<Attribute>;
 
-    /** Returns the value of the requested data, or undefined if the data does not exist. */
-    getData(key: string): string | number | undefined;
+    /** Returns all attributes. If applicable, this will pull attributes from a server, however an empty array will still be
+     * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attribute ares ready. */
+    getAttributes(): Array<Attribute>;
 
-    /** Returns all data. If applicable, this will pull data from a server, however an empty array will still be
-     * returned if no prior data existed. Use the `data_added` event to determine when pulled data is ready. */
-    getData(): Array<DataItem>;
-
-    /** If key provided, returns the value of the requested data, or undefined if the data does not exist. Else returns all data */
-    getData(key?: string): string | number | undefined | Array<DataItem> {
-        let data: DataItem | undefined;
+    /** If key provided, returns the requested attributes by id, or an empty array if the attribute id does not exist. Else returns all attributes */
+    getAttributes(key?: string): Array<Attribute> {
+        let attributes: Array<Attribute>;
 
         if (typeof key !== 'undefined') {
-            data = this._dataArray.find(el => el.name === key);
-
-            return typeof data !== 'undefined' ? data.value : undefined;
+            return this._attributeArray.filter(el => el.id === key);
         } else {
-            if (this._dataArray.length === 0) {
-                this.fetchData();
+            if (this._attributeArray.length === 0) {
+                this.fetchAttributes();
                 return [];
             } else {
-                return this._dataArray;
+                return this._attributeArray;
             }
         }
     }
 
-    /** Forces a data download. Function implementation in subclasses */
-    fetchData(): void { }
+    /** Forces an attribute download. Function implementation in subclasses */
+    fetchAttributes(): void { }
 
-    /** Sets the value of a data item by key. */
-    setData(key: string, newValue: string | number): void;
+    /** Sets the value of an attribute item by key. */
+    setAttributes(key: string, newValue: string | number): void;
 
-    /** Sets data for each key-value pair in the provided object. */
-    setData(keyValue: Object): void;
+    /** Sets attributes for each key-value pair in the provided object. */
+    setAttributes(keyValue: Object): void;
 
-    /** Sets the value of a data item by key or for each key-value pair in the provided object. */
-    setData(keyOrKeyValuePair: string | Object, newValue?: string | number | undefined): void {
+    /** Sets the value of an attribute item by key or for each key-value pair in the provided object. */
+    setAttributes(keyOrKeyValuePair: string | Object, newValue?: string | number | undefined): void {
         if (typeof keyOrKeyValuePair === 'string') {
-            let dataValue: DataItem | undefined = this._dataArray.find(data => data.name === keyOrKeyValuePair);
+            let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === keyOrKeyValuePair);
 
-            if (typeof dataValue !== 'undefined') {
-                const oldValue: DataItem | undefined = Object.assign({}, dataValue);
-                dataValue.value = <string | number>newValue;
+            if (typeof attribValue !== 'undefined') {
+                const oldValue: Attribute | undefined = Object.assign({}, attribValue);
+                attribValue.value = <string | number>newValue;
 
-                this._dataChanged.next([ oldValue, dataValue ]);
+                this._attributesChanged.next([ oldValue, attribValue ]);
             }
         } else {
             for (let key in keyOrKeyValuePair) {
-                let dataValue: DataItem | undefined = this._dataArray.find(data => data.name === key);
+                let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === key);
 
-                if (typeof dataValue !== 'undefined') {
-                    const oldValue: DataItem | undefined = Object.assign({}, dataValue);
-                    dataValue.value = (<any>keyOrKeyValuePair)[key];
+                if (typeof attribValue !== 'undefined') {
+                    const oldValue: Attribute | undefined = Object.assign({}, attribValue);
+                    attribValue.value = (<any>keyOrKeyValuePair)[key];
 
-                    this._dataChanged.next([ oldValue, dataValue ]);
+                    this._attributesChanged.next([ oldValue, attribValue ]);
                 }
             }
         }
@@ -140,12 +129,7 @@ export class BaseLayer {
     get id(): string { return this._id; }
 
     /** Returns the dynamic layer index. */
-    get dynamicLayerIndex(): string { return this._dynamicLayerIndex; }
-
-    /** Sets the index for the dynamic layer */
-    set dynamicLayerIndex(idx: string) {
-        this._dynamicLayerIndex = idx;
-    }
+    get layerIndex(): number | undefined { return this._layerIndex; }
 
     /** Returns the name of the layer.  */
     get name(): string { return this._name; }
@@ -157,13 +141,16 @@ export class BaseLayer {
         // to a different part of the API as opposed to a layer modification
         // http://fgpv-vpgf.github.io/fgpv-vpgf/api/classes/_index_d_.rv.ui.legendentry.html#settitle (appropriate place it seems)
         this._name = name;
-        this.layerI.name = name;
+        this._viewerLayer.name = name;
+
+        // this._viewerLayer.initialConfig.name = name;    // run this by James, won't work for dynamics without layerRecord  ?
+                                                        // even then it won't work correctly, need to think of something else
     }
 
     set nameChanged(observable: Observable<LayerNode>) {
         this._nameChanged = observable;
         this._nameChanged.subscribe(layer => {
-            if (this.id === layer.id) {
+            if (this.id === layer.id && this.name !== layer.name) {
                 this.name = layer.name || '';
             }
         });
@@ -172,7 +159,7 @@ export class BaseLayer {
     /**
      * Emits whenever the layer name is changed.
      * @event nameChanged
-    */
+     */
     get nameChanged(): Observable<LayerNode> {
         return this._nameChanged;
     }
@@ -183,14 +170,17 @@ export class BaseLayer {
     /** Sets the opacity value for the layer. */
     set opacity(opacity: number) {
         this._opacity = opacity;
-        this.layerI.setOpacity(opacity);
+        this._viewerLayer.setOpacity(opacity);
+
+        // this._viewerLayer.initialConfig.state.opacity = opacity;    // run this by James, won't work for dynamics without layerRecord  ?
+                                                                    // even then it won't work correctly, need to think of something else
     }
 
     set opacityChanged(observable: Observable<LayerNode>) {
         this._opacityChanged = observable;
         this._opacityChanged.subscribe(layer => {
-            if (this.id === layer.id) {
-                const opacity = this.layerI.opacity;
+            if (this.id === layer.id && this.opacity !== this._viewerLayer.opacity) {
+                const opacity = this._viewerLayer.opacity;
                 this.opacity = opacity;
             }
         });
@@ -199,7 +189,7 @@ export class BaseLayer {
     /**
      * Emits whenever the layer opacity is changed.
      * @event opacityChanged
-    */
+     */
     get opacityChanged(): Observable<LayerNode> {
         return this._opacityChanged;
     }
@@ -210,14 +200,18 @@ export class BaseLayer {
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
         this._visibility = visibility;
-        this.layerI.setVisibility(visibility);
+        this._viewerLayer.setVisibility(visibility);
+
+        // this._viewerLayer.initialConfig.state.visibility = visibility;  // run this by James, won't work for dynamics without layerRecord  ?
+                                                                        // even then it won't work correctly, need to think of something else
+                                                                        // infinite loop if subscribe and don't specify visibility has to be different ???
     }
 
     set visibilityChanged(observable: Observable<LayerNode>) {
         this._visibilityChanged = observable;
         this._visibilityChanged.subscribe(layer => {
-            if (this.id === layer.id) {
-                const visibility = this.layerI.visibility;
+            if (this.id === layer.id && this.visibility !== this._viewerLayer.visibility) {
+                const visibility = this._viewerLayer.visibility;
                 this.visibility = visibility;
             }
         });
@@ -226,32 +220,32 @@ export class BaseLayer {
     /**
      * Emits whenever the layer visibility is changed.
      * @event visibilityChanged
-    */
+     */
     get visibilityChanged(): Observable<LayerNode> {
         return this._visibilityChanged;
     }
 
-    /** Recursively calls callback for every data item. */
-    forEachData(callback: (data: DataItem) => void): void {
-        this._dataArray.forEach(callback);
+    /** Recursively calls callback for every attribute item. */
+    forEachAttribute(callback: (attrib: Attribute) => void): void {
+        this._attributeArray.forEach(callback);
     }
 
-    /** Removes the data with the given key, or all data if key is undefined. */
-    removeData(key: string | undefined): void {
+    /** Removes the attribute with the given key, or all attributes if key is undefined. */
+    removeAttributes(key: string | undefined): void {
         if (typeof key !== 'undefined') {
-            let allData: Array<DataItem> = this.getData();
-            let dataIndex: number = this._dataArray.findIndex(el => el.name === key);
+            let allAttribs: Array<Attribute> = this.getAttributes();
+            let atrribIndex: number = this._attributeArray.findIndex(el => el.id === key);
 
-            if (dataIndex !== -1) {
-                const value: string | number = this._dataArray[dataIndex].value;
-                allData.splice(dataIndex, 1);
-                this._dataRemoved.next([{ name: key, value: value }]);
+            if (atrribIndex !== -1) {
+                const value: string | number = this._attributeArray[atrribIndex].value;
+                allAttribs.splice(atrribIndex, 1);
+                this._attributesRemoved.next([{ id: key, value: value }]);
             }
         } else {
-            const copyData: Array<DataItem> = this._dataArray;
-            this._dataArray = [];
+            const copyAttribs: Array<Attribute> = this._attributeArray;
+            this._attributeArray = [];
 
-            this._dataRemoved.next(copyData);
+            this._attributesRemoved.next(copyAttribs);
         }
     }
 
@@ -261,7 +255,7 @@ export class BaseLayer {
     }
 }
 
-export interface DataItem {
-    name: string,
+export interface Attribute {
+    id: string,
     value: string | number
 }
