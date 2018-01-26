@@ -20,7 +20,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
+function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -46,9 +46,12 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
     };
 
     let mApiObjects = null;
+    let mapApi = null;
 
     // lets us know the API is ready
     events.$on(events.rvApiMapAdded, (_, mApi) => {
+        mapApi = mApi;
+
         const tt = mApi.ui.tooltip;
 
         mApiObjects = {
@@ -159,9 +162,35 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
 
-            const mapId = $rootElement.attr('id');
+            _removeLayerFromApiMap(layerRecord);
+        }
 
-            window.RZ.layerRemoved.next({ layer: layerRecord, mapId: mapId });
+        /**
+         * This will remove the layer from the API map instance
+         *
+         * @function _removeLayerFromApiMap
+         * @private
+         * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
+         */
+        function _removeLayerFromApiMap(layerRecord) {
+            let index;
+
+            // removing dynamic layers does not actually remove the layer if another child is still present  ?
+            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                const childIndices = _simpleWalk(layerRecord.getChildTree());
+                childIndices.forEach(idx => {
+                    index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
+                    if (index !== -1) {
+                        mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                    }
+                });
+            } else {
+                index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId);
+
+                if (index !== -1) {
+                    mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                }
+            }
         }
 
         return index;
@@ -219,11 +248,6 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
 
         let isRefreshed = false;
         layerRecord.addStateListener(_onLayerRecordLoad);
-
-        // TODO: there's probably a better way to do this; broadcast 'rv-loading' here and then it
-        // will broadcast 'rv-refresh' / 'rv-loading' when the record is loaded in function below  ?
-        events.$broadcast(events.rvLayerStateChanged, layerRecord, layerRecord.state);
-
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount ++;
 
@@ -265,7 +289,6 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
 
             // if a layer errors, do we still want to add it to the list  ?
             _createApiLayer(layerRecord);
-            events.$broadcast(events.rvLayerStateChanged, layerRecord, state);
         }
 
         /**
@@ -585,26 +608,62 @@ function layerRegistryFactory($rootScope, $rootElement, $timeout, $filter, event
      * @param {LayerRecord} layerRecord a layer record to use when creating ConfigLayer
      */
     function _createApiLayer(layerRecord) {
-        const mapId = $rootElement.attr('id');
         let apiLayer;
 
         // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-            Object.keys(layerRecord._featClasses).forEach(idx => {
+            const childIndices = _simpleWalk(layerRecord.getChildTree());
+            childIndices.forEach(idx => {
                 const proxy = layerRecord.getChildProxy(idx);
-                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map);
-                apiLayer.layerI = proxy;
-                apiLayer.dynamicLayerIndex = idx;
+                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, proxy);
 
-                window.RZ.layerAdded.next({ layer: apiLayer, mapId: mapId });
+                _addLayerToApiMap(apiLayer);
                 events.$broadcast(events.rvApiLayerAdded, apiLayer);
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
-            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map);
-            apiLayer.layerI = layerRecord;
+            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
 
-            window.RZ.layerAdded.next({ layer: apiLayer, mapId: mapId });
+            _addLayerToApiMap(apiLayer);
+        }
+
+        /**
+         * This will check first to see if the API map instance already has this layer defined by its id
+         * and if it does exist, it will update that index with the newly created API layer
+         * Else, it will add push a new layer to the list of layers for the map
+         *
+         * @function _addLayerToApiMap
+         * @private
+         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created that needs to be added to map
+         */
+        function _addLayerToApiMap(apiLayer) {
+            let index;
+
+            if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
+                index = mapApi.layers.findIndex(layer =>
+                    layer.id === apiLayer.id &&
+                    layer.layerIndex === apiLayer.layerIndex);
+            } else {
+                index = mapApi.layers.findIndex(layer => layer.id === apiLayer.id);
+            }
+
+            if (index !== -1) {
+                mapApi.layers[index] = apiLayer;      // TODO: modify this after when LayerGroup completed  ?
+            } else {
+                mapApi.layers.push(apiLayer);     // TODO: modify this after when LayerGroup completed  ?
+            }
+
             events.$broadcast(events.rvApiLayerAdded, apiLayer);
         }
+    }
+
+    function _simpleWalk(treeChildren) {
+        // roll in the results into a flat array
+        return [].concat.apply([], treeChildren.map((treeChild, index) => {
+            if (treeChild.childs) {
+                return [].concat(_simpleWalk(treeChild.childs));
+            } else {
+                return treeChild.entryIndex;
+            }
+        }));
     }
 }

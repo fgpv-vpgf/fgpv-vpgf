@@ -1,8 +1,7 @@
-import { BaseLayer, DataItem } from 'api/layer/BaseLayer';
+import { BaseLayer, Attribute } from 'api/layer/BaseLayer';
 import Map from 'api/Map';
 import { InitialLayerSettings } from 'api/schema';
-import { Observable } from 'rxjs/Rx';
-import { Subject } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import { LayerNode } from 'api/schema';
 
 const layerTypes = {
@@ -37,9 +36,9 @@ const layerTypes = {
  *
  * const myConfigLayer = new RV.LAYER.ConfigLayer(layerJson);
  *
- * myConfigLayer.addListener('state_changed', function(stateName) {
- *  if (stateName === 'rv-loaded') {
- *    // layer has loaded, do stuff here
+ * myConfigLayer.attributesAdded.subscribe(function (attribs) {
+ *  if (attribs) {
+ *      // attributes loaded, do stuff here
  *  }
  * });
  * ```
@@ -48,11 +47,12 @@ export default class ConfigLayer extends BaseLayer {
     private _catalogueUrl: string;
     private _layerType: string;
 
-    private _state: string;
-    private _stateChanged: Observable<LayerAndState>
-
-    /** Requires a schema valid JSON config layer snippet and a map instance where the layer is added */
-    constructor(config: JSONConfig, mapInstance: any) {
+    /**
+     * Requires a schema valid JSON config layer snippet and a map instance where the layer is added.
+     * The viewer layer instance must also be provided if created from viewers configuration.
+     * If it is a dynamic layer, then the instance will be used to get the child layer index as well.
+     */
+    constructor(config: JSONConfig, mapInstance: any, viewerInstance?: any) {
         super(mapInstance);
 
         this._id = config.id;
@@ -61,55 +61,49 @@ export default class ConfigLayer extends BaseLayer {
         this._visibility = config.state && typeof config.state.visibility !== 'undefined' ? config.state.visibility : true;
         this._catalogueUrl = config.catalogueUrl || '';
         this._layerType = config.layerType;
-    }
 
-    /** Returns the state of the layer.  */
-    get state(): string { return this._state; }
+        if (viewerInstance) {
+            this._viewerLayer = viewerInstance;
 
-    set stateChanged(observable: Observable<LayerAndState>) {
-        this._stateChanged = observable;
-        this._stateChanged.subscribe(layerAndState => {
-            if (this.id === layerAndState.layer.layerId && layerAndState.state && this._state !== layerAndState.state) {
-                this._state = layerAndState.state;
+            if (this._layerType === layerTypes.ESRI_DYNAMIC) {
+                this._layerIndex = parseInt(viewerInstance.itemIndex);
             }
-        });
+        } else {    // layer created outside the config
+            // TODO: figure out how to create a ConfigLayer instance from outside the config, similar to whats in example above  ?
+        }
     }
 
-    /**
-     * Emits whenever the layer state changes.
-     *
-     * The state can be one of 'rv-error', 'rv-bad-projection', 'rv-loading', 'rv-refresh', and 'rv-loaded'.
-     * This event is always fired at least once with 'rv-loaded' or 'rv-error' as the first state type.
-     *
-     * @event nameChanged
-    */
-    get stateChanged(): Observable<LayerAndState> {
-        return this._stateChanged;
-    }
-
-    /** The viewer downloads data when needed - call this function to force a data download. The `data_added` event will trigger when the download is complete. */
-    fetchData(): void {
+    /** The viewer downloads attributes when needed - call this function to force an attribute download. The `attributes_added` event will trigger when the download is complete. */
+    fetchAttributes(): void {
         let attribs;
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            attribs = this.layerI.attribs;
+            attribs = this._viewerLayer.attribs;
         } else {
-            attribs = this.layerI.getProxy().attribs;
+            attribs = this._viewerLayer.getProxy().attribs;
         }
 
         if (attribs) {
-            attribs.then((data: any) => {
-                this._dataArray = [];
-                data.features.forEach((feat: any) => {
+            attribs.then((attrib: AttribObject) => {
+                this._attributeArray = [];
+                attrib.features.forEach((feat: FeaturesArray) => {
                     Object.keys(feat.attributes).forEach(key =>
-                        this._dataArray.push({
-                            name: key,
-                            value: feat.attributes[key]
+                        this._attributeArray.push({
+                            id: key,
+                            value: (<any>feat.attributes)[key]
                         })
                     );
                 });
 
-                this._dataAdded.next(this._dataArray);
+                this._attributesAdded.next(this._attributeArray);
+            }).catch((e: string) => {
+                console.error(e);
+                this._attributeArray = [];
+                this._attributesAdded.next(this._attributeArray);   // errored out, do we want to broadcast a different event  ?
+                return;
             });
+        } else {
+            this._attributeArray = [];
+            this._attributesAdded.next(this._attributeArray);   // no attribs, do we want to broadcast a different event  ?
         }
     }
 
@@ -121,7 +115,7 @@ export default class ConfigLayer extends BaseLayer {
 
     /** Pans to the layers bounding box */
     panToBoundary(): void {
-        this.layerI.zoomToBoundary(this.mapI.instance);
+        this._viewerLayer.zoomToBoundary(this._mapInstance.instance);
     }
 
     /**
@@ -135,47 +129,47 @@ export default class ConfigLayer extends BaseLayer {
      * var layerDefs = "OBJECTID <= 100 and STATE_NAME='Kansas'";
      * mapServiceLayer.setLayerConditions(layerDefs);
      * ```
-    */
+     */
     setLayerConditions(layerDefinition: string): void {
         // TODO: need to see how to apply values in table correctly  ?
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            const parentNode = this.layerI._source._parent;
+            const parentNode = this._viewerLayer._source._parent;     // avoid private variables
             if (!parentNode.isFileLayer() && parentNode.config.table) {
-                this.layerI.setDefinitionQuery(layerDefinition);
+                this._viewerLayer.setDefinitionQuery(layerDefinition);
 
-                const idx = this.layerI.itemIndex;
+                const idx = this._layerIndex;
 
                 // loose equality since type can be either string or number
-                const childNode = parentNode.config.layerEntries.find((l: any) => l.index == idx);
+                const childNode = parentNode.config.layerEntries.find((l: any) => l.index === idx);
 
                 childNode.initialFilteredQuery = layerDefinition;
 
                 childNode.filter = childNode.table.applied = (layerDefinition !== '');
             }
         } else if (this._layerType === layerTypes.ESRI_FEATURE) {
-            if (!this.layerI.isFileLayer() && this.layerI.config.table) {
-                this.layerI.setDefinitionQuery(layerDefinition);
-                this.layerI.config.initialFilteredQuery = layerDefinition;
+            if (!this._viewerLayer.isFileLayer() && this._viewerLayer.config.table) {
+                this._viewerLayer.setDefinitionQuery(layerDefinition);
+                this._viewerLayer.config.initialFilteredQuery = layerDefinition;
 
-                this.layerI.config.filter = this.layerI.config.table.applied = (layerDefinition !== '');
+                this._viewerLayer.config.filter = this._viewerLayer.config.table.applied = (layerDefinition !== '');
             }
         }
     }
 
     /** Zooms to the minimum layer scale */
-    zoomToScale(): void {
+    zoomToScale(): void {   // may want to change function name and functionality  ?
         let minScale;
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            minScale = this.layerI._source._parent._layer.minScale;
+            minScale = this._viewerLayer._source._parent._layer.minScale;
         } else {
-            minScale = this.layerI._layer.minScale;
+            minScale = this._viewerLayer._layer.minScale;
         }
 
         if (minScale === 0) {
-            const minTileScale = this.mapI.selectedBasemap.lods[0].scale;
-            this.mapI.instance.setScale(minTileScale);
+            const minTileScale = this._mapInstance.selectedBasemap.lods[0].scale;
+            this._mapInstance.instance.setScale(minTileScale);
         } else {
-            this.mapI.instance.setScale(minScale);
+            this._mapInstance.instance.setScale(minScale);
         }
     }
 }
@@ -191,4 +185,13 @@ interface JSONConfig {
 interface LayerAndState {
     layer: any,     // can't use type 'LayerNode' because 'layerid' does not exist on instance
     state: string
+}
+
+interface AttribObject {
+    features: Array<FeaturesArray>,
+    oidIndex: Object
+}
+
+interface FeaturesArray {
+    attributes: Object
 }

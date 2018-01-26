@@ -27,7 +27,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common, events) {
+function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
     const ref = {
         legendElementCounter: 0,
@@ -571,19 +571,24 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             // Integrating with API
             events.$on(events.rvApiLayerAdded, (_, layerInstance) => {
                 layerInstance.nameChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerNameChanged, () => subscriber.next(this));
+                    events.$on(events.rvLayerNameChanged, () => {
+                        subscriber.next(this);
+                        $rootScope.$applyAsync();
+                    });
                 });
 
                 layerInstance.opacityChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerOpacityChanged, () =>  subscriber.next(this));
+                    events.$on(events.rvLayerOpacityChanged, () =>  {
+                        subscriber.next(this);
+                        $rootScope.$applyAsync();
+                    });
                 });
 
                 layerInstance.visibilityChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerVisibilityChanged, () => subscriber.next(this));
-                });
-
-                layerInstance.stateChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerStateChanged, (_, layer, state) => subscriber.next({ layer: layer, state: state }));
+                    events.$on(events.rvLayerVisibilityChanged, () => {
+                        subscriber.next(this);
+                        $rootScope.$applyAsync();
+                    });
                 });
             });
         }
