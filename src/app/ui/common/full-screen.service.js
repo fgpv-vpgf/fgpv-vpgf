@@ -18,7 +18,7 @@ angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
 
-function fullScreenService($rootElement, configService, $interval, events, $timeout) {
+function fullScreenService($rootElement, configService, $interval, events) {
     const service = {
         toggle,
         isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body'))
