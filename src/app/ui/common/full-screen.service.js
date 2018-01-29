@@ -96,9 +96,9 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
         const body = angular.element('body');
         const shellNode = angular.element('rv-shell');
-        body.attr('style', (''));
-        $rootElement.attr('style', (''));
-        shellNode.attr('style', (''));
+        body.attr('style', '');
+        $rootElement.attr('style', '');
+        shellNode.attr('style', '');
         angular.element('body').removeClass('rv-full-screen');
         screenfull.toggle(body[0]);
         onChange();
