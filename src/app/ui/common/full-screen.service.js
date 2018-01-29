@@ -18,7 +18,7 @@ angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
 
-function fullScreenService($rootElement, configService, $interval, events) {
+function fullScreenService($rootElement, configService, $interval, events, $timeout) {
     const service = {
         toggle,
         isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body'))
@@ -51,7 +51,9 @@ function fullScreenService($rootElement, configService, $interval, events) {
      */
     function exitFullScreenHandler() {
         if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-            _exitFullScreen();
+            $timeout(() => { // give browser some time to complete full screen in case exited immediately
+                _exitFullScreen();
+            }, 500);
         }
     }
 
