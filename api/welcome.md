@@ -1,3 +1,9 @@
+### STOP!
+THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+
+THIS API IS NOT SUPPORTED.
+
+
 ### Introduction
 
 This guide is intented for developers. It outlines the entire viewers API and provides examples throughout.
