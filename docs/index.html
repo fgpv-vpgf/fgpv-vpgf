@@ -11,7 +11,14 @@
   <div id="app"></div>
   <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
   <script>
-    docute.init()
+    docute.init({
+      nav: [
+        // homepage
+        {title: 'Home', path: '/'},
+        // chinese doc
+        {title: 'Installation', path: 'install'}
+      ]
+    })
   </script>
 </body>
 </html>

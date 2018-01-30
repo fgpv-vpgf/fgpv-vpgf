@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "baseUrl": "./node_modules",
+        "target": "ES2016",
+        "paths": {
+            "app/*": ["../src/*"]
+          },
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true
+    }
+}

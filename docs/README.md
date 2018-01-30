@@ -1,3 +1,7 @@
-# docute
+# Geosearch Documentation
 
-just start writing...
+Goes here...
+
+## Installation 
+
+Hmmmm?
