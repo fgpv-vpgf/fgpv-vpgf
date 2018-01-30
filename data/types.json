@@ -1,0 +1,57 @@
+{
+    "PROV": {
+        "en": {
+            "term": "Province",
+            "description": "The main administrative division of Canada. It is a legally-defined territory, as established by Articles of Confederation or by constitutional amendments."
+        },
+        "fr": {
+            "term": "Province",
+            "description": "La principale division administrative du Canada. Il s'agit d'un territoire juridiquement défini, établi par des articles de la Confédération ou par des amendements constitutionnels."
+        }
+    },
+
+    "TERR": {
+        "en": {
+            "term": "Territory",
+            "description": "Administrative division of Canada, not yet admitted to the full rights of a province."
+        },
+        "fr": {
+            "term": "Territoire",
+            "description": "Division administrative du Canada, n'ayant pas encore le statut d'une province."
+        }
+    },
+
+    "CITY": {
+        "en": {
+            "term": "City",
+            "description": "Populated place with legally defined boundaries, usually incorporated under a provincial or territorial Municipal Act and being the highest level of municipal incorporation."
+        },
+        "fr": {
+            "term": "Ville",
+            "description": "Lieu habité dont les limites sont définies par la loi, habituellement constitué en vertu de la Loi sur les municipalités de la province ou du territoire et constituant le niveau le plus élevé de constitution municipale."
+        }
+    },
+
+    "TOWN": {
+        "en": {
+            "term": "Town",
+            "description": "Populated place with legally-defined boundaries, usually incorporated under a provincial Municipal Act, of lesser status than a city."
+        },
+        "fr": {
+            "term": "Ville",
+            "description": "Lieu habité dont les limites sont définies par la loi, habituellement constitué en vertu de la Loi sur les municipalités de la province ou du territoire, et de statut inférieur à une ville importante."
+        }
+    },
+
+    "VILG": {
+        "en": {
+            "term": "Village",
+            "description": "Populated place with legally-defined boundaries, usually incorporated under the Municipal Act of the province or territory in which it is found, of lesser status than a town."
+        },
+
+        "fr": {
+            "term": "Village",
+            "description": "Lieu habité dont les limites sont définies par la loi, habituellement constitué en vertu de la Loi sur les municipalités de la province ou du territoire, et de statut inférieur à une ville."
+        }
+    }
+}

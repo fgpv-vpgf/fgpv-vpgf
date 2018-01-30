@@ -4,7 +4,8 @@
         "baseUrl": "./node_modules",
         "target": "ES2016",
         "paths": {
-            "app/*": ["../src/*"]
+            "app/*": ["../src/*"],
+            "data/*": ["../data/*"]
           },
         "noImplicitAny": true,
         "noImplicitThis": true,

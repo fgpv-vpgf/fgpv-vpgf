@@ -1,0 +1,131 @@
+{
+    "NL": {
+        "en": {
+            "name": "Newfoundland and Labrador"
+        },
+        "fr": {
+            "name": "Terre-Neuve-et-Labrador"
+        },
+        "code": 10
+    },
+
+    "PE": {
+        "en": {
+            "name": "Prince Edward Island"
+        },
+        "fr": {
+            "name": "Île-du-Prince-Édouard"
+        },
+        "code": 11
+    },
+
+    "NS": {
+        "en": {
+            "name": "Nova Scotia"
+        },
+        "fr": {
+            "name": "Nouvelle-Écosse"
+        },
+        "code": 12
+    },
+
+    "NB": {
+        "en": {
+            "name": "New Brunswick"
+        },
+        "fr": {
+            "name": "Nouveau-Brunswick"
+        },
+        "code": 13
+    },
+
+    "QC": {
+        "en": {
+            "name": "Quebec"
+        },
+        "fr": {
+            "name": "Québec"
+        },
+        "code": 24
+    },
+
+    "ON": {
+        "en": {
+            "name": "Ontario"
+        },
+        "fr": {
+            "name": "Ontario"
+        },
+        "code": 35
+    },
+
+    "MB": {
+        "en": {
+            "name": "Manitoba"
+        },
+        "fr": {
+            "name": "Manitoba"
+        },
+        "code": 46
+    },
+
+    "SK": {
+        "en": {
+            "name": "Saskatchewan"
+        },
+        "fr": {
+            "name": "Saskatchewan"
+        },
+        "code": 47
+    },
+
+    "AB": {
+        "en": {
+            "name": "Alberta"
+        },
+        "fr": {
+            "name": "Alberta"
+        },
+        "code": 48
+    },
+
+    "BC": {
+        "en": {
+            "name": "British Columbia"
+        },
+        "fr": {
+            "name": "Colombie-Britannique"
+        },
+        "code": 59
+    },
+
+    "YU": {
+        "en": {
+            "name": "Yukon"
+        },
+        "fr": {
+            "name": "Yukon"
+        },
+        "code": 60
+    },
+
+    "NT": {
+        "en": {
+            "name": "Northwest Territories"
+        },
+        "fr": {
+            "name": "Territoires du Nord-Ouest"
+        },
+        "code": 61
+    },
+
+    "NU": {
+        "en": {
+            "name": "Nunavut"
+        },
+        "fr": {
+            "name": "Nunavut"
+        },
+        "code": 62
+    }
+}
