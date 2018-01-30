@@ -18,7 +18,7 @@ angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
 
-function fullScreenService($rootElement, configService, $interval, events) {
+function fullScreenService($rootElement, configService, $interval, events, $timeout) {
     const service = {
         toggle,
         isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body'))
@@ -28,7 +28,11 @@ function fullScreenService($rootElement, configService, $interval, events) {
     let lastKnownCenter;
     let stopInterval;
 
-    screenfull.on('change', onChange);
+    // override default brower full screen exiting action
+    document.addEventListener('fullscreenchange', exitFullScreenHandler);
+    document.addEventListener('webkitfullscreenchange', exitFullScreenHandler);
+    document.addEventListener('mozfullscreenchange', exitFullScreenHandler);
+    document.addEventListener('MSFullscreenChange', exitFullScreenHandler);
 
     events.$on(events.rvMapLoaded, (_, i) => {
         configService.getSync.map.instance.fullscreen = fs => {
@@ -40,34 +44,72 @@ function fullScreenService($rootElement, configService, $interval, events) {
 
     return service;
 
+    /**
+     * Handler browser full screen exiting event
+     *
+     * @function exitFullScreenHandler
+     */
+    function exitFullScreenHandler() {
+        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+            $timeout(() => { // give browser some time to complete full screen in case exited immediately
+                _exitFullScreen();
+            }, 500);
+        }
+    }
+
+    /**
+     * Toggle full screen mode
+     *
+     * @function toggle
+     */
     function toggle() {
+        if (screenfull.isFullscreen) {
+            _exitFullScreen();
+        } else {
+            _enterFullScreen();
+        }
+    }
+
+    /**
+     * Modify elements needed in entering full screen
+     *
+     * @function _enterFullScreen
+     * @private
+     */
+    function _enterFullScreen() {
+        lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
         const body = angular.element('body');
         const shellNode = angular.element('rv-shell');
-
-        lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
-
-        body.attr('style', (screenfull.isFullscreen ? '' : 'width: 100%; height: 100%'));
-        $rootElement.attr('style', (screenfull.isFullscreen ? '' : `overflow: visible; z-index: ${FULL_SCREEN_Z_INDEX};`));
-        shellNode.attr('style', (screenfull.isFullscreen ? '' : `position: fixed; margin: 0; z-index: ${FULL_SCREEN_Z_INDEX};`));
-
-        if (screenfull.isFullscreen) {
-            angular.element('body').removeClass('rv-full-screen');
-        } else {
-            angular.element('body').addClass('rv-full-screen');
-        }
-
+        body.attr('style', 'width: 100%; height: 100%');
+        $rootElement.attr('style', `overflow: visible; z-index: ${FULL_SCREEN_Z_INDEX};`);
+        shellNode.attr('style', `position: fixed; margin: 0; z-index: ${FULL_SCREEN_Z_INDEX};`);
+        angular.element('body').addClass('rv-full-screen');
         screenfull.toggle(body[0]);
+        onChange();
+    }
+
+    /**
+     * Modify elements needed in entering full screen
+     *
+     * @function _exitFullScreen
+     * @private
+     */
+    function _exitFullScreen() {
+        lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
+        const body = angular.element('body');
+        const shellNode = angular.element('rv-shell');
+        body.attr('style', '');
+        $rootElement.attr('style', '');
+        shellNode.attr('style', '');
+        angular.element('body').removeClass('rv-full-screen');
+        screenfull.toggle(body[0]);
+        onChange();
     }
 
     function onChange() {
-        // since this event fires for all viewers on a page, we keep track of the last element that went fullscreen
-        lastChangedElement = screenfull.isFullscreen ? $(screenfull.element) : lastChangedElement;
-        // only execute changes if this map instance was the last fullscreen map
-        if (lastChangedElement.is(angular.element('body'))) {
-            // give browser/esri some time to update center, time it will take is unknown (roughly 0.5s to 1s)
-            stopInterval = $interval(centerMap, 100);
-            centerMap(); // invoke immediately just in case the transition was faster than 100ms
-        }
+        // give browser/esri some time to update center, time it will take is unknown (roughly 0.5s to 1s)
+        stopInterval = $interval(centerMap, 100);
+        centerMap(); // invoke immediately just in case the transition was faster than 100ms
     }
 
     /**
