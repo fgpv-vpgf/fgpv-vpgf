@@ -1510,10 +1510,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
     class NorthArrowComponent extends ComponentBase {
         constructor (source) {
             super(source);
+            this._arrowIcon = source.arrowIcon;
+            this._poleIcon = source.poleIcon;
         }
 
+        get arrowIcon () { return this._arrowIcon; }
+        get poleIcon () { return this._poleIcon; }
+
         get JSON() {
-            return super.JSON;
+            return angular.merge(super.JSON, {
+                arrowIcon: this._arrowIcon,
+                poleIcon: this._poleIcon
+            });
         }
     }
 
