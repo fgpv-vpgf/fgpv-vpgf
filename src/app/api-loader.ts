@@ -22,13 +22,6 @@ class RZ {
     /** Contains all geography related classes. */
     get GEO() { return GEO };
 
-    /** Returns the different layer classes */
-    get LAYER(): Object {
-        return {
-            ConfigLayer
-        }
-    }
-
     mapById(id: string): Map | undefined {
         return this.mapInstances.find(mi => mi.id === id);
     }

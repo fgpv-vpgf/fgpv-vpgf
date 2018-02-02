@@ -1,5 +1,21 @@
+/**
+ *               __
+ *              /    \
+ *             | STOP |
+ *              \ __ /
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *              ~~~~~~~
+ * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+ *
+ * THIS API IS NOT SUPPORTED.
+ */
+
 import { Observable, Subject } from 'rxjs/Rx';
-import { LayerNode } from 'api/schema';
+import { DynamicLayerEntryNode } from 'api/schema';
 
 /**
  * Represents a base layer implementation that will be extended by ConfigLayer and SimpleLayer
@@ -14,17 +30,17 @@ export class BaseLayer {
     protected _layerIndex: number | undefined;
 
     protected _name: string;
-    private _nameChanged: Observable<LayerNode>;
+    private _nameChanged: Subject<LayerInterface>;
 
     protected _opacity: number;
-    private _opacityChanged: Observable<LayerNode>;
+    private _opacityChanged: Subject<LayerInterface>;
 
     protected _visibility: boolean;
-    private _visibilityChanged: Observable<LayerNode>;
+    private _visibilityChanged: Subject<LayerInterface>;
 
-    // slight inconsistency between dynamic layers and other types of layers
-    // the viewerLayer for dynamics is the 'LayerInterface' whereas for others its the 'LayerRecord'
+    // the viewerLayer is the layerRecord and the layerProxy is the proxy or child proxy if dynamic
     protected _viewerLayer: any;
+    protected _layerProxy: any;
 
     protected _attributesAdded: Subject<Array<Attribute>>;
     protected _attributesChanged: Subject<Array<Attribute>>;
@@ -33,6 +49,15 @@ export class BaseLayer {
     /** Sets the layers viewer map instance. */
     constructor(mapInstance: any) {
         this._mapInstance = mapInstance;
+
+        this._nameChanged = new Subject();
+        this._opacityChanged = new Subject();
+        this._visibilityChanged = new Subject();
+
+        this._nameChanged.subscribe(layer => this._name = layer.name || '');
+        this._opacityChanged.subscribe(layer => this._opacity = layer.opacity);
+        this._visibilityChanged.subscribe(layer => this._visibility = layer.visibility);
+
         this._attributeArray = [];
         this._attributesAdded = new Subject();
         this._attributesChanged = new Subject();
@@ -61,11 +86,6 @@ export class BaseLayer {
      */
     get attributesRemoved(): Observable<Array<Attribute>> {
         return this._attributesRemoved.asObservable();
-    }
-
-    /** Returns the viewer layer instance. Type any for convenience  */
-    get layerI(): any {
-        return this._viewerLayer;
     }
 
     /** Returns all values of the requested attribute by id, or an empty array if the attribute id does not exist. */
@@ -136,32 +156,31 @@ export class BaseLayer {
 
     /** Sets the name of the layer. This updates the name throughout the viewer. */
     set name(name: string) {
-        // TODO: currently does not work for dynamic children. need to decide how to move forward with this  ?
+        const oldName: string = this._layerProxy.name;
+
+        // TODO: currently does not work for dynamics since no setter for LayerInterface, so using layerRecord instead.
+        // need to decide how to move forward with this  ?
         // Setting the name seems to be more legend based than directly layer based and may possibly need to be moved
         // to a different part of the API as opposed to a layer modification
         // http://fgpv-vpgf.github.io/fgpv-vpgf/api/classes/_index_d_.rv.ui.legendentry.html#settitle (appropriate place it seems)
         this._name = name;
         this._viewerLayer.name = name;
 
-        // this._viewerLayer.initialConfig.name = name;    // run this by James, won't work for dynamics without layerRecord  ?
-                                                        // even then it won't work correctly, need to think of something else
-    }
+        if (this._layerIndex === undefined) {
+            this._viewerLayer.config.name = name;
+        }
 
-    set nameChanged(observable: Observable<LayerNode>) {
-        this._nameChanged = observable;
-        this._nameChanged.subscribe(layer => {
-            if (this.id === layer.id && this.name !== layer.name) {
-                this.name = layer.name || '';
-            }
-        });
+        if (oldName !== name) {
+            this._nameChanged.next(this._layerProxy);
+        }
     }
 
     /**
      * Emits whenever the layer name is changed.
      * @event nameChanged
      */
-    get nameChanged(): Observable<LayerNode> {
-        return this._nameChanged;
+    get nameChanged(): Observable<LayerInterface> {
+        return this._nameChanged.asObservable();
     }
 
     /** Returns the opacity of the layer on the map from 0 (hidden) to 100 (fully visible) */
@@ -169,29 +188,29 @@ export class BaseLayer {
 
     /** Sets the opacity value for the layer. */
     set opacity(opacity: number) {
+        const oldOpacity: number = this._layerProxy.opacity;
+
         this._opacity = opacity;
-        this._viewerLayer.setOpacity(opacity);
+        this._layerProxy.setOpacity(opacity);
 
-        // this._viewerLayer.initialConfig.state.opacity = opacity;    // run this by James, won't work for dynamics without layerRecord  ?
-                                                                    // even then it won't work correctly, need to think of something else
-    }
+        if (this._layerIndex !== undefined) {
+            const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+            childNode.state.opacity = opacity;
+        } else {
+            this._viewerLayer.config.state.opacity = opacity;
+        }
 
-    set opacityChanged(observable: Observable<LayerNode>) {
-        this._opacityChanged = observable;
-        this._opacityChanged.subscribe(layer => {
-            if (this.id === layer.id && this.opacity !== this._viewerLayer.opacity) {
-                const opacity = this._viewerLayer.opacity;
-                this.opacity = opacity;
-            }
-        });
+        if (oldOpacity !== opacity) {
+            this._opacityChanged.next(this._layerProxy);
+        }
     }
 
     /**
      * Emits whenever the layer opacity is changed.
      * @event opacityChanged
      */
-    get opacityChanged(): Observable<LayerNode> {
-        return this._opacityChanged;
+    get opacityChanged(): Observable<LayerInterface> {
+        return this._opacityChanged.asObservable();
     }
 
     /** Returns true if the layer is currently visible, false otherwise. */
@@ -199,30 +218,29 @@ export class BaseLayer {
 
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
+        const oldVisibility: boolean = this._layerProxy.visibility;
+
         this._visibility = visibility;
-        this._viewerLayer.setVisibility(visibility);
+        this._layerProxy.setVisibility(visibility);
 
-        // this._viewerLayer.initialConfig.state.visibility = visibility;  // run this by James, won't work for dynamics without layerRecord  ?
-                                                                        // even then it won't work correctly, need to think of something else
-                                                                        // infinite loop if subscribe and don't specify visibility has to be different ???
-    }
+        if (this._layerIndex !== undefined) {
+            const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+            childNode.state.visibility = visibility;
+        } else {
+            this._viewerLayer.config.state.visibility = visibility;
+        }
 
-    set visibilityChanged(observable: Observable<LayerNode>) {
-        this._visibilityChanged = observable;
-        this._visibilityChanged.subscribe(layer => {
-            if (this.id === layer.id && this.visibility !== this._viewerLayer.visibility) {
-                const visibility = this._viewerLayer.visibility;
-                this.visibility = visibility;
-            }
-        });
+        if (oldVisibility !== visibility) {
+            this._visibilityChanged.next(this._layerProxy);
+        }
     }
 
     /**
      * Emits whenever the layer visibility is changed.
      * @event visibilityChanged
      */
-    get visibilityChanged(): Observable<LayerNode> {
-        return this._visibilityChanged;
+    get visibilityChanged(): Observable<LayerInterface> {
+        return this._visibilityChanged.asObservable();
     }
 
     /** Recursively calls callback for every attribute item. */
@@ -230,17 +248,22 @@ export class BaseLayer {
         this._attributeArray.forEach(callback);
     }
 
-    /** Removes the attribute with the given key, or all attributes if key is undefined. */
+    /** Removes the attributes with the given key, or all attributes if key is undefined. */
     removeAttributes(key: string | undefined): void {
         if (typeof key !== 'undefined') {
             let allAttribs: Array<Attribute> = this.getAttributes();
-            let atrribIndex: number = this._attributeArray.findIndex(el => el.id === key);
 
-            if (atrribIndex !== -1) {
-                const value: string | number = this._attributeArray[atrribIndex].value;
-                allAttribs.splice(atrribIndex, 1);
-                this._attributesRemoved.next([{ id: key, value: value }]);
-            }
+            let allKeyAttribs: Array<Attribute> = this.getAttributes(key);
+            allKeyAttribs.forEach(attrib => {
+                let atrribIndex: number = this._attributeArray.findIndex(el => el.id === key);
+
+                if (atrribIndex !== -1) {
+                    const value: string | number = this._attributeArray[atrribIndex].value;
+                    allAttribs.splice(atrribIndex, 1);
+                }
+            });
+
+            this._attributesRemoved.next(allKeyAttribs);
         } else {
             const copyAttribs: Array<Attribute> = this._attributeArray;
             this._attributeArray = [];
@@ -258,4 +281,10 @@ export class BaseLayer {
 export interface Attribute {
     id: string,
     value: string | number
+}
+
+interface LayerInterface {
+    name: string,
+    opacity: number,
+    visibility: boolean
 }

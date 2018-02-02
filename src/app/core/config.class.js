@@ -265,13 +265,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get opacity () {            return this._opacity; }
         set opacity (value) {
             this._opacity = value;
-            events.$broadcast(events.rvLayerOpacityChanged);
+            $rootScope.$applyAsync();
         }
 
         get visibility () {         return this._visibility; }
         set visibility (value) {
             this._visibility = value;
-            events.$broadcast(events.rvLayerVisibilityChanged);
+            $rootScope.$applyAsync();
         }
 
         get boundingBox () {        return this._boundingBox; }
@@ -567,30 +567,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             if (!source.metadataUrl) {
                 common.removeFromArray(this._controls, 'metadata');
             }
-
-            // Integrating with API
-            events.$on(events.rvApiLayerAdded, (_, layerInstance) => {
-                layerInstance.nameChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerNameChanged, () => {
-                        subscriber.next(this);
-                        $rootScope.$applyAsync();
-                    });
-                });
-
-                layerInstance.opacityChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerOpacityChanged, () =>  {
-                        subscriber.next(this);
-                        $rootScope.$applyAsync();
-                    });
-                });
-
-                layerInstance.visibilityChanged = Observable.create(subscriber => {
-                    events.$on(events.rvLayerVisibilityChanged, () => {
-                        subscriber.next(this);
-                        $rootScope.$applyAsync();
-                    });
-                });
-            });
         }
 
         get source () {                 return this._source; }
@@ -601,7 +577,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get name () {                   return this._name; }
         set name (value) {
             this._name = value;
-            events.$broadcast(events.rvLayerNameChanged);
+            $rootScope.$applyAsync();
         }
 
         get url () {                    return this._url; }

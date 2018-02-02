@@ -287,8 +287,9 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 _advanceLoadingQueue();
             }
 
-            // if a layer errors, do we still want to add it to the list  ?
-            _createApiLayer(layerRecord);
+            if (state !== 'rv-error') {
+                _createApiLayer(layerRecord);
+            }
         }
 
         /**
@@ -614,15 +615,11 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
             childIndices.forEach(idx => {
-                const proxy = layerRecord.getChildProxy(idx);
-                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, proxy);
-
+                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord, idx);
                 _addLayerToApiMap(apiLayer);
-                events.$broadcast(events.rvApiLayerAdded, apiLayer);
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
             apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
-
             _addLayerToApiMap(apiLayer);
         }
 
