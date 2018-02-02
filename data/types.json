@@ -53,5 +53,29 @@
             "term": "Village",
             "description": "Lieu habité dont les limites sont définies par la loi, habituellement constitué en vertu de la Loi sur les municipalités de la province ou du territoire, et de statut inférieur à une ville."
         }
+    },
+
+    "POSTALCODE": {
+        "en": {
+            "term": "Postal Code",
+            "description": "A Canadian postal code is a six-character string that forms part of a postal address in Canada."
+        },
+
+        "fr": {
+            "term": "Code postal",
+            "description": "Au Canada, un code postal est une chaîne de six caractères qui fait partie d'une adresse postale."
+        }
+    },
+
+    "NTS": {
+        "en": {
+            "term": "National Topographic System",
+            "description": ""
+        },
+
+        "fr": {
+            "term": "Système national de référence cartographique",
+            "description": ""
+        }
     }
 }

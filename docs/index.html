@@ -6,19 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>./docs</title>
   <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css">
+  <style>
+      iframe {
+        min-height: 500px;
+      }
+  </style>
 </head>
 <body>
   <div id="app"></div>
   <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
+  <script src="https://unpkg.com/docute-iframe"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.0.0/json2html.min.js"></script>
   <script>
     docute.init({
-      nav: [
-        // homepage
-        {title: 'Home', path: '/'},
-        // chinese doc
-        {title: 'Configuration', path: 'configuration'}
-      ]
-    })
+        nav: [
+            {title: 'Home', path: '/'},
+            {title: 'Demo', path: 'demo'}
+        ],
+        
+        plugins: [
+            docuteIframe({
+                surfaceAPI: ['Prism', 'fetch', 'transforms', 'json2html']
+            })
+        ]
+    });
   </script>
+  <script>
+        window.transforms = {
+            "result": [
+                {"<>":"li", "html": function(){return this.name + ' (' + json2html.transform(this.type, transforms.type) + ') @ ' + json2html.transform(this.geometry, transforms.geometry);}}
+            ],
+            "type": [
+                {"<>":"span", "html": "${name}"}
+            ],
+            "geometry": [
+                {"<>":"span", "html": '${coordinates}'}
+            ]
+        };
+    </script>
 </body>
 </html>

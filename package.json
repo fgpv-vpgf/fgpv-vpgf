@@ -14,7 +14,8 @@
         "docute-cli": "^0.6.0",
         "ts-loader": "^3.3.1",
         "typescript": "^2.6.2",
-        "webpack": "^3.10.0"
+        "webpack": "^3.10.0",
+        "webpack-shell-plugin": "^0.5.0"
     },
     "scripts": {
         "build": "webpack"

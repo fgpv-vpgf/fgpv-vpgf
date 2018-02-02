@@ -1,2 +1,1 @@
-# geosearch
-Configurable geographic location search library
+# [Documentation](https://ramp-pcar.github.io/geosearch/#/)
