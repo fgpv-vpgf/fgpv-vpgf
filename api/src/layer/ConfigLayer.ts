@@ -1,8 +1,24 @@
+/**
+ *               __
+ *              /    \
+ *             | STOP |
+ *              \ __ /
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *              ~~~~~~~
+ * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+ *
+ * THIS API IS NOT SUPPORTED.
+ */
+
 import { BaseLayer, Attribute } from 'api/layer/BaseLayer';
 import Map from 'api/Map';
 import { InitialLayerSettings } from 'api/schema';
 import { Observable, Subject } from 'rxjs/Rx';
-import { LayerNode } from 'api/schema';
+import { DynamicLayerEntryNode } from 'api/schema';
 
 const layerTypes = {
     ESRI_DYNAMIC: 'esriDynamic',
@@ -34,7 +50,7 @@ const layerTypes = {
  *   "url": "http://example.com/MapServer/URL"
  * };
  *
- * const myConfigLayer = new RV.LAYER.ConfigLayer(layerJson);
+ * const myConfigLayer = RZ.mapById("<id>").layers.addLayer(layerJson)
  *
  * myConfigLayer.attributesAdded.subscribe(function (attribs) {
  *  if (attribs) {
@@ -48,11 +64,10 @@ export default class ConfigLayer extends BaseLayer {
     private _layerType: string;
 
     /**
-     * Requires a schema valid JSON config layer snippet and a map instance where the layer is added.
-     * The viewer layer instance must also be provided if created from viewers configuration.
-     * If it is a dynamic layer, then the instance will be used to get the child layer index as well.
+     * Requires a schema valid JSON config layer snippet, map instance where the layer is added and viewer layer record.
+     * If it is a dynamic layer, then the layer index must also be provided and used to get the proxy.
      */
-    constructor(config: JSONConfig, mapInstance: any, viewerInstance?: any) {
+    constructor(config: JSONConfig, mapInstance: any, layerRecord: any, layerIndex?: number) {
         super(mapInstance);
 
         this._id = config.id;
@@ -61,26 +76,19 @@ export default class ConfigLayer extends BaseLayer {
         this._visibility = config.state && typeof config.state.visibility !== 'undefined' ? config.state.visibility : true;
         this._catalogueUrl = config.catalogueUrl || '';
         this._layerType = config.layerType;
+        this._viewerLayer = layerRecord;
 
-        if (viewerInstance) {
-            this._viewerLayer = viewerInstance;
-
-            if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-                this._layerIndex = parseInt(viewerInstance.itemIndex);
-            }
-        } else {    // layer created outside the config
-            // TODO: figure out how to create a ConfigLayer instance from outside the config, similar to whats in example above  ?
+        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
+            this._layerIndex = layerIndex;
+            this._layerProxy = layerRecord.getChildProxy(layerIndex);
+        } else {
+            this._layerProxy = layerRecord.getProxy();
         }
     }
 
     /** The viewer downloads attributes when needed - call this function to force an attribute download. The `attributes_added` event will trigger when the download is complete. */
     fetchAttributes(): void {
-        let attribs;
-        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            attribs = this._viewerLayer.attribs;
-        } else {
-            attribs = this._viewerLayer.getProxy().attribs;
-        }
+        const attribs = this._layerProxy.attribs;
 
         if (attribs) {
             attribs.then((attrib: AttribObject) => {
@@ -115,61 +123,51 @@ export default class ConfigLayer extends BaseLayer {
 
     /** Pans to the layers bounding box */
     panToBoundary(): void {
-        this._viewerLayer.zoomToBoundary(this._mapInstance.instance);
+        this._layerProxy.zoomToBoundary(this._mapInstance.instance);
     }
 
-    /**
-     * Layer conditions limit the information from a layer that gets displayed on the map and populated as data.
-     *
-     * Layer conditions can not be set for file layers
-     *
-     * @example
-     *
-     * ```js
-     * var layerDefs = "OBJECTID <= 100 and STATE_NAME='Kansas'";
-     * mapServiceLayer.setLayerConditions(layerDefs);
-     * ```
-     */
-    setLayerConditions(layerDefinition: string): void {
-        // TODO: need to see how to apply values in table correctly  ?
-        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            const parentNode = this._viewerLayer._source._parent;     // avoid private variables
-            if (!parentNode.isFileLayer() && parentNode.config.table) {
-                this._viewerLayer.setDefinitionQuery(layerDefinition);
+    // /**
+    //  * Layer conditions limit the information from a layer that gets displayed on the map and populated as data.
+    //  *
+    //  * Layer conditions can not be set for file layers
+    //  *
+    //  * @example
+    //  *
+    //  * ```js
+    //  * var layerDefs = "OBJECTID <= 100 and STATE_NAME='Kansas'";
+    //  * mapServiceLayer.setLayerConditions(layerDefs);
+    //  * ```
+    //  */
+    // setLayerConditions(layerDefinition: string): void {
+    //     // TODO: need to see how to apply values in table correctly  ?
+    //     if (!this._viewerLayer.isFileLayer() && this._viewerLayer.config.table) {
+    //         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
+    //             this._layerProxy.setDefinitionQuery(layerDefinition);
 
-                const idx = this._layerIndex;
+    //             const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
 
-                // loose equality since type can be either string or number
-                const childNode = parentNode.config.layerEntries.find((l: any) => l.index === idx);
+    //             childNode.initialFilteredQuery = layerDefinition;
+    //             childNode.filter = childNode.table.applied = (layerDefinition !== '');
+    //         } else if (this._layerType === layerTypes.ESRI_FEATURE) {
+    //             this._layerProxy.setDefinitionQuery(layerDefinition);
 
-                childNode.initialFilteredQuery = layerDefinition;
+    //             this._viewerLayer.config.initialFilteredQuery = layerDefinition;
+    //             this._viewerLayer.config.filter = this._viewerLayer.config.table.applied = (layerDefinition !== '');
+    //         }
+    //     }
+    // }
 
-                childNode.filter = childNode.table.applied = (layerDefinition !== '');
-            }
-        } else if (this._layerType === layerTypes.ESRI_FEATURE) {
-            if (!this._viewerLayer.isFileLayer() && this._viewerLayer.config.table) {
-                this._viewerLayer.setDefinitionQuery(layerDefinition);
-                this._viewerLayer.config.initialFilteredQuery = layerDefinition;
+    /** If layer out of scale, zooms in / out to a scale level where the layer is visible */
+    zoomToScale(): void {
+        const mapScale = this._mapInstance.instance.getScale();
+        const isOffScale = this._layerProxy.isOffScale(mapScale);
 
-                this._viewerLayer.config.filter = this._viewerLayer.config.table.applied = (layerDefinition !== '');
-            }
-        }
-    }
+        if (isOffScale.offScale) {
+            const mapInstance = this._mapInstance.instance;
+            const lods = this._mapInstance.selectedBasemap.lods;
+            const zoomIn = isOffScale.zoomIn;
 
-    /** Zooms to the minimum layer scale */
-    zoomToScale(): void {   // may want to change function name and functionality  ?
-        let minScale;
-        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            minScale = this._viewerLayer._source._parent._layer.minScale;
-        } else {
-            minScale = this._viewerLayer._layer.minScale;
-        }
-
-        if (minScale === 0) {
-            const minTileScale = this._mapInstance.selectedBasemap.lods[0].scale;
-            this._mapInstance.instance.setScale(minTileScale);
-        } else {
-            this._mapInstance.instance.setScale(minScale);
+            this._layerProxy.zoomToScale(mapInstance, lods, zoomIn);
         }
     }
 }
@@ -180,11 +178,6 @@ interface JSONConfig {
     catalogueUrl?: string;
     layerType: string;
     state?: InitialLayerSettings;
-}
-
-interface LayerAndState {
-    layer: any,     // can't use type 'LayerNode' because 'layerid' does not exist on instance
-    state: string
 }
 
 interface AttribObject {

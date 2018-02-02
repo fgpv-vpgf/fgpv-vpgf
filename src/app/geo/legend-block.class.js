@@ -12,7 +12,7 @@ angular
     .module('app.geo')
     .factory('LegendBlock', LegendBlockFactory);
 
-function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack) {
+function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo) {
 
     let legendBlockCounter = 0;
 
@@ -117,6 +117,23 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // store opacity value in the layer config; will be used by full state restore
             this._layerConfig.state.opacity = value;
+
+            let layers;
+
+            // TODO: modify this after when LayerGroup completed  ?
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                } else {
+                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                }
+
+                layers.forEach(layer => {
+                    if (layer.opacity !== value) {
+                        layer._opacityChanged.next(this._proxy);
+                    }
+                });
+            }
         }
         set visibility (value) {
             if (this.isControlSystemDisabled('visibility')) {
@@ -127,6 +144,23 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // store visibility value in the layer config; will be used by full state restore
             this._layerConfig.state.visibility = value;
+
+            let layers;
+
+            // TODO: modify this after when LayerGroup completed  ?
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                } else {
+                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                }
+
+                layers.forEach(layer => {
+                    if (layer.visibility !== value) {
+                        layer._visibilityChanged.next(this._proxy);
+                    }
+                });
+            }
         }
         set query (value) {
             if (this.isControlSystemDisabled('query')) {
