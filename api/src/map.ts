@@ -15,13 +15,14 @@
  */
 
 
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
+import { Subject } from 'rxjs/Subject';
 import { BaseLayer } from 'api/layer/BaseLayer';
 
 /**
