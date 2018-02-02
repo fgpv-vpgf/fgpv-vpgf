@@ -649,7 +649,6 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 mapApi.layers.push(apiLayer);     // TODO: modify this after when LayerGroup completed  ?
             }
 
-            events.$broadcast(events.rvApiLayerAdded, apiLayer);
         }
     }
 
