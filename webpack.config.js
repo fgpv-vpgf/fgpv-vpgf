@@ -2,7 +2,7 @@ const path = require('path');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: ['babel-polyfill', './src/index.ts'],
 
     output: {
         filename: 'geosearch.js',

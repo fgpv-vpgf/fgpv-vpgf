@@ -20,5 +20,7 @@
     "scripts": {
         "build": "webpack"
     },
-    "dependencies": {}
+    "dependencies": {
+        "babel-polyfill": "^6.26.0"
+    }
 }

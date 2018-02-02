@@ -1,16 +1,28 @@
----
-sidebar: false
----
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>IE demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.0.0/json2html.min.js"></script>
+  <script src="js/geosearch.js"></script>
+</head>
+<body>
+<script>
+    const transforms = {
+        "result": [
+            {"<>":"li", "html": function(){return this.name + ' (' + json2html.transform(this.type, transforms.type) + ') @ ' + json2html.transform(this.geometry, transforms.geometry);}}
+        ],
+        "type": [
+            {"<>":"span", "html": "${name}"}
+        ],
+        "geometry": [
+            {"<>":"span", "html": '${coordinates}'}
+        ]
+    };
 
-# Demo
-
-**IE 11 users [click here](./ie.html)**
-
-````html
-<script src="js/geosearch.js"></script>
-
-<script>    
-    function getResults(q, config = null) {
+    function getResults(q, config) {
         // GeoSearch is a global window object since we included the library directly on our page.
         var geoSearch = new GeoSearch(config);
         geoSearch.query(q).then(function(results) {
@@ -41,16 +53,13 @@ sidebar: false
 </script>
 
 <p>This search will return all default result types in English</p>
-<form onsubmit="getResults(document.getElementById('searchField').value); return false;">
-    <input id="searchField" type="text"> <button type="submit">Search</button>
-</form>
+    <input id="searchField" type="text"> <button onclick="getResults(document.getElementById('searchField').value);">Search</button>
 
 <p>This search is configured to only return city results in French</p>
-<form onsubmit="getCityResults(document.getElementById('searchField1').value); return false;">
-    <input id="searchField1" type="text"> <button type="submit">Search</button>
-</form>
+    <input id="searchField1" type="text"> <button onclick="getCityResults(document.getElementById('searchField1').value); return false;">Search</button>
 
 <p class="tip">
     <ul id="results">No results yet!</ul>
 </p>
-````
+</body>
+</html>
