@@ -14,7 +14,7 @@
  * THIS API IS NOT SUPPORTED.
  */
 
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 import { DynamicLayerEntryNode } from 'api/schema';
 
 /**
@@ -42,7 +42,7 @@ export class BaseLayer {
     protected _viewerLayer: any;
     protected _layerProxy: any;
 
-    protected _attributesAdded: Subject<Array<Attribute>>;
+    protected _attributesAdded: BehaviorSubject<Array<Attribute>>;
     protected _attributesChanged: Subject<Array<Attribute>>;
     protected _attributesRemoved: Subject<Array<Attribute>>;
 
@@ -59,7 +59,7 @@ export class BaseLayer {
         this._visibilityChanged.subscribe(layer => this._visibility = layer.visibility);
 
         this._attributeArray = [];
-        this._attributesAdded = new Subject();
+        this._attributesAdded = new BehaviorSubject(this._attributeArray);
         this._attributesChanged = new Subject();
         this._attributesRemoved = new Subject();
     }
@@ -103,6 +103,7 @@ export class BaseLayer {
             return this._attributeArray.filter(el => el.id === key);
         } else {
             if (this._attributeArray.length === 0) {
+                // TODO: need a counter observable while actually downloading the attributes
                 this.fetchAttributes();
                 return [];
             } else {
