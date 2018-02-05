@@ -288,9 +288,14 @@ function buildTween(element, callback, duration, reverse, start, end, config) {
 
     // Build and store the tween
     let id = counter++;
-    sequences[id] = animSrv.fromTo(element.find(RV_PANEL_SELECTOR), duration,
+    /* sequences[id] = animSrv.fromTo(element.find(RV_PANEL_SELECTOR), duration,
         reverse ? end : start,
-        angular.extend({}, reverse ? start : end, config));
-
+        angular.extend({}, reverse ? start : end, config)); */
+    
     element.data(RV_PLUG_SLIDE_ID_DATA, id);
+
+    // CIP: skip content plug animations effectively disabling them
+    sequences[id] = animSrv.set(element.find(RV_PANEL_SELECTOR), angular.extend({}, reverse ? start : end, config));
+    cleanup(element, callback)();
+
 }
