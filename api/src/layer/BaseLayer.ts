@@ -88,19 +88,19 @@ export class BaseLayer {
         return this._attributesRemoved.asObservable();
     }
 
-    /** Returns all values of the requested attribute by id, or an empty array if the attribute id does not exist. */
-    getAttributes(key: string): Array<Attribute>;
+    /** Returns attributes by id, or undefined if the id does not exist. */
+    getAttributes(key: number): Attribute | undefined;
 
-    /** Returns all attributes. If applicable, this will pull attributes from a server, however an empty array will still be
-     * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attribute ares ready. */
+    /** Returns attribuets for all ids. If applicable, this will pull attributes from a server, however an empty array will still be
+     * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attributes are ready. */
     getAttributes(): Array<Attribute>;
 
-    /** If key provided, returns the requested attributes by id, or an empty array if the attribute id does not exist. Else returns all attributes */
-    getAttributes(key?: string): Array<Attribute> {
+    /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes. */
+    getAttributes(key?: number): Attribute | undefined | Array<Attribute> {
         let attributes: Array<Attribute>;
 
         if (typeof key !== 'undefined') {
-            return this._attributeArray.filter(el => el.id === key);
+            return this._attributeArray.find(el => el.id === key);
         } else {
             if (this._attributeArray.length === 0) {
                 // TODO: need a counter observable while actually downloading the attributes
@@ -112,33 +112,40 @@ export class BaseLayer {
         }
     }
 
-    /** Forces an attribute download. Function implementation in subclasses */
+    /** Forces an attribute download. Function implementation in subclasses. */
     fetchAttributes(): void { }
 
     /** Sets the value of an attribute item by key. */
-    setAttributes(key: string, newValue: string | number): void;
+    setAttributes(key: string, newValue: Object): void;
 
     /** Sets attributes for each key-value pair in the provided object. */
     setAttributes(keyValue: Object): void;
 
     /** Sets the value of an attribute item by key or for each key-value pair in the provided object. */
-    setAttributes(keyOrKeyValuePair: string | Object, newValue?: string | number | undefined): void {
-        if (typeof keyOrKeyValuePair === 'string') {
+    setAttributes(keyOrKeyValuePair: number | Object, newValue?: Object): void {
+        // TODO: modify this to allow for changing of full attribute set, individual attributes or both
+        if (typeof keyOrKeyValuePair === 'number') {
             let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === keyOrKeyValuePair);
 
             if (typeof attribValue !== 'undefined') {
                 const oldValue: Attribute | undefined = Object.assign({}, attribValue);
-                attribValue.value = <string | number>newValue;
+                attribValue.value = <Object>newValue;
+
+                // TODO: if value change contains a new OID, need to update the attrib id as well to avoid having conflicting ids
+                // May require a geoApi change to watch for any updates to the id and then handle that case appropriately
 
                 this._attributesChanged.next([ oldValue, attribValue ]);
             }
         } else {
             for (let key in keyOrKeyValuePair) {
-                let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === key);
+                let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === parseInt(key));
 
                 if (typeof attribValue !== 'undefined') {
                     const oldValue: Attribute | undefined = Object.assign({}, attribValue);
                     attribValue.value = (<any>keyOrKeyValuePair)[key];
+
+                    // TODO: if value change contains a new OID, need to update the attrib id as well to avoid having conflicting ids
+                    // May require a geoApi change to watch for any updates to the id and then handle that case appropriately
 
                     this._attributesChanged.next([ oldValue, attribValue ]);
                 }
@@ -184,7 +191,7 @@ export class BaseLayer {
         return this._nameChanged.asObservable();
     }
 
-    /** Returns the opacity of the layer on the map from 0 (hidden) to 100 (fully visible) */
+    /** Returns the opacity of the layer on the map from 0 (hidden) to 100 (fully visible). */
     get opacity(): number { return this._opacity; }
 
     /** Sets the opacity value for the layer. */
@@ -244,27 +251,18 @@ export class BaseLayer {
         return this._visibilityChanged.asObservable();
     }
 
-    /** Recursively calls callback for every attribute item. */
-    forEachAttribute(callback: (attrib: Attribute) => void): void {
-        this._attributeArray.forEach(callback);
-    }
-
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
-    removeAttributes(key: string | undefined): void {
+    removeAttributes(key: number | undefined): void {
         if (typeof key !== 'undefined') {
             let allAttribs: Array<Attribute> = this.getAttributes();
 
-            let allKeyAttribs: Array<Attribute> = this.getAttributes(key);
-            allKeyAttribs.forEach(attrib => {
+            let keyAttrib: Attribute | undefined = this.getAttributes(key);
+            if (keyAttrib !== undefined) {
                 let atrribIndex: number = this._attributeArray.findIndex(el => el.id === key);
+                allAttribs.splice(atrribIndex, 1);
 
-                if (atrribIndex !== -1) {
-                    const value: string | number = this._attributeArray[atrribIndex].value;
-                    allAttribs.splice(atrribIndex, 1);
-                }
-            });
-
-            this._attributesRemoved.next(allKeyAttribs);
+                this._attributesRemoved.next([ keyAttrib ]);
+            }
         } else {
             const copyAttribs: Array<Attribute> = this._attributeArray;
             this._attributeArray = [];
@@ -280,8 +278,8 @@ export class BaseLayer {
 }
 
 export interface Attribute {
-    id: string,
-    value: string | number
+    id: number,
+    value: Object
 }
 
 interface LayerInterface {
