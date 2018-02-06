@@ -1,6 +1,6 @@
 import Map from 'api/map';
 import * as GEO from 'api/geometry';
-import ConfigLayer from 'api/layer/ConfigLayer';
+import { ConfigLayer } from 'api/layers';
 import { Subject } from 'rxjs/Rx';
 import * as $ from "jquery";
 
