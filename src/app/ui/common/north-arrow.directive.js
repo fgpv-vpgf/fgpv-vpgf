@@ -36,7 +36,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 const arrowSource = mapConfig.northArrow.arrowIcon || 'northarrow';
                 const poleSource = mapConfig.northArrow.poleIcon || 'snowman';
 
-                // flags to indicate of the supplied urls are svg or not.  Defaults to true if not provided// flags to indicate of the supplied urls are svg or not.  Defaults to true if not provided
+                // flags to indicate of the supplied urls are svg or not.  Defaults to true if not provided
                 const arrowIsSvg = mapConfig.northArrow.arrowIcon ? _isSVG(arrowSource) : true;
                 const poleIsSvg = mapConfig.northArrow.poleIcon ? _isSVG(poleSource) : true;
 
