@@ -23,7 +23,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { Subject } from 'rxjs/Subject';
-import { BaseLayer } from 'api/layer/BaseLayer';
+import { BaseLayer } from 'api/layers';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
