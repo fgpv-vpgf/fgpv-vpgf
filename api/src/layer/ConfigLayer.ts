@@ -93,13 +93,15 @@ export default class ConfigLayer extends BaseLayer {
         if (attribs) {
             attribs.then((attrib: AttribObject) => {
                 this._attributeArray = [];
-                attrib.features.forEach((feat: FeaturesArray) => {
-                    Object.keys(feat.attributes).forEach(key =>
-                        this._attributeArray.push({
-                            id: key,
-                            value: (<any>feat.attributes)[key]
-                        })
-                    );
+
+                Object.keys(attrib.oidIndex).forEach(id => {
+                    const index: number = (<any>attrib.oidIndex)[id];
+                    const attribs = attrib.features[index].attributes;
+
+                    this._attributeArray.push({
+                        id: parseInt(id),
+                        value: attribs
+                    });
                 });
 
                 this._attributesAdded.next(this._attributeArray);
@@ -115,13 +117,13 @@ export default class ConfigLayer extends BaseLayer {
         }
     }
 
-    /** Returns the catalogue URL */
+    /** Returns the catalogue URL. */
     get catalogueUrl(): string { return this._catalogueUrl; }
 
     /** Returns the underlying layer type such as esriFeature, esriDynamic, and ogcWms. */
     get type(): string { return this._layerType; }
 
-    /** Pans to the layers bounding box */
+    /** Pans to the layers bounding box. */
     panToBoundary(): void {
         this._layerProxy.zoomToBoundary(this._mapInstance.instance);
     }
@@ -157,7 +159,7 @@ export default class ConfigLayer extends BaseLayer {
     //     }
     // }
 
-    /** If layer out of scale, zooms in / out to a scale level where the layer is visible */
+    /** If layer out of scale, zooms in / out to a scale level where the layer is visible. */
     zoomToScale(): void {
         const mapScale = this._mapInstance.instance.getScale();
         const isOffScale = this._layerProxy.isOffScale(mapScale);
