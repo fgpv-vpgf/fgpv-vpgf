@@ -1,4 +1,4 @@
-import ConfigLayer from 'api/layer/ConfigLayer';
+import { ConfigLayer } from 'api/layers';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
