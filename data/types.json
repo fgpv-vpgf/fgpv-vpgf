@@ -77,5 +77,17 @@
             "term": "Système national de référence cartographique",
             "description": ""
         }
+    },
+
+    "LAKE": {
+        "en": {
+            "term": "Lake",
+            "description": "Inland body of standing water or expansion of a river, or body of water separated from a lake, river, or sea by a narrow land barrier."
+        },
+
+        "fr": {
+            "term": "Lac",
+            "description": "Nappe d'eau dormante ou élargissement d'une rivière à l'intérieur des terres, ou encore étendue d'eau complètement ou partiellement isolée d'un lac, d'une rivière ou d'une mer par une étroite barrière de terre."
+        }
     }
 }

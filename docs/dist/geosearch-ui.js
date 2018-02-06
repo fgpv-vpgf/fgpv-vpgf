@@ -60,10 +60,92 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 90);
+/******/ 	return __webpack_require__(__webpack_require__.s = 329);
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ 329:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.GeoSearchUI = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _index = __webpack_require__(90);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var GeoSearchUI = exports.GeoSearchUI = function (_GeoSearch) {
+    _inherits(GeoSearchUI, _GeoSearch);
+
+    function GeoSearchUI(config, input, resultContainer, rIterator) {
+        _classCallCheck(this, GeoSearchUI);
+
+        var _this = _possibleConstructorReturn(this, (GeoSearchUI.__proto__ || Object.getPrototypeOf(GeoSearchUI)).call(this, config));
+
+        _this.docFrag = document.createDocumentFragment();
+        if (!input) {
+            input = document.createElement('input');
+            _this.docFrag.appendChild(input);
+        }
+        input.onkeyup = _this.inputChanged.bind(_this);
+        if (!resultContainer) {
+            _this.rContainer = document.createElement('ul');
+            _this.docFrag.appendChild(_this.rContainer);
+        } else {
+            _this.rContainer = resultContainer;
+        }
+        _this.rContainer.classList.add('geosearch-ui');
+        _this.rIterator = rIterator ? rIterator.bind(_this) : _this.resultIterator;
+        return _this;
+    }
+
+    _createClass(GeoSearchUI, [{
+        key: 'resultIterator',
+        value: function resultIterator(result) {
+            var li = document.createElement('li');
+            li.innerHTML = result.name;
+            return li;
+        }
+    }, {
+        key: 'inputChanged',
+        value: function inputChanged(evt) {
+            var _this2 = this;
+
+            var qValue = evt.target.value;
+            this.rContainer.innerHTML = '';
+            this.query(qValue).then(function (results) {
+                results.forEach(function (r) {
+                    _this2.rContainer.appendChild(_this2.rIterator(r));
+                });
+            }).catch(function (error) {}); // don't care for error
+        }
+    }, {
+        key: 'htmlElem',
+        get: function get() {
+            return this.docFrag;
+        }
+    }]);
+
+    return GeoSearchUI;
+}(_index.GeoSearch);
+
+if (window) {
+    window.GeoSearchUI = GeoSearchUI;
+}
+
+/***/ }),
 
 /***/ 90:
 /***/ (function(module, exports, __webpack_require__) {

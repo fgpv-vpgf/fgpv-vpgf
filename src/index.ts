@@ -5,9 +5,10 @@ export class GeoSearch {
     types: searchType;
     url: string;
     language: string;
-    userQuery: string;
+    rCounter: number;
 
     constructor(config?: config) {
+        this.rCounter = 0;
         this.language = config && config.language ? config.language : 'en';
         if (config && config.types) {
             this.types = config.types;
@@ -18,29 +19,33 @@ export class GeoSearch {
         this.url = config && config.geogratisUrl ? config.geogratisUrl : `https://geogratis.gc.ca/services/geolocation/${this.language}/locate?q=`;
     }
 
-    query(query: string) {
-        this.userQuery = query;
-        return new Promise(resolve => {
+    query(query: string): Promise<Array<returnType>> {
+        let rCount = this.rCounter += 1;
+        return new Promise((resolve, reject) => {
             const xobj = new XMLHttpRequest();
             xobj.overrideMimeType("application/json");
             xobj.open('GET', this.url + encodeURI(query), true);
             xobj.onreadystatechange = () => {
                 if (xobj.readyState === 4 && xobj.status === 200) {
-                    resolve(this.processResults(JSON.parse(xobj.responseText)));
+                    if (rCount === this.rCounter) {
+                        resolve(this.processResults(JSON.parse(xobj.responseText), query));
+                    } else {
+                        reject('Newer query is in the pipeline.');
+                    }
                 }
             }
             xobj.send(null);
         });
     }
 
-    filterQuery(result: geogratisResultType) {
+    filterQuery(result: geogratisResultType, query: string) {
 
         switch (result.type) {
             case 'ca.gc.nrcan.geoloc.data.model.PostalCode':
                 return this.filterPostal(result);
 
             case 'ca.gc.nrcan.geoloc.data.model.NTS':
-                return this.filterNTS(result);
+                return this.filterNTS(result, query);
 
             /**
              * ca.gc.nrcan.geoloc.data.model.Geoname geoGratis types have comma separated string titles which contain some key information
@@ -67,9 +72,10 @@ export class GeoSearch {
     /**
      * geoGratis NTS results contain the NTS code at the start of the result title. This is not needed, so it is removed.
      */
-    filterNTS(result: geogratisResultType) {
+    filterNTS(result: geogratisResultType, query: string) {
+        const queryIsNTS = query.match(/\d{1,3}\w\d{1,3}/);
         result.title = result.title.replace(/\d{1,3}\w\d{1,3}/, '');
-        return this.types.NTS && this.types.NTS[this.language] ? this.validateType(this.types.NTS[this.language].term) : false;
+        return this.types.NTS && this.types.NTS[this.language] && queryIsNTS ? this.validateType(this.types.NTS[this.language].term) : false;
     }
 
     filterPostal(result: geogratisResultType) {
@@ -101,9 +107,9 @@ export class GeoSearch {
     /**
      * Given the geoGratis JSON result object, it calls applies the filter and duplicate reducer functions, and returns the results in a useful structure.
      */
-    processResults(results: Array<geogratisResultType>) {
+    processResults(results: Array<geogratisResultType>, query: string) {
         const filterResults = results.map(r => {
-            const filteredResult = this.filterQuery(r);
+            const filteredResult = this.filterQuery(r, query);
 
             if (filteredResult && filteredResult.isValid) {
                 return {
@@ -147,7 +153,7 @@ export class GeoSearch {
     }
 }
 
-interface returnType {
+export interface returnType {
     name: string,
     type: {
         name: string,
@@ -160,7 +166,7 @@ interface returnType {
     }
 }
 
-interface config {
+export interface config {
     types: searchType,
     language: string,
     geogratisUrl?: string

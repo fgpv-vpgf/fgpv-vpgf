@@ -2,12 +2,41 @@
 sidebar: false
 ---
 
-# Demo
+## GeoSearch
 
-**IE 11 users [click here](./ie.html)**
+Implements the core functionality of queries and filtering. It can be used as a standalone class, or can be extended as `GeoSearchUI` has done. It has no concept of HTML or webpages, so using this in a webpage is more verbose than `GeoSearchUI`.
+
+### Installation
+
+#### Package manager
+Using a package manager such as npm or yarn:
+
+```bash
+npm i --save github:RAMP-PCAR/geosearch
+
+or
+
+yarn add github:RAMP-PCAR/geosearch
+```
+
+Then import or require `GeoSearch` from `src/index.ts`.
+
+#### Precompiled
+
+This repo contains a `dist` folder where you'll find various precomiled library versions ready to be included in a `script` tag on your page. Chose one of:
+- `geosearch-polyd.js`
+- `geosearch.js`
+
+<p class="danger">
+    A global window object will be created on `window.GeoSearch`. The file size of `geosearch-polyd.js` is much larger than `geosearch.js` because it contains polyfills for IE support. Use `geosearch.js` if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.
+</p>
+
+### Example
+
+#### IE 11 users [click here](./ie.html)**
 
 ````html
-<script src="js/geosearch.js"></script>
+<script src="dist/geosearch.js"></script>
 
 <script>    
     function getResults(q, config = null) {
@@ -40,7 +69,7 @@ sidebar: false
     }
 </script>
 
-<p>This search will return all default result types in English</p>
+<p>This search will return all default result types in English (scroll down for results)</p>
 <form onsubmit="getResults(document.getElementById('searchField').value); return false;">
     <input id="searchField" type="text"> <button type="submit">Search</button>
 </form>

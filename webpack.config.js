@@ -1,11 +1,16 @@
 const path = require('path');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
-module.exports = {
-    entry: ['babel-polyfill', './src/index.ts'],
+const config = {
+    entry: {
+        'geosearch-polyd': ['babel-polyfill', './src/index.ts'],
+        'geosearch': './src/index.ts',
+        'geosearch-ui': './src/ui.ts',
+        'geosearch-ui-polyd': ['babel-polyfill', './src/ui.ts'],
+    },
 
     output: {
-        filename: 'geosearch.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist')
     },
 
@@ -22,6 +27,12 @@ module.exports = {
     },
 
     plugins: [
-        new WebpackShellPlugin({onBuildEnd:['cp ./dist/geosearch.js ./docs/js']})
-    ]
+        new WebpackShellPlugin({onBuildEnd:[`cp -rf ${path.resolve(__dirname, 'dist')} ${path.resolve(__dirname, 'docs')}`]})
+    ],
+
+    resolve: {
+        extensions: ['.ts', '.js' ]
+    }
 };
+
+module.exports = config;
