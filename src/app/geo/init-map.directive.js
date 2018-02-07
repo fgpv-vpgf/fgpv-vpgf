@@ -65,9 +65,8 @@ function rvInitMap($rootScope, geoService, events, referenceService, $rootElemen
                 apiMap.fgpMap = mapInstance;
                 appInfo.mapi = apiMap;
                 loadExtensions(apiMap);
-                window.RZ.mapAdded.next(apiMap);
-
                 events.$broadcast(events.rvApiMapAdded, apiMap);
+                window.RZ.mapAdded.next(apiMap);
         });
 
         /**
