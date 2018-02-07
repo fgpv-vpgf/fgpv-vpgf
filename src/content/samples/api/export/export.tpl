@@ -450,7 +450,7 @@
                     <div style="display:flex;">
                         <button onclick="doExport()">Launch the Export</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.api.basic.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-wait="true" rv-extensions="extensions/hello-world.js">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.api.basic.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-wait="true" rv-extensions="../hello-world.js">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
