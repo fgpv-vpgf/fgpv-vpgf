@@ -5,7 +5,7 @@ Provides name, postal code, and NTS location based searching within Canada, usin
 It can be configured to return only certain types of results like provinces or cities, and can be used in English or French.
 
 <p class="tip">
-    See the [configuration](/config) page additional information. 
+    See the [configuration](/config) page for additional information. 
 </p>
 
 ## Variants

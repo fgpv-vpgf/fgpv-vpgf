@@ -11,6 +11,23 @@ The class has the following constructor signature:
 - resultContainer (optional): Any HTML element that will contain the query results
 - rIterator (optional): A function which receives a result object and is expected to return an HTML element
 
+#### Result object passed to rIterator
+
+```js
+{
+    name: string, // Toronto
+    type: {
+        name: string, // i.e. City
+        description: string
+    },
+    bbox?: Array<number>,
+    geometry: {
+        type: string,
+        coordinates: Array<number>
+    }
+}
+```
+
 <p class="warning">
     `resultContainer` is a `ul` element by default, and `rIterator` returns `li` elements by default. You should provide both of these parameters to maintain valid HTML. Any HTML elements omitted will be auto generated. The `input` element is always watched for changes regardless of who provides it.
 </p>
@@ -68,30 +85,6 @@ You do not need to provide any parameters to `GeoSearchUI`. You can simply insta
 ````
 
 #### Format Custom Elements
-
-## Getting results
-
-```js
-var geoSearch = new GeoSearch();
-geoSearch.query('Toronto').then(function(results) {...});
-```
-
-`results` will contain the following structure:
-
-```js
-{
-    name: string, // Toronto
-    type: {
-        name: string, // i.e. City
-        description: string
-    },
-    bbox?: Array<number>,
-    geometry: {
-        type: string,
-        coordinates: Array<number>
-    }
-}
-```
 
 ````html
 <script src="dist/geosearch-ui.js"></script>
