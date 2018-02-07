@@ -397,7 +397,7 @@
             ],
             "required": [ "infoType", "content" ]
         },
-        "mapLegend": { 
+        "mapLegend": {
             "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ]
         },
         "legendAuto": {
@@ -739,7 +739,12 @@
             "properties": {
                 "geoSearch": { "type": "object", "properties": { "enabled": { "type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" } } },
                 "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } } },
-                "northArrow": { "type": "object" },
+                "northArrow": {
+                    "type": "object",
+                    "arrowIcon": { "type": "string", "description": "The graphical icon url/data url of the north arrow." },
+                    "poleIcon": { "type": "string", "description": "The graphical icon url/data url of the north pole that replaces north arrow when it's on north pole." },
+                    "enabled":  { "type": "boolean", "default": true }
+                },
                 "overviewMap": {
                     "type": "object",
                     "properties": {
