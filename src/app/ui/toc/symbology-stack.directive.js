@@ -186,7 +186,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 }
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
-                if ((layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &&
+                if (layerRecord && (layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &&
                     layerRecord.config.toggleSymbology &&
                     self.symbology.stack.length > 1) {
 
