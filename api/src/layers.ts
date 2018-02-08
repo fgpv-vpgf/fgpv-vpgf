@@ -329,13 +329,7 @@ export class ConfigLayer extends BaseLayer {
     constructor(config: JSONConfig, mapInstance: any, layerRecord: any, layerIndex?: number) {
         super(mapInstance);
 
-        this._id = config.id;
-        this._name = config.name;
-        this._opacity = config.state && typeof config.state.opacity !== 'undefined' ? config.state.opacity : 1;
-        this._visibility = config.state && typeof config.state.visibility !== 'undefined' ? config.state.visibility : true;
-        this._catalogueUrl = config.catalogueUrl || '';
         this._layerType = config.layerType;
-        this._viewerLayer = layerRecord;
 
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
             this._layerIndex = layerIndex;
@@ -343,6 +337,14 @@ export class ConfigLayer extends BaseLayer {
         } else {
             this._layerProxy = layerRecord.getProxy();
         }
+
+        this._viewerLayer = layerRecord;
+        this._id = config.id;
+        this._name = config.name;
+        this._catalogueUrl = config.catalogueUrl || '';
+
+        this._opacity = this._layerProxy.opacity;
+        this._visibility = this._layerProxy.visibility;
     }
 
     /** The viewer downloads attributes when needed - call this function to force an attribute download. The `attributes_added` event will trigger when the download is complete. */
