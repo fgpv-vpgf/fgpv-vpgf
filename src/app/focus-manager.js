@@ -617,10 +617,14 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
         return;
     }
 
-    // Calling rvFocus implies the viewer should be active
-    viewerGroup
+    // Calling rvFocus implies the viewer should be active, unless there is no viewer registered which throws an error. Default to normal focus.
+    try {
+        viewerGroup
         .contains(jqueryElem)
         .setStatus(statuses.ACTIVE);
+    } catch(e) {
+        elem.origfocus(); // browser implementation
+    }
 
     // clear any delayed focus movements
     clearTimeout(focusoutTimerCancel);

@@ -1,4 +1,3 @@
-// load viewers css file
 $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css') );
 
 $.getScript('../rv-main.js', function() {
