@@ -6,19 +6,19 @@ Language name (French),lang.fr,anglais,1,français,1
 Language name (native),lang.native,English,1,Français,1
 Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,1,Couches,1
 Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
-Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature Details,1,Détails sur l'élément,1
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature details,1,Détails sur l'élément,1
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
 Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1, Recherche géolocalisée,1
-,appbar.tooltip.geosearchshort,Geo Search,1,[fr] Geo Search,0
+,appbar.tooltip.geosearchshort,Geo Search,1,Recherche Geo,0
 Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,1,Outils,1
 Appbar aria label for layers icon,appbar.aria.layers,Sets,1,Séries,1
 Appbar aria label for layers icon,appbar.aria.geoApiError,Geolocation search is unavailable,1,
 La recherche de géolocalisation n'est pas disponible,1
-Appbar aria label for point info icon,appbar.aria.pointInfo,Feature Details,1,Détails sur l'élément,1
+Appbar aria label for point info icon,appbar.aria.pointInfo,Feature details,1,Détails sur l'élément,1
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,1,Ouvrir le menu de navigation,1
 Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
-,appbar.aria.geosearch,Geo Search,1,[fr] Geo Search,0
+,appbar.aria.geosearch,Geo Search,1,Recherche Geo,0
 Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search,1, Recherche géolocalisée,1
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,1,Agrandir/Minimiser l'aperçu de la carte,1
 Map aria label description,geo.aria.mapdescription,Interactive Map,1,Carte Interactive,1
@@ -83,8 +83,8 @@ Details pane label for searching,details.label.searching,Searching ...,1,Recherc
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
-,table.splash.loadingdata,Loading Data...,1,[fr] Loading Data ...,0
-,table.splash.buildingtable,Building Table ...,1,[fr] Building Table ...,0
+,table.splash.loadingdata,Loading Data...,1,Les données de chargement ...,0
+,table.splash.buildingtable,Building Table ...,1,Tableau de l’immeuble ...,0
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
 Filter pane menu label for Split View,filter.menu.splitView,Split View,1,Diviser la vue,1
@@ -128,7 +128,7 @@ Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,1,Votre position,1
-,geoLocation.error,Your location could not be found.,1,[Your location could not be found.],0
+,geoLocation.error,Your location could not be found.,1,Votre emplacement n’a pu être trouvée.,0
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
 Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
@@ -136,7 +136,7 @@ Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
 Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir métadonnées,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
-,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,[fr]Change {{settingName}} at,0
+,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,Changement {{settingName}} à,0
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1,Zone de délimitation,1
@@ -171,7 +171,7 @@ Side Navigation touch mode,sidenav.label.touch,Touch Mode,1,Mode Tactile,1
 Side Navigation language,sidenav.label.language,Language,1,Langue,1
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
-Table of Content show symbology label,toc.layer.label.symbology,Legend,1,La légende,1
+Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
 Table of Content main title,toc.title,Layer Selector,1,Sélecteur de couche,1
@@ -241,8 +241,8 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
-,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,[fr] Zoomed too far?,0
-,toc.boundaryZoom.undo,fix,1,[fr] fix?,0
+,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,La boîte recherches trop loin?,0
+,toc.boundaryZoom.undo,fix,1,régler?,0
 Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganiser,1
 ,toc.menu.visibility.title,Toggle Visibility,1,Basculer la visibilité,1
 ,toc.menu.visibility.allon,Show All,1,Montrer tout,1
