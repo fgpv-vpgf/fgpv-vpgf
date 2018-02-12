@@ -1,10 +1,6 @@
----
-sidebar: false
----
-
 ## GeoSearch
 
-Implements the core functionality of queries and filtering. It can be used as a standalone class, or can be extended as `GeoSearchUI` has done. It has no concept of HTML or webpages, so using this in a webpage is more verbose than `GeoSearchUI`.
+The constructor only takes one parameter, [config](/config) (optional).
 
 ### Installation
 
@@ -33,13 +29,13 @@ This repo contains a `dist` folder where you'll find various precomiled library 
 
 ### Example
 
-#### IE 11 users [click here](./ie.html)**
+#### IE 11 users [click here](./ie.html)
 
 ````html
 <script src="dist/geosearch.js"></script>
 
 <script>    
-    function getResults(q, config = null) {
+    function getResults(q, config = {includeTypes: ['PROV', 'CITY', 'TOWN', 'TERR', 'LAKE']}) {
         // GeoSearch is a global window object since we included the library directly on our page.
         var geoSearch = new GeoSearch(config);
         geoSearch.query(q).then(function(results) {
@@ -55,14 +51,7 @@ This repo contains a `dist` folder where you'll find various precomiled library 
     function getCityResults(q) {
         const config = {
             language: 'fr',
-            types: {
-                "CITY": {
-                    "fr": {
-                        "term": "Ville",
-                        "description": "La principale division administrative du Canada. Il s'agit d'un territoire juridiquement défini, établi par des articles de la Confédération ou par des amendements constitutionnels."
-                    }
-                }
-            }
+            includeTypes: ['CITY']
         };
 
         getResults(q, config);

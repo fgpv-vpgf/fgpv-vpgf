@@ -1,46 +1,39 @@
 ## Configuration Object
 
-When you create a new instance of `GeoSearch` or `GeoSearchUI` you can optionally pass it a config object. The following are valid config object properties:
+When you create a new instance of `GeoSearch` you can optionally pass it a config object. The following are valid config object properties:
 
 ```js
 {
-    types: Object,
+    includeTypes: string | Array<string>,
+    excludeTypes: string | Array<string>,
     language: string,
-    geogratisUrl: string
+    maxResults: number,
+    geoLocateUrl: string,
+    geoNameUrl: string
 }
 ```
 
-### types: Object
+### includeTypes: string | Array<string>
 
-An object with one or more properties, where each property represents a search type. For example:
+A string or an array of strings for the types of results to display. Any types not included are excluded.
 
-```json
-{
-    "CITY": {
-        "en": {
-            "term": "City",
-            "description": "Populated place with legally defined boundaries, usually incorporated under a provincial or territorial Municipal Act and being the highest level of municipal incorporation."
-        },
-        "fr": {
-            "term": "Ville",
-            "description": "Lieu habité dont les limites sont définies par la loi, habituellement constitué en vertu de la Loi sur les municipalités de la province ou du territoire et constituant le niveau le plus élevé de constitution municipale."
-        }
-    }
-}
-```
+### excludeTypes: string | Array<string>
 
-The library will use `CITY.en.term` (or `CITY.fr.term` if the language is set to `fr`) to determine what results to include in the final output.
-
+A string or an array of strings of the types of results to exclude from being displayed. 
 
 <p class="tip">
-    You can see the default search types used in `data/types.json`.
+    You can only set one of `includeTypes` or `excludeTypes`. If both are set, only `includeTypes` will be computed.
 </p>
     
 ### language: string
 
 Either `en` or `fr`. `en` is default.
-    
-    
-### geogratisUrl : string
 
-The url to the geogratis search service.
+### maxResults?: number
+
+Only show the first `maxResults` number of results.
+    
+    
+### geoLocateUrl, geoNameUrl : string
+
+The urls to the geogratis search services.

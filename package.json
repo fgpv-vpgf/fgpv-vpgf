@@ -1,6 +1,6 @@
 {
     "name": "geosearch",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "Configurable geolocation search library",
     "main": "src/index.js",
     "repository": "git@github.com:RAMP-PCAR/geosearch.git",
@@ -12,6 +12,7 @@
         "babel-preset-latest": "^6.24.1",
         "babel-preset-stage-2": "^6.24.1",
         "docute-cli": "^0.6.0",
+        "node-fetch": "^2.0.0",
         "ts-loader": "^3.3.1",
         "typescript": "^2.6.2",
         "webpack": "^3.10.0",

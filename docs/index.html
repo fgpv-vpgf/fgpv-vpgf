@@ -16,8 +16,8 @@
     docute.init({
         nav: [
             {title: 'Home', path: '/'},
-            {title: 'GeoSearchUI', path: 'demo1'},
-            {title: 'GeoSearch', path: 'demo2'},
+            {title: 'Built in UI', path: 'demo1'},
+            {title: 'Programmatic Usage', path: 'demo2'},
             {title: 'Configuration', path: 'config'}
         ],
         
@@ -33,13 +33,7 @@
   <script>
         window.transforms = {
             "result": [
-                {"<>":"li", "html": function(){return this.name + ' (' + json2html.transform(this.type, transforms.type) + ') @ ' + json2html.transform(this.geometry, transforms.geometry);}}
-            ],
-            "type": [
-                {"<>":"span", "html": "${name}"}
-            ],
-            "geometry": [
-                {"<>":"span", "html": '${coordinates}'}
+                {"<>":"li", "html": function(){return this.name + ' (' + this.location + ', ' + this.province + ') @ ' + this.pointCoords;}}
             ]
         };
     </script>

@@ -4,9 +4,7 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 const config = {
     entry: {
         'geosearch-polyd': ['babel-polyfill', './src/index.ts'],
-        'geosearch': './src/index.ts',
-        'geosearch-ui': './src/ui.ts',
-        'geosearch-ui-polyd': ['babel-polyfill', './src/ui.ts'],
+        'geosearch': './src/index.ts'
     },
 
     output: {
@@ -27,7 +25,10 @@ const config = {
     },
 
     plugins: [
-        new WebpackShellPlugin({onBuildEnd:[`cp -rf ${path.resolve(__dirname, 'dist')} ${path.resolve(__dirname, 'docs')}`]})
+        new WebpackShellPlugin({
+            onBuildStart: [`node scripts/typeCompiler.js && node scripts/provinceCompiler.js`],
+            onBuildEnd: [`cp -rf ${path.resolve(__dirname, 'dist')} ${path.resolve(__dirname, 'docs')}`]
+        })
     ],
 
     resolve: {

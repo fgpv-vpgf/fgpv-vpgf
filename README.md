@@ -17,14 +17,12 @@ or
 yarn add github:RAMP-PCAR/geosearch
 ```
 
-Then import or require `GeoSearchUI` from `src/ui.ts` or `GeoSearch` from `src/index.ts`.
+Then import or require `GeoSearch` from `src/index.ts`.
 
 #### Precompiled
 
 This repo contains a `dist` folder where you'll find various precomiled library versions ready to be included in a `script` tag on your page. Chose one of:
-- `geosearch-ui-polyd.js`
-- `geosearch-ui.js`
 - `geosearch-polyd.js`
 - `geosearch.js`
 
-A global window object will be created to access the library. The file size of `*-polyd.js` is much larger in size since it contains polyfills for IE support. Use the non-polyfilled script if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.
+A global window object will be created to access the library. The file size of `geosearch-polyd.js` is much larger in size since it contains polyfills for IE support. Use the non-polyfilled script if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.

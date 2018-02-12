@@ -8,9 +8,11 @@ It can be configured to return only certain types of results like provinces or c
     See the [configuration](/config) page for additional information. 
 </p>
 
-## Variants
+## Custom vs UI
 
-[GeoSearch](/demo2) is the base implementation of the search queries and filtering. It can be used on its own or you can chose [GeoSearchUI](/demo1) which extends `GeoSearch` to simplify deployment on a webpage. Both of these types have precompiled javascript versions that can be found in the `dist` folder, as well as being able to import/require them with a package manager.
+GeoSearch has functionality to make integrating search easy [in a webpage (demo)](/demo1). GeoSearch can also be implemented [programmatically](/demo2) for more advanced usage and control. 
+
+There are precompiled javascript versions that can be found in the `dist` folder, as well as being able to import/require this library with a package manager.
 
 
 

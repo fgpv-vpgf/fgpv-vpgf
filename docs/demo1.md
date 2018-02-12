@@ -1,12 +1,9 @@
-## GeoSearchUI
+## Built in UI functionality
 
-This is a UI extension of the base class implementation `GeoSearch` which simplifies the process of adding geosearch into html web pages. 
+`GeoSearch` has a special method `ui` with the following constructor signature:
 
-The class has the following constructor signature:
+`(input?: HTMLInputElement, resultContainer?: HTMLElement, rIterator?: Function)`
 
-`(config?: config, input?: HTMLInputElement, resultContainer?: HTMLElement, rIterator?: Function)`
-
-- config (optional): [configuration](/config) object
 - input (optional): An HTML `<input>` element 
 - resultContainer (optional): Any HTML element that will contain the query results
 - rIterator (optional): A function which receives a result object and is expected to return an HTML element
@@ -16,15 +13,11 @@ The class has the following constructor signature:
 ```js
 {
     name: string, // Toronto
-    type: {
-        name: string, // i.e. City
-        description: string
-    },
-    bbox?: Array<number>,
-    geometry: {
-        type: string,
-        coordinates: Array<number>
-    }
+    location: string, // York
+    province: string, // Ontario
+    type: string, // CITY
+    pointCoords: Array<number> // [-79.3733,43.7417]
+    bbox: Array<number> //[-79.6506726,43.3399715,-78.9970696,43.9292617]
 }
 ```
 
@@ -45,49 +38,49 @@ or
 yarn add github:RAMP-PCAR/geosearch
 ```
 
-Then import or require `GeoSearchUI` from `src/ui.ts`.
+Then import or require `GeoSearch` from `src/index.ts`.
 
 #### Precompiled
 
 This repo contains a `dist` folder where you'll find various precomiled library versions ready to be included in a `script` tag on your page. Chose one of:
-- `geosearch-ui-polyd.js`
-- `geosearch-ui.js`
+- `geosearch-polyd.js`
+- `geosearch.js`
 
 <p class="danger">
-    A global window object will be created on `window.GeoSearchUI`. The file size of `geosearch-ui-polyd.js` is much larger than `geosearch-ui.js` because it contains polyfills for IE support. Use `geosearch-ui.js` if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.
+    A global window object will be created on `window.GeoSearch`. The file size of `geosearch-polyd.js` is much larger than `geosearch.js` because it contains polyfills for IE support. Use `geosearch.js` if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.
 </p>
 
 ### Examples
-You do not need to provide any parameters to `GeoSearchUI`. You can simply instantiate an instance of the class and append its html output on your page. 
+You do not need to provide any parameters to `GeoSearch`. You can simply instantiate an instance of the class and append its html output on your page. 
 
 #### Auto Generated
 ````html
-<script src="dist/geosearch-ui.js"></script>
+<script src="dist/geosearch.js"></script>
 <div id="autoSearch"></div>
 
 <script>    
-    var geoSearchAuto = new GeoSearchUI();
-    document.getElementById('autoSearch').append(geoSearchAuto.htmlElem);
+    var geoSearchAuto = new GeoSearch();
+    document.getElementById('autoSearch').append(geoSearchAuto.ui().htmlElem);
 </script>
 ````
 
-
 #### Custom Elements
 ````html
-<script src="dist/geosearch-ui.js"></script>
+<script src="dist/geosearch.js"></script>
 
 <input id="searchField" name="searchField" type="text">
 <ul id="resultElem"></ul>
 
 <script>    
-    var geoSearch = new GeoSearchUI(null, document.getElementById('searchField'), document.getElementById('resultElem'));
+    var geoSearch = new GeoSearch();
+    geoSearch.ui(document.getElementById('searchField'), document.getElementById('resultElem'));
 </script>
 ````
 
 #### Format Custom Elements
 
 ````html
-<script src="dist/geosearch-ui.js"></script>
+<script src="dist/geosearch.js"></script>
 
 <input id="searchField" name="searchField" type="text">
 <ul id="resultElem"></ul>
@@ -95,9 +88,10 @@ You do not need to provide any parameters to `GeoSearchUI`. You can simply insta
 <script>    
     function customIterator(result) {
         var li = document.createElement('li');
-        li.innerHTML = result.name + ' ( ' + result.type.name + ' ) @ ' + result.geometry.coordinates;
+        li.innerHTML = result.name + ' (' + result.location + ', ' + result.province + ') @ ' + result.pointCoords;
         return li;
     }
-    var geoSearch = new GeoSearchUI(null, document.getElementById('searchField'), document.getElementById('resultElem'), customIterator);
+    var geoSearch = new GeoSearch();
+    geoSearch.ui(document.getElementById('searchField'), document.getElementById('resultElem'), customIterator);
 </script>
 ````
