@@ -48,7 +48,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
                                                         : this._layerClass.MODE_ONDEMAND;
 
-        // if we have a definition at load, apply it here to avoid cancellation errors on 
+        // if we have a definition at load, apply it here to avoid cancellation errors on
         if (this.config.initialFilteredQuery) {
             cfg.definitionExpression = this.config.initialFilteredQuery;
         }
@@ -69,6 +69,16 @@ class FeatureRecord extends attribRecord.AttribRecord {
      */
     getGeomType () {
         return this._featClasses[this._defaultFC].geomType;
+    }
+
+    /**
+     * Indicates the oid field of the layer.
+     *
+     * @function getOidField
+     * @returns {String} the oid field of the layer
+     */
+    getOidField () {
+        return this._featClasses[this._defaultFC].oidField;
     }
 
     /**
@@ -116,6 +126,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // update asynch data
         const pLD = aFC.getLayerData().then(ld => {
             aFC.geomType = ld.geometryType;
+            aFC.oidField = ld.oidField;
             aFC.nameField = this.config.nameField || ld.nameField || '';
 
             // trickery. file layer can have field names that are bad keys.

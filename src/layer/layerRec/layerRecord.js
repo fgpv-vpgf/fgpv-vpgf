@@ -147,6 +147,45 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Reacts to a layer downloading attributes.
+     *
+     * @function _attribsAdded
+     * @private
+     * @param {String} idx the index of the layer whose attributes were downloaded
+     * @param {Object} attribs the layer attributes downloaded
+     */
+    _attribsAdded (idx, attribs) {
+        // if we don't copy the array we could be looping on an array
+        // that is being modified as it is being read
+        this._fireEvent(this._attribListeners, this, idx, attribs);
+    }
+
+    /**
+     * Wire up attrib added listener.
+     *
+     * @function addAttribListener
+     * @param {Function} listenerCallback function to call when attributes download event happens
+     */
+    addAttribListener (listenerCallback) {
+        this._attribListeners.push(listenerCallback);
+        return listenerCallback;
+    }
+
+    /**
+     * Remove an attribute added listener.
+     *
+     * @function removeAttribListener
+     * @param {Function} listenerCallback function to not call when attributes download event happens
+     */
+    removeAttribListener (listenerCallback) {
+        const idx = this._attribListeners.indexOf(listenerCallback);
+        if (idx < 0) {
+            throw new Error('Attempting to remove a listener which is not registered.');
+        }
+        this._attribListeners.splice(idx, 1);
+    }
+
+    /**
      * Wire up mouse hover listener.
      *
      * @function addHoverListener
@@ -482,6 +521,17 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Indicates the oid field of the layer.
+     *
+     * @function getOidField
+     * @returns {String} the oid field of the layer
+     */
+    getOidField () {
+        // standard case, layer has no oid field. This gets overridden in feature-based Record classes.
+        return undefined;
+    }
+
+    /**
      * Provides the proxy interface object to the layer.
      *
      * @function getProxy
@@ -522,6 +572,7 @@ class LayerRecord extends root.Root {
 
             if (this._featClasses[fc]._layerPackage) {
                 delete this._featClasses[fc]._layerPackage._attribData;
+                this._featClasses[fc]._layerPackage.loadIsDone = false;
             }
         });
     }
@@ -545,6 +596,7 @@ class LayerRecord extends root.Root {
         this._apiRef = apiRef;
         this.initialConfig = config;
         this._stateListeners = [];
+        this._attribListeners = [];
         this._hoverListeners = [];
         this._user = false;
         this._epsgLookup = epsgLookup;

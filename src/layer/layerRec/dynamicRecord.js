@@ -385,6 +385,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     // value to wait on.
                     if (dFC.layerType === shared.clientLayerType.ESRI_FEATURE) {
                         dFC.geomType = ld.geometryType;
+                        dFC.oidField = ld.oidField;
 
                         return this.getFeatureCount(idx).then(fc => {
                             dFC.featureCount = fc;

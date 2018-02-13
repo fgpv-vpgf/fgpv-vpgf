@@ -35,6 +35,7 @@ class LayerInterface {
     get layerType () { return undefined; } // returns String
     get parentLayerType () { return undefined; } // returns String
     get geometryType () { return undefined; } // returns String
+    get oidField () { return undefined; } // returns String
     get featureCount () { return undefined; } // returns Integer
     get loadedFeatureCount () { return undefined; } // returns Integer
     get extent () { return undefined; } // returns Object (Esri Extent)
@@ -120,6 +121,7 @@ class LayerInterface {
         newProp(this, 'itemIndex', standardGetItemIndex);
 
         newProp(this, 'geometryType', standardGetGeometryType);
+        newProp(this, 'oidField', standardGetOidField);
         newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'parentLayerType', standardGetParentLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
@@ -141,6 +143,7 @@ class LayerInterface {
         newProp(this, 'formattedAttributes', standardGetFormattedAttributes);
         newProp(this, 'attribs', standardGetAttribs);
         newProp(this, 'geometryType', featureGetGeometryType);
+        newProp(this, 'oidField', featureGetOidField);
         newProp(this, 'featureCount', featureGetFeatureCount);
         newProp(this, 'loadedFeatureCount', featureGetLoadedFeatureCount);
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
@@ -171,6 +174,7 @@ class LayerInterface {
         newProp(this, 'attribs', dynamicLeafGetAttribs);
 
         newProp(this, 'geometryType', dynamicLeafGetGeometryType);
+        newProp(this, 'oidField', dynamicLeafGetOidField);
         newProp(this, 'layerType', dynamicLeafGetLayerType);
         newProp(this, 'parentLayerType', dynamicLeafGetParentLayerType);
         newProp(this, 'featureCount', dynamicLeafGetFeatureCount);
@@ -382,6 +386,23 @@ function dynamicLeafGetGeometryType() {
 
     // TEST STATUS none
     return this._source.geomType;
+}
+
+function standardGetOidField() {
+    /* jshint validthis: true */
+    return undefined;
+}
+
+function featureGetOidField() {
+    /* jshint validthis: true */
+    return this._source.getOidField();
+}
+
+function dynamicLeafGetOidField() {
+    /* jshint validthis: true */
+
+    // TEST STATUS none
+    return this._source.oidField;
 }
 
 function standardGetFeatureCount() {
