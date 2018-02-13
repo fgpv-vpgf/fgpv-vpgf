@@ -882,7 +882,7 @@ function scrapeListRenderer(renderer, childList, window) {
             .map(pl => pl.definitionClause)
             .join(' OR ');
 
-        const elseClause = `(NOT (${elseClauseGuts})`;
+        const elseClause = `(NOT (${elseClauseGuts}))`;
 
         // class breaks dont have default label
         // TODO perhaps put in a default of "Other", would need to be in proper language
