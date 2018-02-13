@@ -297,7 +297,7 @@ export class BaseLayer {
  *
  * Note that `ConfigLayer` instances cannot control geometry.
  *
- * @example Create a ConfigLayer <br><br>
+ * @example Listen for layer attributes to be downloaded <br><br>
  *
  * ```js
  * myConfigLayer.attributesAdded.subscribe(function (attribs) {
