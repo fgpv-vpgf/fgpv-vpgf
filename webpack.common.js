@@ -94,7 +94,7 @@ module.exports = function (env) {
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
-                from: '**/*.+(json|js|css)',
+                from: '**/*.+(json|js|css|html)',
                 to: 'samples'
             },{
                 from: 'src/locales/about',
