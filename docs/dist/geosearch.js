@@ -351,7 +351,7 @@ var Query = exports.Query = function () {
                 xobj.responseType = 'json';
                 xobj.onload = function () {
                     if (xobj.status === 200) {
-                        resolve(xobj.response);
+                        resolve(typeof xobj.response === 'string' ? JSON.parse(xobj.response) : xobj.response);
                     } else {
                         reject('Could not load results from remote service.');
                     }

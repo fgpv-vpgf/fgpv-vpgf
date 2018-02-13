@@ -12,13 +12,7 @@
 <script>
     const transforms = {
         "result": [
-            {"<>":"li", "html": function(){return this.name + ' (' + json2html.transform(this.type, transforms.type) + ') @ ' + json2html.transform(this.geometry, transforms.geometry);}}
-        ],
-        "type": [
-            {"<>":"span", "html": "${name}"}
-        ],
-        "geometry": [
-            {"<>":"span", "html": '${coordinates}'}
+            {"<>":"li", "html": function(){return this.name + ' (' + this.location + ', ' + this.province + ') @ ' + this.pointCoords;}}
         ]
     };
 
