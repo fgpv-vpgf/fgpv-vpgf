@@ -27,7 +27,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common, events) {
+function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
     const ref = {
         legendElementCounter: 0,
@@ -263,10 +263,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         }
 
         get opacity () {            return this._opacity; }
-        set opacity (value) {       this._opacity = value; }
+        set opacity (value) {
+            this._opacity = value;
+            $rootScope.$applyAsync();
+        }
 
         get visibility () {         return this._visibility; }
-        set visibility (value) {    this._visibility = value; }
+        set visibility (value) {
+            this._visibility = value;
+            $rootScope.$applyAsync();
+        }
 
         get boundingBox () {        return this._boundingBox; }
         set boundingBox (value) {   this._boundingBox = value; }
@@ -569,7 +575,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get layerType () {              return this._layerType; }
 
         get name () {                   return this._name; }
-        set name (value) {              this._name = value; }
+        set name (value) {
+            this._name = value;
+            $rootScope.$applyAsync();
+        }
 
         get url () {                    return this._url; }
         get metadataUrl () {            return this._metadataUrl; }

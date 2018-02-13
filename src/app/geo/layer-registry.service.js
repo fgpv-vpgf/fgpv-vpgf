@@ -1,3 +1,5 @@
+import { ConfigLayer } from 'api/layers';
+
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
 
@@ -44,9 +46,12 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     };
 
     let mApiObjects = null;
+    let mapApi = null;
 
     // lets us know the API is ready
     events.$on(events.rvApiMapAdded, (_, mApi) => {
+        mapApi = mApi;
+
         const tt = mApi.ui.tooltip;
 
         mApiObjects = {
@@ -156,6 +161,37 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
+
+            layerRecord.removeAttribListener(_onLayerAttribDownload);
+            _removeLayerFromApiMap(layerRecord);
+        }
+
+        /**
+         * This will remove the layer from the API map instance
+         *
+         * @function _removeLayerFromApiMap
+         * @private
+         * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
+         */
+        function _removeLayerFromApiMap(layerRecord) {
+            let index;
+
+            // removing dynamic layers does not actually remove the layer if another child is still present  ?
+            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                const childIndices = _simpleWalk(layerRecord.getChildTree());
+                childIndices.forEach(idx => {
+                    index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
+                    if (index !== -1) {
+                        mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                    }
+                });
+            } else {
+                index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId);
+
+                if (index !== -1) {
+                    mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                }
+            }
         }
 
         return index;
@@ -213,12 +249,12 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
         let isRefreshed = false;
         layerRecord.addStateListener(_onLayerRecordLoad);
-
+        layerRecord.addAttribListener(_onLayerAttribDownload);
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord._layer.loaded) {
+        if (layerRecord.state === Geo.Layer.States.LOADED) {
             isRefreshed = true;
             _onLayerRecordLoad('rv-loaded');
         }
@@ -251,6 +287,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 $timeout.cancel(throttleTimeoutHandle);
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
+            }
+
+            if (state === 'rv-loaded') {
+                _createApiLayer(layerRecord);
             }
         }
 
@@ -493,7 +533,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                         // shortcut to add a tooltip with point information already applied
                         add: content => tooltipService.addHoverTooltip(e.point, {}, content)
                     });
-                    
+
                     if (!e._prevented) {
                         // make the content and display the hovertip
                         tipContent = {
@@ -562,4 +602,89 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     return service;
+
+    /**
+     * Create API ConfigLayer using the layerRecord and config provided.
+     *
+     * @function _createApiLayer
+     * @private
+     * @param {LayerRecord} layerRecord a layer record to use when creating ConfigLayer
+     */
+    function _createApiLayer(layerRecord) {
+        let apiLayer;
+
+        // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
+        if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            const childIndices = _simpleWalk(layerRecord.getChildTree());
+            childIndices.forEach(idx => {
+                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord, idx);
+                _addLayerToApiMap(apiLayer);
+            });
+        } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
+            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
+            _addLayerToApiMap(apiLayer);
+        }
+
+        /**
+         * This will check first to see if the API map instance already has this layer defined by its id
+         * and if it does exist, it will update that index with the newly created API layer
+         * Else, it will add push a new layer to the list of layers for the map
+         *
+         * @function _addLayerToApiMap
+         * @private
+         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created that needs to be added to map
+         */
+        function _addLayerToApiMap(apiLayer) {
+            let index;
+
+            if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
+                index = mapApi.layers.findIndex(layer =>
+                    layer.id === apiLayer.id &&
+                    layer.layerIndex === apiLayer.layerIndex);
+            } else {
+                index = mapApi.layers.findIndex(layer => layer.id === apiLayer.id);
+            }
+
+            if (index !== -1) {
+                mapApi.layers[index] = apiLayer;      // TODO: modify this after when LayerGroup completed  ?
+            } else {
+                mapApi.layers.push(apiLayer);     // TODO: modify this after when LayerGroup completed  ?
+            }
+
+        }
+    }
+
+    function _simpleWalk(treeChildren) {
+        // roll in the results into a flat array
+        return [].concat.apply([], treeChildren.map((treeChild, index) => {
+            if (treeChild.childs) {
+                return [].concat(_simpleWalk(treeChild.childs));
+            } else {
+                return treeChild.entryIndex;
+            }
+        }));
+    }
+
+    /**
+     * Listens for attributes downloaded for a layer
+     *
+     * @function _onLayerAttribDownload
+     * @private
+     * @param {LayerRecord} layerRecord a layerRecod whose id is used to trigger observable
+     * @param {String} idx index of the layer whose attribtues were downloaded
+     * @param {Object} attribs the attributes that were downloaded
+     * @private
+     */
+    function _onLayerAttribDownload(layerRecord, idx, attribs) {
+        let configLayer;
+        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx));
+        } else {
+            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId);
+        }
+
+        if (configLayer) {
+            configLayer.fetchAttributes();
+        }
+    }
 }

@@ -10,7 +10,7 @@
  *                ||
  *              ~~~~~~~
  * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- * 
+ *
  * THIS API IS NOT SUPPORTED.
  */
 
@@ -23,6 +23,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { Subject } from 'rxjs/Subject';
+import { BaseLayer } from 'api/layers';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -34,9 +35,9 @@ import { Subject } from 'rxjs/Subject';
  *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
  * });
  * ```
- * 
+ *
  * @example #### Disable identify feature
- * 
+ *
  * ```js
  * mapInstance.identify = false;
  * ```
@@ -47,6 +48,7 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
+    private _layers: Array<BaseLayer>;    // type change after when LayerGroup implemented  ?
     private _allowIdentify = true;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
@@ -54,6 +56,7 @@ export default class Map {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
+        this._layers = [];  // TODO: need to instantiate LayerGroup when implemented  ?
 
         // config set implies viewer loading via API
         if (config) {
@@ -70,6 +73,8 @@ export default class Map {
             this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
         }
     }
+
+    get layers(): Array<BaseLayer> { return this._layers; }  // TODO: change type after to LayerGroup when implemented  ?
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
