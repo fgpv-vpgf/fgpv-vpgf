@@ -22,6 +22,7 @@ class AttribFC extends basicFC.BasicFC {
 
         this._layerPackage = layerPackage;
         this._geometryType = undefined; // this indicates unknown to the ui.
+        this._oidField = undefined;
         this._fcount = undefined;
         this._quickCache = {
             attribs: {},
@@ -31,6 +32,9 @@ class AttribFC extends basicFC.BasicFC {
 
     get geomType () { return this._geometryType; }
     set geomType (value) { this._geometryType = value; }
+
+    get oidField () { return this._oidField; }
+    set oidField (value) { this._oidField = value; }
 
     get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
 
@@ -43,7 +47,20 @@ class AttribFC extends basicFC.BasicFC {
      * @returns {Promise}         resolves with a layer attribute data object
      */
     getAttribs () {
-        return this._layerPackage.getAttribs();
+        const attribDownloaded = this.attribsLoaded();
+
+        const attribPromise = this._layerPackage.getAttribs();
+
+        attribPromise.then(attrib => {
+            // only trigger the event the first time when the download was in progress.
+            // after the attribs have been downloaded, if triggered again through API, since the attributes have
+            // previously been downloaded, this event will not trigger in the viewer
+            if (!attribDownloaded) {
+                this._parent._attribsAdded(this._idx, attrib.features);
+            }
+        });
+
+        return attribPromise;
     }
 
     /**
