@@ -162,6 +162,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
 
+            layerRecord.removeAttribListener(_onLayerAttribDownload);
             _removeLayerFromApiMap(layerRecord);
         }
 
@@ -248,11 +249,12 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
         let isRefreshed = false;
         layerRecord.addStateListener(_onLayerRecordLoad);
+        layerRecord.addAttribListener(_onLayerAttribDownload);
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord._layer.loaded) {
+        if (layerRecord.state === Geo.Layer.States.LOADED) {
             isRefreshed = true;
             _onLayerRecordLoad('rv-loaded');
         }
@@ -287,7 +289,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 _advanceLoadingQueue();
             }
 
-            if (state !== 'rv-error') {
+            if (state === 'rv-loaded') {
                 _createApiLayer(layerRecord);
             }
         }
@@ -661,5 +663,28 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 return treeChild.entryIndex;
             }
         }));
+    }
+
+    /**
+     * Listens for attributes downloaded for a layer
+     *
+     * @function _onLayerAttribDownload
+     * @private
+     * @param {LayerRecord} layerRecord a layerRecod whose id is used to trigger observable
+     * @param {String} idx index of the layer whose attribtues were downloaded
+     * @param {Object} attribs the attributes that were downloaded
+     * @private
+     */
+    function _onLayerAttribDownload(layerRecord, idx, attribs) {
+        let configLayer;
+        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx));
+        } else {
+            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId);
+        }
+
+        if (configLayer) {
+            configLayer.fetchAttributes();
+        }
     }
 }

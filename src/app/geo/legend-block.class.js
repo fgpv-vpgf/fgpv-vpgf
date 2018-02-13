@@ -85,6 +85,9 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._proxy.setVisibility(this._layerConfig.state.visibility);
             this._proxy.setQuery(this._layerConfig.state.query);
 
+            this._updateApiLayerVisibility(this);
+            this._updateApiLayerOpacity(this);
+
             this._initialStateSettingsApplied = true;
         }
 
@@ -118,22 +121,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             // store opacity value in the layer config; will be used by full state restore
             this._layerConfig.state.opacity = value;
 
-            let layers;
-
-            // TODO: modify this after when LayerGroup completed  ?
-            if (appInfo.mapi) {
-                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
-                } else {
-                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
-                }
-
-                layers.forEach(layer => {
-                    if (layer.opacity !== value) {
-                        layer._opacityChanged.next(this._proxy);
-                    }
-                });
-            }
+            this._updateApiLayerOpacity(this);
         }
         set visibility (value) {
             if (this.isControlSystemDisabled('visibility')) {
@@ -145,22 +133,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             // store visibility value in the layer config; will be used by full state restore
             this._layerConfig.state.visibility = value;
 
-            let layers;
-
-            // TODO: modify this after when LayerGroup completed  ?
-            if (appInfo.mapi) {
-                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
-                } else {
-                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
-                }
-
-                layers.forEach(layer => {
-                    if (layer.visibility !== value) {
-                        layer._visibilityChanged.next(this._proxy);
-                    }
-                });
-            }
+            this._updateApiLayerVisibility(this);
         }
         set query (value) {
             if (this.isControlSystemDisabled('query')) {
@@ -271,6 +244,54 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get availableControls () {      return this._layerConfig.controls; }
         get disabledControls () {       return this._layerConfig.disabledControls; }
         get userDisabledControls () {   return this._layerConfig.userDisabledControls; }
+
+        /**
+         * @function updateApiLayerVisibility
+         * @private
+         * @param {LegendBlock} legendBlock legend block where opacity is being updated
+         */
+        _updateApiLayerOpacity() {
+            let layers;
+
+            // TODO: modify this after when LayerGroup completed  ?
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                } else {
+                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                }
+
+                layers.forEach(layer => {
+                    if (layer.opacity !== this._proxy.opacity) {
+                        layer._opacityChanged.next(this._proxy.opacity);
+                    }
+                });
+            }
+        }
+
+        /**
+         * @function updateApiLayerVisibility
+         * @private
+         * @param {LegendBlock} legendBlock legend block where visibility is being updated
+         */
+        _updateApiLayerVisibility() {
+            let layers;
+
+            // TODO: modify this after when LayerGroup completed  ?
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                } else {
+                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                }
+
+                layers.forEach(layer => {
+                    if (layer.visibility !== this._proxy.visibility) {
+                        layer._visibilityChanged.next(this._proxy.visibility);
+                    }
+                });
+            }
+        }
     }
 
     class LegendBlock {

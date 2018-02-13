@@ -15,9 +15,7 @@
  */
 
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
-import { DynamicLayerEntryNode } from 'api/schema';
-import { InitialLayerSettings } from 'api/schema';
-import Map from 'api/Map';
+import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 
 const layerTypes = {
     ESRI_DYNAMIC: 'esriDynamic',
@@ -31,30 +29,44 @@ const layerTypes = {
  * Represents a base layer implementation that will be extended by ConfigLayer and SimpleLayer
  */
 export class BaseLayer {
-    protected _mapInstance: any;
+    /** @ignore */
+    _mapInstance: any;
 
-    protected _attributeArray: Array<Attribute>;
-    protected _id: string;
+    /** @ignore */
+    _attributeArray: Array<Object>;
+
+    /** @ignore */
+    _id: string;
 
     // index required when reloading dynamic layers to differentiate between children since id is same for all of them
-    protected _layerIndex: number | undefined;
+    /** @ignore */
+    _layerIndex: number | undefined;
 
-    protected _name: string;
-    private _nameChanged: Subject<LayerInterface>;
+    // the name of the OID field for the layer
+    /** @ignore */
+    _primaryAttributeKey: string;
 
-    protected _opacity: number;
-    private _opacityChanged: Subject<LayerInterface>;
+    /** @ignore */
+    _name: string;
+    private _nameChanged: Subject<string>;
 
-    protected _visibility: boolean;
-    private _visibilityChanged: Subject<LayerInterface>;
+    /** @ignore */
+    _opacity: number;
+    private _opacityChanged: Subject<number>;
+
+    /** @ignore */
+    _visibility: boolean;
+    private _visibilityChanged: Subject<boolean>;
 
     // the viewerLayer is the layerRecord and the layerProxy is the proxy or child proxy if dynamic
-    protected _viewerLayer: any;
-    protected _layerProxy: any;
+    /** @ignore */
+    _viewerLayer: any;
+    /** @ignore */
+    _layerProxy: any;
 
-    protected _attributesAdded: BehaviorSubject<Array<Attribute>>;
-    protected _attributesChanged: Subject<Array<Attribute>>;
-    protected _attributesRemoved: Subject<Array<Attribute>>;
+    protected _attributesAdded: BehaviorSubject<Array<Object>>;
+    protected _attributesChanged: Subject<Array<Object>>;
+    protected _attributesRemoved: Subject<Array<Object>>;
 
     /** Sets the layers viewer map instance. */
     constructor(mapInstance: any) {
@@ -64,9 +76,9 @@ export class BaseLayer {
         this._opacityChanged = new Subject();
         this._visibilityChanged = new Subject();
 
-        this._nameChanged.subscribe(layer => this._name = layer.name || '');
-        this._opacityChanged.subscribe(layer => this._opacity = layer.opacity);
-        this._visibilityChanged.subscribe(layer => this._visibility = layer.visibility);
+        this._nameChanged.subscribe(name => this._name = name || '');
+        this._opacityChanged.subscribe(opacity => this._opacity = opacity);
+        this._visibilityChanged.subscribe(visibility => this._visibility = visibility);
 
         this._attributeArray = [];
         this._attributesAdded = new BehaviorSubject(this._attributeArray);
@@ -78,7 +90,7 @@ export class BaseLayer {
      * Emits whenever one or more attributes are added.
      * @event attributesAdded
      */
-    get attributesAdded(): Observable<Array<Attribute>> {
+    get attributesAdded(): Observable<Array<Object>> {
         return this._attributesAdded.asObservable();
     }
 
@@ -86,7 +98,7 @@ export class BaseLayer {
      * Emits whenever an existing attribute entry is updated.
      * @event attributesChanged
      */
-    get attributesChanged(): Observable<Array<Attribute>> {
+    get attributesChanged(): Observable<Array<Object>> {
         return this._attributesChanged.asObservable();
     }
 
@@ -94,23 +106,23 @@ export class BaseLayer {
      * Emits whenever attributes are removed.
      * @event attributesRemoved
      */
-    get attributesRemoved(): Observable<Array<Attribute>> {
+    get attributesRemoved(): Observable<Array<Object>> {
         return this._attributesRemoved.asObservable();
     }
 
     /** Returns attributes by id, or undefined if the id does not exist. */
-    getAttributes(key: number): Attribute | undefined;
+    getAttributes(attributeKey: number): Object | undefined;
 
-    /** Returns attribuets for all ids. If applicable, this will pull attributes from a server, however an empty array will still be
+    /** Returns attributes for all ids. If applicable, this will pull attributes from a server, however an empty array will still be
      * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attributes are ready. */
-    getAttributes(): Array<Attribute>;
+    getAttributes(): Array<Object>;
 
     /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes. */
-    getAttributes(key?: number): Attribute | undefined | Array<Attribute> {
-        let attributes: Array<Attribute>;
+    getAttributes(attributeKey?: number): Object | undefined | Array<Object> {
+        let attributes: Array<Object>;
 
-        if (typeof key !== 'undefined') {
-            return this._attributeArray.find(el => el.id === key);
+        if (typeof attributeKey !== 'undefined') {
+            return this._attributeArray.find(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
         } else {
             if (this._attributeArray.length === 0) {
                 // TODO: need a counter observable while actually downloading the attributes
@@ -125,40 +137,33 @@ export class BaseLayer {
     /** Forces an attribute download. Function implementation in subclasses. */
     fetchAttributes(): void { }
 
-    /** Sets the value of an attribute item by key. */
-    setAttributes(key: number, newValue: Object): void;
+    /** Sets the attribute object to value provided using the attributeKey. */
+    setAttributes(attributeKey: number, value: Object): void;
 
-    /** Sets attributes for each key-value pair in the provided object. */
-    setAttributes(keyValue: Object): void;
+    /** Sets the field inside attribute to the value provided using the attributeKey. */
+    setAttributes(attributeKey: number, fieldName: string, value: string | number): void;
 
-    /** Sets the value of an attribute item by key or for each key-value pair in the provided object. */
-    setAttributes(keyOrKeyValuePair: number | Object, newValue?: Object): void {
-        // TODO: modify this to allow for changing of full attribute set, individual attributes or both
-        if (typeof keyOrKeyValuePair === 'number') {
-            let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === keyOrKeyValuePair);
+    /** Sets the entire attribute or sets an individual field inside attribute using attributeKey provided. */
+    setAttributes(attributeKey: number, valueOrFieldName: Object | string, value?: string | number): void {
+        if (typeof valueOrFieldName === 'string') {
+            let attribValue: Object | undefined = this._attributeArray.find(attrib =>
+                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
 
             if (typeof attribValue !== 'undefined') {
-                const oldValue: Attribute = Object.assign({}, attribValue);
-                attribValue.value = <Object>newValue;
-
-                // TODO: if value change contains a new OID, need to update the attrib id as well to avoid having conflicting ids
-                // May require a geoApi change to watch for any updates to the id and then handle that case appropriately
+                const oldValue: Object = Object.assign({}, attribValue);
+                (<any>attribValue)[valueOrFieldName] = value;
 
                 this._attributesChanged.next([ oldValue, attribValue ]);
             }
         } else {
-            for (let key in keyOrKeyValuePair) {
-                let attribValue: Attribute | undefined = this._attributeArray.find(attrib => attrib.id === parseInt(key));
+            let index: number = this._attributeArray.findIndex(attrib =>
+                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
 
-                if (typeof attribValue !== 'undefined') {
-                    const oldValue: Attribute = Object.assign({}, attribValue);
-                    attribValue.value = (<any>keyOrKeyValuePair)[key];
+            if (index !== -1) {
+                const oldValue: Object = Object.assign({}, this._attributeArray[index]);
+                this._attributeArray[index] = valueOrFieldName;
 
-                    // TODO: if value change contains a new OID, need to update the attrib id as well to avoid having conflicting ids
-                    // May require a geoApi change to watch for any updates to the id and then handle that case appropriately
-
-                    this._attributesChanged.next([ oldValue, attribValue ]);
-                }
+                this._attributesChanged.next([ oldValue, this._attributeArray[index] ]);
             }
         }
     }
@@ -189,7 +194,7 @@ export class BaseLayer {
         }
 
         if (oldName !== name) {
-            this._nameChanged.next(this._layerProxy);
+            this._nameChanged.next(name);
         }
     }
 
@@ -197,7 +202,7 @@ export class BaseLayer {
      * Emits whenever the layer name is changed.
      * @event nameChanged
      */
-    get nameChanged(): Observable<LayerInterface> {
+    get nameChanged(): Observable<string> {
         return this._nameChanged.asObservable();
     }
 
@@ -219,7 +224,7 @@ export class BaseLayer {
         }
 
         if (oldOpacity !== opacity) {
-            this._opacityChanged.next(this._layerProxy);
+            this._opacityChanged.next(opacity);
         }
     }
 
@@ -227,7 +232,7 @@ export class BaseLayer {
      * Emits whenever the layer opacity is changed.
      * @event opacityChanged
      */
-    get opacityChanged(): Observable<LayerInterface> {
+    get opacityChanged(): Observable<number> {
         return this._opacityChanged.asObservable();
     }
 
@@ -249,7 +254,7 @@ export class BaseLayer {
         }
 
         if (oldVisibility !== visibility) {
-            this._visibilityChanged.next(this._layerProxy);
+            this._visibilityChanged.next(visibility);
         }
     }
 
@@ -257,24 +262,24 @@ export class BaseLayer {
      * Emits whenever the layer visibility is changed.
      * @event visibilityChanged
      */
-    get visibilityChanged(): Observable<LayerInterface> {
+    get visibilityChanged(): Observable<boolean> {
         return this._visibilityChanged.asObservable();
     }
 
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
-    removeAttributes(key: number | undefined): void {
-        if (typeof key !== 'undefined') {
-            let allAttribs: Array<Attribute> = this.getAttributes();
+    removeAttributes(attributeKey: number | undefined): void {
+        if (typeof attributeKey !== 'undefined') {
+            let allAttribs: Array<Object> = this.getAttributes();
 
-            let keyAttrib: Attribute | undefined = this.getAttributes(key);
+            let keyAttrib: Object | undefined = this.getAttributes(attributeKey);
             if (keyAttrib !== undefined) {
-                let atrribIndex: number = this._attributeArray.findIndex(el => el.id === key);
+                let atrribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
                 allAttribs.splice(atrribIndex, 1);
 
                 this._attributesRemoved.next([ keyAttrib ]);
             }
         } else {
-            const copyAttribs: Array<Attribute> = this._attributeArray;
+            const copyAttribs: Array<Object> = this._attributeArray;
             this._attributeArray = [];
 
             this._attributesRemoved.next(copyAttribs);
@@ -295,32 +300,22 @@ export class BaseLayer {
  * @example Create a ConfigLayer <br><br>
  *
  * ```js
- * const layerJson = {
- *   "id": "myLayer1",
- *   "name": "An Incredible Layer",
- *   "layerType": "esriFeature",
- *   "controls": [
- *     "remove"
- *   ],
- *   "state": {
- *     "visibility": false,
- *     "boundingBox": false
- *   },
- *   "url": "http://example.com/MapServer/URL"
- * };
- *
- * const myConfigLayer = RZ.mapById("<id>").layers.addLayer(layerJson)
- *
  * myConfigLayer.attributesAdded.subscribe(function (attribs) {
  *  if (attribs) {
+ *      console.log('Got our attributes');
+ *      console.log(attribs);
  *      // attributes loaded, do stuff here
  *  }
  * });
+ *
+ * myConfigLayer.fetchAttributes();  // an asynchronous attribute download. will resolve and display in the console 'Got our attributes' followed by the attributes
  * ```
  */
 export class ConfigLayer extends BaseLayer {
-    private _catalogueUrl: string;
-    private _layerType: string;
+    /** @ignore */
+    _catalogueUrl: string;
+    /** @ignore */
+    _layerType: string;
 
     /**
      * Requires a schema valid JSON config layer snippet, map instance where the layer is added and viewer layer record.
@@ -345,24 +340,27 @@ export class ConfigLayer extends BaseLayer {
 
         this._opacity = this._layerProxy.opacity;
         this._visibility = this._layerProxy.visibility;
+        this._primaryAttributeKey = this._layerProxy.oidField;
     }
 
-    /** The viewer downloads attributes when needed - call this function to force an attribute download. The `attributes_added` event will trigger when the download is complete. */
+    /** The viewer downloads attributes when needed - call this function to force an attribute download if not downloaded previously.
+     * The `attributes_added` event will trigger when the download is complete (if a download was forced). */
     fetchAttributes(): void {
         const attribs = this._layerProxy.attribs;
 
         if (attribs) {
             attribs.then((attrib: AttribObject) => {
-                this._attributeArray = [];
+                // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
+                if (this._attributeArray.length > 0) {
+                    return;
+                }
 
+                // attributes not previously downloaded, after forcing the download, populates the array and triggers event
                 Object.keys(attrib.oidIndex).forEach(id => {
                     const index: number = (<any>attrib.oidIndex)[id];
                     const attribs = attrib.features[index].attributes;
 
-                    this._attributeArray.push({
-                        id: parseInt(id),
-                        value: attribs
-                    });
+                    this._attributeArray.push(attribs);
                 });
 
                 this._attributesAdded.next(this._attributeArray);
@@ -383,6 +381,9 @@ export class ConfigLayer extends BaseLayer {
 
     /** Returns the underlying layer type such as esriFeature, esriDynamic, and ogcWms. */
     get type(): string { return this._layerType; }
+
+    /** Returns the name of the key being used for the attributes OID field. */
+    get attributeKey(): string { return this._primaryAttributeKey; }
 
     /** Pans to the layers bounding box. */
     panToBoundary(): void {
@@ -433,11 +434,6 @@ export class ConfigLayer extends BaseLayer {
             this._layerProxy.zoomToScale(mapInstance, lods, zoomIn);
         }
     }
-}
-
-interface Attribute {
-    id: number,
-    value: Object
 }
 
 interface LayerInterface {
