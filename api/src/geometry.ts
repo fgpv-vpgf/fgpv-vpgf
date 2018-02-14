@@ -42,7 +42,7 @@ export class XY {
     projectToPoint(targetProjection: number) {
         const proj = (<any>window).RZ.GAPI.proj;
 
-        let zoomPoint = proj.localProjectPoint(targetProjection, 4326, [this.x, this.y]);
+        let zoomPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
         return proj.Point(zoomPoint[0], zoomPoint[1], {wkid: targetProjection});
     }
 

@@ -214,7 +214,7 @@ export default class Map {
     setCenter(xy: geo.XY | geo.XYLiteral): void;
     @geo.XYLiteral
     setCenter(xy: geo.XY): void {
-        this.mapI.centerAt(xy.projectToPoint(3978));
+        this.mapI.centerAt(xy.projectToPoint(this.mapI.spatialReference.wkid));
     }
 
     /** Returns the current zoom level applied on the map */
