@@ -1,0 +1,23 @@
+{
+  "name": "core-extensions",
+  "version": "0.0.0",
+  "description": "Home for all RAMP related extensions that we will create and maintain in step with our RAMP release cycle",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fgpv-vpgf/core-extensions.git"
+  },
+  "keywords": [
+    "RAMP2",
+    "extensions"
+  ],
+  "author": "Miles Petrov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fgpv-vpgf/core-extensions/issues"
+  },
+  "homepage": "https://github.com/fgpv-vpgf/core-extensions#readme"
+}
