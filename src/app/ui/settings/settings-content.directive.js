@@ -129,6 +129,6 @@ function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
      * @return {Boolean} true if some sublayer has more than 1 style (only for WMS)
      */
     function checkStylesLength() {
-        return self.block.mainProxyWrapper.layerConfig.layerEntries.some(entry => entry.allStyles.length > 1);
+        return self.block.mainProxyWrapper.layerConfig.layerEntries.some(entry => entry.allStyles && entry.allStyles.length > 1);
     }
 }
