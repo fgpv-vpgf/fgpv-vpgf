@@ -89,7 +89,10 @@ function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
     self.checkWMS = checkWMS;
     self.checkStylesLength = checkStylesLength;
 
-    self.isFileLayer = () => layerRegistry.getLayerRecord(self.block.layerRecordId).isFileLayer();
+    self.includeRefreshInterval = () => {
+        const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
+        return layerRecord ? !layerRecord.isFileLayer() : false;
+    }
 
     /**
      * @function checkAvailableControls
