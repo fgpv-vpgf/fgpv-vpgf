@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ui/help/help.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ui/help/help.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import marked from 'marked';
+
+const templateUrl = require('./help-summary.html');
+
+/**
+ * @module helpService
+ * @memberof app.ui
+ * @description
+ *
+ * The `helpService` service provides stores for help items
+ *
+ */
+/**
+ * @module highlightFilter
+ * @memberof app.ui
+ * @description
+ *
+ * The `highlightFilter` filter, highlights a phrase in the supplied text.
+ *
+ */
+angular
+    .module('app.ui')
+    .service('helpService', helpService)
+    .filter('highlight', highlightFilter);
+
+// TODO: this needs to be moved into a separate into ui/common folder
+function highlightFilter($sce) {
+    return (text = '', searchTerm = undefined, className = 'rv-help-highlight') => {
+
+        // no searchTerm provided, return all html
+        if (!searchTerm) {
+            return $sce.trustAsHtml(text);
+        }
+
+        // Regex in javascript is not capable of searching html text while avoiding matches
+        // on the element attributes. To accomplish this, we render the text html as a DOM tree,
+        // then search the DOM tree for text nodes. We then look for the searchTerm within these
+        // textNodes so that elements and their attributes are not affected
+        const htmlFragment = document.createDocumentFragment();
+        const searchElement = document.createElement('div');
+        searchTerm = searchTerm.toLowerCase(); // case insensitive search
+
+        // Turn HTML text provided into a DOM searchable tree
+        searchElement.innerHTML = text;
+        // Recursively search tree for text node
+        findTextNodes(searchElement);
+        // tree is now searched - append results to html fragment
+        htmlFragment.appendChild(searchElement);
+
+        /**
+        * Given some node it searches the node and its children for textNodes, which are sent to doSearch for searching
+        *
+        * @function findTextNodes
+        * @param {Object} node    node to search for textNodes
+        */
+        function findTextNodes(node) {
+            let childNode;
+            let nextNode;
+            // document, document fragment, or element recurse search
+            if ([1, 9, 11].find(n => n === node.nodeType)) {
+                childNode = node.firstChild;
+                while (childNode) {
+                    nextNode = childNode.nextSibling;
+                    findTextNodes(childNode);
+                    childNode = nextNode;
+                }
+            // found a text node - perform search on it
+            } else if (node.nodeType === 3) {
+                doSearch(node);
+            }
+        }
+
+        /**
+        * Given a textnode, wraps the searchTerm in a span element so that it is visible to the user
+        *
+        * @function doSearch
+        * @param {Object} preMatch    textNode to be searched
+        */
+        function doSearch(preMatch) {
+            // try to find search term index in the preMatch
+            const searchIndex = preMatch.nodeValue.toLowerCase().indexOf(searchTerm);
+            if (searchIndex !== -1) { // found a match, continuing
+                let match; // contains only the matched text
+                let postMatch; // contains text after the match
+                // this next part can be confusing - but this is the general idea:
+                //   - preMatch first contains the entire textNode
+                //   - match is then assigned all text prior to the search term
+                //   - preMatch then contains the search term and all text after it
+                //   - postMatch is then assigned all text after the match, which leaves match with, well, the match
+                match = preMatch.splitText(searchIndex);
+                postMatch = match.splitText(searchTerm.length);
+
+                const span = document.createElement('span');
+                span.className = className;
+                // now bring together split pieces including wrapped search term
+                preMatch.parentNode.insertBefore(span, postMatch);
+                span.appendChild(match);
+            }
+        }
+
+        return $sce.trustAsHtml(searchElement.innerHTML);
+    };
+}
+
+function helpService($mdDialog, $translate, translations, referenceService) {
+    // all help sections (populated when elements tagged with rv-help are created)
+    const registry = [];
+
+    // all help sections currently drawn
+    const drawnCache = [];
+
+    const service = {
+        register,
+        unregister,
+        registry,
+        drawnCache,
+        setDrawn,
+        clearDrawn,
+
+        open
+    };
+
+    return service;
+
+    /**
+     * Opens help panel.
+     *
+     * @function open
+     */
+    function open() {
+        $mdDialog.show({
+            controller: HelpSummaryController,
+            controllerAs: 'self',
+            bindToController: true,
+            templateUrl,
+            parent: referenceService.panels.shell,
+            disableParentScroll: false,
+            clickOutsideToClose: true,
+            fullscreen: false
+        });
+    }
+
+    /**
+    * Adds an object to the service's registry.
+    *
+    * @function register
+    * @param {Object} object    the object to be added
+    */
+    function register(object) {
+        registry.push(object);
+    }
+
+    /**
+    * Removes an object from the service's registry.
+    *
+    * @function unregister
+    * @param {Object} object    the object to be removed
+    */
+    function unregister(object) {
+        const index = registry.indexOf(object);
+        if (index !== -1) {
+            registry.splice(index, 1);
+        }
+    }
+
+    /**
+    * Adds an object to the service's cache of already drawn help sections.
+    *
+    * @function setDrawn
+    * @param {Object} object    the object to be added
+    */
+    function setDrawn(object) {
+        drawnCache.push(object);
+    }
+
+    /**
+    * Clears the service's cache of already drawn help sections.
+    *
+    * @function clearDrawn
+    */
+    function clearDrawn() {
+        drawnCache.length = 0;
+    }
+
+    // FIXME add docs
+    function HelpSummaryController($http, configService) {
+        const self = this;
+
+        self.closeHelpSummary = closeHelpSummary;
+        self.onSearchTermChange = onSearchTermChange;
+
+        self.filteredSections = [];
+
+        // get help location
+        const conf = configService.getSync;
+        if (conf.ui.help) {
+            useMarkdown(conf.ui.help.folderName || 'default');
+        }
+
+        function useMarkdown(foldername) {
+            const renderer = new marked.Renderer();
+            // make it easier to use images in markdown by prepending path to href if href is not an external source
+            // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
+            renderer.image = (href, title) => {
+                if (href.indexOf('http') === -1) {
+                    href = `help/${foldername}/images/` + href;
+                }
+                return `&lt;img src="${href}" alt="${title}">`;
+            };
+
+            const mdLocation = `help/${foldername}/${configService.getSync.language}.md`;
+            $http.get(mdLocation).then(r => {
+                // matches help sections from markdown file where each section begins with one hashbang and a space
+                // followed by the section header, exactly 2 spaces, then up to but not including a double space
+                // note that the {2,} below is used as the double line deparator since each double new line is actually 6
+                // but we'll also accept more than a double space
+                const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
+                let mdStr = r.data; // markdown file contents
+                let section; // used for storing individual section groupings
+                self.sections = []; // used in template for rendering help sections
+
+                // remove new line character ASCII (13) so that above regex is compatible with all
+                // operating systems (markdown file varies by OS new line preference)
+                mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+
+                // start breaking down markdown file into sections where h1 headers (#) denote a new section
+                // eslint-disable-next-line no-cond-assign
+                while (section = reg.exec(mdStr)) { // jshint ignore:line
+                    self.sections.push({
+                        header: section[1],
+                        // parse markdown on info section only. Note that the split/splice/join removes the header
+                        // and is a workaround for not being able to put info section into its own regex grouping like the header
+                        info: marked(section[0].split('\n').splice(2).join('\n'), { renderer }),
+                        isExpanded: false
+                    });
+                }
+            }).catch(error => {
+                self.hasNoHelp = true;
+                RV.logger.warn(error);
+            });
+        }
+
+        self.searchTerm = '';
+
+        /**
+         * Closes the Help panel.
+         *
+         * @function closeHelpSummary
+         * @private
+         */
+        function closeHelpSummary() {
+            $mdDialog.hide();
+        }
+
+        /**
+         * When a search term is entered, expand all the help sections (only once that are filtered will be visible, so it's okay).
+         * When a search term is cleared, collapse all the help sections.
+         * @function onSearchTermChange
+         * @private
+         * @param {String} value search string
+         */
+        function onSearchTermChange(value) {
+            self.sections.forEach(section =>
+                (section.isExpanded = value ? true : false));
+        }
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="app.ui%250D%250DProvides%2520ability%2520to%2520place%2520this%2520viewer%2520into%2520fullscreen%2520mode,%2520and%2520whether%2520it%2520is%2520actively%2520in%2520fullscreen%2520mode.fullScreenServicemodule_.html">fullScreenService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 16 2018 13:05:50 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ui/sidenav/sidenav.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ui/sidenav/sidenav.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import marked from 'marked';
+
+const templateURLs = {
+    about: require('./about-dialog.html'),
+    share: require('./share-dialog.html')
+};
+
+// this is a default configuration of the side menu
+// options are grouped into sections and will be rendered as distinct lists in the side menu panel
+const SIDENAV_CONFIG_DEFAULT = {
+    logo: true,
+    items: [
+        [
+            'layers',
+            'basemap'
+        ],
+        [
+            'fullscreen',
+            'export',
+            'share',
+            'touch',
+            'help'
+        ],
+        [
+            'language'
+        ]
+    ]
+};
+
+/**
+ *
+ * @module sideNavigationService
+ * @memberof app.ui
+ *
+ * @description
+ * The `sideNavigationService` service provides access and controls the side navigation menu.
+ * Exposes methods to close/open the side navigation panel.
+ */
+angular
+    .module('app.ui')
+    .factory('sideNavigationService', sideNavigationService);
+
+// need to find a more elegant way to include all these dependencies
+function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
+    basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
+    translations, $mdDialog, pluginService, geosearchService, appInfo) {
+
+    const service = {
+        open,
+        close,
+
+        controls: {},
+
+        ShareController,
+        AboutController
+    };
+
+    service.controls = {
+        layers: {
+            type: 'link',
+            label: 'appbar.tooltip.layers',
+            icon: 'maps:layers',
+            isChecked: () => stateManager.state.mainToc.active,
+            action: () => {
+                service.close();
+                stateManager.setActive('mainToc');
+            }
+        },
+        basemap: {
+            type: 'link',
+            label: 'nav.label.basemap',
+            icon: 'maps:map',
+            action: () => {
+                service.close();
+                basemapService.open();
+            }
+        },
+        geoSearch: {
+            type: 'link',
+            label: 'appbar.tooltip.geosearchshort',
+            icon: 'action:search',
+            action: () => {
+                service.close();
+                geosearchService.toggle();
+            }
+        },
+        export: {
+            type: 'link',
+            label: 'sidenav.label.export',
+            icon: 'community:export',
+            action: () => {
+                service.close();
+                exportService.open();
+            }
+        },
+        share: {
+            type: 'link',
+            label: 'sidenav.label.share',
+            icon: 'social:share',
+            action: () => {
+                service.close();
+
+                $mdDialog.show({
+                    controller: service.ShareController,
+                    controllerAs: 'self',
+                    templateUrl: templateURLs.share,
+                    parent: referenceService.panels.shell,
+                    disableParentScroll: false,
+                    clickOutsideToClose: true,
+                    fullscreen: false,
+                    onShowing: (scope, element) =>
+                        (scope.element = element.find('.side-nav-summary'))
+                }).then(() =>
+                    ($rootElement.find('.rv-shareLink').select()));
+            }
+        },
+        about: {
+            type: 'link',
+            label: 'sidenav.label.about',
+            icon: 'action:info_outline',
+            action: () => {
+                service.close();
+
+                $mdDialog.show({
+                    controller: service.AboutController,
+                    controllerAs: 'self',
+                    templateUrl: templateURLs.about,
+                    parent: referenceService.panels.shell,
+                    disableParentScroll: false,
+                    clickOutsideToClose: true,
+                    fullscreen: false
+                });
+            }
+        },
+        fullscreen: {
+            type: 'link',
+            label: 'sidenav.label.fullscreen',
+            icon: 'navigation:fullscreen',
+            isChecked: fullScreenService.isExpanded,
+            action: () => fullScreenService.toggle()
+        },
+        touch: {
+            type: 'link',
+            label: 'sidenav.label.touch',
+            icon: 'action:touch_app',
+            isChecked: () => $rootElement.hasClass('rv-touch'),
+            action: () => $rootElement.toggleClass('rv-touch')
+        },
+        help: {
+            type: 'link',
+            label: 'sidenav.label.help',
+            icon: 'community:help',
+            action: () => {
+                service.close();
+                helpService.open();
+            }
+        },
+        language: {
+            type: 'group',
+            label: 'sidenav.label.language',
+            icon: 'action:translate',
+            children: []
+        },
+        plugins: {
+            type: 'group',
+            label: 'sidenav.menu.plugin',
+            icon: 'action:settings_input_svideo',
+            children: []
+        }
+    };
+
+    init();
+
+    // TODO: is this affected by the config reload at all?
+    // Add any MenuItem plugins as they are created to the menu
+    pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
+        // first plugin created should add the plugin group
+        if (service.controls.plugins.children.length === 0) {
+            SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
+        }
+
+        mItem.label = mItem.name;
+        service.controls.plugins.children.push(mItem);
+    });
+
+    return service;
+
+    function ShareController(scope, $mdDialog, $rootElement, $http, configService) {
+        'ngInject';
+        const self = this;
+
+        // url cache to avoid unneeded API calls
+        const URLS = {
+            short: undefined,
+            long: undefined
+        };
+
+        self.switchChanged = switchChanged;
+        self.close = $mdDialog.hide;
+
+        getLongLink();
+
+        // fetch googleAPIKey - if it exists the short link switch option is shown
+        configService.onEveryConfigLoad(conf =>
+            (self.googleAPIUrl = conf.googleAPIKey ?
+                `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null)
+        );
+
+        /**
+        * Handles onClick event on URL input box
+        * @function switchChanged
+        * @param    {Boolean}    value   the value of the short/long switch option
+        */
+        function switchChanged(value) {
+            self.linkCopied = false;
+            return value ? getShortLink() : getLongLink();
+        }
+
+        /**
+        * Fetches a long url from the page if one has not yet been cached
+        * @function getLongLink
+        */
+        function getLongLink() {
+            if (typeof URLS.long === 'undefined' &amp;&amp; globalRegistry.getMap(appInfo.id)) { // no cached url exists
+                // eslint-disable-next-line no-return-assign
+                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
+                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+                }).then(() => {
+                    selectURL();
+                });
+            } else { // cache exists
+                self.url = URLS.long;
+                selectURL();
+            }
+        }
+
+        /**
+        * Fetches a short url from the Google API service if one has not yet been cached
+        * @function getShortLink
+        */
+        function getShortLink() {
+            // no cached url exists - making API call
+            if (typeof URLS.short === 'undefined') {
+                $http.post(self.googleAPIUrl, { longUrl: self.url })
+                    .then(r => {
+                        URLS.short = self.url = r.data.id;
+                        selectURL();
+                    })
+                    .catch(() => (URLS.short = undefined)); // reset cache from failed API call);
+            // cache exists, API call not needed
+            } else {
+                self.url = URLS.short;
+                selectURL();
+            }
+        }
+
+        /**
+        * Select URL in input box
+        * @function selectURL
+        */
+        function selectURL() {
+            if (scope.element !== undefined) {
+                scope.element.find('.rv-shareLink').select();
+            }
+        }
+    }
+
+    function AboutController(scope, $mdDialog, $sanitize, $http, configService) {
+        'ngInject';
+        const self = this;
+
+        self.close = $mdDialog.hide;
+
+        // get about map description from markdown or config file
+        configService.onEveryConfigLoad(config => {
+            if (config.ui.about.content) {
+                self.about = config.ui.about.content;
+            } else if (config.ui.about.folderName) {
+                useMarkdown(config.ui.about.folderName).then(html => {
+                    self.about = html;
+                }).catch(error => {
+                    RV.logger.warn(error);
+                });
+            }
+        });
+
+        /**
+         * Takes a folder path, fetches markdown files and parses them.
+         * @param {String} foldername path to the markdown files
+         * @return {Promise} a promise resolving to rendered HTML
+         */
+        function useMarkdown(foldername) {
+            const renderer = new marked.Renderer();
+            // make it easier to use images in markdown by prepending path to href if href is not an external source
+            // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
+            renderer.image = (href, title) => {
+                if (href.indexOf('http') === -1) {
+                    href = `about/${foldername}/images/` + href;
+                }
+                return `&lt;img src="${href}" alt="${title}">`;
+            };
+
+            const mdLocation = `about/${foldername}/${configService.getSync.language}.md`;
+            return $http.get(mdLocation).then(r => marked(r.data, { renderer }));
+        }
+    }
+
+    /**
+     * Opens side navigation panel.
+     * @function open
+     */
+    function open() {
+        $mdSidenav('left')
+            .open()
+            .then(() => $('md-sidenav[md-component-id="left"] button').first().rvFocus());
+    }
+
+    /**
+     * Closes side navigation panel.
+     * @function close
+     */
+    function close() {
+        return $mdSidenav('left').close();
+    }
+
+    /**
+     * Set up initial mapnav cluster buttons.
+     * Set up language change listener to update the buttons and language menus when a new config is loaded.
+     *
+     * @function init
+     * @private
+     */
+    function init() {
+        configService.onEveryConfigLoad(config => {
+            // all menu items should be defined in the config's ui section
+            // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
+            // or just let it failed
+            // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
+            service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
+
+            // generate the language selector menu;
+            const langs = config.languages;
+            service.controls.language.children = langs.map(l =>
+                ({
+                    type: 'link',
+                    label: translations[l].lang[l.substring(0, 2)],
+                    action: switchLanguage,
+                    isChecked: isCurrentLanguage,
+                    value: l
+                }));
+        });
+
+        /**
+         * Switches the language to the language represented by the sidemenu language control object.
+         *
+         * @function switchLanguage
+         * @param {Object} control sidemenu language control object
+         * @private
+         */
+        function switchLanguage(control) {
+            // reload service with the new language and close side panel
+            reloadService.loadNewLang(control.value);
+            service.close();
+        }
+
+        /**
+         * Checks if the provided sidemenu language control object represents the currently selected language
+         *
+         * @function isCurrentLanguage
+         * @private
+         * @param {Object} control sidemenu language control object
+         * @return {Boolean} true is sidemenu language control object represents the currently selected language
+         */
+        function isCurrentLanguage(control) {
+            return control.value === configService.getLang();
+        }
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="app.ui%250D%250DProvides%2520ability%2520to%2520place%2520this%2520viewer%2520into%2520fullscreen%2520mode,%2520and%2520whether%2520it%2520is%2520actively%2520in%2520fullscreen%2520mode.fullScreenServicemodule_.html">fullScreenService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 16 2018 13:05:50 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

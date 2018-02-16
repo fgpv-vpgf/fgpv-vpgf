@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bootstrap.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bootstrap.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* global Logdown */
+// eslint-disable-next-line max-statements
+
+import geoapi from 'geoApi';
+
+// fixes logger issue where it can be called before it is loaded, this reverts it to console
+// TODO: load logger lib before app starts
+RV.logger = console;
+
+// test user browser, true if IE false otherwise
+RV.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
+
+// Safari problem with file saver: https://github.com/eligrey/FileSaver.js/#supported-browsers
+// test if it is Safari browser on desktop and it if is, show a message to let user know we can't automatically save the file
+// they have to save it manually the same way as when the canvas is tainted.
+RV.isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent) &amp;&amp;
+    !/(iPhone|iPod|iPad)/i.test(navigator.platform);
+
+// set these outside of the initial creation in case the page defines RV for setting
+// properties like dojoURL
+Object.assign(RV, {
+    getMap,
+    ready,
+    allScriptsLoaded: false,
+    debug: {},
+    _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
+});
+
+RV._deferredPolyfills.forEach(dp => dp());
+
+const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
+
+const d = document;
+const scripts = d.getElementsByTagName('script'); // get scripts
+
+// TODO: make more robust; this way of getting script's url might break if the `asyn` attribute is added on the script tag
+const seedUrl = scripts[scripts.length - 1].src; // get the last loaded script, which is this
+const headNode = d.getElementsByTagName('head')[0];
+
+// inject fonts
+const fontsLink = d.createElement('link');
+fontsLink.href = '//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
+fontsLink.rel = 'stylesheet';
+headNode.appendChild(fontsLink);
+
+// registry of map proxies
+const mapRegistry = [];
+let readyQueue = []; // array of callbacks waiting on script loading to complete
+
+const mapProxy = {
+    _appPromise: null,
+    _initAppPromise: null,
+    appID: null,
+
+    _proxy(action, ...args) {
+        return this._appPromise.then(appInstance =>
+            appInstance[action](...args)
+        );
+    },
+
+    _initProxy(action, ...args) {
+        return this._initAppPromise.then(appInstance =>
+            appInstance[action](...args)
+        );
+    },
+
+    /**
+     * RCS layers to be loaded once the map has been instantiated.
+     *
+     * @function    loadRcsLayers
+     * @param {Array}  keys  array of strings containing RCS keys to be added
+     */
+    loadRcsLayers(keys) {
+        this._proxy('loadRcsLayers', keys);
+    },
+
+    /**
+     * Sets the translation language and reloads the map.
+     *
+     * @function    setLanguage
+     * @param   {String}    lang    the new language to use
+     */
+    setLanguage(lang) {
+        this._proxy('setLanguage', lang);
+    },
+
+    /**
+     * Returns a bookmark for the current viewers state.
+     *
+     * @function    getBookmark
+     * @returns     {Promise}    a promise that resolves to the bookmark containing the state of the viewer
+     */
+    getBookmark() {
+        return this._proxy('getBookmark');
+    },
+
+    /**
+     * useBookmark loads the provided bookmark into the map application. Unlike initialBookmark, it does not need to be the first bookmark loaded nor does it require `rv-wait` on the map DOM node. This method is typically triggered by user actions, taking priority over existing bookmarks.
+     *
+     * @function    useBookmark
+     * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+     */
+    useBookmark(bookmark) {
+        this._proxy('useBookmark', bookmark);
+    },
+
+    /**
+     * initialBookmark is intended to be the first bookmark loaded by the map application (for example, when a bookmark comes in the URL bar) and should only be used if the `rv-wait` attribute is set on the map DOM node.  `rv-wait` will inform the viewer to wait until an unblocking call like initialBookmark is called.
+     *
+     * If a useBookmark call happens to be triggered before initialBookmark it will take priority (useBookmark is typically triggered by user actions which should take priority over automated actions).
+     *
+     * @function    initialBookmark
+     * @param   {String}    bookmark    bookmark containing the desired state of the viewer
+     */
+    initialBookmark(bookmark) {
+        this._initProxy('initialBookmark', bookmark);
+    },
+
+    /**
+     *  Updates the extent of the map by centering and zooming the map.
+     *
+     * @function    centerAndZoom
+     * @param {Number} x                    The x coord to center on
+     * @param {Number} y                    The y coord to center on
+     * @param {Object} spatialRef           The spatial reference for the coordinates
+     * @param {Number} zoom                 The level to zoom to
+     */
+    centerAndZoom(x, y, spatialRef, zoom) {
+        this._proxy('centerAndZoom', x, y, spatialRef, zoom);
+    },
+
+    /**
+     * Loads using a bookmark from sessionStorage (if found) and a keyList.
+     *
+     * @function    restoreSession
+     * @param   {Array}     keys      array of strings containing RCS keys to load
+     */
+    restoreSession(keys) {
+        this._initProxy('restoreSession', keys);
+    },
+
+    /**
+     * Returns an array of ids for rcs added layers.
+     *
+     * @function    getRcsLayerIDs
+     * @returns     {Promise}     a promise which resolves to a list of rcs layer ids
+     */
+    getRcsLayerIDs() {
+        return this._proxy('getRcsLayerIDs');
+    },
+
+    /**
+     * Registers a plugin with a viewer instance.
+     * This function expects a minimum of two parameters such that:
+     *   - the first parameter is a plugin class reference
+     *   - the second parameter is a unique plugin id string
+     * Any additional parameters will be passed to the plugins init method
+     *
+     * @function    registerPlugin
+     */
+    registerPlugin() {
+        this._loadPromise.then(app => app.registerPlugin(...arguments));
+    },
+
+    /**
+    * Provides data needed for the display of a north arrow on the map for lambert and mercator projections. All other projections
+    * are not supported, however mapPntCntr and mapScrnCntr are still returned so that if needed, external API's can be created for
+    * any projection type.
+    *
+    * The returned object has the following properties:
+    *    projectionSupported    {boolean}   true iff current projection is lambert or mercator
+    *    screenX                {Number}    left offset for arrow to intersect line between map center and north point
+    *    angleDegrees           {Number}    angle derived from intersection of horizontal axis line with line between map center and north point
+    *    rotationAngle          {Number}    number of degrees to rotate north arrow, 0 being none with heading due north
+    *    mapPntCntr             {Object}    lat/lng of center in current extent
+    *    mapScrnCntr            {Object}    pixel x,y of center in current extent
+    *
+    * @function  northArrow
+    * @returns  {Object}    an object containing data needed for either static or moving north arrows
+    */
+    getNorthArrowData() {
+        return this._proxy('northArrow');
+    },
+
+    /**
+    * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree).
+    *
+    * The returned array can contain 2 items:
+    *   if spatial reference ouput = 4326 (lat/long)
+    *    [0]           {String}    lat/long in degree, minute, second (N/S) | lat/long in degree, minute, second (E/W)
+    *    [1]           {String}    lat/long in decimal degree (N/S)| lat/long in decimal degree (E/W)
+    *   otherwise
+    *    [0]           {String}    number (N/S)
+    *    [1]           {String}    number (E/W)
+    *
+    * @function  mapCoordinates
+    * @returns  {Array}    an array containing data needed for map coordinates
+    */
+    getMapCoordinates() {
+        return this._proxy('mapCoordinates');
+    },
+
+
+    /**
+    * reinitial when a new config file is loaded
+    * @function  reInitialize
+    * @param {String} bookmark     The new bookmark when config is reloaded
+    */
+    reInitialize(bookmark = null) {
+        this._proxy('reInitialize', bookmark);
+    },
+
+    _init(appID) {
+        this.appID = appID;
+
+        this._appPromise = new Promise(resolve =>
+            // store a callback function in the proxy object itself for map instances to call upon readiness
+            (this._registerMap = appInstance =>
+                // resolve with the actual instance of the map;
+                // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
+                resolve(appInstance))
+        );
+
+        // this promise waits to be resolved by the rvReady event on the angular side
+        // unlike the other promises this is only resolved once during the page load cycle
+        if (typeof this._loadPromise === 'undefined') {
+            this._loadPromise = new Promise(resolve =>
+                // store a callback function in the proxy object itself for map instances to call upon readiness
+                (this._applicationLoaded = appInstance => resolve(appInstance))
+            );
+        }
+
+        this._initAppPromise = new Promise(resolve =>
+            // store a callback function in the proxy object itself for map instances to call upon readiness
+            (this._registerPreLoadApi = appInstance =>
+                // resolve with the actual instance of the map;
+                // after this point, all queued calls to `loadRcsLayers`, `setLanguage`, etc. will trigger
+                resolve(appInstance))
+        );
+
+        return this;
+    },
+
+    _deregisterMap() {
+        this._init();
+    }
+};
+
+const nodeIdList = RV._nodeIdList;
+nodeIdList.forEach(appId => {
+    // create debug object for each app instance
+    RV.debug[appId] = {};
+    mapRegistry[appId] = Object.create(mapProxy)._init(appId);
+});
+
+/**
+ * The following enhancements are applied to make Logdown better for our use cases:
+ *      1) Allows log prefixes to be added as the first argument to a logging function
+ *         For example, RV.logger.warn('focusManager', 'is the best');
+ *         Normally, prefixes cannot be defined after a Logdown instance is created. We correct this
+ *         by wrapping console functions such that Logdown instances are created after the console message is executed.
+ *
+ *      2) We correct an issue where Logdown does not retrieve a pre-existing instance by prefix name, which causes prefix
+ *         instances with the same name to have multiple colors.
+ *
+ * @function    enhanceLogger
+ * @param       {Array}  enabledMethods    an array of console function string names like log, debug, warn that should be displayed
+ * @return {Object} the logger object
+ */
+function enhanceLogger(enabledMethods = []) {
+    const methods = ['debug', 'log', 'info', 'warn', 'error'];
+    const logger = {};
+
+    methods.forEach(type => {
+        logger[type] = function() {
+            const args = [].slice.call(arguments);
+            if (enabledMethods.indexOf(type) !== -1) {
+                getLogdownInstance(args.splice(0, 1)[0])[type](...args);
+            }
+        };
+    });
+    return logger;
+}
+
+/**
+ * Logdown should return an existing instance of a logger if it finds one with matching prefixes. However, there seems to be a bug
+ * where logdown does not trim() its prefix search when alignOutput is true - the extra spaces cause the error. So we manually try
+ * to find instances and only create a new one if one if not found.
+ *
+ * @function    getLogdownInstance
+ * @param       {String}  prefix    the name/prefix of the logger instance
+ * @return {Object} an instance of the logdown logger
+ */
+function getLogdownInstance(prefix) {
+    let logger = Logdown._instances.find(ld => ld.opts.prefix.trim() === prefix);
+    // logger for prefix was not found, create a new one
+    if (!logger) {
+        logger = new Logdown({ prefix, alignOutput: true });
+    }
+
+    return logger;
+}
+
+/**
+ * Called to buffer code until the library code has been fully loaded.  Behaves similar to jQuery style DOM ready events.
+ * @function
+ * @param {Function} callBack a function to be called once the library is loaded
+ */
+function ready(callBack) {
+    if (RV.allScriptsLoaded) {
+        callBack();
+    } else {
+        readyQueue.push(callBack);
+    }
+}
+
+/**
+ * Fires all callbacks waiting on the ready event and empties the callback queue.
+ * @private
+ */
+function fireRvReady() {
+    readyQueue.forEach(cb => cb());
+    readyQueue = [];
+}
+
+// external "sync" function to retrieve a map instance
+// in reality it returns a map proxy queueing calls to the map until it's ready
+function getMap(id) {
+    return mapRegistry[id];
+}
+
+/**
+ * Compares two versions of a script, prints warnings to the console if the versions are not the same
+ *
+ * @private
+ * @function versionCheck
+ * @param  {String} ourVersion      our version of the script
+ * @param  {String} theirVersion    their version of the script
+ * @param  {String} scriptName      the name of the script
+ */
+function versionCheck(ourVersion, theirVersion, scriptName) {
+    const ourVersionSplit = ourVersion.split('.');
+    const versionDiff = theirVersion.split('.')
+        // compare the two versions
+        .map((x, index) => parseInt(x) - ourVersionSplit[index])
+        // find first non-equal part
+        .find(x => x !== 0);
+
+    if (typeof versionDiff === 'undefined') {
+        // the versions were equal
+        return;
+    }
+
+    const warningMessgage = `${scriptName} ${theirVersion} is detected ` +
+        `(${ versionDiff > 0 ? 'more recent' : 'older' } that expected ${ourVersion} version). ` +
+        `No tests were done with this version. The viewer might be unstable or not work correctly.`;
+
+    console.warn(warningMessgage);
+}
+
+RV.debug._trackFocus = trackFocusBuilder();
+
+/**
+ * Builds a focus tracking debug option.
+ * @function trackFocusBuilder
+ * @private
+ * @return {Function} enables/disabled focus/blur event tracking on the page; this function accepts a boolean - `true` enables tracking; `false`, disables it
+ */
+function trackFocusBuilder() {
+    let lastActiveElement = document.activeElement;
+
+    let isActive = false;
+
+    return () => {
+        isActive = !isActive;
+        if (isActive) {
+            RV.logger.debug('trackFocus', 'Enabled');
+            attachEvents();
+        } else {
+            RV.logger.debug('trackFocus', 'Disabled');
+            detachEvents();
+        }
+    };
+
+    /***/
+
+    /**
+     * Logs blur events.
+     * @function detectBlur
+     * @private
+     * @param  {Object} event blur event
+     */
+    function detectBlur(event) {
+        // Do logic related to blur using document.activeElement;
+        // You can do change detection too using lastActiveElement as a history
+        RV.logger.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
+    }
+
+    /**
+     * Checks if the currently active element is the same as the previosly focused one.
+     * @function isSameActiveElement
+     * @private
+     * @return {Boolean} true if it's the same object
+     */
+    function isSameActiveElement() {
+        let currentActiveElement = document.activeElement;
+        if (lastActiveElement !== currentActiveElement) {
+            lastActiveElement = currentActiveElement;
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Logs focus events.
+     * @function detectFocus
+     * @private
+     * @param  {Object} event focus event
+     */
+    function detectFocus(event) {
+        // Add logic to detect focus and to see if it has changed or not from the lastActiveElement.
+        RV.logger.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
+    }
+
+    /**
+     * Attaches listeners to the window to listen for focus and blue events.
+     * @function attachEvents
+     * @private
+     */
+    function attachEvents() {
+        window.addEventListener('focus', detectFocus, true);
+        window.addEventListener('blur', detectBlur, true);
+    }
+
+    /**
+     * Detaches focus and blur listeners from the window.
+     * @function detachEvents
+     * @private
+     */
+    function detachEvents() {
+        window.removeEventListener('focus', detectFocus, true);
+        window.removeEventListener('blur', detectBlur, true);
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="app.ui%250D%250DProvides%2520ability%2520to%2520place%2520this%2520viewer%2520into%2520fullscreen%2520mode,%2520and%2520whether%2520it%2520is%2520actively%2520in%2520fullscreen%2520mode.fullScreenServicemodule_.html">fullScreenService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 16 2018 13:05:50 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

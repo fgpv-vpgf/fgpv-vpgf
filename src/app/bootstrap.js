@@ -3,9 +3,6 @@
 
 import geoapi from 'geoApi';
 
-// check if window.RV has been created by ie-polyfills already, otherwise init
-const RV = window.RV = window.RV ? window.RV : {};
-
 // fixes logger issue where it can be called before it is loaded, this reverts it to console
 // TODO: load logger lib before app starts
 RV.logger = console;
@@ -26,7 +23,6 @@ Object.assign(RV, {
     ready,
     allScriptsLoaded: false,
     debug: {},
-    _nodes: null,
     _deferredPolyfills: RV._deferredPolyfills || [] // holds callback for any polyfills or patching that needs to be done after the core.js is loaded
 });
 
@@ -250,39 +246,10 @@ const mapProxy = {
     }
 };
 
-const nodes = [].slice.call(document.querySelectorAll('[is=rv-map]'));
-nodes.filter(node => nodes.indexOf(node) === -1).forEach(node => nodes.push(node));
-
-export const rvNodes = nodes;
-
-let counter = 0;
-
-nodes.forEach(node => {
-
-    let appId = node.getAttribute('id');
-
-    customAttrs
-        .filter(attrName => node.getAttribute(`data-rv-${attrName}`))
-        .forEach(attrName => {
-            node.setAttribute(`rv-${attrName}`, node.getAttribute(`data-rv-${attrName}`)); // getAttribute returns a string so data-rv-fullscreen-app="false" will copy correctly
-            node.removeAttribute(`data-rv-${attrName}`);
-        });
-
-    if (!appId) {
-        appId = 'rv-app-' + counter++;
-        node.setAttribute('id', appId);
-    }
-
-    node.setAttribute('rv-trap-focus', appId);
-
-    // basic touch device detection; if detected set rv-touch class so that touch mode is on by default
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        node.className += ' rv-touch';
-    }
-
+const nodeIdList = RV._nodeIdList;
+nodeIdList.forEach(appId => {
     // create debug object for each app instance
     RV.debug[appId] = {};
-
     mapRegistry[appId] = Object.create(mapProxy)._init(appId);
 });
 

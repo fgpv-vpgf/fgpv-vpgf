@@ -29,6 +29,10 @@ export class MouseEvent {
     /** The number of pixels from the left edge of the viewport. */
     screenX: number;
 
+    equals(otherMouseEvent: MouseEvent) {
+        return this.screenX === otherMouseEvent.screenX && this.screenY === otherMouseEvent.screenY;
+    }
+
     constructor(event: esriMouseEvent) {
         // mapPoint is specific to esri and is not available for all event types
         try {
