@@ -47,7 +47,7 @@ class AttribFC extends basicFC.BasicFC {
      * @returns {Promise}         resolves with a layer attribute data object
      */
     getAttribs () {
-        const attribDownloaded = this.attribsLoaded();
+        const attribsDownloaded = this.attribsLoaded();
 
         const attribPromise = this._layerPackage.getAttribs();
 
@@ -55,8 +55,14 @@ class AttribFC extends basicFC.BasicFC {
             // only trigger the event the first time when the download was in progress.
             // after the attribs have been downloaded, if triggered again through API, since the attributes have
             // previously been downloaded, this event will not trigger in the viewer
-            if (!attribDownloaded) {
+            if (!attribsDownloaded) {
                 this._parent._attribsAdded(this._idx, attrib.features);
+
+                // for file layers, since attributes are local and we have promise initially,
+                // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
+                if (this._parent.isFileLayer()) {
+                    this._layerPackage.loadIsDone = true;
+                }
             }
         });
 
