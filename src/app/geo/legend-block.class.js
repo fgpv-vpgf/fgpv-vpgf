@@ -251,21 +251,21 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * @param {LegendBlock} legendBlock legend block where opacity is being updated
          */
         _updateApiLayerOpacity() {
-            let layers;
+            let layer;
 
-            // TODO: modify this after when LayerGroup completed  ?
             if (appInfo.mapi) {
                 if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                    // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
+                    // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
+                    // of both the id and index to find the correct layer
+                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
                 } else {
-                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                    layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
 
-                layers.forEach(layer => {
-                    if (layer.opacity !== this._proxy.opacity) {
-                        layer._opacityChanged.next(this._proxy.opacity);
-                    }
-                });
+                if (layer && layer.opacity !== this._proxy.opacity) {
+                    layer._opacityChanged.next(this._proxy.opacity);
+                }
             }
         }
 
@@ -275,21 +275,21 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * @param {LegendBlock} legendBlock legend block where visibility is being updated
          */
         _updateApiLayerVisibility() {
-            let layers;
+            let layer;
 
-            // TODO: modify this after when LayerGroup completed  ?
             if (appInfo.mapi) {
                 if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    layers = appInfo.mapi.layers.filter(l => l.layerIndex === this._layerConfig.index);
+                    // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
+                    // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
+                    // of both the id and index to find the correct layer
+                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
                 } else {
-                    layers = appInfo.mapi.layers.filter(l => l.id === this._layerConfig.id);
+                    layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
 
-                layers.forEach(layer => {
-                    if (layer.visibility !== this._proxy.visibility) {
-                        layer._visibilityChanged.next(this._proxy.visibility);
-                    }
-                });
+                if (layer && layer.visibility !== this._proxy.visibility) {
+                    layer._visibilityChanged.next(this._proxy.visibility);
+                }
             }
         }
     }

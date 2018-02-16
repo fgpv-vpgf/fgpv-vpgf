@@ -12,7 +12,7 @@ angular
     .factory('tocService', tocService);
 
 function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
-    geoService, metadataService, errorService, LegendBlock, configService, legendService, Geo) {
+    geoService, metadataService, errorService, LegendBlock, configService, legendService, Geo, events) {
 
     const service = {
         // method called by the options and flags set on the layer item
@@ -56,6 +56,28 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     watchPanelState('sideMetadata', 'metadata');
     watchPanelState('sideSettings', 'settings');
     watchPanelState('tableFulldata', 'table');
+
+    // wire in a hook to any map for removing a layer. this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.removeApiLayer = (id, index) => {
+            const legendBlocks = configService.getSync.map.legendBlocks;
+            let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
+
+            if (layerToRemove) {
+                if (index !== undefined) {
+                    // in cases of dynamic, if index specified, remove only that child, otherwise we choose to remove entire group below
+                    layerToRemove = layerToRemove.find(l => l.itemIndex === index);
+                } else {
+                    // removing the first instance, whether it be the legend group or node
+                    layerToRemove = layerToRemove[0];
+                }
+
+                if (layerToRemove) {
+                    service.removeLayer(layerToRemove);
+                }
+            }
+        }
+    });
 
     return service;
 

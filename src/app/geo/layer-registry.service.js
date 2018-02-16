@@ -112,6 +112,24 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             if (refreshInterval) {
                 updateAttributes = common.$interval(() => {
                     layerRecord.cleanUpAttribs();
+
+                    let configLayer;
+
+                    // remove the pre-existing attributes for the ConfigLayer(s)
+                    if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                        const childIndices = _simpleWalk(layerRecord.getChildTree());
+                        childIndices.forEach(idx => {
+                            configLayer = mapApi.layers.allLayers.find(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
+                            if (configLayer) {
+                                configLayer.removeAttributes();
+                            }
+                        });
+                    } else {
+                        configLayer = mapApi.layers.getLayersById(layerRecord.layerId)[0];
+                        if (configLayer) {
+                            configLayer.removeAttributes();
+                        }
+                    }
                 }, refreshInterval * 60000);
             }
 
@@ -180,16 +198,21 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
                 const childIndices = _simpleWalk(layerRecord.getChildTree());
                 childIndices.forEach(idx => {
-                    index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
+                    index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
                     if (index !== -1) {
-                        mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                        const apiLayer = mapApi.layers.allLayers[index];
+
+                        mapApi.layers.allLayers.splice(index, 1);
+                        mapApi.layers._layerRemoved.next(apiLayer);
                     }
                 });
             } else {
-                index = mapApi.layers.findIndex(layer => layer.id === layerRecord.layerId);
-
+                index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
                 if (index !== -1) {
-                    mapApi.layers.splice(index, 1);    // TODO: modify this after when LayerGroup completed  ?
+                    const apiLayer = mapApi.layers.allLayers[index];
+
+                    mapApi.layers.allLayers.splice(index, 1);
+                    mapApi.layers._layerRemoved.next(apiLayer);
                 }
             }
         }
@@ -618,11 +641,44 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             const childIndices = _simpleWalk(layerRecord.getChildTree());
             childIndices.forEach(idx => {
                 apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord, idx);
+                _initializeLayerObservables(apiLayer);
                 _addLayerToApiMap(apiLayer);
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
             apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
+            _initializeLayerObservables(apiLayer);
             _addLayerToApiMap(apiLayer);
+        }
+
+        /**
+         * This will subscribe to the apiLayer attribute observables and then notify the LayerGroup of any such changes.
+         *
+         * @function _initializeLayerObservables
+         * @private
+         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created whose attributes updates we must subscribe to
+         */
+        function _initializeLayerObservables(apiLayer) {
+            apiLayer.attributesAdded.subscribe(attribs => {
+                mapApi.layers._attributesAdded.next({
+                    layer: apiLayer,
+                    attributes: attribs
+                });
+            });
+
+            apiLayer.attributesChanged.subscribe(changedAttribs => {
+                mapApi.layers._attributesChanged.next({
+                    layer: apiLayer,
+                    attributesBeforeChange: changedAttribs.attributesBeforeChange,
+                    attributesAfterChange: changedAttribs.attributesAfterChange
+                });
+            });
+
+            apiLayer.attributesRemoved.subscribe(attribs => {
+                mapApi.layers._attributesRemoved.next({
+                    layer: apiLayer,
+                    attributes: attribs
+                });
+            });
         }
 
         /**
@@ -638,19 +694,19 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             let index;
 
             if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
-                index = mapApi.layers.findIndex(layer =>
+                index = mapApi.layers.allLayers.findIndex(layer =>
                     layer.id === apiLayer.id &&
                     layer.layerIndex === apiLayer.layerIndex);
             } else {
-                index = mapApi.layers.findIndex(layer => layer.id === apiLayer.id);
+                index = mapApi.layers.allLayers.findIndex(layer => layer.id === apiLayer.id);
             }
 
             if (index !== -1) {
-                mapApi.layers[index] = apiLayer;      // TODO: modify this after when LayerGroup completed  ?
+                mapApi.layers.allLayers[index] = apiLayer;
             } else {
-                mapApi.layers.push(apiLayer);     // TODO: modify this after when LayerGroup completed  ?
+                mapApi.layers.allLayers.push(apiLayer);
+                mapApi.layers._layerAdded.next(apiLayer);
             }
-
         }
     }
 
@@ -678,9 +734,9 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     function _onLayerAttribDownload(layerRecord, idx, attribs) {
         let configLayer;
         if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx));
+            configLayer = mapApi.layers.allLayers.find(l => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx));
         } else {
-            configLayer = mapApi.layers.find(l => l.id === layerRecord.layerId);
+            configLayer = mapApi.layers.getLayersById(layerRecord.layerId)[0];
         }
 
         if (configLayer) {

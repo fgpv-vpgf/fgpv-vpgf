@@ -12,7 +12,7 @@ angular
     .factory('legendService', legendServiceFactory);
 
 function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
-    layerRegistry, common) {
+    layerRegistry, common, events, $rootScope) {
 
     const service = {
         constructLegend,
@@ -21,6 +21,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         addLayerDefinition,
         removeLegendBlock
     };
+
+    // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.addConfigLayer = layerJSON => {
+            const layer = service.addLayerDefinition(layerJSON);
+            $rootScope.$applyAsync();
+            return layer;
+        };
+    });
 
     return service;
 
@@ -251,15 +260,23 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             // FIXME: in cases of removing dynamic children, they also need to be removed from the structure returned by `layerRecord.getChildTree()`
             // without this, loading from the bookmark, removed dynamic children will come back with their visibility set to "off"
 
+            let layerRecordId = legendBlock.layerRecordId;
+
+            // legendBlock.layerRecordId can be undefined if we recursively call 'removeLayer()' in tocService because we are
+            // removing a groups parent. in that case we need to find the correct layerRecordId of the initial layer that was being removed
+            if (layerRecordId === null) {
+                layerRecordId = legendBlock.walk(l => l.layerRecordId !== null ? l.layerRecordId : null).filter(a => a)[0];
+            }
+
             // check if any other blocks reference this layer record
             // if none found, it's safe to remove the layer record
             const isSafeToRemove = legendBlocks
-                .walk(entry => entry.layerRecordId === legendBlock.layerRecordId)
+                .walk(entry => entry.layerRecordId === layerRecordId)
                 .filter(a => a)
                 .length === 0;
 
             if (isSafeToRemove) {
-                layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
+                layerRegistry.removeLayerRecord(layerRecordId);
             }
 
             // remove any bounding box layers associated with this legend block
