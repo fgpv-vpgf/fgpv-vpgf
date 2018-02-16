@@ -25,6 +25,7 @@ import 'datatables.net-select';
 // APPLICATION MAIN IMPORTS
 import './api-loader';
 import './app-seed';
+import './bootstrap';
 import './global-registry.js';
 import './geo/geo.module.js';
 import './core/core.module.js';

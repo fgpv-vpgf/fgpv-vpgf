@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>./docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
+  <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
+  <script>
+    docute.init({
+        nav: [
+            {title: 'Home', path: '/'},
+            {title: 'Using the map', type: 'dropdown', items: [
+                {title: 'On a webpage', path: '/user/index'},
+                {title: 'Configuration', path: '/user/working_examples'}
+            ]},
+            {title: 'API', type: 'dropdown', items: [
+                {title: 'An Introduction', path: '/api/welcome'},
+                {title: 'Core extensions', path: '/api/core-extensions'},
+                {title: 'Technical Documentation', path: 'http://fgpv-vpgf.github.io/fgpv-vpgf/api/developer/index.html'}
+            ]},
+            {title: 'Developer Documenation', type: 'dropdown', items: [
+                {title: 'An overview', path: '/developer/getting_started'},
+                {title: 'How to contribute', path: '/developer/contributing_guide'},
+                {title: 'Writing extensions', path: '/developer/plugins'},
+                {title: 'Technical JSDocs', path: 'http://fgpv-vpgf.github.io/fgpv-vpgf/v2.1.0/'}
+            ]}
+        ],
+        plugins: [],
+        repo: 'fgpv-vpgf/fgpv-vpgf'
+    })
+  </script>
+</body>
+</html>

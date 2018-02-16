@@ -1,18 +1,16 @@
-### STOP!
-THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+# API
 
-THIS API IS NOT SUPPORTED.
+This guide is intented for developers. It provides a general overview of the API, its major components, and coding examples.
 
-
-### Introduction
-
-This guide is intented for developers. It outlines the entire viewers API and provides examples throughout.
+<p class="tip">
+    Use this guide to understand the overall structure of the API, how `Observables` are used, and take in a few examples. You should refer to the [technical documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/api/developer/index.html) after reading this guide since not all API functionality is covered in this guide.
+</p>
 
 In all but some trival cases, you'll want to use the API in something called an `extension`. An `extension` is a file(s) where you can write custom code that uses our API. There is no right or wrong way to write an extension - choose the approach that works best for you.
 
 We'll start by example - building an extension that allows you to toggle layer visibility through an external select box.
 
-### Getting Started
+## Getting Started
 
 Let's create a new file named `layerSelector.js`. The relative path to the `layerSelector.js` file goes inside the `rv-extensions` property of your map element, like so:
 
@@ -26,7 +24,7 @@ Additional extensions can be added, separated by commas:
 <div id="map1" is="rv-map" rv-config="config.json" rv-extensions="js/layerSelector.js,http://www.example.com/js/anotherextension.js"></div>
 ```
 
-### Adding the select element
+## Adding the select element
 
 Inside `layerSelector.js` type the following:
 
@@ -46,7 +44,7 @@ You first create a new select element then iterate over all layers adding them a
 
 You might be wondering where `mapInstance` comes from - it's a scoped variable that the api adds to our extension file when it gets loaded and executed.
 
-### Adding changeVisibility function
+## Adding changeVisibility function
 
 Now you'll add the function `changeVisibility` that we called in the above code.
 
@@ -61,7 +59,7 @@ function changeVisibility(element) {
 
 This function iterates over all layers setting visibility to false. It then gets the selected layer and makes it visible.
 
-### All together now
+## All together now
 
 ```js
   map = mapInstance; // save instance for future use
@@ -83,13 +81,13 @@ This function iterates over all layers setting visibility to false. It then gets
 }
 ```
 
-### Advanced extension loading
+## Advanced extension loading
 
 This section is for more advanced types of extension loading. It should only be used if setting the `rv-extensions` property is not desirable or you wish to support dynamically added maps.
 
 We'll modify the above example so that it can be loaded directly in the host page without the use of the `rv-extensions` property.
 
-### Loading the file
+## Loading the file
 
 You **must** load extension files **after** the main viewers javascript file `rv-main.js` so that the global `RV` namespace can be created before your extension uses it.
 
@@ -98,7 +96,7 @@ You **must** load extension files **after** the main viewers javascript file `rv
 <script src="js/layerSelector.js"></script>
 ```
 
-### Get map instances
+## Get map instances
 
 You no longer have access to the scoped `mapInstance` variable like you did when you used the `rv-extensions` property. Instead you can subscribe to the `RV.map_added` observable like this:
 
@@ -116,7 +114,7 @@ RV.mapInstances.forEach(mapInstance => {
 });
 ```
 
-### All together
+## All together
 
 ```js
   RV.mapInstances.forEach(onNewMap);

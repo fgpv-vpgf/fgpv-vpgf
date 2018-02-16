@@ -179,6 +179,7 @@ module.exports = function (env) {
     // not supported while doing hmr - causes memory leaks and slows build time by ~40%
     if (!env.hmr && !env.inspect) {
         config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+        config.plugins.push(new WebpackShellPlugin({onBuildStart:['npm run doc', 'npm run apidoc']}));
     }
     
     if (env.inspect) {
