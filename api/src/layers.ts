@@ -120,7 +120,10 @@ export class BaseLayer {
      * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attributes are ready. */
     getAttributes(): Array<Object>;
 
-    /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes. */
+    /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes.
+     *
+     * TODO: add a counter observable when downloading the attributes.
+     */
     getAttributes(attributeKey?: number): Object | undefined | Array<Object> {
         let attributes: Array<Object>;
 
@@ -128,7 +131,6 @@ export class BaseLayer {
             return this._attributeArray.find(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
         } else {
             if (this._attributeArray.length === 0) {
-                // TODO: need a counter observable while actually downloading the attributes
                 this.fetchAttributes();
                 return [];
             } else {
@@ -183,11 +185,14 @@ export class BaseLayer {
     /** Returns the name of the layer.  */
     get name(): string { return this._name; }
 
-    /** Sets the name of the layer. This updates the name throughout the viewer. */
+    /** Sets the name of the layer. This updates the name throughout the viewer.
+     *
+     * TODO: allow setting of name for dynamic layers / children.
+     */
     set name(name: string) {
         const oldName: string = this._layerProxy.name;
 
-        // TODO: currently does not work for dynamics since no setter for LayerInterface, so using layerRecord instead.
+        // no setter for LayerInterface, so using layerRecord instead
         // need to decide how to move forward with this  ?
         // Setting the name seems to be more legend based than directly layer based and may possibly need to be moved
         // to a different part of the API as opposed to a layer modification
@@ -279,8 +284,8 @@ export class BaseLayer {
 
             let keyAttrib: Object | undefined = this.getAttributes(attributeKey);
             if (keyAttrib !== undefined) {
-                let atrribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
-                allAttribs.splice(atrribIndex, 1);
+                let attribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
+                allAttribs.splice(attribIndex, 1);
 
                 this._attributesRemoved.next([ keyAttrib ]);
             }
@@ -292,10 +297,12 @@ export class BaseLayer {
         }
     }
 
-    /** Exports the layer to a GeoJSON object. */
-    toGeoJson(callback: (obj: Object) => void): void {
-        // TODO: complete this function
-    }
+    // /** Exports the layer to a GeoJSON object.
+    //  *
+    //  * TODO: complete this function.
+    //  */
+    // toGeoJson(callback: (obj: Object) => void): void {
+    // }
 }
 
 /**
@@ -577,7 +584,10 @@ export class LayerGroup {
     /** Removes the layer with the provided id from the group. */
     removeLayer(id: string | number): void;
 
-    /** Removes the layer from the group using the provided layer itself, or by id. */
+    /** Removes the layer from the group using the provided layer itself, or by id.
+     *
+     * TODO: decide how to move forward with removing dynamic children using id.
+     */
     removeLayer(layerOrId: BaseLayer | string | number): void {
         if (isLayerObject(layerOrId)) {
             if (layerOrId.layerIndex !== undefined) {
@@ -589,7 +599,6 @@ export class LayerGroup {
             // if id provided is for dynamic layer, this will remove all the children as well
             // currently no way to remove an individual child through an id, may need the use of an optional second parameter
             // similar to how it is done a few lines above
-            // TODO: decide how to move forward with this
             this._mapI.mapI.removeApiLayer(layerOrId.toString());
         }
     }
@@ -631,10 +640,12 @@ export class LayerGroup {
         return this._layersArray.filter(layer => layer instanceof (<any>type));
     }
 
-    /** Exports the layers in the group to a GeoJSON object. */
-    toGeoJson(callback: (obj: Object) => void): void {
-        // TODO: complete this function
-    }
+    // /** Exports the layers in the group to a GeoJSON object.
+    //  *
+    //  * TODO: complete this function.
+    //  */
+    // toGeoJson(callback: (obj: Object) => void): void {
+    // }
 }
 
 function isLayerObject(layerOrId: BaseLayer | string | number): layerOrId is BaseLayer {
