@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>XYBounds | r2v2</title>
+	<title>XY | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -38,6 +38,8 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -54,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_geometry_.html">&quot;geometry&quot;</a>
+					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_geometry_.xybounds.html">XYBounds</a>
+					<a href="_api_src_geometry_.xy.html">XY</a>
 				</li>
 			</ul>
-			<h1>Class XYBounds</h1>
+			<h1>Class XY</h1>
 		</div>
 	</div>
 </header>
@@ -70,34 +72,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Represents a rectangular geographical area with a north-east and south-west boundary definition (x, y) in decimal degrees.</p>
+						<p>Represents a geographical point in decimal degrees.</p>
 					</div>
-					<pre><code class="lang-text">+--------NE
-|         |
-|         |
-|         |
-SW--------+
-</code></pre>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><h4 id="check-if-two-xybounds-intersect">Check if two <code>XYBounds</code> intersect</h4>
-							<pre><code class="lang-js"><span class="hljs-keyword">const</span> ne = <span class="hljs-keyword">new</span> RV.GEO.XY(<span class="hljs-number">150</span>, <span class="hljs-number">65</span>);
-<span class="hljs-keyword">const</span> sw = <span class="hljs-keyword">new</span> RV.GEO.XY(<span class="hljs-number">100</span>, <span class="hljs-number">30</span>);
-
-<span class="hljs-keyword">const</span> b1 = <span class="hljs-keyword">new</span> RV.GEO.XYBounds(ne, sw);
-<span class="hljs-keyword">const</span> b2 = <span class="hljs-keyword">new</span> RV.GEO.XYBounds([<span class="hljs-number">170</span>, <span class="hljs-number">35</span>], [<span class="hljs-number">90</span>, <span class="hljs-number">-60</span>]); <span class="hljs-comment">// an [x, y] tuple works too</span>
-
-<span class="hljs-built_in">console</span>.log(b1.intersects(b2)); <span class="hljs-comment">// true</span>
-</code></pre>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">XYBounds</span>
+						<span class="target">XY</span>
 					</li>
 				</ul>
 			</section>
@@ -108,30 +91,23 @@ SW--------+
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_geometry_.xybounds.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_geometry_.xybounds.html#center" class="tsd-kind-icon">center</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_geometry_.xybounds.html#northeast" class="tsd-kind-icon">north<wbr>East</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_geometry_.xybounds.html#southwest" class="tsd-kind-icon">south<wbr>West</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_geometry_.xybounds.html#extent" class="tsd-kind-icon">extent</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#x" class="tsd-kind-icon">x</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#y" class="tsd-kind-icon">y</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_geometry_.xybounds.html#contains" class="tsd-kind-icon">contains</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_geometry_.xybounds.html#equals" class="tsd-kind-icon">equals</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_geometry_.xybounds.html#intersects" class="tsd-kind-icon">intersects</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_geometry_.xybounds.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#projecttopoint" class="tsd-kind-icon">project<wbr>ToPoint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#urlvalue" class="tsd-kind-icon">url<wbr>Value</a></li>
 							</ul>
 						</section>
 					</div>
@@ -143,25 +119,25 @@ SW--------+
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new XYBounds<span class="tsd-signature-symbol">(</span>northEast<span class="tsd-signature-symbol">: </span><a href="_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.extent.html" class="tsd-signature-type">Extent</a>, southWest<span class="tsd-signature-symbol">?: </span><a href="_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></li>
+						<li class="tsd-signature tsd-kind-icon">new XY<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L102">geometry.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>northEast: <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.extent.html" class="tsd-signature-type">Extent</a></h5>
+									<h5>x: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> southWest: <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<h5>y: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -169,108 +145,63 @@ SW--------+
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="center" class="tsd-anchor"></a>
-					<h3>center</h3>
-					<div class="tsd-signature tsd-kind-icon">center<span class="tsd-signature-symbol">:</span> <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a></div>
+					<a name="x" class="tsd-anchor"></a>
+					<h3>x</h3>
+					<div class="tsd-signature tsd-kind-icon">x<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L100">geometry.ts:100</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L24">api/src/geometry.ts:24</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Longitude in decimal degrees, bounded by ±360°</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="northeast" class="tsd-anchor"></a>
-					<h3>north<wbr>East</h3>
-					<div class="tsd-signature tsd-kind-icon">north<wbr>East<span class="tsd-signature-symbol">:</span> <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a></div>
+					<a name="y" class="tsd-anchor"></a>
+					<h3>y</h3>
+					<div class="tsd-signature tsd-kind-icon">y<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L101">geometry.ts:101</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="southwest" class="tsd-anchor"></a>
-					<h3>south<wbr>West</h3>
-					<div class="tsd-signature tsd-kind-icon">south<wbr>West<span class="tsd-signature-symbol">:</span> <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L102">geometry.ts:102</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="extent" class="tsd-anchor"></a>
-					<h3>extent</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> extent<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_geometry_.extent.html" class="tsd-signature-type">Extent</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L129">geometry.ts:129</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_geometry_.extent.html" class="tsd-signature-type">Extent</a></h4>
-						</li>
-					</ul>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Latitude in decimal degrees, bounded by ±90°</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="contains" class="tsd-anchor"></a>
-					<h3>contains</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">contains<span class="tsd-signature-symbol">(</span>xy<span class="tsd-signature-symbol">: </span><a href="_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L141">geometry.ts:141</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns true if the given XY point is contained within this boundary.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>xy: <a href="_geometry_.xy.html" class="tsd-signature-type">XY</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="equals" class="tsd-anchor"></a>
 					<h3>equals</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>otherXYBounds<span class="tsd-signature-symbol">: </span><a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>otherXY<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L146">geometry.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L54">api/src/geometry.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns true if this boundary is equal geographically to the other XYBounds provided.</p>
+									<p>Returns true if both this and the provided <code>XY</code> instance have identical x<code>and</code>y` values.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>otherXYBounds: <a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></h5>
+									<h5>otherXY: <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Another <code>XY</code> instance for comparison</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -278,30 +209,30 @@ SW--------+
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="intersects" class="tsd-anchor"></a>
-					<h3>intersects</h3>
+					<a name="projecttopoint" class="tsd-anchor"></a>
+					<h3>project<wbr>ToPoint</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">intersects<span class="tsd-signature-symbol">(</span>otherXYBounds<span class="tsd-signature-symbol">: </span><a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">project<wbr>ToPoint<span class="tsd-signature-symbol">(</span>targetProjection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L154">geometry.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L42">api/src/geometry.ts:42</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns true if this boundary intersects with the other XYBounds provided.</p>
+									<p>Returns a projection Point</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>otherXYBounds: <a href="_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></h5>
+									<h5>targetProjection: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -315,14 +246,45 @@ SW--------+
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L164">geometry.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L70">api/src/geometry.ts:70</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the bounds in the form &quot;x_lo,y_lo,x_hi,y_hi&quot;.</p>
+									<p>Returns a string of the form <code>y,x</code> for the current values of x and y, rounded to 6 decimal places.</p>
 								</div>
 							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="urlvalue" class="tsd-anchor"></a>
+					<h3>url<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">url<wbr>Value<span class="tsd-signature-symbol">(</span>precision<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L63">api/src/geometry.ts:63</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a string of the form <code>y,x</code> for the current values of x and y.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> precision: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;6</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The amount of decimal places for rounding</p>
+									</div>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
@@ -335,75 +297,81 @@ SW--------+
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_events_.html">"events"</a>
+						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_geometry_.html">"geometry"</a>
+						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_layers_.html">"layers"</a>
+						<a href="../modules/_api_src_layers_.html">"api/src/layers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_map_.html">"map"</a>
+						<a href="../modules/_api_src_map_.html">"api/src/map"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_.html">"ui"</a>
+						<a href="../modules/_api_src_ui_.html">"api/src/ui"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_app_seed_.html">"src/app/app-<wbr>seed"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_startup_.html">"src/app/startup"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_geometry_.xy.html" class="tsd-kind-icon">XY</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a>
+						<a href="_api_src_geometry_.xy.html" class="tsd-kind-icon">XY</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_geometry_.xy.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#center" class="tsd-kind-icon">center</a>
+								<a href="_api_src_geometry_.xy.html#x" class="tsd-kind-icon">x</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#northeast" class="tsd-kind-icon">north<wbr>East</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#southwest" class="tsd-kind-icon">south<wbr>West</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#extent" class="tsd-kind-icon">extent</a>
+								<a href="_api_src_geometry_.xy.html#y" class="tsd-kind-icon">y</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#contains" class="tsd-kind-icon">contains</a>
+								<a href="_api_src_geometry_.xy.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#equals" class="tsd-kind-icon">equals</a>
+								<a href="_api_src_geometry_.xy.html#projecttopoint" class="tsd-kind-icon">project<wbr>ToPoint</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#intersects" class="tsd-kind-icon">intersects</a>
+								<a href="_api_src_geometry_.xy.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_geometry_.xybounds.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+								<a href="_api_src_geometry_.xy.html#urlvalue" class="tsd-kind-icon">url<wbr>Value</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
+						<a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
+						<a href="../modules/_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>
+						<a href="../modules/_api_src_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>
 					</li>
 				</ul>
 			</nav>

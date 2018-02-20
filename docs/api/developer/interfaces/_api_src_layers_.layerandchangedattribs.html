@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PanelEvent | r2v2</title>
+	<title>LayerAndChangedAttribs | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -38,6 +38,8 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -54,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_events_.html">&quot;events&quot;</a>
+					<a href="../modules/_api_src_layers_.html">&quot;api/src/layers&quot;</a>
 				</li>
 				<li>
-					<a href="_events_.panelevent.html">PanelEvent</a>
+					<a href="_api_src_layers_.layerandchangedattribs.html">LayerAndChangedAttribs</a>
 				</li>
 			</ul>
-			<h1>Class PanelEvent</h1>
+			<h1>Interface LayerAndChangedAttribs</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +73,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PanelEvent</span>
+						<a href="_api_src_layers_.changedattribs.html" class="tsd-signature-type">ChangedAttribs</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">LayerAndChangedAttribs</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -79,116 +86,50 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_events_.panelevent.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_events_.panelevent.html#_content" class="tsd-kind-icon">_content</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_events_.panelevent.html#_name" class="tsd-kind-icon">_name</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_events_.panelevent.html#content" class="tsd-kind-icon">content</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_events_.panelevent.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_api_src_layers_.layerandchangedattribs.html#attributesafterchange" class="tsd-kind-icon">attributes<wbr>After<wbr>Change</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_api_src_layers_.layerandchangedattribs.html#attributesbeforechange" class="tsd-kind-icon">attributes<wbr>Before<wbr>Change</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_api_src_layers_.layerandchangedattribs.html#layer" class="tsd-kind-icon">layer</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Panel<wbr>Event<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_events_.panelevent.html" class="tsd-signature-type">PanelEvent</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/events.ts#L73">events.ts:73</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>node: <span class="tsd-signature-type">Node</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_events_.panelevent.html" class="tsd-signature-type">PanelEvent</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_content" class="tsd-anchor"></a>
-					<h3>_content</h3>
-					<div class="tsd-signature tsd-kind-icon">_content<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Node</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+					<a name="attributesafterchange" class="tsd-anchor"></a>
+					<h3>attributes<wbr>After<wbr>Change</h3>
+					<div class="tsd-signature tsd-kind-icon">attributes<wbr>After<wbr>Change<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_layers_.changedattribs.html">ChangedAttribs</a>.<a href="_api_src_layers_.changedattribs.html#attributesafterchange">attributesAfterChange</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/events.ts#L73">events.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L683">api/src/layers.ts:683</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_name" class="tsd-anchor"></a>
-					<h3>_name</h3>
-					<div class="tsd-signature tsd-kind-icon">_name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+					<a name="attributesbeforechange" class="tsd-anchor"></a>
+					<h3>attributes<wbr>Before<wbr>Change</h3>
+					<div class="tsd-signature tsd-kind-icon">attributes<wbr>Before<wbr>Change<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_layers_.changedattribs.html">ChangedAttribs</a>.<a href="_api_src_layers_.changedattribs.html#attributesbeforechange">attributesBeforeChange</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/events.ts#L72">events.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L682">api/src/layers.ts:682</a></li>
 						</ul>
 					</aside>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="content" class="tsd-anchor"></a>
-					<h3>content</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> content<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Node</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/events.ts#L84">events.ts:84</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Node</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> name<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/events.ts#L80">events.ts:80</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="layer" class="tsd-anchor"></a>
+					<h3>layer</h3>
+					<div class="tsd-signature tsd-kind-icon">layer<span class="tsd-signature-symbol">:</span> <a href="../classes/_api_src_layers_.baselayer.html" class="tsd-signature-type">BaseLayer</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L687">api/src/layers.ts:687</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -198,57 +139,87 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_events_.html">"events"</a>
+						<a href="../modules/_api_src_layers_.html">"api/src/layers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_geometry_.html">"geometry"</a>
+						<a href="../modules/_api_src_map_.html">"api/src/map"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_layers_.html">"layers"</a>
+						<a href="../modules/_api_src_ui_.html">"api/src/ui"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_map_.html">"map"</a>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_.html">"ui"</a>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_app_seed_.html">"src/app/app-<wbr>seed"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_startup_.html">"src/app/startup"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_events_.mapclickevent.html" class="tsd-kind-icon">Map<wbr>Click<wbr>Event</a>
+						<a href="../classes/_api_src_layers_.baselayer.html" class="tsd-kind-icon">Base<wbr>Layer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_events_.mouseevent.html" class="tsd-kind-icon">Mouse<wbr>Event</a>
+						<a href="../classes/_api_src_layers_.configlayer.html" class="tsd-kind-icon">Config<wbr>Layer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_layers_.layergroup.html" class="tsd-kind-icon">Layer<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.attribobject.html" class="tsd-kind-icon">Attrib<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.changedattribs.html" class="tsd-kind-icon">Changed<wbr>Attribs</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.featuresarray.html" class="tsd-kind-icon">Features<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.jsonconfig.html" class="tsd-kind-icon">JSONConfig</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerandattribs.html" class="tsd-kind-icon">Layer<wbr>And<wbr>Attribs</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_events_.panelevent.html" class="tsd-kind-icon">Panel<wbr>Event</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerandchangedattribs.html" class="tsd-kind-icon">Layer<wbr>And<wbr>Changed<wbr>Attribs</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_events_.panelevent.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_src_layers_.layerandchangedattribs.html#attributesafterchange" class="tsd-kind-icon">attributes<wbr>After<wbr>Change</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_events_.panelevent.html#_content" class="tsd-kind-icon">_content</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+								<a href="_api_src_layers_.layerandchangedattribs.html#attributesbeforechange" class="tsd-kind-icon">attributes<wbr>Before<wbr>Change</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_events_.panelevent.html#_name" class="tsd-kind-icon">_name</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_events_.panelevent.html#content" class="tsd-kind-icon">content</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_events_.panelevent.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_api_src_layers_.layerandchangedattribs.html#layer" class="tsd-kind-icon">layer</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_events_.esrimouseevent.html" class="tsd-kind-icon">esri<wbr>Mouse<wbr>Event</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerinterface.html" class="tsd-kind-icon">Layer<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_layers_.html#islayerobject" class="tsd-kind-icon">is<wbr>Layer<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_layers_.html#layertypes" class="tsd-kind-icon">layer<wbr>Types</a>
 					</li>
 				</ul>
 			</nav>

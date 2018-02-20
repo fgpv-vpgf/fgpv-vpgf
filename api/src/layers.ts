@@ -18,7 +18,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
-import Map from 'api/Map';
+import Map from 'api/map';
 
 const layerTypes = {
     ESRI_DYNAMIC: 'esriDynamic',

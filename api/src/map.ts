@@ -219,7 +219,7 @@ export default class Map {
 
     /** Returns the current zoom level applied on the map */
     get zoom(): number {
-        return this.mapI.zoomCounter;
+        return this.mapI.getLevel();
     }
 
     /** Zooms to the level provided. */

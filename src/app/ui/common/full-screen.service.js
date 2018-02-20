@@ -8,12 +8,6 @@ const FULL_SCREEN_Z_INDEX = 50;
 // There seems to be some of the z-index- in Angular Material which are not derived from variables (in version 1.0.5);
 // This should be revisited after upgrading Angular Material or in case additional bug reports (host page having higher z-index for example)
 
-/**
- * @module fullScreenService
- * @memberof app.ui
- *
- * Provides ability to place this viewer into fullscreen mode, and whether it is actively in fullscreen mode.
- */
 angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);
