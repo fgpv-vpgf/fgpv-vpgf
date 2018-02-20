@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>UI | r2v2</title>
+	<title>MouseEvent | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -38,6 +38,8 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -54,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_.html">&quot;ui&quot;</a>
+					<a href="../modules/_api_src_events_.html">&quot;api/src/events&quot;</a>
 				</li>
 				<li>
-					<a href="_ui_.ui.html">UI</a>
+					<a href="_api_src_events_.mouseevent.html">MouseEvent</a>
 				</li>
 			</ul>
-			<h1>Class UI</h1>
+			<h1>Class MouseEvent</h1>
 		</div>
 	</div>
 </header>
@@ -69,20 +71,24 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><h4 id="using-an-anchor-point-to-remove-context-map">Using an anchor point to remove context map</h4>
-							<pre><code class="lang-js">RZ.mapInstances[<span class="hljs-number">0</span>].ui.anchors.CONTEXT_MAP.remove();
-</code></pre>
-						</dd>
-					</dl>
+					<div class="lead">
+						<p>Provides screen and geographic point information for most observable mouse actions.</p>
+					</div>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">UI</span>
+						<span class="target">MouseEvent</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_api_src_events_.mapclickevent.html" class="tsd-signature-type">MapClickEvent</a>
+							</li>
+							<li>
+								<a href="../interfaces/_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -93,23 +99,21 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_ui_.ui.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_events_.mouseevent.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_.ui.html#_mapi" class="tsd-kind-icon">_mapI</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_.ui.html#_panels" class="tsd-kind-icon">_panels</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_.ui.html#_tooltip" class="tsd-kind-icon">_tooltip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_events_.mouseevent.html#screenx" class="tsd-kind-icon">screenX</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_events_.mouseevent.html#screeny" class="tsd-kind-icon">screenY</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_events_.mouseevent.html#xy" class="tsd-kind-icon">xy</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_ui_.ui.html#anchors" class="tsd-kind-icon">anchors</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_ui_.ui.html#panels" class="tsd-kind-icon">panels</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_ui_.ui.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_events_.mouseevent.html#equals" class="tsd-kind-icon">equals</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,22 +125,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new UI<span class="tsd-signature-symbol">(</span>mapInstance<span class="tsd-signature-symbol">: </span><a href="_map_.map.html" class="tsd-signature-type">Map</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.ui.html" class="tsd-signature-type">UI</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Mouse<wbr>Event<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L237">ui.ts:237</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L34">api/src/events.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>mapInstance: <a href="_map_.map.html" class="tsd-signature-type">Map</a></h5>
+									<h5>event: <a href="../interfaces/_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.ui.html" class="tsd-signature-type">UI</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -144,86 +148,73 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_mapi" class="tsd-anchor"></a>
-					<h3>_mapI</h3>
-					<div class="tsd-signature tsd-kind-icon">_mapI<span class="tsd-signature-symbol">:</span> <a href="_map_.map.html" class="tsd-signature-type">Map</a></div>
+					<a name="screenx" class="tsd-anchor"></a>
+					<h3>screenX</h3>
+					<div class="tsd-signature tsd-kind-icon">screenX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L235">ui.ts:235</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L30">api/src/events.ts:30</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The number of pixels from the left edge of the viewport.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_panels" class="tsd-anchor"></a>
-					<h3>_panels</h3>
-					<div class="tsd-signature tsd-kind-icon">_panels<span class="tsd-signature-symbol">:</span> <a href="_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></div>
+					<a name="screeny" class="tsd-anchor"></a>
+					<h3>screenY</h3>
+					<div class="tsd-signature tsd-kind-icon">screenY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L236">ui.ts:236</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L28">api/src/events.ts:28</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The number of pixels from the top of the viewport.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_tooltip" class="tsd-anchor"></a>
-					<h3>_tooltip</h3>
-					<div class="tsd-signature tsd-kind-icon">_tooltip<span class="tsd-signature-symbol">:</span> <a href="_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a><span class="tsd-signature-symbol"> =&nbsp;new ToolTip()</span></div>
+					<a name="xy" class="tsd-anchor"></a>
+					<h3>xy</h3>
+					<div class="tsd-signature tsd-kind-icon">xy<span class="tsd-signature-symbol">:</span> <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L237">ui.ts:237</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L26">api/src/events.ts:26</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Geographic point information</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="anchors" class="tsd-anchor"></a>
-					<h3>anchors</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> anchors<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_ui_.anchorpoints.html" class="tsd-signature-type">anchorPoints</a></li>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="equals" class="tsd-anchor"></a>
+					<h3>equals</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>otherMouseEvent<span class="tsd-signature-symbol">: </span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L252">ui.ts:252</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L32">api/src/events.ts:32</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_ui_.anchorpoints.html" class="tsd-signature-type">anchorPoints</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="panels" class="tsd-anchor"></a>
-					<h3>panels</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> panels<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L244">ui.ts:244</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="tooltip" class="tsd-anchor"></a>
-					<h3>tooltip</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> tooltip<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/ui.ts#L248">ui.ts:248</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>otherMouseEvent: <a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -235,72 +226,69 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_events_.html">"events"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_geometry_.html">"geometry"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_layers_.html">"layers"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_map_.html">"map"</a>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_ui_.html">"ui"</a>
+						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_layers_.html">"api/src/layers"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_map_.html">"api/src/map"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_ui_.html">"api/src/ui"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_app_seed_.html">"src/app/app-<wbr>seed"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_startup_.html">"src/app/startup"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_.basepanel.html" class="tsd-kind-icon">Base<wbr>Panel</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.panel.html" class="tsd-kind-icon">Panel</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.panelregistry.html" class="tsd-kind-icon">Panel<wbr>Registry</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_ui_.tooltip.html" class="tsd-kind-icon">Tool<wbr>Tip</a>
+						<a href="_api_src_events_.mapclickevent.html" class="tsd-kind-icon">Map<wbr>Click<wbr>Event</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.ui.html" class="tsd-kind-icon">UI</a>
+						<a href="_api_src_events_.mouseevent.html" class="tsd-kind-icon">Mouse<wbr>Event</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_ui_.ui.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_events_.mouseevent.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_.ui.html#_mapi" class="tsd-kind-icon">_mapI</a>
+								<a href="_api_src_events_.mouseevent.html#screenx" class="tsd-kind-icon">screenX</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_.ui.html#_panels" class="tsd-kind-icon">_panels</a>
+								<a href="_api_src_events_.mouseevent.html#screeny" class="tsd-kind-icon">screenY</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_.ui.html#_tooltip" class="tsd-kind-icon">_tooltip</a>
+								<a href="_api_src_events_.mouseevent.html#xy" class="tsd-kind-icon">xy</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_ui_.ui.html#anchors" class="tsd-kind-icon">anchors</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_ui_.ui.html#panels" class="tsd-kind-icon">panels</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_ui_.ui.html#tooltip" class="tsd-kind-icon">tooltip</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_events_.mouseevent.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_ui_.screenposition.html" class="tsd-kind-icon">Screen<wbr>Position</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_events_.panelevent.html" class="tsd-kind-icon">Panel<wbr>Event</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_ui_.anchorpoints.html" class="tsd-kind-icon">anchor<wbr>Points</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_events_.esrimouseevent.html" class="tsd-kind-icon">esri<wbr>Mouse<wbr>Event</a>
 					</li>
 				</ul>
 			</nav>

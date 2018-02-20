@@ -1,5 +1,9 @@
 # API
 
+<p class="danger">
+    The APi in this guide is not yet officially supported until RAMP v3 is released. If using, please keep in mind that any part of the api can change without advanced noticed.
+</p>
+
 This guide is intented for developers. It provides a general overview of the API, its major components, and coding examples.
 
 <p class="tip">
@@ -26,7 +30,7 @@ Additional extensions can be added, separated by commas:
 
 ## Adding the select element
 
-Inside `layerSelector.js` type the following:
+Inside `layerSelector.js` type the following:app.ui
 
 ```js
 var newSelect = document.createElement("select");

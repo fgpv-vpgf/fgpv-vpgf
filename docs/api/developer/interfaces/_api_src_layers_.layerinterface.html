@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Extent | r2v2</title>
+	<title>LayerInterface | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -38,6 +38,8 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -54,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_geometry_.html">&quot;geometry&quot;</a>
+					<a href="../modules/_api_src_layers_.html">&quot;api/src/layers&quot;</a>
 				</li>
 				<li>
-					<a href="_geometry_.extent.html">Extent</a>
+					<a href="_api_src_layers_.layerinterface.html">LayerInterface</a>
 				</li>
 			</ul>
-			<h1>Interface Extent</h1>
+			<h1>Interface LayerInterface</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Extent</span>
+						<span class="target">LayerInterface</span>
 					</li>
 				</ul>
 			</section>
@@ -79,87 +81,46 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#getcenter" class="tsd-kind-icon">get<wbr>Center</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#spatialreference" class="tsd-kind-icon">spatial<wbr>Reference</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#xmax" class="tsd-kind-icon">xmax</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#xmin" class="tsd-kind-icon">xmin</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#ymax" class="tsd-kind-icon">ymax</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_geometry_.extent.html#ymin" class="tsd-kind-icon">ymin</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_api_src_layers_.layerinterface.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_api_src_layers_.layerinterface.html#opacity" class="tsd-kind-icon">opacity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_api_src_layers_.layerinterface.html#visibility" class="tsd-kind-icon">visibility</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="getcenter" class="tsd-anchor"></a>
-					<h3>get<wbr>Center</h3>
-					<div class="tsd-signature tsd-kind-icon">get<wbr>Center<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L187">geometry.ts:187</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L656">api/src/layers.ts:656</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="spatialreference" class="tsd-anchor"></a>
-					<h3>spatial<wbr>Reference</h3>
-					<div class="tsd-signature tsd-kind-icon">spatial<wbr>Reference<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="opacity" class="tsd-anchor"></a>
+					<h3>opacity</h3>
+					<div class="tsd-signature tsd-kind-icon">opacity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L186">geometry.ts:186</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>wkid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="xmax" class="tsd-anchor"></a>
-					<h3>xmax</h3>
-					<div class="tsd-signature tsd-kind-icon">xmax<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L183">geometry.ts:183</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L657">api/src/layers.ts:657</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="xmin" class="tsd-anchor"></a>
-					<h3>xmin</h3>
-					<div class="tsd-signature tsd-kind-icon">xmin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="visibility" class="tsd-anchor"></a>
+					<h3>visibility</h3>
+					<div class="tsd-signature tsd-kind-icon">visibility<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L182">geometry.ts:182</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ymax" class="tsd-anchor"></a>
-					<h3>ymax</h3>
-					<div class="tsd-signature tsd-kind-icon">ymax<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L184">geometry.ts:184</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ymin" class="tsd-anchor"></a>
-					<h3>ymin</h3>
-					<div class="tsd-signature tsd-kind-icon">ymin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/c9a64825/api/src/geometry.ts#L185">geometry.ts:185</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/layers.ts#L658">api/src/layers.ts:658</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,66 +132,87 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_events_.html">"events"</a>
+						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_geometry_.html">"geometry"</a>
+						<a href="../modules/_api_src_layers_.html">"api/src/layers"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_layers_.html">"layers"</a>
+						<a href="../modules/_api_src_map_.html">"api/src/map"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_map_.html">"map"</a>
+						<a href="../modules/_api_src_ui_.html">"api/src/ui"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ui_.html">"ui"</a>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_app_seed_.html">"src/app/app-<wbr>seed"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_startup_.html">"src/app/startup"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_geometry_.xy.html" class="tsd-kind-icon">XY</a>
+						<a href="../classes/_api_src_layers_.baselayer.html" class="tsd-kind-icon">Base<wbr>Layer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a>
+						<a href="../classes/_api_src_layers_.configlayer.html" class="tsd-kind-icon">Config<wbr>Layer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_layers_.layergroup.html" class="tsd-kind-icon">Layer<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.attribobject.html" class="tsd-kind-icon">Attrib<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.changedattribs.html" class="tsd-kind-icon">Changed<wbr>Attribs</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.featuresarray.html" class="tsd-kind-icon">Features<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.jsonconfig.html" class="tsd-kind-icon">JSONConfig</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerandattribs.html" class="tsd-kind-icon">Layer<wbr>And<wbr>Attribs</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerandchangedattribs.html" class="tsd-kind-icon">Layer<wbr>And<wbr>Changed<wbr>Attribs</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.layerinterface.html" class="tsd-kind-icon">Layer<wbr>Interface</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#getcenter" class="tsd-kind-icon">get<wbr>Center</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_api_src_layers_.layerinterface.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#spatialreference" class="tsd-kind-icon">spatial<wbr>Reference</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_api_src_layers_.layerinterface.html#opacity" class="tsd-kind-icon">opacity</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#xmax" class="tsd-kind-icon">xmax</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#xmin" class="tsd-kind-icon">xmin</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#ymax" class="tsd-kind-icon">ymax</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_geometry_.extent.html#ymin" class="tsd-kind-icon">ymin</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_api_src_layers_.layerinterface.html#visibility" class="tsd-kind-icon">visibility</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_layers_.html#islayerobject" class="tsd-kind-icon">is<wbr>Layer<wbr>Object</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_layers_.html#layertypes" class="tsd-kind-icon">layer<wbr>Types</a>
 					</li>
 				</ul>
 			</nav>
