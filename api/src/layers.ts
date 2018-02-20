@@ -14,8 +14,11 @@
  * THIS API IS NOT SUPPORTED.
  */
 
-import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
+import Map from 'api/Map';
 
 const layerTypes = {
     ESRI_DYNAMIC: 'esriDynamic',
@@ -65,7 +68,7 @@ export class BaseLayer {
     _layerProxy: any;
 
     protected _attributesAdded: BehaviorSubject<Array<Object>>;
-    protected _attributesChanged: Subject<Array<Object>>;
+    protected _attributesChanged: Subject<ChangedAttribs>;
     protected _attributesRemoved: Subject<Array<Object>>;
 
     /** Sets the layers viewer map instance. */
@@ -98,7 +101,7 @@ export class BaseLayer {
      * Emits whenever an existing attribute entry is updated.
      * @event attributesChanged
      */
-    get attributesChanged(): Observable<Array<Object>> {
+    get attributesChanged(): Observable<ChangedAttribs> {
         return this._attributesChanged.asObservable();
     }
 
@@ -117,7 +120,10 @@ export class BaseLayer {
      * returned if no prior attributes existed. Use the `attributes_added` event to determine when pulled attributes are ready. */
     getAttributes(): Array<Object>;
 
-    /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes. */
+    /** If key provided, returns the requested attributes by id, or undefined if the id does not exist. Else returns all attributes.
+     *
+     * TODO: add a counter observable when downloading the attributes.
+     */
     getAttributes(attributeKey?: number): Object | undefined | Array<Object> {
         let attributes: Array<Object>;
 
@@ -125,7 +131,6 @@ export class BaseLayer {
             return this._attributeArray.find(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
         } else {
             if (this._attributeArray.length === 0) {
-                // TODO: need a counter observable while actually downloading the attributes
                 this.fetchAttributes();
                 return [];
             } else {
@@ -153,7 +158,7 @@ export class BaseLayer {
                 const oldValue: Object = Object.assign({}, attribValue);
                 (<any>attribValue)[valueOrFieldName] = value;
 
-                this._attributesChanged.next([ oldValue, attribValue ]);
+                this._attributesChanged.next({ attributesBeforeChange: oldValue, attributesAfterChange: attribValue });
             }
         } else {
             let index: number = this._attributeArray.findIndex(attrib =>
@@ -161,9 +166,12 @@ export class BaseLayer {
 
             if (index !== -1) {
                 const oldValue: Object = Object.assign({}, this._attributeArray[index]);
-                this._attributeArray[index] = valueOrFieldName;
 
-                this._attributesChanged.next([ oldValue, this._attributeArray[index] ]);
+                Object.keys(this._attributeArray[index]).forEach(key => {
+                    (<any>this._attributeArray[index])[key] = (<any>valueOrFieldName)[key];
+                });
+
+                this._attributesChanged.next({ attributesBeforeChange: oldValue, attributesAfterChange: this._attributeArray[index] });
             }
         }
     }
@@ -177,11 +185,14 @@ export class BaseLayer {
     /** Returns the name of the layer.  */
     get name(): string { return this._name; }
 
-    /** Sets the name of the layer. This updates the name throughout the viewer. */
+    /** Sets the name of the layer. This updates the name throughout the viewer.
+     *
+     * TODO: allow setting of name for dynamic layers / children.
+     */
     set name(name: string) {
         const oldName: string = this._layerProxy.name;
 
-        // TODO: currently does not work for dynamics since no setter for LayerInterface, so using layerRecord instead.
+        // no setter for LayerInterface, so using layerRecord instead
         // need to decide how to move forward with this  ?
         // Setting the name seems to be more legend based than directly layer based and may possibly need to be moved
         // to a different part of the API as opposed to a layer modification
@@ -193,7 +204,7 @@ export class BaseLayer {
             this._viewerLayer.config.name = name;
         }
 
-        if (oldName !== name) {
+        if (oldName !== name && this._layerIndex === undefined) {
             this._nameChanged.next(name);
         }
     }
@@ -273,8 +284,8 @@ export class BaseLayer {
 
             let keyAttrib: Object | undefined = this.getAttributes(attributeKey);
             if (keyAttrib !== undefined) {
-                let atrribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
-                allAttribs.splice(atrribIndex, 1);
+                let attribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
+                allAttribs.splice(attribIndex, 1);
 
                 this._attributesRemoved.next([ keyAttrib ]);
             }
@@ -286,10 +297,12 @@ export class BaseLayer {
         }
     }
 
-    /** Exports the layer to a GeoJSON object. */
-    toGeoJson(callback: (obj: Object) => void): void {
-        // TODO: complete this function  ?
-    }
+    // /** Exports the layer to a GeoJSON object.
+    //  *
+    //  * TODO: complete this function.
+    //  */
+    // toGeoJson(callback: (obj: Object) => void): void {
+    // }
 }
 
 /**
@@ -436,6 +449,209 @@ export class ConfigLayer extends BaseLayer {
     }
 }
 
+/**
+ * #### Under Consideration
+ * - To expose the events `geometry_added`, `geometry_removed`. These could only fire for `SimpleLayer` instances in this group.
+ *
+ * A layer group created for every map instance consisting of all layers on that map. Layers can be added through the viewers configuration,
+ * import options and also externally.
+ *
+ * @example Create a ConfigLayer for some map instance <br><br>
+ *
+ * ```js
+ * const layerJson = {
+ *   "id": "myLayer1",
+ *   "name": "An Incredible Layer",
+ *   "layerType": "esriFeature",
+ *   "controls": [
+ *     "remove"
+ *   ],
+ *   "state": {
+ *     "visibility": false,
+ *     "boundingBox": false
+ *   },
+ *   "url": "http://example.com/MapServer/URL"
+ * };
+ *
+ * const myConfigLayer = RZ.mapById('<mapID>').layers.addLayer(layerJSON);
+ * ```
+ */
+export class LayerGroup {
+    /** @ignore */
+    _mapI: Map
+    /** @ignore */
+     _layersArray: Array<BaseLayer> = [];
+
+    private _layerAdded: Subject<BaseLayer>;
+    private _layerRemoved: Subject<BaseLayer>
+
+    private _attributesAdded: Subject<LayerAndAttribs>; // Subject vs BehaviourSubject  ? How to initalize BehaviourSubject if that is the best option
+    private _attributesChanged: Subject<LayerAndChangedAttribs>;
+    private _attributesRemoved: Subject<LayerAndAttribs>;
+
+    private _click: Subject<BaseLayer>;
+
+    /** Sets the layer groups api map instance. */
+    constructor(mapInstance: Map) {
+        this._mapI = mapInstance;
+
+        this._layerAdded = new Subject();
+        this._layerRemoved = new Subject();
+
+        this._attributesAdded = new Subject();
+        this._attributesChanged = new Subject();
+        this._attributesRemoved = new Subject();
+
+        this._click = new Subject();
+    }
+
+    /** Returns all layers in the group. */
+    get allLayers(): Array<BaseLayer> {
+        return this._layersArray;
+    }
+
+    /**
+     * Emits whenever a layer is added to the group.
+     * @event layerAdded
+     */
+    get layerAdded(): Observable<BaseLayer> {
+        return this._layerAdded.asObservable();
+    }
+
+    /**
+     * Emits whenever a layer is removed from the group.
+     * @event layerRemoved
+     */
+    get layerRemoved(): Observable<BaseLayer> {
+        return this._layerRemoved.asObservable();
+    }
+
+    /**
+     * Emits whenever one or more attributes are added for a layer in the group.
+     * @event attributesAdded
+     */
+    get attributesAdded(): Observable<LayerAndAttribs> {
+        return this._attributesAdded.asObservable();
+    }
+
+    /**
+     * Emits whenever an existing attribute entry is updated for a layer in the group.
+     * @event attributesChanged
+     */
+    get attributesChanged(): Observable<LayerAndChangedAttribs> {
+        return this._attributesChanged.asObservable();
+    }
+
+    /**
+     * Emits whenever attributes are removed for a layer in the group.
+     * @event attributesRemoved
+     */
+    get attributesRemoved(): Observable<LayerAndAttribs> {
+        return this._attributesRemoved.asObservable();
+    }
+
+    /**
+     * Emits whenever a layer is clicked on the legend.
+     * @event click
+     */
+    get click(): Observable<BaseLayer> {
+        return this._click.asObservable();
+    }
+
+    // /** Adds the provided layer instance to the group, and returns the instance. */
+    // addLayer(layer: BaseLayer): BaseLayer;
+
+    // /** Providing a layer json snippet returns a `ConfigLayer`.*/
+    // addLayer(layerJSON: JSON): ConfigLayer;
+
+    // /** Providing a string layer name will instantiate and return an empty `SimpleLayer` */
+    // addLayer(layerName: string): SimpleLayer;
+
+    // /** Adds GeoJSON layers to the group. Give this method a parsed JSON. The imported layers are returned. Throws an exception if the GeoJSON could not be imported. */
+    // addLayer(geoJson: Object): Array<SimpleLayer>;
+
+    // /** Loads GeoJSON from a URL, and adds the layers to the group. Invokes callback function once async layer loading is complete. */
+    // addLayer(url: string, callback?: (layers: Array<SimpleLayer>) => void): void;
+
+    /** Providing a layer json snippet creates a `ConfigLayer`.*/
+    addLayer(layerJSON: JSON): void {       // change return type after if we want to return something  ?
+        this._mapI.mapI.addConfigLayer(layerJSON);
+    }
+
+    /** Removes a layer from the group. */
+    removeLayer(layer: BaseLayer): void;
+
+    /** Removes the layer with the provided id from the group. */
+    removeLayer(id: string | number): void;
+
+    /** Removes the layer from the group using the provided layer itself, or by id.
+     *
+     * TODO: decide how to move forward with removing dynamic children using id.
+     */
+    removeLayer(layerOrId: BaseLayer | string | number): void {
+        if (isLayerObject(layerOrId)) {
+            if (layerOrId.layerIndex !== undefined) {
+                this._mapI.mapI.removeApiLayer(layerOrId.id, layerOrId.layerIndex.toString());
+            } else {
+                this._mapI.mapI.removeApiLayer(layerOrId.id);
+            }
+        } else {
+            // if id provided is for dynamic layer, this will remove all the children as well
+            // currently no way to remove an individual child through an id, may need the use of an optional second parameter
+            // similar to how it is done a few lines above
+            this._mapI.mapI.removeApiLayer(layerOrId.toString());
+        }
+    }
+
+    /** Checks whether the given layer is in the group. */
+    contains(layer: BaseLayer): boolean;
+
+    /** Checks whether the given layer by id is in the group. */
+    contains(id: string | number): boolean;
+
+    /** Checks whether the given layer is in the group using the provided layer itself, or by id. */
+    contains(layerOrId: BaseLayer | string | number): boolean {
+        if (isLayerObject(layerOrId)) {
+            return this._layersArray.find(layer => layer === layerOrId) !== undefined;
+        } else {
+            return this._layersArray.find(layer => layer.id === layerOrId.toString()) !== undefined;
+        }
+    }
+
+    /** Returns any layers with the given ID, if they exist in the group. Otherwise returns empty array.
+     *
+     * Note: IDs 1234 and '1234' are equivalent. Either can be used to look up layers.
+     *
+     * Note: For dynamic layers, all of its children have the same id.
+     */
+    getLayersById(id: number | string): Array<BaseLayer> {
+        return this._layersArray.filter(layer => layer.id === id.toString());
+    }
+
+    /** Returns all layers of a given type.
+     *
+     * @example <br><br>
+     *
+     * ```js
+     * const listOfConfigLayers = mapInstance.layers.getLayersByType(RZ.LAYERS.ConfigLayer);
+     * ```
+     */
+    getLayersByType(type: ConfigLayer): Array<BaseLayer> {   // add SimpleLayer as option for parameter type after  ?
+        return this._layersArray.filter(layer => layer instanceof (<any>type));
+    }
+
+    // /** Exports the layers in the group to a GeoJSON object.
+    //  *
+    //  * TODO: complete this function.
+    //  */
+    // toGeoJson(callback: (obj: Object) => void): void {
+    // }
+}
+
+function isLayerObject(layerOrId: BaseLayer | string | number): layerOrId is BaseLayer {
+    return layerOrId instanceof BaseLayer;
+}
+
 interface LayerInterface {
     name: string,
     opacity: number,
@@ -447,7 +663,6 @@ interface JSONConfig {
     name: string;
     catalogueUrl?: string;
     layerType: string;
-    state?: InitialLayerSettings;
 }
 
 interface AttribObject {
@@ -457,4 +672,17 @@ interface AttribObject {
 
 interface FeaturesArray {
     attributes: Object
+}
+
+interface LayerAndAttribs extends FeaturesArray {
+    layer: BaseLayer,
+}
+
+interface ChangedAttribs {
+    attributesBeforeChange: Object,
+    attributesAfterChange: Object
+}
+
+interface LayerAndChangedAttribs extends ChangedAttribs {
+    layer: BaseLayer
 }

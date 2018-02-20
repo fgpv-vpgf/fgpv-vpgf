@@ -23,7 +23,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { Subject } from 'rxjs/Subject';
-import { BaseLayer } from 'api/layers';
+import { LayerGroup } from 'api/layers';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -48,7 +48,7 @@ export default class Map {
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
-    private _layers: Array<BaseLayer>;    // type change after when LayerGroup implemented  ?
+    private _layers: LayerGroup;
     private _allowIdentify = true;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
@@ -56,7 +56,7 @@ export default class Map {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
-        this._layers = [];  // TODO: need to instantiate LayerGroup when implemented  ?
+        this._layers = new LayerGroup(this);
 
         // config set implies viewer loading via API
         if (config) {
@@ -74,7 +74,7 @@ export default class Map {
         }
     }
 
-    get layers(): Array<BaseLayer> { return this._layers; }  // TODO: change type after to LayerGroup when implemented  ?
+    get layers(): LayerGroup { return this._layers; }
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
