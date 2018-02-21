@@ -72,7 +72,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>ESRI wraps the standard mouse event with spatial data that we want to preserve.</p>
+						<p>ESRI wraps the standard mouse event with spatial data that we want to preserve. Spatial reference equals maps wkid</p>
 					</div>
 				</div>
 			</section>
@@ -103,6 +103,10 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_src_events_.esrimouseevent.html#mappoint" class="tsd-kind-icon">map<wbr>Point</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#offsetx" class="tsd-kind-icon">offsetX</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#offsety" class="tsd-kind-icon">offsetY</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#pagex" class="tsd-kind-icon">pageX</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#pagey" class="tsd-kind-icon">pageY</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#screenx" class="tsd-kind-icon">screenX</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#screeny" class="tsd-kind-icon">screenY</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_src_events_.esrimouseevent.html#xy" class="tsd-kind-icon">xy</a></li>
@@ -123,20 +127,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">new esri<wbr>Mouse<wbr>Event<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a></li>
+						<li class="tsd-signature tsd-kind-icon">new esri<wbr>Mouse<wbr>Event<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L34">api/src/events.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L36">api/src/events.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>event: <a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a></h5>
+									<h5>event: <a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_api_src_events_.esrimouseevent.html" class="tsd-signature-type">esriMouseEvent</a></h4>
@@ -152,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">map<wbr>Point<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L92">api/src/events.ts:92</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L96">api/src/events.ts:96</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -164,6 +168,14 @@
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter">
+								<h5>spatial<wbr>Reference<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>wkid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+								</ul>
+							</li>
+							<li class="tsd-parameter">
 								<h5>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
 							</li>
 							<li class="tsd-parameter">
@@ -173,20 +185,59 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="offsetx" class="tsd-anchor"></a>
+					<h3>offsetX</h3>
+					<div class="tsd-signature tsd-kind-icon">offsetX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#offsetx">offsetX</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L31">api/src/events.ts:31</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="offsety" class="tsd-anchor"></a>
+					<h3>offsetY</h3>
+					<div class="tsd-signature tsd-kind-icon">offsetY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#offsety">offsetY</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L32">api/src/events.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="pagex" class="tsd-anchor"></a>
+					<h3>pageX</h3>
+					<div class="tsd-signature tsd-kind-icon">pageX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#pagex">pageX</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L29">api/src/events.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="pagey" class="tsd-anchor"></a>
+					<h3>pageY</h3>
+					<div class="tsd-signature tsd-kind-icon">pageY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#pagey">pageY</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L30">api/src/events.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="screenx" class="tsd-anchor"></a>
 					<h3>screenX</h3>
 					<div class="tsd-signature tsd-kind-icon">screenX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#screenx">screenX</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L30">api/src/events.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L28">api/src/events.ts:28</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The number of pixels from the left edge of the viewport.</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="screeny" class="tsd-anchor"></a>
@@ -195,28 +246,23 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#screeny">screenY</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L28">api/src/events.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L27">api/src/events.ts:27</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The number of pixels from the top of the viewport.</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="xy" class="tsd-anchor"></a>
 					<h3>xy</h3>
-					<div class="tsd-signature tsd-kind-icon">xy<span class="tsd-signature-symbol">:</span> <a href="../classes/_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<div class="tsd-signature tsd-kind-icon">xy<span class="tsd-signature-symbol">:</span> <a href="../classes/_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#xy">xy</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L26">api/src/events.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L26">api/src/events.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Geographic point information</p>
+							<p>Geographic point information from esri event</p>
 						</div>
 					</div>
 				</section>
@@ -234,7 +280,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/_api_src_events_.mouseevent.html">MouseEvent</a>.<a href="../classes/_api_src_events_.mouseevent.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/events.ts#L32">api/src/events.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/events.ts#L34">api/src/events.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -307,6 +353,18 @@
 								<a href="_api_src_events_.esrimouseevent.html#mappoint" class="tsd-kind-icon">map<wbr>Point</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_src_events_.esrimouseevent.html#offsetx" class="tsd-kind-icon">offsetX</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_src_events_.esrimouseevent.html#offsety" class="tsd-kind-icon">offsetY</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_src_events_.esrimouseevent.html#pagex" class="tsd-kind-icon">pageX</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_src_events_.esrimouseevent.html#pagey" class="tsd-kind-icon">pageY</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="_api_src_events_.esrimouseevent.html#screenx" class="tsd-kind-icon">screenX</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
@@ -322,6 +380,9 @@
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_events_.html#isesrimouseevent" class="tsd-kind-icon">is<wbr>Esri<wbr>Mouse<wbr>Event</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
