@@ -496,7 +496,7 @@ rv-table-setting-panel {
                 }
 
                 .md-input {
-                    color: $primary-color-text;
+                    color: $primary-color-text !important;
                     border-color: $primary-color-light;
 
                     &::placeholder {
