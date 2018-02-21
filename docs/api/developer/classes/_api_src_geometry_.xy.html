@@ -105,6 +105,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#projectfrompoint" class="tsd-kind-icon">project<wbr>From<wbr>Point</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#projecttopoint" class="tsd-kind-icon">project<wbr>ToPoint</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.xy.html#urlvalue" class="tsd-kind-icon">url<wbr>Value</a></li>
@@ -119,13 +120,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new XY<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></li>
+						<li class="tsd-signature tsd-kind-icon">new XY<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, wkid<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -135,6 +136,9 @@
 								</li>
 								<li>
 									<h5>y: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> wkid: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h4>
@@ -150,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">x<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L24">api/src/geometry.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L24">api/src/geometry.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -165,7 +169,7 @@
 					<div class="tsd-signature tsd-kind-icon">y<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L26">api/src/geometry.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -187,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L54">api/src/geometry.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L69">api/src/geometry.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -209,6 +213,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="projectfrompoint" class="tsd-anchor"></a>
+					<h3>project<wbr>From<wbr>Point</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">project<wbr>From<wbr>Point<span class="tsd-signature-symbol">(</span>sourceProjection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, x<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, y<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L57">api/src/geometry.ts:57</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a projection Point</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sourceProjection: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> x: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> y: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="projecttopoint" class="tsd-anchor"></a>
 					<h3>project<wbr>ToPoint</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -218,7 +256,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L42">api/src/geometry.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L49">api/src/geometry.ts:49</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -246,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L70">api/src/geometry.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L85">api/src/geometry.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -268,7 +306,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/d1587bd7/api/src/geometry.ts#L63">api/src/geometry.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/geometry.ts#L78">api/src/geometry.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -344,6 +382,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_api_src_geometry_.xy.html#equals" class="tsd-kind-icon">equals</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_geometry_.xy.html#projectfrompoint" class="tsd-kind-icon">project<wbr>From<wbr>Point</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_api_src_geometry_.xy.html#projecttopoint" class="tsd-kind-icon">project<wbr>ToPoint</a>

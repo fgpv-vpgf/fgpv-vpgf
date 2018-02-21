@@ -22,26 +22,30 @@ import { Subject } from 'rxjs/Subject';
 
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {
-    /** Geographic point information */
-    xy: XY | null;
-    /** The number of pixels from the top of the viewport. */
+    /** Geographic point information from esri event */
+    xy: XY | undefined;
     screenY: number;
-    /** The number of pixels from the left edge of the viewport. */
     screenX: number;
+    pageX: number;
+    pageY: number;
+    offsetX: number;
+    offsetY: number;
 
     equals(otherMouseEvent: MouseEvent) {
         return this.screenX === otherMouseEvent.screenX && this.screenY === otherMouseEvent.screenY;
     }
 
-    constructor(event: esriMouseEvent) {
-        // mapPoint is specific to esri and is not available for all event types
-        try {
-            this.xy = new XY(event.mapPoint.x, event.mapPoint.y);
-        } catch (e) {
-            this.xy = null;
+    constructor(event: esriMouseEvent | MouseEvent) {
+        if (isEsriMouseEvent(event)) {
+            this.xy = new XY(event.mapPoint.x, event.mapPoint.y, event.mapPoint.spatialReference.wkid);
         }
+
         this.screenY = event.screenY;
         this.screenX = event.screenX;
+        this.pageX = event.pageX;
+        this.pageY = event.pageY;
+        this.offsetX = event.offsetX;
+        this.offsetY = event.offsetY;
     }
 }
 
@@ -86,11 +90,17 @@ export class PanelEvent {
     }
 }
 
-/** ESRI wraps the standard mouse event with spatial data that we want to preserve. */
+/** ESRI wraps the standard mouse event with spatial data that we want to preserve. Spatial reference equals maps wkid */
 export interface esriMouseEvent extends MouseEvent {
     /** Decimal degrees in y,x form */
     mapPoint: {
         y: number,
         x: number
+        spatialReference: { wkid: number }
     };
+
+}
+
+function isEsriMouseEvent(event: esriMouseEvent | MouseEvent): event is esriMouseEvent {
+    return !!(<esriMouseEvent>event).mapPoint;
 }
