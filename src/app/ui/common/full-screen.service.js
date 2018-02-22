@@ -12,8 +12,10 @@ const FULL_SCREEN_Z_INDEX = 50;
  * @module fullScreenService
  * @memberof app.ui
  *
+ * @description
  * Provides ability to place this viewer into fullscreen mode, and whether it is actively in fullscreen mode.
  */
+
 angular
     .module('app.ui')
     .factory('fullScreenService', fullScreenService);

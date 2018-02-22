@@ -10,7 +10,6 @@ cache:
 
 after_success:
   - source ./scripts/devdeploy.sh
-  - source ./scripts/docdeploy.sh
 
 notifications:
   webhooks:

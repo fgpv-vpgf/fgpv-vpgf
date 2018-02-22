@@ -25,7 +25,14 @@ export class XY {
     /** Latitude in decimal degrees, bounded by ±90° */
     y: number;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, wkid?: number) {
+
+        if (wkid) {
+            const normalizePoints = this.projectFromPoint(wkid, x, y);
+            x = normalizePoints.x;
+            y = normalizePoints.y;
+        }
+
         x = x <= 180 && x >= -180 ? x : 360 % Math.abs(x) * (x < 0 ? 1 : -1);
 
         if (typeof x !== 'number' || x > 180 || x < -180) {
@@ -44,6 +51,14 @@ export class XY {
 
         let zoomPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
         return proj.Point(zoomPoint[0], zoomPoint[1], {wkid: targetProjection});
+    }
+
+    /** Returns a projection Point */
+    projectFromPoint(sourceProjection: number, x?: number, y?: number) {
+        const proj = (<any>window).RZ.GAPI.proj;
+
+        let point = proj.localProjectPoint(sourceProjection, 4326, [this.x || x, this.y || y]);
+        return proj.Point(point[0], point[1], {wkid: sourceProjection});
     }
 
     /**
