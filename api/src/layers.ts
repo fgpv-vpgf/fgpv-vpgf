@@ -466,11 +466,11 @@ export class ConfigLayer extends BaseLayer {
 /**
  * A simple layer is one created programmatically via the API - without the use of a config construct.
  *
- * @example #### Draw a line for a SimpleLayer<br><br>
+ * @example #### Draw a point for a SimpleLayer<br><br>
  *
  * ```js
- * const lineGeo = new RV.LAYER.LineString('myLine', [{y: 81, x: 79}, {y: 51, x: 49}]);
- * mySimpleLayer.setGeometry(lineGeo);
+ * const pointGeo = new RV.GEOMETRY.Point('myPoint', { x: 81, y: 79 });
+ * mySimpleLayer.addGeometry(pointGeo);
  * ```
  */
 export class SimpleLayer extends BaseLayer {
@@ -497,6 +497,27 @@ export class SimpleLayer extends BaseLayer {
     get geometry(): Array<any> { return this._geometryArray; }  // change to BaseGeometry after  ?
 
     /**
+     * Emits whenever geometry is added to the layer.
+     * @event geometryAdded
+     */
+    get geometryAdded(): Observable<Array<any>> {   // change to BaseGeometry after  ?
+        return this._geometryAdded.asObservable();
+    }
+
+    /**
+     * Emits whenever geometry is removed from the layer.
+     * @event geometryRemoved
+     */
+    get geometryRemoved(): Observable<Array<any>> { // change to BaseGeometry after  ?
+        return this._geometryRemoved.asObservable();
+    }
+
+    /** Adds the geometry to the layer. */
+    addGeometry(geometry: any): void { // change to BaseGeometry after  ?
+
+    }
+
+    /**
      * If geometry specified, removes those items. Else removes all geometry.
      *
      * @param geometry any strings should reference a particular geometry instance with that ID. If undefined, all geometry is removed.
@@ -504,13 +525,6 @@ export class SimpleLayer extends BaseLayer {
     removeGeometry(geometry: Array<string> | string | undefined): void {
 
     }
-
-    /** Adds the geometry to the layer. */
-    // original name was 'setGeometry', keep it as that or change it to 'addGeometry'  ?
-    addGeometry(geometry: any): void { // change to BaseGeometry after  ?
-
-    }
-
 }
 
 /**
