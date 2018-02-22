@@ -282,15 +282,29 @@ export class BaseLayer {
         if (typeof attributeKey !== 'undefined') {
             let allAttribs: Array<Object> = this.getAttributes();
 
-            let keyAttrib: Object | undefined = this.getAttributes(attributeKey);
-            if (keyAttrib !== undefined) {
-                let attribIndex: number = this._attributeArray.findIndex(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
-                allAttribs.splice(attribIndex, 1);
+            let index: number = this._attributeArray.findIndex(attrib =>
+                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
 
-                this._attributesRemoved.next([ keyAttrib ]);
+            if (index !== -1) {
+                const oldValue: Object = Object.assign({}, this._attributeArray[index]);
+
+                Object.keys(this._attributeArray[index]).forEach(key => {
+                    (<any>this._attributeArray[index])[key] = undefined;
+                });
+
+                allAttribs.splice(index, 1);
+
+                this._attributesRemoved.next([ oldValue ]);
             }
         } else {
-            const copyAttribs: Array<Object> = this._attributeArray;
+            const copyAttribs: Array<Object> = this._attributeArray.map(a => Object.assign({}, a));
+
+            this._attributeArray.forEach(attrib => {
+                Object.keys(attrib).forEach(key => {
+                    (<any>attrib)[key] = undefined;
+                });
+            });
+
             this._attributeArray = [];
 
             this._attributesRemoved.next(copyAttribs);
@@ -450,6 +464,56 @@ export class ConfigLayer extends BaseLayer {
 }
 
 /**
+ * A simple layer is one created programmatically via the API - without the use of a config construct.
+ *
+ * @example #### Draw a line for a SimpleLayer<br><br>
+ *
+ * ```js
+ * const lineGeo = new RV.LAYER.LineString('myLine', [{y: 81, x: 79}, {y: 51, x: 49}]);
+ * mySimpleLayer.setGeometry(lineGeo);
+ * ```
+ */
+export class SimpleLayer extends BaseLayer {
+    /** @ignore */
+    _geometryArray: Array<any>;     // change to BaseGeometry after  ?
+
+    protected _geometryAdded: BehaviorSubject<Array<any>>; // change to BaseGeometry after  ?
+    protected _geometryChanged: Subject<ChangedGeometry>;
+    protected _geometryRemoved: Subject<Array<any>>; // change to BaseGeometry after  ?
+
+    /** Sets the name for the layer. */
+    constructor(name: string, mapInstance: any) {
+        super(mapInstance);
+
+        this._name = name;
+
+        this._geometryArray = [];
+        this._geometryAdded = new BehaviorSubject(this._geometryArray);
+        this._geometryChanged = new Subject();
+        this._geometryRemoved = new Subject();
+    }
+
+    /** Returns the value of the requested data, or an empty array if the data does not exist. */
+    get geometry(): Array<any> { return this._geometryArray; }  // change to BaseGeometry after  ?
+
+    /**
+     * If geometry specified, removes those items. Else removes all geometry.
+     *
+     * @param geometry any strings should reference a particular geometry instance with that ID. If undefined, all geometry is removed.
+     */
+    removeGeometry(geometry: Array<string> | string | undefined): void {
+
+    }
+
+    /** Adds the geometry to the layer. */
+    // original name was 'setGeometry', keep it as that or change it to 'addGeometry'  ?
+    addGeometry(geometry: any): void { // change to BaseGeometry after  ?
+
+    }
+
+}
+
+/**
  * #### Under Consideration
  * - To expose the events `geometry_added`, `geometry_removed`. These could only fire for `SimpleLayer` instances in this group.
  *
@@ -558,9 +622,6 @@ export class LayerGroup {
         return this._click.asObservable();
     }
 
-    // /** Adds the provided layer instance to the group, and returns the instance. */
-    // addLayer(layer: BaseLayer): BaseLayer;
-
     // /** Providing a layer json snippet returns a `ConfigLayer`.*/
     // addLayer(layerJSON: JSON): ConfigLayer;
 
@@ -636,7 +697,7 @@ export class LayerGroup {
      * const listOfConfigLayers = mapInstance.layers.getLayersByType(RZ.LAYERS.ConfigLayer);
      * ```
      */
-    getLayersByType(type: ConfigLayer): Array<BaseLayer> {   // add SimpleLayer as option for parameter type after  ?
+    getLayersByType(type: ConfigLayer | SimpleLayer): Array<BaseLayer> {
         return this._layersArray.filter(layer => layer instanceof (<any>type));
     }
 
@@ -685,4 +746,9 @@ interface ChangedAttribs {
 
 interface LayerAndChangedAttribs extends ChangedAttribs {
     layer: BaseLayer
+}
+
+interface ChangedGeometry {
+    geometryBeforeChange: any, // change to BaseGeometry after  ?
+    geometryAfterChange: any  // change to BaseGeometry after  ?
 }
