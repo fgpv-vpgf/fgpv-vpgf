@@ -331,7 +331,8 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         get label () {   return 'settings.label.refreshHint'; }
 
         get isDynamicChild () {
-            return this.block.isControlUserDisabled('interval') && !layerRegistry.getLayerRecord(this.block.layerRecordId).isTrueDynamic;
+            const layerRecord = layerRegistry.getLayerRecord(this.block.layerRecordId);
+            return this.block.isControlUserDisabled('interval') && layerRecord && !layerRecord.isTrueDynamic;
         }
 
         get clearAndReload() {

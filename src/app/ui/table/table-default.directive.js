@@ -1184,7 +1184,7 @@ function ToastController($scope, $mdToast, $timeout, stateManager, tocService) {
     $scope.reloadTable = () => {
         const legendBlock = stateManager.display.table.requester.legendEntry;
 
-        stateManager.setActive({ tableFulldata: false }).then(() =>{
+        stateManager.setActive({ tableFulldata: false }).then(() => {
             $timeout(() => {
                 tocService.toggleLayerTablePanel(legendBlock);
             });
