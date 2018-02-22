@@ -1,50 +1,47 @@
-import * as types from '../data/types.json';
-import * as provinces from '../data/provinces.json';
-import * as i from './interfaces';
-import { Query } from './query';
+import Query from './query';
+import { Query as QueryType } from './query';
+import Provinces from './provinces';
+import Types from './types';
+import * as defs from './definitions';
 
-const searchTypes = (<any>types);
-const provinceTypes = (<any>provinces);
+const GEO_LOCATE_URL = 'https://geogratis.gc.ca/services/geolocation/${language}/locate';
+const GEO_NAMES_URL = 'https://geogratis.gc.ca/services/geoname/${language}/geonames.json';
+
+let lastQuery: string;
 
 export class GeoSearch {
-    types: i.dataType;
-    provinces: i.dataType;
-    rIterator: Function;
+    resultHandler: Function;
+    featureHandler: Function;
     docFrag: DocumentFragment;
-    rContainer: HTMLElement;
-    maxResults: number = 100;
-    geoLocateUrl: string;
-    geoNameUrl: string;
+    config: defs.mainConfig;
+    resultContainer: HTMLElement;
+    featureContainer: HTMLElement;
 
-    constructor(config?: i.config) {
-        const language = config && config.language ? config.language : 'en';
-        this.types = (<i.dataFile>searchTypes)[language];
-        this.provinces = (<i.dataFile>provinceTypes)[language];
+    constructor(uConfig?: defs.userConfig) {
+        uConfig = uConfig ? uConfig : {};
+        const language = uConfig.language ? uConfig.language : 'en';
+        // set default URLS if none provided and search/replace language in string (if exists)
+        let geoLocateUrl = uConfig.geoLocateUrl ? uConfig.geoLocateUrl : GEO_LOCATE_URL;
+        let geoNameUrl = uConfig.geoNameUrl ? uConfig.geoNameUrl : GEO_NAMES_URL;
+        geoLocateUrl = geoLocateUrl.replace('${language}', language);
+        geoNameUrl = geoNameUrl.replace('${language}', language);
 
-
-        this.geoLocateUrl = this.geoLocateUrl ? this.geoLocateUrl : `https://geogratis.gc.ca/services/geolocation/${language}/locate`;
-        this.geoNameUrl = this.geoNameUrl ? this.geoNameUrl : `https://geogratis.gc.ca/services/geoname/${language}/geonames.json`;
+        this.config = {
+            language: language,
+            types: Types(language),
+            provinces: Provinces(language),
+            maxResults: uConfig.maxResults ? uConfig.maxResults : 100,
+            geoNameUrl: geoNameUrl,
+            geoLocateUrl: geoLocateUrl
+        };
         
-        if (config) {
-            this.maxResults = config.maxResults ? config.maxResults : this.maxResults;
-            if (config.includeTypes) {
-                this.findReplaceTypes((typeof config.includeTypes === 'string' ? [config.includeTypes] : config.includeTypes));
-            } else if (config.excludeTypes) {
-                this.findReplaceTypes((typeof config.excludeTypes === 'string' ? [config.excludeTypes] : config.excludeTypes), true);
-            }   
-        }        
+        this.config.types.filterValidTypes(uConfig.includeTypes, uConfig.excludeTypes);
     }
 
-    findReplaceTypes(keys: Array<string>, exclude?: boolean) {
-        const typeSet = new Set(Object.keys(this.types));
-        const keySet = new Set(keys);
-        const invalidKeys = new Set([...typeSet].filter(x => !!exclude === keySet.has(x)));
-        for (let key of invalidKeys) {
-            delete this.types[key];
-        }
-    }
-
-    ui(input?: HTMLInputElement, resultContainer?: HTMLElement, rIterator?: Function) {
+    ui(resultHandler?: Function, featureHandler?: Function, input?: HTMLInputElement, resultContainer?: HTMLElement, featureContainer?: HTMLElement) {
+        // bind scope of provided iterator to this class, or set to internal resultIterator implementation for default behaviour
+        this.resultHandler = resultHandler ? resultHandler.bind(this) : this.defaultResultHandler;
+        this.featureHandler = featureHandler ? featureHandler.bind(this) : this.defaultFeatureHandler;
         this.docFrag = document.createDocumentFragment();
 
         if (!input) {
@@ -54,61 +51,86 @@ export class GeoSearch {
 
         input.onkeyup = this.inputChanged.bind(this);
 
-        if (!resultContainer) {
-            this.rContainer = document.createElement('ul');
-            this.docFrag.appendChild(this.rContainer);
+        if (!featureContainer) {
+            this.featureContainer = document.createElement('div');
+            this.docFrag.appendChild(this.featureContainer);
         } else {
-            this.rContainer = resultContainer;
+            this.featureContainer = featureContainer;
         }
 
-        this.rContainer.classList.add('geosearch-ui');
+        if (!resultContainer) {
+            this.resultContainer = document.createElement('div');
+            this.docFrag.appendChild(this.resultContainer);
+        } else {
+            this.resultContainer = resultContainer;
+        }
 
-        this.rIterator = rIterator ? rIterator.bind(this) : this.resultIterator;
+        this.resultContainer.classList.add('geosearch-ui');
+        this.featureContainer.classList.add('geosearch-ui');
 
         return this;
     }
 
-    resultIterator(result: i.returnType): HTMLElement {
-        const li = document.createElement('li');
-        li.innerHTML = result.name;
-        return li;
+    defaultResultHandler(results: defs.nameResultList): HTMLElement {
+        const ul = document.createElement('ul');
+        
+        results.reverse().forEach(r => {
+            const li = document.createElement('li');
+            li.innerHTML = `${r.name} (${r.type})${r.location ? ', ' + r.location : ''}, ${r.province} @ lat: ${r.latLon.lat}, lon: ${r.latLon.lon}`;
+            ul.appendChild(li);
+        });
+
+        return ul;
+    }
+
+    defaultFeatureHandler(fR: defs.queryFeatureResults): HTMLElement {
+        let output;
+
+        if (defs.isFSAResult(fR)) {
+            output = `${fR.fsa} - FSA located in ${fR.province} @ lat: ${fR.latLon.lat}, lon: ${fR.latLon.lon}`;
+        } else {
+            output = `${fR.nts} - NTS located in ${fR.location} @ lat: ${fR.latLon.lat}, lon: ${fR.latLon.lon}`;
+        }
+
+        const p = document.createElement('p');
+        p.innerHTML = output;
+        return p;
     }
 
     inputChanged(evt: KeyboardEvent) {
-        const qValue = (<HTMLInputElement>evt.target).value;
-        this.rContainer.innerHTML = '';
-        this.query(qValue).then(results => {
-            results.forEach(r => {
-                this.rContainer.appendChild(this.rIterator(r));
-            });
-        }).catch(error => {}); // don't care for error
+        const qValue = (<HTMLInputElement>evt.target).value;    
+        
+        if (qValue.length > 2 && qValue !== lastQuery) {
+            lastQuery = qValue;
+
+            while (this.resultContainer.firstChild) {
+                this.resultContainer.removeChild(this.resultContainer.firstChild);
+            }
+
+            while (this.featureContainer.firstChild) {
+                this.featureContainer.removeChild(this.featureContainer.firstChild);
+            }
+
+            this.query(qValue).onComplete.then(q => {                
+                if (q.featureResults) {
+                    this.featureContainer.appendChild(this.featureHandler(q.featureResults));
+                }
+    
+                this.resultContainer.appendChild(this.resultHandler(q.results));
+            }).catch(err => {
+                const p = document.createElement('p');
+                p.innerHTML = err;
+                this.resultContainer.appendChild(p);
+            });   
+        }
     }
 
     get htmlElem(): DocumentFragment  {
         return this.docFrag;
     }
 
-    query(query: string): Promise<Array<i.returnType>> {
-        
-        const Q = new Query({
-            query: query,
-            urls: {name: this.geoNameUrl, locate: this.geoLocateUrl},
-            maxResults: this.maxResults,
-            types: this.types
-        });
-
-        return Q.search().then(geoName => {
-            return geoName.map(gn => (
-                {
-                    name: gn.name,
-                    location: gn.location,
-                    province: this.provinces[gn.province.code],
-                    type: this.types[gn.concise.code],
-                    pointCoords: gn.position.coordinates,
-                    bbox: gn.bbox
-                }
-            )).filter(r => Object.keys(this.types).find(t => this.types[t] === r.type));
-        });
+    query(query: string): QueryType {
+        return Query(this.config, query);
     }
 }
 

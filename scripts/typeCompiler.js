@@ -1,8 +1,14 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
 const types = {
-    "en": {},
-    "fr": {}
+    "en": {
+        FSA: "Forward Sortation Area",
+        NTS: "National Topographic System"
+    },
+    "fr": {
+        FSA: "Région De Tri D'Acheminement",
+        NTS: "Système National De Référence Cartographique"
+    }
 };
 
 function fetchConsise(lang) {

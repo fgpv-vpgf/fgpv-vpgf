@@ -2,28 +2,52 @@
 
 `GeoSearch` has a special method `ui` with the following constructor signature:
 
-`(input?: HTMLInputElement, resultContainer?: HTMLElement, rIterator?: Function)`
+`(resultHandler?: Function, featureHandler?: Function, input?: HTMLInputElement, resultContainer?: HTMLElement, featureContainer?: HTMLElement)`
 
+- resultHandler: A function which receives an array of `resultObject` (see below) and is expected to return an HTML element with all results rendered
+- featureHandler: A function which receives either an `FSAResult` or `NTSResult` object (see below) and is expected to return an HTML element with the rendered result
 - input (optional): An HTML `<input>` element 
 - resultContainer (optional): Any HTML element that will contain the query results
-- rIterator (optional): A function which receives a result object and is expected to return an HTML element
+- featureContainer (optional): Any HTML element that will contain a special query feature result
 
-#### Result object passed to rIterator
+#### resultObject
 
 ```js
 {
-    name: string, // Toronto
-    location: string, // York
-    province: string, // Ontario
-    type: string, // CITY
-    pointCoords: Array<number> // [-79.3733,43.7417]
+    name: string, // "Toronto"
+    location: string, // "York"
+    province: string, // "Ontario"
+    type: string, // "CITY"
+    latLon: latLon, // [-79.3733,43.7417]
     bbox: Array<number> //[-79.6506726,43.3399715,-78.9970696,43.9292617]
 }
 ```
 
-<p class="warning">
-    `resultContainer` is a `ul` element by default, and `rIterator` returns `li` elements by default. You should provide both of these parameters to maintain valid HTML. Any HTML elements omitted will be auto generated. The `input` element is always watched for changes regardless of who provides it.
-</p>
+#### FSAResult
+
+```js
+{
+    fsa: string, // "H0H"
+    code: string, // "FSA"
+    desc: string, // "Forward Sortation Area"
+    province: string, // Ontario
+    latLon: latLon
+}
+```
+
+
+#### NTSResult
+
+```js
+{
+    nts: string, // 064D or 064D06
+    location: string, // "NUMABIN BAY"
+    code: string, // "NTS"
+    desc: string, // "National Topographic System"
+    latLon: latLon, // [-79.3733,43.7417]
+    bbox: Array<number> //[-79.6506726,43.3399715,-78.9970696,43.9292617]
+}
+```
 
 ### Installation
 
@@ -51,7 +75,7 @@ This repo contains a `dist` folder where you'll find various precomiled library 
 </p>
 
 ### Examples
-You do not need to provide any parameters to `GeoSearch`. You can simply instantiate an instance of the class and append its html output on your page. 
+You can pass an optional configuration object to `GeoSearch`. After instantiating an instance, you append its HTML output on your page. 
 
 #### Auto Generated
 ````html
@@ -59,7 +83,7 @@ You do not need to provide any parameters to `GeoSearch`. You can simply instant
 <div id="autoSearch"></div>
 
 <script>    
-    var geoSearchAuto = new GeoSearch();
+    var geoSearchAuto = new GeoSearch({includeTypes: ['CITY', 'FSA', 'NTS', 'PROV', 'TERR', 'TOWN']});
     document.getElementById('autoSearch').append(geoSearchAuto.ui().htmlElem);
 </script>
 ````
@@ -69,11 +93,12 @@ You do not need to provide any parameters to `GeoSearch`. You can simply instant
 <script src="dist/geosearch.js"></script>
 
 <input id="searchField" name="searchField" type="text">
+<div id="feature"></div>
 <ul id="resultElem"></ul>
 
 <script>    
     var geoSearch = new GeoSearch();
-    geoSearch.ui(document.getElementById('searchField'), document.getElementById('resultElem'));
+    geoSearch.ui(null, null, document.getElementById('searchField'), document.getElementById('resultElem'), document.getElementById('feature'));
 </script>
 ````
 
@@ -83,15 +108,22 @@ You do not need to provide any parameters to `GeoSearch`. You can simply instant
 <script src="dist/geosearch.js"></script>
 
 <input id="searchField" name="searchField" type="text">
+<div id="feature"></div>
 <ul id="resultElem"></ul>
 
 <script>    
-    function customIterator(result) {
-        var li = document.createElement('li');
-        li.innerHTML = result.name + ' (' + result.location + ', ' + result.province + ') @ ' + result.pointCoords;
-        return li;
+    function customIterator(results) {
+        const ul = document.createElement('ul');
+        
+        results.forEach(r => {
+            const li = document.createElement('li');
+            li.innerHTML = `${r.name} (${r.type}), ${r.location}, ${r.province} @ lat: ${r.latLon.lat}, lon: ${r.latLon.lon}`;
+            ul.appendChild(li);
+        });
+
+        return ul;
     }
     var geoSearch = new GeoSearch();
-    geoSearch.ui(document.getElementById('searchField'), document.getElementById('resultElem'), customIterator);
+    geoSearch.ui(customIterator, null, document.getElementById('searchField'), document.getElementById('resultElem'), document.getElementById('feature'));
 </script>
 ````
