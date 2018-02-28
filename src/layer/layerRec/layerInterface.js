@@ -157,6 +157,18 @@ class LayerInterface {
         this.abortAttribLoad = featureAbortAttribLoad;
     }
 
+    convertToSimpleLayer (layerRecord) {
+        this._source = layerRecord;
+        this._isPlaceholder = false;
+
+        newProp(this, 'visibility', simpleGetVisibility);
+        newProp(this, 'opacity', simpleGetOpacity);
+        newProp(this, 'name', simpleGetName);
+
+        this.setVisibility = simpleSetVisibility;
+        this.setOpacity = simpleSetOpacity;
+    }
+
     convertToDynamicLeaf (dynamicFC) {
         this._source = dynamicFC;
         this._isPlaceholder = false;
@@ -252,6 +264,11 @@ function standardGetVisibility() {
     return this._source.visibility;
 }
 
+function simpleGetVisibility() {
+    /* jshint validthis: true */
+    return this._source.visibility;
+}
+
 function dynamicLeafGetVisibility() {
     /* jshint validthis: true */
     return this._source.getVisibility();
@@ -262,12 +279,22 @@ function standardGetName() {
     return this._source.name;
 }
 
+function simpleGetName() {
+    /* jshint validthis: true */
+    return this._source.name;
+}
+
 function dynamicLeafGetName() {
     /* jshint validthis: true */
     return this._source.name;
 }
 
 function standardGetOpacity() {
+    /* jshint validthis: true */
+    return this._source.opacity;
+}
+
+function simpleGetOpacity() {
     /* jshint validthis: true */
     return this._source.opacity;
 }
@@ -425,12 +452,22 @@ function standardSetVisibility(value) {
     this._source.visibility = value;
 }
 
+function simpleSetVisibility(value) {
+    /* jshint validthis: true */
+    this._source.visibility = value;
+}
+
 function dynamicLeafSetVisibility(value) {
     /* jshint validthis: true */
     this._source.setVisibility(value);
 }
 
 function standardSetOpacity(value) {
+    /* jshint validthis: true */
+    this._source.opacity = value;
+}
+
+function simpleSetOpacity(value) {
     /* jshint validthis: true */
     this._source.opacity = value;
 }
