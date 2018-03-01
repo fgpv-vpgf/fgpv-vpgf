@@ -50,6 +50,12 @@ function filterifyRenderer(renderer, fields) {
         return delim;
     };
 
+    // worker function to turn single quotes in a value into two
+    // single quotes to avoid conflicts with the text delimiters
+    const quoter = inStr => {
+        return inStr.replace(/'/g, "''");
+    };
+
     switch (renderer.type) {
         case SIMPLE:
             renderer.definitionClause = '1=1';
@@ -76,7 +82,7 @@ function filterifyRenderer(renderer, fields) {
 
                     // convert fields/values into sql clause
                     const clause = keyFields
-                        .map((kf, i) =>  `${kf} = ${fieldDelims[i]}${keyValues[i]}${fieldDelims[i]}`)
+                        .map((kf, i) =>  `${kf} = ${fieldDelims[i]}${quoter(keyValues[i])}${fieldDelims[i]}`)
                         .join(' AND ');
 
                     uvi.definitionClause = `(${clause})`;
