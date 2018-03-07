@@ -16,7 +16,13 @@ const defaultSymbols = {
         width: 16.5,
         height: 16.5,
         type: 'esriSMS',
-        color: [255, 0, 0]
+        color: [255, 0, 0],
+        outline: {
+            color: [0,0,0],
+            width: 1,
+            type: "esriSLS",
+            style: "esriSLSSolid"
+        }
     }
 }
 
@@ -183,17 +189,21 @@ class GraphicsRecord extends root.Root {
      * Identify the type of geometry being added and add it to the map.
      *
      * @function addGeometry
-     * @param {Object} geometry                  api geometry class to be added
+     * @param {Object|Array} geo                  api geometry class to be added
      * @param {Object} spatialReference          the projection the graphics should be in
      */
-    addGeometry(geometry, spatialReference) {
-        if (geometry.type === geometryTypes.POINT) {
-            const coords = geometry.xy.projectToPoint(spatialReference);
-            const icon = geometry.icon;
-            this._addPoint(coords, spatialReference, icon);
-        }
+    addGeometry(geo, spatialReference) {
+        const geometries = Array.isArray(geo) ? geo : [ geo ];
 
-        // TODO: add 'private' functions and conditions for other geometry types as well
+        geometries.forEach(geometry => {
+            if (geometry.type === geometryTypes.POINT) {
+                const coords = geometry.xy.projectToPoint(spatialReference);
+                const icon = geometry.icon;
+                this._addPoint(coords, spatialReference, icon);
+            }
+
+            // TODO: add 'private' functions and conditions for other geometry types as well
+        });
     }
 
     /**
@@ -214,6 +224,7 @@ class GraphicsRecord extends root.Root {
 
         let symbol;
         if (icon) {
+            // TODO: discuss how to handle the width / height issue when passing in an icon
             symbol = {
                 width: 16.5,
                 height: 16.5,
