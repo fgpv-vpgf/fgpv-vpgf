@@ -20,8 +20,8 @@ const defaultSymbols = {
         outline: {
             color: [0,0,0],
             width: 1,
-            type: "esriSLS",
-            style: "esriSLSSolid"
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
         }
     }
 }
