@@ -1,4 +1,4 @@
-import { ConfigLayer } from 'api/layers';
+import { ConfigLayer, SimpleLayer } from 'api/layers';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
@@ -66,6 +66,26 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         });
     });
 
+    // wire in a hook to any map for adding a simple layer using id. this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.addSimpleLayer = name => {
+            const index = mapApi.layers.allLayers.findIndex(layer => layer.id === name);
+
+            if (index === -1) {
+                const layerRecord = gapiService.gapi.layer.createGraphicsRecord(name);
+                configService.getSync.map.instance.addLayer(layerRecord._layer);
+
+                const simpleLayer = new SimpleLayer(layerRecord, configService.getSync.map);
+                _initializeLayerObservables(simpleLayer);
+                _addLayerToApiMap(simpleLayer);
+            }
+        };
+
+        configService.getSync.map.instance.removeSimpleLayer = layerRecord => {
+            configService.getSync.map.instance.removeLayer(layerRecord._layer);
+            _removeLayerFromApiMap(layerRecord);
+        };
+    });
 
     /**
      * Finds and returns the layer record using the id specified.
@@ -182,39 +202,6 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
             layerRecord.removeAttribListener(_onLayerAttribDownload);
             _removeLayerFromApiMap(layerRecord);
-        }
-
-        /**
-         * This will remove the layer from the API map instance
-         *
-         * @function _removeLayerFromApiMap
-         * @private
-         * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
-         */
-        function _removeLayerFromApiMap(layerRecord) {
-            let index;
-
-            // removing dynamic layers does not actually remove the layer if another child is still present  ?
-            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                const childIndices = _simpleWalk(layerRecord.getChildTree());
-                childIndices.forEach(idx => {
-                    index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
-                    if (index !== -1) {
-                        const apiLayer = mapApi.layers.allLayers[index];
-
-                        mapApi.layers.allLayers.splice(index, 1);
-                        mapApi.layers._layerRemoved.next(apiLayer);
-                    }
-                });
-            } else {
-                index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
-                if (index !== -1) {
-                    const apiLayer = mapApi.layers.allLayers[index];
-
-                    mapApi.layers.allLayers.splice(index, 1);
-                    mapApi.layers._layerRemoved.next(apiLayer);
-                }
-            }
         }
 
         return index;
@@ -649,64 +636,64 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             _initializeLayerObservables(apiLayer);
             _addLayerToApiMap(apiLayer);
         }
+    }
 
-        /**
-         * This will subscribe to the apiLayer attribute observables and then notify the LayerGroup of any such changes.
-         *
-         * @function _initializeLayerObservables
-         * @private
-         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created whose attributes updates we must subscribe to
-         */
-        function _initializeLayerObservables(apiLayer) {
-            apiLayer.attributesAdded.subscribe(attribs => {
-                mapApi.layers._attributesAdded.next({
-                    layer: apiLayer,
-                    attributes: attribs
-                });
+    /**
+     * This will subscribe to the apiLayer attribute observables and then notify the LayerGroup of any such changes.
+     *
+     * @function _initializeLayerObservables
+     * @private
+     * @param {BaseLayer} apiLayer an instance of an api layer created whose attributes updates we must subscribe to
+     */
+    function _initializeLayerObservables(apiLayer) {
+        apiLayer.attributesAdded.subscribe(attribs => {
+            mapApi.layers._attributesAdded.next({
+                layer: apiLayer,
+                attributes: attribs
             });
+        });
 
-            apiLayer.attributesChanged.subscribe(changedAttribs => {
-                mapApi.layers._attributesChanged.next({
-                    layer: apiLayer,
-                    attributesBeforeChange: changedAttribs.attributesBeforeChange,
-                    attributesAfterChange: changedAttribs.attributesAfterChange
-                });
+        apiLayer.attributesChanged.subscribe(changedAttribs => {
+            mapApi.layers._attributesChanged.next({
+                layer: apiLayer,
+                attributesBeforeChange: changedAttribs.attributesBeforeChange,
+                attributesAfterChange: changedAttribs.attributesAfterChange
             });
+        });
 
-            apiLayer.attributesRemoved.subscribe(attribs => {
-                mapApi.layers._attributesRemoved.next({
-                    layer: apiLayer,
-                    attributes: attribs
-                });
+        apiLayer.attributesRemoved.subscribe(attribs => {
+            mapApi.layers._attributesRemoved.next({
+                layer: apiLayer,
+                attributes: attribs
             });
+        });
+    }
+
+    /**
+     * This will check first to see if the API map instance already has this layer defined by its id
+     * and if it does exist, it will update that index with the newly created API layer
+     * Else, it will add push a new layer to the list of layers for the map
+     *
+     * @function _addLayerToApiMap
+     * @private
+     * @param {BaseLayer} apiLayer an instance of an api layer created that needs to be added to map
+     */
+    function _addLayerToApiMap(apiLayer) {
+        let index;
+
+        if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
+            index = mapApi.layers.allLayers.findIndex(layer =>
+                layer.id === apiLayer.id &&
+                layer.layerIndex === apiLayer.layerIndex);
+        } else {
+            index = mapApi.layers.allLayers.findIndex(layer => layer.id === apiLayer.id);
         }
 
-        /**
-         * This will check first to see if the API map instance already has this layer defined by its id
-         * and if it does exist, it will update that index with the newly created API layer
-         * Else, it will add push a new layer to the list of layers for the map
-         *
-         * @function _addLayerToApiMap
-         * @private
-         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created that needs to be added to map
-         */
-        function _addLayerToApiMap(apiLayer) {
-            let index;
-
-            if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
-                index = mapApi.layers.allLayers.findIndex(layer =>
-                    layer.id === apiLayer.id &&
-                    layer.layerIndex === apiLayer.layerIndex);
-            } else {
-                index = mapApi.layers.allLayers.findIndex(layer => layer.id === apiLayer.id);
-            }
-
-            if (index !== -1) {
-                mapApi.layers.allLayers[index] = apiLayer;
-            } else {
-                mapApi.layers.allLayers.push(apiLayer);
-                mapApi.layers._layerAdded.next(apiLayer);
-            }
+        if (index !== -1) {
+            mapApi.layers.allLayers[index] = apiLayer;
+        } else {
+            mapApi.layers.allLayers.push(apiLayer);
+            mapApi.layers._layerAdded.next(apiLayer);
         }
     }
 
@@ -741,6 +728,39 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 
         if (configLayer) {
             configLayer.fetchAttributes();
+        }
+    }
+
+    /**
+     * This will remove the layer from the API map instance
+     *
+     * @function _removeLayerFromApiMap
+     * @private
+     * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
+     */
+    function _removeLayerFromApiMap(layerRecord) {
+        let index;
+
+        // removing dynamic layers does not actually remove the layer if another child is still present  ?
+        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            const childIndices = _simpleWalk(layerRecord.getChildTree());
+            childIndices.forEach(idx => {
+                index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);
+                if (index !== -1) {
+                    const apiLayer = mapApi.layers.allLayers[index];
+
+                    mapApi.layers.allLayers.splice(index, 1);
+                    mapApi.layers._layerRemoved.next(apiLayer);
+                }
+            });
+        } else {
+            index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
+            if (index !== -1) {
+                const apiLayer = mapApi.layers.allLayers[index];
+
+                mapApi.layers.allLayers.splice(index, 1);
+                mapApi.layers._layerRemoved.next(apiLayer);
+            }
         }
     }
 }

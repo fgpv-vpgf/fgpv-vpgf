@@ -18,9 +18,11 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
+import { BaseGeometry, Point } from 'api/geometry';
 import Map from 'api/map';
 
 const layerTypes = {
+    ESRI_GRAPHICS: 'esriGraphics',
     ESRI_DYNAMIC: 'esriDynamic',
     ESRI_FEATURE: 'esriFeature',
     ESRI_IMAGE: 'esriImage',
@@ -29,7 +31,9 @@ const layerTypes = {
 }
 
 /**
- * Represents a base layer implementation that will be extended by ConfigLayer and SimpleLayer
+ * All layer types must derive from this class. Not intented to be instantiated on its own.
+ *
+ * TODO: Observe features / geometry clicks, mouseover, and mouseout events
  */
 export class BaseLayer {
     /** @ignore */
@@ -51,15 +55,15 @@ export class BaseLayer {
 
     /** @ignore */
     _name: string;
-    private _nameChanged: Subject<string>;
+    _nameChanged: Subject<string>;
 
     /** @ignore */
     _opacity: number;
-    private _opacityChanged: Subject<number>;
+    _opacityChanged: Subject<number>;
 
     /** @ignore */
     _visibility: boolean;
-    private _visibilityChanged: Subject<boolean>;
+    _visibilityChanged: Subject<boolean>;
 
     // the viewerLayer is the layerRecord and the layerProxy is the proxy or child proxy if dynamic
     /** @ignore */
@@ -67,9 +71,9 @@ export class BaseLayer {
     /** @ignore */
     _layerProxy: any;
 
-    protected _attributesAdded: BehaviorSubject<Array<Object>>;
-    protected _attributesChanged: Subject<ChangedAttribs>;
-    protected _attributesRemoved: Subject<Array<Object>>;
+    _attributesAdded: BehaviorSubject<Array<Object>>;
+    _attributesChanged: Subject<ChangedAttribs>;
+    _attributesRemoved: Subject<Array<Object>>;
 
     /** Sets the layers viewer map instance. */
     constructor(mapInstance: any) {
@@ -182,7 +186,7 @@ export class BaseLayer {
     /** Returns the layer index. */
     get layerIndex(): number | undefined { return this._layerIndex; }
 
-    /** Returns the name of the layer.  */
+    /** Returns the name of the layer. */
     get name(): string { return this._name; }
 
     /** Sets the name of the layer. This updates the name throughout the viewer.
@@ -200,8 +204,10 @@ export class BaseLayer {
         this._name = name;
         this._viewerLayer.name = name;
 
-        if (this._layerIndex === undefined) {
-            this._viewerLayer.config.name = name;
+        if (this._viewerLayer.config) {
+            if (this._layerIndex === undefined) {
+                this._viewerLayer.config.name = name;
+            }
         }
 
         if (oldName !== name && this._layerIndex === undefined) {
@@ -227,11 +233,13 @@ export class BaseLayer {
         this._opacity = opacity;
         this._layerProxy.setOpacity(opacity);
 
-        if (this._layerIndex !== undefined) {
-            const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
-            childNode.state.opacity = opacity;
-        } else {
-            this._viewerLayer.config.state.opacity = opacity;
+        if (this._viewerLayer.config) {
+            if (this._layerIndex !== undefined) {
+                const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+                childNode.state.opacity = opacity;
+            } else {
+                this._viewerLayer.config.state.opacity = opacity;
+            }
         }
 
         if (oldOpacity !== opacity) {
@@ -257,11 +265,13 @@ export class BaseLayer {
         this._visibility = visibility;
         this._layerProxy.setVisibility(visibility);
 
-        if (this._layerIndex !== undefined) {
-            const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
-            childNode.state.visibility = visibility;
-        } else {
-            this._viewerLayer.config.state.visibility = visibility;
+        if (this._viewerLayer.config) {
+            if (this._layerIndex !== undefined) {
+                const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+                childNode.state.visibility = visibility;
+            } else {
+                this._viewerLayer.config.state.visibility = visibility;
+            }
         }
 
         if (oldVisibility !== visibility) {
@@ -278,7 +288,7 @@ export class BaseLayer {
     }
 
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
-    removeAttributes(attributeKey: number | undefined): void {
+    removeAttributes(attributeKey?: number): void {
         if (typeof attributeKey !== 'undefined') {
             let allAttribs: Array<Object> = this.getAttributes();
 
@@ -469,38 +479,60 @@ export class ConfigLayer extends BaseLayer {
  * @example #### Draw a point for a SimpleLayer<br><br>
  *
  * ```js
- * const pointGeo = new RV.GEOMETRY.Point('myPoint', { x: 81, y: 79 });
+ * const pointGeo = new RZ.GEO.Point('myPoint', 'www.someImage.com/abc.svg', [81, 79 ]);
  * mySimpleLayer.addGeometry(pointGeo);
  * ```
  */
 export class SimpleLayer extends BaseLayer {
     /** @ignore */
-    _geometryArray: Array<any>;     // change to BaseGeometry after  ?
+    _geometryArray: Array<BaseGeometry>;
 
-    protected _geometryAdded: BehaviorSubject<Array<any>>; // change to BaseGeometry after  ?
-    protected _geometryChanged: Subject<ChangedGeometry>;
-    protected _geometryRemoved: Subject<Array<any>>; // change to BaseGeometry after  ?
+    _geometryAdded: Subject<BaseGeometry>;
+    _geometryRemoved: Subject<Array<BaseGeometry>>;
 
-    /** Sets the name for the layer. */
-    constructor(name: string, mapInstance: any) {
+    /** Sets the initial layer settings. The id is equivalent to the name. */
+    constructor(layerRecord: any, mapInstance: any) {
         super(mapInstance);
 
-        this._name = name;
+        this._viewerLayer = layerRecord;
+        this._layerProxy = layerRecord.getProxy();
+
+        this._name = layerRecord.name;
+        this._id = layerRecord.name;
+
+        this._opacity = this._layerProxy.opacity;
+        this._visibility = this._layerProxy.visibility;
 
         this._geometryArray = [];
-        this._geometryAdded = new BehaviorSubject(this._geometryArray);
-        this._geometryChanged = new Subject();
+        this._geometryAdded = new Subject();
         this._geometryRemoved = new Subject();
     }
 
+    /** Returns the name of the layer. */
+    get name(): string { return this._name; }
+
+    /** Sets the name of the layer. Will also update the id to reflect this change, since the id is equivalent to the name. */
+    set name(name: string) {
+        const oldName: string = this._name;
+
+        this._name = name;
+        this._id = name;
+
+        this._viewerLayer.name = name;
+
+        if (oldName !== name) {
+            this._nameChanged.next(name);
+        }
+    }
+
     /** Returns the value of the requested data, or an empty array if the data does not exist. */
-    get geometry(): Array<any> { return this._geometryArray; }  // change to BaseGeometry after  ?
+    get geometry(): Array<BaseGeometry> { return this._geometryArray; }
 
     /**
      * Emits whenever geometry is added to the layer.
      * @event geometryAdded
      */
-    get geometryAdded(): Observable<Array<any>> {   // change to BaseGeometry after  ?
+    get geometryAdded(): Observable<BaseGeometry> {
         return this._geometryAdded.asObservable();
     }
 
@@ -508,13 +540,21 @@ export class SimpleLayer extends BaseLayer {
      * Emits whenever geometry is removed from the layer.
      * @event geometryRemoved
      */
-    get geometryRemoved(): Observable<Array<any>> { // change to BaseGeometry after  ?
+    get geometryRemoved(): Observable<Array<BaseGeometry>> {
         return this._geometryRemoved.asObservable();
     }
 
     /** Adds the geometry to the layer. */
-    addGeometry(geometry: any): void { // change to BaseGeometry after  ?
+    addGeometry(geometry: BaseGeometry): void {
+        const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
 
+        if (index === -1) {
+            // TODO: change this after to add polygons, lines, etc.
+            const spatialReference = this._mapInstance.instance.spatialReference;
+            this._viewerLayer.addGeometry(geometry, spatialReference);
+            this._geometryArray.push(geometry);
+            this._geometryAdded.next(geometry);
+        }
     }
 
     /**
@@ -522,8 +562,45 @@ export class SimpleLayer extends BaseLayer {
      *
      * @param geometry any strings should reference a particular geometry instance with that ID. If undefined, all geometry is removed.
      */
-    removeGeometry(geometry: Array<string> | string | undefined): void {
+    removeGeometry(ids?: Array<string> | string): void {
+        if (typeof ids !== 'undefined') {
+            if (typeof ids === 'string') {
+                const index: number = this._geometryArray.findIndex(geo => geo.id === ids);
 
+                if (index !== -1) {
+                    const oldValue: BaseGeometry = this._geometryArray[index];
+
+                    this._viewerLayer.removeGeometry(index);
+                    this._geometryArray.splice(index, 1);
+                    this._geometryRemoved.next([ oldValue ]);
+                }
+            } else {
+                const geometriesRemoved: Array<BaseGeometry> = [];
+                ids.forEach(id => {
+                    const index: number = this._geometryArray.findIndex(geo => geo.id === id);
+
+                    if (index !== -1) {
+                        const oldValue: BaseGeometry = this._geometryArray[index];
+
+                        this._viewerLayer.removeGeometry(index);
+                        this._geometryArray.splice(index, 1);
+                        geometriesRemoved.push(oldValue);
+                    }
+                });
+
+                this._geometryRemoved.next(geometriesRemoved);
+            }
+        } else {
+            const copyGeometry: Array<BaseGeometry> = this._geometryArray;
+
+            this._geometryArray.forEach(geo => {
+                // always remove first index because when we remove it from esri layer instance, it removes from array as well
+                // so updated index will always be 0, and since we're removing all geometry, we can keep removing from start of array
+                this._viewerLayer.removeGeometry(0);
+            });
+            this._geometryArray = [];
+            this._geometryRemoved.next(copyGeometry);
+        }
     }
 }
 
@@ -558,16 +635,16 @@ export class LayerGroup {
     /** @ignore */
     _mapI: Map
     /** @ignore */
-     _layersArray: Array<BaseLayer> = [];
+    _layersArray: Array<BaseLayer> = [];
 
-    private _layerAdded: Subject<BaseLayer>;
-    private _layerRemoved: Subject<BaseLayer>
+    _layerAdded: Subject<BaseLayer>;
+    _layerRemoved: Subject<BaseLayer>
 
-    private _attributesAdded: Subject<LayerAndAttribs>; // Subject vs BehaviourSubject  ? How to initalize BehaviourSubject if that is the best option
-    private _attributesChanged: Subject<LayerAndChangedAttribs>;
-    private _attributesRemoved: Subject<LayerAndAttribs>;
+    _attributesAdded: Subject<LayerAndAttribs>;
+    _attributesChanged: Subject<LayerAndChangedAttribs>;
+    _attributesRemoved: Subject<LayerAndAttribs>;
 
-    private _click: Subject<BaseLayer>;
+    _click: Subject<BaseLayer>;
 
     /** Sets the layer groups api map instance. */
     constructor(mapInstance: Map) {
@@ -636,21 +713,34 @@ export class LayerGroup {
         return this._click.asObservable();
     }
 
-    // /** Providing a layer json snippet returns a `ConfigLayer`.*/
-    // addLayer(layerJSON: JSON): ConfigLayer;
+    /** Providing a layer json snippet returns a `ConfigLayer`.*/
+    addLayer(layerJSON: JSON): void;    // change return type after if we want to return something  ?
 
-    // /** Providing a string layer name will instantiate and return an empty `SimpleLayer` */
-    // addLayer(layerName: string): SimpleLayer;
+    /** Providing a string layer name will instantiate and return an empty `SimpleLayer` */
+    addLayer(layerName: string): void;  // change return type after if we want to return something  ?
 
-    // /** Adds GeoJSON layers to the group. Give this method a parsed JSON. The imported layers are returned. Throws an exception if the GeoJSON could not be imported. */
+    // /**
+    //  * Adds GeoJSON layers to the group. Give this method a parsed JSON. The imported layers are returned.
+    //  * Throws an exception if the GeoJSON could not be imported.
+    //  *
+    //  * TODO: complete this function.
+    //  */
     // addLayer(geoJson: Object): Array<SimpleLayer>;
 
-    // /** Loads GeoJSON from a URL, and adds the layers to the group. Invokes callback function once async layer loading is complete. */
+    // /**
+    //  * Loads GeoJSON from a URL, and adds the layers to the group.
+    //  * Invokes callback function once async layer loading is complete.
+    //  * TODO: complete this function.
+    //  */
     // addLayer(url: string, callback?: (layers: Array<SimpleLayer>) => void): void;
 
     /** Providing a layer json snippet creates a `ConfigLayer`.*/
-    addLayer(layerJSON: JSON): void {       // change return type after if we want to return something  ?
-        this._mapI.mapI.addConfigLayer(layerJSON);
+    addLayer(layerJSONOrName: JSON | string): void {       // change return type after if we want to return something  ?
+        if (typeof layerJSONOrName === 'string') {
+            this._mapI.mapI.addSimpleLayer(layerJSONOrName);
+        } else {
+            this._mapI.mapI.addConfigLayer(layerJSONOrName);
+        }
     }
 
     /** Removes a layer from the group. */
@@ -665,16 +755,25 @@ export class LayerGroup {
      */
     removeLayer(layerOrId: BaseLayer | string | number): void {
         if (isLayerObject(layerOrId)) {
-            if (layerOrId.layerIndex !== undefined) {
+            if (isSimpleLayer(layerOrId)) {
+                layerOrId.removeGeometry();
+                this._mapI.mapI.removeSimpleLayer(layerOrId._viewerLayer);
+            } else if (layerOrId.layerIndex !== undefined) {
                 this._mapI.mapI.removeApiLayer(layerOrId.id, layerOrId.layerIndex.toString());
             } else {
                 this._mapI.mapI.removeApiLayer(layerOrId.id);
             }
         } else {
-            // if id provided is for dynamic layer, this will remove all the children as well
-            // currently no way to remove an individual child through an id, may need the use of an optional second parameter
-            // similar to how it is done a few lines above
-            this._mapI.mapI.removeApiLayer(layerOrId.toString());
+            const layer = this.getLayersById(layerOrId.toString())[0];
+            if (isSimpleLayer(layer)) {
+                layer.removeGeometry();
+                this._mapI.mapI.removeSimpleLayer(layer._viewerLayer);
+            } else {
+                // if id provided is for dynamic layer, this will remove all the children as well
+                // currently no way to remove an individual child through an id, may need the use of an optional second parameter
+                // similar to how it is done a few lines above
+                this._mapI.mapI.removeApiLayer(layerOrId.toString());
+            }
         }
     }
 
@@ -727,6 +826,10 @@ function isLayerObject(layerOrId: BaseLayer | string | number): layerOrId is Bas
     return layerOrId instanceof BaseLayer;
 }
 
+function isSimpleLayer(layerOrId: BaseLayer | undefined): layerOrId is SimpleLayer {
+    return layerOrId instanceof SimpleLayer;
+}
+
 interface LayerInterface {
     name: string,
     opacity: number,
@@ -763,6 +866,6 @@ interface LayerAndChangedAttribs extends ChangedAttribs {
 }
 
 interface ChangedGeometry {
-    geometryBeforeChange: any, // change to BaseGeometry after  ?
-    geometryAfterChange: any  // change to BaseGeometry after  ?
+    geometryBeforeChange: BaseGeometry,
+    geometryAfterChange: BaseGeometry
 }
