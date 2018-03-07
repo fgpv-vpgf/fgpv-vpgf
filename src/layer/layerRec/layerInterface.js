@@ -106,29 +106,32 @@ class LayerInterface {
         this._source = newSource;
     }
 
-    convertToSingleLayer (layerRecord) {
+    convertToGraphicsLayer (layerRecord) {
         this._source = layerRecord;
         this._isPlaceholder = false;
 
+        newProp(this, 'visibility', graphicsGetVisibility);
+        newProp(this, 'opacity', graphicsGetOpacity);
+        newProp(this, 'name', graphicsGetName);
+        newProp(this, 'layerType', graphicsGetLayerType);
+
+        this.setVisibility = graphicsSetVisibility;
+        this.setOpacity = graphicsSetOpacity;
+    }
+
+    convertToSingleLayer (layerRecord) {
+        this.convertToGraphicsLayer(layerRecord);
+
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'state', standardGetState);
-
-        newProp(this, 'visibility', standardGetVisibility);
-        newProp(this, 'opacity', standardGetOpacity);
         newProp(this, 'query', standardGetQuery);
-
-        newProp(this, 'name', standardGetName);
         newProp(this, 'itemIndex', standardGetItemIndex);
-
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'oidField', standardGetOidField);
-        newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'parentLayerType', standardGetParentLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
         newProp(this, 'extent', standardGetExtent);
 
-        this.setVisibility = standardSetVisibility;
-        this.setOpacity = standardSetOpacity;
         this.setQuery = standardSetQuery;
         this.zoomToBoundary = standardZoomToBoundary;
         this.validateProjection = standardValidateProjection;
@@ -155,18 +158,6 @@ class LayerInterface {
         this.setDefinitionQuery = featureSetDefinitionQuery;
         this.zoomToGraphic = featureZoomToGraphic;
         this.abortAttribLoad = featureAbortAttribLoad;
-    }
-
-    convertToSimpleLayer (layerRecord) {
-        this._source = layerRecord;
-        this._isPlaceholder = false;
-
-        newProp(this, 'visibility', simpleGetVisibility);
-        newProp(this, 'opacity', simpleGetOpacity);
-        newProp(this, 'name', simpleGetName);
-
-        this.setVisibility = simpleSetVisibility;
-        this.setOpacity = simpleSetOpacity;
     }
 
     convertToDynamicLeaf (dynamicFC) {
@@ -215,9 +206,9 @@ class LayerInterface {
         this._isPlaceholder = true;
 
         newProp(this, 'symbology', standardGetSymbology);
-        newProp(this, 'name', standardGetName);
+        newProp(this, 'name', graphicsGetName);
         newProp(this, 'state', standardGetState);
-        newProp(this, 'layerType', standardGetLayerType);
+        newProp(this, 'layerType', graphicsGetLayerType);
         newProp(this, 'parentLayerType', standardGetParentLayerType);
     }
 
@@ -259,12 +250,7 @@ function dynamicLeafGetState() {
     return this._source.state;
 }
 
-function standardGetVisibility() {
-    /* jshint validthis: true */
-    return this._source.visibility;
-}
-
-function simpleGetVisibility() {
+function graphicsGetVisibility() {
     /* jshint validthis: true */
     return this._source.visibility;
 }
@@ -274,12 +260,7 @@ function dynamicLeafGetVisibility() {
     return this._source.getVisibility();
 }
 
-function standardGetName() {
-    /* jshint validthis: true */
-    return this._source.name;
-}
-
-function simpleGetName() {
+function graphicsGetName() {
     /* jshint validthis: true */
     return this._source.name;
 }
@@ -289,12 +270,7 @@ function dynamicLeafGetName() {
     return this._source.name;
 }
 
-function standardGetOpacity() {
-    /* jshint validthis: true */
-    return this._source.opacity;
-}
-
-function simpleGetOpacity() {
+function graphicsGetOpacity() {
     /* jshint validthis: true */
     return this._source.opacity;
 }
@@ -304,7 +280,7 @@ function dynamicLeafGetOpacity() {
     return this._source.opacity;
 }
 
-function standardGetLayerType() {
+function graphicsGetLayerType() {
     /* jshint validthis: true */
     return this._source.layerType;
 }
@@ -447,12 +423,7 @@ function dynamicLeafGetFeatureCount() {
     return this._source.featureCount;
 }
 
-function standardSetVisibility(value) {
-    /* jshint validthis: true */
-    this._source.visibility = value;
-}
-
-function simpleSetVisibility(value) {
+function graphicsSetVisibility(value) {
     /* jshint validthis: true */
     this._source.visibility = value;
 }
@@ -462,12 +433,7 @@ function dynamicLeafSetVisibility(value) {
     this._source.setVisibility(value);
 }
 
-function standardSetOpacity(value) {
-    /* jshint validthis: true */
-    this._source.opacity = value;
-}
-
-function simpleSetOpacity(value) {
+function graphicsSetOpacity(value) {
     /* jshint validthis: true */
     this._source.opacity = value;
 }

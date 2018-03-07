@@ -2,20 +2,32 @@
 
 const layerInterface = require('./layerInterface.js')();
 const root = require('./root.js')();
+const shared = require('./shared.js')();
 
-const markerSymbol = {    // TODO: throw this into a constants file and include defaults for other types as well if applicable
-    width: 16.5,
-    height: 16.5,
-    type: 'esriSMS',
-    color: [255, 0, 0]
-};
+const geometryTypes = {
+    POINT: 'Point',
+    MULTIPOINT: 'MultiPoint',
+    LINESTRING: 'LineString',
+    MULTILINESTRING: 'MultiLineString'
+}
+
+const defaultSymbols = {
+    POINT: {
+        width: 16.5,
+        height: 16.5,
+        type: 'esriSMS',
+        color: [255, 0, 0]
+    }
+}
 
 /**
- * @class SimpleRecord
+ * @class GraphicsRecord
  */
-class SimpleRecord extends root.Root {
+class GraphicsRecord extends root.Root {
     /**
-     * Create a simple layer record with the appropriate geoApi layer type.
+     * Create a graphics layer record with the appropriate geoApi layer type.
+     * TODO: possibly have an intermediate class between root and layerRecord to have all the duplicated items, such as hovertips.
+     * TODO: add identify functionality and fix up hover listeners / other features that might need to be modified
      * @param {Object} esriBundle       bundle of API classes
      * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {String} name             name and id of the layer.
@@ -34,6 +46,14 @@ class SimpleRecord extends root.Root {
     }
 
     get layerId () { return this._id; }
+
+    get name () { return this._name; }
+    set name (value) {
+        this._name = value;
+        this._id = value;
+    }
+
+    get layerType () { return shared.clientLayerType.ESRI_GRAPHICS; }
 
     get visibility () {
         if (this._layer) {
@@ -119,7 +139,7 @@ class SimpleRecord extends root.Root {
     getProxy () {
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this);
-            this._rootProxy.convertToSimpleLayer(this);
+            this._rootProxy.convertToGraphicsLayer(this);
         }
         return this._rootProxy;
     }
@@ -160,14 +180,32 @@ class SimpleRecord extends root.Root {
     }
 
     /**
+     * Identify the type of geometry being added and add it to the map.
+     *
+     * @function addGeometry
+     * @param {Object} geometry                  api geometry class to be added
+     * @param {Object} spatialReference          the projection the graphics should be in
+     */
+    addGeometry(geometry, spatialReference) {
+        if (geometry.type === geometryTypes.POINT) {
+            const coords = geometry.xy.projectToPoint(spatialReference);
+            const icon = geometry.icon;
+            this._addPoint(coords, spatialReference, icon);
+        }
+
+        // TODO: add 'private' functions and conditions for other geometry types as well
+    }
+
+    /**
      * Add a point where specified using longitute and latitute.
      *
-     * @function addPoint
+     * @function _addPoint
+     * @private
      * @param {Object} coords                    the long and lat to use as the graphic location
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} icon                      data url to for layer icon. defaults to a red point
      */
-    addPoint(coords, spatialReference, icon) {
+    _addPoint(coords, spatialReference, icon) {
         const point = new this._bundle.Point({
             x: coords.x,
             y: coords.y,
@@ -185,7 +223,7 @@ class SimpleRecord extends root.Root {
             };
         }
 
-        const marker = new this._bundle.Graphic({ symbol: symbol || markerSymbol });
+        const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.POINT });
         marker.setGeometry(point);
         this._layer.add(marker);
     }
@@ -203,5 +241,5 @@ class SimpleRecord extends root.Root {
 }
 
 module.exports = () => ({
-    SimpleRecord
+    GraphicsRecord
 });

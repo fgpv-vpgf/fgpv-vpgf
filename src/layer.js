@@ -1154,14 +1154,14 @@ function createFeatureRecordBuilder(esriBundle, geoApi, classBundle) {
     };
 }
 
-function createSimpleRecordBuilder(esriBundle, geoApi, classBundle) {
+function createGraphicsRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
-    * Creates a Simple Layer Record class
+    * Creates a Graphics Layer Record class
     * @param {String} name           name and id of the layer to be constructed
-    * @returns {Object}              instantited SimpleRecord class
+    * @returns {Object}              instantited GraphicsRecord class
     */
     return name => {
-        return new classBundle.SimpleRecord(esriBundle, geoApi, name);
+        return new classBundle.GraphicsRecord(esriBundle, geoApi, name);
     };
 }
 
@@ -1246,7 +1246,7 @@ module.exports = function (esriBundle, geoApi) {
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
-        createSimpleRecord: createSimpleRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createGraphicsRecord: createGraphicsRecordBuilder(esriBundle, geoApi, layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
         makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
