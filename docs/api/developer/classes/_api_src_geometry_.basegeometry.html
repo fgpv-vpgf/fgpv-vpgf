@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PanelEvent | r2v2</title>
+	<title>BaseGeometry | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,24 +56,36 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_api_src_events_.html">&quot;api/src/events&quot;</a>
+					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_api_src_events_.panelevent.html">PanelEvent</a>
+					<a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>
 				</li>
 			</ul>
-			<h1>Class PanelEvent</h1>
+			<h1>Class BaseGeometry</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>All geometry types must derive from this class. Not intented to be instantiated on its own.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PanelEvent</span>
+						<span class="target">BaseGeometry</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -84,21 +96,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_events_.panelevent.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_events_.panelevent.html#_content" class="tsd-kind-icon">_content</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_events_.panelevent.html#_name" class="tsd-kind-icon">_name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_events_.panelevent.html#content" class="tsd-kind-icon">content</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_events_.panelevent.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -110,25 +121,27 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Panel<wbr>Event<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_events_.panelevent.html" class="tsd-signature-type">PanelEvent</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Base<wbr>Geometry<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/events.ts#L77">api/src/events.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/geometry.ts#L189">api/src/geometry.ts:189</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the geometry id.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>node: <span class="tsd-signature-type">Node</span></h5>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_events_.panelevent.html" class="tsd-signature-type">PanelEvent</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -136,58 +149,65 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_content" class="tsd-anchor"></a>
-					<h3>_content</h3>
-					<div class="tsd-signature tsd-kind-icon">_content<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Node</span></div>
+					<a name="_id" class="tsd-anchor"></a>
+					<h3>_id</h3>
+					<div class="tsd-signature tsd-kind-icon">_id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/events.ts#L77">api/src/events.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/geometry.ts#L189">api/src/geometry.ts:189</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_name" class="tsd-anchor"></a>
-					<h3>_name</h3>
-					<div class="tsd-signature tsd-kind-icon">_name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/events.ts#L76">api/src/events.ts:76</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>ignore</dt>
+							<dd></dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="content" class="tsd-anchor"></a>
-					<h3>content</h3>
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> content<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Node</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/events.ts#L88">api/src/events.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/geometry.ts#L203">api/src/geometry.ts:203</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Node</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the geometry id.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> name<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/events.ts#L84">api/src/events.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/geometry.ts#L200">api/src/geometry.ts:200</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the type of the geometry object. Possibilities are &#39;Point&#39;, &#39;MultiPoint&#39;, &#39;LineString&#39;, or &#39;MultiLineString&#39;.
+									Function implementation in subclasses.</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
@@ -203,10 +223,10 @@
 					<li class="label tsd-is-external">
 						<span>Internals</span>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -231,41 +251,47 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_events_.mapclickevent.html" class="tsd-kind-icon">Map<wbr>Click<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_events_.mouseevent.html" class="tsd-kind-icon">Mouse<wbr>Event</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_events_.panelevent.html" class="tsd-kind-icon">Panel<wbr>Event</a>
+						<a href="_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_api_src_events_.panelevent.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_events_.panelevent.html#_content" class="tsd-kind-icon">_content</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_events_.panelevent.html#_name" class="tsd-kind-icon">_name</a>
+								<a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_events_.panelevent.html#content" class="tsd-kind-icon">content</a>
+								<a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_events_.panelevent.html#name" class="tsd-kind-icon">name</a>
+								<a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_api_src_events_.esrimouseevent.html" class="tsd-kind-icon">esri<wbr>Mouse<wbr>Event</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_api_src_events_.html#isesrimouseevent" class="tsd-kind-icon">is<wbr>Esri<wbr>Mouse<wbr>Event</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.xy.html" class="tsd-kind-icon">XY</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>
 					</li>
 				</ul>
 			</nav>

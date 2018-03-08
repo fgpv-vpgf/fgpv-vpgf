@@ -487,7 +487,7 @@ export class SimpleLayer extends BaseLayer {
     /** @ignore */
     _geometryArray: Array<BaseGeometry>;
 
-    _geometryAdded: Subject<BaseGeometry>;
+    _geometryAdded: Subject<Array<BaseGeometry>>;
     _geometryRemoved: Subject<Array<BaseGeometry>>;
 
     /** Sets the initial layer settings. The id is equivalent to the name. */
@@ -532,7 +532,7 @@ export class SimpleLayer extends BaseLayer {
      * Emits whenever geometry is added to the layer.
      * @event geometryAdded
      */
-    get geometryAdded(): Observable<BaseGeometry> {
+    get geometryAdded(): Observable<Array<BaseGeometry>> {
         return this._geometryAdded.asObservable();
     }
 
@@ -545,15 +545,30 @@ export class SimpleLayer extends BaseLayer {
     }
 
     /** Adds the geometry to the layer. */
-    addGeometry(geometry: BaseGeometry): void {
-        const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
+    addGeometry(geo: BaseGeometry | Array<BaseGeometry>): void {
+        let geometries: Array<BaseGeometry>;
+        if (geo instanceof Array) {
+            geometries = geo;
+        } else {
+            geometries = [ geo ];
+        }
 
-        if (index === -1) {
-            // TODO: change this after to add polygons, lines, etc.
-            const spatialReference = this._mapInstance.instance.spatialReference;
-            this._viewerLayer.addGeometry(geometry, spatialReference);
-            this._geometryArray.push(geometry);
-            this._geometryAdded.next(geometry);
+        const geometriesAdded: Array<BaseGeometry> = [];
+
+        geometries.forEach(geometry => {
+            const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
+
+            if (index === -1) {
+                // TODO: change this after to add polygons, lines, etc.
+                const spatialReference = this._mapInstance.instance.spatialReference;
+                this._viewerLayer.addGeometry(geometry, spatialReference);
+                this._geometryArray.push(geometry);
+                geometriesAdded.push(geometry);
+            }
+        });
+
+        if (geometriesAdded.length > 0) {
+            this._geometryAdded.next(geometriesAdded);
         }
     }
 
@@ -588,7 +603,9 @@ export class SimpleLayer extends BaseLayer {
                     }
                 });
 
-                this._geometryRemoved.next(geometriesRemoved);
+                if (geometriesRemoved.length > 0) {
+                    this._geometryRemoved.next(geometriesRemoved);
+                }
             }
         } else {
             const copyGeometry: Array<BaseGeometry> = this._geometryArray;

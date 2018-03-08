@@ -76,6 +76,7 @@
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_layers_.baselayer.html" class="tsd-kind-icon">Base<wbr>Layer</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_layers_.configlayer.html" class="tsd-kind-icon">Config<wbr>Layer</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_layers_.layergroup.html" class="tsd-kind-icon">Layer<wbr>Group</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_layers_.simplelayer.html" class="tsd-kind-icon">Simple<wbr>Layer</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -83,6 +84,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.attribobject.html" class="tsd-kind-icon">Attrib<wbr>Object</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.changedattribs.html" class="tsd-kind-icon">Changed<wbr>Attribs</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.changedgeometry.html" class="tsd-kind-icon">Changed<wbr>Geometry</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.featuresarray.html" class="tsd-kind-icon">Features<wbr>Array</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.jsonconfig.html" class="tsd-kind-icon">JSONConfig</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_layers_.layerandattribs.html" class="tsd-kind-icon">Layer<wbr>And<wbr>Attribs</a></li>
@@ -94,6 +96,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_api_src_layers_.html#islayerobject" class="tsd-kind-icon">is<wbr>Layer<wbr>Object</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_api_src_layers_.html#issimplelayer" class="tsd-kind-icon">is<wbr>Simple<wbr>Layer</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -117,13 +120,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L651">api/src/layers.ts:651</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L842">api/src/layers.ts:842</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>layerOrId: <a href="../classes/_api_src_layers_.baselayer.html" class="tsd-signature-type">BaseLayer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="issimplelayer" class="tsd-anchor"></a>
+					<h3>is<wbr>Simple<wbr>Layer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Simple<wbr>Layer<span class="tsd-signature-symbol">(</span>layerOrId<span class="tsd-signature-symbol">: </span><a href="../classes/_api_src_layers_.baselayer.html" class="tsd-signature-type">BaseLayer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L846">api/src/layers.ts:846</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>layerOrId: <a href="../classes/_api_src_layers_.baselayer.html" class="tsd-signature-type">BaseLayer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -139,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">layer<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L23">api/src/layers.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L24">api/src/layers.ts:24</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -148,7 +174,7 @@
 						<div class="tsd-signature tsd-kind-icon">ESRI_<wbr>DYNAMIC<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;esriDynamic&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L24">api/src/layers.ts:24</a></li>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L26">api/src/layers.ts:26</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -158,7 +184,17 @@
 						<div class="tsd-signature tsd-kind-icon">ESRI_<wbr>FEATURE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;esriFeature&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L25">api/src/layers.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L27">api/src/layers.ts:27</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
+						<a name="layertypes.esri_graphics" class="tsd-anchor"></a>
+						<h3>ESRI_<wbr>GRAPHICS</h3>
+						<div class="tsd-signature tsd-kind-icon">ESRI_<wbr>GRAPHICS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;esriGraphics&quot;</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L25">api/src/layers.ts:25</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -168,7 +204,7 @@
 						<div class="tsd-signature tsd-kind-icon">ESRI_<wbr>IMAGE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;esriImage&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L26">api/src/layers.ts:26</a></li>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L28">api/src/layers.ts:28</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -178,7 +214,7 @@
 						<div class="tsd-signature tsd-kind-icon">ESRI_<wbr>TILE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;esriTile&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L27">api/src/layers.ts:27</a></li>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L29">api/src/layers.ts:29</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -188,7 +224,7 @@
 						<div class="tsd-signature tsd-kind-icon">OGC_<wbr>WMS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;ogcWms&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/milesap/fgpv-vpgf/blob/af05cdda/api/src/layers.ts#L28">api/src/layers.ts:28</a></li>
+								<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/1f04e8e0/api/src/layers.ts#L30">api/src/layers.ts:30</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -241,11 +277,17 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_api_src_layers_.layergroup.html" class="tsd-kind-icon">Layer<wbr>Group</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_layers_.simplelayer.html" class="tsd-kind-icon">Simple<wbr>Layer</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.attribobject.html" class="tsd-kind-icon">Attrib<wbr>Object</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.changedattribs.html" class="tsd-kind-icon">Changed<wbr>Attribs</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_api_src_layers_.changedgeometry.html" class="tsd-kind-icon">Changed<wbr>Geometry</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.featuresarray.html" class="tsd-kind-icon">Features<wbr>Array</a>
@@ -264,6 +306,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_api_src_layers_.html#islayerobject" class="tsd-kind-icon">is<wbr>Layer<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_layers_.html#issimplelayer" class="tsd-kind-icon">is<wbr>Simple<wbr>Layer</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_api_src_layers_.html#layertypes" class="tsd-kind-icon">layer<wbr>Types</a>
