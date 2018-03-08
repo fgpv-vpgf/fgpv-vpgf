@@ -881,8 +881,3 @@ interface ChangedAttribs {
 interface LayerAndChangedAttribs extends ChangedAttribs {
     layer: BaseLayer
 }
-
-interface ChangedGeometry {
-    geometryBeforeChange: BaseGeometry,
-    geometryAfterChange: BaseGeometry
-}
