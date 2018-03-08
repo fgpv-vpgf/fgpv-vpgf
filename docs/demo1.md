@@ -101,29 +101,3 @@ You can pass an optional configuration object to `GeoSearch`. After instantiatin
     geoSearch.ui(null, null, document.getElementById('searchField'), document.getElementById('resultElem'), document.getElementById('feature'));
 </script>
 ````
-
-#### Format Custom Elements
-
-````html
-<script src="dist/geosearch.js"></script>
-
-<input id="searchField" name="searchField" type="text">
-<div id="feature"></div>
-<ul id="resultElem"></ul>
-
-<script>    
-    function customIterator(results) {
-        const ul = document.createElement('ul');
-        
-        results.forEach(r => {
-            const li = document.createElement('li');
-            li.innerHTML = `${r.name} (${r.type}), ${r.location}, ${r.province} @ lat: ${r.latLon.lat}, lon: ${r.latLon.lon}`;
-            ul.appendChild(li);
-        });
-
-        return ul;
-    }
-    var geoSearch = new GeoSearch();
-    geoSearch.ui(customIterator, null, document.getElementById('searchField'), document.getElementById('resultElem'), document.getElementById('feature'));
-</script>
-````

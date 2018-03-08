@@ -17,6 +17,7 @@ function fetchConsise(lang) {
     .then(json => json.definitions.forEach(type => types[lang][type.code] = type.term));
 }
 
-Promise.all([fetchConsise('en'), fetchConsise('fr')]).then(() => {
+module.exports = Promise.all([fetchConsise('en'), fetchConsise('fr')]).then(() => {
     fs.writeFileSync('data/types.json', JSON.stringify(types));
+    return types;
 });

@@ -16,12 +16,13 @@ const config = {
     module: {
         rules: [{
             test: /\.ts$/,
+            enforce: 'pre',
             use: [{
                 loader: 'babel-loader',
                 options: { presets: ['es2015', 'stage-2'], cacheDirectory: true }
             }, {
                 loader: 'ts-loader'
-            }]
+            }, 'tslint-loader']
         }]
     },
 
@@ -29,7 +30,6 @@ const config = {
 
     plugins: [
         new WebpackShellPlugin({
-            onBuildStart: [`node scripts/typeCompiler.js && node scripts/provinceCompiler.js`],
             onBuildEnd: [`cp -rf ${path.resolve(__dirname, 'dist')} ${path.resolve(__dirname, 'docs')}`]
         }),
 

@@ -1,23 +1,25 @@
 import * as defs from './definitions';
-import * as provs from '../data/provinces.json';
-import * as fsaToProv from '../data/fsa_to_prov.json';
+import * as jsonprovs from '../data/provinces.json';
+import * as jsonfsaToProv from '../data/fsa_to_prov.json';
 
-const provinceObj = {};
+const provinceObj: {[key: string]: Provinces} = {};
+const fsaToProv = (<any>jsonfsaToProv);
+const provs: defs.GenericObjectType = (<any>jsonprovs);
 
 class Provinces {
-    list: defs.genericObjectType = {};
+    list: defs.GenericObjectType = {};
 
     constructor(language: string) {
         Object.keys(provs[language]).forEach(provKey => {
-            this.list[provKey] = provs[language][provKey];
+            this.list[provKey] = (<any>provs[language])[provKey];
         });
     }
 
-    fsaToProvinces(fsa: string): defs.genericObjectType {
-        const genericObj = {};
+    fsaToProvinces(fsa: string): defs.GenericObjectType {
+        const genericObj: defs.GenericObjectType = {};
     
         // either a provincial code, or an array of them
-        let provCodes = fsaToProv[fsa.substring(0,1).toUpperCase()];
+        let provCodes = (<number[] | number>fsaToProv[fsa.substring(0, 1).toUpperCase()]);
     
         if (typeof provCodes === 'number') {
             provCodes = [provCodes];
@@ -26,7 +28,7 @@ class Provinces {
         provCodes.forEach(n => {
             genericObj[n] = this.list[n];
         });
-
+ 
         return genericObj;
     }
     

@@ -1,12 +1,12 @@
 import * as defs from './definitions';
 
-export default function(config: defs.mainConfig, query: string): Query {
+export function make(config: defs.MainConfig, query: string): Query {
     // FSA test
     if (/^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/.test(query)) {
         return new FSAQuery(config, query);
     // Partial NTS match (Sheet and Map Unit Subdivision)
     } else if (/^\d{2,3}[A-P]/.test(query)) {
-        query = query.substring(0,6).toUpperCase();
+        query = query.substring(0, 6).toUpperCase();
         return new NTSQuery(config, query);
     // name based search
     } else if (/^[A-Za-z]/.test(query)) {
@@ -19,27 +19,27 @@ export default function(config: defs.mainConfig, query: string): Query {
     // posible street address search (not supported) or contains special characters
     } else {
         const q = new Query(config, query);
-        q.onComplete = new Promise(r => r(q));
+        q.onComplete = new Promise((resolve, reject) => resolve(q));
         return q;
     }
 }
 
 export class Query {
-    config: defs.mainConfig;
-    query: string | null;
+    config: defs.MainConfig;
+    query: string | undefined;
     featureResults: defs.queryFeatureResults;
     suggestions: defs.NTSResultList = [];
-    results: defs.nameResultList = [];
+    results: defs.NameResultList = [];
     onComplete: Promise<this>;
 
-    constructor(config: defs.mainConfig, query?: string) {
-        this.query = query || null;
+    constructor(config: defs.MainConfig, query?: string) {
+        this.query = query;
         this.config = config;
     }
 
-    private getUrl(useLocate?: boolean, restrict?: Array<number>, altQuery?: string, lat?: number, lon?: number): string {
+    private getUrl(useLocate?: boolean, restrict?: number[], altQuery?: string, lat?: number, lon?: number): string {
         let url = '';
-        let query = altQuery ? altQuery : this.query;
+        const query = altQuery ? altQuery : this.query;
         if (useLocate) {
             url = this.config.geoLocateUrl + '?q=' + query;
         
@@ -61,29 +61,29 @@ export class Query {
         return url;
     }
 
-    normalizeNameItems(items: Array<defs.nameResponse>): defs.nameResultList {
+    normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList {
         return items.filter(i => this.config.types.validTypes[i.concise.code]).map(i => {
             return {
                 name: i.name,
                 location: i.location,
                 province: this.config.provinces.list[i.province.code],
                 type: this.config.types.allTypes[i.concise.code],
-                latLon: { lat: i.latitude, lon: i.longitude},
+                LatLon: { lat: i.latitude, lon: i.longitude},
                 bbox: i.bbox
             }
         });
     }
 
-    search(restrict?: Array<number>): Promise<defs.nameResultList> {
-       return (<Promise<defs.rawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then(r => this.normalizeNameItems(r.items));
+    search(restrict?: number[]): Promise<defs.NameResultList> {
+       return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then(r => this.normalizeNameItems(r.items));
     }
 
-    nameByLatLon(lat: number, lon: number, restrict?: Array<number>): Promise<defs.nameResultList> {
-        return (<Promise<defs.rawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => this.normalizeNameItems(r.items));
+    nameByLatLon(lat: number, lon: number, restrict?: number[]): Promise<defs.NameResultList> {
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => this.normalizeNameItems(r.items));
     }
 
-    locateByQuery(altQuery?: string): Promise<defs.locateResponseList> {
-        return (<Promise<defs.locateResponseList>>this.jsonRequest(this.getUrl(true, undefined, altQuery)));
+    locateByQuery(altQuery?: string): Promise<defs.LocateResponseList> {
+        return (<Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined, altQuery)));
     }
 
     jsonRequest(url: string) {
@@ -91,7 +91,7 @@ export class Query {
             const xobj = new XMLHttpRequest();
             xobj.open('GET', url, true);
             xobj.responseType = 'json';
-            xobj.onload = function() {
+            xobj.onload = () => {
                 if (xobj.status === 200) {
                     resolve(typeof xobj.response === 'string' ? JSON.parse(xobj.response) : xobj.response);
                 } else {
@@ -119,13 +119,13 @@ export class Query {
  *     - Sheet, Map Unit Subdivision, and Map Sheet Unit
  * 
  * Note that "Blocks" and "Units" are currently not supported on geogratis and are ignored on the query.
-*/
-class NTSQuery extends Query {
+ */
+export class NTSQuery extends Query {
     unitName: string;
     unit: defs.NTSResult;
     mapSheets: defs.NTSResultList;
 
-    constructor(config: defs.mainConfig, query: string) {
+    constructor(config: defs.MainConfig, query: string) {
         // front pad 0 if NTS starts with two digits
         query = !parseInt(query[2]) ? '0' + query : query;
         super(config, query);
@@ -139,7 +139,7 @@ class NTSQuery extends Query {
                     this.mapSheets = allSheets;
 
                     this.featureResults = this.unit;
-                    this.nameByLatLon(this.unit.latLon.lat, this.unit.latLon.lon).then(r => {
+                    this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then(r => {
                         this.results = r;
                         resolve(this);
                     });
@@ -150,16 +150,16 @@ class NTSQuery extends Query {
         });
     }
 
-    locateToResult(lrl: defs.locateResponseList): defs.NTSResultList {
+    locateToResult(lrl: defs.LocateResponseList): defs.NTSResultList {
         const results = lrl.map(ls => {
             const title = ls.title.split(' ');
             return {
                 nts: title.shift() || '', // 064D or 064D06
                 location: title.join(' '), // "NUMABIN BAY"
                 code: 'NTS', // "NTS"
-                desc: this.config.types.allTypes['NTS'], // "National Topographic System"
-                latLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0]},
-                bbox: (<Array<number>>ls.bbox)
+                desc: this.config.types.allTypes.NTS, // "National Topographic System"
+                LatLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0]},
+                bbox: (<number[]>ls.bbox)
             };
         });
 
@@ -171,17 +171,17 @@ class NTSQuery extends Query {
     }
 }
 
-class FSAQuery extends Query {
-    constructor(config: defs.mainConfig, query: string) {
+export class FSAQuery extends Query {
+    constructor(config: defs.MainConfig, query: string) {
 
-        query = query.substring(0,3).toUpperCase();
+        query = query.substring(0, 3).toUpperCase();
         super(config, query);
 
         this.onComplete = new Promise((resolve, reject) => {
             this.formatLocationResult().then(fLR => {
-                if (fLR !== null) {
+                if (fLR) {
                     this.featureResults = fLR;
-                    this.nameByLatLon(fLR.latLon.lat, fLR.latLon.lon, Object.keys(fLR._provinces).map(x => parseInt(x))).then(r => {
+                    this.nameByLatLon(fLR.LatLon.lat, fLR.LatLon.lon, Object.keys(fLR._provinces).map(x => parseInt(x))).then(r => {
                         this.results = r;
                         resolve(this);
                     });
@@ -192,7 +192,7 @@ class FSAQuery extends Query {
         });
     }
 
-    formatLocationResult(): Promise<defs.FSAResult | null> {
+    formatLocationResult(): Promise<defs.FSAResult | undefined> {
         return this.locateByQuery().then(locateResponseList => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
@@ -200,13 +200,12 @@ class FSAQuery extends Query {
                 return {
                     fsa: this.query,
                     code: 'FSA',
-                    desc: this.config.types.allTypes['FSA'],
+                    desc: this.config.types.allTypes.FSA,
                     province: Object.keys(provList).map(i => provList[i]).join(','),
                     _provinces: provList,
-                    latLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0]}
+                    LatLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0]}
                 }
             }
-            return null;
         });
     }
 }

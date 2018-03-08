@@ -1,34 +1,36 @@
-import * as types from '../data/types.json';
+import * as jsontypes from '../data/types.json';
 import * as defs from './definitions';
 
-const typeObj = {};
+const typeObj: {[key: string]: Types} = {};
+const types: defs.GenericObjectType = (<any>jsontypes);
+
 
 class Types {
-    allTypes = {};
-    validTypes = {};
+    allTypes: defs.GenericObjectType = {};
+    validTypes: defs.GenericObjectType = {};
     filterComplete: boolean = false;
 
-    constructor(language) {
+    constructor(language: string) {
         Object.keys(types[language]).forEach(typeKey => {
-            this.allTypes[typeKey] = types[language][typeKey];
-            this.validTypes[typeKey] = types[language][typeKey];
+            this.allTypes[typeKey] = (<any>types[language])[typeKey];
+            this.validTypes[typeKey] = (<any>types[language])[typeKey];
         });
     }
 
-    filterValidTypes(include?: string | Array<string>, exclude?: string | Array<string>): defs.genericObjectType {
+    filterValidTypes(include?: string | string[], exclude?: string | string[]): defs.GenericObjectType {
         if (this.filterComplete) {
             return this.validTypes;
         }
 
         include = typeof include === 'string' ? [include] : include;
         exclude = typeof exclude === 'string' ? [exclude] : exclude;
-        const setExclusion = include || exclude ? (include && include.length > 0) || (exclude && exclude.length) : null;
+        const setExclusion = include || exclude ? (include && include.length > 0) || (exclude && exclude.length) : undefined;
     
-        if (setExclusion !== null) {
-            const typeSet = new Set(Object.keys(this.validTypes));
-            const keySet = new Set(include || exclude);
-            const invalidKeys = new Set([...typeSet].filter(x => !setExclusion === keySet.has(x)));
-            for (let key of invalidKeys) {
+        if (setExclusion) {
+            const typeSet = Object.keys(this.validTypes);
+            const keySet = include || exclude || [];
+            const invalidKeys = [...typeSet].filter(x => !setExclusion === (keySet.indexOf(x) !== -1));
+            for (const key of invalidKeys) {
                 delete this.validTypes[key];
             }
         }

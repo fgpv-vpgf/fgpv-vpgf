@@ -1,9 +1,9 @@
-export interface genericObjectType {
+export interface GenericObjectType {
     [key: string]: string
 }
 
 // config object is used by all query classes
-export interface mainConfig {
+export interface MainConfig {
     geoNameUrl: string,
     geoLocateUrl: string,
     maxResults: number,
@@ -12,65 +12,59 @@ export interface mainConfig {
     provinces: Provinces
 }
 
-export interface userConfig {
-    includeTypes?: string | Array<string>,
-    excludeTypes?: string | Array<string>,
+export interface UserConfig {
+    includeTypes?: string | string[],
+    excludeTypes?: string | string[],
     language?: string,
     maxResults?: number,
     geoLocateUrl?: string,
     geoNameUrl?: string
 }
 
-export interface latLon {
+export interface LatLon {
     lat: number,
     lon: number
 }
 
-export interface locateResponse {
+export interface LocateResponse {
     title: string,
-    bbox?: Array<number>,
-    geometry: { coordinates: Array<number> }
+    bbox?: number[],
+    geometry: { coordinates: number[] }
 }
 
-export interface nameResponse {
+export interface NameResponse {
     name: string,
     location: string,
     province: {code: string},
     concise: { code: string },
     latitude: number,
     longitude: number,
-    bbox: Array<number>,
+    bbox: number[],
 }
 
 export interface Types {
-    allTypes: genericObjectType
-    validTypes: genericObjectType;
-    filterValidTypes(include?: string | Array<string>, exclude?: string | Array<string>): genericObjectType;
+    allTypes: GenericObjectType
+    validTypes: GenericObjectType;
+    filterValidTypes(include?: string | string[], exclude?: string | string[]): GenericObjectType;
 }
 
 export interface Provinces {
-    fsaToProvinces(fsa: string): genericObjectType;
-    list: genericObjectType;
+    fsaToProvinces(fsa: string): GenericObjectType;
+    list: GenericObjectType;
 }
 
-// final results from a query, filtered on types and sorted where applicable
-export interface finalResults {
-    featured: nameResultList | FSAResult | NTSResult,
-    results: nameResultList
-}
-
-export interface rawNameResult {
-    items: Array<nameResponse>
+export interface RawNameResult {
+    items: NameResponse[]
 }
 
 // defines results from a geoNames search
-export interface nameResult {
+export interface NameResult {
     name: string,
     location: string,
     province: string, // "Ontario"
     type: string, // "Lake"
-    latLon: latLon,
-    bbox: Array<number>
+    LatLon: LatLon,
+    bbox: number[]
 }
 
 export interface FSAResult {
@@ -78,8 +72,8 @@ export interface FSAResult {
     code: string, // "FSA"
     desc: string, // "Forward Sortation Area"
     province: string, // Ontario
-    _provinces: genericObjectType, // {ON: "Ontario"} or {ON: "Ontario", MB: "Manitoba"}
-    latLon: latLon
+    _provinces: GenericObjectType, // {ON: "Ontario"} or {ON: "Ontario", MB: "Manitoba"}
+    LatLon: LatLon
 }
 
 export interface NTSResult {
@@ -87,13 +81,13 @@ export interface NTSResult {
     location: string, // "NUMABIN BAY"
     code: string, // "NTS"
     desc: string, // "National Topographic System"
-    latLon: latLon,
-    bbox: Array<number>
+    LatLon: LatLon,
+    bbox: number[]
 }
 
-export type locateResponseList = Array<locateResponse>;
-export type nameResultList = Array<nameResult>
-export type NTSResultList = Array<NTSResult>;
+export type LocateResponseList = LocateResponse[];
+export type NameResultList = NameResult[]
+export type NTSResultList = NTSResult[];
 export type queryFeatureResults = FSAResult | NTSResult;
 
 export function isFSAResult(result: queryFeatureResults): result is FSAResult {
