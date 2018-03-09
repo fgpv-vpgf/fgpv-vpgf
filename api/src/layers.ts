@@ -751,7 +751,7 @@ export class LayerGroup {
     //  */
     // addLayer(url: string, callback?: (layers: Array<SimpleLayer>) => void): void;
 
-    /** Providing a layer json snippet creates a `ConfigLayer`.*/
+    /** Creates a `ConfigLayer` using a json snippet. Else creates a 'SimpleLayer' using the string. */
     addLayer(layerJSONOrName: JSON | string): void {       // change return type after if we want to return something  ?
         if (typeof layerJSONOrName === 'string') {
             this._mapI.mapI.addSimpleLayer(layerJSONOrName);
