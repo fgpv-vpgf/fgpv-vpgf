@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>UI | r2v2</title>
+	<title>BaseGeometry | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_api_src_ui_.html">&quot;api/src/ui&quot;</a>
+					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_api_src_ui_.ui.html">UI</a>
+					<a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>
 				</li>
 			</ul>
-			<h1>Class UI</h1>
+			<h1>Class BaseGeometry</h1>
 		</div>
 	</div>
 </header>
@@ -71,20 +71,21 @@
 		<div class="col-8 col-content">
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><h4 id="using-an-anchor-point-to-remove-context-map">Using an anchor point to remove context map</h4>
-							<pre><code class="lang-js">RZ.mapInstances[<span class="hljs-number">0</span>].ui.anchors.CONTEXT_MAP.remove();
-</code></pre>
-						</dd>
-					</dl>
+					<div class="lead">
+						<p>All geometry types must derive from this class. Not intented to be instantiated on its own.</p>
+					</div>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">UI</span>
+						<span class="target">BaseGeometry</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -95,23 +96,20 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#_mapi" class="tsd-kind-icon">_mapI</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#_panels" class="tsd-kind-icon">_panels</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#_tooltip" class="tsd-kind-icon">_tooltip</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#anchors" class="tsd-kind-icon">anchors</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#panels" class="tsd-kind-icon">panels</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_ui_.ui.html#tooltip" class="tsd-kind-icon">tooltip</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -123,22 +121,27 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new UI<span class="tsd-signature-symbol">(</span>mapInstance<span class="tsd-signature-symbol">: </span><a href="_api_src_map_.map.html" class="tsd-signature-type">Map</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_ui_.ui.html" class="tsd-signature-type">UI</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Base<wbr>Geometry<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L237">api/src/ui.ts:237</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L189">api/src/geometry.ts:189</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the geometry id.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>mapInstance: <a href="_api_src_map_.map.html" class="tsd-signature-type">Map</a></h5>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_ui_.ui.html" class="tsd-signature-type">UI</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -146,86 +149,67 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_mapi" class="tsd-anchor"></a>
-					<h3>_mapI</h3>
-					<div class="tsd-signature tsd-kind-icon">_mapI<span class="tsd-signature-symbol">:</span> <a href="_api_src_map_.map.html" class="tsd-signature-type">Map</a></div>
+					<a name="_id" class="tsd-anchor"></a>
+					<h3>_id</h3>
+					<div class="tsd-signature tsd-kind-icon">_id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L235">api/src/ui.ts:235</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L189">api/src/geometry.ts:189</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_panels" class="tsd-anchor"></a>
-					<h3>_panels</h3>
-					<div class="tsd-signature tsd-kind-icon">_panels<span class="tsd-signature-symbol">:</span> <a href="_api_src_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L236">api/src/ui.ts:236</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_tooltip" class="tsd-anchor"></a>
-					<h3>_tooltip</h3>
-					<div class="tsd-signature tsd-kind-icon">_tooltip<span class="tsd-signature-symbol">:</span> <a href="_api_src_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a><span class="tsd-signature-symbol"> =&nbsp;new ToolTip()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L237">api/src/ui.ts:237</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>ignore</dt>
+							<dd></dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="anchors" class="tsd-anchor"></a>
-					<h3>anchors</h3>
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> anchors<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_src_ui_.anchorpoints.html" class="tsd-signature-type">anchorPoints</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L252">api/src/ui.ts:252</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L204">api/src/geometry.ts:204</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_src_ui_.anchorpoints.html" class="tsd-signature-type">anchorPoints</a></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the geometry id.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="panels" class="tsd-anchor"></a>
-					<h3>panels</h3>
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> panels<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L244">api/src/ui.ts:244</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L201">api/src/geometry.ts:201</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_ui_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="tooltip" class="tsd-anchor"></a>
-					<h3>tooltip</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> tooltip<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/ui.ts#L248">api/src/ui.ts:248</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_ui_.tooltip.html" class="tsd-signature-type">ToolTip</a></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the type of the geometry object. Possibilities are &#39;Point&#39;.
+										TODO: &#39;MultiPoint&#39;, &#39;LineString&#39;, or &#39;MultiLineString&#39;.
+									Function implementation in subclasses.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -243,7 +227,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_api_src_events_.html">"api/src/events"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_api_src_geometry_.html">"api/src/geometry"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -252,7 +236,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_api_src_map_.html">"api/src/map"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_api_src_ui_.html">"api/src/ui"</a>
 					</li>
 					<li class="label tsd-is-external">
@@ -268,53 +252,47 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_api_src_ui_.basepanel.html" class="tsd-kind-icon">Base<wbr>Panel</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_ui_.panel.html" class="tsd-kind-icon">Panel</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_ui_.panelregistry.html" class="tsd-kind-icon">Panel<wbr>Registry</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_api_src_ui_.tooltip.html" class="tsd-kind-icon">Tool<wbr>Tip</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_ui_.ui.html" class="tsd-kind-icon">UI</a>
+						<a href="_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#_mapi" class="tsd-kind-icon">_mapI</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#_panels" class="tsd-kind-icon">_panels</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#_tooltip" class="tsd-kind-icon">_tooltip</a>
+								<a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#anchors" class="tsd-kind-icon">anchors</a>
+								<a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#panels" class="tsd-kind-icon">panels</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_ui_.ui.html#tooltip" class="tsd-kind-icon">tooltip</a>
+								<a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_api_src_ui_.screenposition.html" class="tsd-kind-icon">Screen<wbr>Position</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_api_src_ui_.anchorpoints.html" class="tsd-kind-icon">anchor<wbr>Points</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.xy.html" class="tsd-kind-icon">XY</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>
 					</li>
 				</ul>
 			</nav>

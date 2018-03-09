@@ -1,6 +1,6 @@
 import Map from 'api/map';
 import * as GEO from 'api/geometry';
-import { ConfigLayer } from 'api/layers';
+import { ConfigLayer, SimpleLayer } from 'api/layers';
 import { Subject } from 'rxjs/Rx';
 import * as $ from "jquery";
 
@@ -25,7 +25,8 @@ class RZ {
     /** Returns the different layer classes */
     get LAYERS(): Object {
         return {
-            ConfigLayer
+            ConfigLayer,
+            SimpleLayer
         }
     }
 

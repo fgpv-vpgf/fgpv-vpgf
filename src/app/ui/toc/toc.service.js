@@ -11,7 +11,7 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
+function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceService, common, stateManager, graphicsService,
     geoService, metadataService, errorService, LegendBlock, configService, legendService, Geo, events) {
 
     const service = {
@@ -107,22 +107,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         }
 
         const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
-
-        // displayManagers 'toggleDisplayPanel' requires an argument called 'dataPromise', for settings 'dataPromise' is LegendNode
-        // if the table is being toggled, 'dataPromise is an object with 'data' key
-        // 'data' for table consists of columns, rows, etc.
-        // if the metadata is being toggled, 'dataPromise is an object with multiple properties
-        // example of properties are metadata, metadataUrl, etc.
-        let data, panel;
         if (openPanel) {
-            panel = panelSwitch[openPanel.name].panel;
+            const panel = panelSwitch[openPanel.name].panel;
             stateManager.setActive({ [panel]: false });
-
-            if (openPanel.name === 'table') {
-                data = { data: stateManager.display[openPanel.name].data };
-            } else if (openPanel.name === 'metadata') {
-                data = stateManager.display[openPanel.name].data;
-            }
         } else {    // open panel not being reloaded, close any open panel
             stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
         }
@@ -158,23 +145,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
-                // update the requester accordingly for the reloaded legend block
-                openPanel.requester.id = legendBlock.id;
-                openPanel.requester.name = legendBlock.name;
-
-                if (openPanel.data && openPanel.name !== 'table') {
-                    openPanel.data = legendBlock;
+                if (openPanel.name === 'table') {
+                    toggleLayerTablePanel(legendBlock);
+                } else if (openPanel.name === 'settings') {
+                    toggleSettings(legendBlock);
+                } else if (openPanel.name === 'metadata') {
+                    toggleMetadata(legendBlock);
                 }
-
-                if (openPanel.requester.layerId) {
-                    openPanel.requester.layerId = legendBlock.id;
-                }
-
-                if (openPanel.requester.legendEntry) {
-                    openPanel.requester.legendEntry = legendBlock;
-                }
-
-                stateManager.toggleDisplayPanel(panel, data || legendBlock, openPanel.requester, 0);
             }
         }, (layerName) => {
             console.error('Failed to reload layer:', layerName);

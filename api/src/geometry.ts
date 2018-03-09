@@ -10,7 +10,7 @@
  *                ||
  *              ~~~~~~~
  * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- * 
+ *
  * THIS API IS NOT SUPPORTED.
  */
 
@@ -178,6 +178,65 @@ export class XYBounds {
      */
     toString(): string {
         return `${this.southWest.x},${this.southWest.y},${this.northEast.x},${this.northEast.y}`;
+    }
+}
+
+/**
+ * All geometry types must derive from this class. Not intented to be instantiated on its own.
+ */
+export class BaseGeometry {
+    /** @ignore */
+    _id: string;
+
+    /** Sets the geometry id. */
+    constructor(id: string) {
+        this._id = id;
+    }
+
+    /**
+     * Returns the type of the geometry object. Possibilities are 'Point'.
+     * TODO: 'MultiPoint', 'LineString', or 'MultiLineString'.
+     * Function implementation in subclasses.
+     */
+    get type(): string { return ''; }
+
+    /** Returns the geometry id. */
+    get id(): string { return this._id; }
+}
+
+/** A Point geometry containing a single XY. */
+export class Point extends BaseGeometry {
+    /** @ignore */
+    _xy: XY;
+    /** @ignore */
+    _icon: string;  // TODO: extend this property to include in-line svg / images, not only urls
+
+    /** Constructs a Point from the given XY or XYLiteral. */
+    constructor(id: string | number, icon: string, xy: XY | XYLiteral) {
+        super(id.toString());
+
+        this._icon = icon;
+
+        if (isXYLiteral(xy)) {
+            this._xy = new XY(xy[0], xy[1]);
+        } else {
+            this._xy = xy;
+        }
+    }
+
+    /** Returns the URL of icon displayed on the map. */
+    get icon(): string {
+        return this._icon;
+    }
+
+    /** Returns the contained XY. */
+    get xy(): XY {
+        return this._xy;
+    }
+
+    /** Returns the string 'Point'. */
+    get type(): string {
+        return 'Point';
     }
 }
 

@@ -1,6 +1,7 @@
 const GEO = {
     Layer: {
         Types: {
+            ESRI_GRAPHICS: 'esriGraphics',
             ESRI_DYNAMIC: 'esriDynamic',
             ESRI_FEATURE: 'esriFeature',
             ESRI_IMAGE: 'esriImage',
