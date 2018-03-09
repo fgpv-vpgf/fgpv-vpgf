@@ -6,6 +6,7 @@
 
 const dynamicRecord = require('./dynamicRecord.js')();
 const featureRecord = require('./featureRecord.js')();
+const graphicsRecord = require('./graphicsRecord.js')();
 const imageRecord = require('./imageRecord.js')();
 const tileRecord = require('./tileRecord.js')();
 const wmsRecord = require('./wmsRecord.js')();
@@ -63,6 +64,7 @@ Dynamic Records will also have interfaces for children.
 module.exports = () => ({
     DynamicRecord: dynamicRecord.DynamicRecord,
     FeatureRecord: featureRecord.FeatureRecord,
+    GraphicsRecord: graphicsRecord.GraphicsRecord,
     ImageRecord: imageRecord.ImageRecord,
     TileRecord: tileRecord.TileRecord,
     WmsRecord: wmsRecord.WmsRecord

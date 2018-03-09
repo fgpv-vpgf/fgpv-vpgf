@@ -106,29 +106,32 @@ class LayerInterface {
         this._source = newSource;
     }
 
-    convertToSingleLayer (layerRecord) {
+    convertToGraphicsLayer (layerRecord) {
         this._source = layerRecord;
         this._isPlaceholder = false;
 
-        newProp(this, 'symbology', standardGetSymbology);
-        newProp(this, 'state', standardGetState);
-
         newProp(this, 'visibility', standardGetVisibility);
         newProp(this, 'opacity', standardGetOpacity);
-        newProp(this, 'query', standardGetQuery);
-
         newProp(this, 'name', standardGetName);
-        newProp(this, 'itemIndex', standardGetItemIndex);
+        newProp(this, 'layerType', standardGetLayerType);
 
+        this.setVisibility = standardSetVisibility;
+        this.setOpacity = standardSetOpacity;
+    }
+
+    convertToSingleLayer (layerRecord) {
+        this.convertToGraphicsLayer(layerRecord);
+
+        newProp(this, 'symbology', standardGetSymbology);
+        newProp(this, 'state', standardGetState);
+        newProp(this, 'query', standardGetQuery);
+        newProp(this, 'itemIndex', standardGetItemIndex);
         newProp(this, 'geometryType', standardGetGeometryType);
         newProp(this, 'oidField', standardGetOidField);
-        newProp(this, 'layerType', standardGetLayerType);
         newProp(this, 'parentLayerType', standardGetParentLayerType);
         newProp(this, 'featureCount', standardGetFeatureCount);
         newProp(this, 'extent', standardGetExtent);
 
-        this.setVisibility = standardSetVisibility;
-        this.setOpacity = standardSetOpacity;
         this.setQuery = standardSetQuery;
         this.zoomToBoundary = standardZoomToBoundary;
         this.validateProjection = standardValidateProjection;

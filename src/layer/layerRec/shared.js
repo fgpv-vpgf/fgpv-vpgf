@@ -12,6 +12,7 @@ const states = { // these are used as css classes; hence the `rv` prefix
 
 // these match strings in the client.
 const clientLayerType = {
+    ESRI_GRAPHICS: 'esriGraphics',
     ESRI_DYNAMIC: 'esriDynamic',
     ESRI_FEATURE: 'esriFeature',
     ESRI_IMAGE: 'esriImage',
