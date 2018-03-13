@@ -23,6 +23,30 @@ const defaultSymbols = {
             type: 'esriSLS',
             style: 'esriSLSSolid'
         }
+    },
+    MULTIPOINT: {
+        width: 16.5,
+        height: 16.5,
+        type: 'esriSMS',
+        color: [0, 255, 0],
+        outline: {
+            color: [0,0,0],
+            width: 1,
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
+        }
+    },
+    LINESTRING: {
+        width: 2,
+        type: 'esriSLS',
+        color: [255, 0, 0],
+        style:' esriSLSSolid',
+        outline: {
+            color: [0,0,0],
+            width: 1,
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
+        }
     }
 }
 
@@ -200,6 +224,15 @@ class GraphicsRecord extends root.Root {
                 const coords = geometry.xy.projectToPoint(spatialReference);
                 const icon = geometry.icon;
                 this._addPoint(coords, spatialReference, icon);
+            } else if (geometry.type === geometryTypes.MULTIPOINT) {
+                const coords = geometry.xyArray.map(xy => xy.projectToPoint(spatialReference));
+                const points = coords.map(point => [ point.x, point.y ]);
+                const icon = geometry.icon;
+                this._addMultiPoint(points, spatialReference, icon);
+            } else if (geometry.type === geometryTypes.LINESTRING) {
+                const coords = geometry.xyArray.map(xy => xy.projectToPoint(spatialReference));
+                const path = coords.map(point => [ point.x, point.y ]);
+                this._addLine(path, spatialReference);
             }
 
             // TODO: add 'private' functions and conditions for other geometry types as well
@@ -236,6 +269,57 @@ class GraphicsRecord extends root.Root {
 
         const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.POINT });
         marker.setGeometry(point);
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add multiple points where specified using the longitutes and latitutes.
+     *
+     * @function _addMultiPoint
+     * @private
+     * @param {Array} coords                     an array of long and lat to use as the graphic location for each point
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} icon                      data url to for layer icon. defaults to a green point
+     */
+    _addMultiPoint(coords, spatialReference, icon) {
+        const points = new this._bundle.Multipoint({
+            points: coords,
+            spatialReference: spatialReference
+        });
+
+        let symbol;
+        if (icon) {
+            // TODO: discuss how to handle the width / height issue when passing in an icon
+            symbol = {
+                width: 16.5,
+                height: 16.5,
+                type: 'esriPMS',
+                contentType: 'image/png',
+                url: icon
+            };
+        }
+
+        const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.MULTIPOINT });
+        marker.setGeometry(points);
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add a line where specified using the path of longitutes and latitutes.
+     *
+     * @function _addLine
+     * @private
+     * @param {Array} path                       an array of long and lat to use as the path for the line
+     * @param {Object} spatialReference          the projection the graphics should be in
+     */
+    _addLine(path, spatialReference) {
+        const line = new this._bundle.Polyline({
+            paths: [ path ],
+            spatialReference: spatialReference
+        });
+
+        const marker = new this._bundle.Graphic({ symbol: defaultSymbols.LINESTRING });
+        marker.setGeometry(line);
         this._layer.add(marker);
     }
 
