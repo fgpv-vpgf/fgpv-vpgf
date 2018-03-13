@@ -194,8 +194,8 @@ export class BaseGeometry {
     }
 
     /**
-     * Returns the type of the geometry object. Possibilities are 'Point'.
-     * TODO: 'MultiPoint', 'LineString', or 'MultiLineString'.
+     * Returns the type of the geometry object. Possibilities are 'Point', 'MultiPoint', 'LineString'.
+     * TODO: 'MultiLineString'.
      * Function implementation in subclasses.
      */
     get type(): string { return ''; }
@@ -237,6 +237,67 @@ export class Point extends BaseGeometry {
     /** Returns the string 'Point'. */
     get type(): string {
         return 'Point';
+    }
+}
+
+/** A MultiPoint geometry contains a number of XYs. */
+export class MultiPoint extends BaseGeometry {
+    /** @ignore */
+    _xyArray: Array<XY> = [];
+    /** @ignore */
+    _icon: string;  // TODO: extend this property to include in-line svg / images, not only urls
+
+    /** Constructs a MultiPoint from the given XYs or XYLiterals. */
+    constructor(id: string | number, icon: string, elements: Array<XY | XYLiteral>) {
+        super(id.toString());
+
+        this._icon = icon;
+
+        elements.forEach(xy => {
+            if (isXYLiteral(xy)) {
+                this._xyArray.push(new XY(xy[0], xy[1]));
+            } else {
+                this._xyArray.push(xy);
+            }
+        });
+    }
+
+    /** Returns the URL of icon displayed on the map. */
+    get icon(): string {
+        return this._icon;
+    }
+
+    /** Returns an array of the contained XYs. A new array is returned each time this is called. */
+    get xyArray(): Array<XY> {
+        return [ ...this._xyArray ];
+    }
+
+    /** Returns the n-th contained XY. */
+    getAt(n: number): XY {
+        return this._xyArray[n];
+    }
+
+    /** Returns the number of contained XYs. */
+    get length(): number {
+        return this._xyArray.length;
+    }
+
+    /** Returns the string 'MultiPoint'. */
+    get type(): string {
+        return 'MultiPoint';
+    }
+}
+
+/** A LineString geometry contains a number of XYs. */
+export class LineString extends MultiPoint {
+    /** Constructs a LineString from the given XYs or XYLiterals. */
+    constructor(id: string | number, elements: Array<XY | XYLiteral>) {
+        super(id, '', elements);
+    }
+
+    /** Returns the string 'LineString'. */
+    get type(): string {
+        return 'LineString'
     }
 }
 
