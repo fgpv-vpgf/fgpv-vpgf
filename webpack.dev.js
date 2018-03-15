@@ -4,6 +4,7 @@ const CommonConfig  = require('./webpack.common.js');
 
 module.exports = function (env) {
     const config = Merge(CommonConfig(env), {});
+    config.mode = 'development';
 
     if (env.useMap) {
         config.devtool = 'cheap-module-eval-source-map';

@@ -338,9 +338,6 @@
                   },
                   {
                     "layerId": "powerplant100mw-liquids"
-                  },
-                  {
-                    "layerId": "wms"
                   }
                 ]
               }
@@ -392,20 +389,6 @@
           "visibility": true
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
-      },
-      {
-        "id":"wms",
-        "name": "WMS Layer",
-        "layerType":"ogcWms",
-        "disabledControls": [ "styles" ],
-        "layerEntries": [
-            {
-              "id": "GDPS.ETA_UU",
-              "allStyles": [ "WINDARROW", "WINDARROWKMH", "WINDSPEED", "WINDSPEEDKMH" ],
-              "currentStyle": "WINDSPEEDKMH"
-            }
-        ],
-        "url":"http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
       }
     ],
     "tileSchemas": [

@@ -15,6 +15,8 @@ module.exports = function(env) {
             crossOriginLoading: 'anonymous'
         },
 
+        mode: 'production',
+
         devtool: 'source-map',
 
         plugins: [

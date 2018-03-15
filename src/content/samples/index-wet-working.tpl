@@ -6,27 +6,11 @@
 
 <head>
     <meta charset="utf-8">
-    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
-wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
-    <title>Web Experience Toolkit (WET) - Working examples - Web Experience Toolkit
-    </title>
+    <title>Web Experience Toolkit (WET) - Working examples - Web Experience Toolkit</title>
     <meta content="width=device-width,initial-scale=1" name="viewport">
-    <!-- Meta data -->
     <meta name="description" content="Web Experience Toolkit (WET) includes reusable components for building and maintaining innovative Web sites that are accessible, usable, and interoperable. These reusable components are open source software and free for use by departments and external Web communities">
-    <!-- Meta data-->
-    <!--[if gte IE 9 | !IE ]><!-->
     <link href="//fgpv.cloudapp.net/demo/wet4.0.20/theme-wet-boew/assets/favicon.ico" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet4.0.20/theme-wet-boew/css/theme.min.css">
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
-<link href="//fgpv.cloudapp.net/demo/wet4.0.20/theme-wet-boew/assets/favicon.ico" rel="shortcut icon" />
-<link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet4.0.20/theme-wet-boew/css/ie8-theme.min.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/ie8-wet-boew.min.js"></script>
-<![endif]-->
-    <noscript>
-        <link rel="stylesheet" href="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/css/noscript.min.css" />
-    </noscript>
     <style>
         .myMap {
             height: 700px;
@@ -35,6 +19,14 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             position: relative;
         }
     </style>
+
+    <% for (var index in htmlWebpackPlugin.files.css) { %>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
+        <% } else { %>
+            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
+        <% } %>
+    <% } %>
 </head>
 
 <body vocab="//schema.org/" typeof="WebPage">
@@ -116,22 +108,15 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             </details>
         </section>
         <section>
-            <div class="myMap" is="rv-map" id="rv-app-0" rv-config="config.[lang].json" rv-langs='["en-CA", "fr-CA"]' rv-restore-bookmark="bookmark">
+            <div class="myMap" is="rv-map" id="rv-app-0" rv-config="config/config-sample-01-structured-visibility-sets.json" rv-langs='["en-CA"]'>
                 <noscript>
                     <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
                     <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
                 </noscript>
             </div>
-            <h2 id="about">What is the Web Experience Toolkit?</h2>
-            <ul>
-                <li>An <a href="docs/ref/accolades-en.html#awards">award-winning</a> front-end framework for building websites
-                    that are <a href="#accessibility">accessible</a>, <a href="#usability">usable</a>, <a href="#interoperability">interoperable</a>,
-                    <a href="#mobile-friendly-responsive-design">mobile friendly</a> and <a href="#multilingual">multilingual</a></li>
-                <li>A collection of <a href="#themeable-and-reusable">flexible and themeable templates and reusable components</a></li>
-                <li>A <a href="#collaborative-approach">collaborative open source project led by the Government of Canada</a></li>
-            </ul>
         </section>
+       
         <section>
             <h2 id="key">Key resources</h2>
             <ul>
@@ -302,52 +287,18 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
             </nav>
         </div>
     </footer>
-    <!--[if gte IE 9 | !IE ]><!-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/wet-boew.min.js"></script>
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
-<script src="//fgpv.cloudapp.net/demo/wet4.0.20/wet-boew/js/ie8-wet-boew2.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//wet-boew.github.io/themes-dist/GCWeb/wet-boew/js/wet-boew.min.js"></script>
+    <script src="//wet-boew.github.io/themes-dist/GCWeb/GCWeb/js/theme.min.js"></script>
 
-<![endif]-->
-
-    <script>
-    const needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype
-    ].some(function(x) { return !x; });
-    if (needIePolyfills) {
-        document.write('<script src="../ie-polyfills.js"><\/script>');
-    }
-    </script>
-
-    <script>
-
-        // https://css-tricks.com/snippets/javascript/get-url-variables/
-        function getQueryVariable(variable)
-        {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
-                    var pair = vars[i].split("=");
-                    if(pair[0] == variable){return pair[1];}
-            }
-            return(false);
-        }
-
-        function bookmark(){
-            return new Promise(function (resolve) {
-                var thing = getQueryVariable("rv");
-                console.log(thing);
-                resolve(thing);
-            });
-        }
-    </script>
+    <% for (var index in htmlWebpackPlugin.files.js) { %>
+        <% if (webpackConfig.output.crossOriginLoading) { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"></script>
+        <% } else { %>
+            <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
+        <% } %>
+    <% } %>
 </body>
 
 </html>
