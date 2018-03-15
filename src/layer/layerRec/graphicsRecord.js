@@ -18,7 +18,7 @@ const defaultSymbols = {
         type: 'esriSMS',
         color: [255, 0, 0],
         outline: {
-            color: [0,0,0],
+            color: [0, 0, 0],
             width: 1,
             type: 'esriSLS',
             style: 'esriSLSSolid'
@@ -30,7 +30,7 @@ const defaultSymbols = {
         type: 'esriSMS',
         color: [0, 255, 0],
         outline: {
-            color: [0,0,0],
+            color: [0, 0, 0],
             width: 1,
             type: 'esriSLS',
             style: 'esriSLSSolid'
@@ -42,7 +42,7 @@ const defaultSymbols = {
         color: [255, 0, 0],
         style:' esriSLSSolid',
         outline: {
-            color: [0,0,0],
+            color: [0, 0, 0],
             width: 1,
             type: 'esriSLS',
             style: 'esriSLSSolid'
@@ -246,7 +246,7 @@ class GraphicsRecord extends root.Root {
      * @private
      * @param {Object} coords                    the long and lat to use as the graphic location
      * @param {Object} spatialReference          the projection the graphics should be in
-     * @param {String} icon                      data url to for layer icon. defaults to a red point
+     * @param {String} icon                      data / image url or svg path for layer icon. defaults to a red point
      */
     _addPoint(coords, spatialReference, icon) {
         const point = new this._bundle.Point({
@@ -255,20 +255,23 @@ class GraphicsRecord extends root.Root {
             spatialReference: spatialReference
         });
 
-        let symbol;
+        let symbol, marker;
         if (icon) {
-            // TODO: discuss how to handle the width / height issue when passing in an icon
-            symbol = {
-                width: 16.5,
-                height: 16.5,
-                type: 'esriPMS',
-                contentType: 'image/png',
-                url: icon
-            };
+            if (this._isUrl(icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
+            } else {
+                symbol = new this._bundle.SimpleMarkerSymbol();
+                symbol.setPath(icon);
+                symbol.setColor([255, 0, 0]);
+                symbol.setSize('auto');
+            }
+            marker = new this._bundle.Graphic(point, symbol);
+        } else {
+            marker = new this._bundle.Graphic({ symbol: defaultSymbols.POINT });
+            marker.setGeometry(point);
         }
 
-        const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.POINT });
-        marker.setGeometry(point);
         this._layer.add(marker);
     }
 
@@ -279,7 +282,7 @@ class GraphicsRecord extends root.Root {
      * @private
      * @param {Array} coords                     an array of long and lat to use as the graphic location for each point
      * @param {Object} spatialReference          the projection the graphics should be in
-     * @param {String} icon                      data url to for layer icon. defaults to a green point
+     * @param {String} icon                      data / image url or svg path for layer icon. defaults to a green point
      */
     _addMultiPoint(coords, spatialReference, icon) {
         const points = new this._bundle.Multipoint({
@@ -287,20 +290,23 @@ class GraphicsRecord extends root.Root {
             spatialReference: spatialReference
         });
 
-        let symbol;
+        let symbol, marker;
         if (icon) {
-            // TODO: discuss how to handle the width / height issue when passing in an icon
-            symbol = {
-                width: 16.5,
-                height: 16.5,
-                type: 'esriPMS',
-                contentType: 'image/png',
-                url: icon
-            };
+            if (this._isUrl(icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
+            } else {
+                symbol = new this._bundle.SimpleMarkerSymbol();
+                symbol.setPath(icon);
+                symbol.setColor([255, 0, 0]);
+                symbol.setSize('auto');
+            }
+            marker = new this._bundle.Graphic(points, symbol);
+        } else {
+            marker = new this._bundle.Graphic({ symbol: defaultSymbols.MULTIPOINT });
+            marker.setGeometry(points);
         }
 
-        const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.MULTIPOINT });
-        marker.setGeometry(points);
         this._layer.add(marker);
     }
 
@@ -324,15 +330,28 @@ class GraphicsRecord extends root.Root {
     }
 
     /**
-    * Remove the specified graphic.
-    *
-    * @function removeGeometry
-    * @param {Number} index      index of the graphic to remove from the layer
-    */
+     * Remove the specified graphic.
+     *
+     * @function removeGeometry
+     * @param {Number} index      index of the graphic to remove from the layer
+     */
     removeGeometry(index) {
         const graphic = this._layer.graphics[index];
         this._layer.remove(graphic);
     };
+
+    /**
+     * Check to see if text provided is a valid image / data URL based on extension type or format.
+     *
+     * @function _isUrl
+     * @private
+     * @param {String} text                      string to be matched against valid image types / data url format
+     * @returns {Boolean}                        true if valid image extension
+     */
+    _isUrl(text) {
+        return !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
+            !!text.match(/^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i);
+    }
 }
 
 module.exports = () => ({
