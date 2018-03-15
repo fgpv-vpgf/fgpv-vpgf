@@ -1,4 +1,5 @@
 import { MapClickEvent } from 'api/events';
+import { IdentifyMode } from 'api/map';
 
 /**
  * @module identifyService
@@ -7,9 +8,7 @@ import { MapClickEvent } from 'api/events';
  * @description
  * Generates handlers for feature identification on all layer types.
  */
-angular
-    .module('app.geo')
-    .factory('identifyService', identifyService);
+angular.module('app.geo').factory('identifyService', identifyService);
 
 function identifyService($q, configService, stateManager, events) {
     const service = {
@@ -17,7 +16,7 @@ function identifyService($q, configService, stateManager, events) {
     };
 
     let mApi = null;
-    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     return service;
 
@@ -29,6 +28,7 @@ function identifyService($q, configService, stateManager, events) {
      *
      * @function identify
      * @param {Event} clickEvent ESRI map click event which is used to run identify function
+     * @returns {Object} { details?: { data: Promise<any>[], isLoaded: Promise<boolean> }, requester?: { mapPoint: any } }
      */
     function identify(clickEvent) {
         console.log(clickEvent);
@@ -46,14 +46,11 @@ function identifyService($q, configService, stateManager, events) {
         const identifyInstances = configService.getSync.map.layerRecords
             // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
             .filter(layerRecord => typeof layerRecord.identify !== 'undefined')
-            .map(layerRecord =>
-                layerRecord.identify(opts))
+            .map(layerRecord => layerRecord.identify(opts))
             // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
-            .filter(identifyInstance =>
-                typeof identifyInstance.identifyResults !== 'undefined');
+            .filter(identifyInstance => typeof identifyInstance.identifyResults !== 'undefined');
 
-        const allIdentifyResults = [].concat(...
-            identifyInstances.map(({ identifyResults }) => identifyResults));
+        const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
 
         const mapClickEvent = new MapClickEvent(clickEvent);
         mApi._clickSubject.next(mapClickEvent);
@@ -88,12 +85,21 @@ function identifyService($q, configService, stateManager, events) {
         });
 
         if (allIdentifyResults.length === 0) {
-            return;
+            return {};
         }
+
+        const allLoadedPromise = $q.all(allLoadingPromises).then(() => {
+            // push identify results into the API stream when everything is resolved
+            // the subscribers can modify/add/remove the items returned by the results
+            // if the items are removed from the `identifyResults[].data` array,
+            // they will not be highlighted or shown in the details panel
+            mApi._identifySubject.next(allIdentifyResults);
+            return true;
+        });
 
         const details = {
             data: allIdentifyResults,
-            isLoaded: $q.all(allLoadingPromises).then(() => true)
+            isLoaded: allLoadedPromise
         };
 
         // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
@@ -101,9 +107,11 @@ function identifyService($q, configService, stateManager, events) {
             mapPoint: clickEvent.mapPoint
         };
 
-        // show details panel only when there is data
-        if (mApi.identify) {
+        // show details panel only when there is data and the idenityfMode is set to `Details`
+        if (mApi.identifyMode === IdentifyMode.Details) {
             stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        } else {
+            return { details, requester };
         }
 
         /**
@@ -114,14 +122,10 @@ function identifyService($q, configService, stateManager, events) {
          * @function makeInfalliblePromise
          * @private
          * @param  {Promise} promise [description]
-         * @return {Promise}                 promise that doesn't reject
+         * @return {Promise} promise that doesn't reject
          */
         function makeInfalliblePromise(promise) {
-            const modifiedPromise = $q(resolve =>
-                promise
-                    .then(() => resolve(true))
-                    .catch(() => resolve(true))
-            );
+            const modifiedPromise = $q(resolve => promise.then(() => resolve(true)).catch(() => resolve(true)));
 
             return modifiedPromise;
         }
