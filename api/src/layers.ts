@@ -941,11 +941,13 @@ export interface IdentifyResult {
 
 export interface IdentifyRequest {
     sessionId: number;
+    event: MouseEvent
     layer: ConfigLayer;
     features: Promise<IdentifyResult[]>;
 }
 
 export interface IdentifySession {
     sessionId: number;
+    event: MouseEvent
     requests: IdentifyRequest[];
 }

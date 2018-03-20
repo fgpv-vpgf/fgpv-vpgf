@@ -1,4 +1,4 @@
-import { MapClickEvent } from 'api/events';
+import { MouseEvent, MapClickEvent } from 'api/events';
 import { IdentifyMode } from 'api/map';
 
 /**
@@ -92,11 +92,15 @@ function identifyService($q, configService, stateManager, events) {
             return {};
         }
 
+        // convert esri click event into the API mouse event and add to the identify session and all identify requests
+        const identifyMouseEvent = new MouseEvent(clickEvent);
+
         // map identify instances to identify requests
         const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
             const requests = identifyResults.map(r => ({
                 // TODO: include the actual referenced layer
                 layer: "I' layer",
+                event: identifyMouseEvent,
                 sessionId,
                 features: identifyPromise.then(() => r.data)
             }));
@@ -108,7 +112,11 @@ function identifyService($q, configService, stateManager, events) {
         // the subscribers can modify/add/remove the items returned by the results
         // if the items are removed from the `identifyResults[].data` array,
         // they will not be highlighted or shown in the details panel
-        mApi.layers._identify.next({ sessionId, requests: identifyRequests });
+        mApi.layers._identify.next({
+            event: identifyMouseEvent,
+            sessionId,
+            requests: identifyRequests
+        });
 
         const details = {
             data: allIdentifyResults,
