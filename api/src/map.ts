@@ -175,28 +175,6 @@ export default class Map {
     /** @ignore */
     _clickSubject: Subject<MapClickEvent> = new Subject();
 
-    /** @ignore */
-    _identifySubject: Subject<MapClickEvent> = new Subject();
-
-    /**
-     * Emits when a new identify result is resolved.
-     * The emitted event has the following form:
-     * {
-     *      data: {
-     *          data: { [name: string]: string },
-     *          name: string,
-     *          oid: string,
-     *          symbology: { svgcode: string }[]
-     *      }[],
-     *      isLoading: boolean,
-     *      requestId: -1,
-     *      requester: { proxy: LayerInterface }
-     * }[]
-     *
-     * @event identify
-     */
-    identify: Observable<any>;
-
     /**
      * Emits when a user clicks anywhere on the map.
      *
@@ -298,8 +276,6 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
     this.click = this._clickSubject.asObservable();
-
-    this.identify = this._identifySubject.asObservable();
 
     this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove')

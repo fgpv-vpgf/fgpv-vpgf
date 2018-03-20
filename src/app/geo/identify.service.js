@@ -18,6 +18,8 @@ function identifyService($q, configService, stateManager, events) {
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
+    let sessionId = 0;
+
     return service;
 
     /**
@@ -32,6 +34,8 @@ function identifyService($q, configService, stateManager, events) {
      */
     function identify(clickEvent) {
         console.log(clickEvent);
+
+        sessionId++;
 
         const mapInstance = configService.getSync.map.instance;
         const opts = {
@@ -88,18 +92,27 @@ function identifyService($q, configService, stateManager, events) {
             return {};
         }
 
-        const allLoadedPromise = $q.all(allLoadingPromises).then(() => {
-            // push identify results into the API stream when everything is resolved
-            // the subscribers can modify/add/remove the items returned by the results
-            // if the items are removed from the `identifyResults[].data` array,
-            // they will not be highlighted or shown in the details panel
-            mApi._identifySubject.next(allIdentifyResults);
-            return true;
-        });
+        // map identify instances to identify requests
+        const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
+            const requests = identifyResults.map(r => ({
+                // TODO: include the actual referenced layer
+                layer: "I' layer",
+                sessionId,
+                features: identifyPromise.then(() => r.data)
+            }));
+
+            return map.concat(requests);
+        }, []);
+
+        // push identify requests into the API stream
+        // the subscribers can modify/add/remove the items returned by the results
+        // if the items are removed from the `identifyResults[].data` array,
+        // they will not be highlighted or shown in the details panel
+        mApi.layers._identify.next({ sessionId, requests: identifyRequests });
 
         const details = {
             data: allIdentifyResults,
-            isLoaded: allLoadedPromise
+            isLoaded: $q.all(allLoadingPromises).then(() => true)
         };
 
         // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
