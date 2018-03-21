@@ -695,6 +695,7 @@ export class LayerGroup {
     _attributesRemoved: Subject<LayerAndAttribs>;
 
     _click: Subject<BaseLayer>;
+    
     /** @ignore */
     _identify: Subject<any>;
 
@@ -769,7 +770,7 @@ export class LayerGroup {
     /**
      * Emits when a new identify session as soon as the identify is triggered.
      * The emitted event contains an array of IdentifyRequest objects, one for each layer in this layer group.
-     * 
+     *
      * @readonly
      * @type {Observable<IdentifySession>}
      * @event identify
@@ -932,22 +933,27 @@ interface LayerAndChangedAttribs extends ChangedAttribs {
     layer: BaseLayer;
 }
 
+export interface DataItem {
+    name: string;
+    value: string | number;
+}
+
 export interface IdentifyResult {
-    data: RV.LAYER.DataItem[],
-    name: string,
-    oid: string,
-    symbology: { svgcode: string }[]
+    data: DataItem[];
+    name: string;
+    oid: string;
+    symbology: { svgcode: string }[];
 }
 
 export interface IdentifyRequest {
     sessionId: number;
-    event: MouseEvent
+    event: MouseEvent;
     layer: ConfigLayer;
     features: Promise<IdentifyResult[]>;
 }
 
 export interface IdentifySession {
     sessionId: number;
-    event: MouseEvent
+    event: MouseEvent;
     requests: IdentifyRequest[];
 }
