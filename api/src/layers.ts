@@ -20,6 +20,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 import { BaseGeometry, Point } from 'api/geometry';
 import Map from 'api/map';
+import { RV } from './index';
 
 const layerTypes = {
     ESRI_GRAPHICS: 'esriGraphics',
@@ -28,7 +29,7 @@ const layerTypes = {
     ESRI_IMAGE: 'esriImage',
     ESRI_TILE: 'esriTile',
     OGC_WMS: 'ogcWms'
-}
+};
 
 /**
  * All layer types must derive from this class. Not intented to be instantiated on its own.
@@ -83,9 +84,9 @@ export class BaseLayer {
         this._opacityChanged = new Subject();
         this._visibilityChanged = new Subject();
 
-        this._nameChanged.subscribe(name => this._name = name || '');
-        this._opacityChanged.subscribe(opacity => this._opacity = opacity);
-        this._visibilityChanged.subscribe(visibility => this._visibility = visibility);
+        this._nameChanged.subscribe(name => (this._name = name || ''));
+        this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
+        this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
 
         this._attributeArray = [];
         this._attributesAdded = new BehaviorSubject(this._attributeArray);
@@ -144,7 +145,7 @@ export class BaseLayer {
     }
 
     /** Forces an attribute download. Function implementation in subclasses. */
-    fetchAttributes(): void { }
+    fetchAttributes(): void {}
 
     /** Sets the attribute object to value provided using the attributeKey. */
     setAttributes(attributeKey: number, value: Object): void;
@@ -155,8 +156,9 @@ export class BaseLayer {
     /** Sets the entire attribute or sets an individual field inside attribute using attributeKey provided. */
     setAttributes(attributeKey: number, valueOrFieldName: Object | string, value?: string | number): void {
         if (typeof valueOrFieldName === 'string') {
-            let attribValue: Object | undefined = this._attributeArray.find(attrib =>
-                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
+            let attribValue: Object | undefined = this._attributeArray.find(
+                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+            );
 
             if (typeof attribValue !== 'undefined') {
                 const oldValue: Object = Object.assign({}, attribValue);
@@ -165,8 +167,9 @@ export class BaseLayer {
                 this._attributesChanged.next({ attributesBeforeChange: oldValue, attributesAfterChange: attribValue });
             }
         } else {
-            let index: number = this._attributeArray.findIndex(attrib =>
-                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
+            let index: number = this._attributeArray.findIndex(
+                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+            );
 
             if (index !== -1) {
                 const oldValue: Object = Object.assign({}, this._attributeArray[index]);
@@ -175,19 +178,28 @@ export class BaseLayer {
                     (<any>this._attributeArray[index])[key] = (<any>valueOrFieldName)[key];
                 });
 
-                this._attributesChanged.next({ attributesBeforeChange: oldValue, attributesAfterChange: this._attributeArray[index] });
+                this._attributesChanged.next({
+                    attributesBeforeChange: oldValue,
+                    attributesAfterChange: this._attributeArray[index]
+                });
             }
         }
     }
 
     /** Returns the layer ID. */
-    get id(): string { return this._id; }
+    get id(): string {
+        return this._id;
+    }
 
     /** Returns the layer index. */
-    get layerIndex(): number | undefined { return this._layerIndex; }
+    get layerIndex(): number | undefined {
+        return this._layerIndex;
+    }
 
     /** Returns the name of the layer. */
-    get name(): string { return this._name; }
+    get name(): string {
+        return this._name;
+    }
 
     /** Sets the name of the layer. This updates the name throughout the viewer.
      *
@@ -224,7 +236,9 @@ export class BaseLayer {
     }
 
     /** Returns the opacity of the layer on the map from 0 (hidden) to 100 (fully visible). */
-    get opacity(): number { return this._opacity; }
+    get opacity(): number {
+        return this._opacity;
+    }
 
     /** Sets the opacity value for the layer. */
     set opacity(opacity: number) {
@@ -235,7 +249,9 @@ export class BaseLayer {
 
         if (this._viewerLayer.config) {
             if (this._layerIndex !== undefined) {
-                const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+                const childNode = this._viewerLayer.config.layerEntries.find(
+                    (l: DynamicLayerEntryNode) => l.index === this._layerIndex
+                );
                 childNode.state.opacity = opacity;
             } else {
                 this._viewerLayer.config.state.opacity = opacity;
@@ -256,7 +272,9 @@ export class BaseLayer {
     }
 
     /** Returns true if the layer is currently visible, false otherwise. */
-    get visibility(): boolean { return this._visibility; }
+    get visibility(): boolean {
+        return this._visibility;
+    }
 
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
@@ -267,7 +285,9 @@ export class BaseLayer {
 
         if (this._viewerLayer.config) {
             if (this._layerIndex !== undefined) {
-                const childNode = this._viewerLayer.config.layerEntries.find((l: DynamicLayerEntryNode) => l.index === this._layerIndex);
+                const childNode = this._viewerLayer.config.layerEntries.find(
+                    (l: DynamicLayerEntryNode) => l.index === this._layerIndex
+                );
                 childNode.state.visibility = visibility;
             } else {
                 this._viewerLayer.config.state.visibility = visibility;
@@ -292,8 +312,9 @@ export class BaseLayer {
         if (typeof attributeKey !== 'undefined') {
             let allAttribs: Array<Object> = this.getAttributes();
 
-            let index: number = this._attributeArray.findIndex(attrib =>
-                (<any>attrib)[this._primaryAttributeKey] === attributeKey);
+            let index: number = this._attributeArray.findIndex(
+                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+            );
 
             if (index !== -1) {
                 const oldValue: Object = Object.assign({}, this._attributeArray[index]);
@@ -304,7 +325,7 @@ export class BaseLayer {
 
                 allAttribs.splice(index, 1);
 
-                this._attributesRemoved.next([ oldValue ]);
+                this._attributesRemoved.next([oldValue]);
             }
         } else {
             const copyAttribs: Array<Object> = this._attributeArray.map(a => Object.assign({}, a));
@@ -386,41 +407,49 @@ export class ConfigLayer extends BaseLayer {
         const attribs = this._layerProxy.attribs;
 
         if (attribs) {
-            attribs.then((attrib: AttribObject) => {
-                // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
-                if (this._attributeArray.length > 0) {
+            attribs
+                .then((attrib: AttribObject) => {
+                    // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
+                    if (this._attributeArray.length > 0) {
+                        return;
+                    }
+
+                    // attributes not previously downloaded, after forcing the download, populates the array and triggers event
+                    Object.keys(attrib.oidIndex).forEach(id => {
+                        const index: number = (<any>attrib.oidIndex)[id];
+                        const attribs = attrib.features[index].attributes;
+
+                        this._attributeArray.push(attribs);
+                    });
+
+                    this._attributesAdded.next(this._attributeArray);
+                })
+                .catch((e: string) => {
+                    console.error(e);
+                    this._attributeArray = [];
+                    this._attributesAdded.next(this._attributeArray); // errored out, do we want to broadcast a different event  ?
                     return;
-                }
-
-                // attributes not previously downloaded, after forcing the download, populates the array and triggers event
-                Object.keys(attrib.oidIndex).forEach(id => {
-                    const index: number = (<any>attrib.oidIndex)[id];
-                    const attribs = attrib.features[index].attributes;
-
-                    this._attributeArray.push(attribs);
                 });
-
-                this._attributesAdded.next(this._attributeArray);
-            }).catch((e: string) => {
-                console.error(e);
-                this._attributeArray = [];
-                this._attributesAdded.next(this._attributeArray);   // errored out, do we want to broadcast a different event  ?
-                return;
-            });
         } else {
             this._attributeArray = [];
-            this._attributesAdded.next(this._attributeArray);   // no attribs, do we want to broadcast a different event  ?
+            this._attributesAdded.next(this._attributeArray); // no attribs, do we want to broadcast a different event  ?
         }
     }
 
     /** Returns the catalogue URL. */
-    get catalogueUrl(): string { return this._catalogueUrl; }
+    get catalogueUrl(): string {
+        return this._catalogueUrl;
+    }
 
     /** Returns the underlying layer type such as esriFeature, esriDynamic, and ogcWms. */
-    get type(): string { return this._layerType; }
+    get type(): string {
+        return this._layerType;
+    }
 
     /** Returns the name of the key being used for the attributes OID field. */
-    get attributeKey(): string { return this._primaryAttributeKey; }
+    get attributeKey(): string {
+        return this._primaryAttributeKey;
+    }
 
     /** Pans to the layers bounding box. */
     panToBoundary(): void {
@@ -509,7 +538,9 @@ export class SimpleLayer extends BaseLayer {
     }
 
     /** Returns the name of the layer. */
-    get name(): string { return this._name; }
+    get name(): string {
+        return this._name;
+    }
 
     /** Sets the name of the layer. Will also update the id to reflect this change, since the id is equivalent to the name. */
     set name(name: string) {
@@ -526,7 +557,9 @@ export class SimpleLayer extends BaseLayer {
     }
 
     /** Returns the value of the requested data, or an empty array if the data does not exist. */
-    get geometry(): Array<BaseGeometry> { return this._geometryArray; }
+    get geometry(): Array<BaseGeometry> {
+        return this._geometryArray;
+    }
 
     /**
      * Emits whenever geometry is added to the layer.
@@ -550,7 +583,7 @@ export class SimpleLayer extends BaseLayer {
         if (geo instanceof Array) {
             geometries = geo;
         } else {
-            geometries = [ geo ];
+            geometries = [geo];
         }
 
         const geometriesAdded: Array<BaseGeometry> = [];
@@ -587,7 +620,7 @@ export class SimpleLayer extends BaseLayer {
 
                     this._viewerLayer.removeGeometry(index);
                     this._geometryArray.splice(index, 1);
-                    this._geometryRemoved.next([ oldValue ]);
+                    this._geometryRemoved.next([oldValue]);
                 }
             } else {
                 const geometriesRemoved: Array<BaseGeometry> = [];
@@ -650,18 +683,21 @@ export class SimpleLayer extends BaseLayer {
  */
 export class LayerGroup {
     /** @ignore */
-    _mapI: Map
+    _mapI: Map;
     /** @ignore */
     _layersArray: Array<BaseLayer> = [];
 
     _layerAdded: Subject<BaseLayer>;
-    _layerRemoved: Subject<BaseLayer>
+    _layerRemoved: Subject<BaseLayer>;
 
     _attributesAdded: Subject<LayerAndAttribs>;
     _attributesChanged: Subject<LayerAndChangedAttribs>;
     _attributesRemoved: Subject<LayerAndAttribs>;
 
     _click: Subject<BaseLayer>;
+    
+    /** @ignore */
+    _identify: Subject<any>;
 
     /** Sets the layer groups api map instance. */
     constructor(mapInstance: Map) {
@@ -675,6 +711,7 @@ export class LayerGroup {
         this._attributesRemoved = new Subject();
 
         this._click = new Subject();
+        this._identify = new Subject<any>();
     }
 
     /** Returns all layers in the group. */
@@ -730,11 +767,24 @@ export class LayerGroup {
         return this._click.asObservable();
     }
 
+    /**
+     * Emits when a new identify session as soon as the identify is triggered.
+     * The emitted event contains an array of IdentifyRequest objects, one for each layer in this layer group.
+     *
+     * @readonly
+     * @type {Observable<IdentifySession>}
+     * @event identify
+     * @memberof LayerGroup
+     */
+    get identify(): Observable<IdentifySession> {
+        return this._identify.asObservable();
+    }
+
     /** Providing a layer json snippet returns a `ConfigLayer`.*/
-    addLayer(layerJSON: JSON): void;    // change return type after if we want to return something  ?
+    addLayer(layerJSON: JSON): void; // change return type after if we want to return something  ?
 
     /** Providing a string layer name will instantiate and return an empty `SimpleLayer` */
-    addLayer(layerName: string): void;  // change return type after if we want to return something  ?
+    addLayer(layerName: string): void; // change return type after if we want to return something  ?
 
     // /**
     //  * Adds GeoJSON layers to the group. Give this method a parsed JSON. The imported layers are returned.
@@ -752,7 +802,8 @@ export class LayerGroup {
     // addLayer(url: string, callback?: (layers: Array<SimpleLayer>) => void): void;
 
     /** Creates a `ConfigLayer` using a json snippet. Else creates a 'SimpleLayer' using the string. */
-    addLayer(layerJSONOrName: JSON | string): void {       // change return type after if we want to return something  ?
+    addLayer(layerJSONOrName: JSON | string): void {
+        // change return type after if we want to return something  ?
         if (typeof layerJSONOrName === 'string') {
             this._mapI.mapI.addSimpleLayer(layerJSONOrName);
         } else {
@@ -828,7 +879,7 @@ export class LayerGroup {
      * ```
      */
     getLayersByType(type: ConfigLayer | SimpleLayer): Array<BaseLayer> {
-        return this._layersArray.filter(layer => layer instanceof (<any>type));
+        return this._layersArray.filter(layer => layer instanceof <any>type);
     }
 
     // /** Exports the layers in the group to a GeoJSON object.
@@ -848,9 +899,9 @@ function isSimpleLayer(layerOrId: BaseLayer | undefined): layerOrId is SimpleLay
 }
 
 interface LayerInterface {
-    name: string,
-    opacity: number,
-    visibility: boolean
+    name: string;
+    opacity: number;
+    visibility: boolean;
 }
 
 interface JSONConfig {
@@ -861,23 +912,48 @@ interface JSONConfig {
 }
 
 interface AttribObject {
-    features: Array<FeaturesArray>,
-    oidIndex: Object
+    features: Array<FeaturesArray>;
+    oidIndex: Object;
 }
 
 interface FeaturesArray {
-    attributes: Object
+    attributes: Object;
 }
 
 interface LayerAndAttribs extends FeaturesArray {
-    layer: BaseLayer,
+    layer: BaseLayer;
 }
 
 interface ChangedAttribs {
-    attributesBeforeChange: Object,
-    attributesAfterChange: Object
+    attributesBeforeChange: Object;
+    attributesAfterChange: Object;
 }
 
 interface LayerAndChangedAttribs extends ChangedAttribs {
-    layer: BaseLayer
+    layer: BaseLayer;
+}
+
+export interface DataItem {
+    name: string;
+    value: string | number;
+}
+
+export interface IdentifyResult {
+    data: DataItem[];
+    name: string;
+    oid: string;
+    symbology: { svgcode: string }[];
+}
+
+export interface IdentifyRequest {
+    sessionId: number;
+    event: MouseEvent;
+    layer: ConfigLayer;
+    features: Promise<IdentifyResult[]>;
+}
+
+export interface IdentifySession {
+    sessionId: number;
+    event: MouseEvent;
+    requests: IdentifyRequest[];
 }
