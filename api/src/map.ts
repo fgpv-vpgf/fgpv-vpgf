@@ -22,7 +22,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { Subject } from 'rxjs/Subject';
-import { LayerGroup } from 'api/layers';
+import { LayerGroup, SimpleLayer } from 'api/layers';
 
 export enum IdentifyMode {
     /**
@@ -71,6 +71,7 @@ export default class Map {
     private _ui: UI;
     private _layers: LayerGroup;
     private _identifyMode: IdentifyMode = IdentifyMode.Details;
+    private _simpleLayer: SimpleLayer;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -115,6 +116,10 @@ export default class Map {
 
     get identifyMode(): IdentifyMode {
         return this._identifyMode;
+    }
+
+    get simpleLayer(): SimpleLayer {
+        return this._simpleLayer;
     }
 
     /**

@@ -270,6 +270,9 @@ function mapServiceFactory(
             'update-end': () => {
                 _setLoadingFlag(false, 100);
             },
+            'zoom-start': () => {
+                events.$broadcast(events.rvMapZoomStart);
+            },
             click: clickEvent => {
                 const areGraphicsHighlighted = mapConfig.highlightLayer.graphics.length > 0;
 
