@@ -71,7 +71,8 @@ function events($rootScope) {
 
         rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
 
-        rvApiMapAdded: 'rvApiMapAdded'
+        rvApiMapAdded: 'rvApiMapAdded',
+        rvApiLayerAdded: 'rvApiLayerAdded'
     };
 }
 

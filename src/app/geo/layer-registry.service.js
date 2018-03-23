@@ -724,6 +724,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
      */
     function _createApiLayer(layerRecord) {
         let apiLayer;
+        const createdLayers = [];
 
         // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
@@ -740,6 +741,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     apiLayer = new ConfigLayer(configService.getSync.map, layerRecord, idx);
                     _initializeLayerObservables(apiLayer);
                     _addLayerToApiMap(apiLayer);
+                    createdLayers.push(apiLayer);
                 }
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
@@ -752,8 +754,11 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 apiLayer = new ConfigLayer(configService.getSync.map, layerRecord);
                 _initializeLayerObservables(apiLayer);
                 _addLayerToApiMap(apiLayer);
+                createdLayers.push(apiLayer);
             }
         }
+
+        events.$broadcast(events.rvApiLayerAdded, createdLayers);
     }
 
     /**

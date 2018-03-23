@@ -22,13 +22,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         removeLegendBlock
     };
 
-    let mapApi = null;
-
-    // lets us know the API is ready
-    events.$on(events.rvApiMapAdded, (_, mApi) => {
-        mapApi = mApi;
-    });
-
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
         configService.getSync.map.instance.addConfigLayer = layerJSON => {
@@ -41,16 +34,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 const layer = service.addLayerDefinition(layerJSON);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
-                    const layerRecord = layerRegistry.getLayerRecord(layerJSON.id);
-                    layerRecord.addStateListener(_onLayerRecordLoad);
-
-                    function _onLayerRecordLoad(state) {
-                        // resolve with Array<ConfigLayer>
-                        if (state === 'rv-loaded') {
-                            layerRecord.removeStateListener(_onLayerRecordLoad);
-                            resolve(mapApi.layers.getLayersById(layerJSON.id));
-                        }
-                    }
+                    events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        resolve(layers);
+                    });
                 });
             } else {
                 return common.$q.resolve([]);
