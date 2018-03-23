@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BaseGeometry | r2v2</title>
+	<title>LineString | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>
+					<a href="_api_src_geometry_.linestring.html">LineString</a>
 				</li>
 			</ul>
-			<h1>Class BaseGeometry</h1>
+			<h1>Class LineString</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>All geometry types must derive from this class. Not intented to be instantiated on its own.</p>
+						<p>A LineString geometry contains a number of XYs.</p>
 					</div>
 				</div>
 			</section>
@@ -80,13 +80,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">BaseGeometry</span>
+						<a href="_api_src_geometry_.multipoint.html" class="tsd-signature-type">MultiPoint</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a>
-							</li>
-							<li>
-								<a href="_api_src_geometry_.multipoint.html" class="tsd-signature-type">MultiPoint</a>
+								<span class="target">LineString</span>
 							</li>
 						</ul>
 					</li>
@@ -99,30 +96,36 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.linestring.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#_hoverpoint" class="tsd-kind-icon">_hoverpoint</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#_hoverpointremoved" class="tsd-kind-icon">_hoverpoint<wbr>Removed</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#_hoverpoint" class="tsd-kind-icon">_hoverpoint</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#_hoverpointremoved" class="tsd-kind-icon">_hoverpoint<wbr>Removed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#_icon" class="tsd-kind-icon">_icon</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#_id" class="tsd-kind-icon">_id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#_pointarray" class="tsd-kind-icon">_point<wbr>Array</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#hoverpoint" class="tsd-kind-icon">hoverpoint</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#hoverpoint" class="tsd-kind-icon">hoverpoint</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#icon" class="tsd-kind-icon">icon</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#length" class="tsd-kind-icon">length</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#pointarray" class="tsd-kind-icon">point<wbr>Array</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.linestring.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#addhoverpoint" class="tsd-kind-icon">add<wbr>Hoverpoint</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.basegeometry.html#removehoverpoint" class="tsd-kind-icon">remove<wbr>Hoverpoint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#addhoverpoint" class="tsd-kind-icon">add<wbr>Hoverpoint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#getat" class="tsd-kind-icon">get<wbr>At</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linestring.html#removehoverpoint" class="tsd-kind-icon">remove<wbr>Hoverpoint</a></li>
 							</ul>
 						</section>
 					</div>
@@ -130,42 +133,47 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Base<wbr>Geometry<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Line<wbr>String<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, elements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.linestring.html" class="tsd-signature-type">LineString</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L286">api/src/geometry.ts:286</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L424">api/src/geometry.ts:424</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Sets the geometry id.</p>
+									<p>Constructs a LineString from the given XYs or XYLiterals.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <span class="tsd-signature-type">string</span></h5>
+									<h5>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>elements: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.linestring.html" class="tsd-signature-type">LineString</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="_hoverpoint" class="tsd-anchor"></a>
 					<h3>_hoverpoint</h3>
 					<div class="tsd-signature tsd-kind-icon">_hoverpoint<span class="tsd-signature-symbol">:</span> <a href="_api_src_geometry_.hoverpoint.html" class="tsd-signature-type">HoverPoint</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hoverpoint">_hoverpoint</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L284">api/src/geometry.ts:284</a></li>
 						</ul>
@@ -177,11 +185,12 @@
 						</dl>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="_hoverpointremoved" class="tsd-anchor"></a>
 					<h3>_hoverpoint<wbr>Removed</h3>
 					<div class="tsd-signature tsd-kind-icon">_hoverpoint<wbr>Removed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject()</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hoverpointremoved">_hoverpointRemoved</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L286">api/src/geometry.ts:286</a></li>
 						</ul>
@@ -193,13 +202,48 @@
 						</dl>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="_icon" class="tsd-anchor"></a>
+					<h3>_icon</h3>
+					<div class="tsd-signature tsd-kind-icon">_icon<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#_icon">_icon</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L374">api/src/geometry.ts:374</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>ignore</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="_id" class="tsd-anchor"></a>
 					<h3>_id</h3>
 					<div class="tsd-signature tsd-kind-icon">_id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_id">_id</a></p>
 						<ul>
 							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L282">api/src/geometry.ts:282</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<dl class="tsd-comment-tags">
+							<dt>ignore</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="_pointarray" class="tsd-anchor"></a>
+					<h3>_point<wbr>Array</h3>
+					<div class="tsd-signature tsd-kind-icon">_point<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#_pointarray">_pointArray</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L372">api/src/geometry.ts:372</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -212,15 +256,16 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 					<a name="hoverpoint" class="tsd-anchor"></a>
 					<h3>hoverpoint</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> hoverpoint<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.hoverpoint.html" class="tsd-signature-type">HoverPoint</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#hoverpoint">hoverpoint</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L304">api/src/geometry.ts:304</a></li>
 								</ul>
@@ -237,15 +282,39 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="icon" class="tsd-anchor"></a>
+					<h3>icon</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> icon<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#icon">icon</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L398">api/src/geometry.ts:398</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the data / image URL or SVG path of icon displayed on the map.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#id">id</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L301">api/src/geometry.ts:301</a></li>
 								</ul>
@@ -259,24 +328,69 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="length" class="tsd-anchor"></a>
+					<h3>length</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> length<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#length">length</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L413">api/src/geometry.ts:413</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the number of contained points.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="pointarray" class="tsd-anchor"></a>
+					<h3>point<wbr>Array</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> pointArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#pointarray">pointArray</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L403">api/src/geometry.ts:403</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an array of the contained points. A new array is returned each time this is called.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L298">api/src/geometry.ts:298</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L431">api/src/geometry.ts:431</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the type of the geometry object. Possibilities are &#39;Point&#39;, &#39;MultiPoint&#39;, &#39;LineString&#39;.
-										TODO: &#39;MultiLineString&#39;.
-									Function implementation in subclasses.</p>
+									<p>Returns the string &#39;LineString&#39;.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -284,17 +398,18 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="addhoverpoint" class="tsd-anchor"></a>
 					<h3>add<wbr>Hoverpoint</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">add<wbr>Hoverpoint<span class="tsd-signature-symbol">(</span>hoverpoint<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.hoverpoint.html" class="tsd-signature-type">HoverPoint</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#addhoverpoint">addHoverpoint</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L307">api/src/geometry.ts:307</a></li>
 								</ul>
@@ -314,15 +429,45 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="getat" class="tsd-anchor"></a>
+					<h3>get<wbr>At</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>At<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.multipoint.html">MultiPoint</a>.<a href="_api_src_geometry_.multipoint.html#getat">getAt</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L408">api/src/geometry.ts:408</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the n-th contained point.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="removehoverpoint" class="tsd-anchor"></a>
 					<h3>remove<wbr>Hoverpoint</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">remove<wbr>Hoverpoint<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#removehoverpoint">removeHoverpoint</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L316">api/src/geometry.ts:316</a></li>
 								</ul>
@@ -375,48 +520,66 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.hoverpoint.html" class="tsd-kind-icon">Hover<wbr>Point</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a>
+						<a href="_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_api_src_geometry_.linestring.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#_hoverpoint" class="tsd-kind-icon">_hoverpoint</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#_hoverpoint" class="tsd-kind-icon">_hoverpoint</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#_hoverpointremoved" class="tsd-kind-icon">_hoverpoint<wbr>Removed</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#_hoverpointremoved" class="tsd-kind-icon">_hoverpoint<wbr>Removed</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#_id" class="tsd-kind-icon">_id</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#_icon" class="tsd-kind-icon">_icon</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#hoverpoint" class="tsd-kind-icon">hoverpoint</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#id" class="tsd-kind-icon">id</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#_pointarray" class="tsd-kind-icon">_point<wbr>Array</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#type" class="tsd-kind-icon">type</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#hoverpoint" class="tsd-kind-icon">hoverpoint</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#addhoverpoint" class="tsd-kind-icon">add<wbr>Hoverpoint</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#icon" class="tsd-kind-icon">icon</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_api_src_geometry_.basegeometry.html#removehoverpoint" class="tsd-kind-icon">remove<wbr>Hoverpoint</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#length" class="tsd-kind-icon">length</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#pointarray" class="tsd-kind-icon">point<wbr>Array</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_api_src_geometry_.linestring.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#addhoverpoint" class="tsd-kind-icon">add<wbr>Hoverpoint</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#getat" class="tsd-kind-icon">get<wbr>At</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linestring.html#removehoverpoint" class="tsd-kind-icon">remove<wbr>Hoverpoint</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.hoverpoint.html" class="tsd-kind-icon">Hover<wbr>Point</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
 					</li>

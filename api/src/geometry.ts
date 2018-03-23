@@ -203,11 +203,13 @@ export class HoverPoint {
      * Set the id and hovertip text. Also set any of the optional hovertip options if provided.
      *
      * The different options and values available are the following:
-     *     keepOpen:        true or false. default is false.
-     *     position:        'top', 'bottom', 'left' or 'right'. default is 'top'. (if followCursor is true, position value will be ignored.)
-     *     xOffset:         any number. default is 0.
-     *     yOffset:         any number. default is 0.
-     *     followCursor:    true or false. default is false. (if keepOpen is true, followCursor value will be ignored.)
+     * <ul>
+     *     <li>keepOpen:        true or false. default is false.
+     *     <li>position:        'top', 'bottom', 'left' or 'right'. default is 'top'. (if followCursor is true, position value will be ignored.)
+     *     <li>xOffset:         any number. default is 0.
+     *     <li>yOffset:         any number. default is 0.
+     *     <li>followCursor:    true or false. default is false. (if keepOpen is true, followCursor value will be ignored.)
+     * </ul>
     */
     constructor(id: string | number, text: string, opts?: HovertipOptions) {
         this._id = id.toString();
