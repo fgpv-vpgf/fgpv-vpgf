@@ -1,8 +1,8 @@
 {
     "name": "geosearch",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Configurable geolocation search library",
-    "main": "src/index.js",
+    "main": "dist/geosearch.js",
     "repository": "git@github.com:RAMP-PCAR/geosearch.git",
     "author": "Miles Petrov",
     "license": "MIT",
