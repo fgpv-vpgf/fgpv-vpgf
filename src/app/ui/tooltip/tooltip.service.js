@@ -54,7 +54,6 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             this._mouseGap = 10;
 
             this._originPoint = { x: 0, y: 0 };
-            this._collisionOffset = { x: 0, y: 0 };
             this._dimensions = { width: 0, height: 0 };
 
             this._resetOffset();
@@ -92,18 +91,20 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                     const position = tipAndOptions.position;
 
                     // need to use defaults or a getter for the graphic size instead of 16.5 directly
-                    switch (position) {
-                        case 'bottom':
-                            tooltip.offset(0, -this._dimensions.height - 16.5 - 1);
-                            break;
-                        case 'left':
-                            tooltip.offset(this._dimensions.width / 2 + 16.5 / 2 + 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
-                            break;
-                        case 'right':
-                            tooltip.offset(-this._dimensions.width / 2 - 16.5 / 2 - 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
-                            break;
-                        default:
-                            tooltip.offset(0, this._dimensions.height / 2 + 1);
+                    if (!tooltip._scope.self.isRendered) {
+                        switch (position) {
+                            case 'bottom':
+                                tooltip.offset(0, -this._dimensions.height - 16.5 - 1);
+                                break;
+                            case 'left':
+                                tooltip.offset(this._dimensions.width / 2 + 16.5 / 2 + 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
+                                break;
+                            case 'right':
+                                tooltip.offset(-this._dimensions.width / 2 - 16.5 / 2 - 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
+                                break;
+                            default:
+                                tooltip.offset(0, this._dimensions.height / 2 + 1);
+                        }
                     }
                 }
             }
