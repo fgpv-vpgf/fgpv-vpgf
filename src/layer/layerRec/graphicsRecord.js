@@ -18,7 +18,31 @@ const defaultSymbols = {
         type: 'esriSMS',
         color: [255, 0, 0],
         outline: {
-            color: [0,0,0],
+            color: [0, 0, 0],
+            width: 1,
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
+        }
+    },
+    MULTIPOINT: {
+        width: 16.5,
+        height: 16.5,
+        type: 'esriSMS',
+        color: [0, 255, 0],
+        outline: {
+            color: [0, 0, 0],
+            width: 1,
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
+        }
+    },
+    LINESTRING: {
+        width: 2,
+        type: 'esriSLS',
+        color: [255, 0, 0],
+        style:' esriSLSSolid',
+        outline: {
+            color: [0, 0, 0],
             width: 1,
             type: 'esriSLS',
             style: 'esriSLSSolid'
@@ -33,9 +57,9 @@ class GraphicsRecord extends root.Root {
     /**
      * Create a graphics layer record with the appropriate geoApi layer type.
      * TODO: possibly have an intermediate class between root and layerRecord to have all the duplicated items, such as hovertips.
-     * TODO: add identify functionality and fix up hover listeners / other features that might need to be modified
+     * TODO: add identify functionality and fix any other features that might need to be modified
      * @param {Object} esriBundle       bundle of API classes
-     * @param {Object} apiRef        object pointing to the geoApi. allows us to call other geoApi functions.
+     * @param {Object} apiRef           object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {String} name             name and id of the layer.
      */
     constructor (esriBundle, apiRef, name) {
@@ -162,7 +186,8 @@ class GraphicsRecord extends root.Root {
             const showBundle = {
                 type: 'mouseOver',
                 point: e.screenPoint,
-                target: e.target
+                target: e.target,
+                graphic: e.graphic
             };
 
             // tell anyone listening we moused into something
@@ -196,10 +221,20 @@ class GraphicsRecord extends root.Root {
         const geometries = Array.isArray(geo) ? geo : [ geo ];
 
         geometries.forEach(geometry => {
+            const id = geometry.id;
             if (geometry.type === geometryTypes.POINT) {
                 const coords = geometry.xy.projectToPoint(spatialReference);
                 const icon = geometry.icon;
-                this._addPoint(coords, spatialReference, icon);
+                this._addPoint(coords, spatialReference, icon, id);
+            } else if (geometry.type === geometryTypes.MULTIPOINT) {
+                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference))
+                const points = coords.map(point => [ point.x, point.y ]);
+                const icon = geometry.icon;
+                this._addMultiPoint(points, spatialReference, icon, id);
+            } else if (geometry.type === geometryTypes.LINESTRING) {
+                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference))
+                const path = coords.map(point => [ point.x, point.y ]);
+                this._addLine(path, spatialReference, id);
             }
 
             // TODO: add 'private' functions and conditions for other geometry types as well
@@ -213,41 +248,129 @@ class GraphicsRecord extends root.Root {
      * @private
      * @param {Object} coords                    the long and lat to use as the graphic location
      * @param {Object} spatialReference          the projection the graphics should be in
-     * @param {String} icon                      data url to for layer icon. defaults to a red point
+     * @param {String} icon                      data / image url or svg path for layer icon. defaults to a red point
+     * @param {String} id                        id of api geometry being added to map
      */
-    _addPoint(coords, spatialReference, icon) {
+    _addPoint(coords, spatialReference, icon, id) {
         const point = new this._bundle.Point({
             x: coords.x,
             y: coords.y,
             spatialReference: spatialReference
         });
 
-        let symbol;
+        let symbol, marker;
         if (icon) {
-            // TODO: discuss how to handle the width / height issue when passing in an icon
-            symbol = {
-                width: 16.5,
-                height: 16.5,
-                type: 'esriPMS',
-                contentType: 'image/png',
-                url: icon
-            };
+            if (this._isUrl(icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
+            } else {
+                symbol = new this._bundle.SimpleMarkerSymbol();
+                symbol.setPath(icon);
+                symbol.setColor([255, 0, 0]);
+                symbol.setSize('auto');
+            }
+            marker = new this._bundle.Graphic(point, symbol);
+        } else {
+            marker = new this._bundle.Graphic({ symbol: defaultSymbols.POINT });
+            marker.setGeometry(point);
         }
 
-        const marker = new this._bundle.Graphic({ symbol: symbol || defaultSymbols.POINT });
-        marker.setGeometry(point);
+        marker.geometry.apiId = id;
         this._layer.add(marker);
     }
 
     /**
-    * Remove the specified graphic.
-    *
-    * @function removeGeometry
-    * @param {Number} index      index of the graphic to remove from the layer
-    */
+     * Add multiple points where specified using the longitutes and latitutes.
+     *
+     * @function _addMultiPoint
+     * @private
+     * @param {Array} coords                     an array of long and lat to use as the graphic location for each point
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} icon                      data / image url or svg path for layer icon. defaults to a green point
+     * @param {String} id                        id of api geometry being added to map
+     */
+    _addMultiPoint(coords, spatialReference, icon, id) {
+        const points = new this._bundle.Multipoint({
+            points: coords,
+            spatialReference: spatialReference
+        });
+
+        let symbol, marker;
+        if (icon) {
+            if (this._isUrl(icon)) {
+                // TODO: discuss how to handle the width / height issue when passing in an icon
+                symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
+            } else {
+                symbol = new this._bundle.SimpleMarkerSymbol();
+                symbol.setPath(icon);
+                symbol.setColor([255, 0, 0]);
+                symbol.setSize('auto');
+            }
+            marker = new this._bundle.Graphic(points, symbol);
+        } else {
+            marker = new this._bundle.Graphic({ symbol: defaultSymbols.MULTIPOINT });
+            marker.setGeometry(points);
+        }
+
+        marker.geometry.apiId = id;
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add a line where specified using the path of longitutes and latitutes.
+     *
+     * @function _addLine
+     * @private
+     * @param {Array} path                       an array of long and lat to use as the path for the line
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} id                        id of api geometry being added to map
+     */
+    _addLine(path, spatialReference, id) {
+        const line = new this._bundle.Polyline({
+            paths: [ path ],
+            spatialReference: spatialReference
+        });
+
+        const marker = new this._bundle.Graphic({ symbol: defaultSymbols.LINESTRING });
+        marker.setGeometry(line);
+
+        marker.geometry.apiId = id;
+        this._layer.add(marker);
+    }
+
+    /**
+     * Remove the specified graphic.
+     *
+     * @function removeGeometry
+     * @param {Number} index      index of the graphic to remove from the layer
+     */
     removeGeometry(index) {
         const graphic = this._layer.graphics[index];
         this._layer.remove(graphic);
+    };
+
+    /**
+     * Check to see if text provided is a valid image / data URL based on extension type or format.
+     *
+     * @function _isUrl
+     * @private
+     * @param {String} text                      string to be matched against valid image types / data url format
+     * @returns {Boolean}                        true if valid image extension
+     */
+    _isUrl(text) {
+        return !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
+            !!text.match(/^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i);
+    }
+
+    /**
+     * Return the extent of an array of graphics.
+     *
+     * @function getGraphicsBoundingBox
+     * @param {Array<Graphic>} graphics      the graphics whose bounding box we want to calculate
+     * @returns {Object}                     the extent of an array of graphics
+     */
+    getGraphicsBoundingBox(graphics) {
+        return this._apiRef.proj.graphicsUtils.graphicsExtent(graphics);
     };
 }
 
