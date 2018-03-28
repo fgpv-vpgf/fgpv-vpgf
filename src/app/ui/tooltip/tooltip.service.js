@@ -90,7 +90,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                     const tooltip = tipAndOptions.toolTip;
                     const position = tipAndOptions.position;
 
-                    // need to use defaults or a getter for the graphic size instead of 16.5 directly
+                    // need to use defaults or a getter for the graphic size instead of numbers directly
                     if (!tooltip._scope.self.isRendered) {
                         switch (position) {
                             case 'bottom':
@@ -468,11 +468,21 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
     // wire in a hook to any map for removing a tooltip when a Hover is removed
     events.$on(events.rvMapLoaded, () => {
+        // if id provided, remove hovertip with that id if it exists
+        // if no id provided, remove all open hovertips
         configService.getSync.map.instance.removeHover = id => {
-            const index = activeTooltips.findIndex(tt => tt.id === id);
-            if (index !== -1) {
-                activeTooltips[index].toolTip.destroy();
-                activeTooltips.splice(index, 1);
+            if (typeof id !== 'undefined') {
+                const index = activeTooltips.findIndex(tt => tt.id === id);
+                if (index !== -1) {
+                    activeTooltips[index].toolTip.destroy();
+                    activeTooltips.splice(index, 1);
+                }
+
+            } else {
+                activeTooltips.forEach(tt => {
+                    tt.toolTip.destroy();
+                });
+                activeTooltips = [];
             }
         }
     });

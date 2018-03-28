@@ -210,6 +210,8 @@ export class Hover {
      *     <li>yOffset:         any number. default is 0.
      *     <li>followCursor:    true or false. default is false. (if keepOpen is true, followCursor value will be ignored.)
      * </ul>
+     *
+     * TODO: add option for position 'center' specifically used for polygons.
     */
     constructor(id: string | number, text: string, opts?: HovertipOptions) {
         this._id = id.toString();
@@ -291,7 +293,8 @@ export class BaseGeometry {
     }
 
     /**
-     * Returns the type of the geometry object. Possibilities are 'Point', 'MultiPoint', 'LineString'.
+     * Returns the type of the geometry object.
+     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'LinearRing', 'Polygon'.
      * TODO: 'MultiLineString'.
      * Function implementation in subclasses.
      */
@@ -327,8 +330,6 @@ export class Point extends BaseGeometry {
     _xy: XY;
     /** @ignore */
     _icon: string;
-    /** @ignore */
-    _size: Array<number> = [16.5, 16.5];
 
     /** Constructs a Point from the given XY or XYLiteral. */
     constructor(id: string | number, icon: string, xy: XY | XYLiteral) {
@@ -355,18 +356,13 @@ export class Point extends BaseGeometry {
         return this._xy;
     }
 
-    /** Returns the size of the point in the following format: [width, height]. */
-    get size(): Array<number> {
-        return this._size;
-    }
-
     /** Returns the string 'Point'. */
     get type(): string {
         return 'Point';
     }
 }
 
-/** A MultiPoint geometry contains a number of Points. */
+/** A MultiPoint geometry containing a number of Points. */
 export class MultiPoint extends BaseGeometry {
     /** @ignore */
     _pointArray: Array<Point> = [];
@@ -420,7 +416,7 @@ export class MultiPoint extends BaseGeometry {
     }
 }
 
-/** A LineString geometry contains a number of XYs. */
+/** A LineString geometry containing a number of Points. */
 export class LineString extends MultiPoint {
     /** Constructs a LineString from the given XYs or XYLiterals. */
     constructor(id: string | number, elements: Array<XY | XYLiteral>) {
@@ -430,6 +426,125 @@ export class LineString extends MultiPoint {
     /** Returns the string 'LineString'. */
     get type(): string {
         return 'LineString';
+    }
+}
+
+/**
+ * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
+ * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
+ */
+export class LinearRing extends BaseGeometry {
+    /** @ignore */
+    _pointArray: Array<Point> = [];
+
+    /** Constructs a LinearRing from the given Points, XYs or XYLiterals. */
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>) {
+        super(id.toString());
+
+        let counter = 0;
+
+        elements.forEach(elem => {
+            const subId = (counter < 10) ? '0' + counter : counter;
+            const newId = id + '-' + subId;
+
+            if (isPointInstance(elem)) {
+                this._pointArray.push(new Point(newId, '', elem.xy));
+            } else {
+                this._pointArray.push(new Point(newId, '', elem));
+            }
+
+            counter++;
+        });
+
+        // add the first point to the end of the array to 'close' the ring
+        this._pointArray.push(this._pointArray[0]);
+    }
+
+    /** Returns an array of the contained points. A new array is returned each time this is called. */
+    get pointArray(): Array<Point> {
+        return [ ...this._pointArray ];
+    }
+
+    /** Returns the string 'LinearRing'. */
+    get type(): string {
+        return 'LinearRing';
+    }
+}
+
+/** A Polygon geometry containing a number of LinearRings. */
+export class Polygon extends BaseGeometry {
+    /** @ignore */
+    _ringArray: Array<LinearRing> = [];
+    /** @ignore */
+    _outlineColor: string = '#AFAFAF';
+    /** @ignore */
+    _outlineWidth: number = 3;
+    /** @ignore */
+    _fillColor: string = '#000000';
+    /** @ignore */
+    _fillOpacity: number = 0;
+
+    /**
+     * Constructs a Polygon from the given LinearRings.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>outlineColor:        string hex code. default is '#AFAFAF'.
+     *     <li>outlineWidth:        number in pixels. default is 3.
+     *     <li>fillColor:           string hex code. default is '#000000'.
+     *     <li>fillOpacity:         number between 0 and 1. default is 0.
+     * </ul>
+     *
+     * TODO: add option for polygon icon fill.
+     */
+    constructor(id: string | number, elements: Array<LinearRing>, styleOptions?: PolygonStyleOptions) {
+        super(id.toString());
+
+        this._ringArray = elements;
+        if (styleOptions) {
+            if (styleOptions.outlineColor !== undefined) {
+                this._outlineColor = styleOptions.outlineColor;
+            }
+            if (styleOptions.outlineWidth !== undefined) {
+                this._outlineWidth = styleOptions.outlineWidth;
+            }
+            if (styleOptions.fillColor !== undefined) {
+                this._fillColor = styleOptions.fillColor;
+            }
+            if (styleOptions.fillOpacity !== undefined) {
+                this._fillOpacity = styleOptions.fillOpacity;
+            }
+        }
+    }
+
+    /** Returns an array of the contained rings. A new array is returned each time this is called. */
+    get ringArray(): Array<LinearRing> {
+        return [ ...this._ringArray ];
+    }
+
+    /** Returns the hex code of the color used for the lines of the ring. */
+    get outlineColor(): string {
+        return this._outlineColor;
+    }
+
+    /** Returns the width in pixels used for the lines of the ring. */
+    get outlineWidth(): number {
+        return this._outlineWidth;
+    }
+
+    /** Returns the hex code of the color used for the fill of the polygon. */
+    get fillColor(): string {
+        return this._fillColor;
+    }
+
+    /** Returns the opacity (between 0 and 1) for the fill of the polygon. */
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    /** Returns the string 'Polygon'. */
+    get type(): string {
+        return 'Polygon';
     }
 }
 
@@ -465,6 +580,13 @@ interface HovertipOptions {
     xOffset: number;
     yOffset: number;
     followCursor: boolean;
+}
+
+interface PolygonStyleOptions {
+    outlineColor: string;
+    outlineWidth: number;
+    fillColor: string;
+    fillOpacity: number
 }
 
 // Type guards ------------------------

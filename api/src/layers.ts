@@ -551,6 +551,12 @@ export class SimpleLayer extends BaseLayer {
                 });
             });
         });
+
+        this._visibilityChanged.subscribe(visibility => {
+            if (!visibility) {
+                this._mapInstance.instance.removeHover();
+            }
+        });
     }
 
     /** Returns the name of the layer. */
@@ -608,7 +614,6 @@ export class SimpleLayer extends BaseLayer {
             const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
 
             if (index === -1) {
-                // TODO: change this after to add polygons, lines, etc.
                 const spatialReference = this._mapInstance.instance.spatialReference;
                 this._viewerLayer.addGeometry(geometry, spatialReference);
                 this._geometryArray.push(geometry);
