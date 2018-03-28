@@ -25,9 +25,22 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
         configService.getSync.map.instance.addConfigLayer = layerJSON => {
-            const layer = service.addLayerDefinition(layerJSON);
-            $rootScope.$applyAsync();
-            return layer;
+            const layerRecords = configService.getSync.map.layerRecords;
+
+            const index = layerRecords.find(layerRecord =>
+                layerRecord.layerId === layerJSON.id);
+
+            if (!index) {
+                const layer = service.addLayerDefinition(layerJSON);
+                $rootScope.$applyAsync();
+                return common.$q(resolve => {
+                    events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        resolve(layers);
+                    });
+                });
+            } else {
+                return common.$q.resolve([]);
+            }
         };
     });
 

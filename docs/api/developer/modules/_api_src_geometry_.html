@@ -66,24 +66,6 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<pre><code>          __
-         /    \
-        |<span class="hljs-string"> STOP </span>|
-         \ __ /
-           ||
-           ||
-           ||
-           ||
-           ||
-         ~~~~~~~
-</code></pre><p>THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.</p>
-					</div>
-					<p>THIS API IS NOT SUPPORTED.</p>
-				</div>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
@@ -92,6 +74,9 @@
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.hoverpoint.html" class="tsd-kind-icon">Hover<wbr>Point</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.xy.html" class="tsd-kind-icon">XY</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_api_src_geometry_.xybounds.html" class="tsd-kind-icon">XYBounds</a></li>
@@ -101,6 +86,7 @@
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-kind-icon">Extent</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_api_src_geometry_.hovertipoptions.html" class="tsd-kind-icon">Hovertip<wbr>Options</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a></li>
 							</ul>
 						</section>
@@ -108,6 +94,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_api_src_geometry_.html#ispointinstance" class="tsd-kind-icon">is<wbr>Point<wbr>Instance</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_api_src_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a></li>
 							</ul>
 						</section>
@@ -126,13 +113,36 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L270">api/src/geometry.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L471">api/src/geometry.ts:471</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>x: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="ispointinstance" class="tsd-anchor"></a>
+					<h3>is<wbr>Point<wbr>Instance</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Point<wbr>Instance<span class="tsd-signature-symbol">(</span>xyOrPoint<span class="tsd-signature-symbol">: </span><a href="../classes/_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L479">api/src/geometry.ts:479</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>xyOrPoint: <a href="../classes/_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -149,7 +159,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/geometry.ts#L274">api/src/geometry.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/geometry.ts#L475">api/src/geometry.ts:475</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -205,6 +215,15 @@
 						<a href="../classes/_api_src_geometry_.basegeometry.html" class="tsd-kind-icon">Base<wbr>Geometry</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_geometry_.hoverpoint.html" class="tsd-kind-icon">Hover<wbr>Point</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
@@ -216,11 +235,17 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-kind-icon">Extent</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_api_src_geometry_.hovertipoptions.html" class="tsd-kind-icon">Hovertip<wbr>Options</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-kind-icon">XYLiteral</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_api_src_geometry_.html#ispointinstance" class="tsd-kind-icon">is<wbr>Point<wbr>Instance</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.html#isxyliteral" class="tsd-kind-icon">isXYLiteral</a>

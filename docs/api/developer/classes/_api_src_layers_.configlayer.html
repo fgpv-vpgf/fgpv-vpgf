@@ -165,6 +165,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_layers_.configlayer.html#_initlayersettings" class="tsd-kind-icon">_init<wbr>Layer<wbr>Settings</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_layers_.configlayer.html#fetchattributes" class="tsd-kind-icon">fetch<wbr>Attributes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_layers_.configlayer.html#getattributes" class="tsd-kind-icon">get<wbr>Attributes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_layers_.configlayer.html#pantoboundary" class="tsd-kind-icon">pan<wbr>ToBoundary</a></li>
@@ -182,27 +183,24 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Config<wbr>Layer<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_src_layers_.jsonconfig.html" class="tsd-signature-type">JSONConfig</a>, mapInstance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, layerRecord<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, layerIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_layers_.configlayer.html" class="tsd-signature-type">ConfigLayer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Config<wbr>Layer<span class="tsd-signature-symbol">(</span>mapInstance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, layerRecord<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, layerIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_layers_.configlayer.html" class="tsd-signature-type">ConfigLayer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L355">api/src/layers.ts:355</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L377">api/src/layers.ts:377</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Requires a schema valid JSON config layer snippet, map instance where the layer is added and viewer layer record.
+									<p>Requires a map instance where the layer is added and viewer layer record.
 									If it is a dynamic layer, then the layer index must also be provided and used to get the proxy.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
-								<li>
-									<h5>config: <a href="../interfaces/_api_src_layers_.jsonconfig.html" class="tsd-signature-type">JSONConfig</a></h5>
-								</li>
 								<li>
 									<h5>mapInstance: <span class="tsd-signature-type">any</span></h5>
 								</li>
@@ -231,7 +229,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#attributesadded">attributesAdded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L100">api/src/layers.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L102">api/src/layers.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -254,7 +252,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#attributeschanged">attributesChanged</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L108">api/src/layers.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L110">api/src/layers.ts:110</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -277,7 +275,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#attributesremoved">attributesRemoved</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L116">api/src/layers.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L118">api/src/layers.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -300,7 +298,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#namechanged">nameChanged</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L222">api/src/layers.ts:222</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L235">api/src/layers.ts:235</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -323,7 +321,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#opacitychanged">opacityChanged</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L254">api/src/layers.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L271">api/src/layers.ts:271</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -346,7 +344,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#visibilitychanged">visibilityChanged</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L286">api/src/layers.ts:286</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L307">api/src/layers.ts:307</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -368,7 +366,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_attributearray">_attributeArray</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L43">api/src/layers.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L45">api/src/layers.ts:45</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -385,7 +383,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_attributesadded">_attributesAdded</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L74">api/src/layers.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L76">api/src/layers.ts:76</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -396,7 +394,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_attributeschanged">_attributesChanged</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L75">api/src/layers.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L77">api/src/layers.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -407,7 +405,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_attributesremoved">_attributesRemoved</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L76">api/src/layers.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L78">api/src/layers.ts:78</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -417,7 +415,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<div class="tsd-signature tsd-kind-icon">_catalogue<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L353">api/src/layers.ts:353</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L375">api/src/layers.ts:375</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -434,7 +432,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_id">_id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L46">api/src/layers.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L48">api/src/layers.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -451,7 +449,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_layerindex">_layerIndex</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L50">api/src/layers.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L52">api/src/layers.ts:52</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -468,7 +466,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_layerproxy">_layerProxy</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L72">api/src/layers.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L74">api/src/layers.ts:74</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -484,7 +482,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<div class="tsd-signature tsd-kind-icon">_layer<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L355">api/src/layers.ts:355</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L377">api/src/layers.ts:377</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -501,7 +499,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_mapinstance">_mapInstance</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L40">api/src/layers.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L42">api/src/layers.ts:42</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -518,7 +516,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_name">_name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L57">api/src/layers.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L59">api/src/layers.ts:59</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -535,7 +533,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_namechanged">_nameChanged</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L58">api/src/layers.ts:58</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L60">api/src/layers.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -546,7 +544,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_opacity">_opacity</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L61">api/src/layers.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L63">api/src/layers.ts:63</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -563,7 +561,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_opacitychanged">_opacityChanged</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L62">api/src/layers.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L64">api/src/layers.ts:64</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -574,7 +572,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_primaryattributekey">_primaryAttributeKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L54">api/src/layers.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L56">api/src/layers.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -591,7 +589,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_viewerlayer">_viewerLayer</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L70">api/src/layers.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L72">api/src/layers.ts:72</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -608,7 +606,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_visibility">_visibility</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L65">api/src/layers.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L67">api/src/layers.ts:67</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -625,7 +623,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#_visibilitychanged">_visibilityChanged</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L66">api/src/layers.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L68">api/src/layers.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -642,7 +640,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L423">api/src/layers.ts:423</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L435">api/src/layers.ts:435</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -664,7 +662,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L417">api/src/layers.ts:417</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L425">api/src/layers.ts:425</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -687,7 +685,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#id">id</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L184">api/src/layers.ts:184</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L191">api/src/layers.ts:191</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -710,7 +708,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#layerindex">layerIndex</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L187">api/src/layers.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L196">api/src/layers.ts:196</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -737,7 +735,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#name">name</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L190">api/src/layers.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L201">api/src/layers.ts:201</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -752,7 +750,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#name">name</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L196">api/src/layers.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L209">api/src/layers.ts:209</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -783,7 +781,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#opacity">opacity</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L227">api/src/layers.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L240">api/src/layers.ts:240</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -797,7 +795,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#opacity">opacity</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L230">api/src/layers.ts:230</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L245">api/src/layers.ts:245</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -825,7 +823,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L420">api/src/layers.ts:420</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L430">api/src/layers.ts:430</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -849,7 +847,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#visibility">visibility</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L259">api/src/layers.ts:259</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L276">api/src/layers.ts:276</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -863,7 +861,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#visibility">visibility</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L262">api/src/layers.ts:262</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L281">api/src/layers.ts:281</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -884,6 +882,37 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="_initlayersettings" class="tsd-anchor"></a>
+					<h3>_init<wbr>Layer<wbr>Settings</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">_init<wbr>Layer<wbr>Settings<span class="tsd-signature-symbol">(</span>layerRecord<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, layerIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L490">api/src/layers.ts:490</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the appropriate layer properties such as id, visibility and opacity. Called whenever layer is created or reloaded.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>layerRecord: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> layerIndex: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="fetchattributes" class="tsd-anchor"></a>
 					<h3>fetch<wbr>Attributes</h3>
@@ -895,7 +924,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#fetchattributes">fetchAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L385">api/src/layers.ts:385</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L391">api/src/layers.ts:391</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -920,7 +949,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#getattributes">getAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L121">api/src/layers.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L123">api/src/layers.ts:123</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -944,7 +973,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#getattributes">getAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L125">api/src/layers.ts:125</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L127">api/src/layers.ts:127</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -968,7 +997,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L426">api/src/layers.ts:426</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L440">api/src/layers.ts:440</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -991,7 +1020,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#removeattributes">removeAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L291">api/src/layers.ts:291</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L312">api/src/layers.ts:312</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1021,7 +1050,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#setattributes">setAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L150">api/src/layers.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L152">api/src/layers.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1044,7 +1073,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_layers_.baselayer.html">BaseLayer</a>.<a href="_api_src_layers_.baselayer.html#setattributes">setAttributes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L153">api/src/layers.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L155">api/src/layers.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1078,7 +1107,7 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/d75a40ad/api/src/layers.ts#L462">api/src/layers.ts:462</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/dc501bd7/api/src/layers.ts#L476">api/src/layers.ts:476</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1236,6 +1265,9 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 								<a href="_api_src_layers_.configlayer.html#visibility" class="tsd-kind-icon">visibility</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_layers_.configlayer.html#_initlayersettings" class="tsd-kind-icon">_init<wbr>Layer<wbr>Settings</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_api_src_layers_.configlayer.html#fetchattributes" class="tsd-kind-icon">fetch<wbr>Attributes</a>
 							</li>
@@ -1270,8 +1302,20 @@ myConfigLayer.fetchAttributes();  <span class="hljs-comment">// an asynchronous 
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.changedattribs.html" class="tsd-kind-icon">Changed<wbr>Attribs</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_layers_.dataitem.html" class="tsd-kind-icon">Data<wbr>Item</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.featuresarray.html" class="tsd-kind-icon">Features<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_layers_.identifyrequest.html" class="tsd-kind-icon">Identify<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_layers_.identifyresult.html" class="tsd-kind-icon">Identify<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_api_src_layers_.identifysession.html" class="tsd-kind-icon">Identify<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_api_src_layers_.jsonconfig.html" class="tsd-kind-icon">JSONConfig</a>

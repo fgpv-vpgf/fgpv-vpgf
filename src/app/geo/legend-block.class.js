@@ -246,7 +246,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get userDisabledControls () {   return this._layerConfig.userDisabledControls; }
 
         /**
-         * @function updateApiLayerVisibility
+         * @function _updateApiLayerOpacity
          * @private
          * @param {LegendBlock} legendBlock legend block where opacity is being updated
          */
@@ -270,7 +270,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         /**
-         * @function updateApiLayerVisibility
+         * @function _updateApiLayerVisibility
          * @private
          * @param {LegendBlock} legendBlock legend block where visibility is being updated
          */

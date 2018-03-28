@@ -15,6 +15,7 @@
  */
 
 
+import { Subject } from 'rxjs/Subject';
 
 /**
  * Represents a geographical point in decimal degrees.
@@ -181,12 +182,108 @@ export class XYBounds {
     }
 }
 
+/** A hovertip to be displayed when a SimpleLayer geometry is moused onto. */
+export class Hover {
+    /** @ignore */
+    _id: string;
+    /** @ignore */
+    _text: string;
+    /** @ignore */
+    _keepOpen: boolean = false;
+    /** @ignore */
+    _position: string = 'top';
+    /** @ignore */
+    _xOffset: number = 0;
+    /** @ignore */
+    _yOffset: number = 0;
+    /** @ignore */
+    _followCursor: boolean = false;
+
+    /**
+     * Set the id and hovertip text. Also set any of the optional hovertip options if provided.
+     *
+     * The different options and values available are the following:
+     * <ul>
+     *     <li>keepOpen:        true or false. default is false.
+     *     <li>position:        'top', 'bottom', 'left' or 'right'. default is 'top'. (if followCursor is true, position value will be ignored.)
+     *     <li>xOffset:         any number. default is 0.
+     *     <li>yOffset:         any number. default is 0.
+     *     <li>followCursor:    true or false. default is false. (if keepOpen is true, followCursor value will be ignored.)
+     * </ul>
+    */
+    constructor(id: string | number, text: string, opts?: HovertipOptions) {
+        this._id = id.toString();
+        this._text = text;
+        if (opts) {
+            if (opts.keepOpen !== undefined) {
+                this._keepOpen = opts.keepOpen;
+            }
+            if (opts.position !== undefined) {
+                this._position = opts.position;
+            }
+            if (opts.xOffset !== undefined) {
+                this._xOffset = opts.xOffset;
+            }
+            if (opts.yOffset !== undefined) {
+                this._yOffset = opts.yOffset;
+            }
+            if (opts.followCursor !== undefined) {
+                this._followCursor = opts.followCursor;
+            }
+        }
+    }
+
+    /** Returns the hovertip id. */
+    get id(): string {
+        return this._id;
+    }
+
+    /** Returns the contents of the hovertip. */
+    get text(): string {
+        return this._text;
+    }
+
+    /** Returns true if the hovertip is meant to remain open. */
+    get keepOpen(): boolean {
+        return this._keepOpen;
+    }
+
+    /** Returns the default position of the hovertip. */
+    get position(): string {
+        return this._position;
+    }
+
+    /** Returns the pixel offset on x of the hovertip. */
+    get xOffset(): number {
+        return this._xOffset;
+    }
+
+    /** Returns the pixel offset on y of the hovertip. */
+    get yOffset(): number {
+        return this._yOffset;
+    }
+
+    /** Returns true if the hovertip is meant to follow the cursor movement. */
+    get followCursor(): boolean {
+        return this._followCursor;
+    }
+
+    /** Returns the string 'Hover'. */
+    get type(): string {
+        return 'Hover';
+    }
+}
+
 /**
  * All geometry types must derive from this class. Not intented to be instantiated on its own.
  */
 export class BaseGeometry {
     /** @ignore */
     _id: string;
+    /** @ignore */
+    _hover: Hover | null = null;
+    /** @ignore */
+    _hoverRemoved: Subject<string> = new Subject();
 
     /** Sets the geometry id. */
     constructor(id: string) {
@@ -194,14 +291,34 @@ export class BaseGeometry {
     }
 
     /**
-     * Returns the type of the geometry object. Possibilities are 'Point'.
-     * TODO: 'MultiPoint', 'LineString', or 'MultiLineString'.
+     * Returns the type of the geometry object. Possibilities are 'Point', 'MultiPoint', 'LineString'.
+     * TODO: 'MultiLineString'.
      * Function implementation in subclasses.
      */
     get type(): string { return ''; }
 
     /** Returns the geometry id. */
     get id(): string { return this._id; }
+
+    /** Returns the hovertip for the geometry, if any. */
+    get hover(): Hover | null { return this._hover; }
+
+    /** Adds a hovertip to the geometry. If one already exists, replace it. */
+    set hover(hover: Hover | null) {
+        if (hover && this._hover && this._hover.id !== hover.id) {
+            this._hoverRemoved.next(this._id);
+        }
+
+        this._hover = hover;
+    }
+
+    /** Removes the hovertip from the geometry if it exists. TODO: modify if necessary for multigeometries. */
+    removeHover() {
+        if (this._hover) {
+            this._hoverRemoved.next(this._id);
+            this._hover = null;
+        }
+    }
 }
 
 /** A Point geometry containing a single XY. */
@@ -209,7 +326,9 @@ export class Point extends BaseGeometry {
     /** @ignore */
     _xy: XY;
     /** @ignore */
-    _icon: string;  // TODO: extend this property to include in-line svg / images, not only urls
+    _icon: string;
+    /** @ignore */
+    _size: Array<number> = [16.5, 16.5];
 
     /** Constructs a Point from the given XY or XYLiteral. */
     constructor(id: string | number, icon: string, xy: XY | XYLiteral) {
@@ -222,9 +341,11 @@ export class Point extends BaseGeometry {
         } else {
             this._xy = xy;
         }
+
+        // TODO (maybe): add in an option to specify size (width/height) of point
     }
 
-    /** Returns the URL of icon displayed on the map. */
+    /** Returns the URL or SVG path of icon displayed on the map. */
     get icon(): string {
         return this._icon;
     }
@@ -234,9 +355,81 @@ export class Point extends BaseGeometry {
         return this._xy;
     }
 
+    /** Returns the size of the point in the following format: [width, height]. */
+    get size(): Array<number> {
+        return this._size;
+    }
+
     /** Returns the string 'Point'. */
     get type(): string {
         return 'Point';
+    }
+}
+
+/** A MultiPoint geometry contains a number of Points. */
+export class MultiPoint extends BaseGeometry {
+    /** @ignore */
+    _pointArray: Array<Point> = [];
+    /** @ignore */
+    _icon: string;
+
+    /** Constructs a MultiPoint from the given Points, XYs or XYLiterals. */
+    constructor(id: string | number, icon: string, elements: Array<Point | XY | XYLiteral>) {
+        super(id.toString());
+
+        this._icon = icon;
+        let counter = 0;
+
+        elements.forEach(elem => {
+            const subId = (counter < 10) ? '0' + counter : counter;
+            const newId = id + '-' + subId;
+
+            if (isPointInstance(elem)) {
+                this._pointArray.push(new Point(newId, icon, elem.xy));
+            } else {
+                this._pointArray.push(new Point(newId, icon, elem));
+            }
+
+            counter++;
+        });
+    }
+
+    /** Returns the data / image URL or SVG path of icon displayed on the map. */
+    get icon(): string {
+        return this._icon;
+    }
+
+    /** Returns an array of the contained points. A new array is returned each time this is called. */
+    get pointArray(): Array<Point> {
+        return [ ...this._pointArray ];
+    }
+
+    /** Returns the n-th contained point. */
+    getAt(n: number): Point {
+        return this._pointArray[n];
+    }
+
+    /** Returns the number of contained points. */
+    get length(): number {
+        return this._pointArray.length;
+    }
+
+    /** Returns the string 'MultiPoint'. */
+    get type(): string {
+        return 'MultiPoint';
+    }
+}
+
+/** A LineString geometry contains a number of XYs. */
+export class LineString extends MultiPoint {
+    /** Constructs a LineString from the given XYs or XYLiterals. */
+    constructor(id: string | number, elements: Array<XY | XYLiteral>) {
+        super(id, '', elements);
+    }
+
+    /** Returns the string 'LineString'. */
+    get type(): string {
+        return 'LineString';
     }
 }
 
@@ -266,6 +459,14 @@ export interface XYLiteral {
     1: number
 }
 
+interface HovertipOptions {
+    keepOpen: boolean;
+    position: string;
+    xOffset: number;
+    yOffset: number;
+    followCursor: boolean;
+}
+
 // Type guards ------------------------
 export function isExtent(x: any): x is Extent {
     return !!x.spatialReference;
@@ -273,4 +474,8 @@ export function isExtent(x: any): x is Extent {
 
 export function isXYLiteral(x: any): x is XYLiteral {
     return x.length === 2;
+}
+
+function isPointInstance(xyOrPoint: Point | XY | XYLiteral): xyOrPoint is Point {
+    return xyOrPoint instanceof Point;
 }

@@ -14,6 +14,7 @@
  * THIS API IS NOT SUPPORTED.
  */
 
+
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -376,29 +377,13 @@ export class ConfigLayer extends BaseLayer {
     _layerType: string;
 
     /**
-     * Requires a schema valid JSON config layer snippet, map instance where the layer is added and viewer layer record.
+     * Requires a map instance where the layer is added and viewer layer record.
      * If it is a dynamic layer, then the layer index must also be provided and used to get the proxy.
      */
-    constructor(config: JSONConfig, mapInstance: any, layerRecord: any, layerIndex?: number) {
+    constructor(mapInstance: any, layerRecord: any, layerIndex?: number) {
         super(mapInstance);
 
-        this._layerType = config.layerType;
-
-        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
-            this._layerIndex = layerIndex;
-            this._layerProxy = layerRecord.getChildProxy(layerIndex);
-        } else {
-            this._layerProxy = layerRecord.getProxy();
-        }
-
-        this._viewerLayer = layerRecord;
-        this._id = config.id;
-        this._name = config.name;
-        this._catalogueUrl = config.catalogueUrl || '';
-
-        this._opacity = this._layerProxy.opacity;
-        this._visibility = this._layerProxy.visibility;
-        this._primaryAttributeKey = this._layerProxy.oidField;
+        this._initLayerSettings(layerRecord, layerIndex);
     }
 
     /** The viewer downloads attributes when needed - call this function to force an attribute download if not downloaded previously.
@@ -500,6 +485,29 @@ export class ConfigLayer extends BaseLayer {
             this._layerProxy.zoomToScale(mapInstance, lods, zoomIn);
         }
     }
+
+    /** Set the appropriate layer properties such as id, visibility and opacity. Called whenever layer is created or reloaded. */
+    _initLayerSettings(layerRecord: any, layerIndex?: number): void {
+        this.removeAttributes();
+
+        this._layerType = layerRecord.config.layerType;
+
+        if (this._layerType === layerTypes.ESRI_DYNAMIC) {
+            this._layerIndex = layerIndex;
+            this._layerProxy = layerRecord.getChildProxy(layerIndex);
+        } else {
+            this._layerProxy = layerRecord.getProxy();
+        }
+
+        this._viewerLayer = layerRecord;
+        this._id = layerRecord.config.id;
+        this._name = layerRecord.config.name;
+        this._catalogueUrl = layerRecord.config.catalogueUrl || '';
+
+        this._opacity = this._layerProxy.opacity;
+        this._visibility = this._layerProxy.visibility;
+        this._primaryAttributeKey = this._layerProxy.oidField;
+    }
 }
 
 /**
@@ -535,6 +543,14 @@ export class SimpleLayer extends BaseLayer {
         this._geometryArray = [];
         this._geometryAdded = new Subject();
         this._geometryRemoved = new Subject();
+
+        this._geometryAdded.subscribe(geoArray => {
+            geoArray.forEach(geometry => {
+                geometry._hoverRemoved.subscribe(id => {
+                    this._mapInstance.instance.removeHover(id);
+                });
+            });
+        });
     }
 
     /** Returns the name of the layer. */
@@ -618,6 +634,10 @@ export class SimpleLayer extends BaseLayer {
                 if (index !== -1) {
                     const oldValue: BaseGeometry = this._geometryArray[index];
 
+                    if (oldValue.hover) {
+                        oldValue._hoverRemoved.next(oldValue._id);
+                    }
+
                     this._viewerLayer.removeGeometry(index);
                     this._geometryArray.splice(index, 1);
                     this._geometryRemoved.next([oldValue]);
@@ -629,6 +649,10 @@ export class SimpleLayer extends BaseLayer {
 
                     if (index !== -1) {
                         const oldValue: BaseGeometry = this._geometryArray[index];
+
+                        if (oldValue.hover) {
+                            oldValue._hoverRemoved.next(oldValue._id);
+                        }
 
                         this._viewerLayer.removeGeometry(index);
                         this._geometryArray.splice(index, 1);
@@ -644,6 +668,10 @@ export class SimpleLayer extends BaseLayer {
             const copyGeometry: Array<BaseGeometry> = this._geometryArray;
 
             this._geometryArray.forEach(geo => {
+                if (geo.hover) {
+                    geo._hoverRemoved.next(geo._id);
+                }
+
                 // always remove first index because when we remove it from esri layer instance, it removes from array as well
                 // so updated index will always be 0, and since we're removing all geometry, we can keep removing from start of array
                 this._viewerLayer.removeGeometry(0);
@@ -652,6 +680,11 @@ export class SimpleLayer extends BaseLayer {
             this._geometryRemoved.next(copyGeometry);
         }
     }
+
+    /** Returns the extent of an array of graphics. */
+    getGraphicsBoundingBox(graphics: Array<Object>) {
+        return this._viewerLayer.getGraphicsBoundingBox(graphics);
+    };
 }
 
 /**
@@ -695,7 +728,7 @@ export class LayerGroup {
     _attributesRemoved: Subject<LayerAndAttribs>;
 
     _click: Subject<BaseLayer>;
-    
+
     /** @ignore */
     _identify: Subject<any>;
 
@@ -780,11 +813,11 @@ export class LayerGroup {
         return this._identify.asObservable();
     }
 
-    /** Providing a layer json snippet returns a `ConfigLayer`.*/
-    addLayer(layerJSON: JSON): void; // change return type after if we want to return something  ?
+    /** Providing a layer json snippet will instantiate and return a promise resolving to an array containing the `ConfigLayer(s)` created.*/
+    addLayer(layerJSON: JSON): Promise<Array<ConfigLayer>>;
 
-    /** Providing a string layer name will instantiate and return an empty `SimpleLayer` */
-    addLayer(layerName: string): void; // change return type after if we want to return something  ?
+    /** Providing a string layer name will instantiate and return a promise resolving to an array containg the `SimpleLayer` created */
+    addLayer(layerName: string): Promise<Array<SimpleLayer>>;
 
     // /**
     //  * Adds GeoJSON layers to the group. Give this method a parsed JSON. The imported layers are returned.
@@ -797,18 +830,21 @@ export class LayerGroup {
     // /**
     //  * Loads GeoJSON from a URL, and adds the layers to the group.
     //  * Invokes callback function once async layer loading is complete.
+    //  *
     //  * TODO: complete this function.
     //  */
     // addLayer(url: string, callback?: (layers: Array<SimpleLayer>) => void): void;
 
     /** Creates a `ConfigLayer` using a json snippet. Else creates a 'SimpleLayer' using the string. */
-    addLayer(layerJSONOrName: JSON | string): void {
-        // change return type after if we want to return something  ?
+    addLayer(layerJSONOrName: JSON | string): Promise<Array<SimpleLayer | ConfigLayer>> {
+        let promiseArray: Promise<Array<SimpleLayer | ConfigLayer>>;
+
         if (typeof layerJSONOrName === 'string') {
-            this._mapI.mapI.addSimpleLayer(layerJSONOrName);
+            promiseArray = this._mapI.mapI.addSimpleLayer(layerJSONOrName);
         } else {
-            this._mapI.mapI.addConfigLayer(layerJSONOrName);
+            promiseArray = this._mapI.mapI.addConfigLayer(layerJSONOrName);
         }
+        return promiseArray;
     }
 
     /** Removes a layer from the group. */

@@ -2,6 +2,12 @@ import { ConfigLayer, SimpleLayer } from 'api/layers';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
+const geometryTypes = {
+    POINT: 'Point',
+    MULTIPOINT: 'MultiPoint',
+    LINESTRING: 'LineString',
+    MULTILINESTRING: 'MultiLineString'
+};
 
 /**
  *
@@ -52,6 +58,16 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     events.$on(events.rvApiMapAdded, (_, mApi) => {
         mapApi = mApi;
 
+        // add default simpleLayer to the map and initialize any required listeners
+        const layerRecord = gapiService.gapi.layer.createGraphicsRecord('');
+        const map = configService.getSync.map;
+        map.instance.addLayer(layerRecord._layer);
+
+        const simpleLayer = new SimpleLayer(layerRecord, map);
+        mapApi._simpleLayer = simpleLayer;
+        _initializeLayerObservables(simpleLayer);
+        _setHover(layerRecord, simpleLayer);
+
         const tt = mApi.ui.tooltip;
 
         mApiObjects = {
@@ -71,14 +87,18 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         configService.getSync.map.instance.addSimpleLayer = name => {
             const index = mapApi.layers.allLayers.findIndex(layer => layer.id === name);
 
+            let simpleLayer;
             if (index === -1) {
                 const layerRecord = gapiService.gapi.layer.createGraphicsRecord(name);
                 configService.getSync.map.instance.addLayer(layerRecord._layer);
 
-                const simpleLayer = new SimpleLayer(layerRecord, configService.getSync.map);
+                simpleLayer = new SimpleLayer(layerRecord, configService.getSync.map);
                 _initializeLayerObservables(simpleLayer);
                 _addLayerToApiMap(simpleLayer);
+                _setHover(layerRecord, simpleLayer);
             }
+
+            return common.$q.resolve(simpleLayer ? [simpleLayer] : []);
         };
 
         configService.getSync.map.instance.removeSimpleLayer = layerRecord => {
@@ -593,6 +613,85 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     /**
+     * Binds onHover event (for graphics layers / api simple layers) and displays a hover tooltip if there are any added to the layer.
+     *
+     * @function _setHover
+     * @private
+     * @param {LayerRecord} layerRecord a layer record to set the hovertips on
+     * @param {SimpleLayer} simpleLayer an api layer to get the appropriate hovertip content from
+     */
+    function _setHover(layerRecord, simpleLayer) {
+        layerRecord.addHoverListener(_onHoverHandler);
+
+        function _onHoverHandler(data) {
+            const mapInstance = configService.getSync.map.instance;
+
+            // we use the mouse event target to track which
+            // graphic the active tooltip is pointing to.
+            // this lets us weed any delayed events that are meant
+            // for tooltips that are no longer active.
+            const typeMap = {
+                mouseOver: e => {
+                    const graphic = data.graphic;
+                    const geometry = graphic.geometry;
+                    const apiGeo = simpleLayer.geometry.find(geo => geo.id === geometry.apiId);
+                    if (!apiGeo || !apiGeo.hover) {
+                        return;
+                    }
+
+                    const hovertip = apiGeo.hover;
+                    const id = apiGeo.id;
+                    const boundingBox = simpleLayer.getGraphicsBoundingBox([graphic]);
+                    const center = boundingBox.getCenter();
+
+                    let point, screenPoint;
+
+                    if (!hovertip.keepOpen && hovertip.followCursor) {
+                        screenPoint = e.point;
+                    } else {
+                        point = center;
+                        switch (hovertip.position) {
+                            case 'bottom':
+                                point.y = boundingBox.ymin;
+                                break;
+                            case 'left':
+                                point.x = boundingBox.xmin;
+                                break;
+                            case 'right':
+                                point.x = boundingBox.xmax;
+                                break;
+                            default:
+                                point.y = boundingBox.ymax;
+                        }
+
+                        screenPoint = mapInstance.toScreen(point);
+                    }
+
+                    if (hovertip) {
+                        const tipRef = tooltipService.addHover(screenPoint, {}, hovertip, id);
+                        if (tipRef) {
+                            // hovertip being used for API geometry, so we want to be able to ensure we can click on the contents of the hovertip
+                            // this will also ensure that the hovertip (since it can possibly stay open until manually closed) will appear underneath
+                            // other content such as panels
+                            tipRef.enablePointerEvents();
+
+                            if (hovertip.xOffset || hovertip.yOffset) {
+                                tipRef.offset(hovertip.xOffset, hovertip.yOffset);
+                            }
+                        }
+                    }
+                },
+                mouseOut: e => {
+                    tooltipService.removeHover();
+                }
+            };
+
+            // execute function for the given type
+            typeMap[data.type](data);
+        }
+    }
+
+    /**
      * Returns an array of ids for rcs added layers
      *
      * @function getRcsLayerIDs
@@ -614,7 +713,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     return service;
 
     /**
-     * Create API ConfigLayer using the layerRecord and config provided.
+     * This will check first to see if the API map instance already has this layer defined by its id and index if applicable.
+     * Create API ConfigLayer using the layerRecord and config provided if it does not exist.
+     * If ConfigLayer already exists (loaded twice, reloaded, etc.), don't create another instance of ConfigLayer.
+     * Simply update the relevant fields which will ensure all observables and pointers persist.
      *
      * @function _createApiLayer
      * @private
@@ -622,20 +724,41 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
      */
     function _createApiLayer(layerRecord) {
         let apiLayer;
+        const createdLayers = [];
 
         // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
             childIndices.forEach(idx => {
-                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord, idx);
-                _initializeLayerObservables(apiLayer);
-                _addLayerToApiMap(apiLayer);
+                let configLayer;
+                configLayer = mapApi.layers.allLayers.find(layer =>
+                    layer.id === layerRecord.layerId &&
+                    layer.layerIndex === idx);
+
+                if (configLayer) {
+                    configLayer._initLayerSettings(layerRecord, idx);
+                } else {
+                    apiLayer = new ConfigLayer(configService.getSync.map, layerRecord, idx);
+                    _initializeLayerObservables(apiLayer);
+                    _addLayerToApiMap(apiLayer);
+                    createdLayers.push(apiLayer);
+                }
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
-            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
-            _initializeLayerObservables(apiLayer);
-            _addLayerToApiMap(apiLayer);
+            let configLayer;
+            configLayer = mapApi.layers.allLayers.find(layer => layer.id === layerRecord.layerId);
+
+            if (configLayer) {
+                configLayer._initLayerSettings(layerRecord);
+            } else {
+                apiLayer = new ConfigLayer(configService.getSync.map, layerRecord);
+                _initializeLayerObservables(apiLayer);
+                _addLayerToApiMap(apiLayer);
+                createdLayers.push(apiLayer);
+            }
         }
+
+        events.$broadcast(events.rvApiLayerAdded, createdLayers);
     }
 
     /**
@@ -670,31 +793,15 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     /**
-     * This will check first to see if the API map instance already has this layer defined by its id
-     * and if it does exist, it will update that index with the newly created API layer
-     * Else, it will add push a new layer to the list of layers for the map
+     * Push a new layer to the list of layers for the map
      *
      * @function _addLayerToApiMap
      * @private
      * @param {BaseLayer} apiLayer an instance of an api layer created that needs to be added to map
      */
     function _addLayerToApiMap(apiLayer) {
-        let index;
-
-        if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
-            index = mapApi.layers.allLayers.findIndex(layer =>
-                layer.id === apiLayer.id &&
-                layer.layerIndex === apiLayer.layerIndex);
-        } else {
-            index = mapApi.layers.allLayers.findIndex(layer => layer.id === apiLayer.id);
-        }
-
-        if (index !== -1) {
-            mapApi.layers.allLayers[index] = apiLayer;
-        } else {
-            mapApi.layers.allLayers.push(apiLayer);
-            mapApi.layers._layerAdded.next(apiLayer);
-        }
+        mapApi.layers.allLayers.push(apiLayer);
+        mapApi.layers._layerAdded.next(apiLayer);
     }
 
     function _simpleWalk(treeChildren) {
