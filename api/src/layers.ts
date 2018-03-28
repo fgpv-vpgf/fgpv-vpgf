@@ -546,8 +546,8 @@ export class SimpleLayer extends BaseLayer {
 
         this._geometryAdded.subscribe(geoArray => {
             geoArray.forEach(geometry => {
-                geometry._hoverpointRemoved.subscribe(id => {
-                    this._mapInstance.instance.removeHoverpoint(id);
+                geometry._hoverRemoved.subscribe(id => {
+                    this._mapInstance.instance.removeHover(id);
                 });
             });
         });
@@ -634,8 +634,8 @@ export class SimpleLayer extends BaseLayer {
                 if (index !== -1) {
                     const oldValue: BaseGeometry = this._geometryArray[index];
 
-                    if (oldValue.hoverpoint) {
-                        oldValue._hoverpointRemoved.next(oldValue._id);
+                    if (oldValue.hover) {
+                        oldValue._hoverRemoved.next(oldValue._id);
                     }
 
                     this._viewerLayer.removeGeometry(index);
@@ -650,8 +650,8 @@ export class SimpleLayer extends BaseLayer {
                     if (index !== -1) {
                         const oldValue: BaseGeometry = this._geometryArray[index];
 
-                        if (oldValue.hoverpoint) {
-                            oldValue._hoverpointRemoved.next(oldValue._id);
+                        if (oldValue.hover) {
+                            oldValue._hoverRemoved.next(oldValue._id);
                         }
 
                         this._viewerLayer.removeGeometry(index);
@@ -668,8 +668,8 @@ export class SimpleLayer extends BaseLayer {
             const copyGeometry: Array<BaseGeometry> = this._geometryArray;
 
             this._geometryArray.forEach(geo => {
-                if (geo.hoverpoint) {
-                    geo._hoverpointRemoved.next(geo._id);
+                if (geo.hover) {
+                    geo._hoverRemoved.next(geo._id);
                 }
 
                 // always remove first index because when we remove it from esri layer instance, it removes from array as well

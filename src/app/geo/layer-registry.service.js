@@ -66,7 +66,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const simpleLayer = new SimpleLayer(layerRecord, map);
         mapApi._simpleLayer = simpleLayer;
         _initializeLayerObservables(simpleLayer);
-        _setHoverPoint(layerRecord, simpleLayer);
+        _setHover(layerRecord, simpleLayer);
 
         const tt = mApi.ui.tooltip;
 
@@ -95,7 +95,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                 simpleLayer = new SimpleLayer(layerRecord, configService.getSync.map);
                 _initializeLayerObservables(simpleLayer);
                 _addLayerToApiMap(simpleLayer);
-                _setHoverPoint(layerRecord, simpleLayer);
+                _setHover(layerRecord, simpleLayer);
             }
 
             return common.$q.resolve(simpleLayer ? [simpleLayer] : []);
@@ -615,12 +615,12 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     /**
      * Binds onHover event (for graphics layers / api simple layers) and displays a hover tooltip if there are any added to the layer.
      *
-     * @function _setHoverPoint
+     * @function _setHover
      * @private
      * @param {LayerRecord} layerRecord a layer record to set the hovertips on
      * @param {SimpleLayer} simpleLayer an api layer to get the appropriate hovertip content from
      */
-    function _setHoverPoint(layerRecord, simpleLayer) {
+    function _setHover(layerRecord, simpleLayer) {
         layerRecord.addHoverListener(_onHoverHandler);
 
         function _onHoverHandler(data) {
@@ -635,22 +635,22 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     const graphic = data.graphic;
                     const geometry = graphic.geometry;
                     const apiGeo = simpleLayer.geometry.find(geo => geo.id === geometry.apiId);
-                    if (!apiGeo || !apiGeo.hoverpoint) {
+                    if (!apiGeo || !apiGeo.hover) {
                         return;
                     }
 
-                    const hoverPoint = apiGeo.hoverpoint;
+                    const hovertip = apiGeo.hover;
                     const id = apiGeo.id;
                     const boundingBox = simpleLayer.getGraphicsBoundingBox([graphic]);
                     const center = boundingBox.getCenter();
 
                     let point, screenPoint;
 
-                    if (!hoverPoint.keepOpen && hoverPoint.followCursor) {
+                    if (!hovertip.keepOpen && hovertip.followCursor) {
                         screenPoint = e.point;
                     } else {
                         point = center;
-                        switch (hoverPoint.position) {
+                        switch (hovertip.position) {
                             case 'bottom':
                                 point.y = boundingBox.ymin;
                                 break;
@@ -667,22 +667,22 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                         screenPoint = mapInstance.toScreen(point);
                     }
 
-                    if (hoverPoint) {
-                        const tipRef = tooltipService.addHoverPoint(screenPoint, {}, hoverPoint, id);
+                    if (hovertip) {
+                        const tipRef = tooltipService.addHover(screenPoint, {}, hovertip, id);
                         if (tipRef) {
                             // hovertip being used for API geometry, so we want to be able to ensure we can click on the contents of the hovertip
                             // this will also ensure that the hovertip (since it can possibly stay open until manually closed) will appear underneath
                             // other content such as panels
                             tipRef.enablePointerEvents();
 
-                            if (hoverPoint.xOffset || hoverPoint.yOffset) {
-                                tipRef.offset(hoverPoint.xOffset, hoverPoint.yOffset);
+                            if (hovertip.xOffset || hovertip.yOffset) {
+                                tipRef.offset(hovertip.xOffset, hovertip.yOffset);
                             }
                         }
                     }
                 },
                 mouseOut: e => {
-                    tooltipService.removeHoverpoint();
+                    tooltipService.removeHover();
                 }
             };
 

@@ -23,13 +23,13 @@
 
             background-color: white;
             border: 1px solid $divider-color;
+            padding: rem(0.6) rem(1.2);
 
             .rv-tooltip-content {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
                 max-width: rem(35);
-                padding: rem(0.6) rem(1.2);
 
                 .rv-tooltip-graphic {
                     width: rem(2.4);

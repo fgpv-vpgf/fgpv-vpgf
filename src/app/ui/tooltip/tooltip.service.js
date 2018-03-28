@@ -94,13 +94,13 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                     if (!tooltip._scope.self.isRendered) {
                         switch (position) {
                             case 'bottom':
-                                tooltip.offset(0, -this._dimensions.height - 16.5 - 1);
+                                tooltip.offset(0, -this._dimensions.height - 19.5 - 1);
                                 break;
                             case 'left':
-                                tooltip.offset(this._dimensions.width / 2 + 16.5 / 2 + 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
+                                tooltip.offset(this._dimensions.width / 2 + 22.5 / 2 + 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
                                 break;
                             case 'right':
-                                tooltip.offset(-this._dimensions.width / 2 - 16.5 / 2 - 1, -this._dimensions.height / 2 - 16.5 / 2 - 1);
+                                tooltip.offset(-this._dimensions.width / 2 - 22.5 / 2 - 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
                                 break;
                             default:
                                 tooltip.offset(0, this._dimensions.height / 2 + 1);
@@ -457,18 +457,18 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
     const service = {
         addHoverTooltip,
         addTooltip,
-        addHoverPoint,
+        addHover,
         removeHoverTooltip,
-        removeHoverpoint,
+        removeHover,
         refreshHoverTooltip
     };
 
 
     const deRegisterRVReady = $rootScope.$on(events.rvReady, init);
 
-    // wire in a hook to any map for removing a tooltip when a HoverPoint is removed
+    // wire in a hook to any map for removing a tooltip when a Hover is removed
     events.$on(events.rvMapLoaded, () => {
-        configService.getSync.map.instance.removeHoverpoint = id => {
+        configService.getSync.map.instance.removeHover = id => {
             const index = activeTooltips.findIndex(tt => tt.id === id);
             if (index !== -1) {
                 activeTooltips[index].toolTip.destroy();
@@ -544,18 +544,18 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
      *
      * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
      * @param {Object} self a self object that will be available on the tooltip directive scope
-     * @param {Object} hoverpoint the api hoverpoint object being added to the map
-     * @param {String} id the individual geometry id to which the hoverpoint is being added
+     * @param {Object} hovertip the api hovertip object being added to the map
+     * @param {String} id the individual geometry id to which the hovertip is being added
      * @return {Tooltip} a Tooltip instance
      */
-    function addHoverPoint(point, self, hoverpoint, id) {
+    function addHover(point, self, hovertip, id) {
         const tooltipScope = $rootScope.$new();
         tooltipScope.self = self;
 
-        const content = hoverpoint.text;
-        const keepOpen = hoverpoint.keepOpen;
-        const followCursor = hoverpoint.followCursor;
-        const position = hoverpoint.position;
+        const content = hovertip.text;
+        const keepOpen = hovertip.keepOpen;
+        const followCursor = hovertip.followCursor;
+        const position = hovertip.position;
         const movementStrategy = !keepOpen && followCursor ? ref.followMouseStrategy : ref.followMapStrategy;
 
         let toolTip;
@@ -585,9 +585,9 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
     /**
      * Removes all existing tooltips that are not meant to remain open on mouse out event.
      *
-     * @function removeHoverpoint
+     * @function removeHover
      */
-    function removeHoverpoint() {
+    function removeHover() {
         const idxToRemove = [];
         activeTooltips.forEach((tipAndOpen, idx) => {
             if (!tipAndOpen.keepOpen) {

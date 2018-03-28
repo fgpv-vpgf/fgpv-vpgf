@@ -182,8 +182,8 @@ export class XYBounds {
     }
 }
 
-/** A hoverpoint to be displayed when a SimpleLayer geometry is moused onto. */
-export class HoverPoint {
+/** A hovertip to be displayed when a SimpleLayer geometry is moused onto. */
+export class Hover {
     /** @ignore */
     _id: string;
     /** @ignore */
@@ -233,12 +233,12 @@ export class HoverPoint {
         }
     }
 
-    /** Returns the hoverpoint id. */
+    /** Returns the hovertip id. */
     get id(): string {
         return this._id;
     }
 
-    /** Returns the contents of the hoverpoint. */
+    /** Returns the contents of the hovertip. */
     get text(): string {
         return this._text;
     }
@@ -268,9 +268,9 @@ export class HoverPoint {
         return this._followCursor;
     }
 
-    /** Returns the string 'HoverPoint'. */
+    /** Returns the string 'Hover'. */
     get type(): string {
-        return 'HoverPoint';
+        return 'Hover';
     }
 }
 
@@ -281,9 +281,9 @@ export class BaseGeometry {
     /** @ignore */
     _id: string;
     /** @ignore */
-    _hoverpoint: HoverPoint | null = null;
+    _hover: Hover | null = null;
     /** @ignore */
-    _hoverpointRemoved: Subject<string> = new Subject();
+    _hoverRemoved: Subject<string> = new Subject();
 
     /** Sets the geometry id. */
     constructor(id: string) {
@@ -300,23 +300,23 @@ export class BaseGeometry {
     /** Returns the geometry id. */
     get id(): string { return this._id; }
 
-    /** Returns the hoverpoint for the geometry, if any. */
-    get hoverpoint(): HoverPoint | null { return this._hoverpoint; }
+    /** Returns the hovertip for the geometry, if any. */
+    get hover(): Hover | null { return this._hover; }
 
-    /** Adds a hoverpoint to the geometry. If one already exists, replace it. */
-    addHoverpoint(hoverpoint: HoverPoint) {
-        if (this._hoverpoint && this._hoverpoint.id !== hoverpoint.id) {
-            this._hoverpointRemoved.next(this._id);
+    /** Adds a hovertip to the geometry. If one already exists, replace it. */
+    set hover(hover: Hover | null) {
+        if (hover && this._hover && this._hover.id !== hover.id) {
+            this._hoverRemoved.next(this._id);
         }
 
-        this._hoverpoint = hoverpoint;
+        this._hover = hover;
     }
 
-    /** Removes the hoverpoint from the geometry if it exists. TODO: modify if necessary for multigeometries. */
-    removeHoverpoint() {
-        if (this._hoverpoint) {
-            this._hoverpointRemoved.next(this._id);
-            this._hoverpoint = null;
+    /** Removes the hovertip from the geometry if it exists. TODO: modify if necessary for multigeometries. */
+    removeHover() {
+        if (this._hover) {
+            this._hoverRemoved.next(this._id);
+            this._hover = null;
         }
     }
 }
