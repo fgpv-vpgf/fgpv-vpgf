@@ -8,7 +8,8 @@ const geometryTypes = {
     POINT: 'Point',
     MULTIPOINT: 'MultiPoint',
     LINESTRING: 'LineString',
-    MULTILINESTRING: 'MultiLineString'
+    MULTILINESTRING: 'MultiLineString',
+    POLYGON: 'Polygon'
 }
 
 const defaultSymbols = {
@@ -235,6 +236,17 @@ class GraphicsRecord extends root.Root {
                 const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference))
                 const path = coords.map(point => [ point.x, point.y ]);
                 this._addLine(path, spatialReference, id);
+            } else if (geometry.type === geometryTypes.POLYGON) {
+                const coords = geometry.ringArray.map(ring => ring.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
+                const rings = coords.map(ring => ring.map(point => [point.x, point.y]));
+                const style = {
+                    lineColor: geometry.outlineColor,
+                    lineWidth: geometry.outlineWidth,
+                    fillColor: geometry.fillColor,
+                    fillOpacity: geometry.fillOpacity
+                };
+
+                this._addPolygon(rings, spatialReference, id, style);
             }
 
             // TODO: add 'private' functions and conditions for other geometry types as well
@@ -333,6 +345,39 @@ class GraphicsRecord extends root.Root {
 
         const marker = new this._bundle.Graphic({ symbol: defaultSymbols.LINESTRING });
         marker.setGeometry(line);
+
+        marker.geometry.apiId = id;
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add a polygon where specified using the rings provided.
+     *
+     * @function _addPolygon
+     * @private
+     * @param {Array} rings                      an array of rings containing an array of coordinates
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} id                        id of api geometry being added to map
+     * @param {Object} style                     settings such as color and opacity for the polygon
+     */
+    _addPolygon(rings, spatialReference, id, style) {
+        const polygon = new this._bundle.Polygon({
+            rings,
+            spatialReference
+        });
+
+        const lineSymbol = new this._bundle.SimpleLineSymbol();
+        lineSymbol.setColor(style.lineColor);
+        lineSymbol.setWidth(style.lineWidth);
+
+        const fillColor = new this._bundle.Color(style.fillColor);
+        fillColor.a = style.fillOpacity;
+
+        const fillSymbol = new this._bundle.SimpleFillSymbol();
+        fillSymbol.setColor(fillColor);
+        fillSymbol.setOutline(lineSymbol);
+
+        const marker = new this._bundle.Graphic(polygon, fillSymbol);
 
         marker.geometry.apiId = id;
         this._layer.add(marker);
