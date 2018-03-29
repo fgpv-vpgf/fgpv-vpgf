@@ -633,8 +633,9 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                         return;
                     }
 
+                    const simpleLayerId = simpleLayer.id;
                     const hovertip = apiGeo.hover;
-                    const id = apiGeo.id;
+                    const geoId = apiGeo.id;
                     const boundingBox = simpleLayer.getGraphicsBoundingBox([graphic]);
                     const center = boundingBox.getCenter();
 
@@ -662,7 +663,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     }
 
                     if (hovertip) {
-                        const tipRef = tooltipService.addHover(screenPoint, {}, hovertip, id);
+                        const tipRef = tooltipService.addHover(screenPoint, {}, hovertip, geoId, simpleLayerId);
                         if (tipRef) {
                             // hovertip being used for API geometry, so we want to be able to ensure we can click on the contents of the hovertip
                             // this will also ensure that the hovertip (since it can possibly stay open until manually closed) will appear underneath

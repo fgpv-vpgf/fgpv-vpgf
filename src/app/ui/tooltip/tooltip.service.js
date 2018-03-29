@@ -468,22 +468,28 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
     // wire in a hook to any map for removing a tooltip when a Hover is removed
     events.$on(events.rvMapLoaded, () => {
-        // if id provided, remove hovertip with that id if it exists
-        // if no id provided, remove all open hovertips
-        configService.getSync.map.instance.removeHover = id => {
-            if (typeof id !== 'undefined') {
-                const index = activeTooltips.findIndex(tt => tt.id === id);
-                if (index !== -1) {
-                    activeTooltips[index].toolTip.destroy();
-                    activeTooltips.splice(index, 1);
-                }
-
-            } else {
-                activeTooltips.forEach(tt => {
-                    tt.toolTip.destroy();
-                });
-                activeTooltips = [];
+        // remove hovertip with that geometry id if it exists
+        configService.getSync.map.instance.removeHover = geoId => {
+            const index = activeTooltips.findIndex(tt => tt.geoId === geoId);
+            if (index !== -1) {
+                activeTooltips[index].toolTip.destroy();
+                activeTooltips.splice(index, 1);
             }
+        }
+
+        // remove all open hovertips for layer whose visibility was toggled
+        configService.getSync.map.instance.hoverRemoveOnToggle = slId => {
+            const idxToRemove = [];
+            activeTooltips.forEach((tt, idx) => {
+                if (tt.simpleLayerId === slId) {
+                    tt.toolTip.destroy();
+                    idxToRemove.push(idx);
+                }
+            });
+
+            idxToRemove.reverse().forEach(idx => {
+                activeTooltips.splice(idx, 1);
+            });
         }
     });
 
@@ -555,10 +561,11 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
      * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
      * @param {Object} self a self object that will be available on the tooltip directive scope
      * @param {Object} hovertip the api hovertip object being added to the map
-     * @param {String} id the individual geometry id to which the hovertip is being added
+     * @param {String} geoId the individual geometry id to which the hovertip is being added
+     * @param {String} simpleLayerId the id of the simpleLayer where the geometry hover is being added
      * @return {Tooltip} a Tooltip instance
      */
-    function addHover(point, self, hovertip, id) {
+    function addHover(point, self, hovertip, geoId, simpleLayerId) {
         const tooltipScope = $rootScope.$new();
         tooltipScope.self = self;
 
@@ -569,10 +576,10 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         const movementStrategy = !keepOpen && followCursor ? ref.followMouseStrategy : ref.followMapStrategy;
 
         let toolTip;
-        if (!activeTooltips.find(tt => tt.id === id)) {
+        if (!activeTooltips.find(tt => tt.geoId === geoId)) {
             toolTip = new Tooltip(movementStrategy, ref.containInsideStrategy, content, tooltipScope);
 
-            activeTooltips.push({ toolTip, keepOpen, id, position });
+            activeTooltips.push({ toolTip, keepOpen, geoId, simpleLayerId, position });
 
             referenceService.panels.shell.append(toolTip.node);
             toolTip.position(point.x, point.y);

@@ -546,15 +546,15 @@ export class SimpleLayer extends BaseLayer {
 
         this._geometryAdded.subscribe(geoArray => {
             geoArray.forEach(geometry => {
-                geometry._hoverRemoved.subscribe(id => {
-                    this._mapInstance.instance.removeHover(id);
+                geometry._hoverRemoved.subscribe(geoId => {
+                    this._mapInstance.instance.removeHover(geoId);
                 });
             });
         });
 
         this._visibilityChanged.subscribe(visibility => {
             if (!visibility) {
-                this._mapInstance.instance.removeHover();
+                this._mapInstance.instance.hoverRemoveOnToggle(this._id);
             }
         });
     }
