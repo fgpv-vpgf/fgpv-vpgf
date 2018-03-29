@@ -458,8 +458,12 @@ export class LinearRing extends BaseGeometry {
             counter++;
         });
 
-        // add the first point to the end of the array to 'close' the ring
-        this._pointArray.push(this._pointArray[0]);
+        // add the first point to the end of the array to 'close' the ring (if it wasn't already closed)
+        const firstPoint = this._pointArray[0].xy;
+        const lastPoint = this._pointArray[this._pointArray.length - 1].xy;
+        if (firstPoint.x !== lastPoint.x || firstPoint.y !== lastPoint.y) {
+            this._pointArray.push(this._pointArray[0]);
+        }
     }
 
     /** Returns an array of the contained points. A new array is returned each time this is called. */
