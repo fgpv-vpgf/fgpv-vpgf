@@ -2,12 +2,6 @@ import { ConfigLayer, SimpleLayer } from 'api/layers';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
-const geometryTypes = {
-    POINT: 'Point',
-    MULTIPOINT: 'MultiPoint',
-    LINESTRING: 'LineString',
-    MULTILINESTRING: 'MultiLineString'
-};
 
 /**
  *

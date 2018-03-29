@@ -294,8 +294,8 @@ export class BaseGeometry {
 
     /**
      * Returns the type of the geometry object.
-     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'LinearRing', 'Polygon'.
-     * TODO: 'MultiLineString'.
+     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon'.
+     * TODO: 'MultiLineString', 'MultiPolygon'.
      * Function implementation in subclasses.
      */
     get type(): string { return ''; }
@@ -418,8 +418,8 @@ export class MultiPoint extends BaseGeometry {
 
 /** A LineString geometry containing a number of Points. */
 export class LineString extends MultiPoint {
-    /** Constructs a LineString from the given XYs or XYLiterals. */
-    constructor(id: string | number, elements: Array<XY | XYLiteral>) {
+    /** Constructs a LineString from the given Points, XYs or XYLiterals. */
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>) {
         super(id, '', elements);
     }
 
@@ -432,6 +432,8 @@ export class LineString extends MultiPoint {
 /**
  * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
  * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
+ *
+ * NOTE: LinearRings can not be added to a layer directly. They must be added to Polygons.
  */
 export class LinearRing extends BaseGeometry {
     /** @ignore */
@@ -476,9 +478,9 @@ export class Polygon extends BaseGeometry {
     /** @ignore */
     _ringArray: Array<LinearRing> = [];
     /** @ignore */
-    _outlineColor: string = '#AFAFAF';
+    _outlineColor: string = '#000000';
     /** @ignore */
-    _outlineWidth: number = 3;
+    _outlineWidth: number = 1;
     /** @ignore */
     _fillColor: string = '#000000';
     /** @ignore */
