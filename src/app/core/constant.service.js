@@ -72,7 +72,10 @@ function events($rootScope) {
         rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
 
         rvApiMapAdded: 'rvApiMapAdded',
-        rvApiLayerAdded: 'rvApiLayerAdded'
+        rvApiLayerAdded: 'rvApiLayerAdded',
+
+        rvIntentionsPreInited: 'rvInternalExtensionLoaded',
+        rvIntentionsInited: 'rvExternalExtensionLoaded'
     };
 }
 

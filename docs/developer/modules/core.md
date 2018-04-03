@@ -72,3 +72,8 @@ As the name implies, this handles the display of panels as they are open and clo
 - When closing a child panel with another child panel open underneath, the parent panel remains open while the child panel closes immediately.
 - When a panel is closed, its data is also removed. Many watchers rely on this to signal a panel was closed.
 - Handles the animation promises so that, for example, a child panel is not destroyed until after the parent panel is closed (to avoid the panel from going blank while it closes)
+
+
+# intention.service.js
+
+Load and initialize requested intentions using the instructions prodvided from the configuration file.
