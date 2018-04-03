@@ -429,6 +429,52 @@ export class LineString extends MultiPoint {
     }
 }
 
+/** A MultiLineString geometry containing a number of LineStrings. */
+export class MultiLineString extends BaseGeometry {
+    /** @ignore */
+    _lineArray: Array<LineString> = [];
+
+    /** Constructs a MultiLineString from the given LineStrings or arrays of positions. */
+    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>) {
+        super(id.toString());
+
+        let counter = 0;
+
+        elements.forEach(elem => {
+            const subId = (counter < 10) ? '0' + counter : counter;
+            const newId = id + '-' + subId;
+
+            if (isLineInstance(elem)) {
+                this._lineArray.push(new LineString(newId, elem.pointArray));
+            } else {
+                this._lineArray.push(new LineString(newId, elem));
+            }
+
+            counter++;
+        });
+    }
+
+    /** Returns an array of the contained lines. A new array is returned each time this is called. */
+    get lineArray(): Array<LineString> {
+        return [ ...this._lineArray ];
+    }
+
+    /** Returns the n-th contained line. */
+    getAt(n: number): LineString {
+        return this._lineArray[n];
+    }
+
+    /** Returns the number of contained lines. */
+    get length(): number {
+        return this._lineArray.length;
+    }
+
+    /** Returns the string 'MultiLineString'. */
+    get type(): string {
+        return 'MultiLineString';
+    }
+}
+
 /**
  * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
  * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
@@ -606,4 +652,8 @@ export function isXYLiteral(x: any): x is XYLiteral {
 
 function isPointInstance(xyOrPoint: Point | XY | XYLiteral): xyOrPoint is Point {
     return xyOrPoint instanceof Point;
+}
+
+function isLineInstance(pointOrLine: LineString | Array<Point | XY | XYLiteral>): pointOrLine is LineString {
+    return pointOrLine instanceof LineString;
 }
