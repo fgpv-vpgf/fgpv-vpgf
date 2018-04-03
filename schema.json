@@ -951,6 +951,23 @@
                 }
             },
             "required": [ "tileSchemas", "baseMaps" ]
+        },
+
+        "intentions": {
+            "type": "object",
+            "description": "Intentions(internal extenstions) that will be loaded",
+            "properties": {
+                "epsg": {
+                    "description": "intention for EPSG Lookup",
+                    "type": "string",
+                    "default": "none"
+                },
+                "dataTable": {
+                    "description": "intention for data table",
+                    "type": "string",
+                    "default": "none"
+                }
+            }
         }
     },
 
