@@ -167,6 +167,7 @@ With respect to the git commit guidelines above, the following scopes should be 
 - 💩 or :neckbeard: (formerly common)
 - 🔮 or :globe_with_meridians: (formerly geo)
 - 🍩 or :doughnut: (formerly core)
+- intention
 
 For the remaining types the above list should be used wherever possible, but we include some additions:
 

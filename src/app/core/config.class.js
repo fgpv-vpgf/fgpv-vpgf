@@ -1,6 +1,7 @@
 import screenfull from 'screenfull';
 import { Observable } from 'rxjs/Rx';
 import { XY, XYBounds } from 'api/geometry';
+import { ESPIPE } from 'constants';
 
 /**
  * @module ConfigObject
@@ -27,7 +28,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
+function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, intentionService) {
 
     const ref = {
         legendElementCounter: 0,
@@ -1799,6 +1800,43 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     /**
+     * EPSG Intention.
+     * @class EPSG
+     */
+    class EPSG {
+        constructor(epsg) {
+            this._source = epsg;
+            this._lookup = (() => {});
+        }
+
+        get source() { return this._source; }
+        get lookup() { return this._lookup; }
+
+        set lookup(lookup) { this._lookup = lookup; }
+    }
+
+    /**
+     * Intentions(internal extentions)
+     * @class Intentions
+     */
+    class Intentions {
+        constructor(source) {
+            this._epsg = new EPSG(source.epsg);
+            this._dataTable = source.dataTable;
+        }
+
+        get epsg() { return this._epsg; }
+        get dataTable() { return this._dataTable; }
+
+        get source() {
+            return {
+                epsg: this.epsg.source,
+                dataTable: this.dataTable
+            }
+        }
+    }
+
+    /**
      * Typed representation of the `map` section of the config.
      * @class Map
      */
@@ -2348,6 +2386,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
 
+            this._intentions = new Intentions(configSource.intentions);
+            intentionService.loadIntentions(this.intentions);
+
             // post parsing runtimechecks
             this.ui.legend._reorderable =
                 this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
@@ -2440,6 +2481,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
+        get intentions() { return this._intentions; }
 
         applyBookmark (value) {
             this.map.applyBookmark(value);
