@@ -48,6 +48,18 @@ const defaultSymbols = {
             type: 'esriSLS',
             style: 'esriSLSSolid'
         }
+    },
+    MULTILINESTRING: {
+        width: 2,
+        type: 'esriSLS',
+        color: [0, 255, 0],
+        style:' esriSLSSolid',
+        outline: {
+            color: [0, 0, 0],
+            width: 1,
+            type: 'esriSLS',
+            style: 'esriSLSSolid'
+        }
     }
 }
 
@@ -228,14 +240,18 @@ class GraphicsRecord extends root.Root {
                 const icon = geometry.icon;
                 this._addPoint(coords, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference))
+                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
                 const points = coords.map(point => [ point.x, point.y ]);
                 const icon = geometry.icon;
                 this._addMultiPoint(points, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.LINESTRING) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference))
+                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
                 const path = coords.map(point => [ point.x, point.y ]);
                 this._addLine(path, spatialReference, id);
+            } else if (geometry.type === geometryTypes.MULTILINESTRING) {
+                const coords = geometry.lineArray.map(line => line.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
+                const path = coords.map(path => path.map(point => [point.x, point.y]));
+                this._addMultiLine(path, spatialReference, id);
             } else if (geometry.type === geometryTypes.POLYGON) {
                 const coords = geometry.ringArray.map(ring => ring.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
                 const rings = coords.map(ring => ring.map(point => [point.x, point.y]));
@@ -296,7 +312,7 @@ class GraphicsRecord extends root.Root {
      *
      * @function _addMultiPoint
      * @private
-     * @param {Array} coords                     an array of long and lat to use as the graphic location for each point
+     * @param {Array} coords                     a 3D array of long and lat to use as the graphic location for each point
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} icon                      data / image url or svg path for layer icon. defaults to a green point
      * @param {String} id                        id of api geometry being added to map
@@ -345,6 +361,28 @@ class GraphicsRecord extends root.Root {
 
         const marker = new this._bundle.Graphic({ symbol: defaultSymbols.LINESTRING });
         marker.setGeometry(line);
+
+        marker.geometry.apiId = id;
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add multiple lines where specified using the path of longitutes and latitutes.
+     *
+     * @function _addMultiLine
+     * @private
+     * @param {Array} paths                      a 3D array of long and lat to use as the paths for the lines
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} id                        id of api geometry being added to map
+     */
+    _addMultiLine(paths, spatialReference, id) {
+        const lines = new this._bundle.Polyline({
+            paths,
+            spatialReference
+        });
+
+        const marker = new this._bundle.Graphic({ symbol: defaultSymbols.MULTILINESTRING });
+        marker.setGeometry(lines);
 
         marker.geometry.apiId = id;
         this._layer.add(marker);
