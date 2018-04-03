@@ -1,0 +1,26 @@
+{
+  "name": "intentions",
+  "version": "0.0.1",
+  "description": "Home for all RAMP related intentions that we will create and maintain in step with our RAMP release cycle",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fgpv-vpgf/fgpv-vpgf.git"
+  },
+  "keywords": [
+    "RAMP2",
+    "intentions",
+    "extensions"
+  ],
+  "author": "Barry Yung",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fgpv-vpgf/fgpv-vpgf/issues"
+  },
+  "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme",
+  "devDependencies": {
+    "ng-annotate-loader": "0.6.1",
+    "babel-loader": "7.1.2",
+    "eslint-loader": "1.9.0",
+    "ts-loader": "3.2.0"
+  }
+}
