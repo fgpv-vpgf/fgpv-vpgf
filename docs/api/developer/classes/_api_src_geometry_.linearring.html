@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Point | r2v2</title>
+	<title>LinearRing | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_api_src_geometry_.point.html">Point</a>
+					<a href="_api_src_geometry_.linearring.html">LinearRing</a>
 				</li>
 			</ul>
-			<h1>Class Point</h1>
+			<h1>Class LinearRing</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A Point geometry containing a single XY.</p>
+						<p>A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
+						There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.</p>
 					</div>
 				</div>
 			</section>
@@ -83,7 +84,7 @@
 						<a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">Point</span>
+								<span class="target">LinearRing</span>
 							</li>
 						</ul>
 					</li>
@@ -96,33 +97,31 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.point.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.linearring.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#_hover" class="tsd-kind-icon">_hover</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.point.html#_icon" class="tsd-kind-icon">_icon</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#_id" class="tsd-kind-icon">_id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.point.html#_xy" class="tsd-kind-icon">_xy</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#_hover" class="tsd-kind-icon">_hover</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#_id" class="tsd-kind-icon">_id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.linearring.html#_pointarray" class="tsd-kind-icon">_point<wbr>Array</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#hover" class="tsd-kind-icon">hover</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.point.html#icon" class="tsd-kind-icon">icon</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.point.html#type" class="tsd-kind-icon">type</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.point.html#xy" class="tsd-kind-icon">xy</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#hover" class="tsd-kind-icon">hover</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.linearring.html#pointarray" class="tsd-kind-icon">point<wbr>Array</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.linearring.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.point.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.linearring.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a></li>
 							</ul>
 						</section>
 					</div>
@@ -134,19 +133,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Point<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, icon<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, xy<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Linear<wbr>Ring<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, elements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L332">api/src/geometry.ts:332</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L438">api/src/geometry.ts:438</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructs a Point from the given XY or XYLiteral.</p>
+									<p>Constructs a LinearRing from the given Points, XYs or XYLiterals.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,13 +154,10 @@
 									<h5>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>icon: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>xy: <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a></h5>
+									<h5>elements: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -202,22 +198,6 @@
 						</dl>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_icon" class="tsd-anchor"></a>
-					<h3>_icon</h3>
-					<div class="tsd-signature tsd-kind-icon">_icon<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L332">api/src/geometry.ts:332</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<dl class="tsd-comment-tags">
-							<dt>ignore</dt>
-							<dd></dd>
-						</dl>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="_id" class="tsd-anchor"></a>
 					<h3>_id</h3>
@@ -236,12 +216,12 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_xy" class="tsd-anchor"></a>
-					<h3>_xy</h3>
-					<div class="tsd-signature tsd-kind-icon">_xy<span class="tsd-signature-symbol">:</span> <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></div>
+					<a name="_pointarray" class="tsd-anchor"></a>
+					<h3>_point<wbr>Array</h3>
+					<div class="tsd-signature tsd-kind-icon">_point<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L330">api/src/geometry.ts:330</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L438">api/src/geometry.ts:438</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -301,28 +281,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="icon" class="tsd-anchor"></a>
-					<h3>icon</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> icon<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L350">api/src/geometry.ts:350</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the URL or SVG path of icon displayed on the map.</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
@@ -346,6 +304,28 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="pointarray" class="tsd-anchor"></a>
+					<h3>point<wbr>Array</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> pointArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L464">api/src/geometry.ts:464</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an array of the contained points. A new array is returned each time this is called.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
@@ -357,37 +337,15 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L360">api/src/geometry.ts:360</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L469">api/src/geometry.ts:469</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the string &#39;Point&#39;.</p>
+									<p>Returns the string &#39;LinearRing&#39;.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="xy" class="tsd-anchor"></a>
-					<h3>xy</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> xy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L355">api/src/geometry.ts:355</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the contained XY.</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -465,57 +423,51 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.linearring.html" class="tsd-kind-icon">Linear<wbr>Ring</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
+						<a href="_api_src_geometry_.linearring.html" class="tsd-kind-icon">Linear<wbr>Ring</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_api_src_geometry_.point.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_geometry_.linearring.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#_hover" class="tsd-kind-icon">_hover</a>
+								<a href="_api_src_geometry_.linearring.html#_hover" class="tsd-kind-icon">_hover</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a>
+								<a href="_api_src_geometry_.linearring.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="_api_src_geometry_.linearring.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.point.html#_icon" class="tsd-kind-icon">_icon</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#_id" class="tsd-kind-icon">_id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.point.html#_xy" class="tsd-kind-icon">_xy</a>
+								<a href="_api_src_geometry_.linearring.html#_pointarray" class="tsd-kind-icon">_point<wbr>Array</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#hover" class="tsd-kind-icon">hover</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.point.html#icon" class="tsd-kind-icon">icon</a>
+								<a href="_api_src_geometry_.linearring.html#hover" class="tsd-kind-icon">hover</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_api_src_geometry_.point.html#type" class="tsd-kind-icon">type</a>
+								<a href="_api_src_geometry_.linearring.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.point.html#xy" class="tsd-kind-icon">xy</a>
+								<a href="_api_src_geometry_.linearring.html#pointarray" class="tsd-kind-icon">point<wbr>Array</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_api_src_geometry_.linearring.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.point.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a>
+								<a href="_api_src_geometry_.linearring.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.polygon.html" class="tsd-kind-icon">Polygon</a>
 					</li>

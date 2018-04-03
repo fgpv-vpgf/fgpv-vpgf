@@ -19,7 +19,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
-import { BaseGeometry, Point } from 'api/geometry';
+import { BaseGeometry, LinearRing } from 'api/geometry';
 import Map from 'api/map';
 import { RV } from './index';
 
@@ -546,10 +546,16 @@ export class SimpleLayer extends BaseLayer {
 
         this._geometryAdded.subscribe(geoArray => {
             geoArray.forEach(geometry => {
-                geometry._hoverRemoved.subscribe(id => {
-                    this._mapInstance.instance.removeHover(id);
+                geometry._hoverRemoved.subscribe(geoId => {
+                    this._mapInstance.instance.removeHover(geoId);
                 });
             });
+        });
+
+        this._visibilityChanged.subscribe(visibility => {
+            if (!visibility) {
+                this._mapInstance.instance.hoverRemoveOnToggle(this._id);
+            }
         });
     }
 
@@ -605,14 +611,19 @@ export class SimpleLayer extends BaseLayer {
         const geometriesAdded: Array<BaseGeometry> = [];
 
         geometries.forEach(geometry => {
-            const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
+            if (geometry instanceof LinearRing) {
+                console.error('Attempting to add LinearRing directly. Add LinearRing to a Polygon and then add geometry.');
+            } else {
+                const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
 
-            if (index === -1) {
-                // TODO: change this after to add polygons, lines, etc.
-                const spatialReference = this._mapInstance.instance.spatialReference;
-                this._viewerLayer.addGeometry(geometry, spatialReference);
-                this._geometryArray.push(geometry);
-                geometriesAdded.push(geometry);
+                if (index === -1) {
+                    const spatialReference = this._mapInstance.instance.spatialReference;
+                    this._viewerLayer.addGeometry(geometry, spatialReference);
+                    this._geometryArray.push(geometry);
+                    geometriesAdded.push(geometry);
+                } else {
+                    console.error('Attempting to add geometry with an id that has already been added.')
+                }
             }
         });
 
