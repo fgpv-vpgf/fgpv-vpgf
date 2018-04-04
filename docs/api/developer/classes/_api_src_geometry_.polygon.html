@@ -115,6 +115,7 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#linearring" class="tsd-kind-icon">Linear<wbr>Ring</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#fillopacity" class="tsd-kind-icon">fill<wbr>Opacity</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#hover" class="tsd-kind-icon">hover</a></li>
@@ -125,9 +126,10 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.polygon.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#addlinearrings" class="tsd-kind-icon">add<wbr>Linear<wbr>Rings</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a></li>
 							</ul>
 						</section>
@@ -140,19 +142,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Polygon<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, elements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a><span class="tsd-signature-symbol">&gt;</span>, styleOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Polygon<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, elements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, styleOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L485">api/src/geometry.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L542">api/src/geometry.ts:542</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructs a Polygon from the given LinearRings.</p>
+									<p>Constructs a Polygon from the given array of points or ring coordinates.</p>
 								</div>
 								<p>The different style options and values available are the following:</p>
 								<ul>
@@ -161,7 +163,8 @@
 											<li>fillColor:           string hex code. default is &#39;#000000&#39;.
 												<li>fillOpacity:         number between 0 and 1. default is 0.
 								</ul>
-								<p>TODO: add option for polygon icon fill.</p>
+								<p>NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
+								TODO: add option for polygon icon fill.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -169,7 +172,7 @@
 									<h5>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>elements: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>elements: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> styleOptions: <a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a></h5>
@@ -188,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">_fill<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;#000000&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L483">api/src/geometry.ts:483</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L540">api/src/geometry.ts:540</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -204,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">_fill<wbr>Opacity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L485">api/src/geometry.ts:485</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L542">api/src/geometry.ts:542</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -221,7 +224,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hover">_hover</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L286">api/src/geometry.ts:286</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L286">api/src/geometry.ts:286</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -238,7 +241,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hoverremoved">_hoverRemoved</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L288">api/src/geometry.ts:288</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L288">api/src/geometry.ts:288</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +258,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_id">_id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L284">api/src/geometry.ts:284</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L284">api/src/geometry.ts:284</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -268,10 +271,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_outlinecolor" class="tsd-anchor"></a>
 					<h3>_outline<wbr>Color</h3>
-					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;#AFAFAF&quot;</span></div>
+					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;#000000&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L479">api/src/geometry.ts:479</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L536">api/src/geometry.ts:536</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -284,10 +287,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_outlinewidth" class="tsd-anchor"></a>
 					<h3>_outline<wbr>Width</h3>
-					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;3</span></div>
+					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L481">api/src/geometry.ts:481</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L538">api/src/geometry.ts:538</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -300,10 +303,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_ringarray" class="tsd-anchor"></a>
 					<h3>_ring<wbr>Array</h3>
-					<div class="tsd-signature tsd-kind-icon">_ring<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">_ring<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L477">api/src/geometry.ts:477</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L534">api/src/geometry.ts:534</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -317,6 +320,29 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="linearring" class="tsd-anchor"></a>
+					<h3>Linear<wbr>Ring</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> LinearRing<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LinearRing</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L484">api/src/geometry.ts:484</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
+									There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LinearRing</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="fillcolor" class="tsd-anchor"></a>
 					<h3>fill<wbr>Color</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
@@ -326,7 +352,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L536">api/src/geometry.ts:536</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L605">api/src/geometry.ts:605</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -348,7 +374,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L541">api/src/geometry.ts:541</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L610">api/src/geometry.ts:610</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -372,7 +398,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#hover">hover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L307">api/src/geometry.ts:307</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L307">api/src/geometry.ts:307</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -389,7 +415,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#hover">hover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L310">api/src/geometry.ts:310</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L310">api/src/geometry.ts:310</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -418,7 +444,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#id">id</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L304">api/src/geometry.ts:304</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L304">api/src/geometry.ts:304</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -440,7 +466,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L526">api/src/geometry.ts:526</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L595">api/src/geometry.ts:595</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -462,7 +488,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L531">api/src/geometry.ts:531</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L600">api/src/geometry.ts:600</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -478,13 +504,13 @@
 					<a name="ringarray" class="tsd-anchor"></a>
 					<h3>ring<wbr>Array</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ringArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ringArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L521">api/src/geometry.ts:521</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L590">api/src/geometry.ts:590</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -492,7 +518,7 @@
 									<p>Returns an array of the contained rings. A new array is returned each time this is called.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linearring.html" class="tsd-signature-type">LinearRing</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -507,7 +533,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L546">api/src/geometry.ts:546</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L615">api/src/geometry.ts:615</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -520,8 +546,31 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addlinearrings" class="tsd-anchor"></a>
+					<h3>add<wbr>Linear<wbr>Rings</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Linear<wbr>Rings<span class="tsd-signature-symbol">(</span>linearRings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L585">api/src/geometry.ts:585</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>linearRings: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="removehover" class="tsd-anchor"></a>
 					<h3>remove<wbr>Hover</h3>
@@ -533,7 +582,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#removehover">removeHover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/ffda8178/api/src/geometry.ts#L319">api/src/geometry.ts:319</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L319">api/src/geometry.ts:319</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -594,7 +643,7 @@
 						<a href="_api_src_geometry_.linestring.html" class="tsd-kind-icon">Line<wbr>String</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.linearring.html" class="tsd-kind-icon">Linear<wbr>Ring</a>
+						<a href="_api_src_geometry_.multilinestring.html" class="tsd-kind-icon">Multi<wbr>Line<wbr>String</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
@@ -635,6 +684,9 @@
 								<a href="_api_src_geometry_.polygon.html#_ringarray" class="tsd-kind-icon">_ring<wbr>Array</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_geometry_.polygon.html#linearring" class="tsd-kind-icon">Linear<wbr>Ring</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_api_src_geometry_.polygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
@@ -657,6 +709,9 @@
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_api_src_geometry_.polygon.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_geometry_.polygon.html#addlinearrings" class="tsd-kind-icon">add<wbr>Linear<wbr>Rings</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_api_src_geometry_.polygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a>
@@ -685,6 +740,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="../modules/_api_src_geometry_.html#isextent" class="tsd-kind-icon">is<wbr>Extent</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_geometry_.html#islineinstance" class="tsd-kind-icon">is<wbr>Line<wbr>Instance</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_api_src_geometry_.html#ispointinstance" class="tsd-kind-icon">is<wbr>Point<wbr>Instance</a>
