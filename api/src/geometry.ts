@@ -374,10 +374,9 @@ export class MultiPoint extends BaseGeometry {
         super(id.toString());
 
         this._icon = icon;
-        let counter = 0;
 
-        elements.forEach(elem => {
-            const subId = (counter < 10) ? '0' + counter : counter;
+        elements.forEach((elem, index) => {
+            const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isPointInstance(elem)) {
@@ -385,8 +384,6 @@ export class MultiPoint extends BaseGeometry {
             } else {
                 this._pointArray.push(new Point(newId, icon, elem));
             }
-
-            counter++;
         });
     }
 
@@ -438,10 +435,8 @@ export class MultiLineString extends BaseGeometry {
     constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>) {
         super(id.toString());
 
-        let counter = 0;
-
-        elements.forEach(elem => {
-            const subId = (counter < 10) ? '0' + counter : counter;
+        elements.forEach((elem, index) => {
+            const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isLineInstance(elem)) {
@@ -449,8 +444,6 @@ export class MultiLineString extends BaseGeometry {
             } else {
                 this._lineArray.push(new LineString(newId, elem));
             }
-
-            counter++;
         });
     }
 
@@ -495,10 +488,8 @@ export class Polygon extends BaseGeometry {
                 const subId = (ringCounter < 10) ? '0' + ringCounter : ringCounter;
                 this._id = outerClass.id + '-' + subId;
 
-                let counter = 0;
-
-                elements.forEach(elem => {
-                    const subId = (counter < 10) ? '0' + counter : counter;
+                elements.forEach((elem, index) => {
+                    const subId = (index < 10) ? '0' + index : index;
                     const newId = this._id + '-' + subId;
 
                     if (isPointInstance(elem)) {
@@ -506,8 +497,6 @@ export class Polygon extends BaseGeometry {
                     } else {
                         this._pointArray.push(new Point(newId, '', elem));
                     }
-
-                    counter++;
                 });
 
                 // add the first point to the end of the array to 'close' the ring (if it wasn't already closed)
