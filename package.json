@@ -96,6 +96,7 @@
     "doc": "jsdoc -p -r -c .jsdoc.json -R README.md -d ./docs/developer/jsDocs ./src/app",
     "svgcache": "node scripts/svgCache.js",
     "apidoc": "typedoc --target ES6 --out docs/api/developer api/src",
-    "docute": "docute ./docs"
+    "docute": "docute ./docs",
+    "install-all": "npm install && (cd intention && npm install)"
   }
 }

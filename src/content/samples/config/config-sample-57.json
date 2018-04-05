@@ -1,7 +1,6 @@
 {
   "intentions": {
-    "epsg": "epsgExt",
-    "dataTable": "dataTableExt"
+    "epsg": "epsgExt"
   },
   "ui": {
     "title": "Custom Title",
