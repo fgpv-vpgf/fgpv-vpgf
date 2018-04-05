@@ -955,19 +955,15 @@
 
         "intentions": {
             "type": "object",
-            "description": "Intentions(internal extenstions) that will be loaded",
+            "description": "Enable/Disable intentions or replace with your own implementation",
             "properties": {
                 "epsg": {
                     "description": "intention for EPSG Lookup",
                     "type": "string",
                     "default": "none"
-                },
-                "dataTable": {
-                    "description": "intention for data table",
-                    "type": "string",
-                    "default": "none"
                 }
-            }
+            },
+            "additionalProperties": false
         }
     },
 

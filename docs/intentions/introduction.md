@@ -21,19 +21,19 @@ Each property inside `intentions` is an intention that will be loaded into RAMP.
     }
 ```
 
-The value of an intention indicates the way how RAMP will be loading the intention. Default is set to `"none"` if the intention is not specified in `intention` thus it will not be loaded. There are 3 settings available:
+The value of an intention indicates the way RAMP will be loading the intention. Default is set to `"none"` if the intention is not specified in `intention` thus it will not be loaded. There are 3 settings available:
 
 - `"default"`: This will load the default intention.
 
-- `"none"`: This is the default setting.  As the suggested, the intention will be excluded.
+- `"none"`: This is the default setting.  As suggested, the intention will be excluded.
 
 - **Name of the extension**: The name of the extension you would like the default intention to be replaced by.
 
 <p class="danger">
-    When setting the value for an intention. Please ensure the name matches the intention you are intended to add for the intention to be applied. However, having none-existence intentions will not affect RAMP nor causes errors.
+    When setting the value for an intention. Please ensure the name matches the intention you are intended to add for the intention to be applied. However, having non-existing intentions will not affect RAMP nor causes errors.
 <p>
 
-## Writting an Extension to repleace an Intention
+## Writing an Extension to replace an Intention
 
 First you will need to load the extension file before the main viewers JavaScript file `rv-main.js`. We will call it `my-extention.js` in our example.
 
@@ -41,9 +41,9 @@ First you will need to load the extension file before the main viewers JavaScrip
 <script src="my-extention.js"></script>
 ```
 
-When writing an extension. You will need to create a variable and the name of the variable will be the name of the extension. The variable should execute a function returning an object containing methods`preInit` and `init`. RAMP will automatically call the two methods. `preInit` will be called before API is ready. `init` will be called after the API is ready.
+When writing an extension. You will need to create a variable and the name of that variable will be the name of the extension. The variable should execute a function returning an object containing methods either `preInit` or `init` or both depending on the intention you want to replace.
 
-Here is an example of what an extension would look like
+Here is an example of the general structure.
 
 ```js
 var intentionExt = (() => {
@@ -57,6 +57,12 @@ var intentionExt = (() => {
     }
 })();
 ```
+
+RAMP will call methods `preInit` and `init` automatically once the extension is loaded.  `preInit` will be called before the map object of RAMP and API are ready.  Instructions here should be intended to use for creating the map object.  Inversely `init` will be called when both map object and API are ready.  It should be used for actions that depend on the completion of map object.
+
+<p class="danger">
+    `preInit` and `init` are required for when writing an extension to replace an intention.  Not including them might result errors.
+<p>
 
 Finally, You will also need to specify what the intention you are intended to replace and the name of the extensions.
 

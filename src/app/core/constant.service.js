@@ -74,8 +74,8 @@ function events($rootScope) {
         rvApiMapAdded: 'rvApiMapAdded',
         rvApiLayerAdded: 'rvApiLayerAdded',
 
-        rvIntentionsPreInited: 'rvInternalExtensionLoaded',
-        rvIntentionsInited: 'rvExternalExtensionLoaded'
+        rvIntentionsPreInited: 'rvIntentionsPreInited',
+        rvIntentionsInited: 'rvIntentionsInited'
     };
 }
 
