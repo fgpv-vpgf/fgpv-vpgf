@@ -374,10 +374,9 @@ export class MultiPoint extends BaseGeometry {
         super(id.toString());
 
         this._icon = icon;
-        let counter = 0;
 
-        elements.forEach(elem => {
-            const subId = (counter < 10) ? '0' + counter : counter;
+        elements.forEach((elem, index) => {
+            const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isPointInstance(elem)) {
@@ -385,8 +384,6 @@ export class MultiPoint extends BaseGeometry {
             } else {
                 this._pointArray.push(new Point(newId, icon, elem));
             }
-
-            counter++;
         });
     }
 
@@ -429,58 +426,101 @@ export class LineString extends MultiPoint {
     }
 }
 
-/**
- * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
- * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
- *
- * NOTE: LinearRings can not be added to a layer directly. They must be added to Polygons.
- */
-export class LinearRing extends BaseGeometry {
+/** A MultiLineString geometry containing a number of LineStrings. */
+export class MultiLineString extends BaseGeometry {
     /** @ignore */
-    _pointArray: Array<Point> = [];
+    _lineArray: Array<LineString> = [];
 
-    /** Constructs a LinearRing from the given Points, XYs or XYLiterals. */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>) {
+    /** Constructs a MultiLineString from the given LineStrings or arrays of positions. */
+    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>) {
         super(id.toString());
 
-        let counter = 0;
-
-        elements.forEach(elem => {
-            const subId = (counter < 10) ? '0' + counter : counter;
+        elements.forEach((elem, index) => {
+            const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
-            if (isPointInstance(elem)) {
-                this._pointArray.push(new Point(newId, '', elem.xy));
+            if (isLineInstance(elem)) {
+                this._lineArray.push(new LineString(newId, elem.pointArray));
             } else {
-                this._pointArray.push(new Point(newId, '', elem));
+                this._lineArray.push(new LineString(newId, elem));
             }
-
-            counter++;
         });
-
-        // add the first point to the end of the array to 'close' the ring (if it wasn't already closed)
-        const firstPoint = this._pointArray[0].xy;
-        const lastPoint = this._pointArray[this._pointArray.length - 1].xy;
-        if (firstPoint.x !== lastPoint.x || firstPoint.y !== lastPoint.y) {
-            this._pointArray.push(this._pointArray[0]);
-        }
     }
 
-    /** Returns an array of the contained points. A new array is returned each time this is called. */
-    get pointArray(): Array<Point> {
-        return [ ...this._pointArray ];
+    /** Returns an array of the contained lines. A new array is returned each time this is called. */
+    get lineArray(): Array<LineString> {
+        return [ ...this._lineArray ];
     }
 
-    /** Returns the string 'LinearRing'. */
+    /** Returns the n-th contained line. */
+    getAt(n: number): LineString {
+        return this._lineArray[n];
+    }
+
+    /** Returns the number of contained lines. */
+    get length(): number {
+        return this._lineArray.length;
+    }
+
+    /** Returns the string 'MultiLineString'. */
     get type(): string {
-        return 'LinearRing';
+        return 'MultiLineString';
     }
 }
 
 /** A Polygon geometry containing a number of LinearRings. */
 export class Polygon extends BaseGeometry {
+    /**
+     * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
+     * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
+     */
+    get LinearRing() {
+        let outerClass = this;
+        return class LinearRing {
+            /** @ignore */
+            _id: string;
+            /** @ignore */
+            _pointArray: Array<Point> = [];
+
+            /** Constructs a LinearRing from the given Points, XYs or XYLiterals. */
+            constructor(elements: Array<Point | XY | XYLiteral>) {
+                const ringCounter = outerClass._ringArray.length;
+                const subId = (ringCounter < 10) ? '0' + ringCounter : ringCounter;
+                this._id = outerClass.id + '-' + subId;
+
+                elements.forEach((elem, index) => {
+                    const subId = (index < 10) ? '0' + index : index;
+                    const newId = this._id + '-' + subId;
+
+                    if (isPointInstance(elem)) {
+                        this._pointArray.push(new Point(newId, '', elem.xy));
+                    } else {
+                        this._pointArray.push(new Point(newId, '', elem));
+                    }
+                });
+
+                // add the first point to the end of the array to 'close' the ring (if it wasn't already closed)
+                const firstPoint = this._pointArray[0].xy;
+                const lastPoint = this._pointArray[this._pointArray.length - 1].xy;
+                if (firstPoint.x !== lastPoint.x || firstPoint.y !== lastPoint.y) {
+                    this._pointArray.push(this._pointArray[0]);
+                }
+            }
+
+            /** Returns the geometry id. */
+            get id(): string {
+                return this._id;
+            }
+
+            /** Returns an array of the contained points. A new array is returned each time this is called. */
+            get pointArray(): Array<Point> {
+                return [ ...this._pointArray ];
+            }
+        }
+    }
+
     /** @ignore */
-    _ringArray: Array<LinearRing> = [];
+    _ringArray: Array<any> = [];    // type should be 'LinearRing', but that is not available any more
     /** @ignore */
     _outlineColor: string = '#000000';
     /** @ignore */
@@ -491,7 +531,7 @@ export class Polygon extends BaseGeometry {
     _fillOpacity: number = 0;
 
     /**
-     * Constructs a Polygon from the given LinearRings.
+     * Constructs a Polygon from the given array of points or ring coordinates.
      *
      * The different style options and values available are the following:
      * <ul>
@@ -501,12 +541,12 @@ export class Polygon extends BaseGeometry {
      *     <li>fillOpacity:         number between 0 and 1. default is 0.
      * </ul>
      *
+     * NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
      * TODO: add option for polygon icon fill.
      */
-    constructor(id: string | number, elements: Array<LinearRing>, styleOptions?: PolygonStyleOptions) {
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, styleOptions?: PolygonStyleOptions) {
         super(id.toString());
 
-        this._ringArray = elements;
         if (styleOptions) {
             if (styleOptions.outlineColor !== undefined) {
                 this._outlineColor = styleOptions.outlineColor;
@@ -521,10 +561,22 @@ export class Polygon extends BaseGeometry {
                 this._fillOpacity = styleOptions.fillOpacity;
             }
         }
+
+        if (elements[0] !== undefined && elements[0] instanceof Array && !isXYLiteral(elements[0])) {   // single ring added
+            elements.forEach(element => {
+                this._ringArray.push(new this.LinearRing(<Array<Point | XY | XYLiteral>>element));
+            });
+        } else if (elements[0] !== undefined) {                                                         // multiple rings added
+            this._ringArray.push(new this.LinearRing(<Array<Point | XY | XYLiteral>>elements));
+        }
+    }
+
+    addLinearRings(linearRings: Array<any>): void { // type should be 'LinearRing', but that is not available any more
+        this._ringArray.push(...linearRings);
     }
 
     /** Returns an array of the contained rings. A new array is returned each time this is called. */
-    get ringArray(): Array<LinearRing> {
+    get ringArray(): Array<any> {   // type should be 'LinearRing', but that is not available any more
         return [ ...this._ringArray ];
     }
 
@@ -606,4 +658,8 @@ export function isXYLiteral(x: any): x is XYLiteral {
 
 function isPointInstance(xyOrPoint: Point | XY | XYLiteral): xyOrPoint is Point {
     return xyOrPoint instanceof Point;
+}
+
+function isLineInstance(pointOrLine: LineString | Array<Point | XY | XYLiteral>): pointOrLine is LineString {
+    return pointOrLine instanceof LineString;
 }
