@@ -5,12 +5,14 @@
  * @description Load and initialize intentions
  *
  */
+
+import EPSG from 'intention/epsg/epsg.intention';
+
 angular
     .module('app.core')
     .factory('intentionService', intentionService);
 
 function intentionService(events) {
-    const intentionModule = require("intention");
     const service = {
         loadIntentions
     };
@@ -24,7 +26,10 @@ function intentionService(events) {
      * @param {Object} intentions an Intentions object containing loading instructions
      */
     function loadIntentions(intentions) {
+        // execute pre-init
         executePreInit(intentions);
+
+        // execute init
         events.$on(events.rvMapLoaded, (_, mapInstance) => {
             executeInit(intentions.source, mapInstance);
         });
@@ -40,11 +45,9 @@ function intentionService(events) {
         let intentionSource = intentions.source;
 
         if (intentionSource.epsg === 'default') {
-            const lookup = intentionModule.epsg().preInit();
-            intentions.epsg.lookup = lookup;
+            intentions.epsg.lookup = EPSG.preInit();
         } else if (intentionSource.epsg !== 'none') {
-            const lookup = window[intentionSource.epsg].preInit();
-            intentions.epsg.lookup = lookup;
+            intentions.epsg.lookup = window[intentionSource.epsg].preInit();
         }
     }
 
@@ -59,14 +62,8 @@ function intentionService(events) {
         let intentionSource = intentions.source;
 
         for (let intent in intentionSource) {
-            if (!intentionSource[intent]) {
-                break;
-            } else if (intent === 'epsg') {
+            if (intent === 'epsg') {
                 setEPSGLookup(intentions);
-            } else if (intentionSource[intent] === 'default') {
-                preInitPromises.push(intentionModule[intent]().preInit());
-            } else if (intentionSource[intent] !== 'none') {
-                preInitPromises.push(window[intentionSource[intent]].preInit());
             }
         }
 
@@ -82,15 +79,14 @@ function intentionService(events) {
      * @param {Object} intentions an Intentions object containing loading instructions
      */
     function executeInit(intentionSource, mapInstance) {
-        for (let intent in intentionSource) {
-            if (!intentionSource[intent]) {
-                break;
-            } else if (intentionSource[intent] === 'default') {
-                intentionModule[intent]().init(mapInstance)
-            } else if (intentionSource[intent] && intentionSource[intent] !== 'none') {
-                window[intentionSource[intent]].init(mapInstance);
-            }
-        }
+        // NOTE: Since no intentions has init() yet so will comment codes below for now
+        // for (let intent in intentionSource) {
+        //     if (!intentionSource[intent]) {
+        //         break;
+        //     } else if (intentionSource[intent] && intentionSource[intent] !== 'none') {
+        //         window[intentionSource[intent]].init(mapInstance);
+        //     }
+        // }
 
         events.$broadcast(events.rvIntentionsInited);
     }

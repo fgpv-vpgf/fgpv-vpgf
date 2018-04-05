@@ -1,7 +1,6 @@
 {
   "intentions": {
-    "epsg": "default",
-    "dataTable": "default"
+    "epsg": "default"
   },
   "ui": {
     "title": "Custom Title",
