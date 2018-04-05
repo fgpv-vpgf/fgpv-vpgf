@@ -41,7 +41,7 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath, path.resolve(__dirname, 'src/intention')],
+                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath, path.resolve(__dirname, 'intention')],
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
@@ -53,6 +53,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.ts$/,
+                    include: [path.resolve(__dirname, 'intention'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app')],
                     use: [{
                         loader: 'babel-loader',
                         options: babelPresets
@@ -90,7 +91,6 @@ module.exports = function (env) {
 
         plugins: [
             new webpack.PrefetchPlugin(geoPath),
-            new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/intention/index.js')),
             new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
             new CopyWebpackPlugin([{
@@ -130,14 +130,14 @@ module.exports = function (env) {
         externals: { 'TweenLite': 'TweenLite' },
 
         resolve: {
-            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'src/intention/node_modules')],
+            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'intention/node_modules')],
             alias: {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
                 jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
                 api: path.resolve(__dirname, 'api/src/'),
                 src: path.resolve(__dirname, 'src/'),
                 app: path.resolve(__dirname, 'src/app/'),
-                intention: path.resolve(__dirname, 'src/intention/index.js')
+                intention: path.resolve(__dirname, 'intention/')
             },
             extensions: ['.ts', '.js', 'css', 'scss']
         },
