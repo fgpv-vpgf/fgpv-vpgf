@@ -16,11 +16,5 @@
   "bugs": {
     "url": "https://github.com/fgpv-vpgf/fgpv-vpgf/issues"
   },
-  "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme",
-  "devDependencies": {
-    "ng-annotate-loader": "0.6.1",
-    "babel-loader": "7.1.2",
-    "eslint-loader": "1.9.0",
-    "ts-loader": "3.2.0"
-  }
+  "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme"
 }

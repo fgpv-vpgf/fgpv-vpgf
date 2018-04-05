@@ -1,7 +1,6 @@
 import screenfull from 'screenfull';
 import { Observable } from 'rxjs/Rx';
 import { XY, XYBounds } from 'api/geometry';
-import { ESPIPE } from 'constants';
 
 /**
  * @module ConfigObject
@@ -1822,16 +1821,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, inten
     class Intentions {
         constructor(source) {
             this._epsg = new EPSG(source.epsg);
-            this._dataTable = source.dataTable;
         }
 
         get epsg() { return this._epsg; }
-        get dataTable() { return this._dataTable; }
 
         get source() {
             return {
-                epsg: this.epsg.source,
-                dataTable: this.dataTable
+                epsg: this.epsg.source
             }
         }
     }
