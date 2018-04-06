@@ -41,7 +41,7 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath, path.resolve(__dirname, 'intention')],
+                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath],
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
