@@ -2382,8 +2382,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, inten
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
 
-            this._intentions = new Intentions(configSource.intentions);
-            intentionService.loadIntentions(this.intentions);
+            if (configSource.intentions) {
+                this._intentions = new Intentions(configSource.intentions);
+                intentionService.loadIntentions(this.intentions);
+            }
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
