@@ -90,7 +90,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             let index = layerBlueprintsCollection.findIndex(blueprint =>
                 blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(entry => entry.layerId === ld.id ? entry : null)
+                .walk(entry =>
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1) ?
+                    entry : null)
                 .filter(a => a)[0];
 
             // if the item is not being added to the legend, remove it from the map and API layers list as well
