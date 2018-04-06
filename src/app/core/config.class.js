@@ -245,6 +245,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     };
 
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+
     class InitialLayerSettings {
         /**
          *
@@ -1417,6 +1420,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          */
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
+            mApi._legendStructure = this;
         }
 
         get JSON() {

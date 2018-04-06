@@ -72,6 +72,7 @@ export default class Map {
     private _layers: LayerGroup;
     private _identifyMode: IdentifyMode = IdentifyMode.Details;
     private _simpleLayer: SimpleLayer;
+    private _legendStructure: LegendStructure;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -105,6 +106,28 @@ export default class Map {
         this._fgpMap = fgpMap;
         this.setBounds(this.mapI.extent, false);
         initObservables.apply(this);
+    }
+
+    /** Returns the current structured legend JSON. If auto legend, returns undefined */
+    get legendConfig(): Array<JSON> | undefined {
+        if (this._legendStructure.type === 'structured') {  // use constant
+            return this._legendStructure.JSON.root.children;
+        }
+    }
+
+    /**
+     * Sets a new structured legend JSON snippet that updates the legend.
+     *
+     * TODO: If the legend was previously auto, replace it with a structured legend.
+     */
+    set legendConfig(value: Array<JSON> | undefined) {
+        if (value) {
+            const structure = this._legendStructure.JSON;
+            if (this._legendStructure.type === 'structured') {    // use constant
+                structure.root.children = value;
+                this.mapI.setLegendConfig(structure);
+            }
+        }
     }
 
     /**
@@ -288,4 +311,22 @@ function initObservables(this: Map) {
         .distinctUntilChanged((x, y) => x.equals(y));
     this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseUp = Observable.fromEvent(esriMapElement, 'mouseup').map(evt => new MouseEvent(<esriMouseEvent>evt));
+}
+
+interface LegendStructure {
+    type: string;
+    JSON: LegendJSON;
+}
+
+interface LegendJSON {
+    type: string;
+    root: EntryGroupJSON;
+}
+
+interface EntryGroupJSON {
+    name: string;
+    expanded?: boolean;
+    children: Array<JSON>;
+    controls?: Array<string>;
+    disabledControls?: Array<string>;
 }
