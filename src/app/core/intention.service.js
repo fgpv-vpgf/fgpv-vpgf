@@ -42,12 +42,12 @@ function intentionService(events) {
      * @param {Object} intentions an Intentions object containing loading instructions
      */
     function setEPSGLookup(intentions) {
-        let intentionSource = intentions.source;
+        let intentionObj = intentions.source;
 
-        if (intentionSource.epsg === 'default') {
+        if (intentionObj.epsg === 'default') {
             intentions.epsg.lookup = EPSG.preInit();
-        } else if (intentionSource.epsg !== 'none') {
-            intentions.epsg.lookup = window[intentionSource.epsg].preInit();
+        } else if (intentionObj.epsg !== 'none') {
+            intentions.epsg.lookup = window[intentionObj.epsg].preInit();
         }
     }
 
@@ -59,9 +59,9 @@ function intentionService(events) {
      */
     function executePreInit(intentions) {
         let preInitPromises = [];
-        let intentionSource = intentions.source;
+        let intentionObj = intentions.source;
 
-        for (let intent in intentionSource) {
+        for (let intent in intentionObj) {
             if (intent === 'epsg') {
                 setEPSGLookup(intentions);
             }
@@ -76,17 +76,17 @@ function intentionService(events) {
      * Initialize intentions after the map is ready
      *
      * @function executePreInit
-     * @param {Object} intentions an Intentions object containing loading instructions
+     * @param {Object} intentionObj an Intentions object containing loading instructions
+     * @param {object} mapInstance map instance of RAMP
      */
-    function executeInit(intentionSource, mapInstance) {
-        // NOTE: Since no intentions has init() yet so will comment codes below for now
-        // for (let intent in intentionSource) {
-        //     if (!intentionSource[intent]) {
-        //         break;
-        //     } else if (intentionSource[intent] && intentionSource[intent] !== 'none') {
-        //         window[intentionSource[intent]].init(mapInstance);
-        //     }
-        // }
+    function executeInit(intentionObj, mapInstance) {
+        for (let intent in intentionObj) {
+            if (!intentionObj[intent] || intent === 'epsg') {
+                break;
+            } else if (intentionObj[intent] !== 'default' || intentionObj[intent] !== 'none') {
+                window[intentionObj[intent]].init(mapInstance);
+            }
+        }
 
         events.$broadcast(events.rvIntentionsInited);
     }

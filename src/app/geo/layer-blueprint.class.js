@@ -225,8 +225,11 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
+            const intentions = configService.getSync.intentions;
+            const lookup = intentions ? intentions.epsg : undefined;
+
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
-                this.config, undefined, configService.getSync.intentions.epsg.lookup);
+                this.config, undefined, lookup);
         }
     }
 
@@ -253,7 +256,9 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
 
             // HACK: supply epsgLookup here;
             // TODO: find a better place for it
-            this._layerSource.epsgLookup = configService.getSync.intentions.epsg.lookup;
+            const intentions = configService.getSync.intentions;
+            const lookup = intentions ? intentions.epsg : undefined;
+            this._layerSource.epsgLookup = lookup;
 
             const layerFileGenerators = {
                 [Geo.Service.Types.CSV]: () =>
