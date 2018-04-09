@@ -270,7 +270,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
         ref.initialDynamicLayerFilter = events.$on(events.rvLayerRecordLoaded, (_, layerRecordId) => {
             const layerRecord = layerRegistry.getLayerRecord(layerRecordId);
 
-            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+            if (layerRecord && layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
                 layerRecord.config.layerEntries.forEach(currentSubLayer => {
                     if (currentSubLayer.table) {        // if table exists, we need to reaply the definition query every time on reload
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);

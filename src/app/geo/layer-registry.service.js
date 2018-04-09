@@ -214,7 +214,9 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
 
-            layerRecord.removeAttribListener(_onLayerAttribDownload);
+            if (layerRecord.state === Geo.Layer.States.LOADED) {
+                layerRecord.removeAttribListener(_onLayerAttribDownload);
+            }
             _removeLayerFromApiMap(layerRecord);
         }
 
@@ -844,7 +846,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         let index;
 
         // removing dynamic layers does not actually remove the layer if another child is still present  ?
-        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC && layerRecord.state === Geo.Layer.States.LOADED) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
             childIndices.forEach(idx => {
                 index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId && layer.layerIndex === idx);

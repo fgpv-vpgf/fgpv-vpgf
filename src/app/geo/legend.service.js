@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('legendService', legendServiceFactory);
 
-function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
+function legendServiceFactory(Geo, ConfigObject, configService, stateManager, LegendBlock, LayerBlueprint,
     layerRegistry, common, events, $rootScope) {
 
     const service = {
@@ -22,6 +22,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         removeLegendBlock
     };
 
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
         configService.getSync.map.instance.addConfigLayer = layerJSON => {
@@ -31,7 +34,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
                 layerRecord.layerId === layerJSON.id);
 
             if (!index) {
-                const layer = service.addLayerDefinition(layerJSON);
+                let addToLegend = false;
+                if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+                    addToLegend = true;
+                }
+
+                const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
                     events.$on(events.rvApiLayerAdded, (_, layers) => {
@@ -41,6 +49,21 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             } else {
                 return common.$q.resolve([]);
             }
+        };
+
+        configService.getSync.map.instance.setLegendConfig = legendStructure => {
+            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+
+            const apiLayers = mApi.layers.allLayers.map(l => l._viewerLayer.config.source);
+            const viewerLayers = configService.getSync.map.layers;
+            const layers = apiLayers.concat(
+                viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
+            );
+            const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
+            service.constructLegend(layers, newLegend);
+            configService.getSync.map._legend = newLegend;
+            mApi._legendStructure = newLegend;
+            $rootScope.$applyAsync();
         };
     });
 
@@ -54,19 +77,47 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function constructLegend
      * @param {Array} layerDefinitions an array of layer definitions from the config file or RCS snippets
-     * @param {Array} legendStructure a typed legend hierarchy containing Enry, EntryGroup, VisibilitySet, and InfoSections items
+     * @param {Array} legendStructure a typed legend hierarchy containing Entry, EntryGroup, VisibilitySet, and InfoSections items
      */
     function constructLegend(layerDefinitions, legendStructure) {
         const mapConfig = configService.getSync.map;
 
         const layerBlueprintsCollection = mapConfig.layerBlueprints;
         const legendMappings = mapConfig.legendMappings;
+        const newDefinitions = [];
+
+        layerDefinitions.forEach(ld => {
+            let index = layerBlueprintsCollection.findIndex(blueprint =>
+                blueprint.config.id === ld.id);
+            const legendItem = legendStructure.root
+                .walk(entry =>
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1) ?
+                    entry : null)
+                .filter(a => a)[0];
+
+            // if the item is not being added to the legend, remove it from the map and API layers list as well
+            if (!legendItem) {
+                layerRegistry.removeLayerRecord(ld.id);
+                if (index !== -1) {
+                    layerBlueprintsCollection.splice(index, 1);
+                }
+            }
+            // if the layer is being readded to the legend, regenerate the layer record to have up-to-date settings
+            else if (index !== -1) {
+                const blueprint = layerBlueprintsCollection[index];
+                layerRegistry.regenerateLayerRecord(blueprint);
+            }
+            // there is no blueprint already created for the layer, need to create one
+            else {
+                newDefinitions.push(ld);
+            }
+        });
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const layerBlueprints = layerDefinitions.map(createBlueprint);
+        const layerBlueprints = newDefinitions.map(createBlueprint);
 
         // create mapping for all layer blueprints
-        layerBlueprints.forEach(lb =>
+        mapConfig.layerBlueprints.forEach(lb =>
             (legendMappings[lb.config.id] = []));
 
         const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
@@ -80,10 +131,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @function addLayerDefinition
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @param {pos} optional position for layer to be on the legend
+     * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
      * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
-    function addLayerDefinition(layerDefinition, pos = null) {
-        return importLayerBlueprint(createBlueprint(layerDefinition), pos);
+    function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
+        return importLayerBlueprint(createBlueprint(layerDefinition), pos, addToLegend);
     }
 
     /**
@@ -105,9 +157,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @function importLayerBlueprint
      * @param {LayerBlueprint} layerBlueprint a layer blueprint to be imported into the map and added to the legend
      * @param {pos} optional position for layer to be on the legend
+     * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
      * @return {LegendBlock} returns a corresponding, newly created legend block
      */
-    function importLayerBlueprint(layerBlueprint, pos = null) {
+    function importLayerBlueprint(layerBlueprint, pos = null, addToLegend = true) {
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
@@ -130,6 +183,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
 
         const importedBlockConfig = new ConfigObject.legend.Entry(entryConfigObject);
         const importedLegendBlock = _makeLegendBlock(importedBlockConfig, [layerBlueprint]);
+
+        if (!addToLegend) {
+            return;
+        }
 
         let position = 0;
         // find an appropriate spot in a auto legend;
