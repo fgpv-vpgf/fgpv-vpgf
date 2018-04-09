@@ -9,7 +9,8 @@ const geometryTypes = {
     MULTIPOINT: 'MultiPoint',
     LINESTRING: 'LineString',
     MULTILINESTRING: 'MultiLineString',
-    POLYGON: 'Polygon'
+    POLYGON: 'Polygon',
+    MULTIPOLYGON: 'MultiPolygon'
 }
 
 const defaultSymbols = {
@@ -256,16 +257,38 @@ class GraphicsRecord extends root.Root {
                 const coords = geometry.ringArray.map(ring => ring.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
                 const rings = coords.map(ring => ring.map(point => [point.x, point.y]));
                 const style = {
-                    lineColor: geometry.outlineColor,
-                    lineWidth: geometry.outlineWidth,
+                    outlineColor: geometry.outlineColor,
+                    outlineWidth: geometry.outlineWidth,
                     fillColor: geometry.fillColor,
                     fillOpacity: geometry.fillOpacity
                 };
-
                 this._addPolygon(rings, spatialReference, id, style);
+            } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
+                const multiPolyCoords = geometry.polygonArray.map(polygon =>
+                    polygon.ringArray.map(ring =>
+                        ring.pointArray.map(point =>
+                            point.xy.projectToPoint(spatialReference)
+                        )
+                    )
+                );
+                const multiPolyRings = multiPolyCoords.map(coord =>
+                    coord.map(ring =>
+                        ring.map(point =>
+                            [point.x, point.y]
+                        )
+                    )
+                );
+                const rings = [].concat.apply([], multiPolyRings);
+                const multiPolyStyle = geometry.polygonArray.map(polygon =>
+                    ({
+                        outlineColor: polygon.outlineColor,
+                        outlineWidth: polygon.outlineWidth,
+                        fillColor: polygon.fillColor,
+                        fillOpacity: polygon.fillOpacity,
+                    })
+                );
+                this._addMultiPolygon(rings, spatialReference, id, multiPolyStyle);
             }
-
-            // TODO: add 'private' functions and conditions for other geometry types as well
         });
     }
 
@@ -405,8 +428,8 @@ class GraphicsRecord extends root.Root {
         });
 
         const lineSymbol = new this._bundle.SimpleLineSymbol();
-        lineSymbol.setColor(style.lineColor);
-        lineSymbol.setWidth(style.lineWidth);
+        lineSymbol.setColor(style.outlineColor);
+        lineSymbol.setWidth(style.outlineWidth);
 
         const fillColor = new this._bundle.Color(style.fillColor);
         fillColor.a = style.fillOpacity;
@@ -416,6 +439,39 @@ class GraphicsRecord extends root.Root {
         fillSymbol.setOutline(lineSymbol);
 
         const marker = new this._bundle.Graphic(polygon, fillSymbol);
+
+        marker.geometry.apiId = id;
+        this._layer.add(marker);
+    }
+
+    /**
+     * Add multiple polygons where specified using the rings provided.
+     *
+     * @function _addMultiPolygon
+     * @private
+     * @param {Array} rings                      a 3D array of polygon rings containing an array of coordinates
+     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {String} id                        id of api geometry being added to map
+     * @param {Array} multiPolyStyle             an array of settings such as color and opacity for each polygons
+     */
+    _addMultiPolygon(rings, spatialReference, id, multiPolyStyle) {
+        const multiPolygon = new this._bundle.Polygon({
+            rings,
+            spatialReference
+        });
+
+        const lineSymbol = new this._bundle.SimpleLineSymbol();
+        lineSymbol.setColor(multiPolyStyle[0].outlineColor);
+        lineSymbol.setWidth(multiPolyStyle[0].outlineWidth);
+
+        const fillColor = new this._bundle.Color(multiPolyStyle[0].fillColor);
+        fillColor.a = multiPolyStyle[0].fillOpacity;
+
+        const fillSymbol = new this._bundle.SimpleFillSymbol();
+        fillSymbol.setColor(fillColor);
+        fillSymbol.setOutline(lineSymbol);
+
+        const marker = new this._bundle.Graphic(multiPolygon, fillSymbol);
 
         marker.geometry.apiId = id;
         this._layer.add(marker);
