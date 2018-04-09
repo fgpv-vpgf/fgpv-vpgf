@@ -645,6 +645,7 @@ export class SimpleLayer extends BaseLayer {
                         oldValue._hoverRemoved.next(oldValue._id);
                     }
 
+                    // TODO: change this to remove geometry based on apiId instead of index since that was added to the graphic in geoApi
                     this._viewerLayer.removeGeometry(index);
                     this._geometryArray.splice(index, 1);
                     this._geometryRemoved.next([oldValue]);
@@ -661,6 +662,7 @@ export class SimpleLayer extends BaseLayer {
                             oldValue._hoverRemoved.next(oldValue._id);
                         }
 
+                        // TODO: change this to remove geometry based on apiId instead of index since that was added to the graphic in geoApi
                         this._viewerLayer.removeGeometry(index);
                         this._geometryArray.splice(index, 1);
                         geometriesRemoved.push(oldValue);
@@ -681,6 +683,7 @@ export class SimpleLayer extends BaseLayer {
 
                 // always remove first index because when we remove it from esri layer instance, it removes from array as well
                 // so updated index will always be 0, and since we're removing all geometry, we can keep removing from start of array
+                // TODO: change this to remove geometry based on apiId instead of index since that was added to the graphic in geoApi
                 this._viewerLayer.removeGeometry(0);
             });
             this._geometryArray = [];

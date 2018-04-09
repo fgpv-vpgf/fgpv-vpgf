@@ -63,6 +63,7 @@ function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceSer
             const legendBlocks = configService.getSync.map.legendBlocks;
             let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
 
+            // TODO: fix this, will only remove 1 instance from legend if there are multiple legend blocks referencing it  ?
             if (layerToRemove) {
                 if (index !== undefined) {
                     // in cases of dynamic, if index specified, remove only that child, otherwise we choose to remove entire group below

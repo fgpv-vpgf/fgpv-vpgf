@@ -606,6 +606,41 @@ export class Polygon extends BaseGeometry {
     }
 }
 
+/** A MultiPolygon geometry containing a number of Polygons. */
+export class MultiPolygon extends BaseGeometry {
+    /** @ignore */
+    _polygonArray: Array<Polygon> = [];
+
+    constructor(id: string | number, polygons: Array<Polygon>) {
+        super(id.toString());
+
+        polygons.forEach((polygon, index) => {
+            const subId = (index < 10) ? '0' + index : index;
+            const newId = id + '-' + subId;
+
+            const points = polygon.ringArray.map(ring => ring.pointArray);
+            const styleOptions = {
+                outlineColor: polygon.outlineColor,
+                outlineWidth: polygon.outlineWidth,
+                fillColor: polygon.fillColor,
+                fillOpacity: polygon.fillOpacity
+            }
+
+            this._polygonArray.push(new Polygon(newId, points, styleOptions));
+        });
+    }
+
+    /** Returns an array of the contained polygons. A new array is returned each time this is called. */
+    get polygonArray(): Array<Polygon> {
+        return [ ...this._polygonArray ];
+    }
+
+    /** Returns the string 'MultiPolygon'. */
+    get type(): string {
+        return 'MultiPolygon';
+    }
+}
+
 // Descriptors -----------------------
 
 /** Guarantees functions with a parameter of type `XY | XYLiteral` to be of type XY. */
