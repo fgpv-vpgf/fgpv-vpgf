@@ -7,9 +7,7 @@
  * The `mdDialog` decorator modifies the angular material $mdDialog service
  */
 
-angular
-    .module('material.components.dialog')
-    .decorator('$mdDialog', mdDialog);
+angular.module('material.components.dialog').decorator('$mdDialog', mdDialog);
 
 function mdDialog($delegate, $q) {
     'ngInject';
@@ -31,6 +29,20 @@ function mdDialog($delegate, $q) {
     function show(opts) {
         return $q(resolve => {
             opts.focusOnOpen = opts.focusOnOpen === false ? false : true;
+
+            const originalOnShowing = opts.onShowing;
+            opts.onShowing = (scope, element) => {
+                // wrap dialog into a content node, but only once
+                if (element.find('.rv-inner-shell').length === 0) {
+                    element.find('md-dialog').wrap('<div class="rv-inner-shell"></div>');
+                }
+
+                // run original `onShowing` callback
+                if (originalOnShowing) {
+                    originalOnShowing(scope, element);
+                }
+            };
+
             opts.onComplete = (_, element) => {
                 // these traps are not needed and can cause issues, remove from DOM
                 element.find('.md-dialog-focus-trap').remove();

@@ -8,14 +8,44 @@
         position: absolute;
         z-index: -1;
 
+        // the inner shell (will) contains all the map controls
+        // the inner shell can be resized so the controls occupy a certain region and them map overflows them filling the outer shell
+        .rv-inner-shell {
+            width: inherit;
+            height: inherit;
+
+            max-width: 100%;
+            max-height: 100%;
+
+            // for example
+            /* width: 880px;
+            position: relative;
+            margin: 100px auto 0 auto;
+            height: calc(100% - 300px); */
+
+            pointer-events: none;
+
+            > * {
+                pointer-events: all;
+            }
+        }
+
+        // center dialogs
+        .md-dialog-container > .rv-inner-shell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-self: flex-start;
+        }
+
         &:after {
-            content: "";
+            content: '';
             position: absolute;
             top: 0;
             bottom: 0;
             right: 0;
             left: 0;
-            background-color: #FFFFFF;
+            background-color: #ffffff;
             z-index: -2;
         }
 
