@@ -27,7 +27,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, intentionService) {
+function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
     const ref = {
         legendElementCounter: 0,
@@ -1803,12 +1803,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, inten
      * @class EPSG
      */
     class EPSG {
-        constructor(epsg) {
-            this._source = epsg;
+        constructor(method) {
+            this._method = method;
             this._lookup = (() => {});
         }
 
-        get source() { return this._source; }
+        get method() { return this._method; }
         get lookup() { return this._lookup; }
 
         set lookup(lookup) { this._lookup = lookup; }
@@ -1820,15 +1820,21 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, inten
      */
     class Intentions {
         constructor(source) {
-            this._epsg = new EPSG(source.epsg);
+            if (!source) {
+                this._epsg = new EPSG('default');
+                this._instructions = {
+                    epsg: 'default'
+                };
+            } else {
+                this._epsg = new EPSG(source.epsg);
+                this._instructions = source;
+            }
         }
 
         get epsg() { return this._epsg; }
 
-        get source() {
-            return {
-                epsg: this.epsg.source
-            }
+        get instructions() {
+            return this._instructions;
         }
     }
 
@@ -2381,11 +2387,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope, inten
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
-
-            if (configSource.intentions) {
-                this._intentions = new Intentions(configSource.intentions);
-                intentionService.loadIntentions(this.intentions);
-            }
+            this._intentions = new Intentions(configSource.intentions);
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
