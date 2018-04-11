@@ -28,7 +28,6 @@ function lookup(code: string | number) {
 
 export default {
     preInit: () => {
-        console.log('Intention: epsg pre-initialized');
         return lookup;
     }
 }
