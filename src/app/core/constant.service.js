@@ -79,8 +79,9 @@ function events($rootScope) {
         rvApiMapAdded: 'rvApiMapAdded',
         rvApiLayerAdded: 'rvApiLayerAdded',
 
-        rvIntentionsPreInited: 'rvIntentionsPreInited',
-        rvIntentionsInited: 'rvIntentionsInited'
+        rvEPSGPreInited: 'rvEPSGPreInited', // fire when intention EPSG has been pre-inited
+        rvIntentionsPreInited: 'rvIntentionsPreInited', // fire when all intentions have been pre-iinitialized
+        rvIntentionsInited: 'rvIntentionsInited'// fire when all intentions have been initialized
     };
 }
 
