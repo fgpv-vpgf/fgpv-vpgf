@@ -29,6 +29,11 @@ function intentionService(events, $rootScope) {
     function preInitialize(intentions) {
         let instructions = intentions.instructions;
 
+        // signal for all intentions have been pre-inited
+        events.$on([events.rvEPSGPreInited], ()=> {
+            events.$broadcast(events.rvIntentionsPreInited);
+        });
+
         // pre-initialize all available intentions
         for (let intent in instructions) {
             if (intent === 'epsg') {
@@ -40,8 +45,6 @@ function intentionService(events, $rootScope) {
             }
         }
 
-        events.$broadcast(events.rvIntentionsPreInited);
-
         /**
          * Pre-initialize EPSG lookup intention
          *
@@ -52,10 +55,12 @@ function intentionService(events, $rootScope) {
             if (typeof intent.preInit() === 'function') {
                 intentions.epsg.lookup = intent.preInit();
                 console.log('Intention: epsg pre-initialized');
+                events.$broadcast(events.rvEPSGPreInited);
             } else {
                 intent.preInit().then(lookup => {
                     intentions.epsg.lookup = lookup;
                     console.log('Intention: epsg pre-initialized');
+                    events.$broadcast(events.rvEPSGPreInited);
                 });
             }
         }
