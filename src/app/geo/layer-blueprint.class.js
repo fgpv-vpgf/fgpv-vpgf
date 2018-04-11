@@ -226,7 +226,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          */
         generateLayer() {
             const intentions = configService.getSync.intentions;
-            const lookup = intentions ? intentions.epsg : undefined;
+            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
 
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
                 this.config, undefined, lookup);
