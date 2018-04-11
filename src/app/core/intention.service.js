@@ -12,82 +12,89 @@ angular
     .module('app.core')
     .factory('intentionService', intentionService);
 
-function intentionService(events) {
+function intentionService(events, $rootScope) {
     const service = {
-        loadIntentions
+        preInitialize,
+        initialize
     };
 
     return service;
 
     /**
-     * Load and initialize requested intentions
-     *
-     * @function loadIntentions
-     * @param {Object} intentions an Intentions object containing loading instructions
-     */
-    function loadIntentions(intentions) {
-        // execute pre-init
-        executePreInit(intentions);
-
-        // execute init
-        events.$on(events.rvMapLoaded, (_, mapInstance) => {
-            executeInit(intentions.source, mapInstance);
-        });
-    }
-
-    /**
-     * Store the EPSG lookup function for later uses if provided
-     *
-     * @function setEPSGlookup
-     * @param {Object} intentions an Intentions object containing loading instructions
-     */
-    function setEPSGLookup(intentions) {
-        let intentionObj = intentions.source;
-
-        if (intentionObj.epsg === 'default') {
-            intentions.epsg.lookup = EPSG.preInit();
-        } else if (intentionObj.epsg !== 'none') {
-            intentions.epsg.lookup = window[intentionObj.epsg].preInit();
-        }
-    }
-
-    /**
      * Pre-initialize intentions before the map is ready
      *
-     * @function executePreInit
+     * @function preInitialize
      * @param {Object} intentions an Intentions object containing loading instructions
      */
-    function executePreInit(intentions) {
-        let preInitPromises = [];
-        let intentionObj = intentions.source;
+    function preInitialize(intentions) {
+        let instructions = intentions.instructions;
 
-        for (let intent in intentionObj) {
+        // pre-initialize all available intentions
+        for (let intent in instructions) {
             if (intent === 'epsg') {
-                setEPSGLookup(intentions);
+                if (instructions.epsg === 'default') {
+                    epsgPreInit(EPSG);
+                } else if (instructions.epsg !== 'none') {
+                    epsgPreInit(window[instructions.epsg]);
+                }
             }
         }
 
-        Promise.all(preInitPromises).then((values) => {
-            events.$broadcast(events.rvIntentionsPreInited);
-        });
+        events.$broadcast(events.rvIntentionsPreInited);
+
+        /**
+         * Pre-initialize EPSG lookup intention
+         *
+         * @function epsgPreInit
+         * @param {Object} intent an Intent object returned by the intention
+         */
+        function epsgPreInit(intent) {
+            if (typeof intent.preInit() === 'function') {
+                intentions.epsg.lookup = intent.preInit();
+                console.log('Intention: epsg pre-initialized');
+            } else {
+                intent.preInit().then(lookup => {
+                    intentions.epsg.lookup = lookup;
+                    console.log('Intention: epsg pre-initialized');
+                });
+            }
+        }
     }
 
     /**
      * Initialize intentions after the map is ready
      *
-     * @function executePreInit
-     * @param {Object} intentionObj an Intentions object containing loading instructions
-     * @param {object} mapInstance map instance of RAMP
+     * @function initialize
+     * @param {Object} intentions an Intentions object containing loading instructions
+     * @param {object} mapi map instance of RAMP
      */
-    function executeInit(intentionObj, mapInstance) {
-        for (let intent in intentionObj) {
-            if (!intentionObj[intent] || intent === 'epsg') {
-                break;
-            } else if (intentionObj[intent] !== 'default' || intentionObj[intent] !== 'none') {
-                window[intentionObj[intent]].init(mapInstance);
+    function initialize(intentions, mapi) {
+        let instructions = intentions.instructions;
+
+        // initialize all available intentions
+        for (let intent in instructions) {
+            if (intent === 'epsg') {
+                if (instructions.epsg === 'default') {
+                    epsgInit(EPSG);
+                } else if (instructions.epsg !== 'none') {
+                    epsgInit(window[instructions.epsg]);
+                }
             }
         }
 
         events.$broadcast(events.rvIntentionsInited);
+
+        /**
+         * initialize EPSG lookup intention
+         *
+         * @function epsgInit
+         * @param {Object} intent an Intent object returned by the intention
+         */
+        function epsgInit(intent) {
+            if (intent.init !== undefined) {
+                intent.init(mapi);
+                console.log('Intention: epsg initialized');
+            }
+        }
     }
 }
