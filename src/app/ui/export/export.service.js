@@ -105,6 +105,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
             // watch for the selected option to change and update all the export components
             self.scope.$watch('self.exportSizes.selectedOption', (newValue, oldValue) => {
                 if (oldValue !== newValue && newValue !== self.exportSizes.customOption) {
+                    self.exportSizes.customToggled = true;
                     updateComponents();
                 }
             });
