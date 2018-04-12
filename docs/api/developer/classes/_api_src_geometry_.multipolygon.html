@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Polygon | r2v2</title>
+	<title>MultiPolygon | r2v2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
 				</li>
 				<li>
-					<a href="_api_src_geometry_.polygon.html">Polygon</a>
+					<a href="_api_src_geometry_.multipolygon.html">MultiPolygon</a>
 				</li>
 			</ul>
-			<h1>Class Polygon</h1>
+			<h1>Class MultiPolygon</h1>
 		</div>
 	</div>
 </header>
@@ -72,20 +72,24 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A Polygon geometry containing a number of LinearRings.</p>
+						<p>A MultiPolygon geometry containing a number of Polygons.</p>
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>example</dt>
-						<dd><p>Create polygons using different styles and add to map</p>
+						<dd><p>Create a multipolygon and add to map</p>
 							<pre><code class="lang-js"><span class="hljs-keyword">var</span> pointA = <span class="hljs-keyword">new</span> RZ.GEO.Point(<span class="hljs-number">0</span>, <span class="hljs-string">''</span>, [<span class="hljs-number">-79</span>, <span class="hljs-number">43</span>]);
 <span class="hljs-keyword">var</span> pointB = <span class="hljs-keyword">new</span> RZ.GEO.Point(<span class="hljs-number">1</span>, <span class="hljs-string">''</span>, [<span class="hljs-number">-49</span>, <span class="hljs-number">70</span>]);
 
 <span class="hljs-comment">// default settings - only the outline ring, no fill for polygon</span>
-<span class="hljs-keyword">var</span> polygonA = <span class="hljs-keyword">new</span> RZ.GEO.Polygon(<span class="hljs-number">10000</span>, [[pointA, [<span class="hljs-number">-79</span>, <span class="hljs-number">70</span>], pointB, [<span class="hljs-number">-49</span>, <span class="hljs-number">43</span>]], [[<span class="hljs-number">-70</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-70</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">45</span>]]]);
+<span class="hljs-keyword">var</span> polygonA = <span class="hljs-keyword">new</span> RZ.GEO.Polygon(<span class="hljs-number">100</span>, [[pointA, [<span class="hljs-number">-79</span>, <span class="hljs-number">70</span>], pointB, [<span class="hljs-number">-49</span>, <span class="hljs-number">43</span>]], [[<span class="hljs-number">-70</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-70</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">45</span>]]]);
 <span class="hljs-comment">// custom settings - just the fill for the polygon, no outline ring</span>
-<span class="hljs-keyword">var</span> polygonB = <span class="hljs-keyword">new</span> RZ.GEO.Polygon(<span class="hljs-number">10001</span>, [[<span class="hljs-number">-10</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-10</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">45</span>]], { <span class="hljs-attr">outlineWidth</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">fillColor</span>: <span class="hljs-string">'#000000'</span>, <span class="hljs-attr">fillOpacity</span>: <span class="hljs-number">1</span> });
+<span class="hljs-keyword">var</span> polygonB = <span class="hljs-keyword">new</span> RZ.GEO.Polygon(<span class="hljs-number">101</span>, [], { <span class="hljs-attr">outlineWidth</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">fillColor</span>: <span class="hljs-string">'#000000'</span>, <span class="hljs-attr">fillOpacity</span>: <span class="hljs-number">1</span> });
 
-RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeometry([polygonA, polygonB]);
+<span class="hljs-keyword">var</span> linearRingC = <span class="hljs-keyword">new</span> polygonB.LinearRing([[<span class="hljs-number">-10</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-10</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">45</span>]]);
+polygonB.addLinearRings([linearRingC]);
+<span class="hljs-keyword">var</span> multiPolygonA = <span class="hljs-keyword">new</span> RZ.GEO.MultiPolygon(<span class="hljs-number">1000</span>, [polygonA, polygonB]);
+
+RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeometry(multiPolygonA);
 </code></pre>
 						</dd>
 					</dl>
@@ -98,7 +102,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 						<a href="_api_src_geometry_.basegeometry.html" class="tsd-signature-type">BaseGeometry</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">Polygon</span>
+								<span class="target">MultiPolygon</span>
 							</li>
 						</ul>
 					</li>
@@ -111,41 +115,39 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.polygon.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.multipolygon.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#_fillcolor" class="tsd-kind-icon">_fill<wbr>Color</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#_fillopacity" class="tsd-kind-icon">_fill<wbr>Opacity</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#_hover" class="tsd-kind-icon">_hover</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#_id" class="tsd-kind-icon">_id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#_outlinecolor" class="tsd-kind-icon">_outline<wbr>Color</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#_outlinewidth" class="tsd-kind-icon">_outline<wbr>Width</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#_ringarray" class="tsd-kind-icon">_ring<wbr>Array</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#_fillcolor" class="tsd-kind-icon">_fill<wbr>Color</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#_fillopacity" class="tsd-kind-icon">_fill<wbr>Opacity</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#_hover" class="tsd-kind-icon">_hover</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#_id" class="tsd-kind-icon">_id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#_outlinecolor" class="tsd-kind-icon">_outline<wbr>Color</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#_outlinewidth" class="tsd-kind-icon">_outline<wbr>Width</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#_polygonarray" class="tsd-kind-icon">_polygon<wbr>Array</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#linearring" class="tsd-kind-icon">Linear<wbr>Ring</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#fillopacity" class="tsd-kind-icon">fill<wbr>Opacity</a></li>
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#hover" class="tsd-kind-icon">hover</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#outlinecolor" class="tsd-kind-icon">outline<wbr>Color</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#outlinewidth" class="tsd-kind-icon">outline<wbr>Width</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#ringarray" class="tsd-kind-icon">ring<wbr>Array</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.polygon.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#fillopacity" class="tsd-kind-icon">fill<wbr>Opacity</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#hover" class="tsd-kind-icon">hover</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#outlinecolor" class="tsd-kind-icon">outline<wbr>Color</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#outlinewidth" class="tsd-kind-icon">outline<wbr>Width</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_geometry_.multipolygon.html#polygonarray" class="tsd-kind-icon">polygon<wbr>Array</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_api_src_geometry_.multipolygon.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_geometry_.polygon.html#addlinearrings" class="tsd-kind-icon">add<wbr>Linear<wbr>Rings</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.polygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_api_src_geometry_.multipolygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a></li>
 							</ul>
 						</section>
 					</div>
@@ -157,19 +159,19 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Polygon<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, elements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, styleOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Multi<wbr>Polygon<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, polygons<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a><span class="tsd-signature-symbol">&gt;</span>, styleOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.multipolygon.html" class="tsd-signature-type">MultiPolygon</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L624">api/src/geometry.ts:624</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L733">api/src/geometry.ts:733</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructs a Polygon from the given array of points or ring coordinates.</p>
+									<p>Constructs a MultiPolygon from the given array of Polygons.</p>
 								</div>
 								<p>The different style options and values available are the following:</p>
 								<ul>
@@ -178,8 +180,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 											<li>fillColor:           string hex code. default is &#39;#000000&#39;.
 												<li>fillOpacity:         number between 0 and 1. default is 0.
 								</ul>
-								<p>NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
-								TODO: add option for polygon icon fill.</p>
+								<p>TODO: add option for multipolygon icon fill.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -187,13 +188,13 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 									<h5>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>elements: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.point.html" class="tsd-signature-type">Point</a><span class="tsd-signature-symbol"> | </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>polygons: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> styleOptions: <a href="../interfaces/_api_src_geometry_.polygonstyleoptions.html" class="tsd-signature-type">PolygonStyleOptions</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.multipolygon.html" class="tsd-signature-type">MultiPolygon</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -206,7 +207,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					<div class="tsd-signature tsd-kind-icon">_fill<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;#000000&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L622">api/src/geometry.ts:622</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L731">api/src/geometry.ts:731</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -222,7 +223,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					<div class="tsd-signature tsd-kind-icon">_fill<wbr>Opacity<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L624">api/src/geometry.ts:624</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L733">api/src/geometry.ts:733</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -289,7 +290,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;#000000&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L618">api/src/geometry.ts:618</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L727">api/src/geometry.ts:727</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -305,7 +306,7 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					<div class="tsd-signature tsd-kind-icon">_outline<wbr>Width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L620">api/src/geometry.ts:620</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L729">api/src/geometry.ts:729</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -316,12 +317,12 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_ringarray" class="tsd-anchor"></a>
-					<h3>_ring<wbr>Array</h3>
-					<div class="tsd-signature tsd-kind-icon">_ring<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<a name="_polygonarray" class="tsd-anchor"></a>
+					<h3>_polygon<wbr>Array</h3>
+					<div class="tsd-signature tsd-kind-icon">_polygon<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L616">api/src/geometry.ts:616</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L725">api/src/geometry.ts:725</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -335,37 +336,6 @@ RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeom
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="linearring" class="tsd-anchor"></a>
-					<h3>Linear<wbr>Ring</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> LinearRing<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LinearRing</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L570">api/src/geometry.ts:570</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
-									There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>example</dt>
-									<dd><p>Create a linearring and add to polygon</p>
-										<pre><code class="lang-js"><span class="hljs-keyword">var</span> linearRingA = <span class="hljs-keyword">new</span> polygonB.LinearRing([[<span class="hljs-number">-10</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-10</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">45</span>]]);
-polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linear ring after creating the polygon</span>
-</code></pre>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LinearRing</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="fillcolor" class="tsd-anchor"></a>
 					<h3>fill<wbr>Color</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
@@ -375,7 +345,7 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L687">api/src/geometry.ts:687</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L791">api/src/geometry.ts:791</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -397,7 +367,7 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L692">api/src/geometry.ts:692</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L796">api/src/geometry.ts:796</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -489,7 +459,7 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L677">api/src/geometry.ts:677</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L781">api/src/geometry.ts:781</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,7 +481,7 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L682">api/src/geometry.ts:682</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L786">api/src/geometry.ts:786</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -524,24 +494,24 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="ringarray" class="tsd-anchor"></a>
-					<h3>ring<wbr>Array</h3>
+					<a name="polygonarray" class="tsd-anchor"></a>
+					<h3>polygon<wbr>Array</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ringArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> polygonArray<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L672">api/src/geometry.ts:672</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L776">api/src/geometry.ts:776</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns an array of the contained rings. A new array is returned each time this is called.</p>
+									<p>Returns an array of the contained polygons. A new array is returned each time this is called.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.polygon.html" class="tsd-signature-type">Polygon</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -556,12 +526,12 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L697">api/src/geometry.ts:697</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L801">api/src/geometry.ts:801</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the string &#39;Polygon&#39;.</p>
+									<p>Returns the string &#39;MultiPolygon&#39;.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -569,31 +539,8 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addlinearrings" class="tsd-anchor"></a>
-					<h3>add<wbr>Linear<wbr>Rings</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Linear<wbr>Rings<span class="tsd-signature-symbol">(</span>linearRings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L667">api/src/geometry.ts:667</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>linearRings: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="removehover" class="tsd-anchor"></a>
 					<h3>remove<wbr>Hover</h3>
@@ -671,81 +618,75 @@ polygonA.addLinearRings([linearRingA]);  <span class="hljs-comment">// add linea
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.multipolygon.html" class="tsd-kind-icon">Multi<wbr>Polygon</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_api_src_geometry_.polygon.html" class="tsd-kind-icon">Polygon</a>
+						<a href="_api_src_geometry_.multipolygon.html" class="tsd-kind-icon">Multi<wbr>Polygon</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_api_src_geometry_.polygon.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_api_src_geometry_.multipolygon.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#_fillcolor" class="tsd-kind-icon">_fill<wbr>Color</a>
+								<a href="_api_src_geometry_.multipolygon.html#_fillcolor" class="tsd-kind-icon">_fill<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#_fillopacity" class="tsd-kind-icon">_fill<wbr>Opacity</a>
+								<a href="_api_src_geometry_.multipolygon.html#_fillopacity" class="tsd-kind-icon">_fill<wbr>Opacity</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#_hover" class="tsd-kind-icon">_hover</a>
+								<a href="_api_src_geometry_.multipolygon.html#_hover" class="tsd-kind-icon">_hover</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a>
+								<a href="_api_src_geometry_.multipolygon.html#_hoverremoved" class="tsd-kind-icon">_hover<wbr>Removed</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#_id" class="tsd-kind-icon">_id</a>
+								<a href="_api_src_geometry_.multipolygon.html#_id" class="tsd-kind-icon">_id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#_outlinecolor" class="tsd-kind-icon">_outline<wbr>Color</a>
+								<a href="_api_src_geometry_.multipolygon.html#_outlinecolor" class="tsd-kind-icon">_outline<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#_outlinewidth" class="tsd-kind-icon">_outline<wbr>Width</a>
+								<a href="_api_src_geometry_.multipolygon.html#_outlinewidth" class="tsd-kind-icon">_outline<wbr>Width</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#_ringarray" class="tsd-kind-icon">_ring<wbr>Array</a>
+								<a href="_api_src_geometry_.multipolygon.html#_polygonarray" class="tsd-kind-icon">_polygon<wbr>Array</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#linearring" class="tsd-kind-icon">Linear<wbr>Ring</a>
+								<a href="_api_src_geometry_.multipolygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#fillcolor" class="tsd-kind-icon">fill<wbr>Color</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#fillopacity" class="tsd-kind-icon">fill<wbr>Opacity</a>
+								<a href="_api_src_geometry_.multipolygon.html#fillopacity" class="tsd-kind-icon">fill<wbr>Opacity</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#hover" class="tsd-kind-icon">hover</a>
+								<a href="_api_src_geometry_.multipolygon.html#hover" class="tsd-kind-icon">hover</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#id" class="tsd-kind-icon">id</a>
+								<a href="_api_src_geometry_.multipolygon.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#outlinecolor" class="tsd-kind-icon">outline<wbr>Color</a>
+								<a href="_api_src_geometry_.multipolygon.html#outlinecolor" class="tsd-kind-icon">outline<wbr>Color</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#outlinewidth" class="tsd-kind-icon">outline<wbr>Width</a>
+								<a href="_api_src_geometry_.multipolygon.html#outlinewidth" class="tsd-kind-icon">outline<wbr>Width</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#ringarray" class="tsd-kind-icon">ring<wbr>Array</a>
+								<a href="_api_src_geometry_.multipolygon.html#polygonarray" class="tsd-kind-icon">polygon<wbr>Array</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_api_src_geometry_.polygon.html#type" class="tsd-kind-icon">type</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_api_src_geometry_.polygon.html#addlinearrings" class="tsd-kind-icon">add<wbr>Linear<wbr>Rings</a>
+								<a href="_api_src_geometry_.multipolygon.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="_api_src_geometry_.polygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a>
+								<a href="_api_src_geometry_.multipolygon.html#removehover" class="tsd-kind-icon">remove<wbr>Hover</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.polygon.html" class="tsd-kind-icon">Polygon</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.xy.html" class="tsd-kind-icon">XY</a>
 					</li>
