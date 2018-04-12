@@ -23,7 +23,7 @@
 
                             <!-- disable the custom size generate button when the image is being generated; make the button available if the custom size is changed, so the user can trigger generation of a differently sized image not waiting until the previous generation completes -->
                             <md-button
-                                ng-disabled="!exportForm.$valid || self.isGenerating() || self.exportSizes.tempOption.height === self.exportSizes.selectedOption.height"
+                                ng-disabled="!exportForm.$valid || self.isGenerating() || (self.exportSizes.tempOption.height === self.exportSizes.selectedOption.height && !self.exportSizes.customToggled)"
                                 ng-click="self.exportSizes.updateCustomOption(); self.updateComponents();"
                                 class="rv-button-square md-raised md-primary">
                                 {{ 'export.generate' | translate }}
