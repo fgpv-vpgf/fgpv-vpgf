@@ -279,15 +279,15 @@ class GraphicsRecord extends root.Root {
                     )
                 );
                 const rings = [].concat.apply([], multiPolyRings);
-                const multiPolyStyle = geometry.polygonArray.map(polygon =>
-                    ({
-                        outlineColor: polygon.outlineColor,
-                        outlineWidth: polygon.outlineWidth,
-                        fillColor: polygon.fillColor,
-                        fillOpacity: polygon.fillOpacity,
-                    })
-                );
-                this._addMultiPolygon(rings, spatialReference, id, multiPolyStyle);
+                const multiPolyStyle = {
+                    outlineColor: geometry.outlineColor,
+                    outlineWidth: geometry.outlineWidth,
+                    fillColor: geometry.fillColor,
+                    fillOpacity: geometry.fillOpacity
+                };
+
+                // addPolygon functions works for MultiPolygon as well, since we set up the rings in the proper format
+                this._addPolygon(rings, spatialReference, id, multiPolyStyle);
             }
         });
     }
@@ -439,39 +439,6 @@ class GraphicsRecord extends root.Root {
         fillSymbol.setOutline(lineSymbol);
 
         const marker = new this._bundle.Graphic(polygon, fillSymbol);
-
-        marker.geometry.apiId = id;
-        this._layer.add(marker);
-    }
-
-    /**
-     * Add multiple polygons where specified using the rings provided.
-     *
-     * @function _addMultiPolygon
-     * @private
-     * @param {Array} rings                      a 3D array of polygon rings containing an array of coordinates
-     * @param {Object} spatialReference          the projection the graphics should be in
-     * @param {String} id                        id of api geometry being added to map
-     * @param {Array} multiPolyStyle             an array of settings such as color and opacity for each polygons
-     */
-    _addMultiPolygon(rings, spatialReference, id, multiPolyStyle) {
-        const multiPolygon = new this._bundle.Polygon({
-            rings,
-            spatialReference
-        });
-
-        const lineSymbol = new this._bundle.SimpleLineSymbol();
-        lineSymbol.setColor(multiPolyStyle[0].outlineColor);
-        lineSymbol.setWidth(multiPolyStyle[0].outlineWidth);
-
-        const fillColor = new this._bundle.Color(multiPolyStyle[0].fillColor);
-        fillColor.a = multiPolyStyle[0].fillOpacity;
-
-        const fillSymbol = new this._bundle.SimpleFillSymbol();
-        fillSymbol.setColor(fillColor);
-        fillSymbol.setOutline(lineSymbol);
-
-        const marker = new this._bundle.Graphic(multiPolygon, fillSymbol);
 
         marker.geometry.apiId = id;
         this._layer.add(marker);
