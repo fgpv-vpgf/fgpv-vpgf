@@ -306,8 +306,7 @@ export class BaseGeometry {
 
     /**
      * Returns the type of the geometry object.
-     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon'.
-     * TODO: 'MultiLineString', 'MultiPolygon'.
+     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon', 'MultiLineString', 'MultiPolygon'.
      * Function implementation in subclasses.
      */
     get type(): string { return ''; }
