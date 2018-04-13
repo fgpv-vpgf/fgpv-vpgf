@@ -342,7 +342,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
 
         get value () {
             const layerRecord = layerRegistry.getLayerRecord(this.block.layerRecordId);
-            return layerRecord.config.refreshInterval;
+            return layerRecord ? layerRecord.config.refreshInterval : undefined;
         }
         set value (value) { this.action(value); }
 

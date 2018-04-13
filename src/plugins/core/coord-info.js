@@ -252,10 +252,10 @@
      */
     function parseNTS(nts) {
         // set 250k
-        const nts250 = nts.length > 0 ? `${nts[1].properties.identifier}-${nts[1].properties.name}` : '';
+        const nts250 = nts.length > 0 ? `${nts[0].properties.identifier}-${nts[0].properties.name}` : '';
 
         // set 50k
-        const nts50 = nts.length > 1 ? `${nts[2].properties.identifier}-${nts[2].properties.name}` : '';
+        const nts50 = nts.length > 1 ? `${nts[1].properties.identifier}-${nts[1].properties.name}` : '';
 
         return { nts250, nts50 };
     }
