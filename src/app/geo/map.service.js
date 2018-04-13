@@ -105,6 +105,10 @@ function mapServiceFactory(
         mapConfig.reset();
 
         referenceService.mapNode.empty();
+
+        // unsubscribe events
+        events.$unsubscribe(events.rvFeatureMouseOver);
+
         // FIXME: do we need to destroy scalebar and overview map even after we empty the node
     }
 
@@ -384,7 +388,7 @@ function mapServiceFactory(
      */
     function addMarkerHighlight(mapPoint, showHaze = null) {
         const mapConfig = configService.getSync.map;
-        
+
         mapConfig.highlightLayer.addMarker(mapPoint);
         _toggleHighlightHaze(showHaze);
     }
