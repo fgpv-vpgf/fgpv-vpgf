@@ -182,7 +182,19 @@ export class XYBounds {
     }
 }
 
-/** A hovertip to be displayed when a SimpleLayer geometry is moused onto. */
+/**
+ * A hovertip to be displayed when a SimpleLayer geometry is moused onto.
+ *
+ * @example Create hovertips using different settings and add to points
+ *
+ * ```js
+ * var hoverA = new RZ.GEO.Hover(0, 'my annotation', { position: 'right' });
+ * pointA.hover = hoverA;
+ *
+ * var hoverB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, position: 'left' });
+ * pointB.hover = hoverB;
+ * ```
+ */
 export class Hover {
     /** @ignore */
     _id: string;
@@ -294,8 +306,7 @@ export class BaseGeometry {
 
     /**
      * Returns the type of the geometry object.
-     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon'.
-     * TODO: 'MultiLineString', 'MultiPolygon'.
+     * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon', 'MultiLineString', 'MultiPolygon'.
      * Function implementation in subclasses.
      */
     get type(): string { return ''; }
@@ -324,7 +335,24 @@ export class BaseGeometry {
     }
 }
 
-/** A Point geometry containing a single XY. */
+/**
+ * A Point geometry containing a single XY.
+ *
+ * @example Create points using different icons and add to map
+ *
+ * ```js
+ * // image / data URL as icon
+ * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
+ *
+ * // svg path as icon
+ * var pointB = new RZ.GEO.Point(1, 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801', [79, 32]);
+ *
+ * // default icon
+ * var pointC = new RZ.GEO.Point(2, '', [79, 43]);
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry([pointA, pointB, pointC]);
+ * ```
+ */
 export class Point extends BaseGeometry {
     /** @ignore */
     _xy: XY;
@@ -362,7 +390,23 @@ export class Point extends BaseGeometry {
     }
 }
 
-/** A MultiPoint geometry containing a number of Points. */
+/**
+ * A MultiPoint geometry containing a number of Points.
+ *
+ * @example Create a multipoint using default icon and add to map
+ *
+ * ```js
+ * // same icon options as Point
+ *
+ * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ *
+ * // any existing point icons are ignored and the same icon (taken from multipoint) is used for all points
+ * var multipointA = new RZ.GEO.MultiPoint(10, '', [pointA, pointB, [79, 43], [-79, 32]]);
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry(multipointA);
+ * ```
+ */
 export class MultiPoint extends BaseGeometry {
     /** @ignore */
     _pointArray: Array<Point> = [];
@@ -413,7 +457,19 @@ export class MultiPoint extends BaseGeometry {
     }
 }
 
-/** A LineString geometry containing a number of Points. */
+/**
+ * A LineString geometry containing a number of Points.
+ *
+ * @example Create a linestring and add to map
+ *
+ * ```js
+ * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry(lineA);
+ * ```
+ */
 export class LineString extends MultiPoint {
     /** Constructs a LineString from the given Points, XYs or XYLiterals. */
     constructor(id: string | number, elements: Array<Point | XY | XYLiteral>) {
@@ -426,7 +482,20 @@ export class LineString extends MultiPoint {
     }
 }
 
-/** A MultiLineString geometry containing a number of LineStrings. */
+/**
+ * A MultiLineString geometry containing a number of LineStrings.
+ *
+ * @example Create a multilinestring and add to map
+ *
+ * ```js
+ * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
+ * var multilineA = new RZ.GEO.MultiLineString(1000, [lineA, [[-70, 45], [-70, 57], [-55, 57], [-55, 45]], [[-10, 45], [-10, 57], [-20, 57], [-20, 45]]]);
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry(multilineA);
+ * ```
+ */
 export class MultiLineString extends BaseGeometry {
     /** @ignore */
     _lineArray: Array<LineString> = [];
@@ -468,11 +537,34 @@ export class MultiLineString extends BaseGeometry {
     }
 }
 
-/** A Polygon geometry containing a number of LinearRings. */
+/**
+ * A Polygon geometry containing a number of LinearRings.
+ *
+ * @example Create polygons using different styles and add to map
+ *
+ * ```js
+ * var pointA = new RZ.GEO.Point(0, '', [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, '', [-49, 70]);
+ *
+ * // default settings - only the outline ring, no fill for polygon
+ * var polygonA = new RZ.GEO.Polygon(10000, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
+ * // custom settings - just the fill for the polygon, no outline ring
+ * var polygonB = new RZ.GEO.Polygon(10001, [[-10, 45], [-10, 57], [-20, 57], [-20, 45]], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry([polygonA, polygonB]);
+ * ```
+ */
 export class Polygon extends BaseGeometry {
     /**
      * A LinearRing geometry containing a number of x,y decimal degrees, representing a closed LineString.
      * There is no need to make the first x,y equal to the last x,y. The LinearRing is closed implicitly.
+     *
+     * @example Create a linearring and add to polygon
+     *
+     * ```js
+     * var linearRingA = new polygonB.LinearRing([[-10, 45], [-10, 57], [-20, 57], [-20, 45]]);
+     * polygonA.addLinearRings([linearRingA]);  // add linear ring after creating the polygon
+     * ```
      */
     get LinearRing() {
         let outerClass = this;
@@ -535,8 +627,8 @@ export class Polygon extends BaseGeometry {
      *
      * The different style options and values available are the following:
      * <ul>
-     *     <li>outlineColor:        string hex code. default is '#AFAFAF'.
-     *     <li>outlineWidth:        number in pixels. default is 3.
+     *     <li>outlineColor:        string hex code. default is '#000000'.
+     *     <li>outlineWidth:        number in pixels. default is 1.
      *     <li>fillColor:           string hex code. default is '#000000'.
      *     <li>fillOpacity:         number between 0 and 1. default is 0.
      * </ul>
@@ -603,6 +695,110 @@ export class Polygon extends BaseGeometry {
     /** Returns the string 'Polygon'. */
     get type(): string {
         return 'Polygon';
+    }
+}
+
+/**
+ * A MultiPolygon geometry containing a number of Polygons.
+ *
+ * @example Create a multipolygon and add to map
+ *
+ * ```js
+ * var pointA = new RZ.GEO.Point(0, '', [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, '', [-49, 70]);
+ *
+ * // default settings - only the outline ring, no fill for polygon
+ * var polygonA = new RZ.GEO.Polygon(100, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
+ * // custom settings - just the fill for the polygon, no outline ring
+ * var polygonB = new RZ.GEO.Polygon(101, [], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
+ *
+ * var linearRingC = new polygonB.LinearRing([[-10, 45], [-10, 57], [-20, 57], [-20, 45]]);
+ * polygonB.addLinearRings([linearRingC]);
+ * var multiPolygonA = new RZ.GEO.MultiPolygon(1000, [polygonA, polygonB]);
+ *
+ * RZ.mapById('<mapID>').simpleLayer.addGeometry(multiPolygonA);
+ * ```
+ */
+export class MultiPolygon extends BaseGeometry {
+    /** @ignore */
+    _polygonArray: Array<Polygon> = [];
+    /** @ignore */
+    _outlineColor: string = '#000000';
+    /** @ignore */
+    _outlineWidth: number = 1;
+    /** @ignore */
+    _fillColor: string = '#000000';
+    /** @ignore */
+    _fillOpacity: number = 0;
+
+    /**
+     * Constructs a MultiPolygon from the given array of Polygons.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>outlineColor:        string hex code. default is '#000000'.
+     *     <li>outlineWidth:        number in pixels. default is 1.
+     *     <li>fillColor:           string hex code. default is '#000000'.
+     *     <li>fillOpacity:         number between 0 and 1. default is 0.
+     * </ul>
+     *
+     * TODO: add option for multipolygon icon fill.
+     */
+    constructor(id: string | number, polygons: Array<Polygon>, styleOptions?: PolygonStyleOptions) {
+        super(id.toString());
+
+        if (styleOptions) {
+            if (styleOptions.outlineColor !== undefined) {
+                this._outlineColor = styleOptions.outlineColor;
+            }
+            if (styleOptions.outlineWidth !== undefined) {
+                this._outlineWidth = styleOptions.outlineWidth;
+            }
+            if (styleOptions.fillColor !== undefined) {
+                this._fillColor = styleOptions.fillColor;
+            }
+            if (styleOptions.fillOpacity !== undefined) {
+                this._fillOpacity = styleOptions.fillOpacity;
+            }
+        }
+
+        polygons.forEach((polygon, index) => {
+            const subId = (index < 10) ? '0' + index : index;
+            const newId = id + '-' + subId;
+
+            const points = polygon.ringArray.map(ring => ring.pointArray);
+            this._polygonArray.push(new Polygon(newId, points, styleOptions));
+        });
+    }
+
+    /** Returns an array of the contained polygons. A new array is returned each time this is called. */
+    get polygonArray(): Array<Polygon> {
+        return [ ...this._polygonArray ];
+    }
+
+    /** Returns the hex code of the color used for the lines of the ring. */
+    get outlineColor(): string {
+        return this._outlineColor;
+    }
+
+    /** Returns the width in pixels used for the lines of the ring. */
+    get outlineWidth(): number {
+        return this._outlineWidth;
+    }
+
+    /** Returns the hex code of the color used for the fill of the polygon. */
+    get fillColor(): string {
+        return this._fillColor;
+    }
+
+    /** Returns the opacity (between 0 and 1) for the fill of the polygon. */
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    /** Returns the string 'MultiPolygon'. */
+    get type(): string {
+        return 'MultiPolygon';
     }
 }
 

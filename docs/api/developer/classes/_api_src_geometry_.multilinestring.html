@@ -74,6 +74,18 @@
 					<div class="lead">
 						<p>A MultiLineString geometry containing a number of LineStrings.</p>
 					</div>
+					<dl class="tsd-comment-tags">
+						<dt>example</dt>
+						<dd><p>Create a multilinestring and add to map</p>
+							<pre><code class="lang-js"><span class="hljs-keyword">var</span> pointA = <span class="hljs-keyword">new</span> RZ.GEO.Point(<span class="hljs-number">0</span>, <span class="hljs-string">'https://image.flaticon.com/icons/svg/17/17799.svg'</span>, [<span class="hljs-number">-79</span>, <span class="hljs-number">43</span>]);
+<span class="hljs-keyword">var</span> pointB = <span class="hljs-keyword">new</span> RZ.GEO.Point(<span class="hljs-number">1</span>, <span class="hljs-string">''</span>, [<span class="hljs-number">79</span>, <span class="hljs-number">32</span>]);
+<span class="hljs-keyword">var</span> lineA = <span class="hljs-keyword">new</span> RZ.GEO.LineString(<span class="hljs-number">100</span>, [pointA, pointB]);
+<span class="hljs-keyword">var</span> multilineA = <span class="hljs-keyword">new</span> RZ.GEO.MultiLineString(<span class="hljs-number">1000</span>, [lineA, [[<span class="hljs-number">-70</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-70</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-55</span>, <span class="hljs-number">45</span>]], [[<span class="hljs-number">-10</span>, <span class="hljs-number">45</span>], [<span class="hljs-number">-10</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">57</span>], [<span class="hljs-number">-20</span>, <span class="hljs-number">45</span>]]]);
+
+RZ.mapById(<span class="hljs-string">'&lt;mapID&gt;'</span>).simpleLayer.addGeometry(multilineA);
+</code></pre>
+						</dd>
+					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -141,7 +153,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L435">api/src/geometry.ts:435</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L502">api/src/geometry.ts:502</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -172,7 +184,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hover">_hover</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L286">api/src/geometry.ts:286</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L298">api/src/geometry.ts:298</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -189,7 +201,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_hoverremoved">_hoverRemoved</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L288">api/src/geometry.ts:288</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L300">api/src/geometry.ts:300</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -206,7 +218,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#_id">_id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L284">api/src/geometry.ts:284</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L296">api/src/geometry.ts:296</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -222,7 +234,7 @@
 					<div class="tsd-signature tsd-kind-icon">_line<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.linestring.html" class="tsd-signature-type">LineString</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L435">api/src/geometry.ts:435</a></li>
+							<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L502">api/src/geometry.ts:502</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -247,7 +259,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#hover">hover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L307">api/src/geometry.ts:307</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L319">api/src/geometry.ts:319</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -264,7 +276,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#hover">hover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L310">api/src/geometry.ts:310</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L322">api/src/geometry.ts:322</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,7 +305,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#id">id</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L304">api/src/geometry.ts:304</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L316">api/src/geometry.ts:316</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -315,7 +327,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L468">api/src/geometry.ts:468</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L531">api/src/geometry.ts:531</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -337,7 +349,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L458">api/src/geometry.ts:458</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L521">api/src/geometry.ts:521</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -360,7 +372,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#type">type</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L473">api/src/geometry.ts:473</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L536">api/src/geometry.ts:536</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -385,7 +397,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L463">api/src/geometry.ts:463</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L526">api/src/geometry.ts:526</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -414,7 +426,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_api_src_geometry_.basegeometry.html">BaseGeometry</a>.<a href="_api_src_geometry_.basegeometry.html#removehover">removeHover</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/2aff621b/api/src/geometry.ts#L319">api/src/geometry.ts:319</a></li>
+									<li>Defined in <a href="https://github.com/JahidAhmed/fgpv-vpgf/blob/400ff71a/api/src/geometry.ts#L331">api/src/geometry.ts:331</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -521,6 +533,9 @@
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.multipoint.html" class="tsd-kind-icon">Multi<wbr>Point</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_geometry_.multipolygon.html" class="tsd-kind-icon">Multi<wbr>Polygon</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_src_geometry_.point.html" class="tsd-kind-icon">Point</a>
