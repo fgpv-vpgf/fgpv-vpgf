@@ -9,7 +9,8 @@ const geometryTypes = {
     MULTIPOINT: 'MultiPoint',
     LINESTRING: 'LineString',
     MULTILINESTRING: 'MultiLineString',
-    POLYGON: 'Polygon'
+    POLYGON: 'Polygon',
+    MULTIPOLYGON: 'MultiPolygon'
 }
 
 const defaultSymbols = {
@@ -240,32 +241,60 @@ class GraphicsRecord extends root.Root {
                 const icon = geometry.icon;
                 this._addPoint(coords, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
-                const points = coords.map(point => [ point.x, point.y ]);
+                const points = geometry.pointArray.map(point => {
+                    const p = point.xy.projectToPoint(spatialReference);
+                    return [p.x, p.y];
+                });
                 const icon = geometry.icon;
                 this._addMultiPoint(points, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.LINESTRING) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
-                const path = coords.map(point => [ point.x, point.y ]);
+                const path = geometry.pointArray.map(point => {
+                    const p = point.xy.projectToPoint(spatialReference);
+                    return [p.x, p.y];
+                });
                 this._addLine(path, spatialReference, id);
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
-                const coords = geometry.lineArray.map(line => line.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
-                const path = coords.map(path => path.map(point => [point.x, point.y]));
+                const path = geometry.lineArray.map(line =>
+                    line.pointArray.map(point => {
+                        const p = point.xy.projectToPoint(spatialReference);
+                        return [p.x, p.y];
+                    })
+                );
                 this._addMultiLine(path, spatialReference, id);
             } else if (geometry.type === geometryTypes.POLYGON) {
-                const coords = geometry.ringArray.map(ring => ring.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
-                const rings = coords.map(ring => ring.map(point => [point.x, point.y]));
+                const rings = geometry.ringArray.map(ring =>
+                    ring.pointArray.map(point => {
+                        const p = point.xy.projectToPoint(spatialReference);
+                        return [p.x, p.y];
+                    })
+                );
                 const style = {
-                    lineColor: geometry.outlineColor,
-                    lineWidth: geometry.outlineWidth,
+                    outlineColor: geometry.outlineColor,
+                    outlineWidth: geometry.outlineWidth,
+                    fillColor: geometry.fillColor,
+                    fillOpacity: geometry.fillOpacity
+                };
+                this._addPolygon(rings, spatialReference, id, style);
+            } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
+                const multiPolyRings = geometry.polygonArray.map(polygon =>
+                    polygon.ringArray.map(ring =>
+                        ring.pointArray.map(point => {
+                            const p = point.xy.projectToPoint(spatialReference);
+                            return [p.x, p.y];
+                        })
+                    )
+                );
+                const rings = [].concat.apply([], multiPolyRings);
+                const multiPolyStyle = {
+                    outlineColor: geometry.outlineColor,
+                    outlineWidth: geometry.outlineWidth,
                     fillColor: geometry.fillColor,
                     fillOpacity: geometry.fillOpacity
                 };
 
-                this._addPolygon(rings, spatialReference, id, style);
+                // addPolygon functions works for MultiPolygon as well, since we set up the rings in the proper format
+                this._addPolygon(rings, spatialReference, id, multiPolyStyle);
             }
-
-            // TODO: add 'private' functions and conditions for other geometry types as well
         });
     }
 
@@ -405,8 +434,8 @@ class GraphicsRecord extends root.Root {
         });
 
         const lineSymbol = new this._bundle.SimpleLineSymbol();
-        lineSymbol.setColor(style.lineColor);
-        lineSymbol.setWidth(style.lineWidth);
+        lineSymbol.setColor(style.outlineColor);
+        lineSymbol.setWidth(style.outlineWidth);
 
         const fillColor = new this._bundle.Color(style.fillColor);
         fillColor.a = style.fillOpacity;
