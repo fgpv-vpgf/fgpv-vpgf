@@ -353,10 +353,10 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             moment.locale(configService.getLang());
             const localeData = moment.localeData();
 
-            $mdDateLocale.months = localeData._months;
+            $mdDateLocale.months = localeData.months();
             $mdDateLocale.shortMonths = moment.monthsShort();
-            $mdDateLocale.days = localeData._weekdays;
-            $mdDateLocale.shortDays = localeData._weekdaysMin;
+            $mdDateLocale.days = localeData.weekdays();
+            $mdDateLocale.shortDays = localeData.weekdaysMin();
             $mdDateLocale.firstDayOfWeek = localeData._week.dow;
 
         });
