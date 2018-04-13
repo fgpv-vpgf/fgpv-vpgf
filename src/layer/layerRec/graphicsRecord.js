@@ -241,21 +241,33 @@ class GraphicsRecord extends root.Root {
                 const icon = geometry.icon;
                 this._addPoint(coords, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
-                const points = coords.map(point => [ point.x, point.y ]);
+                const points = geometry.pointArray.map(point => {
+                    const p = point.xy.projectToPoint(spatialReference);
+                    return [p.x, p.y];
+                });
                 const icon = geometry.icon;
                 this._addMultiPoint(points, spatialReference, icon, id);
             } else if (geometry.type === geometryTypes.LINESTRING) {
-                const coords = geometry.pointArray.map(point => point.xy.projectToPoint(spatialReference));
-                const path = coords.map(point => [ point.x, point.y ]);
+                const path = geometry.pointArray.map(point => {
+                    const p = point.xy.projectToPoint(spatialReference);
+                    return [p.x, p.y];
+                });
                 this._addLine(path, spatialReference, id);
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
-                const coords = geometry.lineArray.map(line => line.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
-                const path = coords.map(path => path.map(point => [point.x, point.y]));
+                const path = geometry.lineArray.map(line =>
+                    line.pointArray.map(point => {
+                        const p = point.xy.projectToPoint(spatialReference);
+                        return [p.x, p.y];
+                    })
+                );
                 this._addMultiLine(path, spatialReference, id);
             } else if (geometry.type === geometryTypes.POLYGON) {
-                const coords = geometry.ringArray.map(ring => ring.pointArray.map(point => point.xy.projectToPoint(spatialReference)));
-                const rings = coords.map(ring => ring.map(point => [point.x, point.y]));
+                const rings = geometry.ringArray.map(ring =>
+                    ring.pointArray.map(point => {
+                        const p = point.xy.projectToPoint(spatialReference);
+                        return [p.x, p.y];
+                    })
+                );
                 const style = {
                     outlineColor: geometry.outlineColor,
                     outlineWidth: geometry.outlineWidth,
@@ -264,18 +276,12 @@ class GraphicsRecord extends root.Root {
                 };
                 this._addPolygon(rings, spatialReference, id, style);
             } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
-                const multiPolyCoords = geometry.polygonArray.map(polygon =>
+                const multiPolyRings = geometry.polygonArray.map(polygon =>
                     polygon.ringArray.map(ring =>
-                        ring.pointArray.map(point =>
-                            point.xy.projectToPoint(spatialReference)
-                        )
-                    )
-                );
-                const multiPolyRings = multiPolyCoords.map(coord =>
-                    coord.map(ring =>
-                        ring.map(point =>
-                            [point.x, point.y]
-                        )
+                        ring.pointArray.map(point => {
+                            const p = point.xy.projectToPoint(spatialReference);
+                            return [p.x, p.y];
+                        })
                     )
                 );
                 const rings = [].concat.apply([], multiPolyRings);
