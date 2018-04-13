@@ -388,7 +388,6 @@ function mapServiceFactory(
      */
     function addMarkerHighlight(mapPoint, showHaze = null) {
         const mapConfig = configService.getSync.map;
-
         mapConfig.highlightLayer.addMarker(mapPoint);
         _toggleHighlightHaze(showHaze);
     }
