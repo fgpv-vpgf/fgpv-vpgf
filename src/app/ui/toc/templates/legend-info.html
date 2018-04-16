@@ -1,4 +1,6 @@
-<div ng-switch="self.block.infoType" class="rv-list-item-content rv-legend-{{ self.block.infoType }}">
+<div class="rv-list-item-content rv-legend-{{ self.block.infoType }}"
+
+    ng-switch="self.block.infoType">
 
     <h3 ng-switch-when="title" class="md-subhead">{{ self.block.content }}</h3>
 
@@ -6,7 +8,12 @@
 
     <img ng-switch-when="image" ng-src="{{ self.block.content }}" alt="">
 
-    <div ng-switch-when="unboundLayer">
+    <div
+        ng-switch-when="unboundLayer"
+
+        ng-mouseover="self.block.symbologyStack.fannedOut = true"
+        ng-mouseleave="self.block.symbologyStack.fannedOut = false">
+
         <rv-symbology-stack
             description="self.block.description"
             symbology="self.block.symbologyStack"
