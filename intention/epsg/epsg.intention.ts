@@ -15,7 +15,7 @@ function lookup(code: string | number) {
     const epsgRegex = /EPSG:(\d+)/;
     let matcher = String(code).match(urnRegex) || String(code).match(epsgRegex) || [];
 
-    if (!matcher || matcher.length < 2) {
+    if (matcher.length < 2) {
         throw new Error('Invalid code provided.');
     }
 
