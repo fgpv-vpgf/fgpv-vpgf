@@ -27,7 +27,6 @@ var epsgExt = (() => {
                 });
             });
             return lookup;
-        },
-        init: mApi => {}
+        }
     }
 })();
