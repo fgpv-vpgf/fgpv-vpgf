@@ -355,7 +355,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             super(blockConfig);
 
             this._symbologyStack =
-                new SymbologyStack({}, blockConfig.symbologyStack, this.symbologyRenderStyle, true);
+                new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle, true);
         }
 
         get blockType () {              return TYPES.INFO; }
@@ -430,7 +430,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._aggregateStates = ref.aggregateStates;
             this._symbologyStack = new SymbologyStack(
-                this.mainProxy, blockConfig.symbologyStack, blockConfig.symbologyRenderStyle, true);
+                this.mainProxy, blockConfig.symbologyStack, blockConfig.coverIcon, blockConfig.symbologyRenderStyle, true);
         }
 
         get mainProxyWrapper () { return this._mainProxyWrapper; }

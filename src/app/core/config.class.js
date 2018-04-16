@@ -1331,6 +1331,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._layerName = entrySource.layerName || '';
             this._description = entrySource.description || '';
+            this._coverIcon = entrySource.coverIcon;
             this._symbologyStack = entrySource.symbologyStack || [];
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
         }
@@ -1340,6 +1341,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get layerName () {              return this._layerName; }
         get description () {            return this._description; }
+        get coverIcon () {      return this._coverIcon; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
 
@@ -1352,6 +1354,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 entryType: this.entryType,
                 layerName: this.layerName,
                 description: this.description,
+                coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle
             };
