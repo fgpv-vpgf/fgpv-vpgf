@@ -16,7 +16,7 @@ angular
     .directive('rvInitMap', rvInitMap);
 
 function rvInitMap($rootScope, ConfigObject, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService) {
+    globalRegistry, identifyService, appInfo, gapiService, $mdDialog) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -66,6 +66,11 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 apiMap.fgpMap = mapInstance;
                 apiMap._legendStructure = configService.getSync.map.legend;
                 appInfo.mapi = apiMap;
+
+                // Required for FM to function properly
+                globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+                $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
+
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
                 window.RZ.mapAdded.next(apiMap);
