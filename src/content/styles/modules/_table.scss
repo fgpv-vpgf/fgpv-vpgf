@@ -438,6 +438,8 @@ rv-table-setting-panel {
                 .rv-filter-setting-name {
                     flex: 2 0 30%;
                     padding-left: 25px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .rv-filter-setting-item {
