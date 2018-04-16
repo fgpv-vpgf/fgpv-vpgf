@@ -1820,7 +1820,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      */
     class Intentions {
         constructor(source) {
-            if (!source) {
+            if (!source || Object.keys(source).length === 0) {
                 this._epsg = new EPSG('default');
                 this._instructions = {
                     epsg: 'default'

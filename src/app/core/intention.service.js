@@ -41,6 +41,8 @@ function intentionService(events, $rootScope) {
                     epsgPreInit(EPSG);
                 } else if (instructions.epsg !== 'none') {
                     epsgPreInit(window[instructions.epsg]);
+                } else {
+                    events.$broadcast(events.rvEPSGPreInited);
                 }
             }
         }
@@ -52,8 +54,9 @@ function intentionService(events, $rootScope) {
          * @param {Object} intent an Intent object returned by the intention
          */
         function epsgPreInit(intent) {
-            if (typeof intent.preInit() === 'function') {
-                intentions.epsg.lookup = intent.preInit();
+            const lookup = intent.preInit();
+            if (typeof lookup === 'function') {
+                intentions.epsg.lookup = lookup;
                 console.log('Intention: epsg pre-initialized');
                 events.$broadcast(events.rvEPSGPreInited);
             } else {

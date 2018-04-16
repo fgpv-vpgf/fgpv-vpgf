@@ -26,22 +26,8 @@ var epsgExt = (() => {
                         return null; // jscs:ignore jsDoc
                 });
             });
-            console.log('Extension: epsgLookup pre-initialized');
             return lookup;
         },
-        init: mApi => {
-            console.log('Extension: epsgLookup initialized');
-        }
-    }
-})();
-
-var dataTableExt = (() => {
-    return {
-        preInit: () => {
-            console.log('Extension: dataTable pre-initialized');
-        },
-        init: () => {
-            console.log('Extension: dataTable initialized');
-        }
+        init: mApi => {}
     }
 })();
