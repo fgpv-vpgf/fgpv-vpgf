@@ -79,7 +79,7 @@
             }
         }
 
-        &.rv-compound .rv-symbol {
+        &.rv-compound .rv-symbol:not(.rv-cover-icon) {
             $compound-icon-size: $icon-size - rem(0.2);
 
             width: $compound-icon-size;
@@ -133,6 +133,18 @@
             }
         }
 
+        // hide trigger button when the cover icon is set
+        .rv-symbol.rv-cover-icon {
+            ~ .rv-symbol-trigger {
+                opacity: 0 !important;
+            }
+
+            // hide all other symbols except for the cover symbol when stacked
+            ~ .rv-symbol {
+                visibility: hidden;
+            }
+        }
+
         .rv-symbol-trigger {
             // button which opens symbology section
             // transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
@@ -143,7 +155,6 @@
         // renders symbology as a list of icon-name pairs when expanded; symbol items remain 32x32 regardless of their actual size
         &.rv-render-icons {
             .rv-symbol {
-
                 flex-direction: row;
                 overflow: visible;
                 box-shadow: none;
@@ -174,7 +185,6 @@
         }
     }
 }
-
 
 ///// old
 /*
