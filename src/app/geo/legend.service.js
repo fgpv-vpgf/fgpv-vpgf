@@ -96,7 +96,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                 .filter(a => a)[0];
 
             // if the layer is being readded to the legend, regenerate the layer record to have up-to-date settings
-            if (index !== -1 && !legendItem) {
+            if (index !== -1 && legendItem) {
                 const blueprint = layerBlueprintsCollection[index];
                 layerRegistry.regenerateLayerRecord(blueprint);
             }
