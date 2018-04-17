@@ -1,4 +1,5 @@
 import marked from 'marked';
+import * as moment from 'moment-timezone';
 
 const templateURLs = {
     about: require('./about-dialog.html'),
@@ -43,7 +44,7 @@ angular
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
     basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, pluginService, geosearchService, appInfo) {
+    translations, $mdDialog, pluginService, geosearchService, appInfo, $mdDateLocale) {
 
     const service = {
         open,
@@ -348,6 +349,16 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
                     isChecked: isCurrentLanguage,
                     value: l
                 }));
+
+            moment.locale(configService.getLang());
+            const localeData = moment.localeData();
+
+            $mdDateLocale.months = localeData.months();
+            $mdDateLocale.shortMonths = moment.monthsShort();
+            $mdDateLocale.days = localeData.weekdays();
+            $mdDateLocale.shortDays = localeData.weekdaysMin();
+            $mdDateLocale.firstDayOfWeek = localeData._week.dow;
+
         });
 
         /**

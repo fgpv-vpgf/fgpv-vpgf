@@ -280,7 +280,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord.state === Geo.Layer.States.LOADED) {
+        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.isFileLayer() && layerRecord._layer.loaded)) {
             isRefreshed = true;
             _onLayerRecordLoad('rv-loaded');
         }

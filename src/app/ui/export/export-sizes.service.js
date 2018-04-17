@@ -48,7 +48,13 @@ function exportSizesService(ExportSize, referenceService) {
         resetTemporaryOption,
 
         isCustomOptionUpdated,
-        isCustomOptionSelected
+        isCustomOptionSelected,
+
+        // we bind the selectedOption to whichever is selected from dropdown, so if we select custom and generate image
+        // and then toggle between another size and back to custom, since the size matches, the generate button will be disabled
+        // see: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2619
+        // need to have a flag identifying whether we toggled out of custom size
+        customToggled: false
     };
 
     return service;
@@ -94,6 +100,7 @@ function exportSizesService(ExportSize, referenceService) {
      */
     function updateCustomOption() {
         service.customOption.height = service.tempOption.height;
+        service.customToggled = false;
     }
 
     /**
