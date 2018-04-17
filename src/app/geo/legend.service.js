@@ -95,15 +95,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                     entry : null)
                 .filter(a => a)[0];
 
-            // if the item is not being added to the legend, remove it from the map and API layers list as well
-            if (!legendItem) {
-                layerRegistry.removeLayerRecord(ld.id);
-                if (index !== -1) {
-                    layerBlueprintsCollection.splice(index, 1);
-                }
-            }
             // if the layer is being readded to the legend, regenerate the layer record to have up-to-date settings
-            else if (index !== -1) {
+            if (index !== -1 && !legendItem) {
                 const blueprint = layerBlueprintsCollection[index];
                 layerRegistry.regenerateLayerRecord(blueprint);
             }
