@@ -40,6 +40,11 @@ function events($rootScope) {
             $rootScope.$on(...args),
         $broadcast: (...args) =>
             $rootScope.$broadcast(...args),
+        $unsubscribe: (...events) => {
+            events.forEach(event => {
+                $rootScope.$$listeners[event] = [];
+            });
+        },
 
         rvReady: 'rvReady', // Fired when map should be created the first time; should not be broadcasted more then once
         rvApiHalt: 'rvApiHalt', // Fired when API should be put back into 'queue' mode
