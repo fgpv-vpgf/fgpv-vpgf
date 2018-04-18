@@ -63,8 +63,8 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         .css('display', 'block')
                         .css('left', north.screenX)
                         .css('top', Math.max(1, north.screenY))
-                        // .css('transform-origin', isNorthPole ? 'bottom left' : 'top center')
-                        .css('transform', isNorthPole ? 'translate(0%, -100%)' : `rotate(${north.rotationAngle}deg)`);
+                        .css('transform-origin', isNorthPole ? 'center bottom' : 'top center')
+                        .css('transform', isNorthPole ? 'translate(-20%, -80%)' : `rotate(${north.rotationAngle}deg)`);
                 }
             }
         });
