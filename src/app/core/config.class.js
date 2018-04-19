@@ -1799,6 +1799,46 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     /**
+     * EPSG Intention.
+     * @class EPSG
+     */
+    class EPSG {
+        constructor(method) {
+            this._method = method;
+            this._lookup = (() => {});
+        }
+
+        get method() { return this._method; }
+        get lookup() { return this._lookup; }
+
+        set lookup(lookup) { this._lookup = lookup; }
+    }
+
+    /**
+     * Intentions(internal extentions)
+     * @class Intentions
+     */
+    class Intentions {
+        constructor(source) {
+            if (!source || Object.keys(source).length === 0) {
+                this._epsg = new EPSG('default');
+                this._instructions = {
+                    epsg: 'default'
+                };
+            } else {
+                this._epsg = new EPSG(source.epsg);
+                this._instructions = source;
+            }
+        }
+
+        get epsg() { return this._epsg; }
+
+        get instructions() {
+            return this._instructions;
+        }
+    }
+
+    /**
      * Typed representation of the `map` section of the config.
      * @class Map
      */
@@ -2347,6 +2387,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
+            this._intentions = new Intentions(configSource.intentions);
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
@@ -2440,6 +2481,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
+        get intentions() { return this._intentions; }
 
         applyBookmark (value) {
             this.map.applyBookmark(value);

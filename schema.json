@@ -951,6 +951,19 @@
                 }
             },
             "required": [ "tileSchemas", "baseMaps" ]
+        },
+
+        "intentions": {
+            "type": "object",
+            "description": "Enable/Disable intentions or replace with your own implementation",
+            "properties": {
+                "epsg": {
+                    "description": "intention for EPSG Lookup",
+                    "type": "string",
+                    "default": "none"
+                }
+            },
+            "additionalProperties": false
         }
     },
 

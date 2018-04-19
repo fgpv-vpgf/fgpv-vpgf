@@ -14,7 +14,7 @@ angular
     .factory('geoService', geoService);
 
 function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-    identifyService, /*LayerBlueprint,*/ bookmarkService, ConfigObject, legendService, $timeout) {
+    identifyService, /*LayerBlueprint,*/ bookmarkService, ConfigObject, legendService, $timeout, intentionService) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -57,11 +57,16 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                     config.applyBookmark(bookmarkService.storedBookmark);
                 }
 
-                mapService.makeMap();
-
-                legendService.constructLegend(config.map.layers, config.map.legend);
-                this._isMapReady = true;
-                $rootScope.$broadcast(events.rvApiReady);
+                events.$on(events.rvApiMapAdded, (_, mapi) => {
+                    intentionService.initialize(config.intentions, mapi);
+                });
+                events.$on(events.rvIntentionsPreInited, () => {
+                    mapService.makeMap();
+                    legendService.constructLegend(config.map.layers, config.map.legend);
+                    this._isMapReady = true;
+                    $rootScope.$broadcast(events.rvApiReady);
+                });
+                intentionService.preInitialize(config.intentions);
                 events.$on(events.rvCfgUpdated, (evt, layers) => {
                     let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
                     layers.forEach(layer => {

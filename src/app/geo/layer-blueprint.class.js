@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService) {
+function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -225,8 +225,11 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
+            const intentions = configService.getSync.intentions;
+            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
+
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
-                this.config, undefined, epsgLookup);
+                this.config, undefined, lookup);
         }
     }
 
@@ -253,7 +256,9 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
 
             // HACK: supply epsgLookup here;
             // TODO: find a better place for it
-            this._layerSource.epsgLookup = epsgLookup;
+            const intentions = configService.getSync.intentions;
+            const lookup = intentions ? intentions.epsg : undefined;
+            this._layerSource.epsgLookup = lookup;
 
             const layerFileGenerators = {
                 [Geo.Service.Types.CSV]: () =>
@@ -280,40 +285,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             // TODO: provide epsgLookup to builder function
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__);
         }
-    }
-
-    /**
-     * Lookup a proj4 style projection definition for a given ESPG code.
-     * @function epsgLookup
-     * @param {string|number} code the EPSG code as a string or number
-     * @return {Promise} a Promise resolving to proj4 style definition or null if the definition could not be found
-     */
-    function epsgLookup(code) {
-        // FIXME this should be moved to a plugin; it is hardcoded to use epsg.io
-
-        const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
-        const epsgRegex = /EPSG:(\d+)/;
-        let lookup = code;
-        if (typeof lookup === 'number') {
-            lookup = String(lookup);
-        }
-        const urnMatches = lookup.match(urnRegex);
-        if (urnMatches) {
-            lookup = urnMatches[1];
-        }
-        const epsgMatches = lookup.match(epsgRegex);
-        if (epsgMatches) {
-            lookup = epsgMatches[1];
-        }
-
-        return $http.get(`http://epsg.io/${lookup}.proj4`)
-            .then(response =>
-                response.data)
-            .catch(err => {
-                RV.logger.warn('geoService', 'proj4 style projection lookup failed with error', err);
-                // jscs check doesn't realize return null; returns a promise
-                return null; // jscs:ignore jsDoc
-            });
     }
 
     const service = {
