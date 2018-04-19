@@ -6,6 +6,8 @@ function esriMap(esriBundle, geoApi) {
 
     const printModule = mapPrint(esriBundle);
 
+    let basemapErrored = false;
+
     class Map {
 
         static get Extent () { return esriBundle.Extent; }
@@ -29,7 +31,7 @@ function esriMap(esriBundle, geoApi) {
          * - lods: array of level of details. See config schema lodSetNode.lods
          * - tileSchema: object describing schema of map. See config schema tileSchemaNode
          * - proxyUrl: url to proxy for use by mapping api. optional
-         * 
+         *
          * @param {Object} domNode  the DOM node where the map will be created
          * @param {Object} opts     options object for the map (see above)
          */
@@ -81,6 +83,10 @@ function esriMap(esriBundle, geoApi) {
                     // we use the active basemap, and reset the overview whenever it changes
                     this.initOverviewMap(expand);
                     this.basemapGallery.on('selection-change', () => this.resetOverviewMap(expand));
+                    this.basemapGallery.on('error', () => {
+                        this.overviewMap.destroy();
+                        basemapErrored = true;
+                    });
                 }
             }
 
@@ -317,6 +323,12 @@ function esriMap(esriBundle, geoApi) {
         }
 
         initOverviewMap (expandFactor, baseLayer) {
+            if (basemapErrored) {
+                basemapErrored = false;
+                return;
+            }
+            basemapErrored = false;
+
             const opts = {
                 map: this._map,
                 expandFactor,
@@ -325,11 +337,24 @@ function esriMap(esriBundle, geoApi) {
             if (baseLayer) {
                 opts.baseLayer = baseLayer;
             }
-            this.overviewMap = new esriBundle.OverviewMap(opts);
-            this.overviewMap.startup();
+
+            let hasBaseLayer = false;
+            Object.keys(opts.map._layers).forEach(id => {
+                const layer = opts.map._layers[id];
+                if (layer._basemapGalleryLayerType === 'basemap') {
+                    hasBaseLayer = true;
+                }
+            });
+
+            if (opts.baseLayer || hasBaseLayer) {
+                this.overviewMap = new esriBundle.OverviewMap(opts);
+                this.overviewMap.startup();
+            }
         }
         resetOverviewMap (expandFactor) {
-            this.overviewMap.destroy();
+            if (this.overviewMap) {
+                this.overviewMap.destroy();
+            }
             this.initOverviewMap(expandFactor);
         }
 
