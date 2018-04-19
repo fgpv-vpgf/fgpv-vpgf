@@ -150,6 +150,7 @@
                 <option value="config/config-sample-53.json">53. Layer Refresh Interval</option>
                 <option value="config/config-sample-54.json">54. True Dynamic Layers with different image format</option>
                 <option value="config/config-sample-55.json">55. Custom made north arrow icon</option>
+                <option value="config/config-sample-58.json">58. Initial basemap loaded is broken</option>
             </select>
         </div>
 
