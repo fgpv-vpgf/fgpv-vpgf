@@ -333,6 +333,7 @@ class GraphicsRecord extends root.Root {
         }
 
         marker.geometry.apiId = id;
+        marker.geometry.geomType = "esriGeometryPoint"; // trickery for the zooming
         this._layer.add(marker);
     }
 
@@ -484,6 +485,55 @@ class GraphicsRecord extends root.Root {
     getGraphicsBoundingBox(graphics) {
         return this._apiRef.proj.graphicsUtils.graphicsExtent(graphics);
     };
+
+    /**
+     * Will attempt to zoom the map view so the a graphic is prominent.
+     *
+     * @function zoomToGraphic
+     * @param  {String} apiId           API ID of grahpic being searched for. This is a string name from api, not an esri OID.
+     * @param  {Object} map             wrapper object for the map we want to zoom
+     * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
+     * @return {Promise}                resolves after the map is done moving
+     */
+    zoomToGraphic (apiId, map, offsetFraction) {
+
+        // TODO this is a hacky re-write of the standard attribFC.zoomToGraphic.
+        // we need a function quickly, so doing it this way.
+        // the proper way would be to build in a nice zoom to graphic as part of
+        // the api, and clean up the logic here or somehow merge logic with attribFC (a larger task)
+
+        // find graphic by api id
+        const targGraphic = this._layer.graphics.find(g => g.geometry.apiId === apiId);
+
+        if (targGraphic) {
+            const gapi = this._apiRef;
+
+            // we know graphic is real graphic, and in map projection.
+            // we also assume there is no scale level dependency to worry about.
+
+            const extent = gapi.proj.graphicsUtils.graphicsExtent([targGraphic]);
+
+            let geomZoomPromise;
+            if (targGraphic.geometry.geomType === 'esriGeometryPoint') {
+                // zoom to point at a decent scale for hilighting a point
+                const sweetLod = gapi.Map.findClosestLOD(map.lods, 50000);
+                geomZoomPromise = map.centerAndZoom(extent.getCenter(), Math.max(sweetLod.level, 0));
+            } else {
+                // zoom to the extent of the geometery
+                geomZoomPromise = map.setExtent(extent, true);
+            }
+
+            return geomZoomPromise.then(() => {
+                // we have zoomed to our graphic. now position our map
+                return map.moveToOffsetExtent(extent, offsetFraction);
+            });
+
+        } else {
+            // TODO handle error correctly
+            console.log(`could not find graphic ${apiId}`);
+            return Promise.resolve();
+        }
+    }
 }
 
 module.exports = () => ({

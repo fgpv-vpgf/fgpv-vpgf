@@ -106,7 +106,11 @@ class LayerInterface {
         this._source = newSource;
     }
 
-    convertToGraphicsLayer (layerRecord) {
+    // forReal indicates we actually want a graphics layer.
+    // other "convert" functions use method due to common commands,
+    // but they are not forReal. this flag lets us skip things that
+    // should ONLY be applied for real graphics layer
+    convertToGraphicsLayer (layerRecord, forReal = true) {
         this._source = layerRecord;
         this._isPlaceholder = false;
 
@@ -117,10 +121,14 @@ class LayerInterface {
 
         this.setVisibility = standardSetVisibility;
         this.setOpacity = standardSetOpacity;
+
+        if (forReal) {
+            this.zoomToGraphic = graphicZoomToGraphic;
+        }
     }
 
     convertToSingleLayer (layerRecord) {
-        this.convertToGraphicsLayer(layerRecord);
+        this.convertToGraphicsLayer(layerRecord, false);
 
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'state', standardGetState);
@@ -519,6 +527,14 @@ function featureZoomToGraphic(oid, map, offsetFraction) {
 
 function dynamicLeafZoomToGraphic(oid, map, offsetFraction) {
     /* jshint validthis: true */
+    return this._source.zoomToGraphic(oid, map, offsetFraction);
+}
+
+function graphicZoomToGraphic(oid, map, offsetFraction) {
+    /* jshint validthis: true */
+
+    // secret. its not really oid. its api id. see comments in graphicRecord.js.
+    // clean up when we get better design.
     return this._source.zoomToGraphic(oid, map, offsetFraction);
 }
 
