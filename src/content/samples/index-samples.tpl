@@ -113,7 +113,7 @@
                 <option value="config/config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>
                 <option value="config/config-sample-17.json">17. Layer with only Information section</option>
                 <option value="config/config-sample-18.json">18. Layer with symbology overridden by config file specified image file</option>
-                <option value="config/config-sample-19.json">19. Layer with Viewer with “About map” text changed</option>
+                <option value="config/config-sample-19.json">19. Customized Map info </option>
                 <option value="config/config-sample-20.json">20. Layer with Bounding box disabled</option>
                 <option value="config/config-sample-21.json">21. Layer with Query disabled</option>
                 <option value="config/config-sample-22.json">22. Layer with Snapshot disabled</option>
