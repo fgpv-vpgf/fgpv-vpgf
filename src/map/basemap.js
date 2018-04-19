@@ -40,7 +40,7 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
 
     // display message
     // TODO: add ui hook? to display msg on screen
-    basemapGallery.on('error', msg => { throw new Error(msg); });
+    basemapGallery.on('error', msg => { console.error(msg); });
 
     return basemapGallery;
 }
