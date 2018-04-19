@@ -107,7 +107,7 @@ function mapServiceFactory(
         referenceService.mapNode.empty();
 
         // unsubscribe events
-        events.$unsubscribe(events.rvFeatureMouseOver);
+        events.$unsubscribe(events.rvFeatureMouseOver, events.rvEPSGPreInited, events.rvIntentionsPreInited);
 
         // FIXME: do we need to destroy scalebar and overview map even after we empty the node
     }
