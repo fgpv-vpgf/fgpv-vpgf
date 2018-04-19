@@ -41,6 +41,9 @@ function mapServiceFactory(
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
+    let fakeFileLayer = null;
+    let firstBasemapFlag = true;
+
     return service;
 
     function setAttribution(config) {
@@ -139,6 +142,28 @@ function mapServiceFactory(
             mapSettings.proxyUrl = servicesConfig.proxyUrl;
         }
         const mapInstance = new gapi.Map(mapNode[0], mapSettings);
+
+        // create a fake GeoJSON file to ensure an esri layer gets created which will trigger the load event on the esri map instance
+        // (when first layer is added to the map) https://developers.arcgis.com/javascript/3/jsapi/map-amd.html#event-load
+        // this way, if the default basemap is down, the app won't crash since it already triggered the event which results in the
+        // correct chain of commands being executed
+        let fakeGeoJSON = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [-100, 50] },
+                    properties: { key: 'value' }
+                }
+            ]
+        };
+
+        // avoid private variable
+        const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, { targetWkid: mapInstance._map.extent.spatialReference.wkid });
+        res.then(esriLayer => {
+            fakeFileLayer = esriLayer;
+            mapInstance.addLayer(esriLayer);
+        });
 
         mapConfig.storeMapReference(mapInstance);
         mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
@@ -248,6 +273,10 @@ function mapServiceFactory(
 
         gapi.events.wrapEvents(mapConfig.instance, {
             load: () => {
+                // remove the fake file layer from the map now
+                mapConfig.instance.removeLayer(fakeFileLayer);
+                fakeFileLayer = null;
+
                 events.$broadcast(events.rvMapLoaded, mapConfig.instance);
                 // setup hilight layer
                 mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
@@ -256,8 +285,21 @@ function mapServiceFactory(
                 // mark the map as loaded so data layers can be added
                 mapConfig.isLoaded = true;
 
+                // reset the basemap flag because the map instance was reset
+                firstBasemapFlag = true;
+
                 // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
                 _setLoadingFlag(false);
+            },
+            'layer-add': res => {
+                if (res.layer._basemapGalleryLayerType === 'basemap') { // avoid private variable
+
+                    // only broadcast the event the first time a basemap is loaded
+                    if (firstBasemapFlag) {
+                        events.$broadcast(events.rvBasemapLoaded);
+                        firstBasemapFlag = false;
+                    }
+                }
             },
             'update-start': () => {
                 _setLoadingFlag(true, 300);

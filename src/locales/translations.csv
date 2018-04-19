@@ -113,6 +113,8 @@ Basemap projection title,basemap.projection.title,{{name}} Maps,1,Cartes {{name}
 ,basemap.select,Select basemap,1,Sélectionner la carte de base,1
 ,basemap.showdescription,Show basemap description,1,Montrer la description de la carte de base,1
 ,basemap.hidedescription,Hide basemap description,1,Masquer la description de la carte de base,1
+Basemap broken,basemap.broken,Basemap load failed,1,Chargement du fond de carte échoué,0
+Basemap broken close toast,basemap.close,Close,1,Fermer,0
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
 WKIDs to name other,wkids.other,Other,1,Autre,1
