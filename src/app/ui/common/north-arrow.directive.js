@@ -34,7 +34,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
              */
             function updateNorthArrow() {
                 const arrowSource = mapConfig.northArrow.arrowIcon || 'northarrow';
-                const poleSource = mapConfig.northArrow.poleIcon || 'snowman';
+                const poleSource = mapConfig.northArrow.poleIcon || 'flag';
 
                 // flags to indicate of the supplied urls are svg or not.  Defaults to true if not provided
                 const arrowIsSvg = mapConfig.northArrow.arrowIcon ? _isSVG(arrowSource) : true;
@@ -51,8 +51,10 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         element.children().remove();
                     }
 
+                    const isNorthPole = north.screenY > 0; // is the icon in north pole
+
                     // create and append northarrow icon
-                    northArrowTemplate = north.screenY > 0 ? _getTemplate(poleSource, poleIsSvg) : _getTemplate(arrowSource, arrowIsSvg);
+                    northArrowTemplate = isNorthPole ? _getTemplate(poleSource, poleIsSvg) : _getTemplate(arrowSource, arrowIsSvg);
                     const northArrowScope = $rootScope.$new();
                     northArrowScope.self = self;
                     const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
@@ -61,7 +63,8 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         .css('display', 'block')
                         .css('left', north.screenX)
                         .css('top', Math.max(1, north.screenY))
-                        .css('transform', north.screenY > 0 ? '' : `rotate(${north.rotationAngle}deg)`);
+                        .css('transform-origin', isNorthPole ? 'center bottom' : 'top center')
+                        .css('transform', isNorthPole ? 'translate(-20%, -80%)' : `rotate(${north.rotationAngle}deg)`);
                 }
             }
         });
