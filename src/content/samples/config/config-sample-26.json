@@ -309,28 +309,7 @@
       }
     ],
     "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "A Group",
-            "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "exclusiveVisibility": [
-                  {
-                    "layerId": "powerplant100mw-electric"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+      "type": "autopopulate"
     },
     "layers": [
       {
