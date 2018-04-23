@@ -37,7 +37,7 @@
 
         #hideShow {
             position: absolute;
-            width: 150px;
+            width: 10%;
             right: 45%;
             z-index: 100;
             top: 80px;
@@ -156,7 +156,7 @@
 
         <div class="row">
             <form class="tool">
-                <input id="bookmarkURL" type="text">
+                <input id="bookmarkURL" type="text" autocomplete="off">
                 <button id="loadButton" class="btn" type="button">Load Bookmark</button>
                 <button id="clearButton" class="btn" type="button">Clear</button>
             </form>
@@ -165,11 +165,10 @@
 
     <button id="hideShow" class="chevron top fade" type="button"></button>
 
-    <div class="myMap" id="mobile-map" is="rv-map"
+    <div class="myMap" id="sample-map" is="rv-map"
         rv-config="config/config-sample-01-structured-visibility-sets.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
-        rv-extensions="api/hello-world.js"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
@@ -224,8 +223,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {
@@ -250,17 +249,17 @@
         if (keys) {
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
-            RV.getMap('mobile-map').restoreSession(keysArr);
+            RV.getMap('sample-map').restoreSession(keysArr);
         } else {
             const bookmark = queryStr.rv;
 
             // update the config values if needed
             var previouslySelectedConfig = sessionStorage.getItem('sampleConfig');
             if (previouslySelectedConfig) {
-                document.getElementById('mobile-map').setAttribute('rv-config', previouslySelectedConfig);
+                document.getElementById('sample-map').setAttribute('rv-config', previouslySelectedConfig);
                 document.getElementById('selectConfig').value = previouslySelectedConfig;
             } else {
-                const currentConfig = document.getElementById('mobile-map').getAttribute('rv-config');
+                const currentConfig = document.getElementById('sample-map').getAttribute('rv-config');
                 sessionStorage.setItem('sampleConfig', currentConfig);
             }
         }
@@ -268,33 +267,34 @@
         // load bookmark
         function loadBookmark() {
             let bookmarkURL = document.getElementById('bookmarkURL').value;
-            RV.getMap('mobile-map').useBookmark(bookmarkURL);
+            RV.getMap('sample-map').useBookmark(bookmarkURL);
         }
 
         function clearBookmark() {
             document.getElementById('bookmarkURL').value = '';
-            document.getElementById("bookmarkURL").selected = true;
+            document.getElementById('bookmarkURL').selected = true;
+            document.getElementById('bookmarkURL').focus();
         }
 
         function hide() {
-            if (document.getElementById("header").style.display === "none") {
-                document.getElementById("header").style.display = "block";
-                document.getElementById("hideShow").classList.remove('bottom');
-                document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('80px');
+            if (document.getElementById('header').style.display === 'none') {
+                document.getElementById('header').style.display = 'block';
+                document.getElementById('hideShow').classList.remove('bottom');
+                document.getElementById('hideShow').classList.add('top');
+                document.getElementById('hideShow').style.top = ('80px');
             } else {
-                document.getElementById("header").style.display = "none";
-                document.getElementById("hideShow").classList.remove('top');
-                document.getElementById("hideShow").classList.add('bottom');
-                document.getElementById("hideShow").style.top = ('0px');
+                document.getElementById('header').style.display = 'none';
+                document.getElementById('hideShow').classList.remove('top');
+                document.getElementById('hideShow').classList.add('bottom');
+                document.getElementById('hideShow').style.top = ('0px');
             }
         }
 
         // change and load the new config
         function changeConfig() {
             var selectedConfig = document.getElementById('selectConfig').value;
-            document.getElementById('mobile-map').setAttribute('rv-config', selectedConfig);
-            RV.getMap('mobile-map').reInitialize();
+            document.getElementById('sample-map').setAttribute('rv-config', selectedConfig);
+            RV.getMap('sample-map').reInitialize();
             sessionStorage.setItem('sampleConfig', selectedConfig);
         }
     </script>

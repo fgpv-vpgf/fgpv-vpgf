@@ -26,7 +26,7 @@
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
 
 <body>
-    <div class="myMap" id="mobile-map" is="rv-map"
+    <div class="myMap" id="intention-map" is="rv-map"
         rv-config="config/config-sample-57.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
@@ -79,8 +79,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RV.getMap('intention-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('intention-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {
@@ -105,11 +105,11 @@
         if (keys) {
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
-            RV.getMap('mobile-map').restoreSession(keysArr);
+            RV.getMap('intention-map').restoreSession(keysArr);
         } else {
             var bookmark = queryStr.rv;
             // console.log(bookmark);
-            RV.getMap('mobile-map').initialBookmark(bookmark);
+            RV.getMap('intention-map').initialBookmark(bookmark);
         }
     </script>
 </body>
