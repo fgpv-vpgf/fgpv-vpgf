@@ -12,7 +12,7 @@ angular
     .factory('tocService', tocService);
 
 function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceService, common, stateManager, graphicsService,
-    geoService, metadataService, errorService, LegendBlock, configService, legendService, Geo, events) {
+    geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
 
     const service = {
         // method called by the options and flags set on the layer item
@@ -64,7 +64,7 @@ function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceSer
             let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
 
             // TODO: fix this, will only remove 1 instance from legend if there are multiple legend blocks referencing it  ?
-            if (layerToRemove) {
+            if (layerToRemove.length > 0) {
                 if (index !== undefined) {
                     // in cases of dynamic, if index specified, remove only that child, otherwise we choose to remove entire group below
                     layerToRemove = layerToRemove.find(l => l.itemIndex === index);
@@ -76,6 +76,9 @@ function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceSer
                 if (layerToRemove) {
                     service.removeLayer(layerToRemove);
                 }
+            } else {
+                // layer is not in legend (or does not exist), try simply removing layer record
+                layerRegistry.removeLayerRecord(id);
             }
         }
     });
