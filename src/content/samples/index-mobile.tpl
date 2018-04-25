@@ -29,8 +29,7 @@
         rv-config="config-mobile-2.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark"
-        rv-extensions="extensions/hello-world.js">
+        rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

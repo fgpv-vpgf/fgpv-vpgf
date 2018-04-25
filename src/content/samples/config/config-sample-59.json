@@ -1,9 +1,5 @@
 {
-  "intentions": {
-    "epsg": "default"
-  },
   "ui": {
-    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -15,9 +11,6 @@
     },
     "sideMenu": {
       "logo": true
-    },
-    "help": {
-      "folderName": "default"
     },
     "legend": {
       "isOpen": {
@@ -74,7 +67,8 @@
         "enabled": true
       },
       "overviewMap": {
-        "enabled": false
+        "enabled": true,
+        "layerType": "imagery"
       },
       "scaleBar": {
         "enabled": true
@@ -319,15 +313,54 @@
     },
     "layers": [
       {
-        "id": "pipelines",
-        "name": "Pipelines",
+        "id": "0",
+        "name": "Electric Transmission Line",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "1",
+        "name": "Natural Gas Pipeline",
+        "layerType": "esriFeature",
+        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+      },
+      {
+        "id": "2",
+        "name": "Liquids Pipeline",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+      },
+      {
+        "id": "3",
+        "name": "Dyanamic Layer 1",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 2
+            "index": 21
           },
           {
-            "index": 3
+            "index": 17
+          },
+          {
+            "index": 19
+          }
+        ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "4",
+        "name": "Dyanamic Layer 2",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 22
+          },
+          {
+            "index": 23
+          },
+          {
+            "index": 24
           }
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
@@ -360,16 +393,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "Custom Attribution"
-          },
-          "logo": {
-            "enabled": true
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseSimple",
