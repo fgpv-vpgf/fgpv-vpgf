@@ -675,6 +675,14 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
         opts.tolerance = opts.tolerance || this.clickTolerance || 5;
 
+        // if there are filter queries on the layer, don't include them in the identify results
+        opts.layerDefinitions = [];
+        this.config.layerEntries.forEach(entry => {
+            if (entry.initialFilteredQuery) {
+                opts.layerDefinitions[entry.index] = entry.initialFilteredQuery;
+            }
+        });
+
         const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {
                 const hitIndexes = []; // sublayers that we got results for
