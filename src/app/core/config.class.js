@@ -2012,8 +2012,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             if (this.legend.type === TYPES.legend.AUTOPOPULATE) {
                 // filter out layers that are not present in the bookmark preserving the bookmark layer order
-                this._layers = value.bookmarkLayers.map(bookmarkedLayer =>
-                    this._layers.find(layer => layer.id === bookmarkedLayer.id));
+                this._layers = value.bookmarkLayers
+                    .map(bookmarkedLayer =>
+                        this._layers.find(layer => layer.id === bookmarkedLayer.id))
+                    .filter(a => a);    // FIXME: layers added through API will be undefined in the array
             }
 
             // re-create the legend structure
