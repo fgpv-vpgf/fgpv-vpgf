@@ -270,6 +270,22 @@ function mapServiceFactory(
             mapConfig.instance.setMapCursor(value ? 'pointer' : '');
         });
 
+        /*
+        General flow of loading map and first layers.
+        1.  Create the map. Basemap schema is supplied to the constructor.
+        2.  Add an in-memory feature layer ("fake layer") to the map. This satisfies the map "load" condition,
+            which happens when the first layer is added. Using a fake layer insulates the map load from a
+            server being down.
+        3.  When the map triggers its layer added event for the fake layer, remove it, and initialize the basemap
+            gallery. At the same time, do a web call to the initial basemap service to see if the server is alive.
+        4a. We see the initial basemap succesfully load via the map's layer added event. We tell the application
+            to continue loading everything else.  If we didn't wait, and a different raster layer loaded first,
+            the basemap gallery would remove it when it loaded the first basemap.
+        4b. We see a failure condition on our web call to the initial basemap service. We track it, remove the
+            overview map, and continue on with loading other layers. The map will have no basemap but will still
+            be functional. In most cases (using the stock config), if one basemap is down, all on that server
+            will be down.
+        */
         gapi.events.wrapEvents(mapConfig.instance, {
             'layer-add': res => {
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
