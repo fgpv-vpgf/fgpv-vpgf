@@ -8,6 +8,9 @@ function esriMap(esriBundle, geoApi) {
 
     let basemapErrored = false;
 
+    let basemaps = null;
+    let overviewExpand = null;
+
     class Map {
 
         static get Extent () { return esriBundle.Extent; }
@@ -53,7 +56,7 @@ function esriMap(esriBundle, geoApi) {
             }
 
             if (opts.basemaps) {
-                this.basemapGallery = basemap.initBasemaps(esriBundle, opts.basemaps, this._map);
+                basemaps = opts.basemaps;
             } else {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
@@ -68,7 +71,7 @@ function esriMap(esriBundle, geoApi) {
             }
 
             if (opts.overviewMap && opts.overviewMap.enabled) {
-                const expand = opts.overviewMap.expandFactor;
+                overviewExpand = opts.overviewMap.expandFactor;
 
                 if (opts.tileSchema.overviewUrl) {
                     // initial implementation.  we only are supporting tile layers.
@@ -77,22 +80,28 @@ function esriMap(esriBundle, geoApi) {
                     // or attempt to wire in the layer records.
                     const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
                     customOverview.on('load', () => {
-                        this.initOverviewMap(expand, customOverview);
+                        this.initOverviewMap(overviewExpand, customOverview);
                     });
                 } else {
                     // we use the active basemap, and reset the overview whenever it changes
-                    this.initOverviewMap(expand);
-                    this.basemapGallery.on('selection-change', () => this.resetOverviewMap(expand));
-                    this.basemapGallery.on('error', () => {
-                        this.overviewMap.destroy();
-                        basemapErrored = true;
-                    });
+                    this.initOverviewMap(overviewExpand);
                 }
             }
 
             this.zoomPromise = Promise.resolve();
             this.zoomCounter = 0;
 
+        }
+
+        initGallery() {
+            this.basemapGallery = basemap.initBasemaps(esriBundle, basemaps, this._map);
+            if (overviewExpand !== null) {
+                this.basemapGallery.on('selection-change', () => this.resetOverviewMap(overviewExpand));
+                this.basemapGallery.on('error', () => {
+                    this.overviewMap.destroy();
+                    basemapErrored = true;
+                });
+            }
         }
 
         printLocal (options) { return printModule.printLocal(this._map, options); }
