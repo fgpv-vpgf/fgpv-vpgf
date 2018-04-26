@@ -281,9 +281,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
                     if (button.name === 'rv-zoom-marker') {
                         // disabled zoom button if layer is not visible
-                        // TODO: fix
-                        // buttonScope.self.visibility = requester.legendEntry.options.visibility;
-                        buttonScope.self.visibility = true;
+                        buttonScope.self.visibility = requester.legendEntry.visibility;
                     }
 
                     button.scope = buttonScope;

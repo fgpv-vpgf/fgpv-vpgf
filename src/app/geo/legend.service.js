@@ -344,6 +344,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
             // remove any bounding box layers associated with this legend block
             _boundingBoxRemoval(legendBlock);
+
+            // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
+            mApi._legendStructure = configService.getSync.map.legend;
         }
 
         /**
