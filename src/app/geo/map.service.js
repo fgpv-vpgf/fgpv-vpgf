@@ -299,13 +299,17 @@ function mapServiceFactory(
                     setAttribution(mapConfig.selectedBasemap);
 
                     // poke the server to see if basemap load errored. if so, initalize the map anyway to ensure all the layers still get added
+                    // this will handle only failure cases, the basemap success case is handled when the `layer-add` event is triggered
+                    // for the basemap layer (only the first time a basemap layer is added)
                     $http.get(mapConfig.selectedBasemap.url + '?f=json')
                         .then(response => {
+
+                            // response returned but its an error response since invalid URL, so initalize map
                             if (!response || typeof response.data.error !== 'undefined') {
                                 _initMap();
                             }
                         })
-                        .catch(() => _initMap());
+                        .catch(() => _initMap());   // promise rejected due to server issues, so initialize map
                 }
             },
             'update-start': () => {
