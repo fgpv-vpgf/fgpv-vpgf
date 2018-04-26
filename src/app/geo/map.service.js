@@ -18,7 +18,8 @@ function mapServiceFactory(
     identifyService,
     events,
     $translate,
-    errorService
+    errorService,
+    $http
 ) {
     const service = {
         destroyMap,
@@ -166,9 +167,6 @@ function mapServiceFactory(
         });
 
         mapConfig.storeMapReference(mapInstance);
-        mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
-        setAttribution(mapConfig.selectedBasemap);
-
         _setMapListeners(mapConfig);
     }
 
@@ -272,33 +270,37 @@ function mapServiceFactory(
         });
 
         gapi.events.wrapEvents(mapConfig.instance, {
-            load: () => {
-                // remove the fake file layer from the map now
-                mapConfig.instance.removeLayer(fakeFileLayer);
-                fakeFileLayer = null;
-
-                events.$broadcast(events.rvMapLoaded, mapConfig.instance);
-                // setup hilight layer
-                mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
-                mapConfig.instance.addLayer(mapConfig.highlightLayer);
-
-                // mark the map as loaded so data layers can be added
-                mapConfig.isLoaded = true;
-
-                // reset the basemap flag because the map instance was reset
-                firstBasemapFlag = true;
-
-                // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
-                _setLoadingFlag(false);
-            },
             'layer-add': res => {
+                console.log("LOADED LAYER " + res.layer.id);
+                console.log(mapConfig.instance.layerIds);
+                if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
+                    // remove the fake file layer from the map now
+                    mapConfig.instance.removeLayer(fakeFileLayer);
+                }
+
                 if (res.layer._basemapGalleryLayerType === 'basemap') { // avoid private variable
 
                     // only broadcast the event the first time a basemap is loaded
                     if (firstBasemapFlag) {
                         events.$broadcast(events.rvBasemapLoaded);
                         firstBasemapFlag = false;
+
+                        _initMap();
                     }
+                }
+            },
+            'layer-remove': res => {
+                if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
+                    fakeFileLayer = null;
+
+                    mapConfig.instance.initGallery();
+                    mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
+                    setAttribution(mapConfig.selectedBasemap);
+
+                    // let basemapResponse;
+                    // $http.get(mapConfig.selectedBasemap.url + '?f=json')
+                    //     .then(response => (basemapResponse = response))
+                    //     .catch(() => _initMap());
                 }
             },
             'update-start': () => {
@@ -349,6 +351,21 @@ function mapServiceFactory(
                 }
             }
         });
+
+        function _initMap() {
+            if (!mapConfig.isLoaded) {
+                // setup hilight layer
+                mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
+                mapConfig.instance.addLayer(mapConfig.highlightLayer);
+
+                // mark the map as loaded so data layers can be added
+                mapConfig.isLoaded = true;
+
+                // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
+                _setLoadingFlag(false);
+                events.$broadcast(events.rvMapLoaded, mapConfig.instance);
+            }
+        }
 
         /**
          * Sets `isMapLoading` flag indicating map layers are updating.
