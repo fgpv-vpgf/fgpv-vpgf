@@ -116,7 +116,7 @@
             </header>
             <main role="main" property="mainContentOfPage" class="container">
                 <h1 id="wb-cont" property="name">Government of Canada Intranet theme</h1>
-                <embed src="index-theme.html" width="100%" height="600px">
+                <iframe src="index-theme.html" width="100%" height="600px"></iframe>
                 <dl id="wb-dtmd">
                     <dt>Date modified:&#32;</dt>
                     <dd><time property="dateModified">2017-10-25</time></dd>
