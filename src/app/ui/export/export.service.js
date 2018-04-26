@@ -28,8 +28,10 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
 
     // wire in a hook to any map for exporting.  this makes it available on the API
     events.$on(events.rvMapLoaded, (_, i) => {
-        configService.getSync.map.instance.export = () => {
-            service.open();
+        configService.getSync.map.instance.export = (fileType) => {
+            if (fileType && fileType !== 'png' && fileType !== 'jpg')
+                throw new Error(`Invalid or unsupported file type ${fileType}.`);
+            service.open(null, fileType);
         };
     });
 
@@ -42,12 +44,13 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
      * @function open
      * @param {Object} event original click event
      */
-    function open(event) {
+    function open(event, fileType = 'png') {
         const shellNode = referenceService.panels.shell;
 
         $mdDialog.show({
             locals: {
-                shellNode
+                shellNode,
+                fileType
             },
             controller: ExportController,
             controllerAs: 'self',
@@ -275,7 +278,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
             try {
                 if (!RV.isSafari) {
                     canvas.toBlob(blob => {
-                        FileSaver.saveAs(blob, `${fileName}.png`);
+                        FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
                     });
                 } else {
                     showToast('error.safari');
