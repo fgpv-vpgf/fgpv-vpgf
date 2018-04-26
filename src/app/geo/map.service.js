@@ -18,7 +18,8 @@ function mapServiceFactory(
     identifyService,
     events,
     $translate,
-    errorService
+    errorService,
+    $http
 ) {
     const service = {
         destroyMap,
@@ -161,14 +162,12 @@ function mapServiceFactory(
         // avoid private variable
         const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, { targetWkid: mapInstance._map.extent.spatialReference.wkid });
         res.then(esriLayer => {
+            firstBasemapFlag = true;
             fakeFileLayer = esriLayer;
             mapInstance.addLayer(esriLayer);
         });
 
         mapConfig.storeMapReference(mapInstance);
-        mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
-        setAttribution(mapConfig.selectedBasemap);
-
         _setMapListeners(mapConfig);
     }
 
@@ -271,34 +270,62 @@ function mapServiceFactory(
             mapConfig.instance.setMapCursor(value ? 'pointer' : '');
         });
 
+        /*
+        General flow of loading map and first layers.
+        1.  Create the map. Basemap schema is supplied to the constructor.
+        2.  Add an in-memory feature layer ("fake layer") to the map. This satisfies the map "load" condition,
+            which happens when the first layer is added. Using a fake layer insulates the map load from a
+            server being down.
+        3.  When the map triggers its layer added event for the fake layer, remove it, and initialize the basemap
+            gallery. At the same time, do a web call to the initial basemap service to see if the server is alive.
+        4a. We see the initial basemap succesfully load via the map's layer added event. We tell the application
+            to continue loading everything else.  If we didn't wait, and a different raster layer loaded first,
+            the basemap gallery would remove it when it loaded the first basemap.
+        4b. We see a failure condition on our web call to the initial basemap service. We track it, remove the
+            overview map, and continue on with loading other layers. The map will have no basemap but will still
+            be functional. In most cases (using the stock config), if one basemap is down, all on that server
+            will be down.
+        */
         gapi.events.wrapEvents(mapConfig.instance, {
-            load: () => {
-                // remove the fake file layer from the map now
-                mapConfig.instance.removeLayer(fakeFileLayer);
-                fakeFileLayer = null;
-
-                events.$broadcast(events.rvMapLoaded, mapConfig.instance);
-                // setup hilight layer
-                mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
-                mapConfig.instance.addLayer(mapConfig.highlightLayer);
-
-                // mark the map as loaded so data layers can be added
-                mapConfig.isLoaded = true;
-
-                // reset the basemap flag because the map instance was reset
-                firstBasemapFlag = true;
-
-                // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
-                _setLoadingFlag(false);
-            },
             'layer-add': res => {
+                if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
+                    // remove the fake file layer from the map now
+                    mapConfig.instance.removeLayer(fakeFileLayer);
+                }
+
                 if (res.layer._basemapGalleryLayerType === 'basemap') { // avoid private variable
 
                     // only broadcast the event the first time a basemap is loaded
                     if (firstBasemapFlag) {
                         events.$broadcast(events.rvBasemapLoaded);
                         firstBasemapFlag = false;
+
+                        // if basemap loaded and it was the first load, initalize the map
+                        _initMap();
                     }
+                }
+            },
+            'layer-remove': res => {
+                if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
+                    fakeFileLayer = null;
+
+                    // after the fake layer has been removed, initalize basemap gallery and select first basemap
+                    mapConfig.instance.initGallery();
+                    mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
+                    setAttribution(mapConfig.selectedBasemap);
+
+                    // poke the server to see if basemap load errored. if so, initalize the map anyway to ensure all the layers still get added
+                    // this will handle only failure cases, the basemap success case is handled when the `layer-add` event is triggered
+                    // for the basemap layer (only the first time a basemap layer is added)
+                    $http.get(mapConfig.selectedBasemap.url + '?f=json')
+                        .then(response => {
+
+                            // response returned but its an error response since invalid URL, so initalize map
+                            if (!response || typeof response.data.error !== 'undefined') {
+                                _initMap();
+                            }
+                        })
+                        .catch(() => _initMap());   // promise rejected due to server issues, so initialize map
                 }
             },
             'update-start': () => {
@@ -349,6 +376,27 @@ function mapServiceFactory(
                 }
             }
         });
+
+        /**
+         * Creates the highlight layer and broadcasts the map loaded event.
+         *
+         * @function _initMap
+         * @private
+         */
+        function _initMap() {
+            if (!mapConfig.isLoaded) {
+                // setup hilight layer
+                mapConfig.highlightLayer = gapi.hilight.makeHilightLayer({});
+                mapConfig.instance.addLayer(mapConfig.highlightLayer);
+
+                // mark the map as loaded so data layers can be added
+                mapConfig.isLoaded = true;
+
+                // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
+                _setLoadingFlag(false);
+                events.$broadcast(events.rvMapLoaded, mapConfig.instance);
+            }
+        }
 
         /**
          * Sets `isMapLoading` flag indicating map layers are updating.
