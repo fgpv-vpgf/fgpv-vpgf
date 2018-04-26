@@ -734,6 +734,10 @@ function serverLayerIdentifyBuilder(esriBundle) {
             identParams.spatialReference = opts.geometry.spatialReference;
             identParams.tolerance = opts.tolerance || 5;
 
+            if (opts.layerDefinitions.length > 0) {
+                identParams.layerDefinitions = opts.layerDefinitions;
+            }
+
             // TODO add support for identParams.layerDefinitions once attribute filtering is implemented
 
         } else {
