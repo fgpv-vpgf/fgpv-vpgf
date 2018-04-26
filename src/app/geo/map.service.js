@@ -162,6 +162,7 @@ function mapServiceFactory(
         // avoid private variable
         const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, { targetWkid: mapInstance._map.extent.spatialReference.wkid });
         res.then(esriLayer => {
+            firstBasemapFlag = true;
             fakeFileLayer = esriLayer;
             mapInstance.addLayer(esriLayer);
         });
@@ -271,8 +272,6 @@ function mapServiceFactory(
 
         gapi.events.wrapEvents(mapConfig.instance, {
             'layer-add': res => {
-                console.log("LOADED LAYER " + res.layer.id);
-                console.log(mapConfig.instance.layerIds);
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
                     // remove the fake file layer from the map now
                     mapConfig.instance.removeLayer(fakeFileLayer);
@@ -285,6 +284,7 @@ function mapServiceFactory(
                         events.$broadcast(events.rvBasemapLoaded);
                         firstBasemapFlag = false;
 
+                        // if basemap loaded and it was the first load, initalize the map
                         _initMap();
                     }
                 }
@@ -293,14 +293,19 @@ function mapServiceFactory(
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
                     fakeFileLayer = null;
 
+                    // after the fake layer has been removed, initalize basemap gallery and select first basemap
                     mapConfig.instance.initGallery();
                     mapConfig.instance.selectBasemap(mapConfig.selectedBasemap);
                     setAttribution(mapConfig.selectedBasemap);
 
-                    // let basemapResponse;
-                    // $http.get(mapConfig.selectedBasemap.url + '?f=json')
-                    //     .then(response => (basemapResponse = response))
-                    //     .catch(() => _initMap());
+                    // poke the server to see if basemap load errored. if so, initalize the map anyway to ensure all the layers still get added
+                    $http.get(mapConfig.selectedBasemap.url + '?f=json')
+                        .then(response => {
+                            if (!response || typeof response.data.error !== 'undefined') {
+                                _initMap();
+                            }
+                        })
+                        .catch(() => _initMap());
                 }
             },
             'update-start': () => {
@@ -352,6 +357,12 @@ function mapServiceFactory(
             }
         });
 
+        /**
+         * Creates the highlight layer and broadcasts the map loaded event.
+         *
+         * @function _initMap
+         * @private
+         */
         function _initMap() {
             if (!mapConfig.isLoaded) {
                 // setup hilight layer

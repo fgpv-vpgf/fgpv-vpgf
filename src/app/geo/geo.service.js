@@ -58,19 +58,6 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                 }
 
                 events.$on(events.rvApiMapAdded, (_, mapi) => {
-                    mapi.layers.addLayer({
-                        "id": "WindSpeed_2021_20yr_ANN_rcp85",
-                        "layerType": "esriTile",
-                        "url": "http://cipgis.canadaeast.cloudapp.azure.com/arcgis/rest/services/CMIP5_WindSpeed/WindSpeed_2021_20yr_ANN_rcp85/MapServer"
-                    });
-
-                    mapi.layers.addLayer({
-                        "id": "DynLayer",
-                        "layerType": "esriDynamic",
-                        "url": "http://cipgis.canadaeast.cloudapp.azure.com/arcgis/rest/services/SupportData/MapServer",
-                        "layerEntries": [{"index": 4}]
-                    });
-
                     intentionService.initialize(config.intentions, mapi);
                 });
                 events.$on(events.rvIntentionsPreInited, () => {

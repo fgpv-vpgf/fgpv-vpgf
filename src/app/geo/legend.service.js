@@ -186,8 +186,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
         if (pos) {   // If the order from bookmark exists
             position = pos;
         } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+            const layerType = importedLegendBlock.layerType;
+            const sortGroup = layerType ? sortGroups[layerType] : 1;    // layerType doesn't exist, legend block is a group
             position = legendBlocks.entries.findIndex(block =>
-                sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
+                sortGroups[block.layerType] === sortGroup);
 
             // FIXME: there might be an error here when importing a Feature layer to a legend with only WMS and Dynamic layers; need to check more;
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
