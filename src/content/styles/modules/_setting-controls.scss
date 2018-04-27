@@ -55,6 +55,13 @@
         }
 
         form {
+            md-input-container {
+                // remove clear button rendered by IE;
+                input::-ms-clear {
+                    display: none;
+                }
+            }
+
             .interval-value {
                 padding-right: 36px;
             }
