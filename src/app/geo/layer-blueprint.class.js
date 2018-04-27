@@ -257,7 +257,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             // HACK: supply epsgLookup here;
             // TODO: find a better place for it
             const intentions = configService.getSync.intentions;
-            const lookup = intentions ? intentions.epsg : undefined;
+            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
             this._layerSource.epsgLookup = lookup;
 
             const layerFileGenerators = {
@@ -282,8 +282,10 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} promise resolving with the esri layer object
          */
         generateLayer() {
-            // TODO: provide epsgLookup to builder function
-            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__);
+            const intentions = configService.getSync.intentions;
+            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
+
+            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__, lookup);
         }
     }
 
