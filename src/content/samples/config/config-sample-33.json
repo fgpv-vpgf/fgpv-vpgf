@@ -318,7 +318,7 @@
             "layerId": "0"
           },
           {
-            "layerId": "1"
+            "layerId": "5"
           },
           {
             "name": "Exclusive Visibilty Group",
@@ -353,7 +353,7 @@
        {
         "id": "0",
         "name": "Zoom scale layer complete",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
@@ -364,34 +364,37 @@
           },
           {
             "index": 3
-          },
-          {
-            "index": 4
           }
         ]
       },
       {
         "id": "1",
         "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/1",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/9",
         "layerType": "esriFeature"
       },
       {
         "id": "2",
         "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/2",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12",
         "layerType": "esriFeature"
       },
       {
         "id": "3",
         "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/3",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/13",
         "layerType": "esriFeature"
       },
       {
         "id": "4",
         "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/4",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/14",
+        "layerType": "esriFeature"
+      },
+      {
+        "id": "5",
+        "name": "Zoom scale single",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/20",
         "layerType": "esriFeature"
       }
     ],
