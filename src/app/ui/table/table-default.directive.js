@@ -550,9 +550,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         }
 
                         // set searchable (if false, data is there but not part of the filtering)
-                        if (configCol.searchable) {
-                            column.searchable = configCol.searchable;
-                        }
+                        column.searchable = (typeof configCol.searchable === 'undefined') || configCol.searchable ?
+                            true : false;
 
                         // customize filter
                         customizeFilter(configCol, column);
