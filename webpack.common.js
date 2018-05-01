@@ -28,8 +28,7 @@ module.exports = function (env) {
 
     const config = {
         entry: {
-            'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
-            'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js')
+            'rv-main': path.resolve(__dirname, 'src/app/app-loader.js')
         },
 
         output: {
@@ -103,6 +102,10 @@ module.exports = function (env) {
             },{
                 from: 'src/locales/help',
                 to: 'samples/help'
+            },
+            {
+                from: 'src/polyfill/ie-polyfills.js',
+                to: ''
             }]),
 
             new ExtractTextPlugin('rv-styles.css'),
