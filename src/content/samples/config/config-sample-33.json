@@ -318,7 +318,7 @@
             "layerId": "0"
           },
           {
-            "layerId": "5"
+            "layerId": "1"
           },
           {
             "name": "Exclusive Visibilty Group",
@@ -353,9 +353,12 @@
        {
         "id": "0",
         "name": "Zoom scale layer complete",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer",
+        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
+          {
+            "index": 0
+          },
           {
             "index": 1
           },
@@ -370,31 +373,25 @@
       {
         "id": "1",
         "name": "Zoom scale single",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/9",
+        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/0",
         "layerType": "esriFeature"
       },
       {
         "id": "2",
         "name": "Zoom scale single",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12",
+        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/1",
         "layerType": "esriFeature"
       },
       {
         "id": "3",
         "name": "Zoom scale single",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/13",
+        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/2",
         "layerType": "esriFeature"
       },
       {
         "id": "4",
         "name": "Zoom scale single",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/14",
-        "layerType": "esriFeature"
-      },
-      {
-        "id": "5",
-        "name": "Zoom scale single",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/20",
+        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/3",
         "layerType": "esriFeature"
       }
     ],
