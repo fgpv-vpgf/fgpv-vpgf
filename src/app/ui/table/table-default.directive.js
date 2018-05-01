@@ -281,9 +281,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
                     if (button.name === 'rv-zoom-marker') {
                         // disabled zoom button if layer is not visible
-                        // TODO: fix
-                        // buttonScope.self.visibility = requester.legendEntry.options.visibility;
-                        buttonScope.self.visibility = true;
+                        buttonScope.self.visibility = requester.legendEntry.visibility;
                     }
 
                     button.scope = buttonScope;
@@ -1184,7 +1182,7 @@ function ToastController($scope, $mdToast, $timeout, stateManager, tocService) {
     $scope.reloadTable = () => {
         const legendBlock = stateManager.display.table.requester.legendEntry;
 
-        stateManager.setActive({ tableFulldata: false }).then(() =>{
+        stateManager.setActive({ tableFulldata: false }).then(() => {
             $timeout(() => {
                 tocService.toggleLayerTablePanel(legendBlock);
             });

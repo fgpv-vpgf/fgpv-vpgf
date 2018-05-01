@@ -12,7 +12,7 @@ angular
     .module('app.geo')
     .factory('LegendBlock', LegendBlockFactory);
 
-function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack) {
+function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo) {
 
     let legendBlockCounter = 0;
 
@@ -85,6 +85,9 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._proxy.setVisibility(this._layerConfig.state.visibility);
             this._proxy.setQuery(this._layerConfig.state.query);
 
+            this._updateApiLayerVisibility(this);
+            this._updateApiLayerOpacity(this);
+
             this._initialStateSettingsApplied = true;
         }
 
@@ -117,6 +120,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // store opacity value in the layer config; will be used by full state restore
             this._layerConfig.state.opacity = value;
+
+            this._updateApiLayerOpacity(this);
         }
         set visibility (value) {
             if (this.isControlSystemDisabled('visibility')) {
@@ -127,6 +132,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             // store visibility value in the layer config; will be used by full state restore
             this._layerConfig.state.visibility = value;
+
+            this._updateApiLayerVisibility(this);
         }
         set query (value) {
             if (this.isControlSystemDisabled('query')) {
@@ -237,6 +244,54 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get availableControls () {      return this._layerConfig.controls; }
         get disabledControls () {       return this._layerConfig.disabledControls; }
         get userDisabledControls () {   return this._layerConfig.userDisabledControls; }
+
+        /**
+         * @function _updateApiLayerOpacity
+         * @private
+         * @param {LegendBlock} legendBlock legend block where opacity is being updated
+         */
+        _updateApiLayerOpacity() {
+            let layer;
+
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
+                    // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
+                    // of both the id and index to find the correct layer
+                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
+                } else {
+                    layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
+                }
+
+                if (layer && layer.opacity !== this._proxy.opacity) {
+                    layer._opacityChanged.next(this._proxy.opacity);
+                }
+            }
+        }
+
+        /**
+         * @function _updateApiLayerVisibility
+         * @private
+         * @param {LegendBlock} legendBlock legend block where visibility is being updated
+         */
+        _updateApiLayerVisibility() {
+            let layer;
+
+            if (appInfo.mapi) {
+                if (this._layerConfig.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
+                    // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
+                    // of both the id and index to find the correct layer
+                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
+                } else {
+                    layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
+                }
+
+                if (layer && layer.visibility !== this._proxy.visibility) {
+                    layer._visibilityChanged.next(this._proxy.visibility);
+                }
+            }
+        }
     }
 
     class LegendBlock {
@@ -300,7 +355,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             super(blockConfig);
 
             this._symbologyStack =
-                new SymbologyStack({}, blockConfig.symbologyStack, this.symbologyRenderStyle, true);
+                new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle, true);
         }
 
         get blockType () {              return TYPES.INFO; }
@@ -375,7 +430,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._aggregateStates = ref.aggregateStates;
             this._symbologyStack = new SymbologyStack(
-                this.mainProxy, blockConfig.symbologyStack, blockConfig.symbologyRenderStyle, true);
+                this.mainProxy, blockConfig.symbologyStack, blockConfig.coverIcon, blockConfig.symbologyRenderStyle, true);
         }
 
         get mainProxyWrapper () { return this._mainProxyWrapper; }

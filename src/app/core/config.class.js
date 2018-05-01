@@ -27,7 +27,7 @@ angular
     .factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
-function ConfigObjectFactory(Geo, gapiService, common, events) {
+function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
     const ref = {
         legendElementCounter: 0,
@@ -245,6 +245,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         }
     };
 
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+
     class InitialLayerSettings {
         /**
          *
@@ -263,10 +266,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         }
 
         get opacity () {            return this._opacity; }
-        set opacity (value) {       this._opacity = value; }
+        set opacity (value) {
+            this._opacity = value;
+            $rootScope.$applyAsync();
+        }
 
         get visibility () {         return this._visibility; }
-        set visibility (value) {    this._visibility = value; }
+        set visibility (value) {
+            this._visibility = value;
+            $rootScope.$applyAsync();
+        }
 
         get boundingBox () {        return this._boundingBox; }
         set boundingBox (value) {   this._boundingBox = value; }
@@ -569,7 +578,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get layerType () {              return this._layerType; }
 
         get name () {                   return this._name; }
-        set name (value) {              this._name = value; }
+        set name (value) {
+            this._name = value;
+            $rootScope.$applyAsync();
+        }
 
         get url () {                    return this._url; }
         get metadataUrl () {            return this._metadataUrl; }
@@ -822,6 +834,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._table = new TableNode(source.table);
 
             this._singleEntryCollapse = source.singleEntryCollapse === true;
+            this._imageFormat = source.imageFormat || 'png32';
         }
 
         get layerEntries () { return this._layerEntries; }
@@ -839,6 +852,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         _singleEntryCollapse = false;
         set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
         get singleEntryCollapse () {        return this._singleEntryCollapse; }
+
+        get imageFormat() { return this._imageFormat; }
 
         _isResolved = false;
         /**
@@ -873,6 +888,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
         get JSON () {
             return angular.merge(super.JSON, {
+                imageFormat: this.imageFormat,
                 layerEntries: this.layerEntries.map(layerEntry =>
                     layerEntry.JSON),
                 tolerance: this.tolerance,
@@ -1201,7 +1217,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._entryId = entrySource.entryId;
             this._coverIcon = entrySource.coverIcon;
             this._description = entrySource.description || '';
-            this._symbologyStack = entrySource.symbologyStack || [];
+            this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._hidden = entrySource.hidden === true;
 
@@ -1315,7 +1331,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
             this._layerName = entrySource.layerName || '';
             this._description = entrySource.description || '';
-            this._symbologyStack = entrySource.symbologyStack || [];
+            this._coverIcon = entrySource.coverIcon;
+            this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
         }
 
@@ -1324,6 +1341,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
         get layerName () {              return this._layerName; }
         get description () {            return this._description; }
+        get coverIcon () {      return this._coverIcon; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
 
@@ -1336,6 +1354,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
                 entryType: this.entryType,
                 layerName: this.layerName,
                 description: this.description,
+                coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle
             };
@@ -1404,6 +1423,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
          */
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
+            if (mApi) {
+                mApi._legendStructure = this;
+            }
         }
 
         get JSON() {
@@ -1506,10 +1528,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
     class NorthArrowComponent extends ComponentBase {
         constructor (source) {
             super(source);
+            this._arrowIcon = source.arrowIcon;
+            this._poleIcon = source.poleIcon;
         }
 
+        get arrowIcon () { return this._arrowIcon; }
+        get poleIcon () { return this._poleIcon; }
+
         get JSON() {
-            return super.JSON;
+            return angular.merge(super.JSON, {
+                arrowIcon: this._arrowIcon,
+                poleIcon: this._poleIcon
+            });
         }
     }
 
@@ -1769,6 +1799,46 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
     }
 
     /**
+     * EPSG Intention.
+     * @class EPSG
+     */
+    class EPSG {
+        constructor(method) {
+            this._method = method;
+            this._lookup = (() => {});
+        }
+
+        get method() { return this._method; }
+        get lookup() { return this._lookup; }
+
+        set lookup(lookup) { this._lookup = lookup; }
+    }
+
+    /**
+     * Intentions(internal extentions)
+     * @class Intentions
+     */
+    class Intentions {
+        constructor(source) {
+            if (!source || Object.keys(source).length === 0) {
+                this._epsg = new EPSG('default');
+                this._instructions = {
+                    epsg: 'default'
+                };
+            } else {
+                this._epsg = new EPSG(source.epsg);
+                this._instructions = source;
+            }
+        }
+
+        get epsg() { return this._epsg; }
+
+        get instructions() {
+            return this._instructions;
+        }
+    }
+
+    /**
      * Typed representation of the `map` section of the config.
      * @class Map
      */
@@ -1942,8 +2012,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
 
             if (this.legend.type === TYPES.legend.AUTOPOPULATE) {
                 // filter out layers that are not present in the bookmark preserving the bookmark layer order
-                this._layers = value.bookmarkLayers.map(bookmarkedLayer =>
-                    this._layers.find(layer => layer.id === bookmarkedLayer.id));
+                this._layers = value.bookmarkLayers
+                    .map(bookmarkedLayer =>
+                        this._layers.find(layer => layer.id === bookmarkedLayer.id))
+                    .filter(a => a);    // FIXME: layers added through API will be undefined in the array
             }
 
             // re-create the legend structure
@@ -2317,6 +2389,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
+            this._intentions = new Intentions(configSource.intentions);
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
@@ -2410,6 +2483,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events) {
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
+        get intentions() { return this._intentions; }
 
         applyBookmark (value) {
             this.map.applyBookmark(value);

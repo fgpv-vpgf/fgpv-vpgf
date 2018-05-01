@@ -142,13 +142,15 @@ function rvTableSettingPanel(stateManager, dragulaService, animationService, tab
     }
 }
 
-function Controller($scope, events, tableService, stateManager) {
+function Controller($scope, events, tableService, stateManager, $timeout) {
     'ngInject';
     const self = this;
 
     self.sort = onSort;
     self.display = onDisplay;
     self.tableService = tableService;
+    self.isNameTruncated = false;
+    self.setNameTruncated = setNameTruncated;
 
     $scope.$on(events.rvTableReady, () => {
         self.description = stateManager.display.table.data.filter.description;
@@ -310,6 +312,20 @@ function Controller($scope, events, tableService, stateManager) {
                 onDisplay(col);
             }
         });
+    }
+
+    /**
+     * Set the indicated self.isNameTruncated to True if the name is truncated
+     *
+     * @function setNameTruncated
+     * @private
+     * @param{event} evt event when being hovered
+     */
+    function setNameTruncated(evt) {
+        self.isNameTruncated = false;
+        $timeout(() => {
+            self.isNameTruncated = evt.target.scrollWidth > evt.target.clientWidth;
+        }, 250);
     }
 }
 

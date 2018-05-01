@@ -331,18 +331,24 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
         get label () {   return 'settings.label.refreshHint'; }
 
         get isDynamicChild () {
-            return this.block.isControlUserDisabled('interval') && !layerRegistry.getLayerRecord(this.block.layerRecordId).isTrueDynamic;
+            const layerRecord = layerRegistry.getLayerRecord(this.block.layerRecordId);
+            return this.block.isControlUserDisabled('interval') && layerRecord && !layerRecord.isTrueDynamic;
         }
 
         get clearAndReload() {
-            if (this.block._rootProxyWrapper && this.block._rootProxyWrapper.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                this.block._rootProxyWrapper.layerConfig.refreshInterval = 0;
-                this.block._rootProxyWrapper.layerConfig.layerEntries.forEach(entry => (entry.refreshInterval = 0));
-            } else {
-                this.block.mainProxyWrapper.layerConfig.refreshInterval = 0;
-            }
-
+            this.action(0);
             tocService.reloadLayer(this.block);
+        }
+
+        get value () {
+            const layerRecord = layerRegistry.getLayerRecord(this.block.layerRecordId);
+            return layerRecord ? layerRecord.config.refreshInterval : undefined;
+        }
+        set value (value) { this.action(value); }
+
+        action (value) {
+            const layerRecord = layerRegistry.getLayerRecord(this.block.layerRecordId);
+            layerRecord.config.refreshInterval = value;
         }
     }
 

@@ -131,6 +131,8 @@ $layer-item-height-touch: rem(7.2);
             height: $layer-item-height-touch;
         }
 
+        outline: none;
+
         &.rv-legend-set {
             display: none;
         }

@@ -48,6 +48,16 @@ We use a fork and pull model for contributions, see our [contributing guidelines
 
     Serves the production code. Reloads on file change.
 
+### Inspecting Bundle Dependencies
+
+Run `npm run build -- --env.inspect`
+
+When complete, navigate to http://127.0.0.1:8888 in chrome.
+
+You can also use two external tools with the `build/stats.json` file
+    - http://webpack.github.io/analyse
+    - https://chrisbateman.github.io/webpack-visualizer/
+
 ### Optional Flags
 
 To run these flags, prefix with `--` then `--env.` as in `npm run serve -- --env.prod` where `prod` is a flag.

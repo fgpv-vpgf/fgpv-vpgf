@@ -1,5 +1,6 @@
 import Map from 'api/map';
 import * as GEO from 'api/geometry';
+import { ConfigLayer, SimpleLayer } from 'api/layers';
 import { Subject } from 'rxjs/Rx';
 import * as $ from "jquery";
 
@@ -10,6 +11,7 @@ class RZ {
      * Emits an instance of the map class whenever a new map is added to the viewer.
      * */
     mapAdded: Subject<Map> = new Subject();
+
     /** Loads and executes a javascript file from the provided url. */
     loadExtension(url: string): void {
         $.getScript(url);
@@ -19,6 +21,14 @@ class RZ {
     get mapInstances(): Array<Map> { return mapInstances; }
     /** Contains all geography related classes. */
     get GEO() { return GEO };
+
+    /** Returns the different layer classes */
+    get LAYERS(): Object {
+        return {
+            ConfigLayer,
+            SimpleLayer
+        }
+    }
 
     mapById(id: string): Map | undefined {
         return this.mapInstances.find(mi => mi.id === id);
@@ -31,4 +41,13 @@ interface EnhancedWindow extends Window {
 };
 
 (<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : RZInstance;
-RZInstance.mapAdded.subscribe(mapInstance => mapInstances.push(mapInstance));
+
+RZInstance.mapAdded.subscribe(mapInstance => {
+    let index: number = mapInstances.findIndex(map => map.id === mapInstance.id);
+
+    if (index !== -1) {
+        mapInstances[index] = mapInstance;
+    } else {
+        mapInstances.push(mapInstance);
+    }
+});

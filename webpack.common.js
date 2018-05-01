@@ -1,6 +1,7 @@
 const webpack   = require('webpack');
 const path      = require('path');
 const fs        = require('fs');
+const glob      = require("glob");
 const ExtractTextPlugin     = require('extract-text-webpack-plugin');
 const TranslationPlugin     = require('./scripts/webpack/translations_plugin.js');
 const SchemaValidatorPlugin = require('./scripts/webpack/schema_validation_plugin.js');
@@ -10,6 +11,7 @@ const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const WebpackShellPlugin    = require('webpack-shell-plugin');
+const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const babelPresets = {
     presets: ['es2015', 'stage-2'],
@@ -51,6 +53,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.ts$/,
+                    include: [path.resolve(__dirname, 'intention'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app')],
                     use: [{
                         loader: 'babel-loader',
                         options: babelPresets
@@ -91,20 +94,8 @@ module.exports = function (env) {
             new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
 
             new CopyWebpackPlugin([{
-                context: 'src/content/samples/config',
-                from: '**/*.json',
-                to: 'samples/config'
-            },{
-                context: 'src/content/samples/extensions',
-                from: '**/*.js',
-                to: 'samples/extensions'
-            },{
                 context: 'src/content/samples',
-                from: '**/*.json',
-                to: 'samples'
-            },{
-                context: 'src/content/samples',
-                from: '**/*.html',
+                from: '**/*.+(json|js|css|html)',
                 to: 'samples'
             },{
                 from: 'src/locales/about',
@@ -139,13 +130,14 @@ module.exports = function (env) {
         externals: { 'TweenLite': 'TweenLite' },
 
         resolve: {
-            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules')],
+            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'intention/node_modules')],
             alias: {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
                 jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
                 api: path.resolve(__dirname, 'api/src/'),
                 src: path.resolve(__dirname, 'src/'),
-                app: path.resolve(__dirname, 'src/app/')
+                app: path.resolve(__dirname, 'src/app/'),
+                intention: path.resolve(__dirname, 'intention/')
             },
             extensions: ['.ts', '.js', 'css', 'scss']
         },
@@ -171,11 +163,29 @@ module.exports = function (env) {
         }
     };
 
-    config.plugins.push(...htmlInjectPlugins());
+    const files = glob.sync("samples/**/*", {cwd: './src/content/', nodir: true});
+    config.plugins.push(...files.map(file => {
+        if (/\.tpl$/.test(file)) {
+            const filePath = file.split('/');
+            const fileName = filePath.pop();
+            return new HtmlWebpackPlugin({
+                inject: false,
+                filename: `${filePath.join('/')}/${fileName.replace(/\.[^/.]+$/, '.html')}`,
+                template: `src/content/${file}`,
+                excludeChunks: ['ie-polyfills']
+            });
+        }
+        }).filter(x => x)
+    );
 
     // not supported while doing hmr - causes memory leaks and slows build time by ~40%
-    if (!env.hmr) {
+    if (!env.hmr && !env.inspect) {
         config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+        config.plugins.push(new WebpackShellPlugin({onBuildStart:['npm run doc', 'npm run apidoc']}));
+    }
+
+    if (env.inspect) {
+        config.plugins.push(new BundleAnalyzerPlugin({openAnalyzer: false, generateStatsFile: true}));
     }
 
     if (env.geoLocal) {
@@ -183,17 +193,4 @@ module.exports = function (env) {
     }
 
     return config;
-}
-
-function htmlInjectPlugins() {
-    return fs.readdirSync('src/content/samples').map(file => {
-        if (/\.tpl$/.test(file)) {
-            return new HtmlWebpackPlugin({
-                inject: false,
-                filename: `samples/${file.replace(/\.[^/.]+$/, '.html')}`,
-                template: `src/content/samples/${file}`,
-                excludeChunks: ['ie-polyfills']
-            });
-        }
-    }).filter(x => typeof x !== 'undefined');
 }

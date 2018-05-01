@@ -40,6 +40,11 @@ function events($rootScope) {
             $rootScope.$on(...args),
         $broadcast: (...args) =>
             $rootScope.$broadcast(...args),
+        $unsubscribe: (...events) => {
+            events.forEach(event => {
+                $rootScope.$$listeners[event] = [];
+            });
+        },
 
         rvReady: 'rvReady', // Fired when map should be created the first time; should not be broadcasted more then once
         rvApiHalt: 'rvApiHalt', // Fired when API should be put back into 'queue' mode
@@ -60,9 +65,11 @@ function events($rootScope) {
         rvLayerRecordLoaded: 'rvLayerRecordLoaded',
         rvMapLoaded: 'rvMapLoaded',
         rvMapPan: 'rvMapPan',
+        rvMapZoomStart: 'rvMapZoomStart',
         rvExtentChange: 'extentChange', // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance
         rvMouseMove: 'rvMouseMove', // Fired when mouse move over the map (use to calculate mouse coordinates)
         rvBasemapChange: 'rvBasemapChange', // Fired when basemap is changed
+        rvBasemapLoaded: 'rvBasemapLoaded',
         rvHighlightDetailsItem: 'rvHighlightDetailsItem',
         rvGeosearchClose: 'rvGeosearchClose', // Fire when geosearch close
         rvTableReady: 'rvTableReady',
@@ -70,7 +77,12 @@ function events($rootScope) {
 
         rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
 
-        rvApiMapAdded: 'rvApiMapAdded'
+        rvApiMapAdded: 'rvApiMapAdded',
+        rvApiLayerAdded: 'rvApiLayerAdded',
+
+        rvEPSGPreInited: 'rvEPSGPreInited', // fire when intention EPSG has been pre-inited
+        rvIntentionsPreInited: 'rvIntentionsPreInited', // fire when all intentions have been pre-iinitialized
+        rvIntentionsInited: 'rvIntentionsInited'// fire when all intentions have been initialized
     };
 }
 

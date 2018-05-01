@@ -11,8 +11,8 @@ angular
     .module('app.geo')
     .factory('legendService', legendServiceFactory);
 
-function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, LayerBlueprint,
-    layerRegistry, common) {
+function legendServiceFactory(Geo, ConfigObject, configService, stateManager, LegendBlock, LayerBlueprint,
+    layerRegistry, common, events, $rootScope) {
 
     const service = {
         constructLegend,
@@ -21,6 +21,51 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         addLayerDefinition,
         removeLegendBlock
     };
+
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+
+    // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.addConfigLayer = layerJSON => {
+            const layerRecords = configService.getSync.map.layerRecords;
+
+            const index = layerRecords.find(layerRecord =>
+                layerRecord.layerId === layerJSON.id);
+
+            if (!index) {
+                let addToLegend = false;
+                if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+                    addToLegend = true;
+                }
+
+                const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
+                $rootScope.$applyAsync();
+                return common.$q(resolve => {
+                    events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        resolve(layers);
+                    });
+                });
+            } else {
+                return common.$q.resolve([]);
+            }
+        };
+
+        configService.getSync.map.instance.setLegendConfig = legendStructure => {
+            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+
+            const apiLayers = mApi.layers.allLayers.map(l => l._viewerLayer.config.source);
+            const viewerLayers = configService.getSync.map.layers;
+            const layers = apiLayers.concat(
+                viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
+            );
+            const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
+            service.constructLegend(layers, newLegend);
+            configService.getSync.map._legend = newLegend;
+            mApi._legendStructure = newLegend;
+            $rootScope.$applyAsync();
+        };
+    });
 
     return service;
 
@@ -32,19 +77,40 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      *
      * @function constructLegend
      * @param {Array} layerDefinitions an array of layer definitions from the config file or RCS snippets
-     * @param {Array} legendStructure a typed legend hierarchy containing Enry, EntryGroup, VisibilitySet, and InfoSections items
+     * @param {Array} legendStructure a typed legend hierarchy containing Entry, EntryGroup, VisibilitySet, and InfoSections items
      */
     function constructLegend(layerDefinitions, legendStructure) {
         const mapConfig = configService.getSync.map;
 
         const layerBlueprintsCollection = mapConfig.layerBlueprints;
         const legendMappings = mapConfig.legendMappings;
+        const newDefinitions = [];
+
+        layerDefinitions.forEach(ld => {
+            let index = layerBlueprintsCollection.findIndex(blueprint =>
+                blueprint.config.id === ld.id);
+            const legendItem = legendStructure.root
+                .walk(entry =>
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1) ?
+                    entry : null)
+                .filter(a => a)[0];
+
+            // if the layer is being readded to the legend, regenerate the layer record to have up-to-date settings
+            if (index !== -1 && legendItem) {
+                const blueprint = layerBlueprintsCollection[index];
+                layerRegistry.regenerateLayerRecord(blueprint);
+            }
+            // there is no blueprint already created for the layer, need to create one
+            else {
+                newDefinitions.push(ld);
+            }
+        });
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const layerBlueprints = layerDefinitions.map(createBlueprint);
+        const layerBlueprints = newDefinitions.map(createBlueprint);
 
         // create mapping for all layer blueprints
-        layerBlueprints.forEach(lb =>
+        mapConfig.layerBlueprints.forEach(lb =>
             (legendMappings[lb.config.id] = []));
 
         const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
@@ -58,10 +124,11 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @function addLayerDefinition
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @param {pos} optional position for layer to be on the legend
+     * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
      * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
-    function addLayerDefinition(layerDefinition, pos = null) {
-        return importLayerBlueprint(createBlueprint(layerDefinition), pos);
+    function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
+        return importLayerBlueprint(createBlueprint(layerDefinition), pos, addToLegend);
     }
 
     /**
@@ -83,9 +150,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
      * @function importLayerBlueprint
      * @param {LayerBlueprint} layerBlueprint a layer blueprint to be imported into the map and added to the legend
      * @param {pos} optional position for layer to be on the legend
+     * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
      * @return {LegendBlock} returns a corresponding, newly created legend block
      */
-    function importLayerBlueprint(layerBlueprint, pos = null) {
+    function importLayerBlueprint(layerBlueprint, pos = null, addToLegend = true) {
         const layerBlueprintsCollection = configService.getSync.map.layerBlueprints;
         layerBlueprintsCollection.push(layerBlueprint);
 
@@ -109,13 +177,19 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
         const importedBlockConfig = new ConfigObject.legend.Entry(entryConfigObject);
         const importedLegendBlock = _makeLegendBlock(importedBlockConfig, [layerBlueprint]);
 
+        if (!addToLegend) {
+            return;
+        }
+
         let position = 0;
         // find an appropriate spot in a auto legend;
         if (pos) {   // If the order from bookmark exists
             position = pos;
         } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+            const layerType = importedLegendBlock.layerType;
+            const sortGroup = layerType ? sortGroups[layerType] : 1;    // layerType doesn't exist, legend block is a group
             position = legendBlocks.entries.findIndex(block =>
-                sortGroups[block.layerType] === sortGroups[importedLegendBlock.layerType]);
+                sortGroups[block.layerType] === sortGroup);
 
             // FIXME: there might be an error here when importing a Feature layer to a legend with only WMS and Dynamic layers; need to check more;
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
@@ -251,19 +325,30 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             // FIXME: in cases of removing dynamic children, they also need to be removed from the structure returned by `layerRecord.getChildTree()`
             // without this, loading from the bookmark, removed dynamic children will come back with their visibility set to "off"
 
+            let layerRecordId = legendBlock.layerRecordId;
+
+            // legendBlock.layerRecordId can be undefined if we recursively call 'removeLayer()' in tocService because we are
+            // removing a groups parent. in that case we need to find the correct layerRecordId of the initial layer that was being removed
+            if (layerRecordId === null) {
+                layerRecordId = legendBlock.walk(l => l.layerRecordId !== null ? l.layerRecordId : null).filter(a => a)[0];
+            }
+
             // check if any other blocks reference this layer record
             // if none found, it's safe to remove the layer record
             const isSafeToRemove = legendBlocks
-                .walk(entry => entry.layerRecordId === legendBlock.layerRecordId)
+                .walk(entry => entry.layerRecordId === layerRecordId)
                 .filter(a => a)
                 .length === 0;
 
             if (isSafeToRemove) {
-                layerRegistry.removeLayerRecord(legendBlock.layerRecordId);
+                layerRegistry.removeLayerRecord(layerRecordId);
             }
 
             // remove any bounding box layers associated with this legend block
             _boundingBoxRemoval(legendBlock);
+
+            // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
+            mApi._legendStructure = configService.getSync.map.legend;
         }
 
         /**
@@ -355,8 +440,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, LegendBlock, Lay
             const layerConfig = blueprints.main.config;
 
             layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
-
-            layerConfig.layerEntries.forEach(entry => (entry.cachedRefreshInterval = (entry.refreshInterval = layerConfig.refreshInterval)));
 
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 

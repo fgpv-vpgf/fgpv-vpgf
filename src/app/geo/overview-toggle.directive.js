@@ -34,7 +34,7 @@ angular
     .module('app.layout')
     .directive('rvOverviewToggle', rvOverviewToggle);
 
-function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationService, events, configService) {
+function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate, animationService, events, configService, referenceService, errorService) {
     const directive = {
         restrict: 'A',
         link: link
@@ -48,9 +48,14 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationS
         // events.$on(events.rvBasemapChange, init);
 
         // TODO: instead of relying on esri event here, listen on it in map service and re-emit as rv-basemapchange event
-        events.$on(events.rvApiReady, () => {
+        // don't create an overview map until a basemap has loaded
+        events.$on(events.rvBasemapLoaded, () => {
             init();
             configService.getSync.map.instance.basemapGallery.on('selection-change', init);
+        });
+
+        events.$on(events.rvMapLoaded, (_, mapI) => {
+            mapI.basemapGallery.on('error', basemapToast);
         });
 
         const self = scope.self;
@@ -143,6 +148,15 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, animationS
                     overviewAnimation.play();
                 }
             }
+        }
+
+        function basemapToast() {
+            const toast = {
+                textContent: $translate.instant('basemap.broken'),
+                action: $translate.instant('basemap.close'),
+                parent: referenceService.panels.shell
+            };
+            errorService.display(toast)
         }
     }
 }

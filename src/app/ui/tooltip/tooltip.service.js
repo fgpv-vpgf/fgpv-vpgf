@@ -20,7 +20,9 @@ angular
     .module('app.ui')
     .factory('tooltipService', tooltipService);
 
-function tooltipService($rootScope, $compile, $q, referenceService, events) {
+function tooltipService($rootScope, $compile, $q, configService, referenceService, events) {
+    let activeTooltips = [];
+
     /**
      * Tooltip's origin point is generally the position of the initial mouse cursor or clientX/Y of a mouse event when the tooltip was first created.
      * Movement and Collision strategies are defined in the TooltipService on initialization and then passed to Tooltip instances.
@@ -52,7 +54,6 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
             this._mouseGap = 10;
 
             this._originPoint = { x: 0, y: 0 };
-            this._collisionOffset = { x: 0, y: 0 };
             this._dimensions = { width: 0, height: 0 };
 
             this._resetOffset();
@@ -81,6 +82,32 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
             // reposition taking into the account new dimensions
             this.position(this._originPoint.x, this._originPoint.y, false);
+
+            // set the appropriate offset based on the specified tooltip position
+            if (this._dimensions.width > 0 || this._dimensions.height > 0) {
+                const tipAndOptions = activeTooltips.find(tt => tt.toolTip === this);
+                if (tipAndOptions) {
+                    const tooltip = tipAndOptions.toolTip;
+                    const position = tipAndOptions.position;
+
+                    // need to use defaults or a getter for the graphic size instead of numbers directly
+                    if (!tooltip._scope.self.isRendered) {
+                        switch (position) {
+                            case 'bottom':
+                                tooltip.offset(0, -this._dimensions.height - 19.5 - 1);
+                                break;
+                            case 'left':
+                                tooltip.offset(this._dimensions.width / 2 + 22.5 / 2 + 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
+                                break;
+                            case 'right':
+                                tooltip.offset(-this._dimensions.width / 2 - 22.5 / 2 - 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
+                                break;
+                            default:
+                                tooltip.offset(0, this._dimensions.height / 2 + 1);
+                        }
+                    }
+                }
+            }
         }
 
         /**
@@ -149,6 +176,16 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
             const collisionOffset = this._collisionStrategy.checkCollisions(this);
 
+            if (collisionOffset.x !== 0 || collisionOffset.y !== 0) {
+                this._node.css({
+                    display: 'none'
+                });
+            } else if (collisionOffset.x === 0 && collisionOffset.y === 0) {
+                this._node.css({
+                    display: 'block'
+                });
+            }
+
             // flip the tooltip when it hits the ceiling
             if (collisionOffset.y > 0) {
                 collisionOffset.y = this._dimensions.height + this._mouseGap * 2;
@@ -187,6 +224,20 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
             // apply the current running offset and check for collisions
             this.offset(0, 0);
+        }
+
+        /**
+         * Allows for hovertips to be clickable and appear below other content such as settings panel.
+         * Specifically used for api geometry for SimpleLayers.
+         *
+         * @function enablePointerEvents
+         *
+         */
+        enablePointerEvents() {
+            this._node.css({
+                'pointer-events': 'auto',
+                'z-index': -1
+            });
         }
 
         /**
@@ -405,11 +456,50 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
 
     const service = {
         addHoverTooltip,
+        addTooltip,
+        addHover,
         removeHoverTooltip,
+        removeHover,
         refreshHoverTooltip
     };
 
+
     const deRegisterRVReady = $rootScope.$on(events.rvReady, init);
+
+    // wire in a hook to any map for removing a tooltip when a Hover is removed
+    events.$on(events.rvMapLoaded, () => {
+        // remove hovertip with that geometry id if it exists
+        configService.getSync.map.instance.removeHover = geoId => {
+            const index = activeTooltips.findIndex(tt => tt.geoId === geoId);
+            if (index !== -1) {
+                activeTooltips[index].toolTip.destroy();
+                activeTooltips.splice(index, 1);
+            }
+        }
+
+        // remove all open hovertips for layer whose visibility was toggled
+        configService.getSync.map.instance.hoverRemoveOnToggle = slId => {
+            const idxToRemove = [];
+            activeTooltips.forEach((tt, idx) => {
+                if (tt.simpleLayerId === slId) {
+                    tt.toolTip.destroy();
+                    idxToRemove.push(idx);
+                }
+            });
+
+            idxToRemove.reverse().forEach(idx => {
+                activeTooltips.splice(idx, 1);
+            });
+        }
+    });
+
+    // if the map is being zoomed, close any open tooltips to avoid mispositioning
+    events.$on(events.rvMapZoomStart, () => {
+        activeTooltips.forEach(tt => {
+            tt.toolTip.destroy();
+        });
+        activeTooltips = [];
+    });
 
     return service;
 
@@ -445,6 +535,60 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
     }
 
     /**
+     * Similar to the `addHoverTooltip` function. The key difference is that this function allows for the creation of several tooltips on the map.
+     *
+     * Strictly follows the `followMapStrategy` pattern.
+     *
+     * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
+     * @param {Object} self a self object that will be available on the tooltip directive scope
+     * @param {String} content tooltips content template that will be transcluded by the tooltip directive; should be valid HTML
+     * @return {Tooltip} a Tooltip instance
+     */
+    function addTooltip(point, self, content = DEFAULT_HOVERTIP_TEMPLATE) {
+        const tooltipScope = $rootScope.$new();
+        tooltipScope.self = self;
+
+        const toolTip = new Tooltip(ref.followMapStrategy, ref.containInsideStrategy, content, tooltipScope);
+        referenceService.panels.shell.append(toolTip.node);
+        toolTip.position(point.x, point.y);
+        return toolTip;
+    }
+
+    /**
+     * Similar to the `addTooltip` function. The key difference is that this function will create hovertips with
+     * user-defined options (or defaults) and also track hovertips that are meant remain open.
+     *
+     * @param {Object} point tooltip origin point ({ x: <Number>, y: <Number> } in pixels relative to the map node)
+     * @param {Object} self a self object that will be available on the tooltip directive scope
+     * @param {Object} hovertip the api hovertip object being added to the map
+     * @param {String} geoId the individual geometry id to which the hovertip is being added
+     * @param {String} simpleLayerId the id of the simpleLayer where the geometry hover is being added
+     * @return {Tooltip} a Tooltip instance
+     */
+    function addHover(point, self, hovertip, geoId, simpleLayerId) {
+        const tooltipScope = $rootScope.$new();
+        tooltipScope.self = self;
+
+        const content = hovertip.text;
+        const keepOpen = hovertip.keepOpen;
+        const followCursor = hovertip.followCursor;
+        const position = hovertip.position;
+        const movementStrategy = !keepOpen && followCursor ? ref.followMouseStrategy : ref.followMapStrategy;
+
+        let toolTip;
+        if (!activeTooltips.find(tt => tt.geoId === geoId)) {
+            toolTip = new Tooltip(movementStrategy, ref.containInsideStrategy, content, tooltipScope);
+
+            activeTooltips.push({ toolTip, keepOpen, geoId, simpleLayerId, position });
+
+            referenceService.panels.shell.append(toolTip.node);
+            toolTip.position(point.x, point.y);
+        }
+
+        return toolTip;
+    }
+
+    /**
      * Removes an existing hover tooltip if one exists, otherwise does nothing.
      *
      * @function removeHoverTooltip
@@ -453,6 +597,25 @@ function tooltipService($rootScope, $compile, $q, referenceService, events) {
         if (ref.hoverTooltip) {
             ref.hoverTooltip.destroy();
         }
+    }
+
+    /**
+     * Removes all existing tooltips that are not meant to remain open on mouse out event.
+     *
+     * @function removeHover
+     */
+    function removeHover() {
+        const idxToRemove = [];
+        activeTooltips.forEach((tipAndOpen, idx) => {
+            if (!tipAndOpen.keepOpen) {
+                tipAndOpen.toolTip.destroy();
+                idxToRemove.push(idx);
+            }
+        });
+
+        idxToRemove.reverse().forEach(idx => {
+            activeTooltips.splice(idx, 1);
+        });
     }
 
     /**

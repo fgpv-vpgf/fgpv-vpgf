@@ -20,11 +20,20 @@ angular
     .module('app.ui')
     .service('exportService', exportService);
 
-function exportService($mdDialog, $mdToast, referenceService) {
+function exportService($mdDialog, $mdToast, referenceService, configService, events) {
     const service = {
         open,
         close
     };
+
+    // wire in a hook to any map for exporting.  this makes it available on the API
+    events.$on(events.rvMapLoaded, (_, i) => {
+        configService.getSync.map.instance.export = (fileType) => {
+            if (fileType && fileType !== 'png' && fileType !== 'jpg')
+                throw new Error(`Invalid or unsupported file type ${fileType}.`);
+            service.open(null, fileType);
+        };
+    });
 
     return service;
 
@@ -35,12 +44,13 @@ function exportService($mdDialog, $mdToast, referenceService) {
      * @function open
      * @param {Object} event original click event
      */
-    function open(event) {
+    function open(event, fileType = 'png') {
         const shellNode = referenceService.panels.shell;
 
         $mdDialog.show({
             locals: {
-                shellNode
+                shellNode,
+                fileType
             },
             controller: ExportController,
             controllerAs: 'self',
@@ -98,6 +108,7 @@ function exportService($mdDialog, $mdToast, referenceService) {
             // watch for the selected option to change and update all the export components
             self.scope.$watch('self.exportSizes.selectedOption', (newValue, oldValue) => {
                 if (oldValue !== newValue && newValue !== self.exportSizes.customOption) {
+                    self.exportSizes.customToggled = true;
                     updateComponents();
                 }
             });
@@ -267,7 +278,7 @@ function exportService($mdDialog, $mdToast, referenceService) {
             try {
                 if (!RV.isSafari) {
                     canvas.toBlob(blob => {
-                        FileSaver.saveAs(blob, `${fileName}.png`);
+                        FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
                     });
                 } else {
                     showToast('error.safari');

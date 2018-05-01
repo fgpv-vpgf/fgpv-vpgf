@@ -1,9 +1,50 @@
+/**
+ *               __
+ *              /    \
+ *             | STOP |
+ *              \ __ /
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *                ||
+ *              ~~~~~~~
+ * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
+ *
+ * THIS API IS NOT SUPPORTED.
+ */
+
 import { Observable } from 'rxjs/Rx';
 import $ from 'jquery';
-import { MouseEvent, esriMouseEvent } from 'api/event/MouseEvent';
+import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
+import { UI } from 'api/ui';
+import { Subject } from 'rxjs/Subject';
+import { LayerGroup, SimpleLayer } from 'api/layers';
+
+export enum IdentifyMode {
+    /**
+     * Display the identify results in the details panel and highlight them on the map.
+     */
+    Details = 'details',
+
+    /**
+     * Only highlight the identify results on the map.
+     */
+    Highlight = 'highlight',
+
+    /**
+     * The identify query will be run and results will be available through the `identify` API endpoint, but they will not be highlighted on the map or dispalayed in the details panel.
+     */
+    Silent = 'silent',
+
+    /**
+     * The identify query will not be run.
+     */
+    None = 'none'
+}
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -15,17 +56,30 @@ import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
  *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
  * });
  * ```
+ *
+ * @example #### Disable identify feature
+ *
+ * ```js
+ * mapInstance.identify = false;
+ * ```
  */
 export default class Map {
     private _id: string;
     private _fgpMap: Object;
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
+    private _ui: UI;
+    private _layers: LayerGroup;
+    private _identifyMode: IdentifyMode = IdentifyMode.Details;
+    private _simpleLayer: SimpleLayer;
+    private _legendStructure: LegendStructure;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
+        this._ui = new UI(this);
+        this._layers = new LayerGroup(this);
 
         // config set implies viewer loading via API
         if (config) {
@@ -43,11 +97,52 @@ export default class Map {
         }
     }
 
+    get layers(): LayerGroup {
+        return this._layers;
+    }
+
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
         this._fgpMap = fgpMap;
         this.setBounds(this.mapI.extent, false);
         initObservables.apply(this);
+    }
+
+    /** Returns the current structured legend JSON. If auto legend, returns undefined */
+    get legendConfig(): Array<JSON> | undefined {
+        if (this._legendStructure.type === 'structured') {  // use constant
+            return this._legendStructure.JSON.root.children;
+        }
+    }
+
+    /**
+     * Sets a new structured legend JSON snippet that updates the legend.
+     *
+     * TODO: If the legend was previously auto, replace it with a structured legend.
+     */
+    set legendConfig(value: Array<JSON> | undefined) {
+        if (value) {
+            const structure = this._legendStructure.JSON;
+            if (this._legendStructure.type === 'structured') {    // use constant
+                structure.root.children = value;
+                this.mapI.setLegendConfig(structure);
+            }
+        }
+    }
+
+    /**
+     * Specifies if the identify panel should be shown after the identify query completes.
+     */
+    set identifyMode(value: IdentifyMode) {
+        this._identifyMode = value;
+    }
+
+    get identifyMode(): IdentifyMode {
+        return this._identifyMode;
+    }
+
+    get simpleLayer(): SimpleLayer {
+        return this._simpleLayer;
     }
 
     /**
@@ -83,31 +178,45 @@ export default class Map {
         this.mapI.fullscreen(enabled);
     }
 
+    /** Triggers the map export screen. */
+    export(): void {
+        this.mapI.export();
+    }
+
     /** Returns the boundary of the map, similar to extent. */
-    get bounds(): geo.XYBounds { return this._bounds; }
+    get bounds(): geo.XYBounds {
+        return this._bounds;
+    }
 
     /** Returns the id assigned to the viewer. */
-    get id(): string { return this._id; }
+    get id(): string {
+        return this._id;
+    }
 
-    get center(): geo.XY { return this.bounds.center; }
+    get center(): geo.XY {
+        return this.bounds.center;
+    }
 
     /** The main JQuery map element on the host page.  */
     mapDiv: JQuery<HTMLElement>;
+
+    /** @ignore */
+    _clickSubject: Subject<MapClickEvent> = new Subject();
 
     /**
      * Emits when a user clicks anywhere on the map.
      *
      * It **does not** emit for clicks on overlaying panels or map controls.
      * @event click
-    */
-    click: Observable<MouseEvent>;
+     */
+    click: Observable<MapClickEvent>;
 
     /**
      * Emits when a user double clicks anywhere on the map.
      *
      * It **does not** emit for double clicks on overlaying panels or map controls.
      * @event doubleClick
-    */
+     */
     doubleClick: Observable<MouseEvent>;
 
     /**
@@ -117,7 +226,7 @@ export default class Map {
      *
      * This observable emits a considerable amount of data, be mindful of performance implications.
      * @event mouseMove
-    */
+     */
     mouseMove: Observable<MouseEvent>;
 
     /**
@@ -125,7 +234,7 @@ export default class Map {
      *
      * It **does not** emit for down left clicks on overlaying panels or map controls.
      * @event mouseDown
-    */
+     */
     mouseDown: Observable<MouseEvent>;
 
     /**
@@ -133,54 +242,58 @@ export default class Map {
      *
      * It **does not** emit for mouse lifts over overlaying panels or map controls.
      * @event mouseUp
-    */
+     */
     mouseUp: Observable<MouseEvent>;
 
     /**
      * Emits whenever the map zoom level changes.
      * @event zoomChanged
-    */
+     */
     zoomChanged: Observable<number>;
 
     /**
      * Emits whenever the map center has changed.
      * @event centerChanged
-    */
+     */
     centerChanged: Observable<MouseEvent>;
 
     /**
-    * Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.
-    * @event boundsChanged
-    */
+     * Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.
+     * @event boundsChanged
+     */
     get boundsChanged(): Observable<geo.XYBounds> {
         return this._boundsChanged;
     }
 
     /** Returns the viewer map instance as an `any` type for convenience.  */
     get mapI(): any {
-        return (<any>this._fgpMap);
+        return <any>this._fgpMap;
     }
 
     /** Pans the map to the center point provided. */
     setCenter(xy: geo.XY | geo.XYLiteral): void;
     @geo.XYLiteral
     setCenter(xy: geo.XY): void {
-        this.mapI.centerAt(xy.projectToPoint(3978));
+        this.mapI.centerAt(xy.projectToPoint(this.mapI.spatialReference.wkid));
     }
 
     /** Returns the current zoom level applied on the map */
     get zoom(): number {
-        return this.mapI.zoomCounter;
+        return this.mapI.getLevel();
     }
 
     /** Zooms to the level provided. */
-   set zoom(to: number) {
+    set zoom(to: number) {
         this.mapI.setZoom(to);
-   }
+    }
 
-   /** Returns the jQuery element of the main viewer.  */
+    /** Returns the jQuery element of the main viewer.  */
     get div(): JQuery<HTMLElement> {
         return this.mapDiv;
+    }
+
+    get ui(): UI {
+        return this._ui;
     }
 }
 
@@ -190,10 +303,30 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
+    this.click = this._clickSubject.asObservable();
 
-    this.click = Observable.fromEvent(esriMapElement, 'click').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
-    this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove')
+        .map(evt => new MouseEvent(<esriMouseEvent>evt))
+        .distinctUntilChanged((x, y) => x.equals(y));
     this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));
     this.mouseUp = Observable.fromEvent(esriMapElement, 'mouseup').map(evt => new MouseEvent(<esriMouseEvent>evt));
+}
+
+interface LegendStructure {
+    type: string;
+    JSON: LegendJSON;
+}
+
+interface LegendJSON {
+    type: string;
+    root: EntryGroupJSON;
+}
+
+interface EntryGroupJSON {
+    name: string;
+    expanded?: boolean;
+    children: Array<JSON>;
+    controls?: Array<string>;
+    disabledControls?: Array<string>;
 }

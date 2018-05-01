@@ -61,7 +61,10 @@
                             </md-button>
                         </div>
 
-                        <span class="rv-filter-setting-name">{{ column.title }}</span>
+                        <div class="rv-filter-setting-name" ng-mouseenter="self.setNameTruncated($event)">
+                            {{ column.title }}
+                            <md-tooltip ng-show="self.isNameTruncated">{{ column.title }}</md-tooltip>
+                        </div>
 
                         <div rv-table-definition class="rv-filter-setting-item" info="column"></div>
 

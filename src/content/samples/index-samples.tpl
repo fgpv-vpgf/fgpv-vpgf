@@ -37,7 +37,7 @@
 
         #hideShow {
             position: absolute;
-            width: 150px;
+            width: 10%;
             right: 45%;
             z-index: 100;
             top: 80px;
@@ -113,7 +113,7 @@
                 <option value="config/config-sample-16-structured-legend-tile-layer-only-valid-one-proj.json">16. Tile layer which is only valid in one of the basemap projections</option>
                 <option value="config/config-sample-17.json">17. Layer with only Information section</option>
                 <option value="config/config-sample-18.json">18. Layer with symbology overridden by config file specified image file</option>
-                <option value="config/config-sample-19.json">19. Layer with Viewer with “About map” text changed</option>
+                <option value="config/config-sample-19.json">19. Customized Map info </option>
                 <option value="config/config-sample-20.json">20. Layer with Bounding box disabled</option>
                 <option value="config/config-sample-21.json">21. Layer with Query disabled</option>
                 <option value="config/config-sample-22.json">22. Layer with Snapshot disabled</option>
@@ -122,7 +122,7 @@
                 <option value="config/config-sample-25.json">25. Layer with Reload disabled</option>
                 <option value="config/config-sample-26.json">26. Layer with Remove disabled</option>
                 <option value="config/config-sample-27.json">27. Layer with Settings disabled</option>
-                <option value="config/config-sample-28.json">28. Layer with Data table disabled</option>
+                <option value="config/config-sample-28.json">28. Layer without option to view its data table</option>
                 <option value="config/config-sample-29.json">29. Layer with metadata included</option>
                 <option value="config/config-sample-30.json">30. Viewer with Map re-order disabled for auto legends</option>
                 <option value="config/config-sample-31.json">31. Layer with customized title of a data table</option>
@@ -148,12 +148,16 @@
                 <option value="config/config-sample-51.json">51. Physical layer order must match config layer order</option>
                 <option value="config/config-sample-52.json">52. Disabled Overview Map</option>
                 <option value="config/config-sample-53.json">53. Layer Refresh Interval</option>
+                <option value="config/config-sample-54.json">54. True Dynamic Layers with different image format</option>
+                <option value="config/config-sample-55.json">55. Custom made north arrow icon</option>
+                <option value="config/config-sample-58.json">58. Initial basemap loaded is broken</option>
+                <option value="config/config-sample-59.json">59. Layer Re-ordering enabled</option>
             </select>
         </div>
 
         <div class="row">
             <form class="tool">
-                <input id="bookmarkURL" type="text">
+                <input id="bookmarkURL" type="text" autocomplete="off">
                 <button id="loadButton" class="btn" type="button">Load Bookmark</button>
                 <button id="clearButton" class="btn" type="button">Clear</button>
             </form>
@@ -162,11 +166,10 @@
 
     <button id="hideShow" class="chevron top fade" type="button"></button>
 
-    <div class="myMap" id="mobile-map" is="rv-map"
+    <div class="myMap" id="sample-map" is="rv-map"
         rv-config="config/config-sample-01-structured-visibility-sets.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
-        rv-extensions="extensions/hello-world.js"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
@@ -221,8 +224,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {
@@ -247,17 +250,17 @@
         if (keys) {
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
-            RV.getMap('mobile-map').restoreSession(keysArr);
+            RV.getMap('sample-map').restoreSession(keysArr);
         } else {
             const bookmark = queryStr.rv;
 
             // update the config values if needed
             var previouslySelectedConfig = sessionStorage.getItem('sampleConfig');
             if (previouslySelectedConfig) {
-                document.getElementById('mobile-map').setAttribute('rv-config', previouslySelectedConfig);
+                document.getElementById('sample-map').setAttribute('rv-config', previouslySelectedConfig);
                 document.getElementById('selectConfig').value = previouslySelectedConfig;
             } else {
-                const currentConfig = document.getElementById('mobile-map').getAttribute('rv-config');
+                const currentConfig = document.getElementById('sample-map').getAttribute('rv-config');
                 sessionStorage.setItem('sampleConfig', currentConfig);
             }
         }
@@ -265,33 +268,34 @@
         // load bookmark
         function loadBookmark() {
             let bookmarkURL = document.getElementById('bookmarkURL').value;
-            RV.getMap('mobile-map').useBookmark(bookmarkURL);
+            RV.getMap('sample-map').useBookmark(bookmarkURL);
         }
 
         function clearBookmark() {
             document.getElementById('bookmarkURL').value = '';
-            document.getElementById("bookmarkURL").selected = true;
+            document.getElementById('bookmarkURL').selected = true;
+            document.getElementById('bookmarkURL').focus();
         }
 
         function hide() {
-            if (document.getElementById("header").style.display === "none") {
-                document.getElementById("header").style.display = "block";
-                document.getElementById("hideShow").classList.remove('bottom');
-                document.getElementById("hideShow").classList.add('top');
-                document.getElementById("hideShow").style.top = ('80px');
+            if (document.getElementById('header').style.display === 'none') {
+                document.getElementById('header').style.display = 'block';
+                document.getElementById('hideShow').classList.remove('bottom');
+                document.getElementById('hideShow').classList.add('top');
+                document.getElementById('hideShow').style.top = ('80px');
             } else {
-                document.getElementById("header").style.display = "none";
-                document.getElementById("hideShow").classList.remove('top');
-                document.getElementById("hideShow").classList.add('bottom');
-                document.getElementById("hideShow").style.top = ('0px');
+                document.getElementById('header').style.display = 'none';
+                document.getElementById('hideShow').classList.remove('top');
+                document.getElementById('hideShow').classList.add('bottom');
+                document.getElementById('hideShow').style.top = ('0px');
             }
         }
 
         // change and load the new config
         function changeConfig() {
             var selectedConfig = document.getElementById('selectConfig').value;
-            document.getElementById('mobile-map').setAttribute('rv-config', selectedConfig);
-            RV.getMap('mobile-map').reInitialize();
+            document.getElementById('sample-map').setAttribute('rv-config', selectedConfig);
+            RV.getMap('sample-map').reInitialize();
             sessionStorage.setItem('sampleConfig', selectedConfig);
         }
     </script>

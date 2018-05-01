@@ -1,8 +1,7 @@
 import * as angular from 'angular';
+import { nodes } from './startup';
 
-const appIdCounter = 0;
-
-angular.element(document).ready(() => (<any>window).RV._nodes.forEach(seeder));
+angular.element(document).ready(() => nodes.forEach(seeder));
 
 export function seeder(node: HTMLElement) {
     // load shell template into the node

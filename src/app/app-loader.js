@@ -24,7 +24,8 @@ import 'datatables.net-select';
 
 // APPLICATION MAIN IMPORTS
 import './api-loader';
-import './bootstrap.js';
+import './app-seed';
+import './bootstrap';
 import './global-registry.js';
 import './geo/geo.module.js';
 import './core/core.module.js';
@@ -36,7 +37,6 @@ import './geo/geo-loader.js';
 import './layout/layout-loader.js';
 import './app.module.js';
 import './focus-manager.js';
-import './app-seed';
 import '../plugins/core/back-to-cart.js';
 import '../plugins/core/coord-info.js';
 import '../content/styles/main.scss';

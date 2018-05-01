@@ -51,8 +51,8 @@
                     class="rv-legend-{{ block.template }}"
                     block="block"
                     is-reorder="self.isReorder"
-                    ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
-
+                    ng-class="{ 'rv-selected': block.isSelected }"
+                    ng-click="self.notifyApiClick(block)"></rv-legend-block>
 
                 <!-- regular group children list -->
                 <ul

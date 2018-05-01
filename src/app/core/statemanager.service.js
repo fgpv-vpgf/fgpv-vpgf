@@ -1,3 +1,5 @@
+import { PanelEvent } from 'api/events';
+
 /**
  * @module stateManager
  * @memberof app.common
@@ -23,7 +25,7 @@ angular
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
 function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
-    referenceService) {
+    referenceService, appInfo) {
 
     const service = {
         addState,
@@ -310,10 +312,24 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return {Promise}  resolves to undefined when all opening panel animations are complete
      */
     function openParentPanel(panelToOpen, propagate) {
-        return propagate ?
+        let panel;
+
+        if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToOpen.name))) {
+            panel._opening.next(new PanelEvent(panelToOpen.name, $(`rv-panel[type="${panelToOpen.name}"]`)));
+        }
+
+        const promiseResult = propagate ?
             openPanel(getChildren(panelToOpen.name)[0], false)
                 .then(() => openPanel(panelToOpen, false)) :
             setItemProperty(panelToOpen.name, 'active', true);
+
+        promiseResult.then(() => {
+            if (panel) {
+                panel._opened.next(new PanelEvent(panelToOpen.name, $(`rv-panel[type="${panelToOpen.name}"]`)));
+            }
+        });
+
+        return promiseResult;
     }
 
     /**
@@ -382,6 +398,36 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             openChildPanel(panelToOpen, propagate);
     }
 
+    function closeParent(panelToClose, propagate) {
+        let panel;
+        let panelEvent;
+
+        if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToClose.name))) {
+            panelEvent = new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`));
+            panel._closing.next(panelEvent);
+        }
+
+        return setItemProperty(panelToClose.name, 'active', false)
+            .then(() =>
+                // wait for all child transition promises to resolve
+                propagate ?
+                    $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
+                    true
+            ).then(() => {
+                if (panel) {
+                    panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
+                }
+            });
+    }
+
+    function closeChild(panelToClose, propagate) {
+        if (propagate) {
+            closePanel(getParent(panelToClose.name), false);
+        }
+        modifyHistory(panelToClose, false);
+        return setItemProperty(panelToClose.name, 'active', false, true);
+    }
+
     /**
      * Closes a panel from display.
      *
@@ -406,24 +452,11 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
 
         // closing parent panel
         if (typeof panelToClose.item.parent === 'undefined') {
-            animationPromise = setItemProperty(panelToClose.name, 'active', false)
-                .then(() =>
-                    // wait for all child transition promises to resolve
-                    propagate ?
-                        $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
-                        true
-                );
-
+            return closeParent(panelToClose, propagate);
         // closing child panel
         } else {
-            if (propagate) {
-                closePanel(getParent(panelToClose.name), false);
-            }
-            modifyHistory(panelToClose, false);
-            animationPromise = setItemProperty(panelToClose.name, 'active', false, true);
+            return closeChild(panelToClose, propagate);
         }
-
-        return animationPromise;
     }
 
     /**

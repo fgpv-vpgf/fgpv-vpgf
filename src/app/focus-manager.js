@@ -617,10 +617,14 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
         return;
     }
 
-    // Calling rvFocus implies the viewer should be active
-    viewerGroup
+    // Calling rvFocus implies the viewer should be active, unless there is no viewer registered which throws an error. Default to normal focus.
+    try {
+        viewerGroup
         .contains(jqueryElem)
         .setStatus(statuses.ACTIVE);
+    } catch(e) {
+        elem.origfocus(); // browser implementation
+    }
 
     // clear any delayed focus movements
     clearTimeout(focusoutTimerCancel);
@@ -703,3 +707,28 @@ function disableCommonPrototypes(funcName) {
         };
     })();
 }
+
+// Watches body for element insertions for more "fine grained control" of host page elements.
+const bodyObserver = new MutationObserver(mutations => {
+    mutations
+        .filter(m => m.type === 'childList' && m.addedNodes && m.addedNodes.length > 0)
+        .forEach(m => {
+            const nodeList = m.addedNodes;
+            nodeList.forEach(node => {
+                /** ----- AM Menu Component -----
+                 * We allow the angular material menu component to set its own initial focus by default. However when there is no focusable
+                 * element in the component, AM does not set focus which leaves focus on the triggering element. This is turn makes it impossible to close
+                 * the menu using the escape key.
+                 * 
+                 * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
+                 */
+                const angularMenu = $(node).first().find('md-menu-content');
+                if (angularMenu.length > 0 && angularMenu.find(focusSelector).length === 0) {
+                    angularMenu.attr('tabindex', '-1');
+                    angularMenu.rvFocus();
+                }
+            });
+        });
+});
+
+bodyObserver.observe(document.body, { attributes: false, childList: true });
