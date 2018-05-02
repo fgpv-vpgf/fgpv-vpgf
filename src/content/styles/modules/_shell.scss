@@ -28,6 +28,10 @@
             > * {
                 pointer-events: all;
             }
+
+            rv-mapnav {
+                pointer-events: none;
+            }
         }
 
         // center dialogs
