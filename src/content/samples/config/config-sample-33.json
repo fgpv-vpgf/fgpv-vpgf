@@ -318,7 +318,7 @@
             "layerId": "0"
           },
           {
-            "layerId": "1"
+            "layerId": "4"
           },
           {
             "name": "Exclusive Visibilty Group",
@@ -338,9 +338,6 @@
                   },
                   {
                     "layerId": "3"
-                  },
-                    {
-                    "layerId": "4"
                   }
                 ]
               }
@@ -353,7 +350,7 @@
        {
         "id": "0",
         "name": "Zoom scale layer complete",
-        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
@@ -364,34 +361,27 @@
           },
           {
             "index": 2
-          },
-          {
-            "index": 3
           }
         ]
       },
       {
         "id": "1",
-        "name": "Zoom scale single",
-        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/0",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/0",
         "layerType": "esriFeature"
       },
       {
         "id": "2",
-        "name": "Zoom scale single",
-        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/1",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/1",
         "layerType": "esriFeature"
       },
       {
         "id": "3",
-        "name": "Zoom scale single",
-        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/2",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/2",
         "layerType": "esriFeature"
       },
       {
         "id": "4",
-        "name": "Zoom scale single",
-        "url": "http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_AirEmissions_SOx/MapServer/3",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/3",
         "layerType": "esriFeature"
       }
     ],
