@@ -309,24 +309,7 @@
       }
     ],
     "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "Esri Tile",
-            "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "layerId": "canadaElevation"
-              }
-            ]
-          }
-        ]
-      }
+      "type": "autopopulate"
     },
     "layers": [
       {
