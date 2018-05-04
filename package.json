@@ -17,7 +17,6 @@
     "angular-sanitize": "1.6.7",
     "angular-translate": "2.16.0",
     "angular-translate-loader-static-files": "2.16.0",
-    "canvas-to-blob": "0.0.0",
     "csvtojson": "1.1.9",
     "datatables.net": "1.10.16",
     "datatables.net-buttons": "1.5.0",
@@ -38,8 +37,7 @@
     "remove-markdown": "0.2.2",
     "rxjs": "5.5.5",
     "screenfull": "3.3.2",
-    "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js",
-    "text-encoding": "0.6.4"
+    "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js"
   },
   "devDependencies": {
     "@types/angular": "^1.6.43",
