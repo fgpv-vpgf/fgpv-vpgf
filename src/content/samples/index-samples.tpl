@@ -154,6 +154,7 @@
                 <option value="config/config-sample-59.json">59. Layer Re-ordering enabled</option>
                 <option value="config/config-sample-61.json">61. Layer with fields not searchable and default values for filters</option>
                 <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
+                <option value="config/config-sample-62.json">63. Tile layer</option>
             </select>
         </div>
 
