@@ -153,6 +153,7 @@
                 <option value="config/config-sample-58.json">58. Initial basemap loaded is broken</option>
                 <option value="config/config-sample-59.json">59. Layer Re-ordering enabled</option>
                 <option value="config/config-sample-61.json">61. Layer with fields not searchable and default values for filters</option>
+                <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
             </select>
         </div>
 

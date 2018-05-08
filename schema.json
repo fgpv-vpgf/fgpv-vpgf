@@ -202,6 +202,7 @@
                     "type": "object",
                     "properties": {
                         "enabled": { "type": "boolean", "default": true },
+                        "altText": { "type": "string", "description": "Alternate text for the image." },
                         "value": { "type": "string", "description": "URL for the image." },
                         "link": { "type": "string", "description": "URL to go to when clicked." }
                     },
