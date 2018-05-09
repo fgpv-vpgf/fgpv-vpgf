@@ -15,7 +15,7 @@
  */
 
 
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 /**
  * Represents a geographical point in decimal degrees.

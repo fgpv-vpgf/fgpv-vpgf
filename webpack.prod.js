@@ -11,24 +11,10 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
-        output: {
-            crossOriginLoading: 'anonymous'
-        },
-
         devtool: 'source-map',
+        mode: 'production',
 
         plugins: [
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false,
-                    screw_ie8 : true
-                },
-                mangle: {
-                    screw_ie8 : true
-                },
-                sourceMap: true
-            }),
-
             new CopyPlugin([{
                 context: 'src/locales/help/default',
                 from: '**/*',
@@ -39,12 +25,6 @@ module.exports = function(env) {
                 path:  path.resolve(__dirname, 'dist'),
                 filename:  path.resolve(__dirname, `dist/fgpv-${pkg.version}.zip`),
                 exclude: [/samples/],
-            }),
-
-            new webpack.DefinePlugin({
-                'process.env': {
-                    'NODE_ENV': JSON.stringify('production')
-                }
             }),
 
             new SriPlugin({
