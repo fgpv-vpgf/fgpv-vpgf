@@ -1,5 +1,5 @@
 import screenfull from 'screenfull';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { XY, XYBounds } from 'api/geometry';
 
 /**

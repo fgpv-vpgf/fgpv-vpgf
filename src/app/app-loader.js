@@ -40,9 +40,4 @@ import './focus-manager.js';
 import '../plugins/core/back-to-cart.js';
 import '../plugins/core/coord-info.js';
 import '../content/styles/main.scss';
-
-
-// HACKS
-// hoverintent is a function consuming the jQuery object where it adds a prototype method hoverIntent.
-import hoverintent from 'jquery-hoverintent';
-hoverintent($);
+import './ui/fancyHover';
