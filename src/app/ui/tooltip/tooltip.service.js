@@ -354,7 +354,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
                 this._items.forEach(item =>
                     item.offset(movementOffset.x, movementOffset.y));
-                    
+
                 removeHoverTooltip(); 
 
                 RV.logger.log('tooltipService', `movementOffset is ${movementOffset}`);
@@ -502,6 +502,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         });
         activeTooltips = [];
 
+        // make sure hover tooltip is removed from ref.hoverTooltip (for IE)
         removeHoverTooltip();
     });
 
