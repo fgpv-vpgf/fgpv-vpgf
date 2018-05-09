@@ -1,7 +1,7 @@
 import Map from 'api/map';
 import * as GEO from 'api/geometry';
 import { ConfigLayer, SimpleLayer } from 'api/layers';
-import { Subject } from 'rxjs/Rx';
+import { Subject } from 'rxjs';
 import * as $ from "jquery";
 
 const mapInstances: Array<Map> = [];

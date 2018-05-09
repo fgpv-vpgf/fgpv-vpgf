@@ -11,6 +11,7 @@
         "noImplicitThis": true,
         "strictNullChecks": true,
         "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "moduleResolution": "node"
     }
 }

@@ -17,18 +17,9 @@ module.exports = function(env) {
 
         devtool: 'source-map',
 
-        plugins: [
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false,
-                    screw_ie8 : true
-                },
-                mangle: {
-                    screw_ie8 : true
-                },
-                sourceMap: true
-            }),
+        mode: 'production',
 
+        plugins: [
             new CopyPlugin([{
                 context: 'src/locales/help/default',
                 from: '**/*',

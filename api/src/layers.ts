@@ -15,9 +15,7 @@
  */
 
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 import { BaseGeometry } from 'api/geometry';
 import Map from 'api/map';
