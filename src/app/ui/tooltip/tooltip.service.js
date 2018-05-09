@@ -354,7 +354,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
                 this._items.forEach(item =>
                     item.offset(movementOffset.x, movementOffset.y));
-                    
+
                 removeHoverTooltip(); 
 
                 RV.logger.log('tooltipService', `movementOffset is ${movementOffset}`);
