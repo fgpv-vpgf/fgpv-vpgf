@@ -1,4 +1,5 @@
-import proj4 from 'proj4';
+let proj4 = require('proj4');
+proj4 = proj4.default ? proj4.default : proj4;
 
 const terraformer = require('terraformer');
 const teraProj = require('terraformer-proj4js');
