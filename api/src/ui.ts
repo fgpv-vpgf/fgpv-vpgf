@@ -15,10 +15,9 @@
  */
 
 
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs';
 import { PanelEvent } from 'api/events';
 import Map from 'api/map';
-import { ObserveOnMessage } from 'rxjs/operators/observeOn';
 
 /**
  * Creates the default panel streams for opening, opened, closing, and closed stream events

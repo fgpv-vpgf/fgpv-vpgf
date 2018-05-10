@@ -17,8 +17,7 @@
 
 
 import { XY } from 'api/geometry';
-import { Observable } from 'rxjs/Rx';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
 
 /** Provides screen and geographic point information for most observable mouse actions. */
 export class MouseEvent {

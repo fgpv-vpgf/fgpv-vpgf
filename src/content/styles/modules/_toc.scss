@@ -35,6 +35,17 @@ $layer-item-height-touch: rem(7.2);
     @include newLegend;
 }
 
+// TODO: these selector become ridiculously complicated, might want to more the legend set highlighting to the js side
+@mixin legend-set-item {
+    > ul.rv-group-collapsed > li > rv-legend-block,
+    > rv-legend-block {
+        rv-legend-control[name="scale"],
+        rv-legend-control[name="visibilityset"] {
+            @content;
+        }
+    }
+}
+
 @mixin newLegend {
 
     .rv-legend-list {
@@ -59,17 +70,6 @@ $layer-item-height-touch: rem(7.2);
     .rv-legend-level {
         @for $i from 0 to 10 {
             @include legend-list-step($i);
-        }
-    }
-
-    // TODO: these selector become ridiculously complicated, might want to more the legend set highlighting to the js side
-    @mixin legend-set-item {
-        > ul.rv-group-collapsed > li > rv-legend-block,
-        > rv-legend-block {
-            rv-legend-control[name="scale"],
-            rv-legend-control[name="visibilityset"] {
-                @content;
-            }
         }
     }
 
