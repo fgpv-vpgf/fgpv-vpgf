@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "dependencies": {
     "babel-cli": "^6.24.1",
+    "babel-preset-env": "1.6.1",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "canvg-origin": "^1.0.0",
