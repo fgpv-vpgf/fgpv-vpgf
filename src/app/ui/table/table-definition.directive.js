@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+const moment = window.moment;
 
 // fields blueprints to be added to the table header for large layout and inside setting panel
 // `self` property is named so intentionally, as it will be passed on a scope to the FILTERS_TEMPLATE
