@@ -15,7 +15,8 @@
  */
 
 import { Observable, Subject, fromEvent } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map }  from 'rxjs/internal/operators/map';
+import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';

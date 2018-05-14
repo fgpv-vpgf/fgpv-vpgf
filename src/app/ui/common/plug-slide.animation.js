@@ -1,10 +1,8 @@
-import {Power1} from 'gsap';
-
 // Using the first inner div to make sure we select something that renders
 const RV_PANEL_SELECTOR = 'div:first';
 const RV_PLUG_SLIDE_DURATION = 0.3;
 const RV_PLUG_SLIDE_ID_DATA = 'rv-plug-slide-id';
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 let sequences = {}; // store animation sequences
 let counter = 1; // simple id for animation sequences

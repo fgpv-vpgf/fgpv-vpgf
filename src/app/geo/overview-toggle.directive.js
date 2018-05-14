@@ -1,6 +1,4 @@
-import {Power1} from 'gsap';
-
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 const TEMPLATE = `
     <md-button

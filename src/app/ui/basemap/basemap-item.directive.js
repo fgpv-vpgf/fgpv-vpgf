@@ -1,8 +1,6 @@
-import {Power1} from 'gsap';
-
 const templateUrl = require('./basemap-item.html');
 const RV_DURATION = 0.3;
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 const BASEMAP_FOOTER = '.rv-basemap-footer';
 const BASEMAP_DESCRIPTION = '.rv-basemap-description';

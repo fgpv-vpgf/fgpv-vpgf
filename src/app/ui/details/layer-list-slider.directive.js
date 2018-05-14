@@ -1,8 +1,7 @@
-import {Power1} from 'gsap';
 const templateUrl = require('./layer-list-slider.html');
 
 const RV_SLIDE_DURATION = 0.3;
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 /**
  * @module rvLayerListSlider

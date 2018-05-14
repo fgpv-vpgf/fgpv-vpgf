@@ -1,7 +1,5 @@
-import {Power1} from 'gsap';
-
 const RV_MORPH_DURATION = 0.3;
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 /**
  * @module rvMorph
