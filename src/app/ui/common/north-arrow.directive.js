@@ -24,7 +24,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
             const mapI = configService.getSync.map.instance; 
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
-                $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
+                $rootElement.find('.rv-esri-map > .rv-inner-shell').first().after(element);
                 events.$on(events.rvApiMapAdded, (_, mApi) => {
                     // create new layer for north pole
                     mApi.layers.addLayer('northPoleLayer').then(layer => {
@@ -79,7 +79,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         element
                             .css('display', 'block')
                             .css('left', north.screenX)
-                            .css('top', Math.max(1, north.screenY))
+                            .css('top', 1)
                             .css('transform-origin', 'top center')
                             .css('transform', `rotate(${north.rotationAngle}deg)`);
                     }                   

@@ -9,8 +9,6 @@
 
 <div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" aria-label="{{ 'geo.aria.mapdescription' | translate }}"></div>
 
-<rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
-
 <div class="rv-inner-shell">
 
     <div class="rv-map-coordinates rv-lg">
@@ -24,12 +22,18 @@
         A panel can display a content pane - mainPanel can display either toc or toolbox content panes. When switching between toc and tollbox, the panel doesn't not animate (fade in/out animations), but the content pane does on etner and leave events.
 
         Panel - Content Pane - Content
+    width: 880px;
+    position: relative;
+    height: calc(100% - 300px);
+    margin: 100px auto 0 auto;
     -->
+
+    <rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
 
     <rv-appbar></rv-appbar>
 
     <!--rv-geosearch></rv-geosearch-->
-
+    
     <!-- <rv-help-overlay rv-state='help'></rv-help-overlay> -->
 
     <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->

@@ -63,6 +63,8 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         } else {
             // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
             angleDegrees = 270 - map.getNorthArrowAngle(map);
+            // offset to include in arrow position calculations
+            const shellOffset = $('.rv-inner-shell').offset();
             // since 90 degree is north, any deviation from this is the rotation angle
             rotationAngle =  90 - angleDegrees;
             // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
@@ -72,9 +74,9 @@ function mapToolService(configService, geoService, gapiService, $translate) {
                 { x: -96, y: 90 });
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
-            // the would be the bottom of our triangle, the length from center to where the arrow should be placed
+            // this would be the bottom of our triangle, the length from center to where the arrow should be placed
             screenX = screenY < 0 ?
-                mapScrnCntr.x + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
+                mapScrnCntr.x - shellOffset.left + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
                 screenNorthPoint.x;
         }
 
