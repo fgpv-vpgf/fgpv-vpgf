@@ -1,4 +1,3 @@
-import { Power1 } from 'gsap';
 const templateUrl = require('./templates/symbology-stack.html');
 
 const RV_SYMBOLOGY_ITEM_CLASS = '.rv-symbol';
@@ -8,7 +7,7 @@ const RV_SYMBOLOGY_ITEM_TRIGGER = '.rv-symbol-trigger';
 const RV_DESCRIPTION_ITEM = '.rv-description-container';
 
 const RV_DURATION = 0.3;
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 /**
  * An instance maintains the state of one toggle symbology checkox. This includes if its checked, and the query to use

@@ -1,6 +1,5 @@
 import marked from 'marked';
-import * as moment from 'moment-timezone';
-
+const moment = window.moment;
 const templateURLs = {
     about: require('./about-dialog.html'),
     share: require('./share-dialog.html')

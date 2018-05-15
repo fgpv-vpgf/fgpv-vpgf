@@ -1,8 +1,8 @@
-/* global linkifyStr, linkifyHtml, moment */
+/* global linkifyStr, linkifyHtml */
 
 import linkifyStr from 'linkifyjs/string';
 import linkifyHtml from 'linkifyjs/html';
-import * as moment from 'moment-timezone';
+const moment = window.moment;
 import marked from 'marked';
 
 /**

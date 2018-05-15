@@ -91,7 +91,7 @@ module.exports = function (env) {
             new webpack.ContextReplacementPlugin(
                 /moment[\/\\]locale$/,
                 /en|fr/
-              ),
+            ),
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
@@ -128,8 +128,6 @@ module.exports = function (env) {
 
             new SchemaValidatorPlugin()
         ],
-
-        externals: { 'TweenLite': 'TweenLite' },
 
         resolve: {
             modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'intention/node_modules')],

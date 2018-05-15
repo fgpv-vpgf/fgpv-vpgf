@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+const moment = window.moment;
 
 /**
  * @name version

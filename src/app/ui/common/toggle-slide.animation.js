@@ -1,8 +1,6 @@
-import {Power1} from 'gsap';
-
 const RV_TOGGLE_SLIDE_DURATION = 0.25;
 const RV_TOGGLE_OPACITY_DURATION = 0.1;
-const RV_SWIFT_IN_OUT_EASE = Power1;
+const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
 
 let animSrv;
 
