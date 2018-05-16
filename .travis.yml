@@ -4,11 +4,24 @@ language: node_js
 node_js:
 - 8.11.1
 
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_38f4b3dc73a1_key -iv $encrypted_38f4b3dc73a1_iv -in ./scripts/travis/azure_docs.enc -out /tmp/docs_rsa -d
+  - chmod 600 /tmp/docs_rsa
+
 cache:
   directories:
   - node_modules
+
 after_success:
 - source ./scripts/devdeploy.sh
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash ./scripts/travis/builddocs.sh
+  on:
+    tags: true
+
 notifications:
   webhooks:
     urls:
@@ -16,6 +29,7 @@ notifications:
     on_success: always
     on_failure: always
     on_start: false
+
 env:
   global:
   - secure: A5a0+y9I6Z471wluD5Ty2U2ciUoXI8GZovPtMeABbZ1jrmTmcyvmbXVOHTRE/YXjRWMMjV5YqKIAvA32ftJghFOzM2ugLWloEPvywOQ2UwDBHkHPytayZKxNqTE2LGNo1hnDhGBQKlaT7jm/aY/JraSyirpDPgmXVtsQsIKaeFB4maYaf0p+DIXYrwSz8CM3rgj6Huq9rjC9BNUD17A94QkNgmQGvmckJ2N13QMnb/w3xkHzyMhQbKsqCRQiB9sDnGy39dSqgdQJACenygm9yhMJ9eFVSTuYRmNdPcJsvJZUyWP83FAaFK6uNfpcmfu4Q6msaLCzLFNmSwhrwC1vnx8JwXZ7SEp8q/FtH1BSAedze3D7ytc9Ap7gZjPbn+cJr575w5cOKIiI7n1LkYuaLFsErU0+AINjQb2NH2al5vBvb/B4UVx3YBQtSGecjjZa8RcXsLSgj/kcGwKCWq0DNcwYSL/FcpBT17TKqU9cBeIfM0MZliemq7YirfIpr88AElluNR7N7V4kJzX+TZ6+5o+NhhrNCkJOzqnKTrtG/3YCoYRXtwkMK6fz9TgNnWAlJiOF4vcUG1rudnx35x8rD7H77R8r8pzpekcyn8XF50QTYVjH/GhSDQ0pFiCjoNM4BOXRw+WDEYYhKy8dbROPilEEUfVPKHKE2MxBi1S3rpQ=
@@ -32,6 +46,7 @@ env:
   - secure: G3jjVTK0HTCJN7yHw24VW+GDrdkUSO+5AgfNRQmEZtd52J3aUhbCt9fRXfpPomkKYj5xSCbMT2xhr2LoBQHNjA3UD02QF/7UzPrLFzjAunhLji0JC8sGgrLWN7upO82MyV+I0WI/g32RqutCM0KHF516a4Ko47ipbFkuuX4NM9xLh5uFQ7tYZDMuflh29VK8DIw7Wu9u0/S/buysGsKWCpFziExafHredU15RqlrJ+NUwRg9968WimL+ZcsnXWOdaY/XtMW0bUzg9N40UJbxvlqzVbVxfD53rZy56ckUEpc5vAytb15cQ3h4IyATCJz9IIc7BekAqYJuM62n9/1e+OpjORroeJAy55MZU8fmba7NM5DYTi5LSzycGXxN7u75x0BZO0g7TMFdJJwDltb9iHp+Ekrh2iqrs/Uqv4hbv2AzLnV6kAAf6Byeq3jhuATqsAJvh0WkAD9b15IH1r5oz1AgC4vYF5Wi8uiVJ8V+QFl3kHujoTN/yD9q6160Zho+1WRFTyMHv6BHEgbt1GZjfzg40GEEtdzpG9e7k1ZDzDp2aRkeb1p4clWcVa4y2ac0U48jnY1F7ngBRSGnH/6yh4v/dccfw4bDB6/QQSoY30ba2B2ECs54wQmUYVAadnZgmuP+TUffX4ehfkWBVzxLVHwKSlkVZLGvw6I5M/S0rb0=
   - secure: zjOVHNfRMQ5Rv7H22+LjSYUXTN3TWFPb8pHn+/Kotc6vugpmCiC8cBmZ+4Nb3la3JdrN/wS2mpKgZmgp7uErd21ePXUSaDmP5m2n7U0gRKefTF6GF+iBAg9Sal2K4XZiQ3XfyQLLI8aClQUBUus4ZwbiY4MgyI0sEule9DY5FyS8Eso4KpD+CmERVqLYdvFgHVQvb8UjV7y4xLwBrOgjRk5MVGWamtwzCjn/UTA2RD3lFPMhECFaKfX1025UolEPaud0bXOD549qqQTP4TPDyO93BaRweteVVHnP+kAI1vx8w4aUvqlxSydpzhH48wfWn/l/O0E2Rg/Af98kEIAMFpLVjF8/9rUOBWha5kNLWJaUuOCGgC+3OKCIRqDVC5hnbDa7CPSbhX6e6e+37klbNfv36iKMpEBMlXJaKd9FUxco4F6wSSVRuFnEkj3PACniJa6I7GftZDP97YN8s6DwpaDiqAKpBAr/w8A7V7+5WqTtR+Jc3jti4Ta5pt02HDsXh6jJejI3VkP0lRlXVaKudCEZedbaIjWi2Lz6dO5enABsnVI/V0QOYR3N04yuThk2e0yiUE4PhlawqH5RkqiYEhontzjT35rP+IT+l0Kz1mHE+FLQA5uEQ/4EoCSgcqNfZXsozqyioCF7xb/t3PrDDB8ZmxNDab032V/DFOmLZ/o=
   - secure: pMzRsMd74RlWKDdmjuUqv/WgPWmCvBnnWMDtvufUIt+4eZI+WaoWKyJ6PiVXL+qcdZnzbLPde7INO7sPfI3ZEr2nv3+4zbLz3TyPzrUrnlrMGifymzI13YopcnZyXnp6r29XC+kaAc38pBreg4Un+/nByKTcfrA09AmMdvYu9LiHjurI704ifhsQQM1wiUQCi8iWlxS3/SIGqC/WQLihKNtg8zXr4LLzYa/Ygrd/9rtp+9ingpRtwTHYPwZ+qOPVlSqd2zEMNbD109CUzANddDogSHLIpa7Mk9qCPbM2ST/IDgnTIhp1F1ryJEZ5UYvr7rUbZjHSk+k+ULDY4zrFHpi3zUX4aZ4NdjzbjgXj0vTCNsBTVEXP2jwmPVNcIdd5URJ9S+RlnqhcOhGxtpGWIeM8nwLXj4G+dyNLN+rPnfpC+gXW07MaQm0yCNoLzWBBUy+zQWZupjRbRCmvg87UItysA+IzrW/oYSkuRKH0xNOQjT1+GvllTLQ5/OTZ6WYpPS0IQPndNXVasa4OJqjYCwo9m97ZZW4UBe1u4Cz3csV4jCTF8uu4crOKNOskgMbJmbBcaiXdiLelA4Sh5bcIFkWQ+Y37oKW0IIhhZoVFCy3UM/a3P3l2W/SbYSC9HdhTt8LCApKR2BTaB3E2ugfwcEEbMyoKXwsgXrs/pQLgUdM=
+  
   matrix:
   - mProc=dev
   - mProc=prod
