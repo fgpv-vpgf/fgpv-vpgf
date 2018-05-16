@@ -120,6 +120,38 @@ function esriMap(esriBundle, geoApi) {
         }
 
         /**
+         * Remove a basemap from the basemapGallery
+         *
+         * @param {Object|String} value either an object with an id field or a string
+         */
+        removeBasemap (value) {
+            if (typeof value === 'object') {
+                value = value.id;
+            }
+            this.basemapGallery.remove(value);
+        }
+
+        /**
+         * Add a basemap to the basemapGallery
+         *
+         * @param {Object} basemapConfig a basemap JSON snippet
+         */
+        addBasemap (basemapConfig) {
+            // create basemap, add to basemap gallery
+            const layers = basemapConfig.layers.map(config =>
+                new esriBundle.BasemapLayer({ url: config.url, opacity: basemapConfig.opacity }));
+
+            const basemap = new esriBundle.Basemap({
+                id: basemapConfig.id,
+                layers: layers,
+                title: basemapConfig.name,
+                thumbnailUrl: basemapConfig.thumbnailUrl,
+                wkid: basemapConfig.wkid
+            });
+            this.basemapGallery.add(basemap);
+        }
+
+        /**
          * Create an ESRI Extent object from extent setting JSON object.
          *
          * @function getExtentFromJson

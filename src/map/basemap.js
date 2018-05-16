@@ -17,7 +17,7 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
 
     const basemapGallery = new esriBundle.BasemapGallery({ showArcGISBasemaps: false, map });
 
-    // iterate throuh basemap configs
+    // iterate through basemap configs
     basemapsConfig.forEach(basemapConfig => {
 
         // create basemap, add to basemap gallery
