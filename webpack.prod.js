@@ -8,6 +8,7 @@ const pkg           = require('./package.json');
 const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
@@ -35,7 +36,23 @@ module.exports = function(env) {
             new WebpackShellPlugin({
                 onBuildStart: ['rm -rf dist'],
                 onBuildEnd: ['rm -rf build/help']
-            })
-        ]
+            }),
+        ],
+        optimization: {
+            minimizer: [
+                new UglifyJsPlugin({
+                    sourceMap: true,
+                    uglifyOptions: {
+                        compress: {
+                            pure_funcs: [
+                                'console.log',
+                                'console.debug',
+                                'console.info'
+                            ]
+                        }
+                    }
+                })
+            ]
+        }
     });
 }

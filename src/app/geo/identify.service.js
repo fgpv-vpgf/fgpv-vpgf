@@ -64,7 +64,7 @@ function identifyService($q, configService, stateManager, events) {
             const loadingPromise = identifyPromise.catch(error => {
                 // add common error handling
 
-                RV.logger.warn('identifyService', `Identify query failed with error`, error);
+                console.warn('identifyService', `Identify query failed with error`, error);
 
                 identifyResults.forEach(identifyResult => {
                     // TODO: this outputs raw error message from the service

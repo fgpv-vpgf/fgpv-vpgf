@@ -254,54 +254,6 @@ nodeIdList.forEach(appId => {
 });
 
 /**
- * The following enhancements are applied to make Logdown better for our use cases:
- *      1) Allows log prefixes to be added as the first argument to a logging function
- *         For example, RV.logger.warn('focusManager', 'is the best');
- *         Normally, prefixes cannot be defined after a Logdown instance is created. We correct this
- *         by wrapping console functions such that Logdown instances are created after the console message is executed.
- *
- *      2) We correct an issue where Logdown does not retrieve a pre-existing instance by prefix name, which causes prefix
- *         instances with the same name to have multiple colors.
- *
- * @function    enhanceLogger
- * @param       {Array}  enabledMethods    an array of console function string names like log, debug, warn that should be displayed
- * @return {Object} the logger object
- */
-function enhanceLogger(enabledMethods = []) {
-    const methods = ['debug', 'log', 'info', 'warn', 'error'];
-    const logger = {};
-
-    methods.forEach(type => {
-        logger[type] = function() {
-            const args = [].slice.call(arguments);
-            if (enabledMethods.indexOf(type) !== -1) {
-                getLogdownInstance(args.splice(0, 1)[0])[type](...args);
-            }
-        };
-    });
-    return logger;
-}
-
-/**
- * Logdown should return an existing instance of a logger if it finds one with matching prefixes. However, there seems to be a bug
- * where logdown does not trim() its prefix search when alignOutput is true - the extra spaces cause the error. So we manually try
- * to find instances and only create a new one if one if not found.
- *
- * @function    getLogdownInstance
- * @param       {String}  prefix    the name/prefix of the logger instance
- * @return {Object} an instance of the logdown logger
- */
-function getLogdownInstance(prefix) {
-    let logger = Logdown._instances.find(ld => ld.opts.prefix.trim() === prefix);
-    // logger for prefix was not found, create a new one
-    if (!logger) {
-        logger = new Logdown({ prefix, alignOutput: true });
-    }
-
-    return logger;
-}
-
-/**
  * Called to buffer code until the library code has been fully loaded.  Behaves similar to jQuery style DOM ready events.
  * @function
  * @param {Function} callBack a function to be called once the library is loaded
@@ -374,10 +326,10 @@ function trackFocusBuilder() {
     return () => {
         isActive = !isActive;
         if (isActive) {
-            RV.logger.debug('trackFocus', 'Enabled');
+            console.debug('trackFocus', 'Enabled');
             attachEvents();
         } else {
-            RV.logger.debug('trackFocus', 'Disabled');
+            console.debug('trackFocus', 'Disabled');
             detachEvents();
         }
     };
@@ -393,7 +345,7 @@ function trackFocusBuilder() {
     function detectBlur(event) {
         // Do logic related to blur using document.activeElement;
         // You can do change detection too using lastActiveElement as a history
-        RV.logger.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
+        console.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
     }
 
     /**
@@ -420,7 +372,7 @@ function trackFocusBuilder() {
      */
     function detectFocus(event) {
         // Add logic to detect focus and to see if it has changed or not from the lastActiveElement.
-        RV.logger.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
+        console.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
     }
 
     /**

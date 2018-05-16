@@ -254,7 +254,7 @@ function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceSer
     // TODO: rename to something like `setVisibility` to make it clearer what this does
     // if 'value' is not specified, toggle
     function toggleVisiblity(tocEntry, value) {
-        RV.logger.log('tocService', `toggle visiblity of layer with name ${tocEntry.name}`);
+        console.log('tocService', `toggle visiblity of layer with name ${tocEntry.name}`);
         tocEntry.setVisibility(value);
 
         // hide bounding box only when visibility is hidden

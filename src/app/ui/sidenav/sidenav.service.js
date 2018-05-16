@@ -279,7 +279,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
                 useMarkdown(config.ui.about.folderName).then(html => {
                     self.about = html;
                 }).catch(error => {
-                    RV.logger.warn(error);
+                    console.warn(error);
                 });
             }
         });
