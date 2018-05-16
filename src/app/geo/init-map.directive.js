@@ -1,4 +1,5 @@
 import Map from 'api/map';
+import { BasemapGroup } from 'api/ui';
 
 /**
  * @restrict A
@@ -66,6 +67,8 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 apiMap.fgpMap = mapInstance;
                 apiMap._legendStructure = configService.getSync.map.legend;
                 appInfo.mapi = apiMap;
+
+                apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
                 // Required for FM to function properly
                 globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
