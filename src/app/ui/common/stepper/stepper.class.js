@@ -110,7 +110,7 @@ function StepperFactory($q) {
             // start stepper if not started; cancel any pending moves as there is no use case for chaining them
 
             if (stepNumber > this.steps.length - 1 || stepNumber < 0) {
-                RV.logger.error('stepperClass', `step number is out of bounds: ${stepNumber}`);
+                console.error('stepperClass', `step number is out of bounds: ${stepNumber}`);
                 return this;
             }
 

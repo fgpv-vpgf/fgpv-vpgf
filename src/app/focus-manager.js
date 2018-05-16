@@ -613,7 +613,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
     const elem = jqueryElem[0];
 
     if (!viewerGroup.trapped(jqueryElem) && !opts.exempt) {
-        RV.logger.warn('focusManager', 'You cannot use *rvFocus* on elements that are outside the viewer');
+        console.warn('focusManager', 'You cannot use *rvFocus* on elements that are outside the viewer');
         return;
     }
 
@@ -672,7 +672,7 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
         el[0].rvFocus({ exempt: true }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
 
     } else if (viewerGroup.trapped(el)) {
-        RV.logger.warn('focusManager', `*rvFocus* must be used to set focus ` +
+        console.warn('focusManager', `*rvFocus* must be used to set focus ` +
             `on elements that are a part of the viewer`);
         return;
     } else {
@@ -701,7 +701,7 @@ function disableCommonPrototypes(funcName) {
             if (takeAction || !viewerGroup.trapped($(this.target))) {
                 originalFunc.call(this);
             } else {
-                RV.logger.warn('focusManager', `*${funcName}* is disabled on elements ` +
+                console.warn('focusManager', `*${funcName}* is disabled on elements ` +
                     `inside or part of the viewer`);
             }
         };
@@ -719,7 +719,7 @@ const bodyObserver = new MutationObserver(mutations => {
                  * We allow the angular material menu component to set its own initial focus by default. However when there is no focusable
                  * element in the component, AM does not set focus which leaves focus on the triggering element. This is turn makes it impossible to close
                  * the menu using the escape key.
-                 * 
+                 *
                  * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
                  */
                 const angularMenu = $(node).first().find('md-menu-content');

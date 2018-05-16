@@ -184,11 +184,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                     onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
             ).catch(error => {
                 if (error.reason === 'abort') {
-                    RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                    console.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
                     return;
                 }
 
-                RV.logger.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
+                console.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
                 toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
             });
 
@@ -261,11 +261,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                     onLayerBlueprintReady(file.name, arrayBuffer)
                 ).catch(error => {
                     if (error.reason === 'abort') {
-                        RV.logger.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                        console.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
                         return;
                     }
 
-                    RV.logger.error('loaderFileDirective', 'file upload has failed with error', error.message);
+                    console.error('loaderFileDirective', 'file upload has failed with error', error.message);
                     toggleErrorMessage(self.upload.form, 'fileSelect', 'upload-error', false);
                 });
 
@@ -287,7 +287,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
             const dataPromise = $q((resolve, reject) => {
 
                 reader.onerror = () => {
-                    RV.logger.error('layerBlueprint', 'failed to read a file');
+                    console.error('layerBlueprint', 'failed to read a file');
                     reject({ reason: 'error', message: 'Failed to read a file' });
                 };
                 reader.onload = () =>
@@ -317,7 +317,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 const percentLoaded = Math.round((event.loaded / event.total) * 100);
                 // Increase the progress bar length.
                 if (percentLoaded <= 100) {
-                    RV.logger.log('loaderFileDirective', `currently loaded ${percentLoaded}%`);
+                    console.log('loaderFileDirective', `currently loaded ${percentLoaded}%`);
 
                     self.upload.progress = percentLoaded;
                     $scope.$apply();
@@ -416,13 +416,13 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         try {
             validationPromise = self.layerSource.validate();
         } catch (e) {
-            RV.logger.error('loaderFileDirective', 'file type is wrong', e);
+            console.error('loaderFileDirective', 'file type is wrong', e);
             toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
             return;
         }
 
         validationPromise.catch(error => {
-            RV.logger.error('loaderFileDirective', 'file type is wrong', error);
+            console.error('loaderFileDirective', 'file type is wrong', error);
             toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
             // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
         });
@@ -497,7 +497,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
                 legendService.importLayerBlueprint(layerBlueprint);
                 closeLoaderFile();
             }).catch(error => {
-                RV.logger.warn('loaderFileDirective', 'file is invalid ', error);
+                console.warn('loaderFileDirective', 'file is invalid ', error);
                 self.configure.form.$setValidity('invalid', false);
             });
     }
