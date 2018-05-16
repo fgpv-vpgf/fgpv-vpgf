@@ -47,14 +47,14 @@ function Controller(geoService, mapService, basemapService, configService, event
     // also wire in a hook for adding / removing a basemap from the available list
     events.$on(events.rvMapLoaded, () => {
         const mapConfig = configService.getSync.map;
-        const allBasemaps = configService.getSync.map.basemaps;
+        const allBasemaps = mapConfig.basemaps;
 
-        configService.getSync.map.instance.changeBasemap = id => {
+        mapConfig.instance.changeBasemap = id => {
             const newBasemap = allBasemaps.find(basemap => basemap.id === id);
             self.selectBasemap(newBasemap);
         };
 
-        configService.getSync.map.instance.deleteBasemap = apiBasemap => {
+        mapConfig.instance.deleteBasemap = apiBasemap => {
             const id = apiBasemap.id;
             const index = allBasemaps.findIndex(basemap => basemap.id === id);
             const basemapToDelete = allBasemaps[index];
@@ -70,7 +70,7 @@ function Controller(geoService, mapService, basemapService, configService, event
             $rootScope.$applyAsync();
         };
 
-        configService.getSync.map.instance.appendBasemap = JSONSnippet => {
+        mapConfig.instance.appendBasemap = JSONSnippet => {
             const tileSchema = mapConfig.tileSchemas.find(tileSchema =>
                 tileSchema.id === JSONSnippet.tileSchemaId);
 
