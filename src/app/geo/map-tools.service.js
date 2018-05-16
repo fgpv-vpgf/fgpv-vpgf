@@ -63,8 +63,9 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         } else {
             // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
             angleDegrees = 270 - map.getNorthArrowAngle(map);
-            // offset to include in arrow position calculations
-            const shellLeftOffset = $('.rv-inner-shell').offset().left - $('rv-shell').offset().left;
+            const shellLeftOffset = $('.rv-inner-shell').offset().left - $('rv-shell').offset().left; // offset for arrow position calculations
+            const shellWidth = $('.rv-inner-shell').width() / 2; // inner shell width for min/max x calculations
+            const arrowWidth = $('.rv-north-arrow').width(); // arrow width to correct arrow positioning
             // since 90 degree is north, any deviation from this is the rotation angle
             rotationAngle =  90 - angleDegrees;
             // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
@@ -75,9 +76,12 @@ function mapToolService(configService, geoService, gapiService, $translate) {
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
             // this would be the bottom of our triangle, the length from center to where the arrow should be placed
+            const offsetX = mapScrnCntr.x - shellLeftOffset - (arrowWidth / 2);
             screenX = screenY < 0 ?
-                mapScrnCntr.x - shellLeftOffset + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
-                screenNorthPoint.x;
+                offsetX + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
+                    screenNorthPoint.x;
+            // Limit the arrow to the bounds of the inner shell
+            screenX = Math.max(offsetX - shellWidth, Math.min(screenX, offsetX + shellWidth));
         }
 
         return {
