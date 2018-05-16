@@ -137,18 +137,8 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} basemapConfig a basemap JSON snippet
          */
         addBasemap (basemapConfig) {
-            // create basemap, add to basemap gallery
-            const layers = basemapConfig.layers.map(config =>
-                new esriBundle.BasemapLayer({ url: config.url, opacity: basemapConfig.opacity }));
-
-            const basemap = new esriBundle.Basemap({
-                id: basemapConfig.id,
-                layers: layers,
-                title: basemapConfig.name,
-                thumbnailUrl: basemapConfig.thumbnailUrl,
-                wkid: basemapConfig.wkid
-            });
-            this.basemapGallery.add(basemap);
+            const basemapToAdd = basemap.createBasemap(esriBundle, basemapConfig);
+            this.basemapGallery.add(basemapToAdd);
         }
 
         /**
