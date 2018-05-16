@@ -21,7 +21,7 @@ var epsgExt = (() => {
                     .then(response =>
                         response.data)
                     .catch(err => {
-                        RV.logger.warn('geoService', 'proj4 style projection lookup failed with error', err);
+                        console.warn('geoService', 'proj4 style projection lookup failed with error', err);
                         // jscs check doesn't realize return null; returns a promise
                         return null; // jscs:ignore jsDoc
                 });

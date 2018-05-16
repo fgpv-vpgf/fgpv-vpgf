@@ -26,7 +26,7 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
             readyDelay();
         })
         .catch(reason => {
-            RV.logger.error('runBlock', 'fatal error', reason);
+            console.error('runBlock', 'fatal error', reason);
         });
 
     $rootScope.uid = uid;
@@ -115,7 +115,7 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
          * @function start
          */
         function start() {
-            RV.logger.log('preLoadApiBlock', 'bypassing *rv-wait*');
+            console.log('preLoadApiBlock', 'bypassing *rv-wait*');
             reloadService.bookmarkBlocking = false;
             $rootScope.$broadcast(events.rvBookmarkInit);
         }
@@ -178,7 +178,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
             globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
-            RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
+            console.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
         });
 
         $rootScope.$on(events.rvApiHalt, () => {

@@ -168,12 +168,12 @@ function displayManager($timeout, $q, $rootElement) {
                         // cancel loading indicator timeout if any
                         $timeout.cancel(display.loadingTimeout);
                     } else {
-                        RV.logger.log('displayManager', `${displayName}: data rejected for request id ` +
+                        console.log('displayManager', `${displayName}: data rejected for request id ` +
                             `${requestId} - any loading in progress or panel has been closed.`);
                     }
                 });
         } else {
-            RV.logger.log('displayManager', `${displayName}: data rejected for request id ${requestId} - ` +
+            console.log('displayManager', `${displayName}: data rejected for request id ${requestId} - ` +
                 `any loading in progress or panel has been closed.```);
         }
     }

@@ -82,7 +82,7 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                         }
                     });
                 });
-            }).catch(error => RV.logger.error('geoService', 'failed to assemble the map with error', error));
+            }).catch(error => console.error('geoService', 'failed to assemble the map with error', error));
         }
 
         setFullExtent() {

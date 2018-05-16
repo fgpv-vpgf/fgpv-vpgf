@@ -244,7 +244,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         stepper.nextStep(validationPromise);
 
         validationPromise.catch(error => {
-            RV.logger.error('loaderServiceDirective', 'service type is wrong', error);
+            console.error('loaderServiceDirective', 'service type is wrong', error);
             toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
         });*/
     }

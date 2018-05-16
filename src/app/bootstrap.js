@@ -256,7 +256,7 @@ nodeIdList.forEach(appId => {
 /**
  * The following enhancements are applied to make Logdown better for our use cases:
  *      1) Allows log prefixes to be added as the first argument to a logging function
- *         For example, RV.logger.warn('focusManager', 'is the best');
+ *         For example, console.warn('focusManager', 'is the best');
  *         Normally, prefixes cannot be defined after a Logdown instance is created. We correct this
  *         by wrapping console functions such that Logdown instances are created after the console message is executed.
  *
@@ -374,10 +374,10 @@ function trackFocusBuilder() {
     return () => {
         isActive = !isActive;
         if (isActive) {
-            RV.logger.debug('trackFocus', 'Enabled');
+            console.debug('trackFocus', 'Enabled');
             attachEvents();
         } else {
-            RV.logger.debug('trackFocus', 'Disabled');
+            console.debug('trackFocus', 'Disabled');
             detachEvents();
         }
     };
@@ -393,7 +393,7 @@ function trackFocusBuilder() {
     function detectBlur(event) {
         // Do logic related to blur using document.activeElement;
         // You can do change detection too using lastActiveElement as a history
-        RV.logger.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
+        console.debug('trackFocus', 'blur detected', document.activeElement, event, isSameActiveElement());
     }
 
     /**
@@ -420,7 +420,7 @@ function trackFocusBuilder() {
      */
     function detectFocus(event) {
         // Add logic to detect focus and to see if it has changed or not from the lastActiveElement.
-        RV.logger.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
+        console.debug('trackFocus', 'focus detected', document.activeElement, event, isSameActiveElement());
     }
 
     /**
