@@ -26,11 +26,12 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import {Power1} from 'gsap';
+            <pre class="prettyprint source linenums"><code>import { Power1 } from 'gsap';
 const templateUrl = require('./templates/symbology-stack.html');
 
 const RV_SYMBOLOGY_ITEM_CLASS = '.rv-symbol';
 const RV_SYMBOLOGY_ITEM_NAME_CLASS = '.rv-symbol-label';
+const RV_COVER_ICON = '.rv-cover-icon';
 const RV_SYMBOLOGY_ITEM_TRIGGER = '.rv-symbol-trigger';
 const RV_DESCRIPTION_ITEM = '.rv-description-container';
 
@@ -46,11 +47,17 @@ class ToggleSymbol {
         this.symbol = symbol;
     }
 
-    click() { this.isSelected = !this.isSelected; }
+    click() {
+        this.isSelected = !this.isSelected;
+    }
 
-    get icon() { return this.isSelected ? "toggle:check_box" : "toggle:check_box_outline_blank"; }
+    get icon() {
+        return this.isSelected ? 'toggle:check_box' : 'toggle:check_box_outline_blank';
+    }
 
-    get query() { return this.isSelected ? this.symbol.definitionClause : null; }
+    get query() {
+        return this.isSelected ? this.symbol.definitionClause : null;
+    }
 }
 
 /**
@@ -116,16 +123,12 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         function allSymbolsVisible() {
             const toggleListKeys = Object.keys(self.toggleList);
 
-            return toggleListKeys
-                .filter(key => self.toggleList[key].isSelected)
-                .length === toggleListKeys.length;
+            return toggleListKeys.filter(key => self.toggleList[key].isSelected).length === toggleListKeys.length;
         }
 
         // returns true if no toggle symbology checkboxes are checked, false otherwise
         function noSymbolsVisible() {
-            return Object.keys(self.toggleList)
-                .filter(key => self.toggleList[key].isSelected)
-                .length === 0;
+            return Object.keys(self.toggleList).filter(key => self.toggleList[key].isSelected).length === 0;
         }
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
@@ -148,10 +151,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // when all symbols are checked, clearing the query is the same as trying to match all of them
             if (allSymbolsVisible()) {
                 defClause = undefined;
-            // when no symbols are checked, make a query that is never true so no symbols are shown
+                // when no symbols are checked, make a query that is never true so no symbols are shown
             } else if (noSymbolsVisible()) {
-                defClause = '1=2'
-            //otherwise proceed with joining geoApi definitionClauses
+                defClause = '1=2';
+                //otherwise proceed with joining geoApi definitionClauses
             } else {
                 defClause = Object.keys(self.toggleList)
                     .map(key => self.toggleList[key].query)
@@ -182,6 +185,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // store reference to symbology nodes
             // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
             symbolItems: [],
+            // cover item stays with the stack when the rest of the stack is expanded
+            coverSymbolItem: null,
             trigger: null, // expand self.trigger node
 
             // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
@@ -193,16 +198,22 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             if (value) {
                 element.find('.md-icon-button').addClass('show');
                 $.link(element.find('.md-icon-button'));
-                element.find('button').not('.rv-symbol-trigger').removeAttr('nofocus');
+                element
+                    .find('button')
+                    .not('.rv-symbol-trigger')
+                    .removeAttr('nofocus');
             } else {
                 element.find('.md-icon-button').removeClass('show');
-                element.find('button').not('.rv-symbol-trigger').attr('nofocus', true);
+                element
+                    .find('button')
+                    .not('.rv-symbol-trigger')
+                    .attr('nofocus', true);
             }
         });
 
         // description persist, so need to store reference only once
         ref.descriptionItem = element.find(RV_DESCRIPTION_ITEM);
-        ref.descriptionItem.css('width', ref.containerWidth)
+        ref.descriptionItem.css('width', ref.containerWidth);
 
         scope.$watchCollection('self.symbology.stack', (newStack, oldStack) => {
             if (newStack) {
@@ -214,39 +225,46 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 }
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
-                if (layerRecord &amp;&amp; (layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &amp;&amp;
+                if (
+                    layerRecord &amp;&amp;
+                    (layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &amp;&amp;
                     layerRecord.config.toggleSymbology &amp;&amp;
-                    self.symbology.stack.length > 1) {
+                    self.symbology.stack.length > 1
+                ) {
+                    const drawPromises = self.symbology.stack.map(s => s.drawPromise);
 
-                        const drawPromises = self.symbology.stack.map(s => s.drawPromise);
-
-                        $q.all(drawPromises).then(() => {
-                            // create a ToggleSymbol instance for each symbol
-                            self.symbology.stack.forEach(s => {
-                                self.toggleList[s.name] = new ToggleSymbol(s);
-                            });
-
-                            // Manually correct symbology boxes so they align with all other layer visibility boxes
-                            const symbolButtonOffset = parseInt(element.closest('rv-legend-block').css('padding-left')) - 30;
-
-                            // angular is not rendering the nestled buttons fast enough so keep checking until they're ready
-                            const stopSymbolInterval = $interval(() => {
-                                const symbolButtons = element.find('.md-icon-button').not('.rv-symbol-trigger');
-                                if (symbolButtons.length > 0) {
-                                    symbolButtons.css('right', `${symbolButtonOffset}px`);
-                                    $interval.cancel(stopSymbolInterval);
-                                }
-                            }, 100);
+                    $q.all(drawPromises).then(() => {
+                        // create a ToggleSymbol instance for each symbol
+                        self.symbology.stack.forEach(s => {
+                            self.toggleList[s.name] = new ToggleSymbol(s);
                         });
+
+                        // Manually correct symbology boxes so they align with all other layer visibility boxes
+                        const symbolButtonOffset =
+                            parseInt(element.closest('rv-legend-block').css('padding-left')) - 30;
+
+                        // angular is not rendering the nestled buttons fast enough so keep checking until they're ready
+                        const stopSymbolInterval = $interval(() => {
+                            const symbolButtons = element.find('.md-icon-button').not('.rv-symbol-trigger');
+                            if (symbolButtons.length > 0) {
+                                symbolButtons.css('right', `${symbolButtonOffset}px`);
+                                $interval.cancel(stopSymbolInterval);
+                            }
+                        }, 100);
+                    });
                 }
             }
         });
 
-        scope.$watch('self.symbology.expanded', (newValue, oldValue) =>
-            newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop);
+        scope.$watch(
+            'self.symbology.expanded',
+            (newValue, oldValue) => (newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop)
+        );
 
-        scope.$watch('self.symbology.fannedOut', (newValue, oldValue) =>
-            newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop);
+        scope.$watch(
+            'self.symbology.fannedOut',
+            (newValue, oldValue) => (newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop)
+        );
 
         return true;
 
@@ -258,6 +276,11 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @param {Boolean} value [optional = !self.isExpanded] true will expand the stack; false, collapse the stack;
          */
         function expandSymbology(value = !self.isExpanded) {
+            // if symbology is non-interative, don't do anything
+            if (!self.symbology.isInteractive) {
+                return;
+            }
+
             if (!ref.isReady) {
                 initializeTimelines();
             }
@@ -284,6 +307,11 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @param {Boolean} value [optional = !ref.isFannedOut] true will fanOut the stack; false, close the fan;
          */
         function fanOutSymbology(value = !ref.isFannedOut) {
+            // if symbology is non-interative, don't do anything
+            if (!self.symbology.isInteractive) {
+                return;
+            }
+
             if (!ref.isReady) {
                 initializeTimelines();
             }
@@ -295,7 +323,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 // on mouse out, set wiggle timeline to 0 if symbology is expanded or animating
                 if (ref.expandTimeline.isActive() || self.isExpanded) {
                     ref.fanOutTimeline.pause(0);
-                } else if (!self.isExpanded &amp;&amp; !ref.expandTimeline.isActive()) { // ... reverse wiggle, if symbology is collapsed and not animating
+                } else if (!self.isExpanded &amp;&amp; !ref.expandTimeline.isActive()) {
+                    // ... reverse wiggle, if symbology is collapsed and not animating
                     ref.fanOutTimeline.reverse();
                 }
             }
@@ -311,18 +340,27 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             const canvas = document.createElement('canvas');
 
-            // find all symbology items and their parts
-            ref.symbolItems = element.find(RV_SYMBOLOGY_ITEM_CLASS)
+            // find all symbology items and their parts including the cover symbol if it exists
+            [ref.symbolItems, ref.coverSymbolItem] = element
+                .find(RV_SYMBOLOGY_ITEM_CLASS)
                 .toArray()
-                .map(domNode => {
-                    domNode = angular.element(domNode);
+                .reduce(
+                    ([symbols, coverSymbol], domNode) => {
+                        domNode = angular.element(domNode);
 
-                    return {
-                        container: domNode,
-                        image: domNode.find('rv-svg'),
-                        label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
-                    };
-                });
+                        const symbol = {
+                            container: domNode,
+                            image: domNode.find('rv-svg'),
+                            label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
+                        };
+
+                        // sort regular symbols from the cover symbol
+                        return domNode.hasClass(RV_COVER_ICON.slice(1))
+                            ? [symbols, symbol]
+                            : [[...symbols, symbol], coverSymbol];
+                    },
+                    [[], null]
+                );
 
             ref.trigger = element.find(RV_SYMBOLOGY_ITEM_TRIGGER);
 
@@ -334,7 +372,9 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                         Math.max(
                             symbolItem.image.find('svg')[0].viewBox.baseVal.width,
                             getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
-                        ))),
+                        )
+                    )
+                ),
                 ref.containerWidth
             );
 
@@ -349,9 +389,18 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         function makeExpandTimeline() {
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { self.isExpanded = true; scope.$digest(); },
-                onComplete: () => { self.showSymbologyToggle = true; scope.$digest(); },
-                onReverseComplete: () => { self.isExpanded = false; scope.$digest(); }
+                onStart: () => {
+                    self.isExpanded = true;
+                    scope.$digest();
+                },
+                onComplete: () => {
+                    self.showSymbologyToggle = true;
+                    scope.$digest();
+                },
+                onReverseComplete: () => {
+                    self.isExpanded = false;
+                    scope.$digest();
+                }
             });
 
             // in pixels
@@ -377,11 +426,16 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 });
 
                 // show and animate description node
-                timeline.to(ref.descriptionItem, RV_DURATION / 3 * 2, {
-                    opacity: 1,
-                    top: totalHeight,
-                    ease: RV_SWIFT_IN_OUT_EASE
-                }, RV_DURATION / 3);
+                timeline.to(
+                    ref.descriptionItem,
+                    RV_DURATION / 3 * 2,
+                    {
+                        opacity: 1,
+                        top: totalHeight,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    },
+                    RV_DURATION / 3
+                );
 
                 // include the description height in the total height of the symbology stack
                 totalHeight += descriptionHeight + symbologyListMargin;
@@ -395,8 +449,12 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // loop over ref.symbolItems, generate timeline for each one, increase total height
             ref.symbolItems.forEach((symbolItem, index) => {
-                const heightIncrease = legendItemTLgenerator[self.symbology.renderStyle](timeline, symbolItem, totalHeight,
-                    index === ref.symbolItems.length - 1);
+                const heightIncrease = legendItemTLgenerator[self.symbology.renderStyle](
+                    timeline,
+                    symbolItem,
+                    totalHeight,
+                    index === ref.symbolItems.length - 1
+                );
 
                 totalHeight += heightIncrease;
             });
@@ -406,17 +464,27 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // expand layer item container to accomodate symbology list
             // if no container specified, skip this part of animation; as a result, the expanded symbology stack may overflow its parent node
             if (self.container) {
-                timeline.to(self.container, RV_DURATION, {
-                    marginBottom: totalHeight - symbologyListTopOffset,
-                    ease: RV_SWIFT_IN_OUT_EASE
-                }, 0);
+                timeline.to(
+                    self.container,
+                    RV_DURATION,
+                    {
+                        marginBottom: totalHeight - symbologyListTopOffset,
+                        ease: RV_SWIFT_IN_OUT_EASE
+                    },
+                    0
+                );
             }
 
             // show the self.trigger button
-            timeline.to(ref.trigger, RV_DURATION - 0.1, {
-                opacity: 1,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, 0.1);
+            timeline.to(
+                ref.trigger,
+                RV_DURATION - 0.1,
+                {
+                    opacity: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                0.1
+            );
 
             return timeline;
         }
@@ -425,33 +493,59 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // we only need one timeline since we can reuse it
             const timeline = animationService.timeLineLite({
                 paused: true,
-                onStart: () => { ref.isFannedOut = true; },
-                onReverseComplete: () => { ref.isFannedOut = false; }
+                onStart: () => {
+                    ref.isFannedOut = true;
+                },
+                onReverseComplete: () => {
+                    ref.isFannedOut = false;
+                }
             });
 
-            const displacement = 4;
-
-            // if there is just one icon, don't do on-hover animation
-            if (ref.symbolItems.length > 1) {
-                // wiggle the first icon in the stack
-                timeline.to(ref.symbolItems[0].container, RV_DURATION, {
-                    x: `-=${displacement}px`,
-                    y: `-=${displacement}px`,
-                    ease: RV_SWIFT_IN_OUT_EASE
-                }, 0);
-
-                // wiggle the last icon in the stack
+            // do not
+            if (ref.coverSymbolItem) {
                 timeline.to(
-                    ref.symbolItems.slice(-1).pop().container,
+                    ref.coverSymbolItem.container,
                     RV_DURATION,
                     {
-                        x: `+=${displacement}px`,
-                        y: `+=${displacement}px`,
+                        transform: 'scale(1.2, 1.2)',
                         ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0);
-            }
+                    },
+                    0
+                );
 
-            return timeline;
+                return timeline;
+            } else {
+                const displacement = 4;
+
+                // if there is just one icon, don't do on-hover animation
+                if (ref.symbolItems.length > 1) {
+                    // wiggle the first icon in the stack
+                    timeline.to(
+                        ref.symbolItems[0].container,
+                        RV_DURATION,
+                        {
+                            x: `-=${displacement}px`,
+                            y: `-=${displacement}px`,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        },
+                        0
+                    );
+
+                    // wiggle the last icon in the stack
+                    timeline.to(
+                        ref.symbolItems.slice(-1).pop().container,
+                        RV_DURATION,
+                        {
+                            x: `+=${displacement}px`,
+                            y: `+=${displacement}px`,
+                            ease: RV_SWIFT_IN_OUT_EASE
+                        },
+                        0
+                    );
+                }
+
+                return timeline;
+            }
         }
 
         /**
@@ -478,39 +572,63 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // animate symbology container's size
             // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
             // so they don't overlay legend entry
-            timeline.to(symbolItem.container, RV_DURATION / 3 * 2, {
-                width: ref.maxItemWidth,
-                height: itemHeight + labelHeight,
-                left: 0,
-                autoAlpha: 1,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3);
+            timeline.to(
+                symbolItem.container,
+                RV_DURATION / 3 * 2,
+                {
+                    width: ref.maxItemWidth,
+                    height: itemHeight + labelHeight,
+                    left: 0,
+                    autoAlpha: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3
+            );
 
             // move item down
-            timeline.to(symbolItem.container, RV_DURATION, {
-                top: totalHeight,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, 0);
+            timeline.to(
+                symbolItem.container,
+                RV_DURATION,
+                {
+                    top: totalHeight,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                0
+            );
 
             // animate image width to the calculated width
-            timeline.to(symbolItem.image, RV_DURATION / 3 * 2, {
-                width: itemWidth,
-                height: itemHeight,
-                padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3);
+            timeline.to(
+                symbolItem.image,
+                RV_DURATION / 3 * 2,
+                {
+                    width: itemWidth,
+                    height: itemHeight,
+                    padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3
+            );
 
             // set width to auto to keep the label centered during animation
-            timeline.set(symbolItem.label, {
-                display: 'block',
-                width: 'auto'
-            }, 0);
+            timeline.set(
+                symbolItem.label,
+                {
+                    display: 'block',
+                    width: 'auto'
+                },
+                0
+            );
 
             // animate symbology label into view
-            timeline.to(symbolItem.label, RV_DURATION / 3, {
-                opacity: 1,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3 * 2);
+            timeline.to(
+                symbolItem.label,
+                RV_DURATION / 3,
+                {
+                    opacity: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3 * 2
+            );
 
             return itemHeight + labelHeight + (isLast ? 0 : symbologyListItemMargin);
         }
@@ -530,42 +648,71 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const itemSize = 32; // icon size is fixed
 
             // expand symbology container width and align it to the left (first and last items are fanned out)
-            timeline.to(symbolItem.container, RV_DURATION / 3 * 2, {
-                width: ref.containerWidth,
-                left: 0,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3);
+            timeline.to(
+                symbolItem.container,
+                RV_DURATION / 3 * 2,
+                {
+                    width: ref.containerWidth,
+                    left: 0,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3
+            );
 
             // shift the symbology item down to the bottom of the stack using the total height
-            timeline.to(symbolItem.container, RV_DURATION, {
-                top: totalHeight,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, 0);
+            timeline.to(
+                symbolItem.container,
+                RV_DURATION,
+                {
+                    top: totalHeight,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                0
+            );
 
             // by default, items 3 to n-1 are hidden (their shadows stack otherwise)
             // animate them back into view
-            timeline.to(symbolItem.container, RV_DURATION / 3, {
-                autoAlpha: 1,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, 0);
+            timeline.to(
+                symbolItem.container,
+                RV_DURATION / 3,
+                {
+                    autoAlpha: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                0
+            );
 
             // animate image width to the calculated width
-            timeline.to(symbolItem.image, RV_DURATION / 3 * 2, {
-                width: itemSize,
-                height: itemSize,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3);
+            timeline.to(
+                symbolItem.image,
+                RV_DURATION / 3 * 2,
+                {
+                    width: itemSize,
+                    height: itemSize,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3
+            );
 
             // set label to `block` so it is properly positioned
-            timeline.set(symbolItem.label, {
-                display: 'block'
-            }, RV_DURATION / 3);
+            timeline.set(
+                symbolItem.label,
+                {
+                    display: 'block'
+                },
+                RV_DURATION / 3
+            );
 
             // animate symbology label into view
-            timeline.to(symbolItem.label, RV_DURATION / 3 * 2, {
-                opacity: 1,
-                ease: RV_SWIFT_IN_OUT_EASE
-            }, RV_DURATION / 3);
+            timeline.to(
+                symbolItem.label,
+                RV_DURATION / 3 * 2,
+                {
+                    opacity: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE
+                },
+                RV_DURATION / 3
+            );
 
             return itemSize + (isLast ? 0 : symbologyListItemMargin);
         }
@@ -590,57 +737,84 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 }
 
 function symbologyStack(ConfigObject, gapiService) {
-
     class SymbologyStack {
         /**
          * Creates a new symbology stack. All parameters are options and if none is supplied, an empty stack will be created.
          *
          * @param {LayerProxy} proxy [optional = {}] layer proxy object which can supply symbology stack; custom symbols will be used first; if they are not availalbe, symbology stack from the proxy object is used;
-         * @param {Array} symbols [optional = []] array of alternative symbology svg graphic elements; can be either [ { name: &lt;String>, svgcode: &lt;String> }, ... ] or [ { text: &lt;String>, image: &lt;String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
+         * @param {Array} symbols [optional = null] array of alternative symbology svg graphic elements; can be either [ { name: &lt;String>, svgcode: &lt;String> }, ... ] or [ { text: &lt;String>, image: &lt;String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
+         * @param {String} coverIcon [optional &lt;String> ] a graphic to be displayed as a cover icon for the symbology stack but which stays put and does not move
          * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
          * @param {Boolean} isInteractive [optional = false] specifies if the user can interact with the symbology stack
          */
-        constructor(proxy = {}, symbols = [], renderStyle = ConfigObject.legend.Entry.ICONS,
-            isInteractive = false) {
-
+        constructor(
+            proxy = {},
+            symbols = null,
+            coverIcon = null,
+            renderStyle = ConfigObject.legend.Entry.ICONS,
+            isInteractive = false
+        ) {
             this._proxy = proxy;
             this._renderStyle = renderStyle;
-            this._isInteractive = isInteractive;
 
-            if (symbols.length === 0) {
-                return;
-            }
+            this._fannedOut = false;
+            this._expanded = false;
 
-            // custom symbology lists coming from the config file need to be converted to svg first
-            if (typeof symbols[0].image !== 'undefined') {
-                const renderStyleSwitch = {
-                    [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
-                    [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
-                };
+            const renderStyleSwitch = {
+                [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
+                [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
+            };
 
-                this._symbols = renderStyleSwitch[renderStyle](symbols);
+            // is the provided symbols is not an array, set to null
+            if (!angular.isArray(symbols)) {
+                this._symbols = null;
             } else {
-                this._symbols = symbols;
-                this._fannedOut = false;
-                this._expanded = false;
+                // custom symbology lists coming from the config file need to be converted to svg first
+                this._symbols =
+                    symbols.length > 0 &amp;&amp; symbols[0].image ? renderStyleSwitch[renderStyle](symbols) : symbols;
             }
+
+            // if a cover icon is specified, convert it to svg as well
+            if (coverIcon) {
+                this._coverIcon = renderStyleSwitch[ConfigObject.legend.Entry.ICONS]([
+                    { text: '', image: coverIcon }
+                ])[0];
+            }
+
+            // the stack can only be interactive if there is at least one symbol
+            this._isInteractive = this.stack &amp;&amp; this.stack.length === 0 ? false : isInteractive;
         }
+
+        _coverIcon = null;
 
         /**
          * @return {Boolean} true if the symbology stack can be expanded by the user; false if not;
          */
-        get isInteractive () {  return this._isInteractive; }
+        get isInteractive() {
+            return this._isInteractive;
+        }
 
-        get stack () {          return this._symbols || this._proxy.symbology; }
-        get renderStyle () {    return this._renderStyle; }
+        get stack() {
+            return this._symbols || this._proxy.symbology;
+        }
+        get renderStyle() {
+            return this._renderStyle;
+        }
+        get coverIcon() {
+            return this._coverIcon;
+        }
 
-        get fannedOut () {      return this._fannedOut; }
-        set fannedOut (value) {
+        get fannedOut() {
+            return this._fannedOut;
+        }
+        set fannedOut(value) {
             this._fannedOut = value;
         }
 
-        get expanded () {       return this._expanded; }
-        set expanded (value) {
+        get expanded() {
+            return this._expanded;
+        }
+        set expanded(value) {
             this._expanded = value;
         }
     }
@@ -657,13 +831,13 @@ function symbologyStack(ConfigObject, gapiService) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-EPSG.html">EPSG</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-Intentions.html">Intentions</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#_cfg">_cfg</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Feb 21 2018 07:48:56 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 11 2018 09:09:27 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

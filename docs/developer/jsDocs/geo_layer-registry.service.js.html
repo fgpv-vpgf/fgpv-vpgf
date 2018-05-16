@@ -26,7 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { ConfigLayer } from 'api/layers';
+            <pre class="prettyprint source linenums"><code>import { ConfigLayer, SimpleLayer } from 'api/layers';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
@@ -80,6 +80,16 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     events.$on(events.rvApiMapAdded, (_, mApi) => {
         mapApi = mApi;
 
+        // add default simpleLayer to the map and initialize any required listeners
+        const layerRecord = gapiService.gapi.layer.createGraphicsRecord('');
+        const map = configService.getSync.map;
+        map.instance.addLayer(layerRecord._layer);
+
+        const simpleLayer = new SimpleLayer(layerRecord, map);
+        mapApi._simpleLayer = simpleLayer;
+        _initializeLayerObservables(simpleLayer);
+        _setHover(layerRecord, simpleLayer);
+
         const tt = mApi.ui.tooltip;
 
         mApiObjects = {
@@ -94,6 +104,30 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         });
     });
 
+    // wire in a hook to any map for adding a simple layer using id. this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.addSimpleLayer = name => {
+            const index = mapApi.layers.allLayers.findIndex(layer => layer.id === name);
+
+            let simpleLayer;
+            if (index === -1) {
+                const layerRecord = gapiService.gapi.layer.createGraphicsRecord(name);
+                configService.getSync.map.instance.addLayer(layerRecord._layer);
+
+                simpleLayer = new SimpleLayer(layerRecord, configService.getSync.map);
+                _initializeLayerObservables(simpleLayer);
+                _addLayerToApiMap(simpleLayer);
+                _setHover(layerRecord, simpleLayer);
+            }
+
+            return common.$q.resolve(simpleLayer ? [simpleLayer] : []);
+        };
+
+        configService.getSync.map.instance.removeSimpleLayer = layerRecord => {
+            configService.getSync.map.instance.removeLayer(layerRecord._layer);
+            _removeLayerFromApiMap(layerRecord);
+        };
+    });
 
     /**
      * Finds and returns the layer record using the id specified.
@@ -208,41 +242,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             layerRecords.splice(index, 1);
             map.removeLayer(layerRecord._layer);
 
-            layerRecord.removeAttribListener(_onLayerAttribDownload);
-            _removeLayerFromApiMap(layerRecord);
-        }
-
-        /**
-         * This will remove the layer from the API map instance
-         *
-         * @function _removeLayerFromApiMap
-         * @private
-         * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
-         */
-        function _removeLayerFromApiMap(layerRecord) {
-            let index;
-
-            // removing dynamic layers does not actually remove the layer if another child is still present  ?
-            if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                const childIndices = _simpleWalk(layerRecord.getChildTree());
-                childIndices.forEach(idx => {
-                    index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId &amp;&amp; layer.layerIndex === idx);
-                    if (index !== -1) {
-                        const apiLayer = mapApi.layers.allLayers[index];
-
-                        mapApi.layers.allLayers.splice(index, 1);
-                        mapApi.layers._layerRemoved.next(apiLayer);
-                    }
-                });
-            } else {
-                index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
-                if (index !== -1) {
-                    const apiLayer = mapApi.layers.allLayers[index];
-
-                    mapApi.layers.allLayers.splice(index, 1);
-                    mapApi.layers._layerRemoved.next(apiLayer);
-                }
+            if (layerRecord.state === Geo.Layer.States.LOADED) {
+                layerRecord.removeAttribListener(_onLayerAttribDownload);
             }
+            _removeLayerFromApiMap(layerRecord);
         }
 
         return index;
@@ -305,7 +308,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord.state === Geo.Layer.States.LOADED) {
+        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.isFileLayer() &amp;&amp; layerRecord._layer.loaded)) {
             isRefreshed = true;
             _onLayerRecordLoad('rv-loaded');
         }
@@ -634,6 +637,86 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     /**
+     * Binds onHover event (for graphics layers / api simple layers) and displays a hover tooltip if there are any added to the layer.
+     *
+     * @function _setHover
+     * @private
+     * @param {LayerRecord} layerRecord a layer record to set the hovertips on
+     * @param {SimpleLayer} simpleLayer an api layer to get the appropriate hovertip content from
+     */
+    function _setHover(layerRecord, simpleLayer) {
+        layerRecord.addHoverListener(_onHoverHandler);
+
+        function _onHoverHandler(data) {
+            const mapInstance = configService.getSync.map.instance;
+
+            // we use the mouse event target to track which
+            // graphic the active tooltip is pointing to.
+            // this lets us weed any delayed events that are meant
+            // for tooltips that are no longer active.
+            const typeMap = {
+                mouseOver: e => {
+                    const graphic = data.graphic;
+                    const geometry = graphic.geometry;
+                    const apiGeo = simpleLayer.geometry.find(geo => geo.id === geometry.apiId);
+                    if (!apiGeo || !apiGeo.hover) {
+                        return;
+                    }
+
+                    const simpleLayerId = simpleLayer.id;
+                    const hovertip = apiGeo.hover;
+                    const geoId = apiGeo.id;
+                    const boundingBox = simpleLayer.getGraphicsBoundingBox([graphic]);
+                    const center = boundingBox.getCenter();
+
+                    let point, screenPoint;
+
+                    if (!hovertip.keepOpen &amp;&amp; hovertip.followCursor) {
+                        screenPoint = e.point;
+                    } else {
+                        point = center;
+                        switch (hovertip.position) {
+                            case 'bottom':
+                                point.y = boundingBox.ymin;
+                                break;
+                            case 'left':
+                                point.x = boundingBox.xmin;
+                                break;
+                            case 'right':
+                                point.x = boundingBox.xmax;
+                                break;
+                            default:
+                                point.y = boundingBox.ymax;
+                        }
+
+                        screenPoint = mapInstance.toScreen(point);
+                    }
+
+                    if (hovertip) {
+                        const tipRef = tooltipService.addHover(screenPoint, {}, hovertip, geoId, simpleLayerId);
+                        if (tipRef) {
+                            // hovertip being used for API geometry, so we want to be able to ensure we can click on the contents of the hovertip
+                            // this will also ensure that the hovertip (since it can possibly stay open until manually closed) will appear underneath
+                            // other content such as panels
+                            tipRef.enablePointerEvents();
+
+                            if (hovertip.xOffset || hovertip.yOffset) {
+                                tipRef.offset(hovertip.xOffset, hovertip.yOffset);
+                            }
+                        }
+                    }
+                },
+                mouseOut: e => {
+                    tooltipService.removeHover();
+                }
+            };
+
+            // execute function for the given type
+            typeMap[data.type](data);
+        }
+    }
+
+    /**
      * Returns an array of ids for rcs added layers
      *
      * @function getRcsLayerIDs
@@ -655,7 +738,10 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     return service;
 
     /**
-     * Create API ConfigLayer using the layerRecord and config provided.
+     * This will check first to see if the API map instance already has this layer defined by its id and index if applicable.
+     * Create API ConfigLayer using the layerRecord and config provided if it does not exist.
+     * If ConfigLayer already exists (loaded twice, reloaded, etc.), don't create another instance of ConfigLayer.
+     * Simply update the relevant fields which will ensure all observables and pointers persist.
      *
      * @function _createApiLayer
      * @private
@@ -663,79 +749,84 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
      */
     function _createApiLayer(layerRecord) {
         let apiLayer;
+        const createdLayers = [];
 
         // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
             childIndices.forEach(idx => {
-                apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord, idx);
-                _initializeLayerObservables(apiLayer);
-                _addLayerToApiMap(apiLayer);
+                let configLayer;
+                configLayer = mapApi.layers.allLayers.find(layer =>
+                    layer.id === layerRecord.layerId &amp;&amp;
+                    layer.layerIndex === idx);
+
+                if (configLayer) {
+                    configLayer._initLayerSettings(layerRecord, idx);
+                } else {
+                    apiLayer = new ConfigLayer(configService.getSync.map, layerRecord, idx);
+                    _initializeLayerObservables(apiLayer);
+                    _addLayerToApiMap(apiLayer);
+                    createdLayers.push(apiLayer);
+                }
             });
         } else {    // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
-            apiLayer = new ConfigLayer(layerRecord.config, configService.getSync.map, layerRecord);
-            _initializeLayerObservables(apiLayer);
-            _addLayerToApiMap(apiLayer);
-        }
+            let configLayer;
+            configLayer = mapApi.layers.allLayers.find(layer => layer.id === layerRecord.layerId);
 
-        /**
-         * This will subscribe to the apiLayer attribute observables and then notify the LayerGroup of any such changes.
-         *
-         * @function _initializeLayerObservables
-         * @private
-         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created whose attributes updates we must subscribe to
-         */
-        function _initializeLayerObservables(apiLayer) {
-            apiLayer.attributesAdded.subscribe(attribs => {
-                mapApi.layers._attributesAdded.next({
-                    layer: apiLayer,
-                    attributes: attribs
-                });
-            });
-
-            apiLayer.attributesChanged.subscribe(changedAttribs => {
-                mapApi.layers._attributesChanged.next({
-                    layer: apiLayer,
-                    attributesBeforeChange: changedAttribs.attributesBeforeChange,
-                    attributesAfterChange: changedAttribs.attributesAfterChange
-                });
-            });
-
-            apiLayer.attributesRemoved.subscribe(attribs => {
-                mapApi.layers._attributesRemoved.next({
-                    layer: apiLayer,
-                    attributes: attribs
-                });
-            });
-        }
-
-        /**
-         * This will check first to see if the API map instance already has this layer defined by its id
-         * and if it does exist, it will update that index with the newly created API layer
-         * Else, it will add push a new layer to the list of layers for the map
-         *
-         * @function _addLayerToApiMap
-         * @private
-         * @param {ConfigLayer} apiLayer an instance of a ConfigLayer created that needs to be added to map
-         */
-        function _addLayerToApiMap(apiLayer) {
-            let index;
-
-            if (apiLayer.type === Geo.Layer.Types.ESRI_DYNAMIC) {
-                index = mapApi.layers.allLayers.findIndex(layer =>
-                    layer.id === apiLayer.id &amp;&amp;
-                    layer.layerIndex === apiLayer.layerIndex);
+            if (configLayer) {
+                configLayer._initLayerSettings(layerRecord);
             } else {
-                index = mapApi.layers.allLayers.findIndex(layer => layer.id === apiLayer.id);
-            }
-
-            if (index !== -1) {
-                mapApi.layers.allLayers[index] = apiLayer;
-            } else {
-                mapApi.layers.allLayers.push(apiLayer);
-                mapApi.layers._layerAdded.next(apiLayer);
+                apiLayer = new ConfigLayer(configService.getSync.map, layerRecord);
+                _initializeLayerObservables(apiLayer);
+                _addLayerToApiMap(apiLayer);
+                createdLayers.push(apiLayer);
             }
         }
+
+        events.$broadcast(events.rvApiLayerAdded, createdLayers);
+    }
+
+    /**
+     * This will subscribe to the apiLayer attribute observables and then notify the LayerGroup of any such changes.
+     *
+     * @function _initializeLayerObservables
+     * @private
+     * @param {BaseLayer} apiLayer an instance of an api layer created whose attributes updates we must subscribe to
+     */
+    function _initializeLayerObservables(apiLayer) {
+        apiLayer.attributesAdded.subscribe(attribs => {
+            mapApi.layers._attributesAdded.next({
+                layer: apiLayer,
+                attributes: attribs
+            });
+        });
+
+        apiLayer.attributesChanged.subscribe(changedAttribs => {
+            mapApi.layers._attributesChanged.next({
+                layer: apiLayer,
+                attributesBeforeChange: changedAttribs.attributesBeforeChange,
+                attributesAfterChange: changedAttribs.attributesAfterChange
+            });
+        });
+
+        apiLayer.attributesRemoved.subscribe(attribs => {
+            mapApi.layers._attributesRemoved.next({
+                layer: apiLayer,
+                attributes: attribs
+            });
+        });
+    }
+
+    /**
+     * Push a new layer to the list of layers for the map
+     *
+     * @function _addLayerToApiMap
+     * @private
+     * @param {BaseLayer} apiLayer an instance of an api layer created that needs to be added to map
+     */
+    function _addLayerToApiMap(apiLayer) {
+        mapApi.layers.allLayers.push(apiLayer);
+        mapApi.layers._layerAdded.next(apiLayer);
     }
 
     function _simpleWalk(treeChildren) {
@@ -771,6 +862,39 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
             configLayer.fetchAttributes();
         }
     }
+
+    /**
+     * This will remove the layer from the API map instance
+     *
+     * @function _removeLayerFromApiMap
+     * @private
+     * @param {LayerRecord} layerRecord a layerRecord to be used to remove the corresponding api layer from map
+     */
+    function _removeLayerFromApiMap(layerRecord) {
+        let index;
+
+        // removing dynamic layers does not actually remove the layer if another child is still present  ?
+        if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC &amp;&amp; layerRecord.state === Geo.Layer.States.LOADED) {
+            const childIndices = _simpleWalk(layerRecord.getChildTree());
+            childIndices.forEach(idx => {
+                index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId &amp;&amp; layer.layerIndex === idx);
+                if (index !== -1) {
+                    const apiLayer = mapApi.layers.allLayers[index];
+
+                    mapApi.layers.allLayers.splice(index, 1);
+                    mapApi.layers._layerRemoved.next(apiLayer);
+                }
+            });
+        } else {
+            index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
+            if (index !== -1) {
+                const apiLayer = mapApi.layers.allLayers[index];
+
+                mapApi.layers.allLayers.splice(index, 1);
+                mapApi.layers._layerRemoved.next(apiLayer);
+            }
+        }
+    }
 }
 </code></pre>
         </article>
@@ -782,13 +906,13 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-EPSG.html">EPSG</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-Intentions.html">Intentions</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#_cfg">_cfg</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Feb 21 2018 07:48:56 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 11 2018 09:09:27 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
