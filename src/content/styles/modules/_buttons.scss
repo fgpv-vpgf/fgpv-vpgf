@@ -255,6 +255,11 @@
         right: 0;
         width: 100%;
     }
+
+    // for plugin button, they do not get md-focused when keyboard focus
+    .rv-body-button:focus {
+        background: rgba(158,158,158,0.2);
+    }
 }
 
 $button-sizes: 32, 24, 20, 16, 14;

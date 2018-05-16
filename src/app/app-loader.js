@@ -34,5 +34,6 @@ import './app.module.js';
 import './focus-manager.js';
 import '../plugins/core/back-to-cart.js';
 import '../plugins/core/coord-info.js';
+import '../plugins/core/area-of-interest.js';
 import '../content/styles/main.scss';
 import './ui/fancyHover';

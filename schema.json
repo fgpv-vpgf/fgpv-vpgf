@@ -754,7 +754,22 @@
                     }
                 },
                 "scaleBar": { "type": "object" },
-                "basemap": { "type": "object" }
+                "basemap": { "type": "object" },
+                "areaOfInterest": {
+                     "type": "array",
+                     "items": {
+                         "type": "object",
+                         "properties": {
+                            "title": { "type": "string" },
+                            "xmin": { "type": "number" },
+                            "ymin": { "type": "number" },
+                            "xmax": { "type": "number" },
+                            "ymax": { "type": "number" }
+                        },
+                        "required": [ "title", "xmin", "ymin", "xmax", "ymax" ]
+                      },
+                    "default": []
+                }
             },
             "additionalProperties": false
         },
