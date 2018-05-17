@@ -1029,8 +1029,19 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         _isSelected = false;
 
         get id () {             return this._id; }
+
         get name () {           return this._name; }
+        set name (value) {
+            this._name = value;
+            $rootScope.$applyAsync();
+        }
+
         get description () {    return this._description; }
+        set description (value) {
+            this._description = value;
+            $rootScope.$applyAsync();
+        }
+
         get typeSummary () {    return this._typeSummary; }
         get layers () {         return this._layers; }
         get url () {            return this._url; }
@@ -2550,6 +2561,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             DynamicLayerEntryNode,
             WMSLayerEntryNode
         },
+
+        Basemap,
 
         applyLayerNodeDefaults,
 

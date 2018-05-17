@@ -128,9 +128,7 @@
 
 
 <div class="description">
-    <p>This will check first to see if the API map instance already has this layer defined by its id
-and if it does exist, it will update that index with the newly created API layer
-Else, it will add push a new layer to the list of layers for the map</p>
+    <p>Push a new layer to the list of layers for the map</p>
 </div>
 
 
@@ -172,7 +170,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
             <td class="type">
             
                 
-<span class="param-type">ConfigLayer</span>
+<span class="param-type">BaseLayer</span>
 
 
             
@@ -182,7 +180,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
 
             
 
-            <td class="description last"><p>an instance of a ConfigLayer created that needs to be added to map</p></td>
+            <td class="description last"><p>an instance of an api layer created that needs to be added to map</p></td>
         </tr>
 
     
@@ -223,7 +221,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line684">line 684</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line792">line 792</a>
     </li></ul></dd>
     
 
@@ -309,7 +307,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line320">line 320</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line323">line 323</a>
     </li></ul></dd>
     
 
@@ -440,7 +438,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line103">line 103</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -504,7 +502,10 @@ Else, it will add push a new layer to the list of layers for the map</p>
 
 
 <div class="description">
-    <p>Create API ConfigLayer using the layerRecord and config provided.</p>
+    <p>This will check first to see if the API map instance already has this layer defined by its id and index if applicable.
+Create API ConfigLayer using the layerRecord and config provided if it does not exist.
+If ConfigLayer already exists (loaded twice, reloaded, etc.), don't create another instance of ConfigLayer.
+Simply update the relevant fields which will ensure all observables and pointers persist.</p>
 </div>
 
 
@@ -597,7 +598,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line629">line 629</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line712">line 712</a>
     </li></ul></dd>
     
 
@@ -681,7 +682,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
             <td class="type">
             
                 
-<span class="param-type">ConfigLayer</span>
+<span class="param-type">BaseLayer</span>
 
 
             
@@ -691,7 +692,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
 
             
 
-            <td class="description last"><p>an instance of a ConfigLayer created whose attributes updates we must subscribe to</p></td>
+            <td class="description last"><p>an instance of an api layer created whose attributes updates we must subscribe to</p></td>
         </tr>
 
     
@@ -732,7 +733,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line653">line 653</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line761">line 761</a>
     </li></ul></dd>
     
 
@@ -818,7 +819,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line253">line 253</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -999,7 +1000,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line724">line 724</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line815">line 815</a>
     </li></ul></dd>
     
 
@@ -1135,7 +1136,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line291">line 291</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line294">line 294</a>
     </li></ul></dd>
     
 
@@ -1270,7 +1271,165 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line187">line 187</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line838">line 838</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~_setHover"><span class="type-signature">(private, inner) </span>_setHover<span class="signature">(layerRecord, simpleLayer)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Binds onHover event (for graphics layers / api simple layers) and displays a hover tooltip if there are any added to the layer.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>layerRecord</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">LayerRecord</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a layer record to set the hovertips on</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>simpleLayer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">SimpleLayer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an api layer to get the appropriate hovertip content from</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line611">line 611</a>
     </li></ul></dd>
     
 
@@ -1405,7 +1564,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line516">line 516</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line519">line 519</a>
     </li></ul></dd>
     
 
@@ -1540,7 +1699,7 @@ Else, it will add push a new layer to the list of layers for the map</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line405">line 405</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line408">line 408</a>
     </li></ul></dd>
     
 
@@ -1627,7 +1786,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line332">line 332</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line335">line 335</a>
     </li></ul></dd>
     
 
@@ -1763,7 +1922,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line455">line 455</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line458">line 458</a>
     </li></ul></dd>
     
 
@@ -1920,7 +2079,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line70">line 70</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line104">line 104</a>
     </li></ul></dd>
     
 
@@ -2028,7 +2187,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line608">line 608</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line691">line 691</a>
     </li></ul></dd>
     
 
@@ -2208,7 +2367,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line471">line 471</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line474">line 474</a>
     </li></ul></dd>
     
 
@@ -2365,7 +2524,7 @@ Adding layers before the basemap loads, will break everything.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line84">line 84</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line118">line 118</a>
     </li></ul></dd>
     
 
@@ -2523,7 +2682,7 @@ This will also remove the corresponding layer from the map, but will not trigger
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line142">line 142</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line176">line 176</a>
     </li></ul></dd>
     
 
@@ -2658,7 +2817,7 @@ This will also remove the corresponding layer from the map, but will not trigger
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line495">line 495</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line498">line 498</a>
     </li></ul></dd>
     
 
@@ -2793,7 +2952,7 @@ This will also remove the corresponding layer from the map, but will not trigger
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line164">line 164</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -2902,7 +3061,7 @@ This should be used every time a new layer is added to the map or legend nodes i
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line354">line 354</a>
+        <a href="geo_layer-registry.service.js.html">geo/layer-registry.service.js</a>, <a href="geo_layer-registry.service.js.html#line357">line 357</a>
     </li></ul></dd>
     
 
@@ -2946,13 +3105,13 @@ This should be used every time a new layer is added to the map or legend nodes i
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoSearch.html">geoSearch</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_LayerBlueprintFactory.html">LayerBlueprintFactory</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LayerSourceInfo.html">LayerSourceInfo</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportComponentsService.html">exportComponentsService</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataExpand.html">rvMetadataExpand</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTableDefinition.html">rvTableDefinition</a></li><li><a href="app.ui.module_rvTableNumberOnly.html">rvTableNumberOnly</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvTableSearch.html">rvTableSearch</a></li><li><a href="app.ui.module_rvTableSettingCluster.html">rvTableSettingCluster</a></li><li><a href="app.ui.module_rvTableSettingPanel.html">rvTableSettingPanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvToolbox.html">rvToolbox</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-EPSG.html">EPSG</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-Intentions.html">Intentions</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerBlueprint.html">LayerBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerFileBlueprint.html">LayerFileBlueprint</a></li><li><a href="app.geo.module_LayerBlueprintFactory-LayerServiceBlueprint.html">LayerServiceBlueprint</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#_cfg">_cfg</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#attachEvents">attachEvents</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#detachEvents">detachEvents</a></li><li><a href="global.html#detectBlur">detectBlur</a></li><li><a href="global.html#detectFocus">detectFocus</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#enhanceLogger">enhanceLogger</a></li><li><a href="global.html#fireRvReady">fireRvReady</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getLogdownInstance">getLogdownInstance</a></li><li><a href="global.html#getRcsLayerIDs">getRcsLayerIDs</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isSameActiveElement">isSameActiveElement</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#loadRcsLayers">loadRcsLayers</a></li><li><a href="global.html#mapCoordinates">mapCoordinates</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#northArrow">northArrow</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#ready">ready</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#registerPlugin">registerPlugin</a></li><li><a href="global.html#reInitialize">reInitialize</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setLanguage">setLanguage</a></li><li><a href="global.html#setLevel">setLevel</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#trackFocusBuilder">trackFocusBuilder</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li><li><a href="global.html#versionCheck">versionCheck</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Feb 21 2018 07:48:57 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 11 2018 09:09:27 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
