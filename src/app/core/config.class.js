@@ -2167,7 +2167,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             'share',
             'touch',
             'help',
-            'language'
+            'language',
+            'plugins'
         ];
 
         get source () { return this._source; }
