@@ -10,7 +10,28 @@
         ]
       },
       "sideMenu": {
-        "logo": true
+        "logo": true,
+        "items": [
+        [
+            "layers",
+            "basemap",
+            "geoSearch"
+        ],
+        [
+            "fullscreen",
+            "export",
+            "share",
+            "touch",
+            "help",
+            "about"
+        ],
+        [
+            "language"
+        ],
+        [
+            "plugins"
+        ]
+      ]
       },
       "legend": {
         "isOpen": {
