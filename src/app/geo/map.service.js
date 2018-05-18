@@ -304,7 +304,10 @@ function mapServiceFactory(
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
-            mapConfig.instance.setMapCursor(value ? 'pointer' : '');
+
+            if (mApi.identifyMode !== 'none') {
+                mapConfig.instance.setMapCursor(value ? 'pointer' : '');
+            }
         });
 
         /*

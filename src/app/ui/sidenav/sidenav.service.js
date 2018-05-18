@@ -180,6 +180,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         }
 
         mItem.label = mItem.name;
+        mItem.isChecked = () => mItem.isActive;
         service.controls.plugins.children.push(mItem);
     });
 
@@ -358,6 +359,10 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             $mdDateLocale.shortDays = localeData.weekdaysMin();
             $mdDateLocale.firstDayOfWeek = localeData._week.dow;
 
+            // mark each plugin inactive (unchecked) before loading the new language
+            service.controls.plugins.children.forEach(child => {
+                child.isActive = false;
+            });
         });
 
         /**
