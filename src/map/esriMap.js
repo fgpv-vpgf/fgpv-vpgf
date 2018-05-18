@@ -226,12 +226,15 @@ function esriMap(esriBundle, geoApi) {
          * Calculate north arrow bearing. Angle returned is to to rotate north arrow image.
          * http://www.movable-type.co.uk/scripts/latlong.html
          * @function getNorthArrowAngle
+         * @param {Object} opts options to apply to north arrow calculation
          * @returns {Number} map rotation angle (in degree)
          */
-        getNorthArrowAngle () {
-            // get center point in longitude and use bottom value for latitude
-            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326',
-                    { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin });
+        getNorthArrowAngle (opts) {
+            // get center point in longitude and use bottom value for latitude for default point
+            const bottomCenter = { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin };
+            // get point if specified by caller else get default
+            const point = opts ? opts.point || bottomCenter : bottomCenter;
+            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326', point);
 
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
             const pointA = { x: -96, y: 90 };
