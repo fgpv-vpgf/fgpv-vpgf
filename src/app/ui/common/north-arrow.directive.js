@@ -1,6 +1,9 @@
+import { Point, XY } from 'api/geometry';
+
 angular.module('app.ui')
     .directive('rvNorthArrow', rvNorthArrow);
 
+const flagIcon = 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z';
 /**
  * `rvNorthArrow` directive body. Displays the north arrow on the map.
  *
@@ -22,8 +25,19 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
-                updateNorthArrow(); // set initial position
-                $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
+                let deregisterMapAddedListener = events.$on(events.rvApiMapAdded, (_, mApi) => {
+                    deregisterMapAddedListener();
+                    // create new layer for north pole
+                    mApi.layers.addLayer('northPoleLayer').then(layer => {
+                        // create north pole as point object and add to north pole layer
+                        const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
+                        let northPole = new Point('northPole', poleSource, new XY(-96, 90));
+                        layer[0].addGeometry(northPole);
+                    });
+
+                    updateNorthArrow(); // set initial position
+                    $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
+                });
             } else {
                 element.css('display', 'none'); // hide if disabled in the config
             }
@@ -34,11 +48,9 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
              */
             function updateNorthArrow() {
                 const arrowSource = mapConfig.northArrow.arrowIcon || 'northarrow';
-                const poleSource = mapConfig.northArrow.poleIcon || 'flag';
 
                 // flags to indicate of the supplied urls are svg or not.  Defaults to true if not provided
                 const arrowIsSvg = mapConfig.northArrow.arrowIcon ? _isSVG(arrowSource) : true;
-                const poleIsSvg = mapConfig.northArrow.poleIcon ? _isSVG(poleSource) : true;
 
                 const north = mapToolService.northArrow();
                 let northArrowTemplate = '';
@@ -53,18 +65,20 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
 
                     const isNorthPole = north.screenY > 0; // is the icon in north pole
 
-                    // create and append northarrow icon
-                    northArrowTemplate = isNorthPole ? _getTemplate(poleSource, poleIsSvg) : _getTemplate(arrowSource, arrowIsSvg);
-                    const northArrowScope = $rootScope.$new();
-                    northArrowScope.self = self;
-                    const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
-                    element.append(northArrowCompiledTemplate);
-                    element
-                        .css('display', 'block')
-                        .css('left', north.screenX)
-                        .css('top', Math.max(1, north.screenY))
-                        .css('transform-origin', isNorthPole ? 'center bottom' : 'top center')
-                        .css('transform', isNorthPole ? 'translate(-20%, -80%)' : `rotate(${north.rotationAngle}deg)`);
+                    // create and append northarrow if the north pole is not visible
+                    if (!isNorthPole) {
+                        northArrowTemplate = _getTemplate(arrowSource, arrowIsSvg);
+                        const northArrowScope = $rootScope.$new();
+                        northArrowScope.self = self;
+                        const northArrowCompiledTemplate = $compile(northArrowTemplate)(northArrowScope);
+                        element.append(northArrowCompiledTemplate);
+                        element
+                            .css('display', 'block')
+                            .css('left', north.screenX)
+                            .css('top', $('.rv-inner-shell').offset().top - $('rv-shell').offset().top)
+                            .css('transform-origin', 'top center')
+                            .css('transform', `rotate(${north.rotationAngle}deg)`);
+                    }
                 }
             }
         });
