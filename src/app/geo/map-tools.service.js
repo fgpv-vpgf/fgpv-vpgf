@@ -47,6 +47,7 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         const map = geoService.map;
         // const map = geoService.mapObject;
         const mapPntCntr = map.extent.getCenter();
+        const mapBottomY = map.extent.ymin;
         const mapScrnCntr = map.toScreen(mapPntCntr);
         const wkid = map.extent.spatialReference.wkid;
 
@@ -61,22 +62,26 @@ function mapToolService(configService, geoService, gapiService, $translate) {
             rotationAngle = 0;
 
         } else {
-            // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
-            angleDegrees = 270 - map.getNorthArrowAngle(map);
             const shellLeftOffset = $('.rv-inner-shell').offset().left - $('rv-shell').offset().left; // offset for arrow position calculations
             const shellWidth = $('.rv-inner-shell').width() / 2; // inner shell width for min/max x calculations
             const arrowWidth = $('.rv-north-arrow').width(); // arrow width to correct arrow positioning
+            const realY = $('.rv-inner-shell').offset().top - $('rv-shell').offset().top;
+            const offsetX = shellLeftOffset + shellWidth - arrowWidth / 2;
+            let arrowPoint = map.toMap({x: offsetX, y: 0});
+            arrowPoint.y = mapBottomY;
+            // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
+            angleDegrees = 270 - map.getNorthArrowAngle({point: arrowPoint});
             // since 90 degree is north, any deviation from this is the rotation angle
             rotationAngle =  90 - angleDegrees;
-            // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
-            const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
             // hard code north pole so that arrow does not continue pointing past it
             const northPoint = gapiService.gapi.proj.localProjectPoint('EPSG:4326', map.extent.spatialReference,
-                { x: -96, y: 90 });
+            { x: -96, y: 90 });
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
+            // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
+            const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
+
             // this would be the bottom of our triangle, the length from center to where the arrow should be placed
-            const offsetX = mapScrnCntr.x - shellLeftOffset - (arrowWidth / 2);
             screenX = screenY < 0 ?
                 offsetX + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
                     screenNorthPoint.x;
