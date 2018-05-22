@@ -56,7 +56,7 @@ function identifyService($q, configService, stateManager, events) {
 
         const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
 
-        const mapClickEvent = new MapClickEvent(clickEvent);
+        const mapClickEvent = new MapClickEvent(clickEvent, mApi);
         mApi._clickSubject.next(mapClickEvent);
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
@@ -93,7 +93,7 @@ function identifyService($q, configService, stateManager, events) {
         }
 
         // convert esri click event into the API mouse event and add to the identify session and all identify requests
-        const identifyMouseEvent = new MouseEvent(clickEvent);
+        const identifyMouseEvent = new MouseEvent(clickEvent, mApi);
 
         // map identify instances to identify requests
         const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
