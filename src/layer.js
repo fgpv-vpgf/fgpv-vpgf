@@ -44,6 +44,7 @@ const serviceType = {
     DynamicService: 'dynamicservice',
     ImageService: 'imageservice',
     WMS: 'wms',
+    WFS: 'wfs',
     Unknown: 'unknown',
     Error: 'error'
 };
@@ -97,7 +98,8 @@ function crawlEsriService(srvJson) {
         const mapper = {
             'Feature Layer': serviceType.FeatureLayer,
             'Raster Layer': serviceType.RasterLayer,
-            'Group Layer': serviceType.GroupLayer
+            'Group Layer': serviceType.GroupLayer,
+            'FeatureCollection': serviceType.WFS
         };
         return mapper[srvJson.type] || serviceType.Unknown;
 
@@ -221,6 +223,13 @@ function pokeEsriService(url, esriBundle, hint) {
         return info;
     };
 
+    srvHandler[serviceType.WFS] = srvJson => {
+        const info = makeInfo(serviceType.WFS);
+        info.geoJson = srvJson;
+        return info;
+
+    };
+
     // couldnt figure it out
     srvHandler[serviceType.Unknown] = () => {
         return makeInfo(serviceType.Unknown);
@@ -323,6 +332,17 @@ function pokeWms(url, esriBundle) {
     return Promise.resolve(makeInfo(serviceType.WMS));
 }
 
+// tests a URL to see if the value is a wfs
+// resolves with promise of information object
+// - serviceType : the type of service (WFS, Unknown)
+function pokeWfs(url, esriBundle) {
+    // FIXME add some WFS detection logic.  that would be nice
+
+    console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
+
+    return Promise.resolve(makeInfo(serviceType.WFS));
+}
+
 /**
   * @method predictFileUrlBuilder
   * @param {String} url a url to something that is hopefully a map service
@@ -383,6 +403,7 @@ function predictLayerUrlBuilder(esriBundle) {
             hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
             hintToFlavour[serviceType.ImageService] = 'F_ESRI';
             hintToFlavour[serviceType.WMS] = 'F_WMS';
+            hintToFlavour[serviceType.WFS] = 'F_WFS';
 
             flavourToHandler.F_ESRI = () => {
                 return pokeEsriService(url, esriBundle, hint);
@@ -392,6 +413,11 @@ function predictLayerUrlBuilder(esriBundle) {
                 // FIXME REAL LOGIC COMING SOON
                 return pokeWms(url, esriBundle);
             };
+
+            flavourToHandler.F_WFS = () => {
+                // FIXME REAL LOGIC COMING SOON
+                return pokeWfs(url, esriBundle);
+            }
 
             // execute handler.  hint -> flavour -> handler -> run it -> promise
             return flavourToHandler[hintToFlavour[hint]]();
@@ -1247,6 +1273,7 @@ module.exports = function (esriBundle, geoApi) {
         bbox: bbox(esriBundle, geoApi),
         createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createWmsRecord: createWmsRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createWfsRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
@@ -1259,6 +1286,7 @@ module.exports = function (esriBundle, geoApi) {
         predictFileUrl: predictFileUrlBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
         validateFile,
+        validateGeoJson,
         csvPeek,
         serviceType,
         validateLatLong
