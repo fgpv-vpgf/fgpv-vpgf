@@ -306,13 +306,13 @@ function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
     this.click = this._clickSubject.asObservable();
 
-    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(map((evt) => new MouseEvent(evt)));
+    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(map((evt) => new MouseEvent(evt, this)));
     this.mouseMove = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousemove').pipe(
-        map((evt: esriMouseEvent) => new MouseEvent(evt)),
+        map((evt: esriMouseEvent) => new MouseEvent(evt, this)),
         distinctUntilChanged((x, y) => x.equals(y))
     );
-    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt)));
-    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt)));
+    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
 }
 
 interface LegendStructure {
