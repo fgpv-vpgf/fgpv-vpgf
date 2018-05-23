@@ -1009,7 +1009,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Basemap
      */
     class Basemap {
-        constructor ({ id, name, description, typeSummary, layers, thumbnailUrl = null, attribution, opacity = 1,
+        constructor ({ id, name, description, typeSummary, layers, thumbnailUrl = null, attribution,
             altText, zoomLevels = {} }, tileSchema) {
             this._id = id;
             this._name = name;
@@ -1020,7 +1020,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._thumbnailUrl = thumbnailUrl;
             this._attribution = attribution;
             this._tileSchema = tileSchema;
-            this._opacity = opacity;
 
             this._altText = altText;
             this._zoomLevels = zoomLevels;
@@ -1048,7 +1047,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get thumbnailUrl () {   return this._thumbnailUrl; }
         get attribution () {    return this._attribution; }
         get tileSchema () {     return this._tileSchema; }
-        get opacity () {        return this._opacity; }
         get altText () {        return this._altText; }
         get zoomLevels () {     return this._zoomLevels; }
 
