@@ -372,7 +372,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                 });
 
             } catch (e) {
-                RV.logger.error('configService', 'RCS key retrieval failed with error', e);
+                console.error('configService', 'RCS key retrieval failed with error', e);
             }
         }
     }

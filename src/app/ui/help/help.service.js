@@ -236,7 +236,7 @@ function helpService($mdDialog, $translate, translations, referenceService) {
                 }
             }).catch(error => {
                 self.hasNoHelp = true;
-                RV.logger.warn(error);
+                console.warn(error);
             });
         }
 

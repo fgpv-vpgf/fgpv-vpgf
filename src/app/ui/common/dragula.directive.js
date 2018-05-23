@@ -94,7 +94,7 @@ function rvDragula($compile, dragulaService, keyNames) {
          * @param  {Object} event event object
          */
         function focusOutHandler(event) {
-            RV.logger.log('dragulaDirective', 'event', event,
+            console.log('dragulaDirective', 'event', event,
                 `isReordering ${isReordering} isDragging ${isDragging}`);
             if (isDragging && !isReordering) {
                 dropElement(event, event.target);
@@ -106,7 +106,7 @@ function rvDragula($compile, dragulaService, keyNames) {
          * @param  {Object} event event object
          */
         function keyDownHandler(event) {
-            RV.logger.log('dragulaDirective', event.keyCode);
+            console.log('dragulaDirective', event.keyCode);
             const target = angular.element(event.target);
 
             // if the target cannot be moved, exit
