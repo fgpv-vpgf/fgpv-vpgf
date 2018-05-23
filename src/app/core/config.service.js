@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, ConfigObject) {
+function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, errorService, ConfigObject) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {
@@ -145,28 +145,35 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                 rcsLang = 'en';
             }
 
-            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(resp => {
-                const result = [];
+            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
+                resp => {
+                    const result = [];
 
-                // there is an array of layer configs in resp.data.
-                // moosh them into one single layer array on the result
-                // FIXME may want to consider a more flexible approach than just assuming RCS
-                // always returns nothing but a single layer per key.  Being able to inject any
-                // part of the config via would be more robust
-                resp.data.forEach(layerEntry => {
-                    // if the key is wrong rcs will return null
-                    if (layerEntry) {
-                        let layer = layerEntry.layers[0];
-                        layer = schemaUpgrade.layerNodeUpgrade(layer);
-                        layer.origin = 'rcs';
-                        result.push(layer);
-                    }
-                });
+                    // there is an array of layer configs in resp.data.
+                    // moosh them into one single layer array on the result
+                    // FIXME may want to consider a more flexible approach than just assuming RCS
+                    // always returns nothing but a single layer per key.  Being able to inject any
+                    // part of the config via would be more robust
+                    resp.data.forEach(layerEntry => {
+                        // if the key is wrong rcs will return null
+                        if (layerEntry) {
+                            let layer = layerEntry.layers[0];
+                            layer = schemaUpgrade.layerNodeUpgrade(layer);
+                            layer.origin = 'rcs';
+                            result.push(layer);
+                        }
+                    });
 
-                this.config.map.layers.push(...result);
-                events.$broadcast(events.rvCfgUpdated, result);
+                    this.config.map.layers.push(...result);
+                    events.$broadcast(events.rvCfgUpdated, result);
 
-                return this.config;
+                    return this.config;
+            },  resp => {
+                    const toast = {
+                        textContent: $translate.instant('config.service.rcs.error'),
+                        action: $translate.instant('config.service.rcs.action')
+                    };
+                    errorService.display(toast);
             });
         }
 
@@ -222,6 +229,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
         /**
          * Load RCS layers after the map has been instantiated.
+         * Only load RCS layers for current lang config.
          * Triggers an event to update the config when done
          *
          * @memberof app.core
@@ -229,7 +237,8 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
          * @param {Array}  keys  array of RCS keys (String) to be added
          */
         rcsAddKeys(keys) {
-            configList.forEach(conf => { conf.rcsKeys = keys; });
+            const conf = configList.find(c => c.language === currentLang());
+            conf.rcsKeys = keys;
         }
 
         /**
