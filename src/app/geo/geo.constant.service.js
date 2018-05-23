@@ -6,7 +6,8 @@ const GEO = {
             ESRI_FEATURE: 'esriFeature',
             ESRI_IMAGE: 'esriImage',
             ESRI_TILE: 'esriTile',
-            OGC_WMS: 'ogcWms'
+            OGC_WMS: 'ogcWms',
+            OGC_WFS: 'ogcWfs'
         },
         Ogc: {
             INFO_FORMAT_MAP: {
@@ -49,6 +50,7 @@ const GEO = {
             ImageService: 'imageservice',
 
             WMS: 'wms',
+            WFS: 'wfs',
             Unknown: 'unknown',
             Error: 'error'
         }
@@ -67,9 +69,9 @@ const GEO = {
 
 angular.extend(GEO.Layer, {
     NO_ATTRS: [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE, GEO.Layer.Types.OGC_WMS],
-    QUERYABLE: [GEO.Layer.Types.ESRI_FEATURE, GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS],
+    QUERYABLE: [GEO.Layer.Types.ESRI_FEATURE, GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS, GEO.Layer.Types.OGC_WFS],
     SORT_GROUPS: [
-        [GEO.Layer.Types.ESRI_FEATURE],
+        [GEO.Layer.Types.ESRI_FEATURE, GEO.Layer.Types.OGC_WFS],
         [GEO.Layer.Types.ESRI_IMAGE, GEO.Layer.Types.ESRI_TILE,
             GEO.Layer.Types.ESRI_DYNAMIC, GEO.Layer.Types.OGC_WMS]
     ],
@@ -78,7 +80,8 @@ angular.extend(GEO.Layer, {
         [GEO.Layer.Types.ESRI_FEATURE]: 0,
         [GEO.Layer.Types.ESRI_IMAGE]: 1,
         [GEO.Layer.Types.ESRI_TILE]: 1,
-        [GEO.Layer.Types.OGC_WMS]: 1
+        [GEO.Layer.Types.OGC_WMS]: 1,
+        [GEO.Layer.Types.OGC_WFS]: 0
     }
 });
 
