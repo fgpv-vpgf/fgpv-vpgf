@@ -662,7 +662,8 @@
                         "properties": {
                             "id": { "type": "string", "default": "" },
                             "layerType": { "type": "string", "default": "" },
-                            "url": { "type": "string", "default": "" }
+                            "url": { "type": "string", "default": "" },
+                            "opacity": { "type": "number", "default": 1, "description": "Initial opacity" }
                         },
                         "additionalProperties": false,
                         "required": [ "id", "layerType", "url" ]
