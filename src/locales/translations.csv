@@ -329,8 +329,9 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.type.dynamicservice,ESRI Dynamic Layer,1,Couche dynamique d'ESRI,1
 ,import.service.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
 ,import.service.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
-,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
+,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1,Service d'entités Web OGC GeoJSON,0
 ,import.service.type.rasterlayer,Raster Layer,1,Couche Raster,1
+,import.service.type.geojson,OGC Web Feature Service GeoJSON,1,
 ,import.service.configure.title,Configure layer,1,Configurer la couche,1
 ,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1

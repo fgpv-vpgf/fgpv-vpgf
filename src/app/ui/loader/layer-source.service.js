@@ -39,6 +39,9 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             [geoServiceTypes.FeatureService]: () =>
                 [_parseAsFeature],
 
+            [geoServiceTypes.WFS]: () =>
+                [_parseAsWfs],
+
             [geoServiceTypes.ImageService]: () =>
                 [_parseAsImage],
 
@@ -176,6 +179,35 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             });
 
             const layerInfo = new LayerSourceInfo.FeatureServiceInfo(layerConfig, data.fields);
+
+            return layerInfo;
+        }
+
+        /**
+         * Parses the supplied service url as if it's a WFS service.
+         *
+         * @function _parseAsWfs
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.WFSServiceInfo object
+         */
+        function _parseAsWfs(url, data) {
+            const nameAndId = `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`;
+            const layerConfig = new ConfigObject.layers.FeatureLayerNode({
+                id: nameAndId,
+                url: url,
+                layerType: Geo.Layer.Types.OGC_WFS,
+                name: nameAndId,
+                state: {
+                    userAdded: true
+                }
+            });
+
+            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
+
+            const layerInfo = new LayerSourceInfo.GeoJSONFileInfo(layerConfig, null, targetWkid);
+            layerInfo._parsedData = data.geoJson;
 
             return layerInfo;
         }
@@ -344,7 +376,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 }
             });
 
-            const targetWkid = configService.getSync.map.instance.spatialReference.wkid
+            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const fileInfoOptions = [
