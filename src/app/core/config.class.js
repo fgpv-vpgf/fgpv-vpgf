@@ -153,17 +153,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'settings',
                     'data',
                     'symbology',
-                    'styles',
                     'interval'
                 ],
                 disabledControls: [],
-                userDisabledControls: [],
-                child: {
-                    state: {},
-                    controls: [],
-                    disabledControls: [],
-                    userDisabledControls: []
-                }
+                userDisabledControls: []
             },
             [Geo.Layer.Types.ESRI_DYNAMIC]: {
                 state: {
