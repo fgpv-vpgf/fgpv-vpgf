@@ -16,6 +16,8 @@ function errorService($mdToast, $translate) {
         remove
     };
 
+    let errorToast = null;
+
     return service;
 
     /**
@@ -29,16 +31,21 @@ function errorService($mdToast, $translate) {
 
     /**
      * Renders a toast message containing the supplied errorMsg
+     * Only render one error toast at a time to prevent toasts from pushing eachother out
      *
      * @function display
      * @param {Object} opts toast options object; see https://material.angularjs.org/latest/api/service/$mdToast for details
      * @return {Promise} resolving when the toast is hidden
      */
     function display(opts) {
-        const extendedOpts = angular.extend({}, {
-            position: 'bottom rv-flex-global'
-        }, opts);
+        if (!errorToast) {
+            const extendedOpts = angular.extend({}, {
+                position: 'bottom rv-flex-global'
+            }, opts);
 
-        return $mdToast.show($mdToast.simple(extendedOpts));
+            errorToast = $mdToast.show($mdToast.simple(extendedOpts)).then(() => { errorToast = null });
+
+            return errorToast;
+        }
     }
 }
