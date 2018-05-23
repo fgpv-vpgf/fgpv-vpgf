@@ -46,7 +46,7 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
 function createBasemap(esriBundle, basemapConfig) {
     // create basemap, add to basemap gallery
     const layers = basemapConfig.layers.map(config =>
-        new esriBundle.BasemapLayer({ url: config.url, opacity: basemapConfig.opacity }));
+        new esriBundle.BasemapLayer({ url: config.url, opacity: config.opacity }));
 
     const basemap = new esriBundle.Basemap({
         id: basemapConfig.id,
