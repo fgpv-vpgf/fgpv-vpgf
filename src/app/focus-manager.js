@@ -51,6 +51,9 @@ let restoreFromHistory = false;
 // We are guaranteed to reach a valid target during traversal so there is no need for focusout intervention.
 let ignoreFocusLoss = false;
 
+const jQwindow = $(window);
+const jQdocument = $(document);
+
 /**
  * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
  * determines if elements belong to it, and stores limited angular services passed in.
@@ -391,7 +394,7 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
  */
 function onMouseDown(event) {
     const evtTarget = $(event.target);
-    const viewer = viewerGroup.contains(evtTarget);
+    const viewer = viewerGroup.contains(evtTarget); // check if the viewer was clicked
 
     // fixes issue where md-backdrop is briefly created outside the viewer, and on click makes the waiting dialog appear
     // ignoring the click when it happens on an md-backdrop
@@ -399,15 +402,22 @@ function onMouseDown(event) {
         return;
     }
 
-    if (viewer) {
-        ignoreFocusLoss = true;
-        viewer.setStatus(statuses.ACTIVE);
-        evtTarget
-            .closest('.rv-esri-map, ' + focusSelector)
-            .rvFocus();
-    } else {
+    if (!viewer) {
         viewerGroup.deactivate();
+        return;
     }
+
+    // disable scroll just once to prevent the page scrolling the viewer into the full view which is quite annoying
+    // fgpv-vpgf/fgpv-vpgf#2665
+    const oldScroll = jQwindow.scrollTop();
+    jQwindow.one('scroll', () =>
+        jQwindow.scrollTop(oldScroll));
+
+    ignoreFocusLoss = true;
+    viewer.setStatus(statuses.ACTIVE);
+    evtTarget
+        .closest('.rv-esri-map, ' + focusSelector)
+        .rvFocus();
 }
 
 /**
@@ -620,8 +630,8 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
     // Calling rvFocus implies the viewer should be active, unless there is no viewer registered which throws an error. Default to normal focus.
     try {
         viewerGroup
-        .contains(jqueryElem)
-        .setStatus(statuses.ACTIVE);
+            .contains(jqueryElem)
+            .setStatus(statuses.ACTIVE);
     } catch(e) {
         elem.origfocus(); // browser implementation
     }
