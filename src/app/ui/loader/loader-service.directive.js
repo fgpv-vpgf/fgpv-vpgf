@@ -29,7 +29,7 @@ function rvLoaderService() {
 }
 
 function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames,
-    ConfigObject, layerSource, legendService) {
+    ConfigObject, layerSource, legendService, gapiService) {
     'ngInject';
     const self = this;
 
@@ -42,6 +42,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         Geo.Service.Types.TileService,
         Geo.Service.Types.ImageService,
         Geo.Service.Types.WMS,
+        Geo.Service.Types.WFS,
         Geo.Service.Types.RasterLayer
     ];
 
@@ -115,7 +116,11 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             reset: configureReset
         },
         form: null,
-        defaultOptions: {}
+        defaultOptions: {},
+        colourPickerSettings: {
+            theme: 'bootstrap',
+            position: 'top right'
+        }
     };
 
     self.layerBlueprint = null;
@@ -236,6 +241,23 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // it seem not to be possible to tell if the layer will work on not until the layer is build and added to the map
         stepper.nextStep($q.resolve());
 
+        if (self.layerSource.config.layerType === Geo.Layer.Types.OGC_WFS) {
+            const validationPromise = gapiService.gapi.layer.validateGeoJson(self.layerSource._parsedData)
+                .then(validationResult => {
+                    self.layerSource.fields = validationResult.fields;
+                    self.layerSource._parsedData = validationResult.formattedData;
+                    self.layerSource._formattedData = validationResult.formattedData;
+                    // TODO: do we need geometry type at all???
+
+                    self.layerSource.config.nameField = validationResult.smartDefaults.primary;
+                    self.layerSource.snapshot();
+
+                    return validationResult;
+                });
+
+            return validationPromise;
+        }
+
         /*
         const validationPromise = self.layerBlueprint.validate();
 
@@ -270,13 +292,21 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
-
-        legendService.importLayerBlueprint(layerBlueprint);
-
-        // TODO: display error message if something breaks
-        // TODO: close import wizard if build is successful
-        closeLoaderService();
+        let layerBlueprint;
+        if (self.layerSource.config.layerType === Geo.Layer.Types.OGC_WFS) {
+            layerBlueprint = new LayerBlueprint.file(self.layerSource);
+            layerBlueprint.validateFileLayerSource()
+                .then(esriLayer => {
+                    legendService.importLayerBlueprint(layerBlueprint);
+                    closeLoaderService();
+                })
+        } else {
+            layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
+            legendService.importLayerBlueprint(layerBlueprint);
+            // TODO: display error message if something breaks
+            // TODO: close import wizard if build is successful
+            closeLoaderService();
+        }
     }
 
     /**

@@ -162,6 +162,10 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         get type () { return Geo.Service.Types.GeoJSON; }
     }
 
+    class WFSServiceInfo extends FileInfo {
+        get type () { return Geo.Service.Types.WFSServiceInfo; }
+    }
+
     class ShapefileFileInfo extends FileInfo {
         get type () { return Geo.Service.Types.Shapefile; }
         get formattedData() { return this._rawData; }
@@ -171,6 +175,7 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         FeatureServiceInfo,
         DynamicServiceInfo,
         WMSServiceInfo,
+        WFSServiceInfo,
         // RasterServiceInfo,
         ImageServiceInfo,
         TileServiceInfo,

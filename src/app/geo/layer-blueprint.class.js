@@ -182,7 +182,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 [layerTypes.ESRI_FEATURE]: ConfigObject.layers.FeatureLayerNode,
                 [layerTypes.ESRI_IMAGE]: ConfigObject.layers.BasicLayerNode,
                 [layerTypes.ESRI_DYNAMIC]: ConfigObject.layers.DynamicLayerNode,
-                [layerTypes.OGC_WMS]: ConfigObject.layers.WMSLayerNode
+                [layerTypes.OGC_WMS]: ConfigObject.layers.WMSLayerNode,
+                [layerTypes.OGC_WFS]: ConfigObject.layers.WFSLayerNode
             }
         }
 
@@ -194,7 +195,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 [layerTypes.ESRI_FEATURE]: gapiLayer.createFeatureRecord,
                 [layerTypes.ESRI_IMAGE]: gapiLayer.createImageRecord,
                 [layerTypes.ESRI_DYNAMIC]: gapiLayer.createDynamicRecord,
-                [layerTypes.OGC_WMS]: gapiLayer.createWmsRecord
+                [layerTypes.OGC_WMS]: gapiLayer.createWmsRecord,
+                [layerTypes.OGC_WFS]: gapiLayer.createWfsRecord
             }
         }
     }
