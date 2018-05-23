@@ -155,6 +155,7 @@
                 <option value="config/config-sample-61.json">61. Layer with fields not searchable and default values for filters</option>
                 <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
                 <option value="config/config-sample-63.json">63. Tile layer</option>
+                <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
             </select>
         </div>
 

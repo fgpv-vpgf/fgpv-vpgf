@@ -1149,7 +1149,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 name: 'basemap.blank.title',
                 description: 'basemap.blank.desc',
                 id: `blank_basemap_${basemap.id}`,
-                layers: basemap.layers,
+                layers: [{ url: basemap.layers[0].url, opacity: 0 }],
                 thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
                 // blank maps have no attributions
                 attribution: {
