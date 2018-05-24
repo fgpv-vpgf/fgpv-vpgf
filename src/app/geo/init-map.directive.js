@@ -17,7 +17,7 @@ angular
     .directive('rvInitMap', rvInitMap);
 
 function rvInitMap($rootScope, ConfigObject, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog) {
+    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -203,8 +203,9 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
      * @param {Object} event     the keydown/keyup browser event
      */
     // eslint-disable-next-line complexity
-    function animate() {
+    function animate(event) {
         stopAnimate();
+
         if (keyMap.length === 0) {
             return;
         }
@@ -225,7 +226,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
             // enter key is pressed - trigger identify
-            case 13:
+            case keyNames.ENTER:
                 // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                 // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
                 if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
@@ -235,39 +236,39 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 }
                 break;
             // shift key pressed - pan distance increased
-            case 16:
+            case keyNames.SHIFT:
                 hasShiftMultiplier = 2;
                 break;
             // left arrow key pressed
-            case 37:
+            case keyNames.LEFT_ARROW:
                 x -= mapPntHorDiff;
                 break;
             // up arrow key pressed
-            case 38:
+            case keyNames.UP_ARROW:
                 y += mapPntVertDiff;
                 break;
             // right arrow key pressed
-            case 39:
+            case keyNames.RIGHT_ARROW:
                 x += mapPntHorDiff;
                 break;
             // down arrow key pressed
-            case 40:
+            case keyNames.DOWN_ARROW:
                 y -= mapPntVertDiff;
                 break;
             // + (plus) key pressed - zoom in
-            case 187:
+            case keyNames.EQUAL_SIGN:
                 geoService.map.shiftZoom(1);
                 break;
             // + (plus) key pressed - FF and IE
-            case 61:
+            case keyNames.EQUALS_FIREFOX:
                 geoService.map.shiftZoom(1);
                 break;
             // - (minus) key pressed - zoom out
-            case 189:
+            case keyNames.DASH:
                 geoService.map.shiftZoom(-1);
                 break;
             // - (minus) key pressed - FF and IE
-            case 173:
+            case keyNames.MINUS_FIREFOX_MUTE_UNMUTE:
                 geoService.map.shiftZoom(-1);
                 break;
             }

@@ -22,7 +22,8 @@ $map-nav-button-height: 32px;
 
 $fade-in-out-duration: 130ms;
 
-$keyboard-only: '.rv-keyboard-only';
+// TODO: this doesn't seem to be used anywhere
+// $keyboard-only: '.rv-keyboard-only';
 
 @mixin keyboard {
     @at-root {

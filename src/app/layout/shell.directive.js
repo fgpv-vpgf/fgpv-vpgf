@@ -15,7 +15,7 @@ angular
     .directive('rvShell', rvShell);
 
 function rvShell($rootElement, $rootScope, events, stateManager, configService, layoutService, referenceService,
-    mapToolService, debounceService, geoService) {
+    mapToolService, debounceService, geoService, keyNames) {
 
     const directive = {
         restrict: 'E',
@@ -67,15 +67,17 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         $rootElement.on('keydown', event => {
             // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
             const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
+            const navigationKeys = [keyNames.TAB, keyNames.ENTER, keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW,keyNames.DOWN_ARROW,keyNames.EQUAL_SIGN,keyNames.DASH];
+            
             if (event.which === 27 && !mdSidePanelOpen) {
                 scope.$apply(() => {
                     stateManager.closePanelFromHistory();
                 });
-            } else if ([9, 13, 37, 38, 39, 40, 187, 189].find(x => x === event.which)) {
+            } else if (navigationKeys.find(x => x === event.which)) {
                 $rootElement.addClass('rv-keyboard');
-                $rootElement.on('mousemove', () => {
+                $rootElement.on('mousedown', () => {
                     $rootElement.removeClass('rv-keyboard');
-                    $rootElement.off('mousemove');
+                    $rootElement.off('mousedown');
                 });
             }
         });
