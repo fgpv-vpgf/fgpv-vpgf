@@ -93,19 +93,22 @@
 
         $crosshairs-size: 230px;
         .rv-crosshairs {
-            width: $crosshairs-size;
-            height: $crosshairs-size;
             position: absolute;
             top: calc(50% - #{$crosshairs-size} / 2);
             left: calc(50% - #{$crosshairs-size} / 2);
             pointer-events: none !important;
             transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
             opacity: 0;
+
+            md-icon {
+                width: $crosshairs-size;
+                height: $crosshairs-size;
+            }
         }
 
-        // only show crosshairs in the keyboard mode and when the map has focus 
+        // only show crosshairs in the keyboard mode and when the map has focus
         @include keyboard {
-            
+
             .rv-esri-map:focus ~ .rv-crosshairs {
                 opacity: 1;
             }
