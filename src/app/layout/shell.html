@@ -7,7 +7,12 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" aria-label="{{ 'geo.aria.mapdescription' | translate }}"></div>
+<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" 
+    aria-label="{{ 'geo.aria.mapdescription' | translate }}"
+    aria-describedby="rv-crosshairs-description"></div>
+
+<!-- crossharis are centered relative to the rv-shell; if the inner shell is not center aligned, crosshairs can appear off-center -->
+<rv-crosshairs class="rv-crosshairs"></rv-crosshairs>
 
 <div class="rv-inner-shell">
 
@@ -33,7 +38,7 @@
     <rv-appbar></rv-appbar>
 
     <!--rv-geosearch></rv-geosearch-->
-    
+
     <!-- <rv-help-overlay rv-state='help'></rv-help-overlay> -->
 
     <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
