@@ -44,7 +44,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
         referenceService.panels.shell = el;
 
         // fix for IE 11 where focus can move to esri generated svg elements
-        $rootScope.$on(events.rvApiReady, () => {
+        events.$on(events.rvApiReady, () => {
             $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
             configService.getAsync.then(config => {
@@ -56,7 +56,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
                     outMouseSR = (typeof sr !== 'undefined') ? sr.wkid : geoService.mapObject.spatialReference;
 
                     // set map coordinates
-                    $rootScope.$on('rvMouseMove',
+                    events.$on('rvMouseMove',
                         debounceService.registerDebounce(updateMapCoordinates, 100, false));
                 } else {
                     el.find('.rv-map-coordinates').remove();    // mouseInfo disabled, remove element from DOM
@@ -68,7 +68,7 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
             // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
             const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
             const navigationKeys = [keyNames.TAB, keyNames.ENTER, keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW,keyNames.DOWN_ARROW,keyNames.EQUAL_SIGN,keyNames.DASH];
-            
+
             if (event.which === 27 && !mdSidePanelOpen) {
                 scope.$apply(() => {
                     stateManager.closePanelFromHistory();

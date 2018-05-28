@@ -52,7 +52,6 @@ let restoreFromHistory = false;
 let ignoreFocusLoss = false;
 
 const jQwindow = $(window);
-const jQdocument = $(document);
 
 /**
  * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
