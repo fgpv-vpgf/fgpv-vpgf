@@ -23,7 +23,8 @@ function rvCrosshairs($rootElement, events) {
     function link(scope, element) {
         const self = scope.self;
 
-        const [elmWidth, elmHeight] = [element.outerWidth(), element.outerHeight()];
+        const targetElement = element.find('.rv-target');
+        const [targetElmWidth, targetElmHeight] = [targetElement.outerWidth(), targetElement.outerHeight()];
 
         const jQwindow = $(window);
 
@@ -36,9 +37,9 @@ function rvCrosshairs($rootElement, events) {
             }
 
             // get position of the crosshairs center point relative to the visible viewport
-            let { left: x, top: y } = element.offset();
-            x += -jQwindow.scrollLeft() + elmWidth / 2;
-            y += -jQwindow.scrollTop() + elmHeight / 2;
+            let { left: x, top: y } = targetElement.offset();
+            x += -jQwindow.scrollLeft() + targetElmWidth / 2;
+            y += -jQwindow.scrollTop() + targetElmHeight / 2;
 
             // get an html element underneath the crosshairs
             const newHoverElement = document.elementFromPoint(x, y);

@@ -117,6 +117,7 @@ Basemap broken close toast,basemap.close,Close,1,Fermer,0
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
 WKIDs to name other,wkids.other,Other,1,Autre,1
+,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"[fr] Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",0
 Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
 Map Navigation slider text,nav.slider,slider,1,Curseur,1
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
