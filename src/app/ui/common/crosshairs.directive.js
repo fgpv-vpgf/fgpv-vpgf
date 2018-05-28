@@ -7,7 +7,7 @@ angular.module('app.ui').directive('rvCrosshairs', rvCrosshairs);
  *
  * @return {object} directive body
  */
-function rvCrosshairs($rootElement, events) {
+function rvCrosshairs($rootElement, events, tooltipService) {
     const directive = {
         restrict: 'E',
         link,
@@ -28,13 +28,29 @@ function rvCrosshairs($rootElement, events) {
 
         const jQwindow = $(window);
 
+        // tracks if the last action was done through a keyboard (map navigation) or mouse (mouse movement)
+        let isCrosshairsActive = false;
         let hoverElement;
+
+        // if the tooltip is opened by crosshairs and the user moves the mouse cursor over the map, the tooltip will move and stay with the mouse cursor until the extent changes or the user hovers over a different feature
+        // this removes the tooltip when the mouse movements are detected in the keyboard-mode
+        // rvMouseMove `does not fire for movement over panels or other map controls`; have to use listen to direct events
+        $rootElement.on('mousemove', () => {
+            // do nothing if the keyboard mode if not enabled or the last action was already compeleted using a mouse
+            if (!isCrosshairsActive || !$rootElement.hasClass('rv-keyboard')) {
+                return;
+            }
+            isCrosshairsActive = false;
+            tooltipService.removeHoverTooltip();
+        });
 
         events.$on(events.rvExtentChange, (_, d) => {
             // if not in keyboard mode, do nothing
             if (!$rootElement.hasClass('rv-keyboard')) {
                 return;
             }
+
+            isCrosshairsActive = true;
 
             // get position of the crosshairs center point relative to the visible viewport
             let { left: x, top: y } = targetElement.offset();
@@ -75,9 +91,6 @@ function rvCrosshairs($rootElement, events) {
                 clientY: y - 60 // offset the tooltip above the crosshairs
             });
             hoverElement.dispatchEvent(overEvt);
-
-            // TODO: if the tooltip is opened by crosshairs and the user moves the mouse cursor over the map, the tooltip will move and stay with the mouse cursor until the extent changes or the user hovers over a different feature
-            // somehow detect such tooltip's desertion and hide it
         });
     }
 }
