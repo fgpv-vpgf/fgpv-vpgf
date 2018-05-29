@@ -199,6 +199,7 @@ class AttribRecord extends layerRecord.LayerRecord {
                 return {
                     key: attribFC.AttribFC.aliasedFieldNameDirect(key, fields), // need synchronous variant of alias lookup
                     value: attribs[key],
+                    field: key,
                     type: fieldType ? fieldType.type : fieldType
                 };
             });
