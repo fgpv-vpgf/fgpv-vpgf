@@ -82,8 +82,8 @@
                     this.isActive = true;
 
                     // store current identify value and then disable in viewer
-                    identifySetting = self.appInfo.mapi.identifyMode;
-                    self.appInfo.mapi.identifyMode = 'none';
+                    identifySetting = self.appInfo.mapi.layers.identifyMode;
+                    self.appInfo.mapi.layers.identifyMode = 'none';
                 } else {
                     // remove the click handler and set the cursor
                     handler.click.remove();
@@ -94,7 +94,7 @@
                     this.isActive = false;
 
                     // reset identify value to stored value
-                    self.appInfo.mapi.identifyMode = identifySetting;
+                    self.appInfo.mapi.layers.identifyMode = identifySetting;
                 }
             };
         }

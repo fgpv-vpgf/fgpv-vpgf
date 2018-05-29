@@ -736,6 +736,15 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     configLayer._initLayerSettings(layerRecord, idx);
                 } else {
                     apiLayer = new ConfigLayer(configService.getSync.map, layerRecord, idx);
+
+                    // dynamic layers must have the same identify tolerance for all children, so if one updates we must update them all
+                    apiLayer.bufferChanged.subscribe(tolerance => {
+                        const children = mapApi.layers.getLayersById(apiLayer.id);
+                        children.forEach(child => {
+                            child._identifyBuffer = tolerance;
+                        });
+                    });
+
                     _initializeLayerObservables(apiLayer);
                     _addLayerToApiMap(apiLayer);
                     createdLayers.push(apiLayer);
