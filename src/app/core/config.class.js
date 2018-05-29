@@ -1145,11 +1145,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @return {Basemap} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
          */
         makeBlankBasemap(basemap) {
+            const blank = $.extend(true, {}, basemap)
+            const layers = blank.layers.map(lyr => { lyr.opacity = 0; return lyr; })
             const blankBasemap = new Basemap({
                 name: 'basemap.blank.title',
                 description: 'basemap.blank.desc',
                 id: `blank_basemap_${basemap.id}`,
-                layers: basemap.layers,
+                layers: layers,
                 thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
                 // blank maps have no attributions
                 attribution: {
