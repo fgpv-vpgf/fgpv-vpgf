@@ -408,7 +408,7 @@ function exportGenerators($q, $filter, $translate, $templateCache, gapiService, 
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function timestampGenerator(exportSize) {
-        const timestampString = $filter('date')(new Date(), 'YYYY-MM-DD HH:mm:ss');
+        const timestampString = $filter('date')(new Date(), 'yyyy-MM-dd, h:mm a');
 
         const containerWidth = exportSize.width;
         let containerHeight = 100;
