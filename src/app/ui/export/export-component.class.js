@@ -31,7 +31,14 @@ function ExportComponentFactory($q, graphicsService) {
          */
         constructor(id, { value = {}, generators = [], graphicOrder = null, isVisible = true,
             isSelectable = true, isSelected = true }) {
-            const validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and emtpy, the component would become unselectable
+            let validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and emtpy, the component would become unselectable
+
+            // handle title differently. Even if empty, show it because user can modify it
+            if (id === 'title') {
+                validToSelect = true;
+                value = (typeof value !== 'string') ? '' : value;
+            }
+
             this._id = id;
             this._config = {
                 value,
