@@ -81,7 +81,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 if (max !== '') {
                     defs.push(`${column.data} <= ${max}`);
                 }
-            } else if (column.type === 'rv-date') {
+            } else if (column.filter.type === 'date') {
                 const min = column.filter.value.min;
                 const max = column.filter.value.max;
 

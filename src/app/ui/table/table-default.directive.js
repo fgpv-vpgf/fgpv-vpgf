@@ -117,7 +117,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             number: {
                 init: () => ({ min: '', max: '', static: false })
             },
-            'rv-date': {
+            date: {
                 init: () => ({ min: null, max: null, static: false })
             }
         };
@@ -177,7 +177,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             const order = initColumns();
 
             // define pre-deformatting function for date columns
-            $.fn.dataTable.ext.order['rv-date-pre'] = d => parseInt(d.replace(/\D/g, ''));
+            $.fn.dataTable.ext.order['date-pre'] = d => parseInt(d.replace(/\D/g, ''));
 
             // Reset datatable to initial state if all sorts are removed
             // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2119
@@ -340,7 +340,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                                 displayData.rows.forEach(r => { r[field.name] = $filter('dateTimeZone')(r[field.name]) });
                                 const width = getColumnWidth(column.title, 0, 400, 375);
                                 column.width = `${width}px`;
-                                column.type = 'rv-date';
+                                column.type = 'date';
                             } else {
                                 const width = getColumnWidth(column.title, 0, 250, 120);
                                 column.width = `${width}px`;
@@ -584,12 +584,14 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         if (column.type === 'string' || column.type === 'selector') {
                             column.filter.value = config.filter.value;
                         } else if (column.type === 'number') {
+                            // expect string "numberMin,numberMax"
                             const values = config.filter.value.split(',');
                             column.filter.min = values[0];
                             column.filter.max = values[1];
-                        } else {
-                            column.filter.min = config.filter.value.min;
-                            column.filter.max = config.filter.value.max;
+                        } else if(column.type === 'date') {
+                            const dates = getDateFilter(config);
+                            column.filter.min = dates.min;
+                            column.filter.max = dates.max;
                         }
                     }
 
@@ -598,6 +600,43 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         column.filter.static = config.filter.static;
                     }
                 } else { column.filter = undefined; }
+            }
+
+            /**
+            * Get min/max dates
+            * @function getDateFilter
+            * @private
+            * @param {Object} config    configuration file for filter
+            * @return {Object} dates {min: ,max:}
+            */
+           function getDateFilter(config) {
+
+                const type = typeof config.filter.value;
+                let dates = { min: null, max: null };
+
+                if (type === 'string') {
+                    // expect string "dateMin,dateMax"
+                    // dates should be in format YYYY-MM-DD
+                    const values = config.filter.value.split(',');
+
+                    const timeMin = $filter('dateTimeZone')(values[0], '');
+                    if (timeMin !== 'Invalid date' && timeMin !== '') {
+                        dates.min = new Date(timeMin);
+                    }
+
+                    const timeMax = $filter('dateTimeZone')(values[1], '');
+                    if (timeMax !== 'Invalid date' && timeMax !== '') {
+                        dates.max = new Date(timeMax);
+                    }
+                    return dates;
+
+                } else if (type === 'object') {
+                    // expect an object of type
+                    dates.min = config.filter.value.min;
+                    dates.max = config.filter.value.max;
+
+                    return dates;
+                }
             }
 
             /**
