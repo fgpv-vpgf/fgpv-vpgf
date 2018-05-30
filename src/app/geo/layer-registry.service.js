@@ -741,7 +741,11 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     apiLayer.bufferChanged.subscribe(tolerance => {
                         const children = mapApi.layers.getLayersById(apiLayer.id);
                         children.forEach(child => {
-                            child._identifyBuffer = tolerance;
+                            const oldBuffer = child._identifyBuffer;
+                            if (oldBuffer !== tolerance) {
+                                child._identifyBuffer = tolerance;
+                                child._bufferChanged.next(tolerance);
+                            }
                         });
                     });
 
