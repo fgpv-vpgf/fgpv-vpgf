@@ -1021,6 +1021,11 @@ export class LayerGroup {
         return this._layersArray.filter(layer => layer instanceof <any>type);
     }
 
+    /** Sets the buffer size of all layers to be used when identifying. */
+    setAllBuffers(tolerance: number | undefined): void {
+        this._layersArray.forEach(layer => layer.identifyBuffer = tolerance);
+    }
+
     // /** Exports the layers in the group to a GeoJSON object.
     //  *
     //  * TODO: complete this function.
