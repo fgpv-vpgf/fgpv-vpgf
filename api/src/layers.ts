@@ -218,6 +218,8 @@ export class BaseLayer {
 
         // if the tolerance value is defined and is less than 1, set it to 1 (smallest possible value)
         const toleranceToSet: number | undefined = tolerance && tolerance < 1 ? 1 : tolerance;
+
+        // if dynamic layer, value is spread to other children in layer-registry.service, _createApiLayer()
         this._identifyBuffer = toleranceToSet;
 
         if (oldBuffer !== toleranceToSet) {
