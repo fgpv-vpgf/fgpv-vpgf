@@ -41,127 +41,6 @@ angular
 function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, errorService, ConfigObject) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
-    const DEFAULT_CONFIG = {
-        "ui": {
-          "navBar": {
-            "zoom": "buttons",
-            "extra": [
-              "fullscreen",
-              "geoLocator",
-              "home",
-              "help"
-            ]
-          },
-          "sideMenu": {
-            "logo": true
-          },
-          "help": {
-            "folderName": "default"
-          }
-        },
-        "version": "2.0",
-        "language": "en",
-        "services": {
-          "export": { "legend": {} }
-        },
-        "map": {
-          "initialBasemapId": "baseNrCan",
-          "components": {
-            "geoSearch": {
-              "enabled": false,
-              "showGraphic": false,
-              "showInfo": false
-            },
-            "mouseInfo": {
-              "enabled": false,
-              "spatialReference": {
-                "wkid": 102100
-              }
-            },
-            "northArrow": {
-              "enabled": true
-            },
-            "basemap": {
-              "enabled": true
-            },
-            "overviewMap": {
-              "enabled": true,
-              "layerType": "imagery"
-            },
-            "scaleBar": {
-              "enabled": true
-            }
-          },
-          "extentSets": [
-            {
-              "id": "EXT_NRCAN_Lambert_3978",
-              "default": {
-                "xmax": 3549492,
-                "xmin": -2681457,
-                "ymax": 3482193,
-                "ymin": -883440
-              },
-              "spatialReference": {
-                "wkid": 3978
-              }
-            }
-          ],
-          "lodSets": [
-            {
-              "id": "LOD_NRCAN_Lambert_3978",
-              "lods": [
-                {"level": 0, "resolution": 38364.660062653464, "scale": 145000000},
-                {"level": 1, "resolution": 22489.62831258996, "scale": 85000000},
-                {"level": 2, "resolution": 13229.193125052918, "scale": 50000000},
-                {"level": 3, "resolution": 7937.5158750317505, "scale": 30000000},
-                {"level": 4, "resolution": 4630.2175937685215, "scale": 17500000},
-                {"level": 5, "resolution": 2645.8386250105837, "scale": 10000000},
-                {"level": 6, "resolution": 1587.5031750063501, "scale": 6000000},
-                {"level": 7, "resolution": 926.0435187537042, "scale": 3500000},
-                {"level": 8, "resolution": 529.1677250021168, "scale": 2000000},
-                {"level": 9, "resolution": 317.50063500127004, "scale": 1200000},
-                {"level": 10, "resolution": 185.20870375074085, "scale": 700000},
-                {"level": 11, "resolution": 111.12522225044451, "scale": 420000},
-                {"level": 12, "resolution": 66.1459656252646, "scale": 250000},
-                {"level": 13, "resolution": 38.36466006265346, "scale": 145000},
-                {"level": 14, "resolution": 22.48962831258996, "scale": 85000},
-                {"level": 15, "resolution": 13.229193125052918, "scale": 50000},
-                {"level": 16, "resolution": 7.9375158750317505, "scale": 30000},
-                {"level": 17, "resolution": 4.6302175937685215, "scale": 17500}
-              ]
-            }
-          ],
-          "legend": {
-            "type": "autopopulate"
-          },
-          "layers": [],
-          "tileSchemas": [
-            {
-              "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-              "name": "Lambert Maps",
-              "extentSetId": "EXT_NRCAN_Lambert_3978",
-              "lodSetId": "LOD_NRCAN_Lambert_3978"
-            }
-          ],
-          "baseMaps": [
-            {
-              "id": "baseNrCan",
-              "name": "Canada Base Map - Transportation (CBMT)",
-              "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-              "altText": "altText - The Canada Base Map - Transportation (CBMT)",
-              "layers": [
-                {
-                  "id": "CBMT",
-                  "layerType": "esriFeature",
-                  "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-                }
-              ],
-              "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
-            }
-          ]
-        }
-      }
-
     const States = {
         NEW: 0,
         LOADING: 1,
@@ -432,7 +311,11 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
 
         // create initial config objects
         langs.forEach(lang => {
-            configList.push(new Config(configAttr, svcAttr, lang));
+            let defConfigAttr;
+            if (!configAttr) {
+                 defConfigAttr = generateDefaultConfig(lang.slice(0,2));
+            }
+            configList.push(new Config(configAttr || defConfigAttr, svcAttr, lang));
         });
 
         // load first config once gapi is ready, other configs will be loaded as needed
@@ -472,12 +355,11 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
         const keysAttr = $rootElement.attr('rv-keys');
 
         $translate.use(languages[0]);
+
         if (!configAttr) {
-            // load default config
-            // convert DEFAULT_CONFIG to string so config parsing logic can stay the same
-            configAttr = JSON.stringify(DEFAULT_CONFIG);
-            languages = ['en-CA'];
+            languages = DEFAULT_LANGS;
         }
+
         configLoader(configAttr, svcAttr, languages);
 
         // handle if any rcs keys were on the html tag.
@@ -518,5 +400,134 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
      */
     function currentLang() {
         return ($translate.proposedLanguage() || $translate.use());
+    }
+
+    /**
+     * Returns the default config in the specified language
+     * @function generateDefaultConfig
+     * @param {String} lang
+     * @return {String} the stringified JSON for the config
+     */
+    function generateDefaultConfig(lang) {
+        const DEFAULT_CONFIG = {
+            "ui": {
+                "navBar": {
+                    "zoom": "buttons",
+                    "extra": [
+                        "fullscreen",
+                        "geoLocator",
+                        "home",
+                        "help"
+                    ]
+                },
+                "sideMenu": {
+                    "logo": true
+                },
+                "help": {
+                    "folderName": "default"
+                }
+            },
+            "version": "2.0",
+            "language": lang,
+            "services": {
+                "export": { "legend": {} }
+            },
+            "map": {
+                "initialBasemapId": "baseNrCan",
+                "components": {
+                    "geoSearch": {
+                        "enabled": false,
+                        "showGraphic": false,
+                        "showInfo": false
+                    },
+                    "mouseInfo": {
+                        "enabled": false,
+                        "spatialReference": {
+                            "wkid": 102100
+                        }
+                    },
+                    "northArrow": {
+                        "enabled": true
+                    },
+                    "basemap": {
+                        "enabled": true
+                    },
+                    "overviewMap": {
+                        "enabled": true,
+                        "layerType": "imagery"
+                    },
+                    "scaleBar": {
+                        "enabled": true
+                    }
+                },
+                "extentSets": [
+                    {
+                        "id": "EXT_NRCAN_Lambert_3978",
+                        "default": {
+                            "xmax": 3549492,
+                            "xmin": -2681457,
+                            "ymax": 3482193,
+                            "ymin": -883440
+                        },
+                        "spatialReference": {
+                            "wkid": 3978
+                        }
+                    }
+                ],
+                "lodSets": [
+                    {
+                        "id": "LOD_NRCAN_Lambert_3978",
+                        "lods": [
+                            {"level": 0, "resolution": 38364.660062653464, "scale": 145000000},
+                            {"level": 1, "resolution": 22489.62831258996, "scale": 85000000},
+                            {"level": 2, "resolution": 13229.193125052918, "scale": 50000000},
+                            {"level": 3, "resolution": 7937.5158750317505, "scale": 30000000},
+                            {"level": 4, "resolution": 4630.2175937685215, "scale": 17500000},
+                            {"level": 5, "resolution": 2645.8386250105837, "scale": 10000000},
+                            {"level": 6, "resolution": 1587.5031750063501, "scale": 6000000},
+                            {"level": 7, "resolution": 926.0435187537042, "scale": 3500000},
+                            {"level": 8, "resolution": 529.1677250021168, "scale": 2000000},
+                            {"level": 9, "resolution": 317.50063500127004, "scale": 1200000},
+                            {"level": 10, "resolution": 185.20870375074085, "scale": 700000},
+                            {"level": 11, "resolution": 111.12522225044451, "scale": 420000},
+                            {"level": 12, "resolution": 66.1459656252646, "scale": 250000},
+                            {"level": 13, "resolution": 38.36466006265346, "scale": 145000},
+                            {"level": 14, "resolution": 22.48962831258996, "scale": 85000},
+                            {"level": 15, "resolution": 13.229193125052918, "scale": 50000},
+                            {"level": 16, "resolution": 7.9375158750317505, "scale": 30000},
+                            {"level": 17, "resolution": 4.6302175937685215, "scale": 17500}
+                        ]
+                    }
+                ],
+                "legend": {
+                    "type": "autopopulate"
+                },
+                "layers": [],
+                "tileSchemas": [
+                    {
+                        "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                        "name": "Lambert Maps",
+                        "extentSetId": "EXT_NRCAN_Lambert_3978",
+                        "lodSetId": "LOD_NRCAN_Lambert_3978"
+                    }
+                ],
+                "baseMaps": [
+                    {
+                        "id": "baseNrCan",
+                        "name": lang === 'fr' ? "Carte de base du Canada" : "Canada Base Map",
+                        "description": lang === 'fr' ? "Une carte du Canada" : "A map of Canada",
+                        "layers": [
+                            {
+                                "id": "CBCT",
+                                "layerType": "esriFeature",
+                                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/" + (lang === 'fr' ? "CBCT" : "CBMT") + "3978/MapServer"
+                            }
+                        ],
+                        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+                    }
+                ]
+            }
+        }
+        return JSON.stringify(DEFAULT_CONFIG);
     }
 }
