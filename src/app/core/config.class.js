@@ -281,7 +281,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         set boundingBox (value) {   this._boundingBox = value; }
 
         get query () {              return this._query; }
-        set query (value) {         this._query = value; }
+        set query (value) {
+            this._query = value;
+            $rootScope.$applyAsync();
+        }
 
         get snapshot () {           return this._snapshot; }
         set snapshot (value) {      this._snapshot = value; }

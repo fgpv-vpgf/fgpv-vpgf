@@ -25,28 +25,6 @@ import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { LayerGroup, SimpleLayer } from 'api/layers';
 
-export enum IdentifyMode {
-    /**
-     * Display the identify results in the details panel and highlight them on the map.
-     */
-    Details = 'details',
-
-    /**
-     * Only highlight the identify results on the map.
-     */
-    Highlight = 'highlight',
-
-    /**
-     * The identify query will be run and results will be available through the `identify` API endpoint, but they will not be highlighted on the map or dispalayed in the details panel.
-     */
-    Silent = 'silent',
-
-    /**
-     * The identify query will not be run.
-     */
-    None = 'none'
-}
-
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
  *
@@ -71,7 +49,6 @@ export default class Map {
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
     private _layers: LayerGroup;
-    private _identifyMode: IdentifyMode = IdentifyMode.Details;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
 
@@ -129,17 +106,6 @@ export default class Map {
                 this.mapI.setLegendConfig(structure);
             }
         }
-    }
-
-    /**
-     * Specifies if the identify panel should be shown after the identify query completes.
-     */
-    set identifyMode(value: IdentifyMode) {
-        this._identifyMode = value;
-    }
-
-    get identifyMode(): IdentifyMode {
-        return this._identifyMode;
     }
 
     get simpleLayer(): SimpleLayer {

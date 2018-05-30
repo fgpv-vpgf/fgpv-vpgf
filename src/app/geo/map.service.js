@@ -1,4 +1,4 @@
-import { IdentifyMode } from 'api/map';
+import { IdentifyMode } from 'api/layers';
 
 /**
  * @module mapService
@@ -305,7 +305,7 @@ function mapServiceFactory(
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
 
-            if (mApi.identifyMode !== 'none') {
+            if (mApi.layers.identifyMode !== 'none') {
                 mapConfig.instance.setMapCursor(value ? 'pointer' : '');
             }
         });
@@ -398,12 +398,12 @@ function mapServiceFactory(
                 }
 
                 // do not run identify query at all in `None` mode
-                if (mApi.identifyMode === IdentifyMode.None) {
+                if (mApi.layers.identifyMode === IdentifyMode.None) {
                     return;
                 }
 
                 // if not hovering, and not in `Silent` mode, add a graphic marker
-                if (mApi.identifyMode !== IdentifyMode.Silent && !isFeatureMousedOver) {
+                if (mApi.layers.identifyMode !== IdentifyMode.Silent && !isFeatureMousedOver) {
                     addMarkerHighlight(clickEvent.mapPoint);
                 }
 
@@ -411,7 +411,7 @@ function mapServiceFactory(
                 const identifyResponse = identifyService.identify(clickEvent);
 
                 // highlight any results if in `Highlight` mode
-                if (mApi.identifyMode === IdentifyMode.Highlight) {
+                if (mApi.layers.identifyMode === IdentifyMode.Highlight) {
                     highlightIdentifyResults(identifyResponse);
                 }
             }
