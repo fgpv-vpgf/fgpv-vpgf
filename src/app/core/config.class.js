@@ -2068,6 +2068,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get basemap () {    return this._basemap; }
         get layers () {     return this._layers; }
 
+        set geoSearch(geoSearch) { this._geoSearch = geoSearch; }
+
         get enabled () {    return this.sideMenu || this.geoSearch || this.layers || this.basemap; }
         get sideMenuOnly () {
             return this.sideMenu && !this.geoSearch && !this.layers && !this.basemap;

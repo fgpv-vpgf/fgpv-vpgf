@@ -156,6 +156,7 @@
                 <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
                 <option value="config/config-sample-63.json">63. Tile layer</option>
                 <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
+                <option value="">67. Map with no config provided</option>
             </select>
         </div>
 
@@ -260,7 +261,7 @@
 
             // update the config values if needed
             var previouslySelectedConfig = sessionStorage.getItem('sampleConfig');
-            if (previouslySelectedConfig) {
+            if (previouslySelectedConfig !== null) {
                 document.getElementById('sample-map').setAttribute('rv-config', previouslySelectedConfig);
                 document.getElementById('selectConfig').value = previouslySelectedConfig;
             } else {
