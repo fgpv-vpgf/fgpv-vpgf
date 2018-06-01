@@ -6,6 +6,16 @@ const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 
 const nIdList: Array<string> = RV._nodeIdList = [];
 const nodeList: Array<Node> = [];
 
+// Google tag manager loading
+(<any>window).dataLayer = (<any>window).dataLayer ? (<any>window).dataLayer : [];
+const gtmScript = document.createElement("script");
+gtmScript.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl+ '&gtm_auth=sX_2blCxbksFO5zU3FzkJA&gtm_preview=env-10&gtm_cookies_win=x';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KQCZGMF');`;
+$("head").append(gtmScript);
+
 domNodes.each((i, node) => {
     let appId = node.getAttribute('id') || 'rv-app-' + i;
 

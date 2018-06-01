@@ -12,6 +12,9 @@ class RZ {
      * */
     mapAdded: Subject<Map> = new Subject();
 
+    // Google tag manager dataLayer
+    gtmDL: Array<any> = (<any>window).dataLayer;
+
     /** Loads and executes a javascript file from the provided url. */
     loadExtension(url: string): void {
         $.getScript(url);
