@@ -127,6 +127,13 @@
             > md-icon {
                 margin-right: rem(1);
             }
+
+            .rv-slider-header-subtitle {
+                display: flex;
+                padding-left: rem(3.2);
+                position: relative;
+                font-size: rem(1.2);
+            }
         }
 
         .rv-slider-body {
@@ -149,6 +156,13 @@
                 padding-left: rem(1);
                 min-width: rem(4.5);
                 text-align: right;
+            }
+
+            .rv-slider-mixed {
+                .md-track, .md-track-fill {
+                    background-color: #9E9E9E !important;
+                    border-color: #9E9E9E !important;
+                }
             }
         }
 

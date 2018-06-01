@@ -103,7 +103,7 @@ Geosearch scale type,geosearch.type.scale,Scale,1,Échelle,1
 Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Longitude,1
 Geosearch FSA type,geosearch.type.fsa,Postal Code,1,Code postal,1
 Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
-,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
+,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"",1
 ,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
 Basemap refresh required,basemap.refresh.req,Map refresh required,1,Actualiser la carte,1
 Basemap blank title,basemap.blank.title,blank map,1,Carte vide,1
@@ -138,7 +138,7 @@ Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
 Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir les métadonnées,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
-,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,Changement {{settingName}} à,0
+,settings.change.at,"Change <span class=""rv-control-name"" translate=""settings.label.{{controlName}}""></span> at",1,Changement {{settingName}} à,0
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
 Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1,Zone de délimitation,1
@@ -227,13 +227,13 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
+Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,,
+Certaines fonctionnalités sont masquées par des filtres du tableau de données,0,,,,
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
 Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,La couche ne peut pas être affichée dans la projection active,1
 Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection active non prise en charge,1
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,,
+Certaines fonctionnalités sont masquées par des filtres du tableau de données,0,,,,
 Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
 Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
 Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
@@ -254,6 +254,8 @@ Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganise
 ,toc.menu.expand.alloff,Collapse Groups,1,Réduire les groupes,1
 ,toc.menu.reorder.title,Reorder Layers,1,Réorganiser les couches,1
 ,toc.menu.reorder.close,Stop Reordering,1,Arrêter de réorganiser,1
+ToC slider applies to nested elements,toc.slider.nested,Applies to nested items,1,S’applique aux articles imbriquées,0
+ToC slider mixed values,toc.slider.mixed,Mixed values,1,Les valeurs mixtes,0
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
@@ -266,13 +268,13 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.undo,Undo,1,Annuler,1
 ,export.title,Enter Title,1,Titre,1
 ,export.error.timeout,Connection timed out. Stopping export task.,1,Connexion expirée. Processus d’exportation arrêté.,1
-,export.error.tainted,We can't save the export image directly (same-origin policy exception). You can right click the image and select "Save As..." if supported by your browser.,1,Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet.,1
+,export.error.tainted,"We can't save the export image directly (same-origin policy exception). You can right click the image and select ""Save As..."" if supported by your browser.",1,Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet.,1
 ,export.error.somethingelseiswrong,Ouch. Something went wrong. We cannot save the export image.,1,Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créée par l'outil d'exportation.,1
 ,export.error.minwidth, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
 ,export.error.minheight, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
 ,export.error.maxwidth, Too large. {{max}} px maximum.,1, Trop grand. {{max}} px maximum.,1
 ,export.error.maxheight, Too large. {{max}} px maximum.,1, Trop grand. {{max}} px maximum.,1
-,export.error.safari,We can't save the export image directly in Safari. You can right click the image and select "Save Page As...".,1,Nous ne pouvons enregistrer l’image directement à l'aide de Safari. Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer la page sous... ».,1
+,export.error.safari,"We can't save the export image directly in Safari. You can right click the image and select ""Save Page As..."".",1,Nous ne pouvons enregistrer l’image directement à l'aide de Safari. Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer la page sous... ».,1
 ,export.retry,Retry,1,Réessayer,1
 ,export.size.customwidth, Width (pixels),1, Largeur (pixels),1
 ,export.size.customheight, Height (pixels),1, Hauteur (pixels),1
