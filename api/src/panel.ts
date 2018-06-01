@@ -5,20 +5,17 @@ import Map from 'api/map';
 export class Panel {
 
     private _id: string;
-    private _coverable: boolean;
 
     //Panel items
     private _content: PanelElem;
     private _controls: (PanelElem)[];
 
-    //HTML/JQuery panel and parent Components
+    //HTML parent Components
     private _panel_contents: HTMLElement;
     private _panel_controls: HTMLElement;
     private _panel_body: HTMLElement;
     private _document_fragment: DocumentFragment;
 
-    private _parent_map: HTMLElement;
-    private _parent_map_jq: JQuery;
     private _map_object: Map;
 
     //Panel positioning/size 
@@ -36,9 +33,6 @@ export class Panel {
     private _GRIDROWS = 20;
     private _GRIDCOLS = 20;
 
-    widthChanged: Observable<number>
-    heightChanged: Observable<number>
-
     //subjects initialized for observables that are fired through method calls
     private _opening: Subject<any> = new Subject();
     private _closing: Subject<any> = new Subject();
@@ -47,16 +41,17 @@ export class Panel {
     private _widthChanged: Subject<any> = new Subject();
     private _heightChanged: Subject<any> = new Subject();
 
+    private _open: boolean; //whether panel is open or closed 
+
+    //user accessible observables 
     opening: Observable<any>;
     closing: Observable<any>;
-
-    //positionChanged: Observable<number, number>; //doesn't work
     topLeftXChanged: Observable<number>;
     bottomRightXChanged: Observable<number>;
     positionChangedX: Observable<[number, number]>; //top left, bottom right
     positionChangedY: Observable<[number, number]>; //top left, bottom right
-    _open: boolean;
-
+    widthChanged: Observable<number>
+    heightChanged: Observable<number>
 
 
     /**
@@ -76,7 +71,6 @@ export class Panel {
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
 
-
         this.observableSubscribe();
 
         //create panel components and document fragment
@@ -84,6 +78,11 @@ export class Panel {
 
     }
 
+
+    /**
+    * Helper method to see observables firing in console.
+    * To be removed when API is finished. 
+    */
     private observableSubscribe() {
         this.opening.subscribe(val => console.log("Panel opening..."));
         this.closing.subscribe(val => console.log("Panel closing..."));
@@ -96,7 +95,7 @@ export class Panel {
     /**
     * Helper method to create panel components and the document fragment. 
     */
-    createPanelComponents() {
+    private createPanelComponents() {
 
         //create panel components as HTMLElements
         this._panel_contents = document.createElement("div");
@@ -123,42 +122,17 @@ export class Panel {
     /**
     * Helper method to setPosition(), setMinPosition(), set coverable(). Updates available spaces on the grid.
     */
-    updateAvailableSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    private updateAvailableSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
         if (this._map_object !== undefined) {
-            this._map_object.setPanelRegistry(coverage, topLeftX, topLeftY, bottomRightX, bottomRightY);
+            this._map_object.updatePanelRegistry(coverage, topLeftX, topLeftY, bottomRightX, bottomRightY);
         }
     }
 
     /**
-     * Helper method to changePosition(). Sets the parent map for width/height calculations.
-     * @return {boolean} - returns true if the parent map is set 
+     * Sets the map object that this panel resides on. 
      */
-    setParentMap(parentMap: Map) {
+    setMap(parentMap: Map) {
         this._map_object = parentMap;
-        let panel = this;
-        if ((<HTMLElement>document.getElementById(this._id)).parentNode !== undefined) {
-            let parentMapID = (<HTMLElement>(<HTMLElement>document.getElementById(this._id)).parentNode).id;
-            this._parent_map = (<HTMLElement>document.getElementById(parentMapID));
-            this._parent_map_jq = $(this._parent_map);
-            /*this.widthChanged = Observable.fromEvent(this._parent_map, 'resize')
-                .map(() => {
-                    return (<number>$(this._parent_map).width() * 0.20);
-                }).debounceTime(200);
-            this.heightChanged = Observable.fromEvent(this._parent_map, 'resize')
-                .map(() => {
-                    return (<number>$(this._parent_map).height() * 0.20);
-                }).debounceTime(200);
-            
-            this.widthChanged.subscribe(val => console.log(val));*/
-
-            $("#"+parentMapID).resize(function(){
-                console.log('hi');
-                //panel._widthChanged.next("I changed!");
-            });
-
-            return true;
-        }
-        throw "Error! Parent map is undefined.";
     }
 
     /**
@@ -174,12 +148,8 @@ export class Panel {
     * @return {number[][]} - array of arrays representing each grid square 
     */
 
-    /*static*/ availableSpaces(width?: number, height?: number) {
-        //TODO: since there will be a panelRegistry in the Map object would it make sense to return the panel registry?
-        //Could have an option for user to return grid for just the panel
-        if (this._map_object !== undefined) {
-            return this._map_object.panelRegistry;
-        }
+    /*static*/ availableSpaces(width?: number, height?: number): number[][] {
+        return this._map_object.panelRegistry;
     }
 
     /**
@@ -237,38 +207,40 @@ export class Panel {
 
     /**
     * Opens the panel on the map. (For the user to see)
-    * @throws {Exception} - PositionUndefinedException
-    * @throws {Exception} - Panel Out of Bounds error
+    * @throws {Exception} - panel positon is not set. 
+    * @throws {Exception} - panel is out of bounds of map. 
     * 
     */
     open() {
+        if (this._map_object !== undefined) {
+            //check to see panel position is set
+            if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
 
-        //check to see panel position is set
-        if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
+                //check to see if panel position is out of bounds of grid 
+                if (this.checkOutOfBounds(false, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY) === false) {
 
-            //check to see if panel position is out of bounds of grid 
-            if (this.checkOutOfBounds(false, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY) === false) {
+                    //If there is no conflict with an existing panel, allow the panel to open
+                    if (!this.conflictDetected()) {
 
-                //If there is no conflict with an existing panel, allow the panel to open
-                if (!this.conflictDetected()) {
+                        //fires opening observable
+                        this._opening.next()
 
-                    //fires opening observable
-                    this._opening.next()
-
-                    this.changePosition(this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
-                    this._panel_contents.classList.remove('hidden'); //hide panel before a call to open is made
-                    this.updateAvailableSpaces(1, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
-                    this.updateAvailableSpaces(-1, this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY);
-                    console.log([this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY]);
-                    this._open = true;
-
+                        //changes position on map and updates panel registry
+                        this.changePosition(this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
+                        this._panel_contents.classList.remove('hidden'); //hide panel before a call to open is made
+                        this.updateAvailableSpaces(1, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
+                        this.updateAvailableSpaces(-1, this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY);
+                        this._open = true;
+                    }
                 }
+            }
+            else {
+                throw "Exception: panel position is not set. Set position before opening panel.";
             }
         }
         else {
-            throw "Exception: panel position is not set. Set position before opening panel.";
+            throw "Exception: panel can't be opened if it has not been added to a map."
         }
-
     }
 
     /**
@@ -276,9 +248,9 @@ export class Panel {
     * @returns {boolean} - returns false if conflict is not detected
     * @throws {Exception} - ConflictDetectedError: Panel Unshrinkable!
     */
-    private conflictDetected() {
+    private conflictDetected(): boolean {
 
-        let availableSpaces = <number[][]>this.availableSpaces();
+        let availableSpaces = this.availableSpaces();
 
         //all the indices in this array 
         for (let i = this._topLeftX; i <= this._bottomRightX; i++) {
@@ -287,7 +259,7 @@ export class Panel {
                 if (availableSpaces[i][j] !== 0) {
                     //if the current [i][j] conflict is in the territory of panel's min positions, throw an error
                     if ((i >= this._minTopLeftX && i <= this._minBottomRightX) || (j >= this._minTopLeftY && i <= this._minBottomRightY)) {
-                        throw "ConflictDetectedError: Conflicting panels, this panel cannot shrink any further!";
+                        throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
                     }
                 }
             }
@@ -299,21 +271,29 @@ export class Panel {
     /**
     * Helper method to conflictDetected(). Shrinks the panel (if possible) to accomodate a conflicting panel.
     * For now can only shrink the panel attempting to open on the map (not the already existing panel). 
-    * @throws {Exception} - ConflictDetectedError: Panel Unshrinkable!
+    * @throws {Exception} - this panel is unshrinkable.
     */
     private shrinkPanel() {
 
-        //panel shrinks by one row and one column
-        return true;
     }
 
     /**
     * Closes the panel on the map. (For the user to see).
     */
     close() {
-        this._closing.next();
-        this._panel_contents.classList.add('hidden');
-        this._open = false;
+
+        //if the map doesn't exist or the position hasn't been set then the map hasn't been added to a map
+        if (this._map_object !== undefined || this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
+            this._closing.next();
+            this._panel_contents.classList.add('hidden');
+            //updates panel registry
+
+            this.updateAvailableSpaces(0, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
+            this._open = false;
+        }
+        else {
+            throw "Exception: can't close a panel that has not been added to a map."
+        }
     }
 
     /**
@@ -422,31 +402,29 @@ export class Panel {
     * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
     * @param {number} bottomRightX - the y coordinate of the bottom right square (set as the bottom right panel corner)
     * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
-    * @throws {Exception} - parent map not defined
     */
-    changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
-        if (this.setParentMap(this._map_object) === true) {
-            //set left position (5% * parentWidth * topLeftX)
-            var parentWidth = <number>this._parent_map_jq.width();
-            this._panel_contents.style.left = (0.05 * parentWidth * topLeftX).toString() + "px";
+    private changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+        //set left position (5% * parentWidth * topLeftX)
+        var parentWidth = <number>$(this._map_object.mapElement).width();
+        this._panel_contents.style.left = (0.05 * parentWidth * topLeftX).toString() + "px";
 
-            //set top position (5% * parentHeight * topLeftY)
-            var parentHeight = <number>this._parent_map_jq.height();
-            this._panel_contents.style.top = (0.05 * parentHeight * topLeftY).toString() + "px";
+        //set top position (5% * parentHeight * topLeftY)
+        //need to forcecast because height and width return undefined
+        var parentHeight = <number>$(this._map_object.mapElement).height();
+        this._panel_contents.style.top = (0.05 * parentHeight * topLeftY).toString() + "px";
 
-            //calculate width and height of panel according to bottom right. 
-            this._panel_contents.style.width = ((bottomRightX - topLeftX) * 0.05 * parentWidth).toString() + "px";
-            this._panel_contents.style.height = ((bottomRightY - topLeftY) * 0.05 * parentHeight).toString() + "px";
-        }
+        //calculate width and height of panel according to bottom right. 
+        this._panel_contents.style.width = ((bottomRightX - topLeftX) * 0.05 * parentWidth).toString() + "px";
+        this._panel_contents.style.height = ((bottomRightY - topLeftY) * 0.05 * parentHeight).toString() + "px";
     }
 
     /**
-    * Helper Method: Checks to see if the panel is out of bounds of its _parent_map.
+    * Helper Method: Checks to see if the panel is out of bounds of its map object.
     * Does not correct the panel - up to panel creator to properly place panel on the map.
-    * @throws {Exception} - OutOfBoundsException
+    * @throws {Exception} - panel is not contained within map grid.
     * @return {boolean} - false is returned if  OutOfBoundsException not thrown
     */
-    checkOutOfBounds(isMin: boolean, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    private checkOutOfBounds(isMin: boolean, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): boolean {
 
         //checks for overflow if panel is added to map
         //panel positions less than 0 conditions
@@ -461,14 +439,14 @@ export class Panel {
         let overflowY = topLeftY > gridRows || bottomRightY > gridRows;
 
         if (lessThanZero || overflowX || overflowY) {
-            throw "OutOfBoundsException: Panel is not contained within grid";
+            throw "Exception: Panel is not contained within map grid.";
         }
 
         //min position not within specified positioning
         if (isMin === true) {
             let minErrorConds = bottomRightX > this._bottomRightX || bottomRightY > this._bottomRightY || topLeftX < this._topLeftX || topLeftY < this._topLeftY;
             if (minErrorConds) {
-                throw "OutOfBoundsException: min position panel is not contained within panel";
+                throw "Exception: the minPosition Panel is not contained within Panel position.";
             }
         }
 
@@ -532,7 +510,7 @@ export class PanelElem {
             let children = this._element.html();
             let checkElem = this._element.empty();
             if (checkElem.length > 1) {
-                throw "Exception: Cannot have multiple top level elements!";
+                throw "Exception: cannot have multiple top level elements.";
             }
             this._element = this._element.append(children);
         }
@@ -556,7 +534,7 @@ export class PanelElem {
     * Gets id of PanelElem object. 
     * @return {string} - the id of this PanelElem 
     */
-    get id() {
+    get id(): string {
         return this._id;
     }
 
@@ -564,7 +542,7 @@ export class PanelElem {
     * Gets id of PanelElem object. 
     * @return {JQuery<HTMLElement>} - this PanelElem
     */
-    get element() {
+    get element(): JQuery<HTMLElement> {
         return this._element;
     }
 

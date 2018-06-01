@@ -2,47 +2,24 @@ TODO:
 
 May 31:
  
-1. Get Panel Registry working (and test):
-    d) Implement conflict detection (for minimum area)
-        i) Adding multiple panels to map
-    e) Miles: is it okay if panel object created into createPanel (Map class), in place of ID
-    f) Miles: is it okay if availableSpaces returns panelRegistry if user doesn't put in option to define panel boundaries?
 
 2. Establish flow (and error detection according to it): 
     a) Construct Panel instance
     b) Set position
     c) Create Map Instance
     d) Create Panel on Map instance
-    e) Error if panel's panel registry tries to be updated without map instance there
-    f) Error if user tries to open panel whose position is not set, and whose map isn't created
+    
 
 3. Double check checkOutOfBounds errors
     a) Panel out of bounds of map
     b) Panel shrinking
     c) Panel
 
-4. Verify that the messy stuff with HTML parent map and Map object is there for a reason (maybe these properties can be moved to Map)
-
-5. Good commenting, good typescript formatting/headers? (compare with other file's privates)
-
 6. Observables: 
-    a) Do observables fire during appropriate times?
-    b) Resizing screen --> does panel behave accordingly
-    c) check with console.log()
-    -Initialize _opening: Subject()
-        -in in opening you would go this._opening.next()
-        -then you would return this._opening.asObservable();
-        -look at how its done in map.ts
+    b) width and height (screen resize)
 
-7. Miles: an option for user to have a toggle button
 
 8. Get panel to incrementally shrink to its min position when resize changes and width shrinks
-
-9. Come up with better exception names.
-
-10. Make sure helper methods don't show up in RZ
-
-11. Avoid force casting
 
 12. Fix the one-off error with panel registry
 
@@ -54,21 +31,12 @@ May 31:
     --> 1+: panels set (not min position)
     --> -1: panel's min position
 
--Controls --> user only gets linebreaks if they specify a line break
-    -Otherwise, have controls divided into 
--Toggle won't change panel height so maybe it is useless. 
--Does he want a linebreak shortcut?
--Make sure helper methods don't show up in RZ
 -make a list of all test cases
--come up with better exception names
--double check comments
 -create open/close/setPosition events? 
 
 -Changes to grid happen as soon as: map instance set OR position is set OR observable
 -checkOutOfBounds() double check
 -Map ALWAYS ADDED BEFORE POSITION
--Does x button close panel contents? Panel contents AND panel controls (except for close button)? Or is it equivalent to deleting a panel?
-    -> Is it up to the user to decide what it does?
 
 1. CSS in API Folder
 
@@ -81,3 +49,19 @@ May 31:
 
 -only open function
 
+Last minute checks: 
+-Private methods
+-unnescessary casting
+-Good commenting
+-Good typescript headers
+-Make a list of all test cases
+
+
+Hi Miles, 
+
+
+
+**widthChanged/HeightChanged**: still haven't been able to implement that
+
+
+ 
