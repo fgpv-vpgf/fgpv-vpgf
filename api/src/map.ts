@@ -23,6 +23,7 @@ import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { Subject } from 'rxjs/Subject';
 import { LayerGroup, SimpleLayer } from 'api/layers';
+import { Panel } from 'api/panel';
 
 export enum IdentifyMode {
     /**
@@ -65,6 +66,8 @@ export enum IdentifyMode {
  */
 export default class Map {
     private _id: string;
+    //private _width: number;
+    //private _height: number;
     private _fgpMap: Object;
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
@@ -73,6 +76,7 @@ export default class Map {
     private _identifyMode: IdentifyMode = IdentifyMode.Details;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
+    private _panel_registry: number[][];
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -80,7 +84,8 @@ export default class Map {
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
         this._layers = new LayerGroup(this);
-
+        //this._width = <number>$('#' + this._id).width();
+        //this._height = <number>$('#' + this._id).height();
         // config set implies viewer loading via API
         if (config) {
             // type guard for cases where config object is given, store on window for config.service to find
@@ -95,11 +100,62 @@ export default class Map {
             seeder(mapDiv);
             this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
         }
+
+        //TODO: move init to helper method. Credit: https://stackoverflow.com/questions/3689903/how-to-create-a-2d-array-of-zeroes-in-javascript
+        let cols = 20, rows = 20;
+        let array = [], row = [];
+        while (cols--) row.push(0);
+        while (rows--) array.push(row.slice());
+
+        //initialize panel registry to have all zeroes (no panels added to a new map instance yet)
+        this._panel_registry = array;
     }
 
     get layers(): LayerGroup {
         return this._layers;
     }
+
+    /**
+     * Returns the grid representation of the map instance describing where panels are on the map. 
+     * @return {Number[]} - 
+     */
+    get panelRegistry() {
+        return this._panel_registry;
+    }
+
+    setPanelRegistry(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+
+        let startingPosition = this._panel_registry[topLeftX][topLeftY];
+        //go through all indices of panel_registry that need to be updated, and update them
+        for (let i = topLeftX; i <= bottomRightX; i++) {
+            for (let j = topLeftY; j <= bottomRightY; j++){
+                this._panel_registry[i][j] = coverage;
+            }
+        }
+    }
+
+    /**
+     * Creates a Panel on this Map instance. Passes panel onto 
+     * TODO: propse that panel object itself be passed into createPanel method (useful for manipulating panel registry)
+     * So panel object would be only parameter
+     * @param {string} id - the ID of the panel to be created
+     * @param {Panel} panel - the panel to be created on the map instance
+     */
+    createPanel(id: string, panel: Panel) {
+        //add panel to map instance
+        $(<HTMLElement>document.getElementById(this._id)).append(panel.element);
+        panel.setParentMap(this);
+    }
+
+    /**
+     * Deletes a Panel on this Map instance.
+     * @param {string} id - the ID of the panel to be deleted
+     */
+    deletePanel(id: string) {
+        //$(<HTMLElement>document.getElementById(this._id)).remove(<HTMLElement>document.getElementById(id));
+        //TODO: delete from panel registry
+    }
+
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
