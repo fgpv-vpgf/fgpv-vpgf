@@ -65,14 +65,12 @@ $.getScript('../../../../rv-main.js', function () {
 
 
         //console.log("Panel ID: "+ lightyear.id);        
-        //lightyear.coverable = true;
-        //console.log(lightyear.coverable);
         //console.log(lightyear.element);
         //lightyear.setPosition(2,3,4,25); //out of bounds of grid
         //lightyear.setMinPosition(2,3,3,4); 
         //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
-        lightyear.setPosition(5, 5, 9, 18);
-        lightyear.setMinPosition(5,5,7,7); //if not set, all -1 should be set because of default minimum position 
+        //lightyear.setPosition(5, 5, 9, 18);
+        //lightyear.setMinPosition(5,5,7,7); //if not set, all -1 should be set because of default minimum position 
 
         woody.setPosition (10,1, 15, 4);
 
@@ -91,6 +89,23 @@ $.getScript('../../../../rv-main.js', function () {
 
 
         console.log("panelElem1 ID: " + panelElem1.id);
+
+        /**
+         * TEST CASES: 
+         * lightyear.open() before lightyear.setPosition (expect console error)
+         * Set min position out of bounds of original position
+         * Set position out of bounds of grid
+         * Set position with invalid values (lower than zero)
+         * Set invalid positions (where topLeft values are greater than bottomRight values)
+         * Set panel's min position within another panel's position (should throw an error that panel can't be set)
+         * If panel's non-min position is within another panel's territory (doesn't matter if other panel's territory is at min or not)
+         * - If panel can shrink out of it then it should
+         * Does available spaces change everytime panel opens/closes? (not when position it set or changed without open/closing)
+         * Does available spaces change everytime panel is added/deleted from map class?
+         * Error if panel registry tries to be updated without map instance there (implicitly done)
+         * Error if user tries to open or close panel whose position is not set, and whose map isn't created
+         * 
+         */
 
     });
 });
