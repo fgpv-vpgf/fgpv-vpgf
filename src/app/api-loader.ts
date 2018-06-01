@@ -3,6 +3,7 @@ import * as GEO from 'api/geometry';
 import { ConfigLayer, SimpleLayer } from 'api/layers';
 import { Subject } from 'rxjs';
 import * as $ from "jquery";
+import { Panel, PanelElem, Btn } from 'api/panel';
 
 const mapInstances: Array<Map> = [];
 
@@ -36,6 +37,11 @@ class RZ {
     mapById(id: string): Map | undefined {
         return this.mapInstances.find(mi => mi.id === id);
     }
+
+    /**Returns the Panel class and PanelElem class */
+    get Panel(): typeof Panel { return Panel; }
+    get PanelElem(): typeof PanelElem { return PanelElem; }
+    get Btn(): typeof Btn { return Btn; }
 }
 
 const RZInstance = new RZ();
