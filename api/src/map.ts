@@ -55,6 +55,7 @@ export default class Map {
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
     private _panel_registry: number[][];
+    private _element: HTMLElement;
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -62,10 +63,11 @@ export default class Map {
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
         this._layers = new LayerGroup(this);
-        //this._width = <number>$('#' + this._id).width();
-        //this._height = <number>$('#' + this._id).height();
-        // config set implies viewer loading via API
+        this._element = mapDiv;
+
+
         if (config) {
+
             // type guard for cases where config object is given, store on window for config.service to find
             if (isConfigSchema(config)) {
                 (<any>window)[`rzConfig${this._id}`] = config;
@@ -93,6 +95,10 @@ export default class Map {
         return this._layers;
     }
 
+    get mapElement(): HTMLElement {
+        return this._element;
+    }
+
     /**
      * Returns the grid representation of the map instance describing where panels are on the map. 
      * @return {Number[]} - 
@@ -101,12 +107,20 @@ export default class Map {
         return this._panel_registry;
     }
 
-    setPanelRegistry(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    /**
+     * Allows Panel object to update panel registry when a panel is opened or closed on the map.
+     * @param {number} coverage - the number (-1, 0, 1) representing the Panel's coverage on the map
+     * @param {number} topLeftX - the x coordinate of the top, left panel corner
+     * @param topLeftY - the y coordinate of the top, left panel corner
+     * @param bottomRightX - the x coordinate of the bottom, right panel corner
+     * @param bottomRightY - the y coordinate of the bottom, right panel corner
+     */
+    updatePanelRegistry(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
 
         let startingPosition = this._panel_registry[topLeftX][topLeftY];
         //go through all indices of panel_registry that need to be updated, and update them
         for (let i = topLeftX; i <= bottomRightX; i++) {
-            for (let j = topLeftY; j <= bottomRightY; j++){
+            for (let j = topLeftY; j <= bottomRightY; j++) {
                 this._panel_registry[i][j] = coverage;
             }
         }
@@ -121,17 +135,18 @@ export default class Map {
      */
     createPanel(id: string, panel: Panel) {
         //add panel to map instance
-        $(<HTMLElement>document.getElementById(this._id)).append(panel.element);
-        panel.setParentMap(this);
+        this.mapDiv.append(panel.element);
+        panel.setMap(this);
     }
 
     /**
      * Deletes a Panel on this Map instance.
+     * TODO: propse that panel object itself be passed into createPanel method (useful for manipulating panel registry)
      * @param {string} id - the ID of the panel to be deleted
+     * @param {Panel} panel - the panel to be deleted on the map instance
      */
-    deletePanel(id: string) {
-        //$(<HTMLElement>document.getElementById(this._id)).remove(<HTMLElement>document.getElementById(id));
-        //TODO: delete from panel registry
+    deletePanel(id: string, panel: Panel) {
+        $(panel).remove();
     }
 
 
