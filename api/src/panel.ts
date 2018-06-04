@@ -252,18 +252,101 @@ export class Panel {
 
         let availableSpaces = this.availableSpaces();
 
+        //first check available spaces for panel's min position, if conflict then throw exception
         //all the indices in this array 
-        for (let i = this._topLeftX; i <= this._bottomRightX; i++) {
-            for (let j = this._topLeftY; j <= this._bottomRightY; j++) {
+        for (let i = this._minTopLeftX; i <= this._minBottomRightX; i++) {
+            for (let j = this._minTopLeftY; j <= this._minBottomRightY; j++) {
                 //if a panel exists where THIS panel is trying to open
                 if (availableSpaces[i][j] !== 0) {
-                    //if the current [i][j] conflict is in the territory of panel's min positions, throw an error
-                    if ((i >= this._minTopLeftX && i <= this._minBottomRightX) || (j >= this._minTopLeftY && i <= this._minBottomRightY)) {
-                        throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
-                    }
+                    throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
                 }
             }
         }
+
+        //next expand range of checks by 1 row up/down, 1 column right/left (rows also check for corner pieces)
+        let leftCol = this._minTopLeftX - 1;
+        let rightCol = this._minBottomRightX + 1;
+        let topRow = this._minTopLeftY - 1;
+        let bottomRow = this._minBottomRightY + 1;
+        let exit = false;
+
+
+        while (true) {
+
+            //if the top row is contained within top bound for this panel then perform search
+            if (topRow >= this._topLeftY) {
+                //check top row for any conflicts 
+                for (let i = leftCol; i <= rightCol; i++) {
+                    if (availableSpaces[i][topRow] !== 0) {
+                        topRow = topRow + 1;
+                        exit = true;
+                    }
+                }
+            }
+
+            //if the bottom row is contained within bottom bound for this panel, perform search
+            /*if (bottomRow <= this._bottomRightY) {
+                //check bottom row for any conflicts 
+                for (let i = leftCol; i <= rightCol; i++) {
+                    if (availableSpaces[i][bottomRow] !== 0) {
+                        bottomRow = bottomRow - 1;
+                        exit = true;
+                    }
+                }
+            }*/
+
+            //if the left column is contained within bottom bound for this panel, perform search
+            if (leftCol >= this._topLeftX) {
+                //check left column for conflicts 
+                for (let i = topRow; i <= bottomRow; i++) {
+                    if (availableSpaces[leftCol][i] !== 0) {
+                        leftCol = leftCol + 1;
+                        exit = true;
+                    }
+                }
+            }
+
+            //if the right column is contained within bottom bound for this panel, perform search
+            if (rightCol <= this._minBottomRightX) {
+                //check right column for conflicts 
+                for (let i = topRow; i <= bottomRow; i++) {
+                    if (availableSpaces[rightCol][i] !== 0) {
+                        rightCol = rightCol - 1;
+                        exit = true;
+                    }
+                }
+            }
+
+            //if any of the columns/rows had conflicts, exit because you know how far to shrink position
+            //first shrink actual panel position
+            if (exit) {
+                let minLeftCol = this._minTopLeftX;
+                let minRightCol = this._minBottomRightX;
+                let minTopRow = this._minTopLeftY;
+                let minBottomRow = this._minBottomRightY;
+
+                this.setPosition(leftCol, topRow, rightCol, bottomRow);
+                this.setMinPosition(minLeftCol, minRightCol, minTopRow, minBottomRow);
+                break;
+
+            }
+            //if full range of panel was searched simply exit loop (position of panel remains same)
+            else if (rightCol >= this._minBottomRightX && leftCol <= this._topLeftX && bottomRow >= this._bottomRightY && topRow <= this._topLeftY) {
+                break;
+            }
+            //if not, expand the range of conflict search
+            else {
+                leftCol -= 1;
+                rightCol += 1;
+                bottomRow += 1
+                topRow -= 1;
+                console.log([leftCol, topRow, rightCol, bottomRow]);
+            }
+
+        }
+
+
+
 
         return false;
     }
