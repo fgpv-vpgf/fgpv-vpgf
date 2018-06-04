@@ -132,11 +132,12 @@ export default class Map {
      * So panel object would be only parameter
      * @param {string} id - the ID of the panel to be created
      * @param {Panel} panel - the panel to be created on the map instance
+     * @return {Map} - the map object so that the panel can set its map instance
      */
-    createPanel(id: string, panel: Panel) {
+    createPanel(id: string) : Map{
         //add panel to map instance
-        this.mapDiv.append(panel.element);
-        panel.setMap(this);
+        this.mapDiv.append($('#' + id));
+        return this; //panel can then set this as the map instance. 
     }
 
     /**
@@ -145,8 +146,8 @@ export default class Map {
      * @param {string} id - the ID of the panel to be deleted
      * @param {Panel} panel - the panel to be deleted on the map instance
      */
-    deletePanel(id: string, panel: Panel) {
-        $(panel).remove();
+    deletePanel(id: string) {
+        $("#" + id).remove();
     }
 
 
