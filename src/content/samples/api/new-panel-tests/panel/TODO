@@ -2,12 +2,10 @@ TODO:
 
 June 4: 
 -Error testing with test cases
--width and height Observables (screen resize)
--one off error with panel registry
--get panel to incrementally shrink to its min position when resize changes and width shrinks
 -CSS access from API folder
--remember registry has 1+ --> 2 means two panels occupy that grid
-
+-toggle button find way to actually hide that portion of panel
+-resize delay
+-------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
 -unnescessary casting
@@ -19,5 +17,7 @@ Last minute checks:
 Future features (?): 
 -Remove coverable for now, don't worry about greying out
 -Assume all panels are non-coverable and don't allow other panels to open on min positions
+-registry's  1+ feature (example: 2 means two panels occupy that gridspace) to be set when panels become coverable
+
 
  
