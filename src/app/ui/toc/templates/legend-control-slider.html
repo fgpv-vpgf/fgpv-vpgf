@@ -2,15 +2,22 @@
     <div class="rv-slider-header rv-icon-20">
         <md-icon md-svg-icon="{{ self.uiControl.icon }}"></md-icon>
         {{ self.uiControl.label | translate }}
+
+        <!-- show that group controls nexted layer opacities -->
+        <span class="rv-slider-header-subtitle" ng-if="self.uiControl.isGroup" translate="toc.slider.nested"></span>
     </div>
 
     <div class="rv-slider-body">
         <md-slider
             ng-disabled="self.uiControl.isDisabled"
             class="md-primary"
+            ng-class="{ 'rv-slider-mixed' : !self.uiControl.same }"
             max="1" min="0" step="0.01" ng-model="self.uiControl.value"></md-slider>
-        <span class="rv-slider-indicator">{{ self.Math.round(self.uiControl.value * 100) }}%</span>
+        <span class="rv-slider-indicator" >{{ self.uiControl.same ? self.Math.round(self.uiControl.value * 100) + '%' : ' ' }}</span>
     </div>
+
+    <!-- this is used when the opacity slider of the group's children are different -->
+    <span class="rv-slider-footer md-caption" ng-if="!self.uiControl.same" translate="toc.slider.mixed"></span>
 
     <!-- this block is used when the control is disabled -->
     <div class="rv-slider-footer" ng-if="self.valueParentBlock" >

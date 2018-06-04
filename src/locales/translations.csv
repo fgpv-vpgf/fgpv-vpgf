@@ -254,6 +254,8 @@ Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganise
 ,toc.menu.expand.alloff,Collapse Groups,1,Réduire les groupes,1
 ,toc.menu.reorder.title,Reorder Layers,1,Réorganiser les couches,1
 ,toc.menu.reorder.close,Stop Reordering,1,Arrêter de réorganiser,1
+ToC slider applies to nested elements,toc.slider.nested,Applies to nested items,1,S’applique aux articles imbriquées,0
+ToC slider mixed values,toc.slider.mixed,Mixed values,1,Les valeurs mixtes,0
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1

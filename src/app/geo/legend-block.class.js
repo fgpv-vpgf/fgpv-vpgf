@@ -830,6 +830,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._userDisabledControls = blockConfig.userDisabledControls;
             this._rootProxyWrapper = rootProxyWrapper;
             this._isDynamicRoot = isDynamicRoot;
+            this._sameOpacity = true;
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
@@ -1002,22 +1003,31 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         /**
          * @return {Number} returns opacity of the group;
          * it's equal to the child opacity values if they are the same or 0.5 if not;
-         * TODO: might want to add a description what 0.5 value means in such cases;
          */
         get opacity () {
             const defaultValue = 0.5;
-            let isAllSame = false;
+            const entries = this._observableEntries;
 
+            let isAllSame = this.sameOpacity;
+            let value = entries.length > 0 ? entries[0].opacity : undefined;
+            return isAllSame ? value : defaultValue;
+        }
+
+        /**
+         * Checks if all children have the same opacity
+         *
+         * @returns {Boolean} 'true' is all children have the same opacity; 'false otherwise;
+         */
+        get sameOpacity () {
             const entries = this._observableEntries;
             let value;
 
             if (entries.length > 0) {
                 value = entries[0].opacity;
-                isAllSame = entries.every(entry =>
-                    entry.opacity === value);
+                // Check that they have the same opacity and if it has all the same opacity if it's a group
+                this._sameOpacity = entries.every(entry => entry.opacity === value && (entry._sameOpacity === undefined || entry._sameOpacity === true));
             }
-
-            return isAllSame ? value : defaultValue;
+            return this._sameOpacity;
         }
 
         set opacity (value) {

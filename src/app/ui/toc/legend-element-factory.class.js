@@ -93,10 +93,20 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
             super(...args);
 
             this._controlName = 'opacity';
+            this._same = false;
+            this._isGroup = this.block.blockType === 'group';
         }
 
         get value () { return this.block.opacity; }
         set value (value) { this.action(value); }
+        get isGroup () { return this._isGroup; }
+
+        get same () {
+            if (this.isGroup) {
+                return this.block.sameOpacity;
+            }
+            return true;
+        }
 
         get icon () {    return 'action:opacity'; }
         get label () {   return 'settings.label.opacity'; }
