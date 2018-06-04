@@ -1,53 +1,12 @@
 TODO: 
 
-May 31:
- 
-
-2. Establish flow (and error detection according to it): 
-    a) Construct Panel instance
-    b) Set position
-    c) Create Map Instance
-    d) Create Panel on Map instance
-    
-
-3. Double check checkOutOfBounds errors
-    a) Panel out of bounds of map
-    b) Panel shrinking
-    c) Panel
-
-6. Observables: 
-    b) width and height (screen resize)
-
-
-8. Get panel to incrementally shrink to its min position when resize changes and width shrinks
-
-12. Fix the one-off error with panel registry
-
-13. Is it really better to put change positions in constructor?
-
--double check checkOutOfBounds() and position methods (debug)
--PanelRegistry
-    --> 0: no panels Set (default to 0)
-    --> 1+: panels set (not min position)
-    --> -1: panel's min position
-
--make a list of all test cases
--create open/close/setPosition events? 
-
--Changes to grid happen as soon as: map instance set OR position is set OR observable
--checkOutOfBounds() double check
--Map ALWAYS ADDED BEFORE POSITION
-
-1. CSS in API Folder
-
-
--Remove coverable for now, don't worry about greying out
--Assume all panels are non-coverable and don't allow other panels to open on min positions
-
-
+June 4: 
+-Error testing with test cases
+-width and height Observables (screen resize)
+-one off error with panel registry
+-get panel to incrementally shrink to its min position when resize changes and width shrinks
+-CSS access from API folder
 -remember registry has 1+ --> 2 means two panels occupy that grid
-
--only open function
 
 Last minute checks: 
 -Private methods
@@ -57,11 +16,8 @@ Last minute checks:
 -Make a list of all test cases
 
 
-Hi Miles, 
-
-
-
-**widthChanged/HeightChanged**: still haven't been able to implement that
-
+Future features (?): 
+-Remove coverable for now, don't worry about greying out
+-Assume all panels are non-coverable and don't allow other panels to open on min positions
 
  
