@@ -123,9 +123,7 @@ export class Panel {
     * Helper method to setPosition(), setMinPosition(), set coverable(). Updates available spaces on the grid.
     */
     private updateAvailableSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
-        if (this._map_object !== undefined) {
-            this._map_object.updatePanelRegistry(coverage, topLeftX, topLeftY, bottomRightX, bottomRightY);
-        }
+        this._map_object.updatePanelRegistry(coverage, topLeftX, topLeftY, bottomRightX, bottomRightY);
     }
 
     /**
@@ -133,6 +131,16 @@ export class Panel {
      */
     setMap(parentMap: Map) {
         this._map_object = parentMap;
+        let panel = this;
+        //resize listener
+        $(window).resize(function(){
+            //fires observables
+            panel._widthChanged.next(<number>$(panel._map_object.mapElement).width());
+            panel._heightChanged.next(<number>$(panel._map_object.mapElement).height());
+
+            //changes width/height to new percentage value of the map
+            panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
+        });
     }
 
     /**
@@ -324,7 +332,7 @@ export class Panel {
                     break;
                 }
             }
-            if (newBottomSet){
+            if (newBottomSet) {
                 break;
             }
         }
@@ -352,7 +360,7 @@ export class Panel {
                     break;
                 }
             }
-            if (newRightSet){
+            if (newRightSet) {
                 break;
             }
         }
