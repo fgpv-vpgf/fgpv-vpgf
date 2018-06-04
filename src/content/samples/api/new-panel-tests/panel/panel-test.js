@@ -47,12 +47,14 @@ $.getScript('../../../../rv-main.js', function () {
 
 
         let lightyear = new RZ.Panel("Buzz Lightyear");
-        mapi.createPanel('Buzz Lightyear', lightyear);
+        var mapInstance = mapi.createPanel('Buzz Lightyear');
+        lightyear.setMap(mapInstance);
 
         let woody = new RZ.Panel("Woody");
-        mapi.createPanel('Woody', woody);
-
-        console.log(lightyear.availableSpaces()); //or console.log(mapi.panelRegistry);
+        let mapInstance2 = mapi.createPanel('Woody');
+        woody.setMap(mapInstance2);
+        
+        console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
 
         //PANEL TESTS:         
 
@@ -69,10 +71,12 @@ $.getScript('../../../../rv-main.js', function () {
         //lightyear.setPosition(2,3,4,25); //out of bounds of grid
         //lightyear.setMinPosition(2,3,3,4); 
         //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
-        lightyear.setPosition(5, 1, 9, 18);
+        lightyear.setPosition(1, 1, 8, 8);
 
-        lightyear.setMinPosition(5, 5, 7, 7); //if not set, all -1 should be set because of default minimum position 
-        woody.setPosition(10, 1, 15, 4);
+        lightyear.setMinPosition(2, 2, 5, 5); //if not set, all -1 should be set because of default minimum position 
+
+        woody.setPosition(7, 7, 11, 11);
+        woody.setMinPosition(10, 10, 11, 11); //this causes a conflict and panel SHOULD autoshrink to 9, 9, 11, 11
 
         lightyear.open();
         woody.open();
