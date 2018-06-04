@@ -189,7 +189,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             const layerType = importedLegendBlock.layerType;
             const sortGroup = layerType ? sortGroups[layerType] : 1;    // layerType doesn't exist, legend block is a group
             position = legendBlocks.entries.findIndex(block =>
-                !block.layerType || sortGroups[block.layerType] > sortGroup);
+                !block.layerType || sortGroups[block.layerType] >= sortGroup);
 
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
             position = position === -1 ? legendBlocks.entries.length : position;
