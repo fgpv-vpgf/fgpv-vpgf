@@ -71,15 +71,15 @@ $.getScript('../../../../rv-main.js', function () {
         //lightyear.setPosition(2,3,4,25); //out of bounds of grid
         //lightyear.setMinPosition(2,3,3,4); 
         //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
-        lightyear.setPosition(1, 1, 8, 8);
+        lightyear.setPosition(2, 2, 5, 10);
 
         lightyear.setMinPosition(2, 2, 5, 5); //if not set, all -1 should be set because of default minimum position 
 
-        woody.setPosition(7, 7, 11, 11);
-        woody.setMinPosition(10, 10, 11, 11); //this causes a conflict and panel SHOULD autoshrink to 9, 9, 11, 11
+        //woody.setPosition(7, 7, 11, 11);
+        //woody.setMinPosition(10, 10, 11, 11); //if not set causes a conflict, if set and panel SHOULD autoshrink to 7, 9, 11, 11
 
         lightyear.open();
-        woody.open();
+        //woody.open();
         //console.log(mapi.panelRegistry); 
         //console.log
 
