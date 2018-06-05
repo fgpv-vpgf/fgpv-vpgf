@@ -59,6 +59,14 @@ export default class Map {
     private _panel_registry: Panel[];
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
+    //if map grid is represented as a dictionary
+    //updating it will be easier
+    //calls will be quicker
+    //if have coordinates indexed by coverage
+    //then for availablespaces check can simply loop through array of -1, 1 and see if any of them would fall into panel space
+    //i get available spaces but just to confirm, even if panel is already set on map, we are disregarding the current panel's set, but still
+    //taking into account other panels?
+    //could just scrap map grid entirely? use panel registry and width/height of existing panels to detect shrinking etc (might save time)
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';

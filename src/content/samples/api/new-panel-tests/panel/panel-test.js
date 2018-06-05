@@ -54,6 +54,7 @@ $.getScript('../../../../rv-main.js', function () {
         let mapInstance2 = mapi.createPanel('Woody');
         woody.setMap(mapInstance2);
 
+        console.log(mapi.mapGrid);
         console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
 
         //PANEL TESTS:         
