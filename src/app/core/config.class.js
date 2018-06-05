@@ -1525,6 +1525,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    class AreaOfInterestComponent extends ComponentBase {
+        constructor (source) {
+            super(source);
+        }
+    }
+
     class MouseInfoComponent extends ComponentBase {
         constructor (source) {
             super(source);
@@ -1611,6 +1617,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._source = componentsSource;
 
             this._geoSearch = new GeoSearchComponent(componentsSource.geoSearch);
+            this._areaOfInterest = new AreaOfInterestComponent(componentsSource.areaOfInterest);
             this._mouseInfo = new MouseInfoComponent(componentsSource.mouseInfo);
             this._northArrow = new NorthArrowComponent(componentsSource.northArrow);
             this._overviewMap = new OverviewMapComponent(componentsSource.overviewMap);
@@ -1619,6 +1626,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
 
         get geoSearch () { return this._geoSearch; }
+        get areaOfInterest () { return this._areaOfInterest; }
         get mouseInfo () { return this._mouseInfo; }
         get northArrow () { return this._northArrow; }
         get overviewMap () { return this._overviewMap; }
@@ -1628,6 +1636,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return {
                 geoSearch: this.geoSearch.JSON,
+                areaOfInterest: this.areaOfInterest.JSON,
                 mouseInfo: this.mouseInfo.JSON,
                 northArrow: this.northArrow.JSON,
                 overviewMap: this.overviewMap.JSON,

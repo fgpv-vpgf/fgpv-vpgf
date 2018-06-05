@@ -155,9 +155,9 @@
                 <option value="config/config-sample-61.json">61. Layer with fields not searchable and default values for filters</option>
                 <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
                 <option value="config/config-sample-63.json">63. Tile layer</option>
+                <option value="config/config-sample-64.json">64. Side menu Area of interest plugin</option>
                 <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
-                <option value="">67. Map with no config provided</option>
-            </select>
+                <option value="">67. Map with no config provided</option>            </select>
         </div>
 
         <div class="row">
@@ -231,6 +231,7 @@
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
         RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
         RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RV.getMap('sample-map').registerPlugin(RV.Plugins.AreaOfInterest, 'areaOfInterest');
 
         function bookmark(){
             return new Promise(function (resolve) {
