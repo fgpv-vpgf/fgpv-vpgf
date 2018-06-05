@@ -58,6 +58,13 @@
                 }
             }
 
+            .rv-symbol-expand {
+                position: absolute;
+                margin: 0;
+                top: -5px;
+                right: -5px;
+            }
+
             .rv-symbol-label-container {
                 width: 100%;
                 flex: 1;

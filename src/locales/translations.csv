@@ -197,6 +197,8 @@ Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to 
 Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom in to details,1,Zoom avant,1
 Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
 Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
+Table of Content full-size image,toc.tooltip.fullsizeImage,View full-size image,1,Agrandir image,0
+Table of Content close full-size image,toc.fullsizeImage.close,Close,1,Fermer,1
 Table of Content reload label,toc.label.reload,Reload,1,Recharger,1
 Table of Content reload tootlip,toc.tooltip.reload,Reload,1,Recharger,1
 Table of Content remove label,toc.label.remove,Remove,1,Retirer,1
