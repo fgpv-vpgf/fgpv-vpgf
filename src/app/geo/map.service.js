@@ -377,6 +377,17 @@ function mapServiceFactory(
                     clearHighlight(false);
                 }
 
+                // restrict map navigation if required
+                if (configService.getSync.ui.restrictNavigation && mapConfig.selectedBasemap.maximum) {
+                    const map = mapConfig.instance;
+                    const maxExtent = map.enhanceConfigExtent(mapConfig.selectedBasemap.maximum);
+                    const checkResult = gapiService.gapi.Map.enforceBoundary(map.extent, maxExtent);
+                    if (checkResult.adjusted) {
+                        // delay so ESRI recognises this as distinct extent change
+                        setTimeout(() => map.centerAt(checkResult.newExtent.getCenter()), 1);
+                    }
+                }
+
                 events.$broadcast(events.rvExtentChange, data);
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),

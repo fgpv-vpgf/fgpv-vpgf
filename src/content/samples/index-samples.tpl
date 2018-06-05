@@ -157,7 +157,9 @@
                 <option value="config/config-sample-63.json">63. Tile layer</option>
                 <option value="config/config-sample-64.json">64. Side menu Area of interest plugin</option>
                 <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
-                <option value="">67. Map with no config provided</option>            </select>
+                <option value="config/config-sample-66.json">66. Map with navigation restricted</option>
+                <option value="">67. Map with no config provided</option>
+            </select>
         </div>
 
         <div class="row">
