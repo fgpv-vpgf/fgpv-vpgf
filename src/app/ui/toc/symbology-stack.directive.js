@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, $mdDialog, $translate) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -158,6 +158,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // store reference to symbology nodes
             // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
             symbolItems: [],
+            largeImages: {},
             // cover item stays with the stack when the rest of the stack is expanded
             coverSymbolItem: null,
             trigger: null, // expand self.trigger node
@@ -166,6 +167,18 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             containerWidth: 350,
             maxItemWidth: 350
         };
+
+        self.onExpandClick = name => {
+            const image = self.symbology.images[name];
+            const htmlContent = "<img src=" + image + "></img>";
+            $mdDialog.show(
+                $mdDialog.alert()
+                    .clickOutsideToClose(true)
+                    .htmlContent(htmlContent)
+                    .ariaLabel($translate.instant('toc.tooltip.fullsizeImage'))
+                    .ok($translate.instant('toc.fullsizeImage.close'))
+            );
+        }
 
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
@@ -541,7 +554,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // extremely convoluted math to calculate an aproximation of the label's height
             // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
-
             let labelHeight = 0;
             const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
             if (textWidth > 0 ) {
@@ -549,6 +561,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 const padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
                 const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
                 labelHeight = Math.ceil(textWidth / (itemWidth - sidePadding)) * lineHeight + padding;
+            }
+
+            const element = symbolItem.image.parent().find('.rv-symbol-expand');
+            if (itemWidth !== imageWidth) {
+                element.css('display', 'block');
+                symbolItem.image.find('svg').after(element);
+                ref.largeImages[symbolItem.label[0].innerText] = symbolItem;
+            } else {
+                element.css('display', 'none');
             }
 
             // animate symbology container's size
@@ -628,6 +649,9 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const symbologyListItemMargin = 8;
 
             const itemSize = 32; // icon size is fixed
+
+            const element = symbolItem.image.parent().find('.rv-symbol-expand');
+            element.css('display', 'none');
 
             // expand symbology container width and align it to the left (first and last items are fanned out)
             timeline.to(
@@ -742,6 +766,8 @@ function symbologyStack(ConfigObject, gapiService) {
             this._fannedOut = false;
             this._expanded = false;
 
+            this._images = null;
+
             const renderStyleSwitch = {
                 [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
                 [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
@@ -754,7 +780,15 @@ function symbologyStack(ConfigObject, gapiService) {
                 // custom symbology lists coming from the config file need to be converted to svg first
                 this._symbols =
                     symbols.length > 0 && symbols[0].image ? renderStyleSwitch[renderStyle](symbols) : symbols;
+                if (renderStyle === ConfigObject.legend.Entry.IMAGES) {
+                    this._images = {};
+                    for (let symbol of symbols) {
+                        this._images[symbol.text] = symbol.image;
+                    }
+                }
             }
+
+
 
             // if a cover icon is specified, convert it to svg as well
             if (coverIcon) {
@@ -784,6 +818,9 @@ function symbologyStack(ConfigObject, gapiService) {
         }
         get coverIcon() {
             return this._coverIcon;
+        }
+        get images() {
+            return this._images;
         }
 
         get fannedOut() {
