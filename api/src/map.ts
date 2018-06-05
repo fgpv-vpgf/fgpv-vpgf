@@ -54,8 +54,9 @@ export default class Map {
     private _layers: LayerGroup;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
-    private _panel_registry: number[][];
+    private _map_grid: number[][];
     private _element: HTMLElement;
+    private _panel_registry: Panel[];
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
@@ -64,7 +65,7 @@ export default class Map {
         this._ui = new UI(this);
         this._layers = new LayerGroup(this);
         this._element = mapDiv;
-
+        this._panel_registry = [];
 
         if (config) {
 
@@ -88,7 +89,7 @@ export default class Map {
         while (rows--) array.push(row.slice());
 
         //initialize panel registry to have all zeroes (no panels added to a new map instance yet)
-        this._panel_registry = array;
+        this._map_grid = array;
     }
 
     get layers(): LayerGroup {
@@ -101,10 +102,26 @@ export default class Map {
 
     /**
      * Returns the grid representation of the map instance describing where panels are on the map. 
-     * @return {Number[]} - 
+     * @return {number[][]} - 
      */
-    get panelRegistry() {
+    get mapGrid() {
+        return this._map_grid;
+    }
+
+    /**
+     * Returns the list of Panels on this map instance. 
+     * @return {Panel[]} - 
+     */
+    get panelRegistry(){
         return this._panel_registry;
+    }
+
+    /**
+     * Adds a panel to the panel registry. 
+     * @param {Panel} panel - the panel to be added to this map instance.  
+     */
+    /*protected*/ addPanel(panel: Panel){
+        this._panel_registry.push(panel);
     }
 
     /**
@@ -115,13 +132,19 @@ export default class Map {
      * @param bottomRightX - the x coordinate of the bottom, right panel corner
      * @param bottomRightY - the y coordinate of the bottom, right panel corner
      */
-    updatePanelRegistry(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    updateMapGrid(coverage: number, topLeft: number, bottomRight: number) {
 
-        let startingPosition = this._panel_registry[topLeftX][topLeftY];
+        let topLeftX = topLeft % 20;
+        let topLeftY = Math.floor(topLeft / 20);
+        let bottomRightX = bottomRight % 20;
+        let bottomRightY = Math.floor(bottomRight / 20);
+
+
+        let startingPosition = this._map_grid[topLeftX][topLeftY];
         //go through all indices of panel_registry that need to be updated, and update them
         for (let i = topLeftX; i <= bottomRightX; i++) {
             for (let j = topLeftY; j <= bottomRightY; j++) {
-                this._panel_registry[i][j] = coverage;
+                this._map_grid[i][j] = coverage;
             }
         }
     }
@@ -134,7 +157,7 @@ export default class Map {
      * @param {Panel} panel - the panel to be created on the map instance
      * @return {Map} - the map object so that the panel can set its map instance
      */
-    createPanel(id: string) : Map{
+    createPanel(id: string): Map {
         //add panel to map instance
         this.mapDiv.append($('#' + id));
         return this; //panel can then set this as the map instance. 

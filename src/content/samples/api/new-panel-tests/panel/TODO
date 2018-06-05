@@ -1,17 +1,23 @@
 TODO: 
 
 June 4: 
--Error testing with test cases
+-Error testing with test cases 
 -CSS access from API folder
 -toggle button find way to actually hide that portion of panel
--resize delay
+-documentation
+-availableSpaces "If the panel were to go here with its current dimensions would it fit"
+-make mapgrid array look better?
+-resize delay?
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
+-Test cases from console
 -unnescessary casting
--Good commenting
+-Good commenting (add examples in)
 -Good typescript headers
 -Make a list of all test cases
+-JQuery/document.getElementByID calls
+-return void
 
 
 Future features (?): 
@@ -20,4 +26,15 @@ Future features (?):
 -registry's  1+ feature (example: 2 means two panels occupy that gridspace) to be set when panels become coverable
 
 
- 
+DOCUMENTATION: 
+0. if you wanna push them over, you have to make your own github-pages link, and host them there
+1. https://codeburst.io/generate-docs-and-host-it-with-jsdoc-and-github-pages-113b9dae9acb 
+2. npm run apidoc
+3. https://github.com/fgpv-vpgf/fgpv-vpgf/pull/2717
+
+
+
+Available Spaces: 
+    -How to evaluate conflict for each square as top left corner
+    -for each claimed spot in panel registry --> pretend this spot is bottom right square of panel of our desired dimensions
+        -for top left --> bottom right mark availableSpaces as -1
