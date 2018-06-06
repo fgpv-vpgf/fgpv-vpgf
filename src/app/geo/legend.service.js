@@ -142,7 +142,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
-        const blueprint = new LayerBlueprint.service(layerDefinition);
+        const blueprint = LayerBlueprint.buildLayer(layerDefinition);
         configService.getSync.map.layerBlueprints.push(blueprint);
         return blueprint;
     }

@@ -29,7 +29,7 @@ function rvLoaderService() {
 }
 
 function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames,
-    ConfigObject, layerSource, legendService, gapiService) {
+    ConfigObject, layerSource, legendService) {
     'ngInject';
     const self = this;
 
@@ -236,27 +236,24 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function selectOnContinue
      */
     function selectOnContinue() {
+        // for WFS layers, there is a validation process
+        // for consistency, also mock a validation for non-WFS services
+        let validationPromise;
 
-        // we don't validate service layer info source;
-        // it seem not to be possible to tell if the layer will work on not until the layer is build and added to the map
-        stepper.nextStep($q.resolve());
-
-        if (self.layerSource.config.layerType === Geo.Layer.Types.OGC_WFS) {
-            const validationPromise = gapiService.gapi.layer.validateGeoJson(self.layerSource._parsedData)
-                .then(validationResult => {
-                    self.layerSource.fields = validationResult.fields;
-                    self.layerSource._parsedData = validationResult.formattedData;
-                    self.layerSource._formattedData = validationResult.formattedData;
-                    // TODO: do we need geometry type at all???
-
-                    self.layerSource.config.nameField = validationResult.smartDefaults.primary;
-                    self.layerSource.snapshot();
-
-                    return validationResult;
-                });
-
-            return validationPromise;
+        try {
+            validationPromise = self.layerSource.validate();
+        } catch (e) {
+            console.error('loaderServiceDirective', 'service type is wrong', e);
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+            return;
         }
+
+        validationPromise.catch(error => {
+            console.error('loaderServiceDirective', 'service type is wrong', error);
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+        });
+
+        stepper.nextStep(validationPromise);
 
         /*
         const validationPromise = self.layerBlueprint.validate();
@@ -264,11 +261,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
         self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
         stepper.nextStep(validationPromise);
-
-        validationPromise.catch(error => {
-            console.error('loaderServiceDirective', 'service type is wrong', error);
-            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
-        });*/
+        */
     }
 
     // FIXME add docs
@@ -287,26 +280,22 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // reset wrong service type error message
         toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
     }
+
     /**
      * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        let layerBlueprint;
-        if (self.layerSource.config.layerType === Geo.Layer.Types.OGC_WFS) {
-            layerBlueprint = new LayerBlueprint.file(self.layerSource);
-            layerBlueprint.validateFileLayerSource()
-                .then(esriLayer => {
-                    legendService.importLayerBlueprint(layerBlueprint);
-                    closeLoaderService();
-                })
-        } else {
-            layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
-            legendService.importLayerBlueprint(layerBlueprint);
-            // TODO: display error message if something breaks
-            // TODO: close import wizard if build is successful
-            closeLoaderService();
-        }
+        const layerBlueprint = LayerBlueprint.buildLayer(self.layerSource);
+
+        layerBlueprint.validateLayerSource()
+            .then(esriLayer => {
+                legendService.importLayerBlueprint(layerBlueprint);
+                closeLoaderService();
+            }).catch(error => {
+                console.warn('loaderServiceDirective', 'service is invalid ', error);
+                self.configure.form.$setValidity('invalid', false);
+            });
     }
 
     /**
