@@ -117,6 +117,12 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             }
         }
 
+        // no validation required for services. mock a vlidation process for consistency.
+        // only instances of LayerFileBlueprint required validation; that class overrides this function
+        validateLayerSource() {
+            return $q.resolve();
+        }
+
         set config(value) {
             if (this._config) {
                 console.warn('config is already set');
@@ -252,7 +258,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             this.config = this._layerSource.config;
         }
 
-        validateFileLayerSource() {
+        validateLayerSource() {
             // clone data because the makeSomethingLayer functions mangle the config data
             const formattedDataCopy = angular.copy(this._layerSource.formattedData);
 
@@ -292,9 +298,28 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
     }
 
     const service = {
-        service: LayerServiceBlueprint,
-        file: LayerFileBlueprint
+        buildLayer: layerSource => {
+            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {
+                return new LayerFileBlueprint(layerSource);
+            } else if (layerSource.config) {
+                return new LayerServiceBlueprint(null, layerSource);
+            } else {
+                return new LayerServiceBlueprint(layerSource);
+            }
+        }
     };
+
+    /**
+     * Checks if the layer being added is a file layer or a WFS layer based on its type.
+     * @function _isFileOrWFSLayer
+     * @private
+     * @param {String} source a string representing the type of layer being added
+     * @return {Boolean} true if the layer type matches one of the file layer constants
+     */
+    function _isFileOrWFSLayer(source) {
+        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.GeoJSON, Geo.Service.Types.Shapefile];
+        return (fileTypes.indexOf(source.type) !== -1);
+    }
 
     return service;
 }

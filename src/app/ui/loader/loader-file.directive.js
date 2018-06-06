@@ -490,9 +490,9 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const layerBlueprint = new LayerBlueprint.file(self.layerSource);
+        const layerBlueprint = LayerBlueprint.buildLayer(self.layerSource);
 
-        layerBlueprint.validateFileLayerSource()
+        layerBlueprint.validateLayerSource()
             .then(esriLayer => {
                 legendService.importLayerBlueprint(layerBlueprint);
                 closeLoaderFile();

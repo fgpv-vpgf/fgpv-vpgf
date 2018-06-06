@@ -193,21 +193,21 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
          * @return {Promise} a promsie resolving with a LayerSourceInfo.WFSServiceInfo object
          */
         function _parseAsWfs(url, data) {
-            const nameAndId = `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`;
-            const layerConfig = new ConfigObject.layers.FeatureLayerNode({
-                id: nameAndId,
+            const splitUrl = url.split('/');
+            const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
+
+            const layerConfig = new ConfigObject.layers.WFSLayerNode({
+                id: `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.OGC_WFS,
-                name: nameAndId,
+                name: splitUrl[indexOfItems - 1],   // may not be the best way to find the name
                 state: {
                     userAdded: true
                 }
             });
 
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
-
-            const layerInfo = new LayerSourceInfo.GeoJSONFileInfo(layerConfig, null, targetWkid);
-            layerInfo._parsedData = data.geoJson;
+            const layerInfo = new LayerSourceInfo.GeoJSONFileInfo(layerConfig, data.rawData, targetWkid);
 
             return layerInfo;
         }
