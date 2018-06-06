@@ -4,7 +4,6 @@ import "ag-grid/dist/styles/ag-theme-balham.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = <GridOptions>{};
-
     constructor() {
         this.gridOptions = {
             columnDefs: this.createColumnDefs(),
@@ -34,4 +33,8 @@ class SimpleGrid {
     }
 }
 
-new SimpleGrid();
+(<any>window).enhancedTable = {
+    init: mApi => {
+        new SimpleGrid();
+    }
+};
