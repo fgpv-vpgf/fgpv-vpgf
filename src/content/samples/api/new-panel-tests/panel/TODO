@@ -2,6 +2,10 @@ TODO:
 
 June 4: 
 -Error testing with test cases 
+-min feat for available spaces 
+-make availalble spaces array look better
+-shrink panel
+
 -CSS access from API folder
 -toggle button find way to actually hide that portion of panel
 -documentation
