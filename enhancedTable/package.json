@@ -1,0 +1,13 @@
+{
+    "name": "enhancedtable",
+    "version": "1.0.0",
+    "description": "A superior table for displaying data",
+    "main": "index.js",
+    "scripts": {},
+    "keywords": ["table", "data", "ramp", "extension"],
+    "author": "Miles Petrov",
+    "license": "ISC",
+    "dependencies": {
+      "ag-grid": "17.1.1"
+    }
+}

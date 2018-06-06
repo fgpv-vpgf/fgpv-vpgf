@@ -1,23 +1,24 @@
 {
-  "name": "core-extensions",
-  "version": "0.0.0",
-  "description": "Home for all RAMP related extensions that we will create and maintain in step with our RAMP release cycle",
-  "main": "src/index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "name": "extensions",
+  "version": "0.0.1",
+  "description": "Sets the fundation for building/testing extensions in a consistent way.",
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fgpv-vpgf/core-extensions.git"
+    "url": "git+https://github.com/fgpv-vpgf/extensions.git"
   },
   "keywords": [
-    "RAMP2",
-    "extensions"
+    "extention",
+    "RAMP"
   ],
   "author": "Miles Petrov",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fgpv-vpgf/core-extensions/issues"
+    "url": "https://github.com/fgpv-vpgf/extensions/issues"
   },
-  "homepage": "https://github.com/fgpv-vpgf/core-extensions#readme"
+  "homepage": "https://github.com/fgpv-vpgf/extensions#readme",
+  "devDependencies": {
+    "ts-loader": "4.3.1",
+    "webpack": "4.11.0"
+  }
 }
