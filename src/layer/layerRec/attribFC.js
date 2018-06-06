@@ -60,7 +60,7 @@ class AttribFC extends basicFC.BasicFC {
 
                 // for file layers, since attributes are local and we have promise initially,
                 // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
-                if (this._parent.isFileLayer()) {
+                if (this._parent.dataSource() !== 'esri') {
                     this._layerPackage.loadIsDone = true;
                 }
             }
@@ -359,7 +359,7 @@ class AttribFC extends basicFC.BasicFC {
                     });
                 });
 
-            } else if (this._parent.isFileLayer() && layerObj.graphics) {
+            } else if (this._parent.dataSource() !== 'esri' && layerObj.graphics) {
                 // it is a feature layer that is file based. we can extract info from it.
                 localGraphic = huntLocalGraphic(objectId);
                 resultFeat.attributes = localGraphic.attributes;

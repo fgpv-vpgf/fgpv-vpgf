@@ -106,7 +106,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // get attribute package
         let attribPackage;
         let featIdx;
-        if (this.isFileLayer()) {
+        if (this.dataSource() !== 'esri') {
             featIdx = '0';
             attribPackage = this._apiRef.attribs.loadFileAttribs(this._layer);
         } else {
@@ -134,7 +134,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             // been supplied from the wizard (it pre-fetches fields to present a choice
             // to the user). If the nameField was adjusted for bad characters, we need to
             // re-synchronize it here.
-            if (this.isFileLayer() && ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
+            if (this.dataSource() !== 'esri' && ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
                 const validField = ld.fields.find(f => f.alias === aFC.nameField);
                 if (validField) {
                     aFC.nameField = validField.name;
@@ -172,14 +172,20 @@ class FeatureRecord extends attribRecord.AttribRecord {
     }
 
     /**
-     * Indicates if the layer is file based.
+     * Indicates if the layer is file based, WFS, or esri based.
      *
-     * @function isFileLayer
-     * @returns {Boolean} true if layer is file based
+     * @function dataSource
+     * @returns {String} 'file' if file layer, 'wfs' if WFS, else 'esri'
      */
-    isFileLayer () {
-        // TODO revisit.  is it robust enough?
-        return this._layer && !this._layer.url;
+    dataSource () {
+        // 'this.layerType' will be 'esriFeature' even for WFS layers, so must use 'this.config.layerType'
+        if (this.config.layerType === shared.clientLayerType.OGC_WFS) {
+            return 'wfs';
+        } else if (this._layer && !this._layer.url) {   // TODO revisit.  is it robust enough?
+            return 'file'
+        } else {
+            return 'esri'
+        }
     }
 
     /**
@@ -301,7 +307,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // more accurate results without making the buffer if we're dealing with extents
         // polygons from added file need buffer
         // TODO further investigate why esri is requiring buffer for file-based polygons. logic says it shouldnt
-        if (this.getGeomType() === 'esriGeometryPolygon' && !this.isFileLayer()) {
+        if (this.getGeomType() === 'esriGeometryPolygon' && this.dataSource() === 'esri') {
             qry.geometry = opts.geometry;
         } else {
             // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry

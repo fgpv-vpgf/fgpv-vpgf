@@ -225,7 +225,7 @@ function pokeEsriService(url, esriBundle, hint) {
 
     srvHandler[serviceType.WFS] = srvJson => {
         const info = makeInfo(serviceType.WFS);
-        info.geoJson = srvJson;
+        info.rawData = stringToArrayBuffer(JSON.stringify(srvJson));
         return info;
 
     };
@@ -332,17 +332,6 @@ function pokeWms(url, esriBundle) {
     return Promise.resolve(makeInfo(serviceType.WMS));
 }
 
-// tests a URL to see if the value is a wfs
-// resolves with promise of information object
-// - serviceType : the type of service (WFS, Unknown)
-function pokeWfs(url, esriBundle) {
-    // FIXME add some WFS detection logic.  that would be nice
-
-    console.log(url, esriBundle); // to stop jslint from quacking. remove when params are actually used
-
-    return Promise.resolve(makeInfo(serviceType.WFS));
-}
-
 /**
   * @method predictFileUrlBuilder
   * @param {String} url a url to something that is hopefully a map service
@@ -402,8 +391,8 @@ function predictLayerUrlBuilder(esriBundle) {
             hintToFlavour[serviceType.TileService] = 'F_ESRI';
             hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
             hintToFlavour[serviceType.ImageService] = 'F_ESRI';
+            hintToFlavour[serviceType.WFS] = 'F_ESRI';
             hintToFlavour[serviceType.WMS] = 'F_WMS';
-            hintToFlavour[serviceType.WFS] = 'F_WFS';
 
             flavourToHandler.F_ESRI = () => {
                 return pokeEsriService(url, esriBundle, hint);
@@ -413,11 +402,6 @@ function predictLayerUrlBuilder(esriBundle) {
                 // FIXME REAL LOGIC COMING SOON
                 return pokeWms(url, esriBundle);
             };
-
-            flavourToHandler.F_WFS = () => {
-                // FIXME REAL LOGIC COMING SOON
-                return pokeWfs(url, esriBundle);
-            }
 
             // execute handler.  hint -> flavour -> handler -> run it -> promise
             return flavourToHandler[hintToFlavour[hint]]();
@@ -487,6 +471,18 @@ function predictLayerUrlBuilder(esriBundle) {
 function arrayBufferToString(buffer) {
     // handles UTF8 encoding
     return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+}
+
+/**
+* Converts a string to an array buffer
+*
+* @method stringToArrayBuffer
+* @private
+* @param {String} str a string containing stuff
+* @returns {Arraybuffer} string in array buffer form
+*/
+function stringToArrayBuffer(str) {
+    return new TextEncoder('utf-8').encode(str);
 }
 
 /**
@@ -1286,7 +1282,6 @@ module.exports = function (esriBundle, geoApi) {
         predictFileUrl: predictFileUrlBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),
         validateFile,
-        validateGeoJson,
         csvPeek,
         serviceType,
         validateLatLong
