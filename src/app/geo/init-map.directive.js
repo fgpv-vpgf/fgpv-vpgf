@@ -1,5 +1,6 @@
 import Map from 'api/map';
 import { BasemapGroup } from 'api/ui';
+import gtm from '../tag-manager';
 
 /**
  * @restrict A
@@ -44,7 +45,21 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
 
         $rootScope.$on(events.rvMapLoaded, (_, i) => {
             mapInstance = i;
+            const api = window.RZ;
+
             mapInstance.disableKeyboardNavigation();
+
+            // GTM application load time
+            if (window.performance) {
+                const timeSincePageLoad = Math.round(performance.now());
+                api.gtmDL.push({
+                    'event' : 'fieldTiming',
+                    'timingCategory' : 'performance',
+                    'timingVariable' : 'load',
+                    'timingLabel' : 'mapLoaded',
+                    'timingValue' : timeSincePageLoad
+                });
+              }
 
             // reduce map animation time which in turn makes panning less jittery
             mapInstance.mapDefault('panDuration', 0);
@@ -62,7 +77,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 .on('mouseup', mouseUpHandler);
 
                 // API related initialization ------------------
-                window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
+                api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
                 apiMap._legendStructure = configService.getSync.map.legend;
@@ -76,7 +91,8 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
 
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
-                window.RZ.mapAdded.next(apiMap);
+                gtm(apiMap);
+                api.mapAdded.next(apiMap);
         });
 
         /**
