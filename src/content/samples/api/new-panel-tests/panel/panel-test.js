@@ -45,26 +45,26 @@ $.getScript('../../../../rv-main.js', function () {
         $(panelElem2.element).append(imgElem.element);
 
 
-
-        let lightyear = new RZ.Panel("Buzz Lightyear");
-        var mapInstance = mapi.createPanel('Buzz Lightyear');
-        lightyear.setMap(mapInstance);
+        //creating panels on map
+        let lightyear = new RZ.Panel("Buzz");
+        let mapInstance = mapi.createPanel('Buzz');
+        lightyear.setMap(mapi);
 
         let woody = new RZ.Panel("Woody");
         let mapInstance2 = mapi.createPanel('Woody');
-        woody.setMap(mapInstance2);
+        woody.setMap(mapi);
 
-        console.log(mapi.mapGrid);
-        console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
+        //console.log(mapi.mapGrid);
+        //console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
 
         //PANEL TESTS:         
 
         //line breaks need to be added in by the user        
-        lightyear.controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
+        woody.controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
 
         //console.log(lightyear.controls);        
-        lightyear.content = panelElem2;
-        console.log(lightyear.content);
+        woody.content = panelElem2;
+        //console.log(lightyear.content);
 
 
         //console.log("Panel ID: "+ lightyear.id);        
@@ -72,7 +72,7 @@ $.getScript('../../../../rv-main.js', function () {
         //lightyear.setPosition(2,3,4,25); //out of bounds of grid
         //lightyear.setMinPosition(2,3,3,4); 
         //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
-        woody.setPosition(9, 50);
+        woody.setPosition(24, 288);
         //woody.setMinPosition(10, 10, 11, 11); //if not set causes a conflict, if set and panel SHOULD autoshrink to 7, 9, 11, 11
         woody.open();
 
@@ -85,13 +85,16 @@ $.getScript('../../../../rv-main.js', function () {
          * all the way up to 380 - 399
          */
         //lightyear.setPosition(4, 268);
-        lightyear.setPosition(60, 70);
+        lightyear.setPosition(69, 110);  //one colum (9-10), two rows (60 - 100)
+        //lightyear.setMinPosition(109, 110);
 
         lightyear.open();
 
-        console.log(woody.staticavailableSpaces());
+        //console.log(woody.staticavailableSpaces());
+        //console.log(mapi.mapGrid);
 
-        //console.log(lightyear.staticavailableSpaces());
+        console.log(lightyear.staticavailableSpaces());
+        console.log(lightyear.availableSpaces());
 
         //lightyear.setMinPosition(2, 6); //if not set, all -1 should be set because of default minimum position 
 
@@ -110,7 +113,7 @@ $.getScript('../../../../rv-main.js', function () {
         //visibilityChanged
 
 
-        console.log("panelElem1 ID: " + panelElem1.id);
+        //console.log("panelElem1 ID: " + panelElem1.id);
 
         /**
          * TEST CASES: 

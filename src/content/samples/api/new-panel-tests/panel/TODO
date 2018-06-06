@@ -1,16 +1,13 @@
 TODO: 
 
 June 4: 
+
 -Error testing with test cases 
 -min feat for available spaces 
--make availalble spaces array look better
--shrink panel
-
 -CSS access from API folder
 -toggle button find way to actually hide that portion of panel
 -documentation
--availableSpaces "If the panel were to go here with its current dimensions would it fit"
--make mapgrid array look better?
+-scrap map grid? 
 -resize delay?
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
