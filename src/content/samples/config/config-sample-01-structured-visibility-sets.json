@@ -401,8 +401,8 @@
         "layerEntries": [
             {
               "id": "GDPS.ETA_UU",
-              "allStyles": [ "WINDARROW", "WINDARROWKMH", "WINDSPEED", "WINDSPEEDKMH" ],
-              "currentStyle": "WINDSPEEDKMH"
+              "allStyles": [ "WINDARROW", "WINDARROWKMH" ],
+              "currentStyle": "WINDARROWKMH"
             }
         ],
         "url":"http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
