@@ -595,7 +595,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // user added layer from server support definition expression and time defintion
         const layer = layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId);
         const layerType = layer.initialConfig.layerType; // stateManager.display.table.requester.legendEntry.layerType;
-        service.isFeatureLayer = (layerType === Geo.Layer.Types.ESRI_FEATURE && !layer.isFileLayer());
+        service.isFeatureLayer = (layerType === Geo.Layer.Types.ESRI_FEATURE && layer.dataSource() === 'esri');
         service.isDynamicLayer = (layerType === Geo.Layer.Types.ESRI_DYNAMIC);
 
         filteredState().then(() => {
@@ -682,7 +682,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         }
 
         // query the layer itself instead of making a mapserver request
-        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.isFileLayer()) {
+        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.dataSource() !== 'esri') {
             queryOpts.featureLayer = layerRecId._layer;         // file based layer
         } else {
             queryOpts.url = legEntry.mainProxy.queryUrl;        // server based layer
