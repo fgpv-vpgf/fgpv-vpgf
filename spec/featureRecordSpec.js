@@ -156,10 +156,10 @@ describe('featureRecord', () => {
         expect(proxy).not.toBe(undefined);
     });
 
-    it('should return true iff it is a file layer, false otherwise', () => {
+    it('should return string file iff it is a file layer, string esri otherwise', () => {
         const featureRecordObject = new featureRecord.FeatureRecord(layerClass, esriRequest, apiRef, config, esriLayer);
 
-        expect(featureRecordObject.isFileLayer()).toBe(false);
+        expect(featureRecordObject.dataSource()).toBe('esri');
     });
 
     it('should have no errors when onMouseOver was called', () => {
