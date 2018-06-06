@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerSourceInfo', LayerSourceInfoFactory);
 
-function LayerSourceInfoFactory(Geo, gapiService) {
+function LayerSourceInfoFactory(Geo, gapiService, $q) {
 
     class Info {
         constructor(config) {
@@ -36,7 +36,11 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         get type () { return Geo.Service.Types.Unknown; }
     }
 
-    class ServiceInfo extends Info { }
+    class ServiceInfo extends Info {
+        validate() {
+            return $q.resolve();
+        }
+    }
 
     class FeatureServiceInfo extends ServiceInfo {
         constructor(config, fields) {
