@@ -280,7 +280,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.isFileLayer() && layerRecord._layer.loaded)) {
+        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded)) {
             isRefreshed = true;
             _onLayerRecordLoad('rv-loaded');
         }
@@ -526,7 +526,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     function _setHoverTips(layerRecord) {
         // TODO: layerRecord returns a promise on layerType to be consistent with dynamic children which don't know their type upfront
         // to not wait on promise, check the layerRecord config
-        if (layerRecord.config.layerType !== Geo.Layer.Types.ESRI_FEATURE) {
+        if (layerRecord.config.layerType !== Geo.Layer.Types.ESRI_FEATURE && layerRecord.config.layerType !== Geo.Layer.Types.OGC_WFS) {
             return;
         }
 

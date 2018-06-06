@@ -1,4 +1,7 @@
-<rv-content-pane close-panel="self.closeLoaderService()" floating-header="true" rv-trap-focus="{{ ::self.appID }}">
+<rv-content-pane
+    close-panel="self.closeLoaderService()"
+    floating-header="true"
+    rv-trap-focus="{{ ::self.appID }}">
 
     <div class="rv-loader-service">
         <rv-stepper-item
@@ -175,7 +178,7 @@
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="geojson">
-                <label>{{ 'import.file.configure.layername' | translate }}</label>
+                <label>{{ 'import.layer.configure.layername' | translate }}</label>
                 <input name="layerName"
                     ng-model="self.layerSource.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
@@ -186,7 +189,7 @@
             </md-input-container>
 
             <md-input-container class="md-block" ng-switch-when="geojson">
-                <label>{{ 'import.file.configure.primaryfield ' | translate }}</label>
+                <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
                 <md-select
                     name="primaryField"
                     ng-model="self.layerSource.config.nameField"
@@ -203,7 +206,7 @@
 
             <div layout="row" ng-switch-when="geojson">
                 <md-input-container class="md-block" flex>
-                    <label>{{ 'import.file.configure.colourfield' | translate }}</label>
+                    <label>{{ 'import.layer.configure.colourfield' | translate }}</label>
                     <input rv-minicolors options="self.configure.colourPickerSettings"
                         name="layerName"
                         ng-change="self.configure.configureResetValidation()"
