@@ -759,6 +759,7 @@ export class Btn extends PanelElem {
     * @param {SVG} svg - the icon to be set for the Btn
     */
     set icon(svg: SVGElement) {
+        console.log(svg);
         svg.classList.add('svg-style');
         this._element.append(svg);
     }
