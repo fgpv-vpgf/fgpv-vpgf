@@ -14,87 +14,89 @@ $.getScript('../../../../rv-main.js', function () {
     //once map is added
     RZ.mapAdded.subscribe(mapi => {
 
-        //SETUP:
-        let text = "Title";
-        // let text = "<p>Text PanelElem</p><h2></h2>"; //multiple top level elements --> throws exception successfully 
-        let htmlInput = $("#coolInput");
-        let panelElem1 = new RZ.PanelElem(text);
-        let panelElem2 = new RZ.PanelElem($("<div>Contents:</div>"));
-        let panelElem3 = new RZ.PanelElem(htmlInput);
-        let panelElem4 = new RZ.PanelElem($('<p>Controls:</p>'))
-        let imgElem = new RZ.PanelElem($("#coolImg"));
-        let closeBtn = new RZ.PanelElem('x');
+        // //SETUP:
+        // 
+        // // let text = "<p>Text PanelElem</p><h2></h2>"; //multiple top level elements --> throws exception successfully 
+        // let htmlInput = $("#coolInpulet text = "Title";t");
+        // let panelElem1 = new RZ.PanelElem(text);
+        // let panelElem2 = new RZ.PanelElem($("<div>Contents:</div>"));
+        // let panelElem3 = new RZ.PanelElem(htmlInput);
+        // let panelElem4 = new RZ.PanelElem($('<p>Controls:</p>'))
+        // let imgElem = new RZ.PanelElem($("#coolImg"));
+        // let closeBtn = new RZ.PanelElem('x');
 
-        let btn = new RZ.Btn();
-        btn.text = "Btn.";
-        $(btn.element).click(function () {
-            alert('Btn element clicked!')
-        });
-
-
-        let btn2 = new RZ.Btn();
-        btn2.icon = document.getElementById('green-rect');
-
-        //Creating a panelElem to be set as contents. User defines line breaks/formatting etc. (this is like dropping a document fragment)
-        $(panelElem2.element).append($("<br>"));
-        $(panelElem2.element).append($("<br>"));
-        $(panelElem2.element).append(btn.element);
-        $(panelElem2.element).append(btn2.element);
-        $(panelElem2.element).append($("<br>"));
-        $(panelElem2.element).append($("<br>"));
-        $(panelElem2.element).append(imgElem.element);
+        // let btn = new RZ.Btn();
+        // btn.text = "Btn.";
+        // $(btn.element).click(function () {
+        //     alert('Btn element clicked!')
+        // });
 
 
-        //creating panels on map
-        let lightyear = new RZ.Panel("Buzz");
-        let mapInstance = mapi.createPanel('Buzz');
-        lightyear.setMap(mapi);
+        // let btn2 = new RZ.Btn();
+        // btn2.icon = document.getElementById('green-rect');
 
-        let woody = new RZ.Panel("Woody");
-        let mapInstance2 = mapi.createPanel('Woody');
-        woody.setMap(mapi);
-
-        //console.log(mapi.mapGrid);
-        //console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
-
-        //PANEL TESTS:         
-
-        //line breaks need to be added in by the user        
-        woody.controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
-
-        //console.log(lightyear.controls);        
-        woody.content = panelElem2;
-        //console.log(lightyear.content);
+        // //Creating a panelElem to be set as contents. User defines line breaks/formatting etc. (this is like dropping a document fragment)
+        // $(panelElem2.element).append($("<br>"));
+        // $(panelElem2.element).append($("<br>"));
+        // $(panelElem2.element).append(btn.element);
+        // $(panelElem2.element).append(btn2.element);
+        // $(panelElem2.element).append($("<br>"));
+        // $(panelElem2.element).append($("<br>"));
+        // $(panelElem2.element).append(imgElem.element);
 
 
-        //console.log("Panel ID: "+ lightyear.id);        
-        //console.log(lightyear.element);
-        //lightyear.setPosition(2,3,4,25); //out of bounds of grid
-        //lightyear.setMinPosition(2,3,3,4); 
-        //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
-        woody.setPosition(24, 288);
-        //woody.setMinPosition(10, 10, 11, 11); //if not set causes a conflict, if set and panel SHOULD autoshrink to 7, 9, 11, 11
-        woody.open();
+        // //creating panels on map
+        // let lightyear = new RZ.Panel("Buzz");
+        // let mapInstance = mapi.createPanel('Buzz');
+        // lightyear.setMap(mapi);
 
-        /**
-         * Position grid is 20 by 20
-         * Rows go from 0 - 19
-         *              20 - 39
-         *              40 - 59
-         * 
-         * all the way up to 380 - 399
-         */
-        //lightyear.setPosition(4, 268);
-        lightyear.setPosition(69, 110);  //one colum (9-10), two rows (60 - 100)
-        //lightyear.setMinPosition(109, 110);
+        // let woody = new RZ.Panel("Woody");
+        // let mapInstance2 = mapi.createPanel('Woody');
+        // woody.setMap(mapi);
 
-        lightyear.open();
+        // //console.log(mapi.mapGrid);
+        // //console.log(mapi.panelRegistry); //or console.log(mapi.panelRegistry);
 
-        //console.log(woody.staticavailableSpaces());
-        //console.log(mapi.mapGrid);
+        // //PANEL TESTS:         
 
-        console.log(lightyear.staticavailableSpaces());
-        console.log(lightyear.availableSpaces());
+        // //line breaks need to be added in by the user        
+        // woody.controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
+
+        // //console.log(lightyear.controls);        
+        // woody.content = panelElem2;
+        // //console.log(lightyear.content);
+
+
+        // //console.log("Panel ID: "+ lightyear.id);        
+        // //console.log(lightyear.element);
+        // //lightyear.setPosition(2,3,4,25); //out of bounds of grid
+        // //lightyear.setMinPosition(2,3,3,4); 
+        // //lightyear.setMinPosition(-1, 3, 4, 5) //out of bounds of grid (also of the set position)
+        // woody.setPosition(24, 288);
+        // //woody.setMinPosition(24, 188);
+        // //woody.setMinPosition(10, 10, 11, 11); //if not set causes a conflict, if set and panel SHOULD autoshrink to 7, 9, 11, 11
+        // woody.open();
+
+        // /**
+        //  * Position grid is 20 by 20
+        //  * Rows go from 0 - 19
+        //  *              20 - 39
+        //  *              40 - 59
+        //  * 
+        //  * all the way up to 380 - 399
+        //  */
+        // //lightyear.setPosition(4, 268);
+        // lightyear.setPosition(69, 110);  //one colum (9-10), two rows (60 - 100)
+        // //lightyear.setMinPosition(109, 110);
+
+        // lightyear.open();
+
+        // //console.log(woody.staticavailableSpaces());
+        // console.log(mapi.mapGrid);
+
+        // console.log(lightyear.staticavailableSpaces());
+        // console.log(lightyear.staticavailableSpaces(5, 10));//5 and 10 are the width and height
+        // console.log(lightyear.availableSpaces());
 
         //lightyear.setMinPosition(2, 6); //if not set, all -1 should be set because of default minimum position 
 
