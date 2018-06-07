@@ -1,14 +1,31 @@
-TODO: 
+TODO (MEETING PLAN): 
 
-June 4: 
+June 7:
+-availableSpaces min feat
+-testing and test cases for all positioning related things 
+-both in .js file AND in console
+-static form of available spaces
+-set map object, add to panel registry done in a really hacky way
+
+June 8: 
+-toggle button find way to actually hide that portion of panel
+-is the PanelElem string, HTML, jQuery<HTMLElement> proper? 
+-SVG buttons are properly done? 
+-Btns bypass PanelElem constructor?
+-testing and test cases for set content (setting PanelElems), panel controls, making different types of Btns, shortcuts
+-on window resize "height changes" even though no actual change
+
+
+
+
 
 -Error testing with test cases 
--min feat for available spaces 
 -CSS access from API folder
--toggle button find way to actually hide that portion of panel
 -documentation
--scrap map grid? 
--resize delay?
+-scrap map grid --> keep for debugging purposes, ask at meeting
+-object.prototype for privates to hide in console
+
+-make sure available spaces and min position work impeccably! 
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
@@ -35,7 +52,18 @@ DOCUMENTATION:
 
 
 
-Available Spaces: 
-    -How to evaluate conflict for each square as top left corner
-    -for each claimed spot in panel registry --> pretend this spot is bottom right square of panel of our desired dimensions
-        -for top left --> bottom right mark availableSpaces as -1
+
+
+
+
+
+
+
+
+
+
+-Add features: controls and contents (demonstrate the setters and getters)
+-Explain that contents are just one PanelElem --> basically a string, HTML, JQuery<HTMLElement>
+-Explain shortcuts and demo them (title, |, x, t)
+-Distinguish between SVG and Text Btns (they are all uniform)
+
