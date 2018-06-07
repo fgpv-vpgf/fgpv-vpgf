@@ -2,14 +2,23 @@
 
 ### Creating and Opening the Panel:
 
-- first create a panel on the map -> you pass in an ID and that id and map object get passed to constructor
-    `RZ.mapInstances[0].createPanel('panel1');`
-    `RZ.mapInstances[0].panelRegistry[0].id;`
-    `RZ.mapInstance[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES]`        
+- First we create the panel on a map instance. We can check it got added by looking at the panel registry.
+- For demo purposes, I have subscribed to all of the observables in this API which you can see fire in the console.
+    ```
 
-- once the panel gets created, we need to set its position on the map and open it. 
-    `RZ.mapInstances[0].panelRegistry[0].setPosition(25, 70);`
-    `RZ.mapInstances[0].panelRegistry[0].open();`
+    RZ.mapInstances[0].createPanel('panel1');
+    RZ.mapInstances[0].panelRegistry[0].id;
+    RZ.mapInstances[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES]
+    
+    ```        
+
+- Once the panel is created, we need to set its position on the map and open it. 
+    ```
+
+    RZ.mapInstances[0].panelRegistry[0].setPosition(25, 268);
+    RZ.mapInstances[0].panelRegistry[0].open();
+
+    ```
 
 - ***Observables:** opening, closing, width changed, height changed, position changed
 
@@ -30,7 +39,7 @@
 
     ```
     
-    Btns can be set to SVG, text (uniform sizes)
+- ***Btns*** can be set to SVG, text (uniform sizes)
 
     ```
 
@@ -41,13 +50,11 @@
     });
 
     let btn2 = new RZ.Btn();
-    btn2.icon = $(<svg id='green-rect' width="300" height="200">
-        <rect width="100%" height="100%" fill="green" />
-    </svg>);
+    btn2.icon = $.parseHTML( '<svg id="green-rect" width="300" height="200"><rect width="100%" height="100%" fill="green"/></svg>');
 
     ```
 
-    Shortcuts are control dividers '|', toggle 'T', close 'x'
+- ***Shortcuts*** are control dividers '|', toggle 'T', close 'x'
 
     ```
 
@@ -63,27 +70,31 @@
     ```
 
 
-- ***Set Controls:***  panel controls set as a list of PanelElems
+- ***Set/Get Controls:***  panel controls set as a list of PanelElems
     
     `RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];`
+
     `RZ.mapInstances[0].panelRegistry[0].controls;`
 
-- ***Set Content:*** panel contents are a single PanelElem
+- ***Set/Get Content:*** panel contents are a single PanelElem
     
     `RZ.mapInstances[0].panelRegistry[0].content = panelElem2;`
+
     `RZ.mapInstances[0].panelRegistry[0].content;`
 
--Available spaces: 
-    -when no position call to availableSpaces() and user doesn't supply anything
-    -if user wants to compute available spaces for a supplied width and height
-    -when position is defined 
-    -when min position is set
-    -Have values memorized so explanation flows
-    -available spaces marks all position invalid where setting that grid square as a panel's top left corner would put it 
-        -out of bounds of map
-        -have the panels min position conflicting with another panel
+### Available Spaces 
 
+- ***Available spaces:*** 
+    - when no position call to availableSpaces() and user doesn't supply anything
+    - if user wants to compute available spaces for a supplied width and height
+    - when position is defined 
+    - when min position is set
+    - have values memorized so explanation flows
+    - available spaces marks all position invalid where setting that grid square as a panel's top left corner would put it 
+        - out of bounds of map
+        - have the panels min position conflicting with another panel
 
+### Conflict Detection and Error Handling
 -If we try to mess with things: 
     -Setting a min that's not a subset of actual position
     -Opening a panel whose min is within another panel's min
