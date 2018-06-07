@@ -5,6 +5,9 @@ June 7:
 -testing and test cases for all positioning related things 
 -both in .js file AND in console
 -static form of available spaces
+    -so user can call RZ.Panel.availableSpaces(2,3); --> static
+    -can call lightyear.availableSpaces(); --> calculates based on position
+    -if no position is set calculaes
 -set map object, add to panel registry done in a really hacky way
 
 June 8: 
