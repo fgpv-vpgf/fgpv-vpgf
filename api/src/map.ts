@@ -76,17 +76,26 @@ export default class Map {
     private _identifyMode: IdentifyMode = IdentifyMode.Details;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
-    private _panel_registry: number[][];
+    private _map_grid: number[][];
     private _element: HTMLElement;
+    private _panel_registry: Panel[];
 
     /** Creates a new map inside of the given HTML container, which is typically a DIV element. */
+    //if map grid is represented as a dictionary
+    //updating it will be easier
+    //calls will be quicker
+    //if have coordinates indexed by coverage
+    //then for availablespaces check can simply loop through array of -1, 1 and see if any of them would fall into panel space
+    //i get available spaces but just to confirm, even if panel is already set on map, we are disregarding the current panel's set, but still
+    //taking into account other panels?
+    //could just scrap map grid entirely? use panel registry and width/height of existing panels to detect shrinking etc (might save time)
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
         this._layers = new LayerGroup(this);
         this._element = mapDiv;
-
+        this._panel_registry = [];
 
         if (config) {
 
@@ -110,7 +119,7 @@ export default class Map {
         while (rows--) array.push(row.slice());
 
         //initialize panel registry to have all zeroes (no panels added to a new map instance yet)
-        this._panel_registry = array;
+        this._map_grid = array;
     }
 
     get layers(): LayerGroup {
@@ -123,10 +132,26 @@ export default class Map {
 
     /**
      * Returns the grid representation of the map instance describing where panels are on the map. 
-     * @return {Number[]} - 
+     * @return {number[][]} - 
      */
-    get panelRegistry() {
+    get mapGrid() {
+        return this._map_grid;
+    }
+
+    /**
+     * Returns the list of Panels on this map instance. 
+     * @return {Panel[]} - 
+     */
+    get panelRegistry(){
         return this._panel_registry;
+    }
+
+    /**
+     * Adds a panel to the panel registry. 
+     * @param {Panel} panel - the panel to be added to this map instance.  
+     */
+    /*protected*/ addPanel(panel: Panel){
+        this._panel_registry.push(panel);
     }
 
     /**
@@ -137,13 +162,19 @@ export default class Map {
      * @param bottomRightX - the x coordinate of the bottom, right panel corner
      * @param bottomRightY - the y coordinate of the bottom, right panel corner
      */
-    updatePanelRegistry(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    updateMapGrid(coverage: number, topLeft: number, bottomRight: number) {
 
-        let startingPosition = this._panel_registry[topLeftX][topLeftY];
+        let topLeftX = topLeft % 20;
+        let topLeftY = Math.floor(topLeft / 20);
+        let bottomRightX = bottomRight % 20;
+        let bottomRightY = Math.floor(bottomRight / 20);
+
+
+        let startingPosition = this._map_grid[topLeftX][topLeftY];
         //go through all indices of panel_registry that need to be updated, and update them
         for (let i = topLeftX; i <= bottomRightX; i++) {
             for (let j = topLeftY; j <= bottomRightY; j++) {
-                this._panel_registry[i][j] = coverage;
+                this._map_grid[i][j] = coverage;
             }
         }
     }
@@ -154,11 +185,12 @@ export default class Map {
      * So panel object would be only parameter
      * @param {string} id - the ID of the panel to be created
      * @param {Panel} panel - the panel to be created on the map instance
+     * @return {Map} - the map object so that the panel can set its map instance
      */
-    createPanel(id: string, panel: Panel) {
+    createPanel(id: string): Map {
         //add panel to map instance
-        this.mapDiv.append(panel.element);
-        panel.setMap(this);
+        this.mapDiv.append($('#' + id));
+        return this; //panel can then set this as the map instance. 
     }
 
     /**
@@ -167,8 +199,8 @@ export default class Map {
      * @param {string} id - the ID of the panel to be deleted
      * @param {Panel} panel - the panel to be deleted on the map instance
      */
-    deletePanel(id: string, panel: Panel) {
-        $(panel).remove();
+    deletePanel(id: string) {
+        $("#" + id).remove();
     }
 
 

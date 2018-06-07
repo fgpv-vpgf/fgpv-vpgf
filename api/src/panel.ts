@@ -36,20 +36,18 @@ export class Panel {
     //subjects initialized for observables that are fired through method calls
     private _opening: Subject<any> = new Subject();
     private _closing: Subject<any> = new Subject();
-    private _positionChangedX: Subject<any> = new Subject();
-    private _positionChangedY: Subject<any> = new Subject();
+    private _positionChanged: Subject<any> = new Subject();
     private _widthChanged: Subject<any> = new Subject();
     private _heightChanged: Subject<any> = new Subject();
 
-    private _open: boolean; //whether panel is open or closed 
+    _open: boolean; //whether panel is open or closed 
 
     //user accessible observables 
     opening: Observable<any>;
     closing: Observable<any>;
     topLeftXChanged: Observable<number>;
     bottomRightXChanged: Observable<number>;
-    positionChangedX: Observable<[number, number]>; //top left, bottom right
-    positionChangedY: Observable<[number, number]>; //top left, bottom right
+    positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>
     heightChanged: Observable<number>
 
@@ -66,12 +64,11 @@ export class Panel {
         this._open = false;
         this.opening = this._opening.asObservable();
         this.closing = this._closing.asObservable();
-        this.positionChangedX = this._positionChangedX.asObservable();
-        this.positionChangedY = this._positionChangedY.asObservable();
+        this.positionChanged = this._positionChanged.asObservable();
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
 
-        this.observableSubscribe();
+        //this.observableSubscribe();
 
         //create panel components and document fragment
         this.createPanelComponents();
@@ -82,20 +79,21 @@ export class Panel {
     /**
     * Helper method to see observables firing in console.
     * To be removed when API is finished. 
+    * @private
     */
-    private observableSubscribe() {
+    /*private observableSubscribe(): void {
         this.opening.subscribe(val => console.log("Panel opening..."));
         this.closing.subscribe(val => console.log("Panel closing..."));
-        this.positionChangedX.subscribe(posX => console.log(posX));
-        this.positionChangedY.subscribe(posY => console.log(posY));
-        this.widthChanged.subscribe(width => console.log(width));
-        this.heightChanged.subscribe(height => console.log(height));
-    }
+        this.positionChanged.subscribe(pos => console.log([pos, 'position changed!']));
+        this.widthChanged.subscribe(width => console.log([width, 'width changed!']));
+        this.heightChanged.subscribe(height => console.log([height, 'height changed!']));
+    }*/
 
     /**
     * Helper method to create panel components and the document fragment. 
+    * @private
     */
-    private createPanelComponents() {
+    private createPanelComponents(): void {
 
         //create panel components as HTMLElements
         this._panel_contents = document.createElement("div");
@@ -121,44 +119,177 @@ export class Panel {
 
     /**
     * Helper method to setPosition(), setMinPosition(), set coverable(). Updates available spaces on the grid.
+    * @private
     */
-    private updateAvailableSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
-        if (this._map_object !== undefined) {
-            this._map_object.updatePanelRegistry(coverage, topLeftX, topLeftY, bottomRightX, bottomRightY);
-        }
+    private updateGridSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+        this._map_object.updateMapGrid(coverage, topLeftX * 20 + topLeftY, bottomRightX * 20 + bottomRightY);
     }
 
     /**
      * Sets the map object that this panel resides on. 
      */
-    setMap(parentMap: Map) {
-        this._map_object = parentMap;
+    setMap(map: Map): void {
+        this._map_object = map;
+        let panel = this;
+        this._map_object.addPanel(this);
+        //resize listener
+        $(window).resize(function () {
+            //fires observables
+            panel._widthChanged.next(<number>$(panel._map_object.mapElement).width());
+            panel._heightChanged.next(<number>$(panel._map_object.mapElement).height());
+
+            //changes width/height to new percentage value of the map
+            panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
+        });
+    }
+
+    get panelCoords(): number[] {
+        return [this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY];
     }
 
     /**
     * Returns an array of arrays representing each grid square. An array value can be the following:
-    * -1 : Invalid panel position (not coverable because it is some panel's min position)
+    * -1 : Invalid panel position (not coverable because it is some panel's min position, or user wants this area empty)
     *  0 :  Valid panel position (no panels set in this area)
     * 1+: Valid panel position with 1 or more other panels capable of covering it (panel is here, but coverable)
     *
     * If width and/or height are not provided the width/height can be computed from the panel position. 
     * If position is not set throw an error
+    * 
+    * "If a panel of this dimension were to use this grid square as its top left corner would it fit?" computation based on using grid square as its top left position
+    * 
+    * 
     * @param {number} [width] - the panel width
     * @param {number} [height] - the panel height
     * @return {number[][]} - array of arrays representing each grid square 
     */
 
-    /*static*/ availableSpaces(width?: number, height?: number): number[][] {
-        return this._map_object.panelRegistry;
+    staticavailableSpaces(width?: number, height?: number): number[][] {
+
+        if (this._map_object === undefined) {
+            throw "Exception: this panel's map is not set; cannot retrieve grid.";
+        }
+
+        //initializes availableSpaces array
+        let cols = 20, rows = 20;
+        let availableSpaces = [], row = [];
+        while (cols--) row.push(0);
+        while (rows--) availableSpaces.push(row.slice());
+        let panelWidth, panelHeight;
+        let minPanelWidth = undefined;
+        let minPanelHeight = undefined;
+
+        //if the user does not supply the width and height for the panel, compute it using the panel's position
+        if (width === undefined && height === undefined) {
+            if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
+                panelWidth = this._bottomRightX - this._topLeftX;
+                panelHeight = this._bottomRightY - this._topLeftY;
+                minPanelWidth = panelWidth;
+                minPanelHeight = panelHeight;
+
+                //if the min position is different than regular position, take this into account
+                if (this._bottomRightX !== this._minBottomRightX || this._bottomRightY !== this._minBottomRightY || this._topLeftX !== this._minTopLeftX || this._topLeftY !== this._minTopLeftY) {
+                    minPanelWidth = this._minBottomRightX - this._minTopLeftX;
+                    minPanelHeight = this._minBottomRightY - this._minTopLeftY;
+                }
+            }
+            //if a panel's position is not set throw an error
+            else {
+                throw "Exception: Panel position is undefined, cannot compute width and height.";
+            }
+        }
+        //otherwise use user supplied width and height
+        else {
+            panelWidth = width;
+            panelHeight = height;
+            minPanelWidth = panelWidth;
+            minPanelHeight = panelHeight;
+        }
+
+        //all squares in these spaces when used as topLeft corner would put panel out of bounds of map
+        if (panelWidth !== undefined && panelHeight !== undefined) {
+            for (let i = 0; i < 20; i++) {
+                for (let j = 0; j < 20; j++) {
+                    if ((20 - i) < panelWidth || (20 - j) < panelHeight) {
+                        availableSpaces[j][i] = -1;
+                    }
+                }
+            }
+        }
+
+        //for every open panel in panel registry
+        for (let panel of this._map_object.panelRegistry) {
+            if (panel._open === true && panel !== this) {
+
+                if (panelWidth !== undefined && panelHeight !== undefined) {
+
+                    //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
+                    let topLeftX = panel.panelCoords[0] - panelWidth;
+                    let topLeftY = panel.panelCoords[1] - panelHeight;
+                    let bottomRightX = panel.panelCoords[2];
+                    let bottomRightY = panel.panelCoords[3];
+
+                    //if these are out of bounds of map, just use the zeroth coordinates
+                    if (topLeftX < 0) {
+                        topLeftX = 0;
+                    }
+                    if (topLeftY < 0) {
+                        topLeftY = 0;
+                    }
+
+                    //mark as invalid
+                    for (let i = topLeftX; i < bottomRightX; i++) {
+                        for (let j = topLeftY; j < bottomRightY; j++) {
+                            availableSpaces[j][i] = -1;
+                        }
+                    }
+
+                }
+
+            }
+        }
+        return availableSpaces;
     }
 
     /**
     * If no position is set, calculate based on a 1x1 panel. 
     * @return {number[][]} - array of arrays representing each grid square 
     */
-    /*availableSpaces(): number[][] {
-        return [[0]];
-    }*/
+    availableSpaces(): number[][] {
+
+        //initializes availableSpaces array
+        let cols = 20, rows = 20;
+        let availableSpaces = [], row = [];
+        while (cols--) row.push(0);
+        while (rows--) availableSpaces.push(row.slice());
+        let panelWidth, panelHeight;
+        let minPanelWidth = undefined;
+        let minPanelHeight = undefined;
+
+        if (this._map_object === undefined) {
+            throw "this panel's map is not set; cannot retrieve grid.";
+        }
+
+        for (let panel of this._map_object.panelRegistry) {
+
+            if (panel._open === true && panel !== this) {
+
+                //1x1 panel position will be invalid if the open panel spaces
+                let topLeftX = panel.panelCoords[0];
+                let topLeftY = panel.panelCoords[1];
+                let bottomRightX = panel.panelCoords[2];
+                let bottomRightY = panel.panelCoords[3];
+
+                //mark as invalid
+                for (let i = topLeftX; i < bottomRightX; i++) {
+                    for (let j = topLeftY; j < bottomRightY; j++) {
+                        availableSpaces[j][i] = -1;
+                    }
+                }
+            }
+        }
+        return availableSpaces;
+    }
 
     /**
     * Returns controls for panel
@@ -211,7 +342,7 @@ export class Panel {
     * @throws {Exception} - panel is out of bounds of map. 
     * 
     */
-    open() {
+    open(): void {
         if (this._map_object !== undefined) {
             //check to see panel position is set
             if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
@@ -228,8 +359,8 @@ export class Panel {
                         //changes position on map and updates panel registry
                         this.changePosition(this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
                         this._panel_contents.classList.remove('hidden'); //hide panel before a call to open is made
-                        this.updateAvailableSpaces(1, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
-                        this.updateAvailableSpaces(-1, this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY);
+                        this.updateGridSpaces(1, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
+                        this.updateGridSpaces(-1, this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY);
                         this._open = true;
                     }
                 }
@@ -247,123 +378,80 @@ export class Panel {
     * Helper method to open(). Detects a conflict where an opening panel interferes with the opening of another panel. 
     * @returns {boolean} - returns false if conflict is not detected
     * @throws {Exception} - ConflictDetectedError: Panel Unshrinkable!
+    * @private
     */
     private conflictDetected(): boolean {
 
-        let availableSpaces = this.availableSpaces();
+        //first check all currently open panels for panel's min position, if conflict then throw exception
+        for (let panel of this._map_object.panelRegistry) {
+            if (panel._open === true && panel !== this) {
 
-        //first check available spaces for panel's min position, if conflict then throw exception
-        //all the indices in this array 
-        for (let i = this._minTopLeftX; i <= this._minBottomRightX; i++) {
-            for (let j = this._minTopLeftY; j <= this._minBottomRightY; j++) {
-                //if a panel exists where THIS panel is trying to open
-                if (availableSpaces[i][j] !== 0) {
-                    throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
+                let topLeftX = panel.panelCoords[0];
+                let topLeftY = panel.panelCoords[1];
+                let bottomRightX = panel.panelCoords[2];
+                let bottomRightY = panel.panelCoords[3];
+
+                //if panel  doesn't completely avoid panel, then panel needs to be shrunk incrementally up to min position
+                //avoiding happens when opening panel's min is to left OR top OR bottom OR right (or some combo)
+                if (!(this._bottomRightX < topLeftX || this._bottomRightY < topLeftY || this._topLeftX > bottomRightX || this._topLeftY > bottomRightY)) {
+
+                    //if panel's min doesn't completely avoid panel, then panel can't open
+                    if (!(this._minBottomRightX < topLeftX || this._minBottomRightY < topLeftY || this._minTopLeftX > bottomRightX || this._minTopLeftY > bottomRightY)) {
+                        throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
+                    }
+                    else {
+
+                        let newLeft = this._topLeftX;
+                        let newTop = this._topLeftY;
+                        let newBottom = this._bottomRightY;
+                        let newRight = this._bottomRightX;
+                        let oldMinLeft = this._minTopLeftX;
+                        let oldMinTop = this._minTopLeftY;
+                        let oldMinRight = this._minBottomRightX;
+                        let oldMinBottom = this._minBottomRightY;
+
+                        //if min position avoided panel by being on left, decrease right position of this panel to get closer to min
+                        if (this._minBottomRightX < topLeftX && this._bottomRightX > this._minBottomRightX) {
+                            newRight = topLeftX - 1;
+                            alert("Shrinking right!");
+                        }
+
+                        //if min position avoided panel by being on top, decrease bottom position of this panel to get closer to min
+                        if (this._minBottomRightY < topLeftY && this._bottomRightY > this._minBottomRightY) {
+                            newBottom = topLeftY - 1;
+                            alert("Shrinking bottom!");
+                        }
+
+                        //if min position avoided panel by being on right, increase left position of this panel to get closer to min
+                        if (this._minTopLeftX > bottomRightX && this._topLeftX < this._minTopLeftX) {
+                            newLeft = bottomRightX + 1;
+                            alert("Shrinking left!");
+                        }
+
+                        //if min position avoided panel by being on bottom, increase top position of this panel to get closer to min
+                        if (this._minTopLeftY > bottomRightY && this._topLeftY < this._minTopLeftY) {
+                            newTop = bottomRightY + 1;
+                            alert("Shrinking top!");
+                        }
+
+                        this.setPosition(newTop * 20 + newLeft, newBottom * 20 + newRight);
+                        this.setMinPosition(oldMinTop * 20 + oldMinLeft, oldMinBottom * 20 + oldMinRight);
+                    }
                 }
             }
         }
-
-        //next expand range of checks by 1 row up/down, 1 column right/left (rows also check for corner pieces)
-        let leftCol = this._minTopLeftX - 1;
-        let rightCol = this._minBottomRightX + 1;
-        let topRow = this._minTopLeftY - 1;
-        let bottomRow = this._minBottomRightY + 1;
-        let exit = false;
-
-
-        while (true) {
-
-            //if the top row is contained within top bound for this panel then perform search
-            if (topRow >= this._topLeftY) {
-                //check top row for any conflicts 
-                for (let i = leftCol; i <= rightCol; i++) {
-                    if (availableSpaces[i][topRow] !== 0) {
-                        topRow = topRow + 1;
-                        exit = true;
-                    }
-                }
-            }
-
-            //if the bottom row is contained within bottom bound for this panel, perform search
-            /*if (bottomRow <= this._bottomRightY) {
-                //check bottom row for any conflicts 
-                for (let i = leftCol; i <= rightCol; i++) {
-                    if (availableSpaces[i][bottomRow] !== 0) {
-                        bottomRow = bottomRow - 1;
-                        exit = true;
-                    }
-                }
-            }*/
-
-            //if the left column is contained within bottom bound for this panel, perform search
-            if (leftCol >= this._topLeftX) {
-                //check left column for conflicts 
-                for (let i = topRow; i <= bottomRow; i++) {
-                    if (availableSpaces[leftCol][i] !== 0) {
-                        leftCol = leftCol + 1;
-                        exit = true;
-                    }
-                }
-            }
-
-            //if the right column is contained within bottom bound for this panel, perform search
-            if (rightCol <= this._minBottomRightX) {
-                //check right column for conflicts 
-                for (let i = topRow; i <= bottomRow; i++) {
-                    if (availableSpaces[rightCol][i] !== 0) {
-                        rightCol = rightCol - 1;
-                        exit = true;
-                    }
-                }
-            }
-
-            //if any of the columns/rows had conflicts, exit because you know how far to shrink position
-            //first shrink actual panel position
-            if (exit) {
-                let minLeftCol = this._minTopLeftX;
-                let minRightCol = this._minBottomRightX;
-                let minTopRow = this._minTopLeftY;
-                let minBottomRow = this._minBottomRightY;
-
-                this.setPosition(leftCol, topRow, rightCol, bottomRow);
-                this.setMinPosition(minLeftCol, minRightCol, minTopRow, minBottomRow);
-                break;
-
-            }
-            //if full range of panel was searched simply exit loop (position of panel remains same)
-            else if (rightCol >= this._minBottomRightX && leftCol <= this._topLeftX && bottomRow >= this._bottomRightY && topRow <= this._topLeftY) {
-                break;
-            }
-            //if not, expand the range of conflict search
-            else {
-                leftCol -= 1;
-                rightCol += 1;
-                bottomRow += 1
-                topRow -= 1;
-                console.log([leftCol, topRow, rightCol, bottomRow]);
-            }
-
-        }
-
-
-
 
         return false;
-    }
 
-    /**
-    * Helper method to conflictDetected(). Shrinks the panel (if possible) to accomodate a conflicting panel.
-    * For now can only shrink the panel attempting to open on the map (not the already existing panel). 
-    * @throws {Exception} - this panel is unshrinkable.
-    */
-    private shrinkPanel() {
 
-    }
+    }  
+
+
 
     /**
     * Closes the panel on the map. (For the user to see).
     */
-    close() {
+    close(): void {
 
         //if the map doesn't exist or the position hasn't been set then the map hasn't been added to a map
         if (this._map_object !== undefined || this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
@@ -371,7 +459,7 @@ export class Panel {
             this._panel_contents.classList.add('hidden');
             //updates panel registry
 
-            this.updateAvailableSpaces(0, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
+            this.updateGridSpaces(0, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
             this._open = false;
         }
         else {
@@ -421,15 +509,18 @@ export class Panel {
 
     /**
     * Sets the position for the Panel according to the map grid layout. 
-    * @param {number} topLeftX - the x coordinate of the top left square (set as top left panel corner) 
-    * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
-    * @param {number} bottomRightX - the y coordinate of the bottom right square (set as the bottom right panel corner)
-    * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
+    * @param {number} topLeft - the grid square that is the panel's top left corner
+    * @param {number} bottomRight - the grid square that is the panel's bottom right corner
     */
-    setPosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    setPosition(topLeft: number, bottomRight: number): void {
+
+        let topLeftX = (topLeft) % 20; //example panel topLeft of 20 means left is 0, 
+        let topLeftY = Math.floor(topLeft / 20);
+        let bottomRightX = (bottomRight) % 20;
+        let bottomRightY = Math.floor(bottomRight / 20);
 
         //if position supplied is invalid throw an error
-        if (topLeftY > bottomRightY || topLeftX > bottomRightX) {
+        if (topLeftX > bottomRightX || topLeftY > bottomRightY) {
             throw "Invalid position supplied!";
         }
         else {
@@ -439,11 +530,12 @@ export class Panel {
             this._bottomRightX = bottomRightX;
             this._bottomRightY = bottomRightY;
 
-            //change min positions to new default -> user changes away from default if they want
-            this.setMinPosition(topLeftX, topLeftY, bottomRightX, bottomRightY);
+            //newTop*10 + 10 + newLeft, newBottom*10 + 10 + newRight
 
-            this._positionChangedX.next([topLeftX, bottomRightX]);
-            this._positionChangedY.next([topLeftY, bottomRightY]);
+            //change min positions to new default -> user changes away from default if they want
+            this.setMinPosition(topLeft, bottomRight);
+
+            this._positionChanged.next([topLeft, bottomRight]);
 
             //if panel already open, available spaces should be updated. 
             if (this._map_object !== undefined && this._open === true) {
@@ -453,18 +545,26 @@ export class Panel {
 
         }
 
-
     }
 
 
     /**
     * Sets the position for the Panel according to the map grid layout (such that panel has a minimum size). 
-    * @param {number} topLeftX - the x coordinate of the top left square (set as top left panel corner) 
-    * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
-    * @param {number} bottomRightX - the y coordinate of the bottom right square (set as the bottom right panel corner)
-    * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
+    * @param {number} topLeft - the grid square representing the top left corner of the panel
+    * @param {number} bottomRight - the grid square representing the bottom right corner of the panel
     */
-    setMinPosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    setMinPosition(topLeft: number, bottomRight: number): void {
+
+        let topLeftX = topLeft % 20;
+        let topLeftY = Math.floor(topLeft / 20);
+        let bottomRightX = bottomRight % 20;
+        let bottomRightY = Math.floor(bottomRight / 20);
+
+        //if position supplied is invalid throw an error
+        if (topLeftX > bottomRightX || topLeftY > bottomRightY) {
+            throw "Invalid position supplied!";
+        }
+
         if (this.checkOutOfBounds(true, topLeftX, topLeftY, bottomRightX, bottomRightY) === false) {
             this._minTopLeftX = topLeftX;
             this._minTopLeftY = topLeftY;
@@ -485,8 +585,9 @@ export class Panel {
     * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
     * @param {number} bottomRightX - the y coordinate of the bottom right square (set as the bottom right panel corner)
     * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
+    * @private
     */
-    private changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    private changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): void {
         //set left position (5% * parentWidth * topLeftX)
         var parentWidth = <number>$(this._map_object.mapElement).width();
         this._panel_contents.style.left = (0.05 * parentWidth * topLeftX).toString() + "px";
@@ -506,6 +607,7 @@ export class Panel {
     * Does not correct the panel - up to panel creator to properly place panel on the map.
     * @throws {Exception} - panel is not contained within map grid.
     * @return {boolean} - false is returned if  OutOfBoundsException not thrown
+    * @private
     */
     private checkOutOfBounds(isMin: boolean, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): boolean {
 
@@ -558,7 +660,7 @@ export class PanelElem {
     * @param {(string | HTMLElement | JQuery<HTMLElement>)} [element] - element to be set as PanelElem
     * @throws {Exception} - cannot have multiple top level elements
     */
-    setElement(element?: string | HTMLElement | JQuery<HTMLElement>) {
+    setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
         //if the element is a string either control divider, close button or title
         //TODO: what is a control divider?
