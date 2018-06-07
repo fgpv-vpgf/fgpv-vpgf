@@ -57,7 +57,7 @@ export class Panel {
 +    * @constructor
 +    * @param {string} id - the user defined ID name for this panel
 +    */
-    constructor(id: string) {
+    constructor(id: string, map: Map) {
 
         //init class attributes
         this._id = id;
@@ -67,6 +67,7 @@ export class Panel {
         this.positionChanged = this._positionChanged.asObservable();
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
+        this._map_object = map;
 
         //this.observableSubscribe();
 
@@ -79,15 +80,26 @@ export class Panel {
     /**
     * Helper method to see observables firing in console.
     * To be removed when API is finished. 
-    * @private
     */
-    /*private observableSubscribe(): void {
+    observableSubscribe(): void {
         this.opening.subscribe(val => console.log("Panel opening..."));
         this.closing.subscribe(val => console.log("Panel closing..."));
         this.positionChanged.subscribe(pos => console.log([pos, 'position changed!']));
         this.widthChanged.subscribe(width => console.log([width, 'width changed!']));
         this.heightChanged.subscribe(height => console.log([height, 'height changed!']));
-    }*/
+    }
+
+    /**
+    * Helper method to unsubscribe to observables.
+    * To be removed when API is finished. 
+    */
+    observableUnsubscribe(): void {
+        this.opening.subscribe();
+        this.closing.subscribe();
+        this.positionChanged.subscribe();
+        this.widthChanged.subscribe();
+        this.heightChanged.subscribe();
+    }
 
     /**
     * Helper method to create panel components and the document fragment. 
@@ -114,7 +126,18 @@ export class Panel {
         //append panel contents ("shell") to document fragment
         this._document_fragment = document.createDocumentFragment();
         this._document_fragment.appendChild(this._panel_contents);
-        document.body.appendChild(this._document_fragment);
+        this._map_object.mapDiv.append(this._document_fragment);
+
+        let panel = this;
+
+        $(window).resize(function () {
+            //fires observables
+            panel._widthChanged.next(<number>$(panel._map_object.mapElement).width() * 0.05);
+            panel._heightChanged.next(<number>$(panel._map_object.mapElement).height() * 0.05);
+
+            //changes width/height to new percentage value of the map
+            panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
+        });
     }
 
     /**
@@ -123,24 +146,6 @@ export class Panel {
     */
     private updateGridSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
         this._map_object.updateMapGrid(coverage, topLeftX * 20 + topLeftY, bottomRightX * 20 + bottomRightY);
-    }
-
-    /**
-     * Sets the map object that this panel resides on. 
-     */
-    setMap(map: Map): void {
-        this._map_object = map;
-        let panel = this;
-        this._map_object.addPanel(this);
-        //resize listener
-        $(window).resize(function () {
-            //fires observables
-            panel._widthChanged.next(<number>$(panel._map_object.mapElement).width());
-            panel._heightChanged.next(<number>$(panel._map_object.mapElement).height());
-
-            //changes width/height to new percentage value of the map
-            panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
-        });
     }
 
     get panelCoords(): number[] {
@@ -176,21 +181,25 @@ export class Panel {
         while (cols--) row.push(0);
         while (rows--) availableSpaces.push(row.slice());
         let panelWidth, panelHeight;
-        let minPanelWidth = undefined;
-        let minPanelHeight = undefined;
+        let minBottomX = undefined;
+        let minBottomY = undefined;
+        let minTopX = undefined;
+        let minTopY = undefined;
 
         //if the user does not supply the width and height for the panel, compute it using the panel's position
         if (width === undefined && height === undefined) {
             if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
                 panelWidth = this._bottomRightX - this._topLeftX;
-                panelHeight = this._bottomRightY - this._topLeftY;
-                minPanelWidth = panelWidth;
-                minPanelHeight = panelHeight;
-
+                panelHeight = this._bottomRightY - this._topLeftY + 1;
                 //if the min position is different than regular position, take this into account
                 if (this._bottomRightX !== this._minBottomRightX || this._bottomRightY !== this._minBottomRightY || this._topLeftX !== this._minTopLeftX || this._topLeftY !== this._minTopLeftY) {
-                    minPanelWidth = this._minBottomRightX - this._minTopLeftX;
-                    minPanelHeight = this._minBottomRightY - this._minTopLeftY;
+
+                    //how far removed the min bottom position is from the panel corner
+                    minBottomX = this._minBottomRightX;
+                    minBottomY = this._minBottomRightY;
+                    minTopX = this._minTopLeftX;
+                    minTopY = this._minTopLeftY;
+
                 }
             }
             //if a panel's position is not set throw an error
@@ -202,8 +211,6 @@ export class Panel {
         else {
             panelWidth = width;
             panelHeight = height;
-            minPanelWidth = panelWidth;
-            minPanelHeight = panelHeight;
         }
 
         //all squares in these spaces when used as topLeft corner would put panel out of bounds of map
@@ -225,6 +232,7 @@ export class Panel {
 
                     //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
                     let topLeftX = panel.panelCoords[0] - panelWidth;
+                    let originalTopLeftX = panel.panelCoords[0];
                     let topLeftY = panel.panelCoords[1] - panelHeight;
                     let bottomRightX = panel.panelCoords[2];
                     let bottomRightY = panel.panelCoords[3];
@@ -237,13 +245,23 @@ export class Panel {
                         topLeftY = 0;
                     }
 
+
                     //mark as invalid
                     for (let i = topLeftX; i < bottomRightX; i++) {
                         for (let j = topLeftY; j < bottomRightY; j++) {
+
                             availableSpaces[j][i] = -1;
+
+                            //if min width and height are specified want to mark all spaces causing overlap as '1'
+                            if (minBottomX !== undefined && minBottomY !== undefined && minTopX !== undefined && minTopY !== undefined) {
+                                //if min position completely misses this panel
+                                if ((i + minTopX) < originalTopLeftX || (j + minTopY) < originalTopLeftX || (i - minBottomX) > bottomRightX || (j - minBottomY) > bottomRightY) {
+                                    availableSpaces[j][i] = 1;
+
+                                }
+                            }
                         }
                     }
-
                 }
 
             }
@@ -444,7 +462,7 @@ export class Panel {
         return false;
 
 
-    }  
+    }
 
 
 
@@ -663,7 +681,6 @@ export class PanelElem {
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
         //if the element is a string either control divider, close button or title
-        //TODO: what is a control divider?
         if (typeof element === "string") {
             //divider shortcut
             if (element === "|") {
