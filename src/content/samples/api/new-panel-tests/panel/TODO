@@ -10,7 +10,7 @@ June 7:
 June 8: 
 -toggle button find way to actually hide that portion of panel
 -is the PanelElem string, HTML, jQuery<HTMLElement> proper? 
--SVG buttons are properly done? 
+-SVG buttons are properly done? NO 
 -Btns bypass PanelElem constructor?
 -testing and test cases for set content (setting PanelElems), panel controls, making different types of Btns, shortcuts
 -on window resize "height changes" even though no actual change
