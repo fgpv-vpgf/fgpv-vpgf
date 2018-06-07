@@ -1,39 +1,77 @@
-# Panel API Demo:
+# Panel API Demo Outline:
 
 ### Creating and Opening the Panel:
 
 - first create a panel on the map -> you pass in an ID and that id and map object get passed to constructor
-    - `RZ.mapInstances[0].createPanel('panel1');`
-    - `RZ.mapInstances[0].panelRegistry[0].id;`
-    - `RZ.mapInstance[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES]`        
+    `RZ.mapInstances[0].createPanel('panel1');`
+    `RZ.mapInstances[0].panelRegistry[0].id;`
+    `RZ.mapInstance[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES]`        
 
 - once the panel gets created, we need to set its position on the map and open it. 
-    - `RZ.mapInstances[0].panelRegistry[0].setPosition(25, 70);`
-    - `RZ.mapInstances[0].panelRegistry[0].open();`
+    `RZ.mapInstances[0].panelRegistry[0].setPosition(25, 70);`
+    `RZ.mapInstances[0].panelRegistry[0].open();`
 
-- show of the opening and set position observables
-- resize window show observables firing upon resize to show width/height of grid square
+- ***Observables:** opening, closing, width changed, height changed, position changed
 
 ### Adding Controls and Contents (PanelElems, Btns, and Shortcuts):
 
-- panel elements such as buttons, text, pictures etc can be added either as controls or contents
-- set controls: controls are added by making a list (drop a list with some text, shortcuts, search bar)
+- ***PanelElems*** such as Btns, text, pictures etc can be added either as controls or contents: 
+    can be string, HTMLElement, JQuery<HTMLElement>
     
+
     ```
-    //Setting up Btns and PanelElems
-    let closeBtn = new RZ.PanelElem('x');
+
+    let htmlInput = $.parseHTML('<input type="text" value="Search..." id="coolInput"></input>');
+    let panelElem1 = new RZ.PanelElem("Title");
+    let panelElem2 = new RZ.PanelElem($("<div>Contents:</div>"));
+    let panelElem3 = new RZ.PanelElem(htmlInput);
     let panelElem4 = new RZ.PanelElem($('<p>Controls:</p>'))
+    let imgElem = new RZ.PanelElem($("<img id='coolImg' src='https://images.pexels.com/photos/240040/pexels-photo-240040.jpeg?auto=compress&cs=tinysrgb&h=350'></img>"));
+
+    ```
+    
+    Btns can be set to SVG, text (uniform sizes)
+
+    ```
+
+    let btn = new RZ.Btn();
+    btn.text = "Btn.";
+    $(btn.element).click(function () {
+        alert('Btn element clicked!')
+    });
+
+    let btn2 = new RZ.Btn();
+    btn2.icon = $(<svg id='green-rect' width="300" height="200">
+        <rect width="100%" height="100%" fill="green" />
+    </svg>);
+
+    ```
+
+    Shortcuts are control dividers '|', toggle 'T', close 'x'
+
+    ```
+
+    let closeBtn = new RZ.PanelElem('x');
+    $(panelElem2.element).append($("<br>"));
+    $(panelElem2.element).append($("<br>"));
+    $(panelElem2.element).append(btn.element);
+    $(panelElem2.element).append(btn2.element);
+    $(panelElem2.element).append($("<br>"));
+    $(panelElem2.element).append($("<br>"));
+    $(panelElem2.element).append(imgElem.element);
 
     ```
 
 
-        RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
-        
+- ***Set Controls:***  panel controls set as a list of PanelElems
+    
+    `RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];`
+    `RZ.mapInstances[0].panelRegistry[0].controls;`
 
-    -set content: contents are added by creating a single PanelElement -> usually an HTMLElement/JQuery element (unless title or shortcut) that scopes
-    other elements --> drop relatively complex panel element
-    -briefly explain Btns (SVG and text) and how they are uniform
-    -of course you can get the contents and controls (getters in console)
+- ***Set Content:*** panel contents are a single PanelElem
+    
+    `RZ.mapInstances[0].panelRegistry[0].content = panelElem2;`
+    `RZ.mapInstances[0].panelRegistry[0].content;`
 
 -Available spaces: 
     -when no position call to availableSpaces() and user doesn't supply anything
