@@ -125,14 +125,6 @@ export default class Map {
     }
 
     /**
-     * Adds a panel to the panel registry. 
-     * @param {Panel} panel - the panel to be added to this map instance.  
-     */
-    /*protected*/ addPanel(panel: Panel){
-        this._panel_registry.push(panel);
-    }
-
-    /**
      * Allows Panel object to update panel registry when a panel is opened or closed on the map.
      * @param {number} coverage - the number (-1, 0, 1) representing the Panel's coverage on the map
      * @param {number} topLeftX - the x coordinate of the top, left panel corner
@@ -165,20 +157,27 @@ export default class Map {
      * @param {Panel} panel - the panel to be created on the map instance
      * @return {Map} - the map object so that the panel can set its map instance
      */
-    createPanel(id: string): Map {
+    createPanel(id: string): Panel {
         //add panel to map instance
-        this.mapDiv.append($('#' + id));
-        return this; //panel can then set this as the map instance. 
+        let panel = new Panel(id, this); 
+        this.panelRegistry.push(panel);
+        return panel;
     }
 
     /**
      * Deletes a Panel on this Map instance.
-     * TODO: propse that panel object itself be passed into createPanel method (useful for manipulating panel registry)
      * @param {string} id - the ID of the panel to be deleted
      * @param {Panel} panel - the panel to be deleted on the map instance
      */
     deletePanel(id: string) {
         $("#" + id).remove();
+        for (let panel of this.panelRegistry){
+            let index;
+            if (panel.id === id){
+                index = this._panel_registry.indexOf(panel);
+                this._panel_registry.splice(index, 1);
+            }
+        }
     }
 
 
