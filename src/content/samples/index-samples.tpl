@@ -301,10 +301,10 @@
 
         // change and load the new config
         function changeConfig() {
-            var selectedConfig = document.getElementById('selectConfig').value;
+            var selectedConfig = document.getElementById('selectConfig').value; // load existing config
             document.getElementById('sample-map').setAttribute('rv-config', selectedConfig);
-            RV.getMap('sample-map').reInitialize();
-            sessionStorage.setItem('sampleConfig', selectedConfig);
+            sessionStorage.setItem('sampleConfig', selectedConfig); // store new config
+            location.reload();
         }
     </script>
 </body>
