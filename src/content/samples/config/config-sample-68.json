@@ -331,16 +331,22 @@
                     "layerId": "powerplant100mw-electric"
                   },
                   {
+<<<<<<< HEAD
                     "layerId": "powerplant100mw-naturalGas"
                   },
                   {
                     "layerId": "powerplant100mw-liquids"
+=======
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png",
+                    "text":"I am big!"
+>>>>>>> feat(ui): add expandability to large images in layer info
                   }
                 ]
               }
             ]
           },
           {
+<<<<<<< HEAD
             "name": "File-based layers",
             "expanded": true,
             "controls": [
@@ -357,6 +363,14 @@
                   "layerId": "flurstuck"
                 }
             ]
+=======
+            "infoType": "image",
+            "content": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png"
+          },
+          {
+            "infoType": "image",
+            "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
+>>>>>>> feat(ui): add expandability to large images in layer info
           }
         ]
       }

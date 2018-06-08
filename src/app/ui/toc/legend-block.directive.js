@@ -79,6 +79,13 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
         // store reference to element on the scope so it can be passed to symbology stack as container
         self.element = element;
 
+        // only allow the image to be enlarged if it has been shrunk
+        const img = new Image();
+        img.onload = function() {
+            self.block.canEnlarge = this.width > self.element.width();
+        }
+        img.src = self.block.content;
+
         self.intersect = common.intersect;
         self.getTooltipDirection = getTooltipDirection;
         self.getTooltipDelay = getTooltipDelay;

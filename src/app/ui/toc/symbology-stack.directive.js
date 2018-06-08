@@ -158,7 +158,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // store reference to symbology nodes
             // the following are normal arrays of jQuery items, NOT jQuery pseudo-arrays
             symbolItems: [],
-            largeImages: {},
             // cover item stays with the stack when the rest of the stack is expanded
             coverSymbolItem: null,
             trigger: null, // expand self.trigger node
@@ -567,7 +566,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             if (itemWidth !== imageWidth) {
                 element.css('display', 'block');
                 symbolItem.image.find('svg').after(element);
-                ref.largeImages[symbolItem.label[0].innerText] = symbolItem;
             } else {
                 element.css('display', 'none');
             }
