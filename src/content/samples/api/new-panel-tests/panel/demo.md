@@ -121,26 +121,103 @@
 
     ```
 
-- ***Non static method use:*** for a specific panel instance. 
+- ***Non static method uses:*** for a specific panel instance. 
 
-    - no height, width or position set: 
+    - No height, width or position set: 
         `RZ.mapInstances[0].panelRegistry[2].availableSpaces();`
     
-    - position is set: 
+    - Position is set: 
         `RZ.mapInstances[0].panelRegistry[0].availableSpaces();`
     
-    - when checking if panel instance is another dimension: 
+    - When checking what would happen if the panel was another width/height: 
         `RZ.mapInstances[0].panelRegistry[0].availableSpaces(2, 3);`
     
-    -when min position is set: 
+    - When a min position is set on a panel: 
         `RZ.mapInstances[0].panelRegistry[1].availableSpaces();`
 
-### Conflict Detection and Error Handling
-- If we try to mess with things: 
-    - Setting a min that's not a subset of actual position
-    - Opening a panel whose min is within another panel's min
-    - If a panel overlaps, autoshrinking to adjust
-    - Setting position out of bounds of grid
-    - I made a list of user errors that it detects
+### Error Handling Examples:
 
--Lastly here's the documentation page I have so far 
+- Setting a min position that is not a subset of actual position: 
+
+    ```
+        
+    RZ.mapInstances[0].panelRegistry[1].setMinPosition(20, 125);
+
+    ```
+- Opening a panel whose min is within another panel's min: 
+    ```
+
+    RZ.mapInstances[0].panelRegistry[2].setPosition(20, 85);
+    RZ.mapInstances[0].panelRegistry[2].open();
+
+    ```
+- Autoshrinking panels when non-min positions overlap: 
+    ```
+    
+    RZ.mapInstances[0].panelRegistry[1].setPosition(0, 105);
+
+    RZ.mapInstances[0].panelRegistry[2].setPosition(0, 145);
+    RZ.mapInstances[0].panelRegistry[2].setPosition(120, 145);
+    RZ.mapInstances[0].panelRegistry[2].open();
+    
+
+    ```
+- Setting position out of bounds of grid:
+    ```
+
+    RZ.mapInstances[0].panelRegistry[2].setPosition(-1, 409);
+    RZ.mapInstances[0].panelRegistry[2].open();
+
+    ```
+
+### Documentation page: 
+
+### Post-Demo:
+
+- ***More Test Cases:*** 
+
+    - Opening/closing a panel before position is set:
+        ```
+    
+        RZ.mapInstances[0].createPanel('panel4');
+        RZ.mapInstances[0].panelRegistry[3].open();
+        RZ.mapInstances[0].panelRegistry[3].close();
+
+        ```
+    
+    - Setting a position with invalid values:
+        ```
+
+        RZ.mapInstances[0].panelRegistry[3].setPosition(35, 100);  //topLeft is at 6th column, bottomRight is at 1st column!
+
+        ```
+
+    - setMinPosition before setPosition: 
+        ```
+
+        RZ.mapInstances[0].panelRegistry[3].setMinPosition(0, 65);
+
+        ```
+    
+    -Setting a PanelElem to have multiple top level elements:
+        ```
+
+        let panelElem1 = new RZ.PanelElem($.parseHTML('<p>Hello</p><p>there</p>')); //doesn't work
+
+        let panelElem2 = new RZ.PanelElem($.parseHTML('<p>Hello there</p>')); //works
+        
+        let panelElem3 = new RZ.PanelElem($.parseHTML('<div>Hello<p>there</p></div>')); //works
+
+        ```
+    
+
+
+- ***Explanation of Map Grid:***
+    
+    - 20 rows x 20 columns
+    - Each grid square has a value between 0-399
+    - First row: 0-19, Second row: 20-39, Third row: 40-59 and so on. 
+
+    - ***Example:*** setPosition(25, 149); 
+        - Top left corner 25: 2nd row, 6th column
+        - Bottom right corner 149: 8th row, 10th column
