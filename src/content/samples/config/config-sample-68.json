@@ -330,13 +330,21 @@
                 "layerId": "canadaElevation",
                 "symbologyStack": [
                   {
-                    "image": "https://pbs.twimg.com/media/CnVysVXVUAIjnRK.jpg",
-                    "text":"tiles anyone?"
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png",
+                    "text":"I am big!"
                   }
                 ],
                 "symbologyRenderStyle": "images"
               }
             ]
+          },
+          {
+            "infoType": "image",
+            "content": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png"
+          },
+          {
+            "infoType": "image",
+            "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
           }
         ]
       }
