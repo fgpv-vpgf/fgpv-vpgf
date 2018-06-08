@@ -90,31 +90,36 @@
 
 - ***Set/Get Controls:***  panel controls set as a list of PanelElems
     
-    `RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];`
+    ```javascript
 
-    `RZ.mapInstances[0].panelRegistry[0].controls;`
+    
+    RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4,panelElem3];
+
+    RZ.mapInstances[0].panelRegistry[0].controls;
+
+    ```
 
 - ***Set/Get Content:*** panel contents are a single PanelElem
     
-    `RZ.mapInstances[0].panelRegistry[0].content = panelElem2;`
-
-    `RZ.mapInstances[0].panelRegistry[0].content;`
+    ```javascript
+    
+    RZ.mapInstances[0].panelRegistry[0].content = panelElem2;
+    RZ.mapInstances[0].panelRegistry[0].content;
+    ```
 
 ---
 
 ### Available Spaces 
 
-- ***Setup:*** 
+- ***Setup:***
 
     ```javascript
 
+    RZ.mapInstances[0].createPanel('panel1').setPosition(64, 105);
+    RZ.mapInstances[0].panelRegistry[0].open();
     RZ.mapInstances[0].createPanel('panel2');
-    RZ.mapInstances[0].panelRegistry[1].setPosition(0, 105);
-    RZ.mapInstances[0].panelRegistry[1].setMinPosition(20, 85);
+    RZ.mapInstances[0].panelRegistry[1].setPosition(22, 63);
     RZ.mapInstances[0].panelRegistry[1].open();
-
-    RZ.mapInstances[0].createPanel('panel3');
-
 
     ```
 
@@ -131,35 +136,27 @@
 
 - ***Non static method uses:*** for a specific panel instance. 
 
-    - No height, width or position set: 
+    - No height, width or position set (calculations based on 1x1 panel): 
         ```javascript
-        RZ.mapInstances[0].panelRegistry[2].availableSpaces();
+        RZ.mapInstances[0].createPanel('panel3');
+        RZ.mapInstances[0].panelRegistry[2].availableSpaces(); //works
         ````
     
     - Position is set: 
         ```javascript
-        RZ.mapInstances[0].panelRegistry[0].availableSpaces();
+
+        RZ.mapInstances[0].panelRegistry[0].availableSpaces(); //works
         ```
     
     - When checking what would happen if the panel was another width/height: 
         ```javascript
-        RZ.mapInstances[0].panelRegistry[0].availableSpaces(2, 3);
+        RZ.mapInstances[0].panelRegistry[0].availableSpaces(2, 3); //works
         ```
     
     - When a min position is set on a panel: 
         ```javascript
-
-        //setup
-        RZ.mapInstances[0].createPanel('panel1').setPosition(64, 105);
-        RZ.mapInstances[0].panelRegistry[0].open();
-
-        RZ.mapInstances[0].createPanel('panel2');
-        RZ.mapInstances[0].panelRegistry[1].setPosition(22, 63);
         RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43);
-        RZ.mapInstances[0].panelRegistry[1].open();
-
         RZ.mapInstances[0].panelRegistry[1].staticavailableSpaces();
-
         ```
 
 ---
@@ -168,10 +165,8 @@
 
 - Setting a min position that is not a subset of actual position: 
 
-    ```javascript
-        
+    ```javascript        
     RZ.mapInstances[0].panelRegistry[1].setMinPosition(20, 125);
-
     ```
 
 - Opening a panel whose min is within another panel's min: 
