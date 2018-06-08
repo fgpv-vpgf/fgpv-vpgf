@@ -53,7 +53,14 @@
                     is-reorder="self.isReorder"
                     ng-class="{ 'rv-selected': block.isSelected }"
                     ng-click="self.notifyApiClick(block)"></rv-legend-block>
-
+                <md-button
+                    class="md-icon-button rv-icon-20 rv-image-expand"
+                    ng-click="self.onExpandClick(block.content)"
+                    ng-if="block.blockType === 'info' && block.infoType === 'image' && block.canEnlarge"
+                    aria-label="{{ 'toc.tooltip.fullsizeImage' | translate }}">
+                    <md-icon md-svg-src="action:zoom_in"></md-icon>
+                    <md-tooltip md-direction="top">{{ 'toc.tooltip.fullsizeImage' | translate }}</md-tooltip>
+                </md-button>
                 <!-- regular group children list -->
                 <ul
                     class="rv-legend-list rv-toggle-slide rv-legend-level-{{ ::$dxLevel }}"
