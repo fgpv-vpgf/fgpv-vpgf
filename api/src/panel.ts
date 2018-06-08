@@ -30,9 +30,6 @@ export class Panel {
     private _minBottomRightX: number;
     private _minBottomRightY: number;
 
-    private _GRIDROWS = 20;
-    private _GRIDCOLS = 20;
-
     //subjects initialized for observables that are fired through method calls
     private _opening: Subject<any> = new Subject();
     private _closing: Subject<any> = new Subject();
@@ -472,7 +469,7 @@ export class Panel {
     close(): void {
 
         //if the map doesn't exist or the position hasn't been set then the map hasn't been added to a map
-        if (this._map_object !== undefined || this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
+        if (this._map_object !== undefined && this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined && this._open === true) {
             this._closing.next();
             this._panel_contents.classList.add('hidden');
             //updates panel registry
@@ -481,7 +478,7 @@ export class Panel {
             this._open = false;
         }
         else {
-            throw "Exception: can't close a panel that has not been added to a map."
+            throw "Exception: can't close a panel that has not been added to a map, whose position is not set or that is not open.";
         }
     }
 
@@ -539,7 +536,7 @@ export class Panel {
 
         //if position supplied is invalid throw an error
         if (topLeftX > bottomRightX || topLeftY > bottomRightY) {
-            throw "Invalid position supplied!";
+            throw "Exception: invalid position supplied, the topLeft row or column is greater than the bottomRight row or column.";
         }
         else {
             //set position values
@@ -573,6 +570,10 @@ export class Panel {
     */
     setMinPosition(topLeft: number, bottomRight: number): void {
 
+        if(this._bottomRightX === undefined || this._bottomRightY === undefined || this._topLeftX === undefined || this._topLeftY === undefined){
+            throw "Exception: cannot set min position before a valid position is set."
+        }
+
         let topLeftX = topLeft % 20;
         let topLeftY = Math.floor(topLeft / 20);
         let bottomRightX = bottomRight % 20;
@@ -580,7 +581,7 @@ export class Panel {
 
         //if position supplied is invalid throw an error
         if (topLeftX > bottomRightX || topLeftY > bottomRightY) {
-            throw "Invalid position supplied!";
+            throw "Exception: invalid position supplied, the topLeft row or column is greater than the bottomRight row or column.";
         }
 
         if (this.checkOutOfBounds(true, topLeftX, topLeftY, bottomRightX, bottomRightY) === false) {
@@ -634,12 +635,10 @@ export class Panel {
         let lessThanZero = topLeftX < 0 || bottomRightX < 0 || bottomRightY < 0 || topLeftY < 0;
 
         //panel x positions more than number of gridCols
-        let gridCols = this._GRIDCOLS;
-        let overflowX = topLeftX > gridCols || bottomRightX > gridCols;
+        let overflowX = topLeftX > 20 || bottomRightX > 20;
 
         //panel y positions more than number of gridRows
-        let gridRows = this._GRIDROWS;
-        let overflowY = topLeftY > gridRows || bottomRightY > gridRows;
+        let overflowY = topLeftY > 20 || bottomRightY > 20;
 
         if (lessThanZero || overflowX || overflowY) {
             throw "Exception: Panel is not contained within map grid.";
