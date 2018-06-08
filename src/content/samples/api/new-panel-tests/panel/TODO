@@ -9,12 +9,10 @@ June 7:
 
 June 8: 
 -toggle button find way to actually hide that portion of panel
--Btns bypass PanelElem constructor?
 -on window resize "height changes" even though no actual change
 -auto shrink seems to be working on map grid, however, delayed alert as well as space between panels
 -CSS access from API folder
 -object.prototype for privates to hide in console
-
 
 -scrap map grid --> keep for debugging purposes, ask at meeting
 

@@ -186,17 +186,19 @@ export class Panel {
         //if the user does not supply the width and height for the panel, compute it using the panel's position
         if (width === undefined && height === undefined) {
             if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
-                panelWidth = this._bottomRightX - this._topLeftX;
+                panelWidth = this._bottomRightX - this._topLeftX + 1;
                 panelHeight = this._bottomRightY - this._topLeftY + 1;
+
                 //if the min position is different than regular position, take this into account
                 if (this._bottomRightX !== this._minBottomRightX || this._bottomRightY !== this._minBottomRightY || this._topLeftX !== this._minTopLeftX || this._topLeftY !== this._minTopLeftY) {
 
-                    //how far removed the min bottom position is from the panel corner
-                    minBottomX = this._minBottomRightX;
-                    minBottomY = this._minBottomRightY;
-                    minTopX = this._minTopLeftX;
-                    minTopY = this._minTopLeftY;
+                    //how far removed the min topLeft from topLeft?
+                    minTopX = this._minTopLeftX - this._topLeftX;
+                    minTopY = this._minTopLeftY - this._topLeftY;
 
+                    //how far removed is minBottomRight from minTopLeft?
+                    minBottomX = this._minBottomRightX - this._minTopLeftX;
+                    minBottomY = this._minBottomRightY - this._minTopLeftY;
                 }
             }
             //if a panel's position is not set throw an error
@@ -228,9 +230,10 @@ export class Panel {
                 if (panelWidth !== undefined && panelHeight !== undefined) {
 
                     //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
-                    let topLeftX = panel.panelCoords[0] - panelWidth;
+                    let topLeftX = panel.panelCoords[0] - panelWidth + 1;
                     let originalTopLeftX = panel.panelCoords[0];
-                    let topLeftY = panel.panelCoords[1] - panelHeight;
+                    let topLeftY = panel.panelCoords[1] - panelHeight + 1;
+                    let originalTopLeftY = panel.panelCoords[1];
                     let bottomRightX = panel.panelCoords[2];
                     let bottomRightY = panel.panelCoords[3];
 
@@ -242,19 +245,33 @@ export class Panel {
                         topLeftY = 0;
                     }
 
+                    //okay so the way that this works to detect 'overlap' is it treats (i, j) as topLeft coordinates of a potential panel
+                    //where would min position be relative to that? 
+                    //need to find min topLeft distance from topLeft --> add to (i, j)
+                    //to find min bottomRight for this iteration --> find minWidth and height and add to this iteration's minTopLeft
+
+                    //so min position would NOT overlap with current panel if one of these happen:
+                    //1. minTopLeftX < panel.panelCoords[0]
+                    //2. minTopLeftY <panel.panelCoords[1]
+                    //3. minBottomRightX > panel.panelCoords[2]
+                    //4. minBottomRightY > panel.panelCoords[3]
+
+                    //if it DOES overlap then availableSpaces[j][i] marked as -1
+
+
 
                     //mark as invalid
-                    for (let i = topLeftX; i < bottomRightX; i++) {
-                        for (let j = topLeftY; j < bottomRightY; j++) {
+                    for (let i = topLeftX; i <= bottomRightX; i++) {
+                        for (let j = topLeftY; j <= bottomRightY; j++) {
 
                             availableSpaces[j][i] = -1;
 
                             //if min width and height are specified want to mark all spaces causing overlap as '1'
                             if (minBottomX !== undefined && minBottomY !== undefined && minTopX !== undefined && minTopY !== undefined) {
                                 //if min position completely misses this panel
-                                if ((i + minTopX) < originalTopLeftX || (j + minTopY) < originalTopLeftX || (i - minBottomX) > bottomRightX || (j - minBottomY) > bottomRightY) {
+                                if ((i + minTopX) < originalTopLeftX || (j + minTopY) < originalTopLeftY || (i + minTopX + minBottomX) > bottomRightX || (j + minTopY + minBottomY) > bottomRightY) {
+                                    console.log([minTopX, minTopY, minBottomX, minBottomY]);
                                     availableSpaces[j][i] = 1;
-
                                 }
                             }
                         }
@@ -296,8 +313,8 @@ export class Panel {
                 let bottomRightY = panel.panelCoords[3];
 
                 //mark as invalid
-                for (let i = topLeftX; i < bottomRightX; i++) {
-                    for (let j = topLeftY; j < bottomRightY; j++) {
+                for (let i = topLeftX; i <= bottomRightX; i++) {
+                    for (let j = topLeftY; j <= bottomRightY; j++) {
                         availableSpaces[j][i] = -1;
                     }
                 }
@@ -570,7 +587,7 @@ export class Panel {
     */
     setMinPosition(topLeft: number, bottomRight: number): void {
 
-        if(this._bottomRightX === undefined || this._bottomRightY === undefined || this._topLeftX === undefined || this._topLeftY === undefined){
+        if (this._bottomRightX === undefined || this._bottomRightY === undefined || this._topLeftX === undefined || this._topLeftY === undefined) {
             throw "Exception: cannot set min position before a valid position is set."
         }
 
@@ -666,7 +683,7 @@ export class PanelElem {
     /**
     * Constructs PanelElem object
     * @param {string | HTMLElement | JQuery<HTMLElement>} [element] - element to be set as PanelElem (strings assumed to be titles)
-    *                                                               - not to be specified for buttons
+    *                                                               - not to be specified for Btns
     */
     constructor(element?: string | HTMLElement | JQuery<HTMLElement>) {
         this.setElement(element);
