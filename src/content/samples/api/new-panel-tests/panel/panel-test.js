@@ -15,10 +15,5 @@ $.getScript('../../../../rv-main.js', function () {
     RZ.mapAdded.subscribe(mapi => {
 
 
-        /**
-         * TEST CASES: 
-         * Error if available spaces call without width/height position existing
-         */
-
     });
 });
