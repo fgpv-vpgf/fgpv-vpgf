@@ -17,7 +17,7 @@ June 8:
 -Btns bypass PanelElem constructor?
 -testing and test cases for set content (setting PanelElems), panel controls, making different types of Btns, shortcuts
 -on window resize "height changes" even though no actual change
-
+-auto shrink seems to be working on map grid, however, delayed alert as well as space between panels
 
 
 
@@ -32,11 +32,9 @@ June 8:
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
--Test cases from console
 -unnescessary casting
 -Good commenting (add examples in)
 -Good typescript headers
--Make a list of all test cases
 -JQuery/document.getElementByID calls
 -return void
 
