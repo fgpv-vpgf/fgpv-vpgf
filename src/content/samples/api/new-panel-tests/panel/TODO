@@ -1,22 +1,28 @@
-TODO: 
+TODO (MEETING PLAN): 
 
-June 4: 
+June 7:
+-availableSpaces min feat
+-static form of available spaces
+    -so user can call RZ.Panel.availableSpaces(2,3); --> static
+    -can call lightyear.availableSpaces(); --> calculates based on position
+    -if no position is set calculaes
 
--Error testing with test cases 
--min feat for available spaces 
--CSS access from API folder
+June 8: 
 -toggle button find way to actually hide that portion of panel
--documentation
--scrap map grid? 
--resize delay?
+-on window resize "height changes" even though no actual change
+-auto shrink seems to be working on map grid, however, delayed alert as well as space between panels
+-CSS access from API folder
+-object.prototype for privates to hide in console
+
+-scrap map grid --> keep for debugging purposes, ask at meeting
+
+-make sure available spaces and min position work impeccably! 
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
--Test cases from console
 -unnescessary casting
 -Good commenting (add examples in)
 -Good typescript headers
--Make a list of all test cases
 -JQuery/document.getElementByID calls
 -return void
 
@@ -35,7 +41,18 @@ DOCUMENTATION:
 
 
 
-Available Spaces: 
-    -How to evaluate conflict for each square as top left corner
-    -for each claimed spot in panel registry --> pretend this spot is bottom right square of panel of our desired dimensions
-        -for top left --> bottom right mark availableSpaces as -1
+
+
+
+
+
+
+
+
+
+
+-Add features: controls and contents (demonstrate the setters and getters)
+-Explain that contents are just one PanelElem --> basically a string, HTML, JQuery<HTMLElement>
+-Explain shortcuts and demo them (title, |, x, t)
+-Distinguish between SVG and Text Btns (they are all uniform)
+
