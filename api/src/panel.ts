@@ -1,5 +1,6 @@
 import { Observable, Subject } from 'rxjs/Rx';
 import Map from 'api/map';
+import { S_IFMT } from 'constants';
 
 
 export class Panel {
@@ -15,6 +16,9 @@ export class Panel {
     private _panel_controls: HTMLElement;
     private _panel_body: HTMLElement;
     private _document_fragment: DocumentFragment;
+
+    private _map_width: number;
+    private _map_height: number;
 
     private _map_object: Map;
 
@@ -66,6 +70,9 @@ export class Panel {
         this.heightChanged = this._heightChanged.asObservable();
         this._map_object = map;
 
+        this._map_height = <number>$(this._map_object.mapElement).height();
+        this._map_width = <number>$(this._map_object.mapElement).width();
+
         //this.observableSubscribe();
 
         //create panel components and document fragment
@@ -84,18 +91,6 @@ export class Panel {
         this.positionChanged.subscribe(pos => console.log([pos, 'position changed!']));
         this.widthChanged.subscribe(width => console.log([width, 'width changed!']));
         this.heightChanged.subscribe(height => console.log([height, 'height changed!']));
-    }
-
-    /**
-    * Helper method to unsubscribe to observables.
-    * To be removed when API is finished. 
-    */
-    observableUnsubscribe(): void {
-        this.opening.subscribe();
-        this.closing.subscribe();
-        this.positionChanged.subscribe();
-        this.widthChanged.subscribe();
-        this.heightChanged.subscribe();
     }
 
     /**
@@ -128,9 +123,16 @@ export class Panel {
         let panel = this;
 
         $(window).resize(function () {
-            //fires observables
-            panel._widthChanged.next(<number>$(panel._map_object.mapElement).width() * 0.05);
-            panel._heightChanged.next(<number>$(panel._map_object.mapElement).height() * 0.05);
+            //if current width is different from stored width, fire width changed
+            if (panel._map_width !== $(panel._map_object.mapElement).width()) {
+                panel._widthChanged.next(<number>$(panel._map_object.mapElement).width() * 0.05);
+                panel._map_width = <number>$(panel._map_object.mapElement).width();
+            }
+            //if current height is different from stored height, fire height changed
+            else if (panel._map_height !== $(panel._map_object.mapElement).height()) {
+                panel._heightChanged.next(<number>$(panel._map_object.mapElement).height() * 0.05);
+                panel._map_height = <number>$(panel._map_object.mapElement).height();
+            }
 
             //changes width/height to new percentage value of the map
             panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);

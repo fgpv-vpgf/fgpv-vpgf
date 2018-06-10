@@ -3,7 +3,6 @@ TODO (MEETING PLAN):
 
 June 8: 
 -toggle button find way to actually hide that portion of panel
--on window resize "height changes" even though no actual change
 -space between panels
 -CSS access from API folder
 -object.prototype for privates to hide in console
