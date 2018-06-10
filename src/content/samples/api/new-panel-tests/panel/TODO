@@ -1,22 +1,15 @@
 TODO (MEETING PLAN): 
 
-June 7:
--availableSpaces min feat
--static form of available spaces
-    -so user can call RZ.Panel.availableSpaces(2,3); --> static
-    -can call lightyear.availableSpaces(); --> calculates based on position
-    -if no position is set calculaes
 
 June 8: 
 -toggle button find way to actually hide that portion of panel
 -on window resize "height changes" even though no actual change
--auto shrink seems to be working on map grid, however, delayed alert as well as space between panels
+-space between panels
 -CSS access from API folder
 -object.prototype for privates to hide in console
 
 -scrap map grid --> keep for debugging purposes, ask at meeting
 
--make sure available spaces and min position work impeccably! 
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
