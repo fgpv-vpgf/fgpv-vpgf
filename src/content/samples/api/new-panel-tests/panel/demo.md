@@ -128,9 +128,9 @@
     ```javascript
 
     let panelRegistry = RZ.mapInstances[0].panelRegistry;
+    RZ.Panel.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance
 
-    RZ.Panel.availableSpaces(2,3);    
-    RZ.Panel.availableSpaces(2,3, panelRegistry); //checking dimensions for specific map instance
+    RZ.mapInstances[0].mapGrid; //compare to map grid representation (mapGrid only for debugging purposes)
 
     ```
 
@@ -155,34 +155,47 @@
     
     - When a min position is set on a panel: 
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43);
-        RZ.mapInstances[0].panelRegistry[1].staticavailableSpaces();
+        RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43); //works!
+        RZ.mapInstances[0].panelRegistry[1].availableSpaces();
         ```
 
 ---
 
 ### Error Handling Examples:
 
+- **Setup:**
+    
+    ```javascript 
+    RZ.mapInstances[0].createPanel('panel1');
+    RZ.mapInstances[0].createPanel('panel2');
+    RZ.mapInstances[0].createPanel('panel3');
+
+    RZ.mapInstances[0].panelRegistry[0].setPosition(20, 105);
+    RZ.mapInstances[0].panelRegistry[1].setPosition(20, 85);
+    
+    RZ.mapInstances[0].panelRegistry[0].open();
+
+    ```
+
 - Setting a min position that is not a subset of actual position: 
 
     ```javascript        
-    RZ.mapInstances[0].panelRegistry[1].setMinPosition(20, 125);
+    RZ.mapInstances[0].panelRegistry[0].setMinPosition(20, 125);
     ```
 
 - Opening a panel whose min is within another panel's min: 
     ```javascript
-    
-
+    RZ.mapInstances[0].panelRegistry[1].open() //within panel 1's min position
     ```
 
 - Autoshrinking panels when non-min positions overlap: 
     ```javascript
     
-    RZ.mapInstances[0].panelRegistry[1].setPosition(0, 105);
+    RZ.mapInstances[0].panelRegistry[0].setPosition(0, 105);
 
-    RZ.mapInstances[0].panelRegistry[2].setPosition(0, 145);
-    RZ.mapInstances[0].panelRegistry[2].setPosition(120, 145);
-    RZ.mapInstances[0].panelRegistry[2].open();
+    RZ.mapInstances[0].panelRegistry[1].setPosition(0, 145);
+    RZ.mapInstances[0].panelRegistry[1].setMinPosition(120, 145);
+    RZ.mapInstances[0].panelRegistry[1].open();
     
 
     ```
@@ -190,9 +203,7 @@
 - Setting position out of bounds of grid:
     ```javascript
 
-    RZ.mapInstances[0].panelRegistry[2].setPosition(-1, 409);
-    RZ.mapInstances[0].panelRegistry[2].open();
-
+    RZ.mapInstances[0].panelRegistry[1].setPosition(-1, 409);
     ```
 
 ---

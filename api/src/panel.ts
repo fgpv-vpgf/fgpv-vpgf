@@ -166,122 +166,87 @@ export class Panel {
     * @return {number[][]} - array of arrays representing each grid square 
     */
 
-    staticavailableSpaces(width?: number, height?: number): number[][] {
+    static availableSpaces(panelRegistry: Panel[], width: number, height: number, panel?: Panel): number[][] {
 
-        if (this._map_object === undefined) {
-            throw "Exception: this panel's map is not set; cannot retrieve grid.";
-        }
 
         //initializes availableSpaces array
         let cols = 20, rows = 20;
         let availableSpaces = [], row = [];
         while (cols--) row.push(0);
         while (rows--) availableSpaces.push(row.slice());
-        let panelWidth, panelHeight;
+
+
         let minBottomX = undefined;
         let minBottomY = undefined;
         let minTopX = undefined;
         let minTopY = undefined;
 
-        //if the user does not supply the width and height for the panel, compute it using the panel's position
-        if (width === undefined && height === undefined) {
-            if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
-                panelWidth = this._bottomRightX - this._topLeftX + 1;
-                panelHeight = this._bottomRightY - this._topLeftY + 1;
+        //if the user supplies the panel
+        if (panel !== undefined) {
+            //if the min position is different than regular position, take this into account
+            if (panel._bottomRightX !== panel._minBottomRightX || panel._bottomRightY !== panel._minBottomRightY || panel._topLeftX !== panel._minTopLeftX || panel._topLeftY !== panel._minTopLeftY) {
 
-                //if the min position is different than regular position, take this into account
-                if (this._bottomRightX !== this._minBottomRightX || this._bottomRightY !== this._minBottomRightY || this._topLeftX !== this._minTopLeftX || this._topLeftY !== this._minTopLeftY) {
+                //how far removed the min topLeft from topLeft?
+                minTopX = panel._minTopLeftX - panel._topLeftX;
+                minTopY = panel._minTopLeftY - panel._topLeftY;
 
-                    //how far removed the min topLeft from topLeft?
-                    minTopX = this._minTopLeftX - this._topLeftX;
-                    minTopY = this._minTopLeftY - this._topLeftY;
-
-                    //how far removed is minBottomRight from minTopLeft?
-                    minBottomX = this._minBottomRightX - this._minTopLeftX;
-                    minBottomY = this._minBottomRightY - this._minTopLeftY;
-                }
+                //how far removed is minBottomRight topLeft?
+                minBottomX = panel._minBottomRightX - panel._topLeftX;
+                minBottomY = panel._minBottomRightY - panel._topLeftY;
             }
-            //if a panel's position is not set throw an error
-            else {
-                throw "Exception: Panel position is undefined, cannot compute width and height.";
-            }
-        }
-        //otherwise use user supplied width and height
-        else {
-            panelWidth = width;
-            panelHeight = height;
         }
 
         //all squares in these spaces when used as topLeft corner would put panel out of bounds of map
-        if (panelWidth !== undefined && panelHeight !== undefined) {
-            for (let i = 0; i < 20; i++) {
-                for (let j = 0; j < 20; j++) {
-                    if ((20 - i) < panelWidth || (20 - j) < panelHeight) {
-                        availableSpaces[j][i] = -1;
-                    }
+        for (let i = 0; i < 20; i++) {
+            for (let j = 0; j < 20; j++) {
+                if ((20 - i) < width || (20 - j) < height) {
+                    availableSpaces[j][i] = -1;
                 }
             }
         }
 
+
         //for every open panel in panel registry
-        for (let panel of this._map_object.panelRegistry) {
-            if (panel._open === true && panel !== this) {
+        for (let panelObj of panelRegistry) {
+            if (panelObj._open === true && panelObj !== panel) {
 
-                if (panelWidth !== undefined && panelHeight !== undefined) {
+                //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
+                let topLeftX = panelObj.panelCoords[0] - width + 1;
+                let originalTopLeftX = panelObj.panelCoords[0];
+                let topLeftY = panelObj.panelCoords[1] - height + 1;
+                let originalTopLeftY = panelObj.panelCoords[1];
+                let bottomRightX = panelObj.panelCoords[2];
+                let bottomRightY = panelObj.panelCoords[3];
 
-                    //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
-                    let topLeftX = panel.panelCoords[0] - panelWidth + 1;
-                    let originalTopLeftX = panel.panelCoords[0];
-                    let topLeftY = panel.panelCoords[1] - panelHeight + 1;
-                    let originalTopLeftY = panel.panelCoords[1];
-                    let bottomRightX = panel.panelCoords[2];
-                    let bottomRightY = panel.panelCoords[3];
+                //if these are out of bounds of map, just use the zeroth coordinates
+                if (topLeftX < 0) {
+                    topLeftX = 0;
+                }
+                if (topLeftY < 0) {
+                    topLeftY = 0;
+                }
 
-                    //if these are out of bounds of map, just use the zeroth coordinates
-                    if (topLeftX < 0) {
-                        topLeftX = 0;
-                    }
-                    if (topLeftY < 0) {
-                        topLeftY = 0;
-                    }
+                //mark as invalid
+                for (let i = topLeftX; i <= bottomRightX; i++) {
+                    for (let j = topLeftY; j <= bottomRightY; j++) {
 
-                    //okay so the way that this works to detect 'overlap' is it treats (i, j) as topLeft coordinates of a potential panel
-                    //where would min position be relative to that? 
-                    //need to find min topLeft distance from topLeft --> add to (i, j)
-                    //to find min bottomRight for this iteration --> find minWidth and height and add to this iteration's minTopLeft
+                        availableSpaces[j][i] = -1;
 
-                    //so min position would NOT overlap with current panel if one of these happen:
-                    //1. minTopLeftX < panel.panelCoords[0]
-                    //2. minTopLeftY <panel.panelCoords[1]
-                    //3. minBottomRightX > panel.panelCoords[2]
-                    //4. minBottomRightY > panel.panelCoords[3]
-
-                    //if it DOES overlap then availableSpaces[j][i] marked as -1
-
-
-
-                    //mark as invalid
-                    for (let i = topLeftX; i <= bottomRightX; i++) {
-                        for (let j = topLeftY; j <= bottomRightY; j++) {
-
-                            availableSpaces[j][i] = -1;
-
-                            //if min width and height are specified want to mark all spaces causing overlap as '1'
-                            if (minBottomX !== undefined && minBottomY !== undefined && minTopX !== undefined && minTopY !== undefined) {
-                                //if min position completely misses this panel
-                                if ((i + minTopX) < originalTopLeftX || (j + minTopY) < originalTopLeftY || (i + minTopX + minBottomX) > bottomRightX || (j + minTopY + minBottomY) > bottomRightY) {
-                                    console.log([minTopX, minTopY, minBottomX, minBottomY]);
-                                    availableSpaces[j][i] = 1;
-                                }
+                        //if min width and height are specified want to mark all spaces causing overlap as '1'
+                        if (minBottomX !== undefined && minBottomY !== undefined && minTopX !== undefined && minTopY !== undefined) {
+                            //if min position completely misses this panel
+                            if ((i + minTopX + 1) < originalTopLeftX || (j + minTopY) < originalTopLeftY || (i + minBottomX - 1) > bottomRightX || (j + minBottomY) > bottomRightY) {
+                                ///console.log([minTopX, minTopY, minBottomX, minBottomY]);
+                                availableSpaces[j][i] = 1;
                             }
                         }
                     }
                 }
-
             }
         }
         return availableSpaces;
     }
+
 
     /**
     * If no position is set, calculate based on a 1x1 panel. 
@@ -298,29 +263,22 @@ export class Panel {
         let minPanelWidth = undefined;
         let minPanelHeight = undefined;
 
+
         if (this._map_object === undefined) {
             throw "this panel's map is not set; cannot retrieve grid.";
         }
 
-        for (let panel of this._map_object.panelRegistry) {
+        //if no position set calculate based on a 1x1 panel
+        if (this._topLeftX === undefined && this._topLeftY === undefined && this._bottomRightX === undefined && this._bottomRightY === undefined) {
 
-            if (panel._open === true && panel !== this) {
-
-                //1x1 panel position will be invalid if the open panel spaces
-                let topLeftX = panel.panelCoords[0];
-                let topLeftY = panel.panelCoords[1];
-                let bottomRightX = panel.panelCoords[2];
-                let bottomRightY = panel.panelCoords[3];
-
-                //mark as invalid
-                for (let i = topLeftX; i <= bottomRightX; i++) {
-                    for (let j = topLeftY; j <= bottomRightY; j++) {
-                        availableSpaces[j][i] = -1;
-                    }
-                }
-            }
+            return Panel.availableSpaces(this._map_object.panelRegistry, 1, 1);
         }
-        return availableSpaces;
+        //otherwise compute based on width/height computed from position
+        else {
+            return Panel.availableSpaces(this._map_object.panelRegistry, this._bottomRightX - this._topLeftX + 1, this._bottomRightY - this._topLeftY + 1, this);
+        }
+
+
     }
 
     /**
