@@ -34,6 +34,8 @@ export class Panel {
     private _minBottomRightX: number;
     private _minBottomRightY: number;
 
+    private _contentsHeight: number;
+
     //subjects initialized for observables that are fired through method calls
     private _opening: Subject<any> = new Subject();
     private _closing: Subject<any> = new Subject();
@@ -119,7 +121,8 @@ export class Panel {
         this._document_fragment = document.createDocumentFragment();
         this._document_fragment.appendChild(this._panel_contents);
         this._map_object.mapDiv.append(this._document_fragment);
-
+        
+        this._contentsHeight = <number>$(this._panel_contents).height();
         let panel = this;
 
         $(window).resize(function () {
@@ -317,10 +320,16 @@ export class Panel {
                     if (elem._element.get(0).innerHTML === '+') {
                         elem._element.get(0).innerHTML = '-';
                         body.classList.remove('hidden');
+
+                        panel._panel_contents.style.height = (panel._contentsHeight + <number>$(panel._panel_body).height()).toString() + 'px';
+                        
                     }
                     else {
                         elem._element.get(0).innerHTML = '+';
                         body.classList.add('hidden');
+
+                        panel._panel_contents.style.height = (panel._contentsHeight - <number>$(panel._panel_body).height()).toString() + 'px';
+
                     }
                 });
             }
