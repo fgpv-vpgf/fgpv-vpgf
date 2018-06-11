@@ -21,7 +21,7 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
-
+    
     <script>
     window.rzTest = {
         preInit: () => {
