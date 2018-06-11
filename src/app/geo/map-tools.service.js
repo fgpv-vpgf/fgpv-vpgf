@@ -9,7 +9,7 @@ angular
     .module('app.geo')
     .factory('mapToolService', mapToolService);
 
-function mapToolService(configService, geoService, gapiService, $translate) {
+function mapToolService(configService, geoService, gapiService, $translate, Geo) {
 
     const service = {
         northArrow,
@@ -56,7 +56,7 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         let angleDegrees = null;
         let rotationAngle = null;
 
-        if (wkid === 102100) { // mercator
+        if (wkid === Geo.SpatialReference.WEB_MERCATOR.latestWkid) { // mercator
             // always in center of viewer with no rotation
             screenX = mapScrnCntr.x;
             rotationAngle = 0;

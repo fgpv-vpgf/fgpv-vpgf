@@ -52,6 +52,15 @@ const GEO = {
             Unknown: 'unknown',
             Error: 'error'
         }
+    },
+    SpatialReference: {
+        CAN_ATLAS_LAMBERT: {
+            wkid: 3978
+        },
+        WEB_MERCATOR: {
+            wkid: 3857,
+            latestWkid: 102100
+        }
     }
 };
 
