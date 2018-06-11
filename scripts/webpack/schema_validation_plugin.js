@@ -10,7 +10,7 @@ class SchemaValidatorPlugin {
         this.schemaFile = opts.schemaFile ? opts.schemaFile : 'schema.json';
         this.hasError = false;
 
-        //schemaToTs.compileFromFile(this.schemaFile).then(ts => fs.writeFileSync('api/src/schema.d.ts', ts));
+        schemaToTs.compileFromFile(this.schemaFile).then(ts => fs.writeFileSync('api/src/schema.d.ts', ts));
     }
 
     apply (compiler) {

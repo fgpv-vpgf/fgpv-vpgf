@@ -10,8 +10,17 @@
  * @param {string|number} code the EPSG code as a string or number
  * @return {Promise} a Promise resolving to proj4 style definition or null if the definition
  */
-export default {
-    lookup: (code: string | number) => {
+window.customEPSG = {
+
+    preInit: config => {
+        console.warn('Custom EPSG', config);
+    },
+
+    init: api => {
+        console.warn('Custom EPSG', api);
+    },
+
+    lookup: code => {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
         const epsgRegex = /EPSG:(\d+)/;
         let matcher = String(code).match(urnRegex) || String(code).match(epsgRegex) || [];

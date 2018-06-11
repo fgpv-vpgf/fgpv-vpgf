@@ -57,6 +57,7 @@ function events($rootScope) {
         rvDataReady: 'rvDataReady', // Fired when table is loaded
 
         // config state transitions
+        rvConfigAdded: 'rvConfigAdded',
         rvCfgLoad: 'rvCfgLoad',
         rvCfgInitialized: 'rvCfgInitialized',
         rvCfgUpdated: 'rvCfgUpdated',
@@ -78,11 +79,7 @@ function events($rootScope) {
         rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
 
         rvApiMapAdded: 'rvApiMapAdded',
-        rvApiLayerAdded: 'rvApiLayerAdded',
-
-        rvEPSGPreInited: 'rvEPSGPreInited', // fire when intention EPSG has been pre-inited
-        rvIntentionsPreInited: 'rvIntentionsPreInited', // fire when all intentions have been pre-iinitialized
-        rvIntentionsInited: 'rvIntentionsInited'// fire when all intentions have been initialized
+        rvApiLayerAdded: 'rvApiLayerAdded'
     };
 }
 

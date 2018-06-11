@@ -1,4 +1,4 @@
-/* global RV */
+import PluginLoader from 'api/../plugin-loader';
 
 /**
  * @module geoService
@@ -13,8 +13,7 @@ angular
     .module('app.geo')
     .factory('geoService', geoService);
 
-function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-    identifyService, /*LayerBlueprint,*/ bookmarkService, ConfigObject, legendService, $timeout, intentionService) {
+function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -57,16 +56,20 @@ function geoService($http, $q, $rootScope, events, mapService, layerRegistry, co
                     config.applyBookmark(bookmarkService.storedBookmark);
                 }
 
-                events.$on(events.rvApiMapAdded, (_, mapi) => {
-                    intentionService.initialize(config.intentions, mapi);
-                });
-                events.$on(events.rvIntentionsPreInited, () => {
+                const pluginLoader = new PluginLoader(config, $rootElement);
+
+                pluginLoader.isReady.then(() => {
                     mapService.makeMap();
+                    appInfo.plugins = pluginLoader.pluginList;
                     legendService.constructLegend(config.map.layers, config.map.legend);
                     this._isMapReady = true;
                     $rootScope.$broadcast(events.rvApiReady);
                 });
-                intentionService.preInitialize(config.intentions);
+
+                events.$on(events.rvApiMapAdded, (_, mapi) => {
+                    pluginLoader.init(mapi);
+                });
+
                 events.$on(events.rvCfgUpdated, (evt, layers) => {
                     let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
                     layers.forEach(layer => {
