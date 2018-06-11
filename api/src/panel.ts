@@ -94,7 +94,7 @@ export class Panel {
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
         this._map_object = map;
-        
+
         this._map_height = $(this._map_object.mapElement).height();
         this._map_width = $(this._map_object.mapElement).width();
 
@@ -280,14 +280,15 @@ export class Panel {
     * If no position is set, calculate based on a 1x1 panel. 
     * @return {number[][]} - array of arrays representing each grid square 
     */
-    availableSpaces(): number[][] {
+    availableSpaces(width?: number, height?: number): number[][] {
 
         //initializes availableSpaces array
         let cols = 20, rows = 20;
         let availableSpaces = [], row = [];
         while (cols--) row.push(0);
         while (rows--) availableSpaces.push(row.slice());
-        let panelWidth, panelHeight;
+        let panelWidth = width;
+        let panelHeight = width;
         let minPanelWidth = undefined;
         let minPanelHeight = undefined;
 
@@ -296,14 +297,19 @@ export class Panel {
             throw "this panel's map is not set; cannot retrieve grid.";
         }
 
-        //if no position set calculate based on a 1x1 panel
-        if (this._topLeftX === undefined && this._topLeftY === undefined && this._bottomRightX === undefined && this._bottomRightY === undefined) {
+        //if no position, width or height set calculate based on a 1x1 panel
+        if (this._topLeftX === undefined && this._topLeftY === undefined && this._bottomRightX === undefined && this._bottomRightY === undefined && width === undefined && height === undefined) {
 
             return Panel.availableSpaces(this._map_object.panelRegistry, 1, 1);
         }
-        //otherwise compute based on width/height computed from position
+        //
         else {
-            return Panel.availableSpaces(this._map_object.panelRegistry, this._bottomRightX - this._topLeftX + 1, this._bottomRightY - this._topLeftY + 1, this);
+            if (width !== undefined && height !== undefined) {
+                return Panel.availableSpaces(this._map_object.panelRegistry, width, height, this);
+            }
+            else {
+                return Panel.availableSpaces(this._map_object.panelRegistry, this._bottomRightX - this._topLeftX + 1, this._bottomRightY - this._topLeftY + 1, this);
+            }
         }
 
 
@@ -545,7 +551,7 @@ export class Panel {
         let bottomRightX = (bottomRight) % 20;
         let bottomRightY = Math.floor(bottomRight / 20);
 
-        if(topLeft < 0 || topLeft > 399 || bottomRight<0 || bottomRight>399){
+        if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
         }
 
@@ -588,7 +594,7 @@ export class Panel {
     */
     setMinPosition(topLeft: number, bottomRight: number): void {
 
-        if(topLeft < 0 || topLeft > 399 || bottomRight<0 || bottomRight>399){
+        if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
         }
 

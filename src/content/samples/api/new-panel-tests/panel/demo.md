@@ -89,6 +89,7 @@
 
 
 - ***Set/Get Controls:***  panel controls set as a list of PanelElems
+    - Hint: copy/paste the following only after the previous setup has been copy/pasted into the console
     
     ```javascript
 
@@ -112,6 +113,7 @@
 ### Available Spaces 
 
 - ***Setup:***
+    - Hint: first refresh page to clear the previous setup.
 
     ```javascript
 
@@ -129,7 +131,9 @@
 
     let panelRegistry = RZ.mapInstances[0].panelRegistry;
     RZ.Panel.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance
+    ```
 
+    ```javascript
     RZ.mapInstances[0].mapGrid; //compare to map grid representation (mapGrid only for debugging purposes)
 
     ```
@@ -139,24 +143,26 @@
     - No height, width or position set (calculations based on 1x1 panel): 
         ```javascript
         RZ.mapInstances[0].createPanel('panel3');
-        RZ.mapInstances[0].panelRegistry[2].availableSpaces(); //works
+        RZ.mapInstances[0].panelRegistry[2].availableSpaces(); //
         ````
     
     - Position is set: 
         ```javascript
 
-        RZ.mapInstances[0].panelRegistry[0].availableSpaces(); //works
+        RZ.mapInstances[0].panelRegistry[1].availableSpaces(); //available spaces for 'panel2'
         ```
     
     - When checking what would happen if the panel was another width/height: 
         ```javascript
-        RZ.mapInstances[0].panelRegistry[0].availableSpaces(2, 3); //works
+        RZ.mapInstances[0].panelRegistry[1].availableSpaces(3, 4); //available spaces for 'panel2' if it were 3x4
         ```
     
     - When a min position is set on a panel: 
+        - 1 represents positions that cause overlap, -1 represents invalid positions
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43); //works!
-        RZ.mapInstances[0].panelRegistry[1].availableSpaces();
+        RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43); 
+
+        RZ.mapInstances[0].panelRegistry[1].availableSpaces();//available spaces for 'panel2' if it had a min position
         ```
 
 ---
@@ -164,7 +170,7 @@
 ### Error Handling Examples:
 
 - **Setup:**
-    
+    - Hint: first refresh page to clear the previous setup.
     ```javascript 
     RZ.mapInstances[0].createPanel('panel1');
     RZ.mapInstances[0].createPanel('panel2');
@@ -185,10 +191,11 @@
 
 - Opening a panel whose min is within another panel's min: 
     ```javascript
-    RZ.mapInstances[0].panelRegistry[1].open() //within panel 1's min position
+    RZ.mapInstances[0].panelRegistry[1].open() //within 'panel1''s min position
     ```
 
 - Autoshrinking panels when non-min positions overlap: 
+    -Alert message should pop up telling you which dimension shrunk (might need to wait a bit)
     ```javascript
     
     RZ.mapInstances[0].panelRegistry[0].setPosition(0, 105);
@@ -249,8 +256,6 @@
 
         ```
     
-    - Error if availableSpaces() is called without width and height set and position existing.
-
 - ***Explanation of Map Grid:***
     
     - 20 rows x 20 columns
