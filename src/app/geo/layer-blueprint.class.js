@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService, layerSource) {
+function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, bookmarkService, appInfo, layerSource) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -21,13 +21,6 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
     const { Layer: { Types: layerTypes }, Service: { Types: serviceTypes } } = Geo;
 
     class LayerBlueprint {
-        /**
-         * Creates a new LayerBlueprint.
-         * @param  {Object} initialConfig partial config, can be an empty object.
-         * @param  {Function} epsgLookup a function which takes and EPSG code and returns a projection definition (see geoService for the exact signature)
-         */
-        constructor() { }
-
         /**
          * Get the layer definition query
          *
@@ -233,11 +226,9 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
-            const intentions = configService.getSync.intentions;
-            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
-
+            const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
             return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
-                this.config, undefined, lookup);
+                this.config, undefined, epsg.lookup);
         }
     }
 
@@ -282,11 +273,9 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             // clone data because the makeSomethingLayer functions mangle the config data
             const formattedDataCopy = angular.copy(this._layerSource.formattedData);
 
-            // HACK: supply epsgLookup here;
             // TODO: find a better place for it
-            const intentions = configService.getSync.intentions;
-            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
-            this._layerSource.epsgLookup = lookup;
+            const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
+            this._layerSource.epsgLookup = epsg.lookup;
 
             const layerFileGenerators = {
                 [Geo.Service.Types.CSV]: () =>
@@ -310,10 +299,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
          * @return {Promise} promise resolving with the esri layer object
          */
         generateLayer() {
-            const intentions = configService.getSync.intentions;
-            const lookup = (intentions && intentions.epsg) ? intentions.epsg.lookup : undefined;
-
-            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__, lookup);
+            const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
+            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__, epsg.lookup);
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "intentions": {
-    "epsg": "epsgExt"
+    "epsg": "customEPSG"
   },
   "ui": {
     "title": "Custom Title",
