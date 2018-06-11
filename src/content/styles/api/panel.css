@@ -6,9 +6,8 @@
     background: #F2F2F2; 
     border: 1px solid #ccc; 
     box-shadow: 1px 1px 2px #fff inset, -1px -1px 2px #fff inset; 
-    margin: 10px; 
-    display: block;
-    position: absolute; 
+    display: inline-block;
+    position: absolute;
     top: 0px; 
     left: 0px;
     padding: 5px;
@@ -27,6 +26,7 @@
 .btn{
     width: 36px;
     height: 26px;
+    margin: 2px;
 }
 .svg-style{
     width: 80%;
