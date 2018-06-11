@@ -2,7 +2,30 @@ import { Observable, Subject } from 'rxjs/Rx';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
 
-
+/**
+ * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls. 
+ *
+ * Panels are sized and positioned relative to the map they are on. Each map instance can be thought of as a 20 x 20 grid. 
+ * - Rows and columns on this grid are numbered from 0-19
+ * - Each grid square gets a number from (0 - 399) with 400 squares in total
+ * - A grid square width is 5% of the map width
+ * - A grid square height is 5% of the map height
+ * - Thus if the width and height of the map are not equal, these "squares" are actually rectangles!
+ * - A panel with the position (25, 149) has: 
+ *      - top-left corner: 2nd row, 6th column
+ *      - bottom-right corner: 8th row, 10th column
+ * 
+ * Panels require a map instance upon creation. While this can be manually passed in by the user, a new Panel is easily created like so:
+ * ```js
+ * mapInstance.createPanel('panelID');   //do this
+ * let panel = new Panel('panelID', mapInstance); //instead of this
+ * ``` 
+ * 
+ * Map instances track panels through their panelRegistry. Thus to retrieve a panel on a map, the following can be done:
+ * ```js
+ * mapInstance.panelRegistry[2]; // retrieves the third panel added to the map instance
+ * ```
+ */
 export class Panel {
 
     private _id: string;
@@ -17,8 +40,8 @@ export class Panel {
     private _panel_body: HTMLElement;
     private _document_fragment: DocumentFragment;
 
-    private _map_width: number;
-    private _map_height: number;
+    private _map_width: number | undefined;
+    private _map_height: number | undefined;
 
     private _map_object: Map;
 
@@ -71,9 +94,9 @@ export class Panel {
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
         this._map_object = map;
-
-        this._map_height = <number>$(this._map_object.mapElement).height();
-        this._map_width = <number>$(this._map_object.mapElement).width();
+        
+        this._map_height = $(this._map_object.mapElement).height();
+        this._map_width = $(this._map_object.mapElement).width();
 
         //this.observableSubscribe();
 
@@ -127,8 +150,9 @@ export class Panel {
         $(window).resize(function () {
             //if current width is different from stored width, fire width changed
             if (panel._map_width !== $(panel._map_object.mapElement).width()) {
-                panel._widthChanged.next(<number>$(panel._map_object.mapElement).width() * 0.05);
-                panel._map_width = <number>$(panel._map_object.mapElement).width();
+
+                panel._widthChanged.next(<number>$(panel._map_object.mapElement)!.width() * 0.05);
+                panel._map_width = $(panel._map_object.mapElement).width();
             }
             //if current height is different from stored height, fire height changed
             else if (panel._map_height !== $(panel._map_object.mapElement).height()) {
@@ -145,7 +169,7 @@ export class Panel {
     * Helper method to setPosition(), setMinPosition(), set coverable(). Updates available spaces on the grid.
     * @private
     */
-    private updateGridSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number) {
+    private updateGridSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): void {
         this._map_object.updateMapGrid(coverage, topLeftX * 20 + topLeftY, bottomRightX * 20 + bottomRightY);
     }
 
@@ -521,6 +545,10 @@ export class Panel {
         let bottomRightX = (bottomRight) % 20;
         let bottomRightY = Math.floor(bottomRight / 20);
 
+        if(topLeft < 0 || topLeft > 399 || bottomRight<0 || bottomRight>399){
+            throw "Exception: positions cannot be less than 0 or greater than 399.";
+        }
+
         //if position supplied is invalid throw an error
         if (topLeftX > bottomRightX || topLeftY > bottomRightY) {
             throw "Exception: invalid position supplied, the topLeft row or column is greater than the bottomRight row or column.";
@@ -560,8 +588,12 @@ export class Panel {
     */
     setMinPosition(topLeft: number, bottomRight: number): void {
 
+        if(topLeft < 0 || topLeft > 399 || bottomRight<0 || bottomRight>399){
+            throw "Exception: positions cannot be less than 0 or greater than 399.";
+        }
+
         if (this._bottomRightX === undefined || this._bottomRightY === undefined || this._topLeftX === undefined || this._topLeftY === undefined) {
-            throw "Exception: cannot set min position before a valid position is set."
+            throw "Exception: cannot set min position before a valid position is set.";
         }
 
         let topLeftX = topLeft % 20;
@@ -608,7 +640,7 @@ export class Panel {
 
         //calculate width and height of panel according to bottom right. 
         this._panel_contents.style.width = ((bottomRightX - topLeftX + 1) * 0.05 * parentWidth).toString() + "px";
-        this._panel_contents.style.height = ((bottomRightY - topLeftY) * 0.05 * parentHeight).toString() + "px";
+        this._panel_contents.style.height = ((bottomRightY - topLeftY + 1) * 0.05 * parentHeight).toString() + "px";
     }
 
     /**
