@@ -2,7 +2,6 @@ TODO (MEETING PLAN):
 
 
 June 8: 
--CSS access from API folder
 -object.prototype for privates to hide in console
 -documentation
 -demo link for Miles
@@ -12,12 +11,9 @@ June 8:
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
--unnescessary casting
 -Good commenting (add examples in)
--Good typescript headers
--JQuery/document.getElementByID calls
--return void
-
+-can't seem to get around force casing for jquery .height() and .width(). sometimes putting it in an if statement with !== undefined works
+but otherwise doesn't
 
 Future features (?): 
 -Remove coverable for now, don't worry about greying out
