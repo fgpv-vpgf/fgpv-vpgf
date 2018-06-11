@@ -2,13 +2,13 @@ TODO (MEETING PLAN):
 
 
 June 8: 
--space between panels --> not sure why width needed a change to 10%
 -CSS access from API folder
 -object.prototype for privates to hide in console
 -documentation
 -demo link for Miles
 -scrap map grid --> keep for debugging purposes, ask at meeting
-
+-ask Miles about opening/closing when position changes
+-actual css file in src/content/styles/api/panel.css
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
