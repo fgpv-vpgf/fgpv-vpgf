@@ -12,7 +12,7 @@
         }
     </style>
 
-    <script src="./extensions/extension.js"></script>
+    <script src="./intentions/epsg.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -21,6 +21,19 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+    
+    <script>
+    window.rzTest = {
+        preInit: () => {
+            console.warn('Loading delayed by 5 seconds.');
+            return new Promise(a => setTimeout(a, 5000));
+        },
+
+        init: (mApi) => {
+            console.warn(mApi);
+        }
+    };
+    </script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -30,7 +43,8 @@
         rv-config="config/config-sample-57.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark">
+        rv-restore-bookmark="bookmark"
+        rz-extensions="rzTest">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

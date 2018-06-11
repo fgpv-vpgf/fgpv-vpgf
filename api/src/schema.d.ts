@@ -16,6 +16,12 @@ export type SideMenuButtons = (
   | "help"
   | "language"
   | "plugins")[];
+/**
+ * Specifies the location/content of the about section
+ */
+export type About = {
+  [k: string]: any;
+};
 export type SpatialReferenceNode = {
   [k: string]: any;
 };
@@ -115,7 +121,7 @@ export interface FgpvConfigSchema {
      */
     title?: string;
     /**
-     * Provides configuration to the main app toolbar. If not supplied, the all default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }.
+     * Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }.
      */
     appBar?: {
       /**
@@ -141,52 +147,9 @@ export interface FgpvConfigSchema {
      * Will restrict the user from panning beyond the maximum extent.
      */
     restrictNavigation?: boolean;
-    /**
-     * About properties from configuration file or Markdown folder
-     */
-    about?:
-      | {
-          content: string;
-        }
-      | {
-          folderName: string;
-        };
-    /**
-     * Help properties
-     */
-    help?: {
-      /**
-       * Help folder name who contain the help description and images
-       */
-      folderName: string;
-    };
-    legend?: {
-      /**
-       * Specifies if the items in the legend can be reordered; structured legend ignores this property.
-       */
-      reorderable?: boolean;
-      /**
-       * Specifies if the user-added layers are allowed.
-       */
-      allowImport?: boolean;
-      /**
-       * Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports
-       */
-      isOpen?: {
-        /**
-         * Whether the legend is opened by default on initial loading of the map for large viewports
-         */
-        large?: boolean;
-        /**
-         * Whether the legend is opened by default on initial loading of the map for medium viewports
-         */
-        medium?: boolean;
-        /**
-         * Whether the legend is opened by default on initial loading of the map for small viewports
-         */
-        small?: boolean;
-      };
-    };
+    about?: About;
+    help?: Help;
+    legend?: LegendUi;
     /**
      * Specifies whether the table panel is opened by default on initial loading of the map for small, medium, and large viewports
      */
@@ -207,12 +170,6 @@ export interface FgpvConfigSchema {
        * Whether the table panel is opened by default on initial loading of the map for small viewports
        */
       small?: boolean;
-    };
-    /**
-     * FIXME
-     */
-    widgetsWidget?: {
-      [k: string]: any;
     };
     [k: string]: any;
   };
@@ -254,40 +211,7 @@ export interface FgpvConfigSchema {
     print?: {
       [k: string]: any;
     };
-    /**
-     * Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls
-     */
-    search?: {
-      /**
-       * Disable specific types of searches including NTS, FSA, or LAT/LNG
-       */
-      disabledSearches?: ("NTS" | "FSA" | "LAT/LNG")[];
-      /**
-       * Service endpoint urls
-       */
-      serviceUrls: {
-        /**
-         * Endpoint url for geoNames service
-         */
-        geoNames: string;
-        /**
-         * Endpoint url for geoLocation service
-         */
-        geoLocation: string;
-        /**
-         * Endpoint url for geoSuggest service
-         */
-        geoSuggest: string;
-        /**
-         * Endpoint url for provinces service
-         */
-        provinces: string;
-        /**
-         * Endpoint url for types service
-         */
-        types: string;
-      };
-    };
+    search?: SearchService;
     /**
      * Export properties
      */
@@ -445,6 +369,30 @@ export interface FgpvConfigSchema {
       basemap?: {
         [k: string]: any;
       };
+      areaOfInterest?: {
+        title: string;
+        /**
+         * The xmin coord value (lower left corner) in lat/long
+         */
+        xmin: number;
+        /**
+         * The ymin coord value (lower left corner) in lat/long
+         */
+        ymin: number;
+        /**
+         * The xmax coord value (upper right corner) in lat/long
+         */
+        xmax: number;
+        /**
+         * The ymax coord value (upper right corner) in lat/long
+         */
+        ymax: number;
+        /**
+         * Path to image file to display in the area of interest selector.
+         */
+        thumbnailUrl: string;
+        [k: string]: any;
+      }[];
     };
     /**
      * Initial basemap to load. If not supplied viewer will select any basemap.
@@ -464,7 +412,19 @@ export interface FgpvConfigSchema {
     legend?: LegendAuto | LegendStructured;
     [k: string]: any;
   };
+  /**
+   * Enable/Disable intentions or replace with your own implementation
+   */
+  intentions?: {
+    /**
+     * intention for EPSG Lookup
+     */
+    epsg?: string;
+  };
 }
+/**
+ * Provides configuration to the nav bar. If not supplied the default nav bar buttons are shown.
+ */
 export interface NavBarNode {
   zoom: "all" | "buttons" | "slider";
   extra?: (
@@ -488,6 +448,79 @@ export interface SideMenuNode {
    */
   logo?: boolean;
   items?: SideMenuButtons[];
+}
+/**
+ * Specifies details for the Help section
+ */
+export interface Help {
+  /**
+   * Help folder name which contains the help description and images
+   */
+  folderName: string;
+}
+/**
+ * Specifies options for the legend like reordering, importing, etc.
+ */
+export interface LegendUi {
+  /**
+   * Specifies if the items in the legend can be reordered; structured legend ignores this property.
+   */
+  reorderable?: boolean;
+  /**
+   * Specifies if the user-added layers are allowed.
+   */
+  allowImport?: boolean;
+  /**
+   * Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports
+   */
+  isOpen?: {
+    /**
+     * Whether the legend is opened by default on initial loading of the map for large viewports
+     */
+    large?: boolean;
+    /**
+     * Whether the legend is opened by default on initial loading of the map for medium viewports
+     */
+    medium?: boolean;
+    /**
+     * Whether the legend is opened by default on initial loading of the map for small viewports
+     */
+    small?: boolean;
+  };
+}
+/**
+ * Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls
+ */
+export interface SearchService {
+  /**
+   * Disable specific types of searches including NTS, FSA, or LAT/LNG
+   */
+  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG")[];
+  /**
+   * Service endpoint urls
+   */
+  serviceUrls: {
+    /**
+     * Endpoint url for geoNames service
+     */
+    geoNames: string;
+    /**
+     * Endpoint url for geoLocation service
+     */
+    geoLocation: string;
+    /**
+     * Endpoint url for geoSuggest service
+     */
+    geoSuggest: string;
+    /**
+     * Endpoint url for provinces service
+     */
+    provinces: string;
+    /**
+     * Endpoint url for types service
+     */
+    types: string;
+  };
 }
 export interface ExtentSetNode {
   id: string;
@@ -686,6 +719,10 @@ export interface BaseMapNode {
     id: string;
     layerType: string;
     url: string;
+    /**
+     * Initial opacity
+     */
+    opacity?: number;
   }[];
   attribution?: AttributionNode;
   zoomLevels?: {
@@ -703,6 +740,10 @@ export interface AttributionNode {
   };
   logo: {
     enabled: boolean;
+    /**
+     * Alternate text for the image.
+     */
+    altText?: string;
     /**
      * URL for the image.
      */
@@ -1033,6 +1074,10 @@ export interface DynamicLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
+  /**
+   * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
+   */
+  imageFormat?: "png" | "png8" | "png24" | "png32" | "jpg" | "pdf" | "bmp" | "gif" | "svg";
 }
 export interface DynamicLayerEntryNode {
   /**
