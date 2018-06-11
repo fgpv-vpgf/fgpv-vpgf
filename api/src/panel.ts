@@ -122,7 +122,6 @@ export class Panel {
         this._document_fragment.appendChild(this._panel_contents);
         this._map_object.mapDiv.append(this._document_fragment);
         
-        this._contentsHeight = <number>$(this._panel_contents).height();
         let panel = this;
 
         $(window).resize(function () {
@@ -321,7 +320,9 @@ export class Panel {
                         elem._element.get(0).innerHTML = '-';
                         body.classList.remove('hidden');
 
-                        panel._panel_contents.style.height = (panel._contentsHeight + <number>$(panel._panel_body).height()).toString() + 'px';
+                        if(panel._contentsHeight !== undefined){
+                            panel._panel_contents.style.height = (panel._contentsHeight).toString() + 'px';
+                        }
                         
                     }
                     else {
@@ -546,6 +547,9 @@ export class Panel {
 
         }
 
+        let parentHeight = <number>$(this._map_object.mapElement).height();
+        this._contentsHeight = ((bottomRightY - topLeftY) * 0.05 * parentHeight);
+
     }
 
 
@@ -594,16 +598,16 @@ export class Panel {
     */
     private changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): void {
         //set left position (5% * parentWidth * topLeftX)
-        var parentWidth = <number>$(this._map_object.mapElement).width();
+        let parentWidth = <number>$(this._map_object.mapElement).width();
         this._panel_contents.style.left = (0.05 * parentWidth * topLeftX).toString() + "px";
 
         //set top position (5% * parentHeight * topLeftY)
         //need to forcecast because height and width return undefined
-        var parentHeight = <number>$(this._map_object.mapElement).height();
+        let parentHeight = <number>$(this._map_object.mapElement).height();
         this._panel_contents.style.top = (0.05 * parentHeight * topLeftY).toString() + "px";
 
         //calculate width and height of panel according to bottom right. 
-        this._panel_contents.style.width = ((bottomRightX - topLeftX) * 0.05 * parentWidth).toString() + "px";
+        this._panel_contents.style.width = ((bottomRightX - topLeftX + 1) * 0.05 * parentWidth).toString() + "px";
         this._panel_contents.style.height = ((bottomRightY - topLeftY) * 0.05 * parentHeight).toString() + "px";
     }
 
