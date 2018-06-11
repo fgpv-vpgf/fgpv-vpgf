@@ -121,7 +121,7 @@ export class Panel {
         this._document_fragment = document.createDocumentFragment();
         this._document_fragment.appendChild(this._panel_contents);
         this._map_object.mapDiv.append(this._document_fragment);
-        
+
         let panel = this;
 
         $(window).resize(function () {
@@ -320,10 +320,10 @@ export class Panel {
                         elem._element.get(0).innerHTML = '-';
                         body.classList.remove('hidden');
 
-                        if(panel._contentsHeight !== undefined){
+                        if (panel._contentsHeight !== undefined) {
                             panel._panel_contents.style.height = (panel._contentsHeight).toString() + 'px';
                         }
-                        
+
                     }
                     else {
                         elem._element.get(0).innerHTML = '+';
@@ -399,7 +399,7 @@ export class Panel {
 
                     //if panel's min doesn't completely avoid panel, then panel can't open
                     if (!(this._minBottomRightX < topLeftX || this._minBottomRightY < topLeftY || this._minTopLeftX > bottomRightX || this._minTopLeftY > bottomRightY)) {
-                        throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate.";
+                        throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate, panel closing.";
                     }
                     else {
 
