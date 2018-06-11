@@ -282,11 +282,6 @@ export class Panel {
     */
     availableSpaces(width?: number, height?: number): number[][] {
 
-        //initializes availableSpaces array
-        let cols = 20, rows = 20;
-        let availableSpaces = [], row = [];
-        while (cols--) row.push(0);
-        while (rows--) availableSpaces.push(row.slice());
         let panelWidth = width;
         let panelHeight = width;
         let minPanelWidth = undefined;
@@ -719,7 +714,6 @@ export class PanelElem {
                 btn.text = "x";
                 this._element = btn.element;
                 this._element.addClass('close-btn');
-                //TODO: define close function in panel class 
             }
             //toggle button shortcut
             else if (element === 'T') {

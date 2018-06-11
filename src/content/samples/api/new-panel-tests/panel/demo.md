@@ -90,7 +90,6 @@
 
 - ***Set/Get Controls:***  panel controls set as a list of PanelElems
     - Hint: copy/paste the following only after the previous setup has been copy/pasted into the console
-    
     ```javascript
 
     

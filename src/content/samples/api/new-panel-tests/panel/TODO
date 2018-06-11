@@ -1,13 +1,11 @@
-TODO (MEETING PLAN): 
+-actual css file in src/content/styles/api/panel.css
 
 
-June 8: 
+TODO: 
+
 -object.prototype for privates to hide in console
 -documentation
--demo link for Miles
 -scrap map grid --> keep for debugging purposes, ask at meeting
--ask Miles about opening/closing when position changes
--actual css file in src/content/styles/api/panel.css
 -------------------------------------------------------------------------------------------------------------------------
 Last minute checks: 
 -Private methods
@@ -26,21 +24,3 @@ DOCUMENTATION:
 1. https://codeburst.io/generate-docs-and-host-it-with-jsdoc-and-github-pages-113b9dae9acb 
 2. npm run apidoc
 3. https://github.com/fgpv-vpgf/fgpv-vpgf/pull/2717
-
-
-
-
-
-
-
-
-
-
-
-
-
--Add features: controls and contents (demonstrate the setters and getters)
--Explain that contents are just one PanelElem --> basically a string, HTML, JQuery<HTMLElement>
--Explain shortcuts and demo them (title, |, x, t)
--Distinguish between SVG and Text Btns (they are all uniform)
-
