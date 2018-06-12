@@ -82,7 +82,7 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
         // only allow the image to be enlarged if it has been shrunk
         const img = new Image();
         img.onload = function() {
-            self.block.canEnlarge = this.width > self.element.width();
+            self.block.canEnlarge = this.width > self.element.parents(".rv-toc").width();
         }
         img.src = self.block.content;
 
