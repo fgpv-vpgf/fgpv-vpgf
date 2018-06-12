@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, $mdDialog, $translate) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, referenceService, events, $interval, $mdDialog, $translate) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -167,14 +167,31 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
         self.onExpandClick = name => {
             const image = self.symbology.images[name];
-            const htmlContent = "<img src=" + image + "></img>";
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .htmlContent(htmlContent)
-                    .ariaLabel($translate.instant('toc.tooltip.fullsizeImage'))
-                    .ok($translate.instant('toc.fullsizeImage.close'))
-            );
+            const shellNode = referenceService.panels.shell;
+            const img = new Image();
+            img.onload = function() {
+                const w = Math.min(this.width + 50, shellNode.width() * 0.8);
+                const h = Math.min(this.height, shellNode.height() * 0.8);
+
+                const template =
+                    '<md-dialog aria-label="{{\'toc.tooltip.fullsizeImage\' | translate}}" class="rv-expanded-dialog" style="width: ' + w + 'px; height: ' + h + 'px;">'+
+                    '    <rv-content-pane close-panel="self.close()" title-style="title" title-value="{{\'toc.tooltip.fullsizeImage\' | translate}}">'+
+                    '        <img class="rv-expanded-image" src=' + image + '></img>'+
+                    '        <div>{{self.test}}</div>' +
+                    '    </rv-content-pane>'+
+                    '</md-dialog>';
+
+                $mdDialog.show({
+                    controller: ExpandController,
+                    controllerAs: 'self',
+                    bindToController: true,
+                    clickOutsideToClose: true,
+                    fullscreen: true,
+                    template: template,
+                    parent: shellNode
+                });
+            }
+            img.src = image;
         }
 
         scope.$watch('self.showSymbologyToggle', value => {
@@ -727,6 +744,11 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const metrics = context.measureText(text);
             return metrics.width;
         }
+    }
+
+    function ExpandController($mdDialog) {
+        const self = this;
+        self.close = $mdDialog.hide;
     }
 }
 
