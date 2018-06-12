@@ -16,7 +16,7 @@ angular
     .module('app.ui')
     .directive('rvToc', rvToc);
 
-function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService, $mdDialog, $translate) {
+function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -113,40 +113,6 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
             }
         };
         // jscs:enable requireSpacesInAnonymousFunctionExpression
-
-        // open dialog with fullsize image
-        self.onExpandClick = content => {
-            const shellNode = referenceService.panels.shell;
-            const img = new Image();
-            img.onload = function() {
-                const w = Math.min(this.width + 50, shellNode.width() * 0.8);
-                const h = Math.min(this.height, shellNode.height() * 0.8);
-
-                const template =
-                    '<md-dialog aria-label="{{\'toc.tooltip.fullsizeImage\' | translate}}" class="rv-expanded-dialog" style="width: ' + w + 'px; height: ' + h + 'px;">'+
-                    '    <rv-content-pane close-panel="self.close()" title-style="title" title-value="{{\'toc.tooltip.fullsizeImage\' | translate}}">'+
-                    '        <img class="rv-expanded-image" src=' + content + '></img>'+
-                    '        <div>{{self.test}}</div>' +
-                    '    </rv-content-pane>'+
-                    '</md-dialog>';
-
-                $mdDialog.show({
-                    controller: ExpandController,
-                    controllerAs: 'self',
-                    bindToController: true,
-                    clickOutsideToClose: true,
-                    fullscreen: true,
-                    template: template,
-                    parent: shellNode
-                });
-            }
-            img.src = content;
-        }
-
-        function ExpandController($mdDialog) {
-            const self = this;
-            self.close = $mdDialog.hide;
-        }
 
         // set an empty animation object in the event a method is called prior
         // to a scroll animation being created
