@@ -9,7 +9,7 @@ const flagIcon = 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z';
  *
  * @return {object} directive body
  */
-function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval, $compile) {
+function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval, $compile, Geo) {
     const directive = {
         restrict: 'E',
         link
@@ -21,6 +21,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
         const self = scope.self;
 
         $rootScope.$on(events.rvApiReady, () => {
+            const hasNorthPole = configService.getSync.map.selectedBasemap.tileSchema.hasNorthPole;
             const mapConfig = configService.getSync.map.components;
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
@@ -28,12 +29,14 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 let deregisterMapAddedListener = events.$on(events.rvApiMapAdded, (_, mApi) => {
                     deregisterMapAddedListener();
                     // create new layer for north pole
-                    mApi.layers.addLayer('northPoleLayer').then(layer => {
-                        // create north pole as point object and add to north pole layer
-                        const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
-                        let northPole = new Point('northPole', poleSource, new XY(-96, 90));
-                        layer[0].addGeometry(northPole);
-                    });
+                    if (hasNorthPole) {
+                        mApi.layers.addLayer('northPoleLayer').then(layer => {
+                            // create north pole as point object and add to north pole layer
+                            const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
+                            let northPole = new Point('northPole', poleSource, new XY(-96, 90));
+                            layer[0].addGeometry(northPole);
+                        });
+                    }
 
                     updateNorthArrow(); // set initial position
                     $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes

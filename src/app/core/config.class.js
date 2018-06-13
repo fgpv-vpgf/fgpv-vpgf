@@ -1120,7 +1120,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class TileSchema
      */
     class TileSchema {
-        constructor ({ id, lodSetId, name, overviewUrl }, extentSet, lodSet) {
+        constructor ({ id, lodSetId, name, overviewUrl, hasNorthPole }, extentSet, lodSet) {
             this._id = id;
             this._name = name;
             this._lodSetId = lodSetId;
@@ -1129,6 +1129,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._extentSet = extentSet;
             this._lodSet = lodSet;
+
+            this._hasNorthPole = hasNorthPole || false;
         }
 
         get name () { return this._name; }
@@ -1138,6 +1140,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get extentSet () { return this._extentSet; }
         get lodSet () { return this._lodSet; }
+
+        get hasNorthPole() { return this._hasNorthPole; }
 
         /**
          * Create a blank basemap from a basemap with the same tile schema.
@@ -1177,7 +1181,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 id: this.id,
                 name: this.name,
                 extentSetId: this.extentSet.id,
-                lodSetId: this.lodSet.id
+                lodSetId: this.lodSet.id,
+                hasNorthPole: this.hasNorthPole
             };
         }
     }

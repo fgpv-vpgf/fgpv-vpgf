@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, errorService, ConfigObject) {
+function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, errorService, ConfigObject, Geo) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {
@@ -443,7 +443,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                     "mouseInfo": {
                         "enabled": false,
                         "spatialReference": {
-                            "wkid": 102100
+                            "wkid": Geo.SpatialReference.WEB_MERCATOR.wkids[1]
                         }
                     },
                     "northArrow": {
@@ -470,7 +470,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                             "ymin": -883440
                         },
                         "spatialReference": {
-                            "wkid": 3978
+                            "wkid": Geo.SpatialReference.CAN_ATLAS_LAMBERT.latestWkid
                         }
                     }
                 ],
@@ -508,7 +508,8 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
                         "name": "Lambert Maps",
                         "extentSetId": "EXT_NRCAN_Lambert_3978",
-                        "lodSetId": "LOD_NRCAN_Lambert_3978"
+                        "lodSetId": "LOD_NRCAN_Lambert_3978",
+                        "hasNorthPole": true
                     }
                 ],
                 "baseMaps": [
