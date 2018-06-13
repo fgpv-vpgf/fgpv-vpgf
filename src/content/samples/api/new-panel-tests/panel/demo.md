@@ -264,3 +264,48 @@
     - ***Example:*** setPosition(25, 149); 
         - Top left corner 25: 2nd row, 6th column
         - Bottom right corner 149: 8th row, 10th column
+
+
+- ***`PanelPositions` Class??*** abstracts logic from `availableSpaces`, `conflictDetected`, `setPosition`, `setMinPosition`, and `checkOutOfBounds`.
+    - a lot of the logic cluttering the the `Panel` class has to do with calculations based on `Panel` coordinates on map
+        - (`_topLeftX`, `_topLeftY`, `_bottomRightX`, `_bottomRightY`)
+    - each `Panel` would have its own `PanelPositions`
+    - `PanelPositions` would store positions coordinates for `Panel` (coordates according to 20 x 20 grid)
+    - provide logic for invalid positions
+    - provide logic for conflicting positions
+    - provide logic for available spaces on the map
+
+    ```js
+    class PanelPositions {
+
+        /*attributes*/
+        private _topLeftX: number, _topLeftY: number, _bottomRightX: number, _bottomRightY: number;
+        private _minTopLeftX: number, _minTopLeftY: number, _minBottomRightX: number, _minBottomRightY: number;
+
+        constructor(panel: Panel): void;
+
+        /* sets coordinate values, throws exceptions if position invalid*/
+        setPanelPosition(topLeft: number, bottomRight: number): void;
+
+        /* sets min coordinate values, throws exceptions if position invalid*/
+        setPanelMinPosition(topLeft: number, bottomRight: number): void;
+
+        checkOutOfBounds(isMin: boolean, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): boolean;
+
+        get panelCoords(): number[]; //useful for panel.changePosition(), conflict detected (checking other panels coords)
+
+        conflictDetected(panelRegistry: Panel[]) : boolean;
+
+        static availableSpaces(panelRegistry: Panel[], width: number, height: number, panel?: Panel): number[][]; 
+
+         availableSpaces(width?: number, height?: number): number[][];
+    }
+
+    /* ONLY SHOWING CHANGES! */
+    class Panel {
+
+        get panelPositions(): PanelPositions;  
+
+        private changePosition(): void // will use this.panelPositions.panelCoords() in its calculations
+    }
+    ```
