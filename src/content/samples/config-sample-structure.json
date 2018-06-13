@@ -1,15 +1,23 @@
 {
   "version": "2.0",
-  "services": { "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU" },
+  "services": {
+    "googleAPIKey": "AIzaSyD_FwYU_mT1xhTdUoiHBRjwToWUe--KVVU"
+  },
   "map": {
     "lodSets": [
       {
         "id": "LOD_NRCAN_Lambert_3978",
-        "lods": [ { "level": 0, "resolution": 38364.660062653464, "scale": 145000000 } ]
+        "lods": [
+          {
+            "level": 0,
+            "resolution": 38364.660062653464,
+            "scale": 145000000
+          }
+        ]
       }
     ],
-   "extentSets": [
-       {
+    "extentSets": [
+      {
         "id": "EXT_NRCAN_Lambert_3978",
         "default": {
           "xmin": -2681457,
@@ -22,7 +30,15 @@
         }
       }
     ],
-    "tileSchemas": [ { "id": "nrcan3978", "name": "NRCan Maps", "lodSetId": "LOD_NRCAN_Lambert_3978", "extentSetId": "EXT_NRCAN_Lambert_3978" } ],
+    "tileSchemas": [
+      {
+        "id": "nrcan3978",
+        "name": "NRCan Maps",
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "extentSetId": "EXT_NRCAN_Lambert_3978",
+        "hasNorthPole": true
+      }
+    ],
     "baseMaps": [
       {
         "id": "baseNrCan",
@@ -45,27 +61,53 @@
       "root": {
         "name": "test",
         "children": [
-          { "content": "red data url", "infoType": "image" },
-          { "content": "red part of the map", "infoType": "text" },
+          {
+            "content": "red data url",
+            "infoType": "image"
+          },
+          {
+            "content": "red part of the map",
+            "infoType": "text"
+          },
           {
             "layerId": "wms-042",
             "entryId": "A",
             "symbologyStack": [
-              { "image": "something other than legend graphic for layer A", "text": "random text" },
-              { "image": "something else which is still not legend graphic for layer A", "text": "some text" }
+              {
+                "image": "something other than legend graphic for layer A",
+                "text": "random text"
+              },
+              {
+                "image": "something else which is still not legend graphic for layer A",
+                "text": "some text"
+              }
             ],
             "symbologyRenderStyle": "icons"
           },
           {
             "name": "B",
             "children": [
-              { "layerId": "layer9000" },
-              { "content": "starfield.gif", "infoType": "image" },
-              { "content": "holderIspum.sentence(maxInt)", "infoType": "text" }
+              {
+                "layerId": "layer9000"
+              },
+              {
+                "content": "starfield.gif",
+                "infoType": "image"
+              },
+              {
+                "content": "holderIspum.sentence(maxInt)",
+                "infoType": "text"
+              }
             ]
           },
-          { "content": "green data url", "infoType": "image" },
-          { "content": "green part of the map", "infoType": "text" }
+          {
+            "content": "green data url",
+            "infoType": "image"
+          },
+          {
+            "content": "green part of the map",
+            "infoType": "text"
+          }
         ]
       }
     },
@@ -83,8 +125,12 @@
         "layerType": "ogcWms",
         "url": "http://localhost/",
         "layerEntries": [
-            {"id": "A"},
-            {"id": "B"}
+          {
+            "id": "A"
+          },
+          {
+            "id": "B"
+          }
         ],
         "state": {
           "query": false
@@ -96,10 +142,17 @@
         "layerType": "esriDynamic",
         "url": "http://localhost/",
         "layerEntries": [
-            {"index": 4},
-            {"index": 7, "outfields": "OBJFIELD33, OBJFIELD99"}
+          {
+            "index": 4
+          },
+          {
+            "index": 7,
+            "outfields": "OBJFIELD33, OBJFIELD99"
+          }
         ],
-        "disabledControls": ["refresh"]
+        "disabledControls": [
+          "refresh"
+        ]
       }
     ]
   }
