@@ -443,7 +443,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                     "mouseInfo": {
                         "enabled": false,
                         "spatialReference": {
-                            "wkid": Geo.SpatialReference.WEB_MERCATOR.latestWkid
+                            "wkid": Geo.SpatialReference.WEB_MERCATOR.wkids[1]
                         }
                     },
                     "northArrow": {
