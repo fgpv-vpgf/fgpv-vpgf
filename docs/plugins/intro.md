@@ -1,76 +1,46 @@
-# Intentions
+# Plugins
 
-Intentions are internal extensions that reside in a sub-folder of [fpgv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf). They are developed and fully supported by the core RAMP team. Intentions are default RAMP features that can be easily disabled or replaced. They come bundled with RAMP and no additional setup is needed to use them.
+A plugin allows you to add, remove, or change the way RAMP works. There are two distinct plugin types, extensions and intentions that share similar conventions but have separate use cases. 
 
-## Getting Started
+## Hello, World!
 
-Default Intentions are loaded automatically when starting RAMP.  If you want to remove or replace individual intentions, you will need to open your **configuration file** and add the following JSON object with property `intentions`.  This is not strictly needed however.
-
-```json
-    "intentions": {}
-```
-
-<p class="tip">
-    By omitting the `intentions` property, RAMP will simply load all the default intentions.
-</p>
-
-## Ways of Loading Intentions
-
-Each property inside `intentions` is an intention that will be loaded into RAMP.
-
-```json
-    "intentions": {
-        "epsg": "default"
-    }
-```
-
-The value of an intention indicates the way RAMP will be loading the intention. Default is set to `"none"` if the intention is not specified in `intention` thus it will not be loaded. There are 3 settings available:
-
-- `"default"`: This will load the default intention.
-
-- `"none"`: This is the default setting.  As suggested, the intention will be excluded.
-
-- **Name of the extension**: The name of the extension you would like the default intention to be replaced by.
-
-<p class="danger">
-    When setting the value for an intention. Please ensure the name matches the intention you are intended to add for the intention to be applied. However, having non-existing intentions will not affect RAMP nor causes errors.
-<p>
-
-## Replacing an Intention
-
-First you will need to load the extension file before the main viewers JavaScript file `rv-main.js`. We will call it `my-extention.js` in our example.
-
-```html
-<script src="my-extention.js"></script>
-```
-
-When writing an extension. You will need to create a variable and the name of that variable will be the name of the extension. It needs to contain methods either `preInit` or `init` or both depending on the intention you want to replace.
-
-Here is an example of the general structure.
+Let's start by example:
 
 ```js
-var intentionExt = (() => {
-    return {
-        preInit: () => {
-            // ...
-        },
-        init: () => {
-            // ...
-        }
+window.myPlugin = {
+    preInit: function(config) {
+        // do things before RAMP has started
+        // optionally return a promise and RAMP won't start until it resolves. We make the map wait for 2.5 seconds.
+        return new Promise(function(resolve) {
+            setTimeout(resolve, 2500);
+        });
+    },
+
+    init: function(api) {
+        // do things after RAMP has started
+        // call doStuff()
+    },
+
+    doStuff: function() {
+        // does things
     }
-})();
+};
 ```
 
-RAMP will call methods `preInit` and `init` automatically once the extension is loaded.  `preInit` will be called before the map object of RAMP and API are ready.  Instructions here should be intended to use for creating the map object.  Inversely `init` will be called when both map object and API are ready.  It should be used for actions that depend on the completion of map object.
+A plugin is a regular JavaScript object that gets added to the global window object. We defined three functions in our example above, two of which are special: `preInit` and `init`.
 
-<p class="danger">
-    Be sure to read the documentation for the intention you intend to replace. It may require both `preInit` and `init` to be defined, with specific return types from `preInit`.
-<p>
+### preInit
+This optional function is called by RAMP before the map and api have been created. A config object is given based on the maps configuration json file. If a promise is returned RAMP will wait for it to resolve before creating the map and api.
 
-Finally, You will also need to specify what the intention you are intended to replace and the name of the extensions.
+### init
+This optional function is called by RAMP after the map and api have been created. The maps api object is given. Anything returned by this function is ignored.
 
-```json
-    "intentions": {
-        "myIntention": "intentionExt",
-    }
-```
+
+## [Intentions](/plugins/intentions)
+Certain features of RAMP can be disabled or replaced by making your own intention plugin. Intentions can have one or more special functions or properties, so it's important to read the documentation for the intention you want to replace.
+
+You can see a list of all intentions [here](/plugins/intentions?id=intention-list). 
+
+## [Extensions](/plugins/extensions)
+Everything that's not an intention is an extension :-)
+
