@@ -55,11 +55,12 @@ const GEO = {
     },
     SpatialReference: {
         CAN_ATLAS_LAMBERT: {
-            wkid: 3978
+            wkids: [3978],
+            latestWkid: 3978
         },
         WEB_MERCATOR: {
-            wkid: 3857,
-            latestWkid: 102100
+            wkids: [3857, 102100],
+            latestWkid: 3857
         }
     }
 };

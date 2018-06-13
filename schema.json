@@ -126,7 +126,8 @@
                 "name": { "type": "string", "description": "The name to display in the basemap selector for the set of basemaps referencing this schema" },
                 "extentSetId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
                 "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
-                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" }
+                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" },
+                "hasNorthPole": { "type": "boolean", "default": false, "description": "Indicates if the map projection includes a north pole.  Defaults to false to avoid errors." }
             },
             "required": [ "extentSetId", "lodSetId", "id", "name" ],
             "additionalProperties": false

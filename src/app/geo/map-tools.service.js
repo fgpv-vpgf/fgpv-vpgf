@@ -56,7 +56,7 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
         let angleDegrees = null;
         let rotationAngle = null;
 
-        if (wkid === Geo.SpatialReference.WEB_MERCATOR.latestWkid) { // mercator
+        if (Geo.SpatialReference.WEB_MERCATOR.wkids.includes(wkid)) { // mercator
             // always in center of viewer with no rotation
             screenX = mapScrnCntr.x;
             rotationAngle = 0;

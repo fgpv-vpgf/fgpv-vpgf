@@ -470,7 +470,7 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                             "ymin": -883440
                         },
                         "spatialReference": {
-                            "wkid": Geo.SpatialReference.CAN_ATLAS_LAMBERT.wkid
+                            "wkid": Geo.SpatialReference.CAN_ATLAS_LAMBERT.latestWkid
                         }
                     }
                 ],
@@ -508,7 +508,8 @@ function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, 
                         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
                         "name": "Lambert Maps",
                         "extentSetId": "EXT_NRCAN_Lambert_3978",
-                        "lodSetId": "LOD_NRCAN_Lambert_3978"
+                        "lodSetId": "LOD_NRCAN_Lambert_3978",
+                        "hasNorthPole": true
                     }
                 ],
                 "baseMaps": [
