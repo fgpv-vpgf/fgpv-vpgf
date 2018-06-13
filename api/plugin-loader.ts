@@ -10,7 +10,7 @@ export default class Loader {
     private config: FgpvConfigSchema;
     private mapElem: JQuery<HTMLElement>;
     private preInitPromises: Promise<void>[] = []; // all preInit promises must resolve prior to map loading
-    
+
     pluginList : Array<any> = []; // a list of all intentions and extensions
 
     constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
