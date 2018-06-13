@@ -265,15 +265,18 @@
         - Top left corner 25: 2nd row, 6th column
         - Bottom right corner 149: 8th row, 10th column
 
+---
 
-- ***`PanelPositions` Class??*** abstracts logic from `availableSpaces`, `conflictDetected`, `setPosition`, `setMinPosition`, and `checkOutOfBounds`.
-    - a lot of the logic cluttering the the `Panel` class has to do with calculations based on `Panel` coordinates on map
-        - (`_topLeftX`, `_topLeftY`, `_bottomRightX`, `_bottomRightY`)
-    - each `Panel` would have its own `PanelPositions`
-    - `PanelPositions` would store positions coordinates for `Panel` (coordates according to 20 x 20 grid)
-    - provide logic for invalid positions
-    - provide logic for conflicting positions
-    - provide logic for available spaces on the map
+### PanelPositions Class?
+
+- abstracts logic from `availableSpaces`, `conflictDetected`, `setPosition`, `setMinPosition`, and `checkOutOfBounds`.
+- a lot of the logic cluttering the the `Panel` class has to do with calculations based on `Panel` coordinates on map
+    - (`_topLeftX`, `_topLeftY`, `_bottomRightX`, `_bottomRightY`)
+- each `Panel` would have its own `PanelPositions`
+- `PanelPositions` would store positions coordinates for `Panel` (coordates according to 20 x 20 grid)
+- provides logic for invalid positions
+- provide logic for conflicting positions
+- provide logic for available spaces on the map
 
     ```js
     class PanelPositions {
@@ -298,7 +301,7 @@
 
         static availableSpaces(panelRegistry: Panel[], width: number, height: number, panel?: Panel): number[][]; 
 
-         availableSpaces(width?: number, height?: number): number[][];
+        availableSpaces(width?: number, height?: number): number[][];
     }
 
     /* ONLY SHOWING CHANGES! */
