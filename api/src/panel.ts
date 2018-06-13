@@ -71,8 +71,6 @@ export class Panel {
     //user accessible observables 
     opening: Observable<any>;
     closing: Observable<any>;
-    topLeftXChanged: Observable<number>;
-    bottomRightXChanged: Observable<number>;
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>
     heightChanged: Observable<number>
