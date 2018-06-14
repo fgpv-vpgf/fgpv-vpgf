@@ -54,7 +54,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
         configService.getSync.map.instance.setLegendConfig = legendStructure => {
             stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
 
-            const apiLayers = mApi.layers.allLayers.map(l => l._viewerLayer.config.source);
+            const apiLayers = mApi.layers.allLayers
+                                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
+                                .filter(l => l._viewerLayer.config)
+                                .map(l => l._viewerLayer.config.source);
             const viewerLayers = configService.getSync.map.layers;
             const layers = apiLayers.concat(
                 viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
