@@ -364,11 +364,13 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const mapBody = configService.getSync.map.instance;
         const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
         const highlightLayer = configService.getSync.map.highlightLayer;
-        let layerRecordIDsInLegend = [];
 
-        configService.getSync.map.legendBlocks.entries.forEach(entry => {
-            layerRecordIDsInLegend.push(entry.layerRecordId);
-        });
+        // an array of layer records ordered as visible to the user in the layer selector UI component
+        const layerRecordIDsInLegend = configService.getSync.map.legendBlocks
+            .walk(lb => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
+            .filter(id => id) // this will strip all falsy values like `undefined` and `null` since ids should be strings; filter out artificial groups that don't have ids set to null and legend info elements
+            .reduce((a, b) =>
+                a.concat(a.indexOf(b) < 0 ? b : []), []); // remove duplicates (dynamic group and its children with have the same layer id)
 
         // if structured legend, take the layer order from the config as the authoritative source
         // TODO:? user-added layers are not added to `configService.getSync.map.layers`; they will be always added at the top of the stack for structured legend, so this is not an immediate concern;
