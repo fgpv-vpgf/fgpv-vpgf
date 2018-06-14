@@ -1,4 +1,5 @@
 import { Point, XY } from 'api/geometry';
+import { SimpleLayer } from 'api/layers';
 
 angular.module('app.ui')
     .directive('rvNorthArrow', rvNorthArrow);
@@ -9,7 +10,7 @@ const flagIcon = 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z';
  *
  * @return {object} directive body
  */
-function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $interval, $compile, Geo) {
+function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $compile, gapiService) {
     const directive = {
         restrict: 'E',
         link
@@ -26,22 +27,24 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
             if (mapConfig.northArrow && mapConfig.northArrow.enabled) {
                 // required so that arrow moves behind overview map instead of in front
                 $rootElement.find('.rv-esri-map > .esriMapContainer').first().after(element);
-                let deregisterMapAddedListener = events.$on(events.rvApiMapAdded, (_, mApi) => {
+                let deregisterMapAddedListener = events.$on(events.rvApiMapAdded, (_) => {
                     deregisterMapAddedListener();
                     // create new layer for north pole
                     if (hasNorthPole) {
-                        mApi.layers.addLayer('northPoleLayer').then(layer => {
-                            // create north pole as point object and add to north pole layer
-                            const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
-                            let northPole = new Point('northPole', poleSource, new XY(-96, 90));
-                            layer[0].addGeometry(northPole);
-                        });
+                        const layerRecord = gapiService.gapi.layer.createGraphicsRecord('');
+                        const map = configService.getSync.map;
+                        map.instance.addLayer(layerRecord._layer);
+
+                        // create north pole as point object and add to north pole layer
+                        const northPoleLayer = new SimpleLayer(layerRecord, map);
+                        const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
+                        let northPole = new Point('northPole', poleSource, new XY(-96, 90));
+                        northPoleLayer.addGeometry(northPole);
                     }
 
                     updateNorthArrow(); // set initial position
                     $rootScope.$on(events.rvExtentChange, updateNorthArrow); // update on extent changes
                 });
-            } else {
                 element.css('display', 'none'); // hide if disabled in the config
             }
 
