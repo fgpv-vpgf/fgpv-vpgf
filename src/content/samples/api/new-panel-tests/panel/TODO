@@ -30,9 +30,7 @@ DOUBLE CHECK:
 -console.log/alerts
 -dangling code/comments
 -restriction to inner shell
-
--toggle button case where contents set before controls doesn't toggle well
-
+-alt text, black toggle with buttons
 
 
 ---------------------------------------------------------------------------------------------------------------------------------
