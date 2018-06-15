@@ -108,6 +108,11 @@ export default class Map {
         return this._element;
     }
 
+    get innerShell():HTMLElement{
+        //(<HTMLElement>document.getElementsByClassName('rv-inner-shell')[0]).style.height = ;
+        return <HTMLElement>document.getElementsByClassName('rv-inner-shell')[0];
+    }
+
     /**
      * Returns the grid representation of the map instance describing where panels are on the map. 
      * @return {number[][]} - 

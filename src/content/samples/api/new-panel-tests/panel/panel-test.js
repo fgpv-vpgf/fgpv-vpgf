@@ -13,7 +13,7 @@ $.getScript('../../../../rv-main.js', function () {
 
     //once map is added
     RZ.mapAdded.subscribe(mapi => {
-
+        document.getElementsByClassName('rv-inner-shell')[0].clientHeight = "auto";
 
     });
 });

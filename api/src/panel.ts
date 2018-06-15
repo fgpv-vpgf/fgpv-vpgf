@@ -92,9 +92,11 @@ export class Panel {
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
         this._map_object = map;
-
-        this._map_height = $(this._map_object.mapElement).height();
-        this._map_width = $(this._map_object.mapElement).width();
+        //INNERSHELL
+        this._map_height = $(this._map_object.innerShell).height();
+        this._map_width = $(this._map_object.innerShell).width();
+        console.log(this._map_width);
+        console.log(this._map_height);
 
         //this.observableSubscribe();
 
@@ -141,21 +143,26 @@ export class Panel {
         //append panel contents ("shell") to document fragment
         this._document_fragment = document.createDocumentFragment();
         this._document_fragment.appendChild(this._panel_contents);
-        this._map_object.mapDiv.append(this._document_fragment);
+
+
+        //INNERSHELL?
+        $(this._map_object.innerShell).append(this._document_fragment);
 
         let panel = this;
 
         $(window).resize(function () {
-            //if current width is different from stored width, fire width changed
-            if (panel._map_width !== $(panel._map_object.mapElement).width()) {
 
-                panel._widthChanged.next(<number>$(panel._map_object.mapElement)!.width() * 0.05);
-                panel._map_width = $(panel._map_object.mapElement).width();
+            //INNERSHELL
+            //if current width is different from stored width, fire width changed
+            if (panel._map_width !== $(panel._map_object.innerShell).width()) {
+
+                panel._widthChanged.next(<number>$(panel._map_object.innerShell)!.width() * 0.05);
+                panel._map_width = $(panel._map_object.innerShell).width();
             }
             //if current height is different from stored height, fire height changed
-            else if (panel._map_height !== $(panel._map_object.mapElement).height()) {
-                panel._heightChanged.next(<number>$(panel._map_object.mapElement).height() * 0.05);
-                panel._map_height = <number>$(panel._map_object.mapElement).height();
+            else if (panel._map_height !== $(panel._map_object.innerShell).height()) {
+                panel._heightChanged.next(<number>$(panel._map_object.innerShell).height() * 0.05);
+                panel._map_height = <number>$(panel._map_object.innerShell).height();
             }
 
             //changes width/height to new percentage value of the map
@@ -574,7 +581,7 @@ export class Panel {
 
         }
 
-        let parentHeight = <number>$(this._map_object.mapElement).height();
+        let parentHeight = <number>$(this._map_object.innerShell).height();
         this._contentsHeight = ((bottomRightY - topLeftY) * 0.05 * parentHeight);
 
     }
@@ -629,12 +636,12 @@ export class Panel {
     */
     private changePosition(topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): void {
         //set left position (5% * parentWidth * topLeftX)
-        let parentWidth = <number>$(this._map_object.mapElement).width();
+        let parentWidth = <number>$(this._map_object.innerShell).width();
         this._panel_contents.style.left = (0.05 * parentWidth * topLeftX).toString() + "px";
 
         //set top position (5% * parentHeight * topLeftY)
         //need to forcecast because height and width return undefined
-        let parentHeight = <number>$(this._map_object.mapElement).height();
+        let parentHeight = <number>$(this._map_object.innerShell).height();
         this._panel_contents.style.top = (0.05 * parentHeight * topLeftY).toString() + "px";
 
         //calculate width and height of panel according to bottom right. 
