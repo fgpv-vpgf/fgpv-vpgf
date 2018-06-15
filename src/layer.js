@@ -227,7 +227,6 @@ function pokeEsriService(url, esriBundle, hint) {
         const info = makeInfo(serviceType.WFS);
         info.rawData = stringToArrayBuffer(JSON.stringify(srvJson));
         return info;
-
     };
 
     // couldnt figure it out
@@ -241,7 +240,7 @@ function pokeEsriService(url, esriBundle, hint) {
             url: url,
             content: { f: 'json' },
             callbackParamName: 'callback',
-            handleAs: 'json',
+            handleAs: 'json'
         });
 
         defService.then(srvResult => {

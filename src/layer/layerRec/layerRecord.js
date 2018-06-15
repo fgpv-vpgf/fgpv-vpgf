@@ -290,12 +290,12 @@ class LayerRecord extends root.Root {
     }
 
     /**
-     * Indicates if layer is file based, WFS, or esri based.
+     * Indicates if layer is file based, WMS, WFS, or esri based.
      *
      * @function dataSource
      */
     dataSource () {
-        // only instances of FeatureLayer can be file based or WFS; that class overrides this function
+        // only instances of FeatureLayer can be file based or WFS and only instances of WMSLayer are type wms; those classes override this function
         return 'esri';
     }
 

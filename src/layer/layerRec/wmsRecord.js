@@ -120,6 +120,16 @@ class WmsRecord extends layerRecord.LayerRecord {
 
         return { identifyResults: [identifyResult], identifyPromise };
     }
+
+    /**
+     * Indicates the layer is WMS based.
+     *
+     * @function dataSource
+     * @returns {String} 'wms' since WMS based layer
+     */
+    dataSource () {
+        return 'wms'
+    }
 }
 
 module.exports = () => ({
