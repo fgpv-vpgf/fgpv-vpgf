@@ -2,7 +2,8 @@ import EPSG from '../intention/epsg/epsg.intention';
 import { FgpvConfigSchema } from 'api/schema';
 
 const iDict: any = {
-    epsg: EPSG
+    epsg: EPSG,
+    table: {} // TODO: replace with simpleTable
 };
 
 // Each map instance will make a Loader instance
@@ -25,19 +26,25 @@ export default class Loader {
     }
 
     /**
-     * Intensions are strictly loaded from the config. If `default` is set we use the imported (proper) intention.
+     * Intentions are strictly loaded from the config. If `default` is set we use the imported (proper) intention.
      * If not `none` we expect the string value to be present on the global window object which points to the (custom) intention.
      */
     loadIntentions() {
         const configI: any = this.config.intentions;
         for (const prop in configI) {
             const val: string = configI[prop];
-            if (val === 'default') {
-                iDict[prop].intention = prop;           // indicate this is an intention and it's type
-                this.pluginList.push(iDict[prop]);
-            } else if (val !== 'none') {
-                (<any>window)[val].intention = prop;    // indicate this is an intention and it's type
-                this.pluginList.push((<any>window)[val]);
+            if (val === 'default' || val !== 'none') {
+                let i = val === 'default' ? iDict[prop] : (<any>window)[val];
+
+                // can contain a constructor, if so initialize. This is useful for multi-map support
+                try {
+                    i = new i();
+                } catch(e) {
+                    // do nothing
+                }
+
+                i.intention = prop; // indicate this is an intention and it's type
+                this.pluginList.push(i);
             }
         }
     }
