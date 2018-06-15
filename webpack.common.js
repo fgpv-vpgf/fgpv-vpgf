@@ -10,7 +10,6 @@ const VersionPlugin         = require('./scripts/webpack/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
-const WebpackShellPlugin    = require('webpack-shell-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const babelPresets = {
@@ -150,6 +149,7 @@ module.exports = function (env) {
 
         devServer: {
             host: '0.0.0.0',
+            https: !!env.https,
             publicPath: '/',
             historyApiFallback: {
                 index: '/samples/webpack-note.html',
