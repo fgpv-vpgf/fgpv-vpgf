@@ -328,40 +328,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         const layerRecord = geoService.layers[requester.layerId];
         const dataPromise = layerRecord.getAttributes(entry.featureIdx)
             .then(attributes => {
-                const rvSymbolColumnName = 'rvSymbol';
-
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
-                // add symbol as the first column
-                // check if the symbol column already exists
-                if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-                    attributes.rows.forEach(row => {
-                        // reset href to solve problem in Safari with svg not rendered
-                        row.rvSymbol =
-                            graphicsService.setSvgHref(geoService.retrieveSymbol(row, attributes.renderer));
-                        row.rvInteractive = '';
-                    });
-
-                    // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because table will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
-                    attributes.columns.unshift({
-                        data: 'rvInteractive',
-                        title: '',
-                        orderable: false,
-                        render: '',
-                        width: '40px' // for datatables
-                    });
-
-                    // add a column for symbols
-                    attributes.columns.unshift({
-                        data: rvSymbolColumnName,
-                        title: '',
-                        orderable: false,
-                        render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px' // for datatables
-                    });
-                }
-
                 return {
                     data: attributes,
                     isLoaded: false
@@ -401,67 +367,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         const dataPromise = legendBlock.formattedData
             .then(attributes => common.$timeout(() => attributes), 1000)
             .then(attributes => {
-                const rvSymbolColumnName = 'rvSymbol';
-
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
-                // add symbol as the first column
-                // check if the symbol column already exists
-                if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-
-                    attributes.rows.forEach(row => {
-                        legendBlock.getSymbol(row).then(symbol => { row.rvSymbol = symbol; });
-                        row.rvInteractive = '';
-                    });
-
-                    // add filters attributes needed by every columns
-                    attributes.columns.forEach(columns => {
-                        columns.name = columns.data; // add name so we can get column from datatables (https://datatables.net/reference/type/column-selector)
-                        columns.display = true;
-                        columns.sort = 'none'; // can be none, asc or desc (values use by datatable)
-                        columns.filter = { };
-                        columns.width = '';
-                        columns.init = false;
-                        columns.position = -1; // use to synchronize columns when reorder
-                    });
-
-                    // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
-                    attributes.columns.unshift({
-                        data: 'rvInteractive',
-                        title: '',
-                        orderable: false,
-                        render: '',
-                        width: '40px', // for datatables
-                        position: 1, // for datatables
-                        className: 'rv-filter-noexport' // do not show when datatble export or print
-                    });
-
-                    // add a column for symbols
-                    attributes.columns.unshift({
-                        data: rvSymbolColumnName,
-                        title: '',
-                        orderable: false,
-                        render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px', // for datatables
-                        position: 0, // for datatables
-                        className: 'rv-filter-noexport' // do not show when datatble export or print
-
-                    });
-                }
-
-                // add filters informations (use by filters to keep info on table so it persist when we change table)
-                if (typeof attributes.filter === 'undefined') {
-                    attributes.filter =  {
-                        globalSearch: '',
-                        isApplied: true,
-                        isActive: false,
-                        isMapFiltered: false,
-                        isInit: false,
-                        isOpen: true
-                    };
-                }
-
                 return {
                     data: attributes,
                     isLoaded: false
