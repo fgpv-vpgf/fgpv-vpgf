@@ -534,11 +534,18 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
             const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
 
-            const labelHeight = symbolItem.label.outerHeight();
 
             // calculate symbology item's dimensions based on max width
             const itemWidth = Math.min(ref.maxItemWidth, imageWidth);
             const itemHeight = imageWidth !== 0 ? itemWidth / imageWidth * imageHeight : 0; // in cases when image urls are broken its size is 0
+
+            // extremely convoluted math to calculate an aproximation of the label's height
+            // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
+            const fontSize = parseInt(symbolItem.label.css('font-size').slice(0, -2));
+            const lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
+            const labelLength = symbolItem.label[0].innerText.length;
+            const padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
+            const labelHeight = Math.ceil((fontSize * labelLength) / itemWidth) * lineHeight + padding;
 
             // animate symbology container's size
             // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
