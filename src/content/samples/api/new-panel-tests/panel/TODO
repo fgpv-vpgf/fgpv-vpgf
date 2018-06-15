@@ -1,7 +1,6 @@
 - Actual css file in src/content/styles/api/panel.css
 
 TODO: 
-- Restrict the panel grid to the inner shell element (div element with class rv-inner-shell).
 - Have the ability to set a panels width and height (based on its current position) as either:
     - A percentage
     - Setting the width and height to 50% of a 4x5 panel would make it appear to be a 2x2.5 panel. 
@@ -12,7 +11,7 @@ or a pixel count
 
 - Panel controls are optional. If none set do not display the controls header.
 
-
+-pesky toggle button (seems to magically work sometimes?)
 - UI Pretty white background make things look like original panel as much as possible
 
 
@@ -26,6 +25,13 @@ but otherwise doesn't
 -structural changes to code
 
 
+DOUBLE CHECK:
+-toggle button
+-console.log/alerts
+-dangling code/comments
+-restriction to inner shell
+
+-toggle button case where contents set before controls doesn't toggle well
 
 
 

@@ -1,4 +1,5 @@
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
 
@@ -57,6 +58,9 @@ export class Panel {
     private _minBottomRightX: number;
     private _minBottomRightY: number;
 
+    private _width: number | string;
+    private _height: number | string;
+
     private _contentsHeight: number;
 
     //subjects initialized for observables that are fired through method calls
@@ -92,13 +96,8 @@ export class Panel {
         this.widthChanged = this._widthChanged.asObservable();
         this.heightChanged = this._heightChanged.asObservable();
         this._map_object = map;
-        //INNERSHELL
         this._map_height = $(this._map_object.innerShell).height();
         this._map_width = $(this._map_object.innerShell).width();
-        console.log(this._map_width);
-        console.log(this._map_height);
-
-        //this.observableSubscribe();
 
         //create panel components and document fragment
         this.createPanelComponents();
@@ -144,8 +143,6 @@ export class Panel {
         this._document_fragment = document.createDocumentFragment();
         this._document_fragment.appendChild(this._panel_contents);
 
-
-        //INNERSHELL?
         $(this._map_object.innerShell).append(this._document_fragment);
 
         let panel = this;
@@ -328,6 +325,7 @@ export class Panel {
     * @param {(PanelElem)[]} elems - the array of control elements that are set as panel controls
     */
     set controls(elems: PanelElem[]) {
+        this._panel_controls.classList.add('visible');
         this._controls = elems;
         let body = this._panel_body;
         //First empty existing controls
@@ -512,6 +510,9 @@ export class Panel {
     * @param {PanelElem} content - the PanelElem to be used as panel's contents (scopes other PanelElems)
     */
     set content(content: PanelElem) {
+
+        this._panel_body.classList.add('visible');
+
         this._content = content;
 
         //First empty existing content
@@ -585,6 +586,31 @@ export class Panel {
         this._contentsHeight = ((bottomRightY - topLeftY) * 0.05 * parentHeight);
 
     }
+
+    //if number, set to pixels, if string, set to %
+    set width(width: number | string) {
+        //check if panel position is set -> if not, error
+        //if it is a string, chop the % and parseInt, set width to % of position
+        //if it is a number, set to that amount of pixels
+
+    }
+
+    //if number, set to pixels, if string, set to %
+    set height(width: number | string) {
+        //check if panel position is set -> if not, error
+
+    }
+
+    //if number, set to pixels, if string, set to %
+    get width(): number | string {
+        return this._width;
+    }
+
+    //if number, set to pixels, if string, set to %
+    get height(): number | string {
+        return this._height;
+    }
+
 
 
     /**

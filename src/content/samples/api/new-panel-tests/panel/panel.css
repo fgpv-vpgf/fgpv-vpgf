@@ -14,10 +14,12 @@
     overflow: hidden;
 }
 .panel-controls {
+    visibility: hidden;
     border: grey solid 1px;
     padding: 3px;
 }
 .panel-body{
+    visibility: hidden;
     margin-top: 2px;
     border: grey solid 1px;
     display: inline-block;
@@ -46,6 +48,9 @@
 }
 .hidden{
     visibility: hidden;
+}
+.visible{
+    visibility: visible;
 }
 .divider{
     border-left: 1px solid palevioletred;
