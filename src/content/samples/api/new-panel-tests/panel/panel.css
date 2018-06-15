@@ -3,7 +3,7 @@
     max-height: 100%;
 }
 .panel-contents {
-    background: #F2F2F2; 
+    background-color: #ffffff; 
     border: 1px solid #ccc; 
     box-shadow: 1px 1px 2px #fff inset, -1px -1px 2px #fff inset; 
     display: inline-block;
@@ -14,14 +14,11 @@
     overflow: hidden;
 }
 .panel-controls {
-    visibility: hidden;
-    border: grey solid 1px;
+    border-bottom: lightslategray solid 1px;
     padding: 3px;
 }
 .panel-body{
-    visibility: hidden;
     margin-top: 2px;
-    border: grey solid 1px;
     display: inline-block;
     padding: 3px;
 }
@@ -29,31 +26,43 @@
     width: 36px;
     height: 26px;
     margin: 2px;
+    padding: 2px;
+    background-color: #ffffff;
+    border: 1px solid  #ffffff;
+    overflow: hidden;
+
+}
+.text-btn{
+    width: 36px;
+    height: 26px;
+    margin: 2px;
+    padding: 2px;
+    background-color: lightslategrey;
+    border: 1px solid  lightslategrey;
+    color: white;
+    overflow: hidden;
+}
+.text-btn:hover {
+    background-color: darkslategray;
+    color: white;
 }
 .svg-style{
-    width: 80%;
-    height: 80%;
+    width: 100%;
+    height: 100%;
+    fill: #778899;
+}
+.svg-style:hover{
+    fill: darkslategray;
 }
 .txt{
     width: 20%;
     height: 20%;
 }
-.close-btn{
-    color: white;
-    background-color: palevioletred;
-    border: white;
-}
-.toggle-btn{
-    color: palevioletred;
-}
 .hidden{
     visibility: hidden;
 }
-.visible{
-    visibility: visible;
-}
 .divider{
-    border-left: 1px solid palevioletred;
+    border-left: 1px solid rgb(146, 167, 187);
     height: 36px;
     margin-left: 10px;
     padding-bottom: 0px;

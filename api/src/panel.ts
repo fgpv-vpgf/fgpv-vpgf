@@ -129,9 +129,11 @@ export class Panel {
 
         this._panel_controls = document.createElement("div");
         this._panel_controls.classList.add('panel-controls');
+        this._panel_controls.classList.add('hidden');
 
         this._panel_body = document.createElement("div");
         this._panel_body.classList.add('panel-body');
+        this._panel_body.classList.add('hidden');
 
         this._panel_contents.setAttribute('id', this._id.toString());
 
@@ -325,7 +327,7 @@ export class Panel {
     * @param {(PanelElem)[]} elems - the array of control elements that are set as panel controls
     */
     set controls(elems: PanelElem[]) {
-        this._panel_controls.classList.add('visible');
+        this._panel_controls.classList.remove('hidden');
         this._controls = elems;
         let body = this._panel_body;
         //First empty existing controls
@@ -357,7 +359,7 @@ export class Panel {
                         elem._element.get(0).innerHTML = '+';
                         body.classList.add('hidden');
 
-                        panel._panel_contents.style.height = (panel._contentsHeight - <number>$(panel._panel_body).height()).toString() + 'px';
+                        panel._panel_contents.style.height = (<number>$(panel._panel_controls).height() + 5).toString() + 'px';
 
                     }
                 });
@@ -511,7 +513,7 @@ export class Panel {
     */
     set content(content: PanelElem) {
 
-        this._panel_body.classList.add('visible');
+        this._panel_body.classList.remove('hidden');
 
         this._content = content;
 
@@ -733,6 +735,10 @@ export class PanelElem {
     */
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
+        let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
+        let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
+        let closeSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>')[0];
+
         //if the element is a string either control divider, close button or title
         if (typeof element === "string") {
             //divider shortcut
@@ -742,19 +748,21 @@ export class PanelElem {
             //close button shortcut
             else if (element === "x") {
                 var btn = new Btn();
-                btn.text = "x";
+                btn.icon = <SVGElement>closeSVG;
                 this._element = btn.element;
-                this._element.addClass('close-btn');
+                this._element.addClass('btn');
+
             }
             //toggle button shortcut
             else if (element === 'T') {
                 var btn = new Btn();
-                btn.text = "-";
+                btn.icon = <SVGElement>minusSVG;
                 this._element = btn.element;
+                this._element.addClass('btn');
                 this._element.addClass('toggle-btn');
             }
             else {
-                this._element = $('<h2>' + element + '</h2>');
+                this._element = $('<h1>' + element + '</h1>');
             }
         }
         else {
@@ -813,6 +821,11 @@ export class Btn extends PanelElem {
     set icon(svg: SVGElement) {
         console.log(svg);
         svg.classList.add('svg-style');
+
+        //usually SVG element's children control fill property (eg when appending path object or rect object etc)
+        if(svg.firstChild !== null){
+            (<HTMLElement>svg.firstChild).classList.add('svg-style');
+        }        
         this._element.append(svg);
     }
 
@@ -822,5 +835,6 @@ export class Btn extends PanelElem {
     */
     set text(txt: string) {
         this._element.html(txt);
+        this._element.addClass('text-btn');
     }
 }
