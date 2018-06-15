@@ -78,7 +78,7 @@ Une symbologie est associée à chaque couche. Pour les couches simples (feature
 
 Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis ![](layer/scale.png)) et offrira une action (![](layer/zoom.png)) afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant, soit un zoom arrière).
 
-Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (![](layer/eye.png)) à côté de chaque couche.
+Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (![](layer/checkbox.png)) à côté de chaque couche.
 
 Il existe cinq types de couches qui peuvent être présentes dans la liste déroulante « Couches » :
 
