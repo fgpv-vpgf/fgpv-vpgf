@@ -12,7 +12,6 @@ or a pixel count
 - Panel controls are optional. If none set do not display the controls header.
 
 -pesky toggle button (seems to magically work sometimes?)
-- UI Pretty white background make things look like original panel as much as possible
 
 
 - Documentation
@@ -24,6 +23,8 @@ but otherwise doesn't
 -delete alerts and console.logs
 -structural changes to code
 
+-circular click effect button
+-UI get shadow effect on button hover and get button icons to be lightslategrey?
 
 DOUBLE CHECK:
 -toggle button
