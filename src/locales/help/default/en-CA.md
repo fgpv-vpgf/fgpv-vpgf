@@ -78,7 +78,7 @@ Each layer has some symbology associated with it. For simple feature layers a si
 
 Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display an icon (![](layer/scale.png)). Further, a zoom to the nearest valid level button will be displayed (![](layer/zoom.png)).
 
-You can toggle the visibility of the layer at any time by selecting the eye icon (![](layer/eye.png)) next to each layer.
+You can toggle the visibility of the layer at any time by selecting the checkbox (![](layer/checkbox.png)) next to each layer.
 
 There are five types of layers that can reside in the Legend dropdown:
 
@@ -144,7 +144,7 @@ Usage:
 
 # Export Image
 
-You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote, and a timestamp.
+You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote*, and a timestamp.
 
 Select the 'EXPORT' button from the main menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.
 
@@ -154,6 +154,7 @@ If you'd like to change the map canvas size you can do so from the dropdown in t
 
 Click on the download button in the header to get the final generated map image.
 
+*Please note that the footnote may not be available depending on the map.
 
 # Data Table Panel
 
@@ -246,7 +247,7 @@ Displays the data associated with a selected feature. This can be accessed by ei
 
 This page is WCAG 2.0 AA compliant.
 
-#### Keyboard Navigation 
+#### Keyboard Navigation
 
 Keyboard functionality is provided as an alternative for users who are unable to use a mouse. Use the Tab key to navigate forward to links and controls on the page. Press Shift+Tab to go back one step. Use the Enter or Spacebar keys to activate links and controls.
 
