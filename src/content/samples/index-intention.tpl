@@ -11,6 +11,11 @@
             height: 100%;
         }
     </style>
+    <script src="./extensions/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./extensions/enhancedTable.css" />
+
+    <script src="./intentions/epsg.js"></script>
+    
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -28,7 +33,8 @@
         rv-config="config/config-sample-56.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark">
+        rv-restore-bookmark="bookmark"
+        rz-extensions="rzTest,enhancedTable">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
