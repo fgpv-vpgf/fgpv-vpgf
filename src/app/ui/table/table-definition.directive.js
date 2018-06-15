@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+const moment = window.moment;
 
 // fields blueprints to be added to the table header for large layout and inside setting panel
 // `self` property is named so intentionally, as it will be passed on a scope to the FILTERS_TEMPLATE
@@ -78,7 +78,7 @@ const FILTERS_TEMPLATE = {
                     md-on-close="self.change('${columnNameMap[column]}', self.${column}.value)"
                     ng-disabled="self.${column}.static"
                     placeholder="{{ self.placeholder | translate }}" multiple>
-                    <md-option ng-repeat="value in self.${column}.values" ng-value="value">
+                    <md-option ng-repeat="value in self.${column}.values" ng-value="value" ng-selected="self.${column}.init.includes(value)">
                         {{ value }}
                     </md-option>
                 </md-select>
@@ -209,9 +209,9 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
             const columns = displayData.columns !== null ? displayData.columns : [];
 
             columns.forEach((column, i) => {
-                // skip the symbol, interactive columns and if the filter is not visible.
+                // skip the symbol, interactive columns and if the filter is not visible/searchable.
                 // this happen for customize columns where user doesn't want to have a filter.
-                if (typeof column.filter !== 'undefined') {
+                if (typeof column.filter !== 'undefined' && column.searchable) {
 
                     // get column directive, scope and type
                     const filterInfo = setFilter(column);
@@ -229,11 +229,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
                             const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;
                             table.column(`${column.name}:name`).search(val, true, false);
                         } else if (column.type === 'selector') {
-                            // set options for the selector then set filter (split with | for or and remove the ")
-                            filterInfo.scope.values = table.column(`${column.name}:name`).data().unique()
-                                .sort().map(val => `"${val}"`);
-                            const val = `^${column.filter.value.join('|').replace(/"/g, '')}.*$`;
-                            table.column(`${column.name}:name`).search(val, true, false);
+                            setSelectorFilter(filterInfo.scope, table, column);
                         }
 
                         // add to table
@@ -376,6 +372,32 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
                     return false;
                 }
             });
+        }
+
+        /**
+         * Add a custom selector filter to datatable
+         * @function setSelectorFilter
+         * @private
+         * @param {Object} filter the filter object who contains filter values { min, max }
+         * @param {Object} table    the table
+         * @param {Object} column    the column
+         */
+        function setSelectorFilter(filter, table, column) {
+            // set options for the selector then set filter (split with | for or and remove the ")
+            filter.values = table.column(`${column.name}:name`).data().unique()
+                .sort().map(val => `${val}`);
+
+            if (column.filter.value.length !== 0) {
+                // when value comes from the authoring tool, it is a string, not an array
+                const array = JSON.parse(column.filter.value);
+
+                // create the regex to select value
+                const val = `^${array.join('|').replace(/"/g, '')}.*$`;
+                table.column(`${column.name}:name`).search(val, true, false);
+
+                // set initial value
+                filter.init = array;
+            }
         }
     }
 }

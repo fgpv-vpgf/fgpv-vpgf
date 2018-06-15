@@ -1,5 +1,6 @@
-const pkg           = require('../../package.json');
-const ConcatSource  = require('webpack-sources').ConcatSource;
+const pkg = require('../../package.json');
+const fs = require('fs');
+const ConcatSource = require('webpack-sources').ConcatSource;
 
 const version = {};
 
@@ -18,7 +19,8 @@ version_plugin.prototype.apply = function(compiler) {
             chunks.forEach(chunk => {
                 chunk.files.forEach(filename => {
                     if (/^rv-main\.js$/.test(filename)) {
-                        const content = `var RVersion = ${JSON.stringify(version)};`;
+                        // TODO: Remove GSAP library once v2+ is released (v1+ is tightly couped to TweenMax)
+                        const content = `var RVersion = ${JSON.stringify(version)};` + fs.readFileSync('src/app/ui/gsap.js', 'utf8')  + fs.readFileSync('src/app/moment-timezone.js', 'utf8');
                         compilation.assets[filename] = new ConcatSource(content, compilation.assets[filename]);
                     }
                 });

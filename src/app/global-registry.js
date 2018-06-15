@@ -6,7 +6,7 @@ import geoapi from 'geoApi';
  * These are global values defined in the RV registry. They can be overridden by creating a global `RV` object with the same properties __before__ `injector.js` is executed.
  */
 const rvDefaults = {
-    dojoURL: '//js.arcgis.com/3.20/'
+    dojoURL: '//js.arcgis.com/3.22/init.js' // layer loading functionality breaks in 3.23/24
 };
 
 /**

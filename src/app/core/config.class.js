@@ -1,5 +1,5 @@
 import screenfull from 'screenfull';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { XY, XYBounds } from 'api/geometry';
 
 /**
@@ -281,7 +281,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         set boundingBox (value) {   this._boundingBox = value; }
 
         get query () {              return this._query; }
-        set query (value) {         this._query = value; }
+        set query (value) {
+            this._query = value;
+            $rootScope.$applyAsync();
+        }
 
         get snapshot () {           return this._snapshot; }
         set snapshot (value) {      this._snapshot = value; }
@@ -1029,8 +1032,19 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         _isSelected = false;
 
         get id () {             return this._id; }
+
         get name () {           return this._name; }
+        set name (value) {
+            this._name = value;
+            $rootScope.$applyAsync();
+        }
+
         get description () {    return this._description; }
+        set description (value) {
+            this._description = value;
+            $rootScope.$applyAsync();
+        }
+
         get typeSummary () {    return this._typeSummary; }
         get layers () {         return this._layers; }
         get url () {            return this._url; }
@@ -1106,7 +1120,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class TileSchema
      */
     class TileSchema {
-        constructor ({ id, lodSetId, name, overviewUrl }, extentSet, lodSet) {
+        constructor ({ id, lodSetId, name, overviewUrl, hasNorthPole }, extentSet, lodSet) {
             this._id = id;
             this._name = name;
             this._lodSetId = lodSetId;
@@ -1115,6 +1129,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._extentSet = extentSet;
             this._lodSet = lodSet;
+
+            this._hasNorthPole = hasNorthPole || false;
         }
 
         get name () { return this._name; }
@@ -1125,6 +1141,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get extentSet () { return this._extentSet; }
         get lodSet () { return this._lodSet; }
 
+        get hasNorthPole() { return this._hasNorthPole; }
+
         /**
          * Create a blank basemap from a basemap with the same tile schema.
          * It's not really a blank basemap, it's a basemap with opacity set to 0.
@@ -1134,11 +1152,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @return {Basemap} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
          */
         makeBlankBasemap(basemap) {
+            const blank = $.extend(true, {}, basemap)
+            const layers = blank.layers.map(lyr => { lyr.opacity = 0; return lyr; })
             const blankBasemap = new Basemap({
                 name: 'basemap.blank.title',
                 description: 'basemap.blank.desc',
                 id: `blank_basemap_${basemap.id}`,
-                layers: basemap.layers,
+                layers: layers,
                 thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
                 // blank maps have no attributions
                 attribution: {
@@ -1161,7 +1181,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 id: this.id,
                 name: this.name,
                 extentSetId: this.extentSet.id,
-                lodSetId: this.lodSet.id
+                lodSetId: this.lodSet.id,
+                hasNorthPole: this.hasNorthPole
             };
         }
     }
@@ -1509,6 +1530,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    class AreaOfInterestComponent extends ComponentBase {
+        constructor (source) {
+            super(source);
+        }
+    }
+
     class MouseInfoComponent extends ComponentBase {
         constructor (source) {
             super(source);
@@ -1595,6 +1622,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._source = componentsSource;
 
             this._geoSearch = new GeoSearchComponent(componentsSource.geoSearch);
+            this._areaOfInterest = new AreaOfInterestComponent(componentsSource.areaOfInterest);
             this._mouseInfo = new MouseInfoComponent(componentsSource.mouseInfo);
             this._northArrow = new NorthArrowComponent(componentsSource.northArrow);
             this._overviewMap = new OverviewMapComponent(componentsSource.overviewMap);
@@ -1603,6 +1631,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
 
         get geoSearch () { return this._geoSearch; }
+        get areaOfInterest () { return this._areaOfInterest; }
         get mouseInfo () { return this._mouseInfo; }
         get northArrow () { return this._northArrow; }
         get overviewMap () { return this._overviewMap; }
@@ -1612,6 +1641,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return {
                 geoSearch: this.geoSearch.JSON,
+                areaOfInterest: this.areaOfInterest.JSON,
                 mouseInfo: this.mouseInfo.JSON,
                 northArrow: this.northArrow.JSON,
                 overviewMap: this.overviewMap.JSON,
@@ -2052,6 +2082,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get basemap () {    return this._basemap; }
         get layers () {     return this._layers; }
 
+        set geoSearch(geoSearch) { this._geoSearch = geoSearch; }
+
         get enabled () {    return this.sideMenu || this.geoSearch || this.layers || this.basemap; }
         get sideMenuOnly () {
             return this.sideMenu && !this.geoSearch && !this.layers && !this.basemap;
@@ -2156,7 +2188,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             'share',
             'touch',
             'help',
-            'language'
+            'language',
+            'plugins'
         ];
 
         get source () { return this._source; }
@@ -2550,6 +2583,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             DynamicLayerEntryNode,
             WMSLayerEntryNode
         },
+
+        Basemap,
 
         applyLayerNodeDefaults,
 

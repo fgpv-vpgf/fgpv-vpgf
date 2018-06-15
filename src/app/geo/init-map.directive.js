@@ -1,4 +1,6 @@
 import Map from 'api/map';
+import { BasemapGroup } from 'api/ui';
+import gtm from '../tag-manager';
 
 /**
  * @restrict A
@@ -16,7 +18,7 @@ angular
     .directive('rvInitMap', rvInitMap);
 
 function rvInitMap($rootScope, ConfigObject, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog) {
+    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -43,7 +45,21 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
 
         $rootScope.$on(events.rvMapLoaded, (_, i) => {
             mapInstance = i;
+            const api = window.RZ;
+
             mapInstance.disableKeyboardNavigation();
+
+            // GTM application load time
+            if (window.performance) {
+                const timeSincePageLoad = Math.round(performance.now());
+                api.gtmDL.push({
+                    'event' : 'fieldTiming',
+                    'timingCategory' : 'performance',
+                    'timingVariable' : 'load',
+                    'timingLabel' : 'mapLoaded',
+                    'timingValue' : timeSincePageLoad
+                });
+              }
 
             // reduce map animation time which in turn makes panning less jittery
             mapInstance.mapDefault('panDuration', 0);
@@ -61,11 +77,13 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 .on('mouseup', mouseUpHandler);
 
                 // API related initialization ------------------
-                window.RZ.GAPI = window.RZ.GAPI ? window.RZ.GAPI : gapiService.gapi;
+                api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
                 apiMap._legendStructure = configService.getSync.map.legend;
                 appInfo.mapi = apiMap;
+
+                apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
                 // Required for FM to function properly
                 globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
@@ -73,7 +91,8 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
 
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
-                window.RZ.mapAdded.next(apiMap);
+                gtm(apiMap);
+                api.mapAdded.next(apiMap);
         });
 
         /**
@@ -200,8 +219,9 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
      * @param {Object} event     the keydown/keyup browser event
      */
     // eslint-disable-next-line complexity
-    function animate() {
+    function animate(event) {
         stopAnimate();
+
         if (keyMap.length === 0) {
             return;
         }
@@ -222,7 +242,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
             // enter key is pressed - trigger identify
-            case 13:
+            case keyNames.ENTER:
                 // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                 // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
                 if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
@@ -232,39 +252,39 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 }
                 break;
             // shift key pressed - pan distance increased
-            case 16:
+            case keyNames.SHIFT:
                 hasShiftMultiplier = 2;
                 break;
             // left arrow key pressed
-            case 37:
+            case keyNames.LEFT_ARROW:
                 x -= mapPntHorDiff;
                 break;
             // up arrow key pressed
-            case 38:
+            case keyNames.UP_ARROW:
                 y += mapPntVertDiff;
                 break;
             // right arrow key pressed
-            case 39:
+            case keyNames.RIGHT_ARROW:
                 x += mapPntHorDiff;
                 break;
             // down arrow key pressed
-            case 40:
+            case keyNames.DOWN_ARROW:
                 y -= mapPntVertDiff;
                 break;
             // + (plus) key pressed - zoom in
-            case 187:
+            case keyNames.EQUAL_SIGN:
                 geoService.map.shiftZoom(1);
                 break;
             // + (plus) key pressed - FF and IE
-            case 61:
+            case keyNames.EQUALS_FIREFOX:
                 geoService.map.shiftZoom(1);
                 break;
             // - (minus) key pressed - zoom out
-            case 189:
+            case keyNames.DASH:
                 geoService.map.shiftZoom(-1);
                 break;
             // - (minus) key pressed - FF and IE
-            case 173:
+            case keyNames.MINUS_FIREFOX_MUTE_UNMUTE:
                 geoService.map.shiftZoom(-1);
                 break;
             }

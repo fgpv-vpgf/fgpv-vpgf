@@ -28,7 +28,7 @@
 
                         <ul class="rv-list rv-basemap-list">
                             <li class="rv-basemap-list-item" ng-repeat="basemap in self.map.basemaps | filter:{ tileSchema: { id: tileSchema.id } }">
-                                <rv-basemap-item basemap="basemap" select="self.selectBasemap(basemap)"></rv-basemap-item>
+                                <rv-basemap-item basemap="basemap" select="self.selectBasemap(basemap)" ng-click="self.notifyApiClick(basemap)"></rv-basemap-item>
                             </li>
                         </ul>
 

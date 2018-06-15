@@ -7,9 +7,12 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" aria-label="{{ 'geo.aria.mapdescription' | translate }}"></div>
+<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" 
+    aria-label="{{ 'geo.aria.mapdescription' | translate }}"
+    aria-describedby="rv-crosshairs-description"></div>
 
-<rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
+<!-- crossharis are centered relative to the rv-shell; if the inner shell is not center aligned, crosshairs can appear off-center -->
+<rv-crosshairs class="rv-crosshairs"></rv-crosshairs>
 
 <div class="rv-inner-shell">
 
@@ -24,7 +27,13 @@
         A panel can display a content pane - mainPanel can display either toc or toolbox content panes. When switching between toc and tollbox, the panel doesn't not animate (fade in/out animations), but the content pane does on etner and leave events.
 
         Panel - Content Pane - Content
+    width: 880px;
+    position: relative;
+    height: calc(100% - 300px);
+    margin: 100px auto 0 auto;
     -->
+
+    <rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
 
     <rv-appbar></rv-appbar>
 

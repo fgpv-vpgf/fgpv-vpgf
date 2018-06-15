@@ -9,7 +9,7 @@ angular
     .module('app.geo')
     .factory('mapToolService', mapToolService);
 
-function mapToolService(configService, geoService, gapiService, $translate) {
+function mapToolService(configService, geoService, gapiService, $translate, Geo) {
 
     const service = {
         northArrow,
@@ -47,6 +47,7 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         const map = geoService.map;
         // const map = geoService.mapObject;
         const mapPntCntr = map.extent.getCenter();
+        const mapBottomY = map.extent.ymin;
         const mapScrnCntr = map.toScreen(mapPntCntr);
         const wkid = map.extent.spatialReference.wkid;
 
@@ -55,27 +56,37 @@ function mapToolService(configService, geoService, gapiService, $translate) {
         let angleDegrees = null;
         let rotationAngle = null;
 
-        if (wkid === 102100) { // mercator
+        if (Geo.SpatialReference.WEB_MERCATOR.wkids.includes(wkid)) { // mercator
             // always in center of viewer with no rotation
             screenX = mapScrnCntr.x;
             rotationAngle = 0;
 
         } else {
+            const shellLeftOffset = $('.rv-inner-shell').offset().left - $('rv-shell').offset().left; // offset for arrow position calculations
+            const shellWidth = $('.rv-inner-shell').width() / 2; // inner shell width for min/max x calculations
+            const arrowWidth = $('.rv-north-arrow').width(); // arrow width to correct arrow positioning
+            const realY = $('.rv-inner-shell').offset().top - $('rv-shell').offset().top;
+            const offsetX = shellLeftOffset + shellWidth - arrowWidth / 2;
+            let arrowPoint = map.toMap({x: offsetX, y: 0});
+            arrowPoint.y = mapBottomY;
             // getNorthArrowAngle uses 180 degrees as north but here we expect 90 degrees to be north, so we correct the rotation by the subtraction
-            angleDegrees = 270 - map.getNorthArrowAngle(map);
+            angleDegrees = 270 - map.getNorthArrowAngle({point: arrowPoint});
             // since 90 degree is north, any deviation from this is the rotation angle
             rotationAngle =  90 - angleDegrees;
-            // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
-            const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
             // hard code north pole so that arrow does not continue pointing past it
             const northPoint = gapiService.gapi.proj.localProjectPoint('EPSG:4326', map.extent.spatialReference,
-                { x: -96, y: 90 });
+            { x: -96, y: 90 });
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
-            // the would be the bottom of our triangle, the length from center to where the arrow should be placed
+            // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
+            const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
+
+            // this would be the bottom of our triangle, the length from center to where the arrow should be placed
             screenX = screenY < 0 ?
-                mapScrnCntr.x + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
-                screenNorthPoint.x;
+                offsetX + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
+                    screenNorthPoint.x;
+            // Limit the arrow to the bounds of the inner shell
+            screenX = Math.max(offsetX - shellWidth, Math.min(screenX, offsetX + shellWidth));
         }
 
         return {

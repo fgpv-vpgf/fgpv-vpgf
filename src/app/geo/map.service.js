@@ -1,4 +1,4 @@
-import { IdentifyMode } from 'api/map';
+import { IdentifyMode } from 'api/layers';
 
 /**
  * @module mapService
@@ -52,37 +52,36 @@ function mapServiceFactory(
         const mapInstance = configService.getSync.map.instance;
         const attNode = $(mapInstance.attribution.listNode.parentNode);
         const logoNode = attNode.parent().find('.logo-med');
+        const listNode = mapInstance.attribution.listNode;
 
         // esri default logo
         const esriLogo =
             'url(data:image/png;base64,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)';
 
-        // if config is undefined, show attribution text and use built in value
-        // if it is !== then undefined take values from config file
-        // for not esri basemap, logo should be disable if no custom logo are provided
-        // because esri logo and liks are the default values
+        // always remove custom text attribution when switch baseMaps
+        if (listNode.childElementCount > 0 &&
+                listNode.children[0].classList.toString().search(/esriAttribution*/) === -1) {
+            listNode.removeChild(listNode.children[0]);
+        }
+
+        // if config is undefined, show attribution text from built in values and ESRI logo
+        // if it is !== undefined then take values from config file
         if (typeof cfgAtt !== 'undefined') {
             if (cfgAtt.text.enabled && cfgAtt.text.value) {
-                if (Object.keys(mapInstance.attribution.itemNodes).length === 0) {
-                    const attributionNode = document.createElement('span');
-                    attributionNode.innerText = cfgAtt.text.value + ' | ';
-                    mapInstance.attribution.listNode.appendChild(attributionNode);
-                }
-                // TODO: test when will we have a base map with multiple layers
+                const attributionNode = document.createElement('span');
+                attributionNode.innerText = cfgAtt.text.value + ' | ';
+                listNode.insertAdjacentElement('afterbegin', attributionNode);
                 attNode.show();
             } else if (!cfgAtt.text.enabled) {
                 attNode.hide();
             }
 
             if (cfgAtt.logo.enabled) {
-                // if values are supplied in the config file, use them
-                // if not use the esri default value
-                if (cfgAtt.logo.value && cfgAtt.logo.link) {
-                    logoNode.css('background-image', `url(${cfgAtt.logo.value})`);
-                    mapInstance.mapDefault('logoLink', cfgAtt.logo.link);
+                // if values are supplied in the config file, use them. otherwise use default esri
+                if (cfgAtt.logo.value) {
+                    setCustomAttribLogo(mapInstance,logoNode, cfgAtt.logo);
                 } else {
-                    logoNode.css('background-image', esriLogo);
-                    mapInstance.mapDefault('logoLink', 'http://www.esri.com'); // TODO: create a function in geoapi to get default config value
+                    setEsriAttribLogo(mapInstance,logoNode, esriLogo);
                 }
                 logoNode.show();
                 logoNode.css('visibility', 'visible');
@@ -90,11 +89,49 @@ function mapServiceFactory(
                 logoNode.hide();
             }
         } else {
-            logoNode.css('background-image', esriLogo);
+            // if not define in config, use service value for attribution and the ESRI default value for logo
             attNode.show();
+            setEsriAttribLogo(mapInstance,logoNode, esriLogo);
             logoNode.show();
             logoNode.css('visibility', 'visible');
         }
+    }
+
+    /**
+     * Set the proper attribution logo, altext and link value.
+     *
+     * @function setCustomAttribLogo
+     * @private
+     * @param {Object} mapInstance map instance
+     * @param {Object} logoNode attribution logo node
+     * @param {Object} config configuration piece for the logo
+     */
+    function setCustomAttribLogo(mapInstance, logoNode, config) {
+        logoNode.css('background-image', `url(${config.value})`);
+        logoNode[0].title = (config.altText) ? config.altText : 'Image';
+        if (config.link) {
+            logoNode[0].classList.remove('rv-nopointer');
+            mapInstance.mapDefault('logoLink', config.link);
+        } else {
+            logoNode[0].classList.add('rv-nopointer');
+            mapInstance.mapDefault('logoLink', '');
+        }
+    }
+
+    /**
+     * Set the esri attribution logo, altext and link value.
+     *
+     * @function setEsriAttribLogo
+     * @private
+     * @param {Object} mapInstance map instance
+     * @param {Object} logoNode attribution logo node
+     * @param {String} esriLogo default esri logo in base64
+     */
+    function setEsriAttribLogo(mapInstance, logoNode, esriLogo) {
+        logoNode.css('background-image', esriLogo);
+        logoNode[0].title = 'Esri';
+        logoNode[0].classList.remove('rv-nopointer');
+        mapInstance.mapDefault('logoLink', 'http://www.esri.com'); // TODO: create a function in geoapi to get default config value
     }
 
     /**
@@ -267,7 +304,10 @@ function mapServiceFactory(
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
-            mapConfig.instance.setMapCursor(value ? 'pointer' : '');
+
+            if (mApi.layers.identifyMode !== 'none') {
+                mapConfig.instance.setMapCursor(value ? 'pointer' : '');
+            }
         });
 
         /*
@@ -337,6 +377,17 @@ function mapServiceFactory(
                     clearHighlight(false);
                 }
 
+                // restrict map navigation if required
+                if (configService.getSync.ui.restrictNavigation && mapConfig.selectedBasemap.maximum) {
+                    const map = mapConfig.instance;
+                    const maxExtent = map.enhanceConfigExtent(mapConfig.selectedBasemap.maximum);
+                    const checkResult = gapiService.gapi.Map.enforceBoundary(map.extent, maxExtent);
+                    if (checkResult.adjusted) {
+                        // delay so ESRI recognises this as distinct extent change
+                        setTimeout(() => map.centerAt(checkResult.newExtent.getCenter()), 1);
+                    }
+                }
+
                 events.$broadcast(events.rvExtentChange, data);
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
@@ -358,12 +409,12 @@ function mapServiceFactory(
                 }
 
                 // do not run identify query at all in `None` mode
-                if (mApi.identifyMode === IdentifyMode.None) {
+                if (mApi.layers.identifyMode === IdentifyMode.None) {
                     return;
                 }
 
                 // if not hovering, and not in `Silent` mode, add a graphic marker
-                if (mApi.identifyMode !== IdentifyMode.Silent && !isFeatureMousedOver) {
+                if (mApi.layers.identifyMode !== IdentifyMode.Silent && !isFeatureMousedOver) {
                     addMarkerHighlight(clickEvent.mapPoint);
                 }
 
@@ -371,7 +422,7 @@ function mapServiceFactory(
                 const identifyResponse = identifyService.identify(clickEvent);
 
                 // highlight any results if in `Highlight` mode
-                if (mApi.identifyMode === IdentifyMode.Highlight) {
+                if (mApi.layers.identifyMode === IdentifyMode.Highlight) {
                     highlightIdentifyResults(identifyResponse);
                 }
             }

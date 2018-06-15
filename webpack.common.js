@@ -2,7 +2,7 @@ const webpack   = require('webpack');
 const path      = require('path');
 const fs        = require('fs');
 const glob      = require("glob");
-const ExtractTextPlugin     = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TranslationPlugin     = require('./scripts/webpack/translations_plugin.js');
 const SchemaValidatorPlugin = require('./scripts/webpack/schema_validation_plugin.js');
 const CopyWebpackPlugin     = require('copy-webpack-plugin');
@@ -14,7 +14,7 @@ const WebpackShellPlugin    = require('webpack-shell-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const babelPresets = {
-    presets: ['es2015', 'stage-2'],
+    presets: ['env', 'stage-2'],
     cacheDirectory: true
 }
 
@@ -28,8 +28,7 @@ module.exports = function (env) {
 
     const config = {
         entry: {
-            'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
-            'ie-polyfills': path.resolve(__dirname, 'src/polyfill/polyfill-loader.js')
+            'rv-main': path.resolve(__dirname, 'src/app/app-loader.js')
         },
 
         output: {
@@ -62,17 +61,12 @@ module.exports = function (env) {
                     }]
                 },
                 {
-                    test: /\.css$/,
-                    use: ExtractTextPlugin.extract({
-                        use: ['style-loader', 'css-loader']
-                    })
-                },
-                {
-                    test: /\.scss$/,
-                    use: ExtractTextPlugin.extract({
-                        fallback: 'style-loader',
-                        use: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
-                    })
+                    test: /\.s?[ac]ss$/,
+                    use: [
+                        env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        'sass-loader'
+                    ]
                 },
                 {
                     test: /\.html$/,
@@ -90,8 +84,14 @@ module.exports = function (env) {
         },
 
         plugins: [
-            new webpack.PrefetchPlugin(geoPath),
-            new webpack.PrefetchPlugin(path.resolve(__dirname, 'src/app/app-loader.js')),
+            new MiniCssExtractPlugin({
+                filename: "rv-styles.css"
+            }),
+
+            new webpack.ContextReplacementPlugin(
+                /moment[\/\\]locale$/,
+                /en|fr/
+            ),
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
@@ -103,9 +103,11 @@ module.exports = function (env) {
             },{
                 from: 'src/locales/help',
                 to: 'samples/help'
+            },
+            {
+                from: 'src/polyfill/ie-polyfills.js',
+                to: ''
             }]),
-
-            new ExtractTextPlugin('rv-styles.css'),
 
             new webpack.ProvidePlugin({
                 $: 'jquery',
@@ -126,8 +128,6 @@ module.exports = function (env) {
 
             new SchemaValidatorPlugin()
         ],
-
-        externals: { 'TweenLite': 'TweenLite' },
 
         resolve: {
             modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'intention/node_modules')],
@@ -181,7 +181,6 @@ module.exports = function (env) {
     // not supported while doing hmr - causes memory leaks and slows build time by ~40%
     if (!env.hmr && !env.inspect) {
         config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
-        config.plugins.push(new WebpackShellPlugin({onBuildStart:['npm run doc', 'npm run apidoc']}));
     }
 
     if (env.inspect) {

@@ -88,7 +88,7 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
                 (visibleOnly ? 'visible' : 'canada') :
                 'canada';
 
-            RV.logger.log('geosearchFiltersService', 'setting isvisible to', visibleOnly, targetExtentValue);
+            console.log('geosearchFiltersService', 'setting isvisible to', visibleOnly, targetExtentValue);
 
             geoSearch.setExtent(targetExtentValue);
         }

@@ -91,7 +91,8 @@ function pluginService(translationService, $mdDialog, referenceService) {
      * Open mdDialog window
      *
      * @function    openDialogInfo
-     * @param       {Object}    opts    options for the mfDialog window
+     * @param       {Object}    opts    options for the mdDialog window
+     * @return      {Object}    $mdDialog dialog window
      */
     function openDialogInfo(opts) {
         $mdDialog.show({
@@ -106,6 +107,8 @@ function pluginService(translationService, $mdDialog, referenceService) {
             clickOutsideToClose: opts.hasOwnProperty('clickOutsideToClose') ? opts.clickOutsideToClose : true,
             fullscreen: opts.hasOwnProperty('fullscreen') ? opts.fullscreen : false
         });
+
+        return $mdDialog;
     }
 
     /**

@@ -1,6 +1,5 @@
 import marked from 'marked';
-import * as moment from 'moment-timezone';
-
+const moment = window.moment;
 const templateURLs = {
     about: require('./about-dialog.html'),
     share: require('./share-dialog.html')
@@ -181,6 +180,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         }
 
         mItem.label = mItem.name;
+        mItem.isChecked = () => mItem.isActive;
         service.controls.plugins.children.push(mItem);
     });
 
@@ -280,7 +280,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
                 useMarkdown(config.ui.about.folderName).then(html => {
                     self.about = html;
                 }).catch(error => {
-                    RV.logger.warn(error);
+                    console.warn(error);
                 });
             }
         });
@@ -359,6 +359,10 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             $mdDateLocale.shortDays = localeData.weekdaysMin();
             $mdDateLocale.firstDayOfWeek = localeData._week.dow;
 
+            // mark each plugin inactive (unchecked) before loading the new language
+            service.controls.plugins.children.forEach(child => {
+                child.isActive = false;
+            });
         });
 
         /**

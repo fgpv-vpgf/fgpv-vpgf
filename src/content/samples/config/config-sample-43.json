@@ -325,7 +325,8 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "This is a customized map title",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "hasNorthPole": true
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",

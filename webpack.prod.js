@@ -8,27 +8,14 @@ const pkg           = require('./package.json');
 const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
-        output: {
-            crossOriginLoading: 'anonymous'
-        },
-
         devtool: 'source-map',
+        mode: 'production',
 
         plugins: [
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false,
-                    screw_ie8 : true
-                },
-                mangle: {
-                    screw_ie8 : true
-                },
-                sourceMap: true
-            }),
-
             new CopyPlugin([{
                 context: 'src/locales/help/default',
                 from: '**/*',
@@ -41,12 +28,6 @@ module.exports = function(env) {
                 exclude: [/samples/],
             }),
 
-            new webpack.DefinePlugin({
-                'process.env': {
-                    'NODE_ENV': JSON.stringify('production')
-                }
-            }),
-
             new SriPlugin({
                 hashFuncNames: ['sha256', 'sha384'],
                 enabled: true
@@ -55,7 +36,23 @@ module.exports = function(env) {
             new WebpackShellPlugin({
                 onBuildStart: ['rm -rf dist'],
                 onBuildEnd: ['rm -rf build/help']
-            })
-        ]
+            }),
+        ],
+        optimization: {
+            minimizer: [
+                new UglifyJsPlugin({
+                    sourceMap: true,
+                    uglifyOptions: {
+                        compress: {
+                            pure_funcs: [
+                                'console.log',
+                                'console.debug',
+                                'console.info'
+                            ]
+                        }
+                    }
+                })
+            ]
+        }
     });
 }

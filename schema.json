@@ -126,7 +126,8 @@
                 "name": { "type": "string", "description": "The name to display in the basemap selector for the set of basemaps referencing this schema" },
                 "extentSetId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
                 "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" },
-                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" }
+                "overviewUrl": { "$ref": "#/definitions/basicLayerNode", "description": "Optional. If set, the overview map will use this layer instead of the active basemap" },
+                "hasNorthPole": { "type": "boolean", "default": false, "description": "Indicates if the map projection includes a north pole.  Defaults to false to avoid errors." }
             },
             "required": [ "extentSetId", "lodSetId", "id", "name" ],
             "additionalProperties": false
@@ -202,6 +203,7 @@
                     "type": "object",
                     "properties": {
                         "enabled": { "type": "boolean", "default": true },
+                        "altText": { "type": "string", "description": "Alternate text for the image." },
                         "value": { "type": "string", "description": "URL for the image." },
                         "link": { "type": "string", "description": "URL to go to when clicked." }
                     },
@@ -661,7 +663,8 @@
                         "properties": {
                             "id": { "type": "string", "default": "" },
                             "layerType": { "type": "string", "default": "" },
-                            "url": { "type": "string", "default": "" }
+                            "url": { "type": "string", "default": "" },
+                            "opacity": { "type": "number", "default": 1, "description": "Initial opacity" }
                         },
                         "additionalProperties": false,
                         "required": [ "id", "layerType", "url" ]
@@ -753,7 +756,23 @@
                     }
                 },
                 "scaleBar": { "type": "object" },
-                "basemap": { "type": "object" }
+                "basemap": { "type": "object" },
+                "areaOfInterest": {
+                     "type": "array",
+                     "items": {
+                         "type": "object",
+                         "properties": {
+                            "title": { "type": "string" },
+                            "xmin": { "type": "number", "description": "The xmin coord value (lower left corner) in lat/long" },
+                            "ymin": { "type": "number", "description": "The ymin coord value (lower left corner) in lat/long" },
+                            "xmax": { "type": "number", "description": "The xmax coord value (upper right corner) in lat/long" },
+                            "ymax": { "type": "number", "description": "The ymax coord value (upper right corner) in lat/long" },
+                            "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the area of interest selector." }
+                        },
+                        "required": [ "title", "xmin", "ymin", "xmax", "ymax", "thumbnailUrl" ]
+                      },
+                    "default": []
+                }
             },
             "additionalProperties": false
         },

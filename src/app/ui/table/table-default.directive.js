@@ -550,9 +550,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         }
 
                         // set searchable (if false, data is there but not part of the filtering)
-                        if (configCol.searchable) {
-                            column.searchable = configCol.searchable;
-                        }
+                        column.searchable = (typeof configCol.searchable === 'undefined') || configCol.searchable;
 
                         // customize filter
                         customizeFilter(configCol, column);
@@ -982,7 +980,7 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
         // wait for morph on table panel to complete and redraw the datatable
         $scope.$on('stateChangeComplete', (event, name, property, value) => {
             if (name === 'table') {
-                RV.logger.log('tableDefaultDirective', event, name, property, value);
+                console.log('tableDefaultDirective', event, name, property, value);
                 self.draw(value);
 
                 if (property === 'active') {
@@ -1023,13 +1021,13 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
 
         // wait for print event and print the table
         $scope.$on(events.rvDataPrint, () => {
-            RV.logger.log('tableDefaultDirective', 'printing Datatable');
+            console.log('tableDefaultDirective', 'printing Datatable');
             triggerTableButton(0);
         });
 
         // wait for data export CSV event and export
         $scope.$on(events.rvDataExportCSV, () => {
-            RV.logger.log('tableDefaultDirective', 'exporting CSV Datatable');
+            console.log('tableDefaultDirective', 'exporting CSV Datatable');
             triggerTableButton(1);
         });
 
@@ -1111,7 +1109,7 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     // redraw the table using scroller extension
     function draw(value) {
         if (self.table) {
-            RV.logger.log('tableDefaultDirective', 'drawing table');
+            console.log('tableDefaultDirective', 'drawing table');
 
             const scroll = self.table.scroller;
             if (value === 'default') {

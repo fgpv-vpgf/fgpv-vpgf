@@ -317,15 +317,22 @@
         "name": "root",
         "children": [
           {
-            "layerId": "scaleDep",
+            "layerId": "ecogeo",
             "controlledIds": [
-              "ecogeo", "powerplant100mw-25"
+              "powerplant100mw-25"
             ]
           }
         ]
       }
     },
     "layers": [
+      {
+        "id":"ecogeo",
+        "name": "Eco Geo",
+        "layerType":"esriFeature",
+        "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
+        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
+      },
       {
         "id": "powerplant100mw-25",
         "name": "Power Plants, 25",
@@ -338,29 +345,7 @@
             "index": 30
           }
         ],
-        "state": {
-          "boundingBox": false,
-          "opacity": 0.2
-        },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
-      },
-      {
-        "id": "scaleDep",
-        "name": "Air Ozone Scale Dependency",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
-        "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-        "state": {
-          "opacity": 0.75
-        },
-        "disabledControls": [ "query" ]
-      },
-      {
-        "id":"ecogeo",
-        "name": "Eco Geo",
-        "layerType":"esriFeature",
-        "url":"http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
-        "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
       }
     ],
     "tileSchemas": [
@@ -368,7 +353,8 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "hasNorthPole": true
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",

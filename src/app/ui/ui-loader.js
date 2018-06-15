@@ -16,6 +16,7 @@ import './common/icon.decorator.js';
 import './common/menu.decorator.js';
 import './common/menuItem.decorator.js';
 import './common/morph.directive.js';
+import './common/crosshairs.directive.js';
 import './common/north-arrow.directive.js';
 import './common/plug-slide.animation.js';
 import './common/reverse.filter.js';

@@ -8,18 +8,17 @@ Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,1,Couches,1
 Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature details,1,Détails sur l'élément,1
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
-Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1, Recherche géolocalisée,1
-,appbar.tooltip.geosearchshort,Geo Search,1,Recherche Geo,0
-Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
+Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1,Recherche géolocalisée,1
+,appbar.tooltip.geosearchshort,Geo Search,1,Recherche géo,1
+Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1,Fermer la recherche géolocalisée,1
 Appbar tooltip for tools icon,appbar.tooltip.tools,Tools,1,Outils,1
 Appbar aria label for layers icon,appbar.aria.layers,Sets,1,Séries,1
-Appbar aria label for layers icon,appbar.aria.geoApiError,Geolocation search is unavailable,1,
-La recherche de géolocalisation n'est pas disponible,1
+Appbar aria label for layers icon,appbar.aria.geoApiError,Geolocation search is unavailable,1,La recherche géolocalisée n'est pas disponible,1
 Appbar aria label for point info icon,appbar.aria.pointInfo,Feature details,1,Détails sur l'élément,1
 Appbar aria label for menu  icon,appbar.aria.menu,Open Sidenav,1,Ouvrir le menu de navigation,1
-Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search,1, Fermer la recherche géolocalisée,1
-,appbar.aria.geosearch,Geo Search,1,Recherche Geo,0
-Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search,1, Recherche géolocalisée,1
+Appbar aria for geosearch close icon,appbar.aria.geosearchclose,Close Geolocation Search,1,Fermer la recherche géolocalisée,1
+,appbar.aria.geosearch,Geo Search,1,Recherche géo,1
+Appbar aria label for geosearch icon,appbar.aria.geosearch,Geolocation Search,1,Recherche géolocalisée,1
 Map overview aria label for toggle icon,geo.aria.overviewtoggle,Expand/Shrink map overview,1,Agrandir/Minimiser l'aperçu de la carte,1
 Map aria label description,geo.aria.mapdescription,Interactive Map,1,Carte Interactive,1
 Map coordinates east label,geo.coord.east,E,1,E,1
@@ -34,9 +33,9 @@ Tooltip text for Zoom To Feature,filter.tooltip.zoom,Zoom To Feature,1,Zoom à l
 Tooltip text for Details,filter.tooltip.description,Details,1,Détails,1
 Tooltip text for No Zoom Projection,filter.tooltip.nozoom,Data in custom projection. Cannot zoom to feature.,1,La donnée utilise une projection personnalisée. Le zoom à l'élément n'est pas supporté.,1
 DataTable text for Processing,filter.default.label.processing,Processing...,1,Traitement en cours...,1
-Datatable contents out of date,filter.default.label.outOfDate,Table may be out of date with layer,1,La table peut être périmée avec la couche,0
-Datatable contents reload,filter.default.action.outOfDate,Reload table,1,Recharger la table,0
-Datatable close toast,filter.default.action.close,Close,1,Fermer,0
+Datatable contents out of date,filter.default.label.outOfDate,Table may be out of date with layer,1,Le tableau peut être périmé avec la couche,1
+Datatable contents reload,filter.default.action.outOfDate,Reload table,1,Recharger le tableau,1
+Datatable close toast,filter.default.action.close,Close,1,Fermer,1
 DataTable text for Search,filter.default.label.search,Search: ,1,Rechercher : ,1
 DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,1,Afficher _MENU_ éléments,1
 DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,1,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments,1
@@ -79,12 +78,12 @@ Details pane title,details.title,Feature Information,1,Information sur l'éléme
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
-Details pane label for searching,details.label.searching,Searching ...,1,Recherche ...,1
+Details pane label for searching,details.label.searching,Searching ...,1,Rechercher ...,1
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
-,table.splash.loadingdata,Loading Data...,1,Les données de chargement ...,0
-,table.splash.buildingtable,Building Table ...,1,Tableau de l’immeuble ...,0
+,table.splash.loadingdata,Loading Data...,1,Chargement des données...,0
+,table.splash.buildingtable,Building Table ...,1,Préparation du tableau...,0
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
 Filter pane menu label for Split View,filter.menu.splitView,Split View,1,Diviser la vue,1
@@ -113,11 +112,12 @@ Basemap projection title,basemap.projection.title,{{name}} Maps,1,Cartes {{name}
 ,basemap.select,Select basemap,1,Sélectionner la carte de base,1
 ,basemap.showdescription,Show basemap description,1,Montrer la description de la carte de base,1
 ,basemap.hidedescription,Hide basemap description,1,Masquer la description de la carte de base,1
-Basemap broken,basemap.broken,Basemap load failed,1,Chargement du fond de carte échoué,0
+Basemap broken,basemap.broken,Basemap load failed,1,Le chargement du fond de carte a échoué,0
 Basemap broken close toast,basemap.close,Close,1,Fermer,0
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
 WKIDs to name other,wkids.other,Other,1,Autre,1
+,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"[fr] Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",0
 Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
 Map Navigation slider text,nav.slider,slider,1,Curseur,1
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
@@ -130,13 +130,13 @@ Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,1,Votre position,1
-,geoLocation.error,Your location could not be found.,1,Votre emplacement n’a pu être trouvée.,0
+,geoLocation.error,Your location could not be found.,1,Votre emplacement n’a pu être trouvé.,0
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
 Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
-Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir métadonnées,1
+Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir les métadonnées,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
 ,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,Changement {{settingName}} à,0
 Settings main title,settings.title,Settings,1,Paramètres,1
@@ -145,13 +145,13 @@ Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
 Settings data header label,settings.label.data,Data,1,Données,1
-Settings refresh header label,settings.label.interval,Refresh Interval,1,Intervalle de rafraîchissement,0
+Settings refresh header label,settings.label.interval,Refresh Interval,1,Intervalle d'actualisation,0
 Settings refresh hint,settings.label.refreshHint,Refresh interval in minutes,1,Intervalle d'actualisation en minutes,0
-Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank or 0 to turn off automatic refresh,1,Recharger requis. Laissez vide ou 0 pour désactiver la régénération automatique,0
+Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank or 0 to turn off automatic refresh,1,Actualisation requise. Laissez vide ou 0 pour désactiver l'actualisation automatique,0
 Settings refresh error message,settings.label.refreshError,Interval must be between 0 and 100,1,L'intervalle doit être compris entre 0 et 100,0
 ,settings.label.refreshInterval.close,Clear and reload,1,Effacer et recharger,1
 Settings styles header for WMS,settings.label.styles,Styles,1,Styles,0
-Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger le calque pour changer de style,0
+Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger la couche pour changer le style,0
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,1,Mode copie instantanée,1
 Settings snapshot mode enable label,settings.label.enable,Enable,1,Activer,1
 Settings snapshot mode enable label,settings.label.enabled,Enabled,1,Activée,1
@@ -219,7 +219,7 @@ Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,1
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
 Table of Content image layer flag tootlip,toc.tooltip.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
 Table of Content scale flag label,toc.label.flag.scale,Toggle scale,1,Basculer l'échelle,1
-Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,1,Couche hors portée,1
+Table of Content scale flag tootlip,toc.tooltip.flag.scale,Layer out of scale,1,Couche hors de portée,1
 Table of Content data table flag label,toc.label.flag.data.table,Layer has viewable data,1,Données disponibles pour la visualisation associées à cette couche,1
 Table of Content data table flag tootlip,toc.tooltip.flag.data.table,Layer has viewable data,1,Données disponibles pour la visualisation associées à cette couche,1
 Table of Content data filter flag label,toc.label.flag.data.filter,Layer data is filtered,1,Couche de données filtrée,1
@@ -228,12 +228,12 @@ Table of Content query flag label,toc.label.flag.query,Layer will be excluded fr
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
 Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres de table,0
+Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,Le calque ne peut pas être affiché dans votre projection actuelle et/ou les filtres,1
-Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection actuelle non prise en charge,1
+Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,La couche ne peut pas être affichée dans la projection active,1
+Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection active non prise en charge,1
 Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres de table,0
+Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
 Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
 Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
 Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
@@ -254,6 +254,8 @@ Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganise
 ,toc.menu.expand.alloff,Collapse Groups,1,Réduire les groupes,1
 ,toc.menu.reorder.title,Reorder Layers,1,Réorganiser les couches,1
 ,toc.menu.reorder.close,Stop Reordering,1,Arrêter de réorganiser,1
+ToC slider applies to nested elements,toc.slider.nested,Applies to nested items,1,S’applique aux articles imbriquées,0
+ToC slider mixed values,toc.slider.mixed,Mixed values,1,Les valeurs mixtes,0
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
@@ -261,7 +263,7 @@ Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|pol
 Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
 Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.close,Close,1,Fermer,1
-,export.save,Save,1,Sauver,1
+,export.save,Save,1,Sauvegarder,1
 ,export.download,Download,1,Télécharger,1
 ,export.undo,Undo,1,Annuler,1
 ,export.title,Enter Title,1,Titre,1
@@ -316,7 +318,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.file.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
 ,import.file.type.geojson,GeoJSON,1,GeoJSON,1
 ,import.service.title,Import Service,1,Importer un service,1
-,import.service.connect.title,Connect service,1,Connecter le service,1
+,import.service.connect.title,Connect service,1,Connecter au service,1
 ,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
 ,import.service.connect.invalidurl,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
 ,import.service.connect.broken,Service does not respond,1,Le service ne répond pas,1

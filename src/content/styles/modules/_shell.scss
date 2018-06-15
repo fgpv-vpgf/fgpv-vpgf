@@ -11,8 +11,12 @@
         // the inner shell (will) contains all the map controls
         // the inner shell can be resized so the controls occupy a certain region and them map overflows them filling the outer shell
         .rv-inner-shell {
-            width: inherit;
-            height: inherit;
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
 
             max-width: 100%;
             max-height: 100%;
@@ -27,6 +31,10 @@
 
             > * {
                 pointer-events: all;
+            }
+
+            rv-mapnav {
+                pointer-events: none;
             }
         }
 
@@ -84,6 +92,70 @@
         @include include-size(rv-sm) {
             .rv-north-arrow {
                 top: $toolbar-height;
+            }
+        }
+
+        $crosshairs-size: 230px;
+        $crosshairs-info-offset: calc(1em + 8px);
+        // the crossharis container assumes the same size as the rv-shell, pointer events are disabled to allow map interactions to go through
+        .rv-crosshairs {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+
+            padding-bottom: $crosshairs-info-offset;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            pointer-events: none !important;
+
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            opacity: 0;
+
+            // the actual crosshairs symbol
+            .rv-target {
+                width: $crosshairs-size;
+                height: $crosshairs-size;
+            }
+
+            // a text description how to navigation the map using the keyboard
+            .rv-info {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                height: $crosshairs-info-offset;
+                padding: 3px 1em 6px 1em;
+                background-color: rgba($color: #e4e3e3, $alpha: 0.9);
+            }
+
+            md-icon {
+                margin: 0;
+            }
+        }
+
+        // only show crosshairs in the keyboard mode and when the map has focus
+        @include keyboard {
+            .rv-esri-map {
+                transition: bottom $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+
+            // offset the bottom of the map and the inner shell to make room for the crossharis description
+            .rv-esri-map:focus {
+                bottom: $crosshairs-info-offset;
+
+                ~ .rv-crosshairs {
+                    opacity: 1;
+                }
+
+                // if the host page defines custom styles for the inner shell, this might need some adjustements
+                ~ .rv-inner-shell {
+                    bottom: $crosshairs-info-offset;
+                }
             }
         }
     }

@@ -14,7 +14,8 @@ report/
 typings/
 tsd.json
 .vagrant/
-apidocs/
+docs/developer/jsDocs
+docs/api/developer
 .vscode/
 
 # VIM files

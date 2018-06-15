@@ -120,7 +120,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
          * @return {Promise} a promsie resolving with an array of a singe LayerSourceInfo.WMSServiceInfo object
          */
         function _parseAsWMS(url, data) {
-            RV.logger.log('layerBlueprint', `the url ${url} is a WMS`);
+            console.log('layerBlueprint', `the url ${url} is a WMS`);
 
             // it is mandatory to set featureInfoMimeType attribute to get fct identifyOgcWmsLayer to work.
             // get the first supported format available in the GetFeatureInfo section of the Capabilities XML.

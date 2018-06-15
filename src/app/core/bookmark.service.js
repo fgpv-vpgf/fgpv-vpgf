@@ -68,7 +68,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         const bookmark = `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(startPoint.scale)}` +
             (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
 
-        RV.logger.log('bookmarkService', 'bookmark object', bookmark);
+        console.log('bookmarkService', 'bookmark object', bookmark);
 
         return bookmark;
 
@@ -343,7 +343,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         const dBookmark = decodeURI(bookmark);
         // const { newKeyList, newBaseMap, newLang } = opts;
 
-        RV.logger.log('bookmarkService', 'in function *parseBookmark* the decoded URI is', dBookmark);
+        console.log('bookmarkService', 'in function *parseBookmark* the decoded URI is', dBookmark);
 
         const version = dBookmark.match(/^([^,]+)/)[0];
 

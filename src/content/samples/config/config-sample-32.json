@@ -368,20 +368,14 @@
       {
         "id": "1",
         "name": "Dynamic layer",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 1
+            "index": 18
           },
           {
-            "index": 2
-          },
-          {
-            "index": 3
-          },
-          {
-            "index": 4
+            "index": 24
           }
         ]
       }
@@ -391,7 +385,8 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "hasNorthPole": true
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",

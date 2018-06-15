@@ -35,8 +35,9 @@ function gapi($q, globalRegistry) {
                 service.gapi = gapi;
                 return $q.resolve(null);
             })
-            .catch(() => {
-                RV.logger.error('gapiService', 'gapi is not ready');
+            .catch((e) => {
+                console.error(e);
+                console.error('gapiService', 'gapi is not ready');
             });
     }
 }

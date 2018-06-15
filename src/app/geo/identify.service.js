@@ -1,5 +1,5 @@
 import { MouseEvent, MapClickEvent } from 'api/events';
-import { IdentifyMode } from 'api/map';
+import { IdentifyMode } from 'api/layers';
 
 /**
  * @module identifyService
@@ -50,13 +50,18 @@ function identifyService($q, configService, stateManager, events) {
         const identifyInstances = configService.getSync.map.layerRecords
             // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
             .filter(layerRecord => typeof layerRecord.identify !== 'undefined')
-            .map(layerRecord => layerRecord.identify(opts))
+            .map(layerRecord => {
+                const apiLayer =  mApi.layers.getLayersById(layerRecord.layerId)[0];
+                const layerTolerance = apiLayer ? apiLayer.identifyBuffer : undefined;
+                opts.tolerance = layerTolerance;
+                return layerRecord.identify(opts);
+            })
             // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
             .filter(identifyInstance => typeof identifyInstance.identifyResults !== 'undefined');
 
         const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
 
-        const mapClickEvent = new MapClickEvent(clickEvent);
+        const mapClickEvent = new MapClickEvent(clickEvent, mApi);
         mApi._clickSubject.next(mapClickEvent);
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
@@ -64,7 +69,7 @@ function identifyService($q, configService, stateManager, events) {
             const loadingPromise = identifyPromise.catch(error => {
                 // add common error handling
 
-                RV.logger.warn('identifyService', `Identify query failed with error`, error);
+                console.warn('identifyService', `Identify query failed with error`, error);
 
                 identifyResults.forEach(identifyResult => {
                     // TODO: this outputs raw error message from the service
@@ -93,7 +98,7 @@ function identifyService($q, configService, stateManager, events) {
         }
 
         // convert esri click event into the API mouse event and add to the identify session and all identify requests
-        const identifyMouseEvent = new MouseEvent(clickEvent);
+        const identifyMouseEvent = new MouseEvent(clickEvent, mApi);
 
         // map identify instances to identify requests
         const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
@@ -129,7 +134,7 @@ function identifyService($q, configService, stateManager, events) {
         };
 
         // show details panel only when there is data and the idenityfMode is set to `Details`
-        if (mApi.identifyMode === IdentifyMode.Details) {
+        if (mApi.layers.identifyMode === IdentifyMode.Details) {
             stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
         } else {
             return { details, requester };

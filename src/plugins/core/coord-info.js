@@ -67,14 +67,35 @@
          * @return  {Function}    Callback to be executed when map is clicked
          */
         onMenuItemClick () {
+            let identifySetting;
             return () => {
                 this.api.toggleSideNav('close');
 
                 // only set event if not already created
-                if (typeof handler === 'undefined') { handler = this.api.getMapClickInfo(this.clickHandlerBuilder); }
+                if (typeof handler === 'undefined') {
+                    handler = this.api.getMapClickInfo(this.clickHandlerBuilder);
 
-                // set cursor
-                self.setMapCursor('crosshair');
+                    // set cursor
+                    self.setMapCursor('crosshair');
+
+                    // set active (checked) in the side menu
+                    this.isActive = true;
+
+                    // store current identify value and then disable in viewer
+                    identifySetting = self.appInfo.mapi.layers.identifyMode;
+                    self.appInfo.mapi.layers.identifyMode = 'none';
+                } else {
+                    // remove the click handler and set the cursor
+                    handler.click.remove();
+                    handler = undefined;
+                    self.setMapCursor('');
+
+                    // set inactive (unchecked) in the side menu
+                    this.isActive = false;
+
+                    // reset identify value to stored value
+                    self.appInfo.mapi.layers.identifyMode = identifySetting;
+                }
             };
         }
 
@@ -85,11 +106,6 @@
          * @param  {Object}  clickEvent the map click event
          */
         clickHandlerBuilder (clickEvent) {
-            // remove the click handler and set the cursor
-            handler.click.remove();
-            handler = undefined;
-            self.setMapCursor('');
-
             // get current language
             const lang = self.getCurrentLang();
 
@@ -269,8 +285,16 @@
      * @return {Object}   the utm information (zone {String} utm zone, x {Number} Easting, y {Number} Northing)
      */
     function parseUtm(utm, pt) {
+        if (utm.length === 0) {
+            return { zone: 'Error', outPt: { x: '-', y: '-' } };
+        }
+
         // set zone
-        const zone = utm.length > 0 ? utm[0].properties.identifier : '';
+        let zone = utm[0].properties.identifier;
+
+        if (zone < 10) {
+            zone = `0${zone}`;
+        }
 
         // set the UTM easting/northing information using a geometry service
         const outPt = self.projectGeometry(pt, parseInt('326' + zone));

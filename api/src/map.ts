@@ -14,38 +14,17 @@
  * THIS API IS NOT SUPPORTED.
  */
 
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject, fromEvent } from 'rxjs';
+import { map }  from 'rxjs/internal/operators/map';
+import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
-import { Subject } from 'rxjs/Subject';
 import { LayerGroup, SimpleLayer } from 'api/layers';
 import { Panel } from 'api/panel';
-
-export enum IdentifyMode {
-    /**
-     * Display the identify results in the details panel and highlight them on the map.
-     */
-    Details = 'details',
-
-    /**
-     * Only highlight the identify results on the map.
-     */
-    Highlight = 'highlight',
-
-    /**
-     * The identify query will be run and results will be available through the `identify` API endpoint, but they will not be highlighted on the map or dispalayed in the details panel.
-     */
-    Silent = 'silent',
-
-    /**
-     * The identify query will not be run.
-     */
-    None = 'none'
-}
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -73,7 +52,6 @@ export default class Map {
     private _boundsChanged: Observable<geo.XYBounds>;
     private _ui: UI;
     private _layers: LayerGroup;
-    private _identifyMode: IdentifyMode = IdentifyMode.Details;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
     private _map_grid: number[][];
@@ -235,17 +213,6 @@ export default class Map {
                 this.mapI.setLegendConfig(structure);
             }
         }
-    }
-
-    /**
-     * Specifies if the identify panel should be shown after the identify query completes.
-     */
-    set identifyMode(value: IdentifyMode) {
-        this._identifyMode = value;
-    }
-
-    get identifyMode(): IdentifyMode {
-        return this._identifyMode;
     }
 
     get simpleLayer(): SimpleLayer {
@@ -412,12 +379,13 @@ function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
     this.click = this._clickSubject.asObservable();
 
-    this.doubleClick = Observable.fromEvent(esriMapElement, 'dblclick').map(evt => new MouseEvent(<esriMouseEvent>evt));
-    this.mouseMove = Observable.fromEvent(esriMapElement, 'mousemove')
-        .map(evt => new MouseEvent(<esriMouseEvent>evt))
-        .distinctUntilChanged((x, y) => x.equals(y));
-    this.mouseDown = Observable.fromEvent(esriMapElement, 'mousedown').map(evt => new MouseEvent(<esriMouseEvent>evt));
-    this.mouseUp = Observable.fromEvent(esriMapElement, 'mouseup').map(evt => new MouseEvent(<esriMouseEvent>evt));
+    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.mouseMove = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousemove').pipe(
+        map((evt: esriMouseEvent) => new MouseEvent(evt, this)),
+        distinctUntilChanged((x, y) => x.equals(y))
+    );
+    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
 }
 
 interface LegendStructure {

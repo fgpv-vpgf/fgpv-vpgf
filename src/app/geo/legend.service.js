@@ -54,7 +54,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
         configService.getSync.map.instance.setLegendConfig = legendStructure => {
             stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
 
-            const apiLayers = mApi.layers.allLayers.map(l => l._viewerLayer.config.source);
+            const apiLayers = mApi.layers.allLayers
+                                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
+                                .filter(l => l._viewerLayer.config)
+                                .map(l => l._viewerLayer.config.source);
             const viewerLayers = configService.getSync.map.layers;
             const layers = apiLayers.concat(
                 viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
@@ -189,9 +192,8 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             const layerType = importedLegendBlock.layerType;
             const sortGroup = layerType ? sortGroups[layerType] : 1;    // layerType doesn't exist, legend block is a group
             position = legendBlocks.entries.findIndex(block =>
-                sortGroups[block.layerType] === sortGroup);
+                !block.layerType || sortGroups[block.layerType] >= sortGroup);
 
-            // FIXME: there might be an error here when importing a Feature layer to a legend with only WMS and Dynamic layers; need to check more;
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
             position = position === -1 ? legendBlocks.entries.length : position;
         }

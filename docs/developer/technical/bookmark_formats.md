@@ -40,7 +40,7 @@
 
 `<Query>` is a binary flag indicating layer queryability. `1` for queryable, `0` for not.
 
-#Version B
+# Version B
 
 `B,<Basemap>,<X-Coord>,<Y-Coord>,<Scale>,<Layer Info>`
 

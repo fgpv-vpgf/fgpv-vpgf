@@ -318,7 +318,7 @@
             "layerId": "0"
           },
           {
-            "layerId": "1"
+            "layerId": "4"
           },
           {
             "name": "Exclusive Visibilty Group",
@@ -338,9 +338,6 @@
                   },
                   {
                     "layerId": "3"
-                  },
-                    {
-                    "layerId": "4"
                   }
                 ]
               }
@@ -353,45 +350,38 @@
        {
         "id": "0",
         "name": "Zoom scale layer complete",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer",
         "layerType": "esriDynamic",
         "layerEntries": [
+          {
+            "index": 0
+          },
           {
             "index": 1
           },
           {
             "index": 2
-          },
-          {
-            "index": 3
-          },
-          {
-            "index": 4
           }
         ]
       },
       {
         "id": "1",
-        "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/1",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/0",
         "layerType": "esriFeature"
       },
       {
         "id": "2",
-        "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/2",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/1",
         "layerType": "esriFeature"
       },
       {
         "id": "3",
-        "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/3",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/2",
         "layerType": "esriFeature"
       },
       {
         "id": "4",
-        "name": "Zoom scale single",
-        "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/4",
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/3",
         "layerType": "esriFeature"
       }
     ],
@@ -400,7 +390,8 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "hasNorthPole": true
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",

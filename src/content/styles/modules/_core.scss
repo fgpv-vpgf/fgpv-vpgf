@@ -8,4 +8,8 @@
     *:after {
         box-sizing: border-box;
     }
+
+    .rv-nopointer {
+        pointer-events: none;
+    }
 }

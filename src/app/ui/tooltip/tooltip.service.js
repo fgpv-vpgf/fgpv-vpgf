@@ -103,7 +103,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                                 tooltip.offset(-this._dimensions.width / 2 - 22.5 / 2 - 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
                                 break;
                             default:
-                                tooltip.offset(0, this._dimensions.height / 2 + 1);
+                                tooltip.offset(0, this._dimensions.height / 2 - 19.5 + 1);
                         }
                     }
                 }
@@ -175,15 +175,31 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             this._runningOffset.y += yOffset;
 
             const collisionOffset = this._collisionStrategy.checkCollisions(this);
+            const tipAndOptions = activeTooltips.find(tt => tt.toolTip === this);
 
-            if (collisionOffset.x !== 0 || collisionOffset.y !== 0) {
-                this._node.css({
-                    display: 'none'
-                });
-            } else if (collisionOffset.x === 0 && collisionOffset.y === 0) {
-                this._node.css({
-                    display: 'block'
-                });
+            //when using the geometry api switch left and right/top and bottom when the tooltip is near the edge
+            if (tipAndOptions) {
+                const position = tipAndOptions.position;
+                if (collisionOffset.x !== 0) {
+                    switch (position) {
+                        case 'left':
+                            collisionOffset.x = this._dimensions.width + 22.5 + 1
+                            break;
+                        case 'right':
+                            collisionOffset.x = - this._dimensions.width - 22.5 - 1
+                            break;
+                    }
+                }
+                if (collisionOffset.y !== 0) {
+                    switch (position) {
+                        case 'top':
+                            collisionOffset.y = this._dimensions.height + 1
+                            break;
+                        case 'bottom':
+                            collisionOffset.y = - this._dimensions.height - 19.5 - 1
+                            break;
+                    }
+                }
             }
 
             // flip the tooltip when it hits the ceiling
@@ -283,11 +299,11 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             const itemBounds = item.getBounds();
 
             const collisionOffset = {
-                x: Math.min(0, targetContainerBounds.width - itemBounds.right) ||
+                x:  Math.min(0, targetContainerBounds.width - itemBounds.right) ||
                     Math.max(0, 0 - itemBounds.left),
-                y: Math.min(0, targetContainerBounds.height - itemBounds.bottom) ||
+                y:  Math.min(0, targetContainerBounds.height - itemBounds.bottom) ||
                     Math.max(0, 0 - itemBounds.top)
-            };
+             };
 
             // tooltip direction
             // const direction = 'top';
@@ -355,19 +371,21 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                 this._items.forEach(item =>
                     item.offset(movementOffset.x, movementOffset.y));
 
-                RV.logger.log('tooltipService', `movementOffset is ${movementOffset}`);
+                removeHoverTooltip();
+
+                console.log('tooltipService', `movementOffset is ${movementOffset}`);
             });
         }
     }
 
     /**
-     * FollowMap strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
+     * FollowMouse strategy keeps tracked tooltips in place relative to the mouse cursor over a specified target.
      *
      * @class FollowMouse
      */
     class FollowMouse extends TooltipStrategy {
         /**
-         * Creates an FollowMap FollowMouse.
+         * Creates a FollowMouse instance.
          *
          * @function constructor
          * @param {Object} targetContainer a DOM node over which mouse movements should be tracked
@@ -499,6 +517,9 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             tt.toolTip.destroy();
         });
         activeTooltips = [];
+
+        // make sure hover tooltip is removed from ref.hoverTooltip (for IE)
+        removeHoverTooltip();
     });
 
     return service;

@@ -173,12 +173,12 @@ function exportGenerators($q, $filter, $translate, $templateCache, gapiService, 
                     .then(data => resolve(data))
                     .catch(error => {
                         attempt++;
-                        RV.logger.error('exportGeneratorsService', `print task failed ` +
+                        console.error('exportGeneratorsService', `print task failed ` +
                             `on try ${attempt} with error`, error);
                         // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
                         // submitting it a second time usually works; if not, submit a third time
                         if (attempt <= RETRY_LIMIT) {
-                            RV.logger.log('exportGeneratorsService', `trying print task again`);
+                            console.log('exportGeneratorsService', `trying print task again`);
                             resolve(serverPrint(exportMapUrl, attempt));
                         } else {
                             // show error; likely service timeout
@@ -190,7 +190,7 @@ function exportGenerators($q, $filter, $translate, $templateCache, gapiService, 
                                         attempt = 0;
 
                                         // self.isError = false;
-                                        RV.logger.log('exportGeneratorsService', `trying print task again`);
+                                        console.log('exportGeneratorsService', `trying print task again`);
                                         resolve(serverPrint(exportMapUrl, attempt));
                                     } else {
                                         reject();
@@ -408,7 +408,7 @@ function exportGenerators($q, $filter, $translate, $templateCache, gapiService, 
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function timestampGenerator(exportSize) {
-        const timestampString = $filter('date')(new Date(), 'YYYY-MM-DD HH:mm:ss');
+        const timestampString = $filter('date')(new Date(), 'yyyy-MM-dd, h:mm a');
 
         const containerWidth = exportSize.width;
         let containerHeight = 100;

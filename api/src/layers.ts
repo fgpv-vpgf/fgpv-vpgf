@@ -15,9 +15,7 @@
  */
 
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 import { BaseGeometry } from 'api/geometry';
 import Map from 'api/map';
@@ -67,6 +65,15 @@ export class BaseLayer {
     _visibility: boolean;
     _visibilityChanged: Subject<boolean>;
 
+    /** @ignore */
+    _queryable: boolean;
+    _queryableChanged: Subject<boolean>;
+
+    /** @ignore */
+    _identifyBuffer: number | undefined;
+    /** @ignore */
+    _bufferChanged: Subject<number | undefined>;
+
     // the viewerLayer is the layerRecord and the layerProxy is the proxy or child proxy if dynamic
     /** @ignore */
     _viewerLayer: any;
@@ -84,10 +91,13 @@ export class BaseLayer {
         this._nameChanged = new Subject();
         this._opacityChanged = new Subject();
         this._visibilityChanged = new Subject();
+        this._queryableChanged = new Subject();
+        this._bufferChanged = new Subject();
 
         this._nameChanged.subscribe(name => (this._name = name || ''));
         this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
         this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
+        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
 
         this._attributeArray = [];
         this._attributesAdded = new BehaviorSubject(this._attributeArray);
@@ -190,6 +200,39 @@ export class BaseLayer {
     /** Returns the layer ID. */
     get id(): string {
         return this._id;
+    }
+
+    /** Returns the custom identify buffer size. Buffer size is the distance in screen pixels from the specified geometry within which identify is performed. */
+    get identifyBuffer(): number | undefined {
+        return this._identifyBuffer;
+    }
+
+    /**
+     * Sets the buffer size of the layer to be used when identifying.
+     *
+     * NOTE: To use the default buffer size, set as undefined.
+     * NOTE: For dynamics, the buffer size must be the same for all of the children. If one buffer value are updated, all children updated automatically.
+    */
+    set identifyBuffer(tolerance: number | undefined) {
+        const oldBuffer: number | undefined = this._identifyBuffer;
+
+        // if the tolerance value is defined and is less than 1, set it to 1 (smallest possible value)
+        const toleranceToSet: number | undefined = tolerance && tolerance < 1 ? 1 : tolerance;
+
+        // if dynamic layer, value is spread to other children in layer-registry.service, _createApiLayer()
+        this._identifyBuffer = toleranceToSet;
+
+        if (oldBuffer !== toleranceToSet) {
+            this._bufferChanged.next(toleranceToSet);
+        }
+    }
+
+    /**
+     * Emits whenever the layer buffer value is changed.
+     * @event bufferChanged
+     */
+    get bufferChanged(): Observable<number | undefined> {
+        return this._bufferChanged.asObservable();
     }
 
     /** Returns the layer index. */
@@ -306,6 +349,42 @@ export class BaseLayer {
      */
     get visibilityChanged(): Observable<boolean> {
         return this._visibilityChanged.asObservable();
+    }
+
+    /** Returns true if the layer is currently queryable, false otherwise. */
+    get queryable(): boolean {
+        return this._queryable;
+    }
+
+    /** Sets the queryable value to on/off. */
+    set queryable(queryable: boolean) {
+        const oldQueryable: boolean = this._layerProxy.query;
+
+        this._queryable = queryable;
+        this._layerProxy.setQuery(queryable);
+
+        if (this._viewerLayer.config) {
+            if (this._layerIndex !== undefined) {
+                const childNode = this._viewerLayer.config.layerEntries.find(
+                    (l: DynamicLayerEntryNode) => l.index === this._layerIndex
+                );
+                childNode.state.query = queryable;
+            } else {
+                this._viewerLayer.config.state.query = queryable;
+            }
+        }
+
+        if (oldQueryable !== queryable) {
+            this._queryableChanged.next(queryable);
+        }
+    }
+
+    /**
+     * Emits whenever the layer queryable value is changed.
+     * @event queryableChanged
+     */
+    get queryableChanged(): Observable<boolean> {
+        return this._queryableChanged.asObservable();
     }
 
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
@@ -506,6 +585,7 @@ export class ConfigLayer extends BaseLayer {
 
         this._opacity = this._layerProxy.opacity;
         this._visibility = this._layerProxy.visibility;
+        this._queryable = this._layerProxy.query;
         this._primaryAttributeKey = this._layerProxy.oidField;
     }
 }
@@ -729,6 +809,8 @@ export class LayerGroup {
     _mapI: Map;
     /** @ignore */
     _layersArray: Array<BaseLayer> = [];
+    /** @ignore */
+    _identifyMode: IdentifyMode = IdentifyMode.Details;
 
     _layerAdded: Subject<BaseLayer>;
     _layerRemoved: Subject<BaseLayer>;
@@ -821,6 +903,17 @@ export class LayerGroup {
      */
     get identify(): Observable<IdentifySession> {
         return this._identify.asObservable();
+    }
+
+    /**
+     * Specifies if the identify panel should be shown after the identify query completes.
+     */
+    set identifyMode(value: IdentifyMode) {
+        this._identifyMode = value;
+    }
+
+    get identifyMode(): IdentifyMode {
+        return this._identifyMode;
     }
 
     /** Providing a layer json snippet will instantiate and return a promise resolving to an array containing the `ConfigLayer(s)` created.*/
@@ -928,6 +1021,11 @@ export class LayerGroup {
         return this._layersArray.filter(layer => layer instanceof <any>type);
     }
 
+    /** Sets the buffer size of all layers to be used when identifying. */
+    setAllBuffers(tolerance: number | undefined): void {
+        this._layersArray.forEach(layer => layer.identifyBuffer = tolerance);
+    }
+
     // /** Exports the layers in the group to a GeoJSON object.
     //  *
     //  * TODO: complete this function.
@@ -1002,4 +1100,26 @@ export interface IdentifySession {
     sessionId: number;
     event: MouseEvent;
     requests: IdentifyRequest[];
+}
+
+export enum IdentifyMode {
+    /**
+     * Display the identify results in the details panel and highlight them on the map.
+     */
+    Details = 'details',
+
+    /**
+     * Only highlight the identify results on the map.
+     */
+    Highlight = 'highlight',
+
+    /**
+     * The identify query will be run and results will be available through the `identify` API endpoint, but they will not be highlighted on the map or dispalayed in the details panel.
+     */
+    Silent = 'silent',
+
+    /**
+     * The identify query will not be run.
+     */
+    None = 'none'
 }

@@ -26,7 +26,7 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
             readyDelay();
         })
         .catch(reason => {
-            RV.logger.error('runBlock', 'fatal error', reason);
+            console.error('runBlock', 'fatal error', reason);
         });
 
     $rootScope.uid = uid;
@@ -115,7 +115,7 @@ function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, e
          * @function start
          */
         function start() {
-            RV.logger.log('preLoadApiBlock', 'bypassing *rv-wait*');
+            console.log('preLoadApiBlock', 'bypassing *rv-wait*');
             reloadService.bookmarkBlocking = false;
             $rootScope.$broadcast(events.rvBookmarkInit);
         }
@@ -156,6 +156,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         loadRcsLayers,
         getBookmark,
         centerAndZoom,
+        setExtent,
         useBookmark,
         getRcsLayerIDs: () => geoService.getRcsLayerIDs(),
         appInfo,
@@ -169,8 +170,9 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         setMapCursor,
         projectGeometry,
         toggleSideNav: val => { $mdSidenav('left')[val](); },
-        openDialogInfo: options => { pluginService.openDialogInfo(options); },
-        reInitialize: bookmark => reloadService.reloadConfig(bookmark)
+        openDialogInfo: options => pluginService.openDialogInfo(options),
+        reInitialize: bookmark => reloadService.reloadConfig(bookmark),
+        getConfig
     };
 
     // Attaches a promise to the appRegistry which resolves with apiService
@@ -178,7 +180,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         $rootScope.$on(events.rvApiReady, () => {
             globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
             globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
-            RV.logger.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
+            console.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
         });
 
         $rootScope.$on(events.rvApiHalt, () => {
@@ -259,6 +261,27 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         // separate zoom and center calls, calling centerAndZoom sets the map to an extent made up of NaN
         configService.getSync.map.instance.setZoom(zoom);
         configService.getSync.map.instance.centerAt(zoomPoint);
+    }
+
+    /**
+     * Set extent of the map.
+     *
+     * @function setExtent
+     * @param {Array}  extent                   The extent to set
+     */
+    function setExtent(extent) {
+        configService.getSync.map.instance.setExtent(configService.getSync.map.instance.enhanceConfigExtent(extent));
+    }
+
+    /**
+     * Get config section.
+     *
+     * @function getConfig
+     * @param {String}  section     The config section name
+     * @return {Object}             The config section
+     */
+    function getConfig(section) {
+        return configService.getSync[section];
     }
 
     /**

@@ -9,11 +9,6 @@ import 'angular-sanitize';
 import 'angular-translate';
 import 'dotjem-angular-tree/src/directives/dxTree.js';
 import 'angular-translate-loader-static-files';
-import 'gsap/TweenLite.js';
-import 'gsap/TimelineLite.js';
-import 'gsap/CSSPlugin.js';
-import 'gsap/EaselPlugin.js';
-import 'gsap/ScrollToPlugin.js';
 import 'datatables.net';
 import 'datatables.net-buttons';
 import 'datatables.net-buttons/js/buttons.html5.js';
@@ -39,10 +34,6 @@ import './app.module.js';
 import './focus-manager.js';
 import '../plugins/core/back-to-cart.js';
 import '../plugins/core/coord-info.js';
+import '../plugins/core/area-of-interest.js';
 import '../content/styles/main.scss';
-
-
-// HACKS
-// hoverintent is a function consuming the jQuery object where it adds a prototype method hoverIntent.
-import hoverintent from 'jquery-hoverintent';
-hoverintent($);
+import './ui/fancyHover';
