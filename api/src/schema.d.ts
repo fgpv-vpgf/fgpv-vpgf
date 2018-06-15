@@ -461,9 +461,13 @@ export interface FgpvConfigSchema {
    */
   intentions?: {
     /**
-     * intention for EPSG Lookup
+     * Intention for EPSG Lookup
      */
     epsg?: string;
+    /**
+     * Intention for displaying data
+     */
+    table?: string;
   };
 }
 /**
