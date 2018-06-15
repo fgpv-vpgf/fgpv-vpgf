@@ -48,11 +48,9 @@ function rvDragula($compile, dragulaService, keyNames, events) {
         /**
          * Create dragular instance
          *
-         * @function compileDragular
+         * @function createDragular
          */
         function createDragular() {
-            console.log('compile dragula', attr.rvDragula);
-
             // destroy previous dragular instance
             if (dragulaService.find(dragulaScope, attr.rvDragula)) {
                 dragulaService.destroy(dragulaScope, attr.rvDragula);
