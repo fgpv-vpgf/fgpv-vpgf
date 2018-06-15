@@ -465,9 +465,11 @@ function onKeydown(event) {
     const viewerActive = viewerGroup.status(statuses.ACTIVE);
     const viewerWaiting = viewerGroup.status(statuses.WAITING);
     const hasFocus = $(document.activeElement);
+    const exemptElem = hasFocus.closest('[rv-focus-exempt]');
+    const isExempt = exemptElem.length > 0;
     keys[event.which] = true;
 
-    if (viewerActive) {
+    if (viewerActive && !isExempt) {
         // set viewer inactive but allow tab action to be handled by the browser
         if (event.which === 9 && keys[27]) { // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);

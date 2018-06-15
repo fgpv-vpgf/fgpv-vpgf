@@ -360,9 +360,6 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     order = customizeColumns(config);
                 }
 
-                // customize table
-                customizeTable(config);
-
                 // set title
                 self.title = displayData.filter.title;
 

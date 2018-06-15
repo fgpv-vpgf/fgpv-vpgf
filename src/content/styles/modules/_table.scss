@@ -1,7 +1,15 @@
 @mixin table {
-    .table-panel {
+    table-pane {
         .rv-content {
-            height: 50%; // in Safari, content panel does not update to the right height when switch from maximized to split view
+            ng-transclude {
+                height: 100%;
+            }
+
+            padding: 8px 8px 0 8px !important;
+        }
+
+        .ag-theme-balham {
+            height: 100% !important;
         }
     }
 
