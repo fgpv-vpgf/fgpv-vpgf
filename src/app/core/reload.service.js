@@ -71,6 +71,8 @@ function reloadService(events, bookmarkService, geoService, configService, state
         geoService
             .destroyMap()
             .assembleMap();
+
+        events.$broadcast(events.rvProjectiontChanged);
     }
 
     /**
@@ -95,6 +97,8 @@ function reloadService(events, bookmarkService, geoService, configService, state
             bookmarkService.adjustRcsLanguage(lang);
             geoService.assembleMap();
         });
+
+        events.$broadcast(events.rvLanguageChanged);
     }
 
     /**
