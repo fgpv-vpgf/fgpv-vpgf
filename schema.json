@@ -1058,7 +1058,12 @@
             "description": "Enable/Disable intentions or replace with your own implementation",
             "properties": {
                 "epsg": {
-                    "description": "intention for EPSG Lookup",
+                    "description": "Intention for EPSG Lookup",
+                    "type": "string",
+                    "default": "none"
+                },
+                "table": {
+                    "description": "Intention for displaying data",
                     "type": "string",
                     "default": "none"
                 }

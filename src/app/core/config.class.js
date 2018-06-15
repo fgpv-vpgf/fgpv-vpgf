@@ -1990,8 +1990,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor(source) {
             if (!source || Object.keys(source).length === 0) {
                 this.epsg = 'default';
+                this.table = 'default';
             } else {
                 this.epsg = source.epsg;
+                this.table = source.table;
             }
         }
     }

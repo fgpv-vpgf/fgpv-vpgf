@@ -6,6 +6,9 @@
     <meta content="width=device-width,initial-scale=1" name="viewport">
     <title>Test Samples - RAMP2 Viewer</title>
 
+    <script src="./extensions/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./extensions/enhancedTable.css" />
+
     <style>
         body {
             display: flex;
