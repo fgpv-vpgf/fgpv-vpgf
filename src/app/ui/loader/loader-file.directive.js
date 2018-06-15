@@ -490,16 +490,15 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const layerBlueprint = LayerBlueprint.buildLayer(self.layerSource);
+        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
 
-        layerBlueprint.validateLayerSource()
-            .then(esriLayer => {
-                legendService.importLayerBlueprint(layerBlueprint);
-                closeLoaderFile();
-            }).catch(error => {
-                console.warn('loaderFileDirective', 'file is invalid ', error);
-                self.configure.form.$setValidity('invalid', false);
-            });
+        blueprintPromise.then(layerBlueprint => {
+            legendService.importLayerBlueprint(layerBlueprint);
+            closeLoaderFile();
+        }).catch(error => {
+            console.warn('loaderFileDirective', 'file is invalid ', error);
+            self.configure.form.$setValidity('invalid', false);
+        });
     }
 
     /**
