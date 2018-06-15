@@ -1,21 +1,35 @@
--actual css file in src/content/styles/api/panel.css
-
-
-
-
+- Actual css file in src/content/styles/api/panel.css
 
 TODO: 
+- Restrict the panel grid to the inner shell element (div element with class rv-inner-shell).
+- Have the ability to set a panels width and height (based on its current position) as either:
+    - A percentage
+    - Setting the width and height to 50% of a 4x5 panel would make it appear to be a 2x2.5 panel. 
+    - For available spaces calculations this panel remains as a 4x5.
 
--object.prototype for privates to hide in console
--documentation
--scrap map grid --> keep for debugging purposes, ask at meeting
--------------------------------------------------------------------------------------------------------------------------
-Last minute checks: 
+or a pixel count
+- Pixels can be used as well but they cannot exceed the position on the grid. If they do the pixel count is ignored. This is to support things like map navigation controls that would exist in a panel with a fixed width of less than one grid square.
+
+- Panel controls are optional. If none set do not display the controls header.
+
+
+- UI Pretty white background make things look like original panel as much as possible
+
+
+- Documentation
+- Scrap map grid --> keep for debugging purposes, ask at meeting
 -Private methods
 -Good commenting (add examples in)
 -can't seem to get around force casing for jquery .height() and .width(). sometimes putting it in an if statement with !== undefined works
 but otherwise doesn't
+-delete alerts and console.logs
+-structural changes to code
 
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
 Future features (?): 
 -Remove coverable for now, don't worry about greying out
 -Assume all panels are non-coverable and don't allow other panels to open on min positions
