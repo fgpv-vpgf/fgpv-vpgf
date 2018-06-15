@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService) {
+function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService, layerSource) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -222,7 +222,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 this.config = userAddedSource.config;
             }
 
-            return;
+            return this.validateLayerSource().then(() => this);
         }
 
         /**
@@ -252,10 +252,28 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
      * @return {String}           service type: 'csv', 'shapefile', 'geojson'
      */
     class LayerFileBlueprint extends LayerBlueprint {
-        constructor(layerSource) {
+        constructor(configFileSource = null, userAddedSource = null) {
+
             super();
-            this._layerSource = layerSource;
-            this.config = this._layerSource.config;
+
+            if (configFileSource) {
+                this.source = configFileSource;
+                return layerSource.fetchServiceInfo(configFileSource.url)
+                    .then(({ options: layerSourceOptions, preselectedIndex }) => {
+                        this._layerSourceOptions = layerSourceOptions;
+                        this._layerSource = layerSourceOptions[preselectedIndex];
+                        this._layerSource.config._id = configFileSource.id;     // need to change id manually since id given is auto-generated from file logic
+                        if (configFileSource.colour) {
+                            this._layerSource.colour = configFileSource.colour; // need to also change colour manually, if provided, since colour is also auto-generated
+                        }
+                        this.config = this._layerSource.config;
+                        return this._layerSource.validate().then(() => this.validateLayerSource().then(() => this));
+                    });
+            } else if (userAddedSource) {
+                this._layerSource = userAddedSource;
+                this.config = this._layerSource.config;
+                return this.validateLayerSource().then(() => this);
+            }
         }
 
         validateLayerSource() {
@@ -299,12 +317,25 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
 
     const service = {
         buildLayer: layerSource => {
-            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {
-                return new LayerFileBlueprint(layerSource);
-            } else if (layerSource.config) {
+            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {   // file or WFS added through importer
+                return new LayerFileBlueprint(null, layerSource);
+            } else if (layerSource.config) {                            // service added through importer
                 return new LayerServiceBlueprint(null, layerSource);
-            } else {
-                return new LayerServiceBlueprint(layerSource);
+            } else {                                                    // any file / service added through config
+                switch (layerSource.layerType) {
+                    case Geo.Layer.Types.OGC_WFS:
+                        layerSource.type = Geo.Service.Types.GeoJSON;
+                        return new LayerFileBlueprint(layerSource);
+                    case Geo.Layer.Types.ESRI_GRAPHICS:
+                    case Geo.Layer.Types.ESRI_DYNAMIC:
+                    case Geo.Layer.Types.ESRI_IMAGE:
+                    case Geo.Layer.Types.ESRI_TILE:
+                    case Geo.Layer.Types.OGC_WMS:
+                    case Geo.Layer.Types.ESRI_FEATURE:  // may need to split this into two, one for services and one for files
+                        return new LayerServiceBlueprint(layerSource);
+                    default:
+                        return new LayerFileBlueprint(layerSource);
+                }
             }
         }
     };

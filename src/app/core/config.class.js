@@ -136,7 +136,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     visibility: true,
                     boundingBox: false,
                     query: true,
-                    snapshot: false,
                     userAdded: false
                 },
                 controls: [
@@ -144,16 +143,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'visibility',
                     'boundingBox',
                     'query',
-                    'snapshot',
                     'metadata',
                     'boundaryZoom',
                     'refresh',
                     'reload',
                     'remove',
                     'settings',
-                    'data',
-                    'symbology',
-                    'interval'
+                    'data'
                 ],
                 disabledControls: [],
                 userDisabledControls: []

@@ -159,6 +159,7 @@
                 <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
                 <option value="config/config-sample-66.json">66. Map with navigation restricted</option>
                 <option value="">67. Map with no config provided</option>
+                <option value="config/config-sample-68.json">68. WFS layer defined in config</option>
             </select>
         </div>
 

@@ -286,16 +286,15 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const layerBlueprint = LayerBlueprint.buildLayer(self.layerSource);
+        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
 
-        layerBlueprint.validateLayerSource()
-            .then(esriLayer => {
-                legendService.importLayerBlueprint(layerBlueprint);
-                closeLoaderService();
-            }).catch(error => {
-                console.warn('loaderServiceDirective', 'service is invalid ', error);
-                self.configure.form.$setValidity('invalid', false);
-            });
+        blueprintPromise.then(layerBlueprint => {
+            legendService.importLayerBlueprint(layerBlueprint);
+            closeLoaderService();
+        }).catch(error => {
+            console.warn('loaderServiceDirective', 'service is invalid ', error);
+            self.configure.form.$setValidity('invalid', false);
+        });
     }
 
     /**
