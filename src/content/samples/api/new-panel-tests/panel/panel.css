@@ -26,7 +26,6 @@
     width: 36px;
     height: 26px;
     margin: 2px;
-    padding: 2px;
     background-color: #ffffff;
     border: 1px solid  #ffffff;
     overflow: hidden;
@@ -47,8 +46,10 @@
     color: white;
 }
 .svg-style{
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
+    top: 0px;
+    left: 0px;
     fill: #778899;
 }
 .svg-style:hover{
