@@ -258,7 +258,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
 
             if (configFileSource) {
                 this.source = configFileSource;
-                return layerSource.fetchServiceInfo(configFileSource.url)
+                return layerSource.fetchServiceInfo(configFileSource.url, configFileSource.layerType)
                     .then(({ options: layerSourceOptions, preselectedIndex }) => {
                         this._layerSourceOptions = layerSourceOptions;
                         this._layerSource = layerSourceOptions[preselectedIndex];

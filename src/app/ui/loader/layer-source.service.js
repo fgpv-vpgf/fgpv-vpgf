@@ -32,9 +32,10 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
      *
      * @function fetchServiceInfo
      * @param {String} serviceUrl a service url to load
+     * @param {String} layerType string representing the layer type. used to know which type of request to make (angular web request for WFS)
      * @return {Promise} a promise resolving with an array of at least one LayerSourceInfo objects; will reject if there is an error accessing the service or parsing its response;
      */
-    function fetchServiceInfo(serviceUrl) {
+    function fetchServiceInfo(serviceUrl, layerType) {
         const matrix = {
             [geoServiceTypes.FeatureService]: () =>
                 [_parseAsFeature],
@@ -78,25 +79,38 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 if (data.layers.length > 0) { // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
                 } else {
-                    return gapiService.gapi.layer.predictLayerUrl(serviceUrl)
-                        .then(serviceInfo => {
-                            if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                                return $http.get(serviceUrl)    // if the esriRequest fails, use angular to make web request
-                                    .then(response => {
-                                        // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
-                                        // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
-                                        const updatedServiceInfo = {
-                                            serviceType: 'wfs',
-                                            index: '-1',
-                                            tileSupport: false,
-                                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(response.data))
-                                        }
-                                        return _parseAsSomethingElse(updatedServiceInfo);
-                                    });
-                            } else {
-                                return _parseAsSomethingElse(serviceInfo)
-                            }
-                        });
+                    if (layerType === Geo.Layer.Types.OGC_WFS) {
+                        return $http.get(serviceUrl)    // use angular to make web request, instead of esriRequest
+                            .then(response => {
+                                const updatedServiceInfo = {
+                                    serviceType: 'wfs',
+                                    index: '-1',
+                                    tileSupport: false,
+                                    rawData: new TextEncoder('utf-8').encode(JSON.stringify(response.data))
+                                }
+                                return _parseAsSomethingElse(updatedServiceInfo);
+                            });
+                    } else {
+                        return gapiService.gapi.layer.predictLayerUrl(serviceUrl)   // remove duplication after
+                            .then(serviceInfo => {
+                                if (serviceInfo.serviceType === Geo.Service.Types.Error) {
+                                    return $http.get(serviceUrl)    // if the esriRequest fails, use angular to make web request
+                                        .then(response => {
+                                            // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
+                                            // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
+                                            const updatedServiceInfo = {
+                                                serviceType: 'wfs',
+                                                index: '-1',
+                                                tileSupport: false,
+                                                rawData: new TextEncoder('utf-8').encode(JSON.stringify(response.data))
+                                            }
+                                            return _parseAsSomethingElse(updatedServiceInfo);
+                                        });
+                                } else {
+                                    return _parseAsSomethingElse(serviceInfo)
+                                }
+                            });
+                    }
                 }
             })
             .then(options => ({
