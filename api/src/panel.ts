@@ -168,8 +168,8 @@ export class Panel {
             panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
 
             //need to preserve previously set width and height for the panel.
-            panel.width = panel.width;
-            panel.height = panel.height;
+            panel.width = panel._width;
+            panel.height = panel._height;
         });
     }
 
@@ -598,6 +598,9 @@ export class Panel {
             this.setMinPosition(topLeft, bottomRight);
 
             this._positionChanged.next([topLeft, bottomRight]);
+
+            this._width = (this._bottomRightX - this._topLeftX) * parentWidth * 0.05;
+            this._height = (this._bottomRightY - this._topLeftY) * parentHeight * 0.05;
 
             //if panel already open, available spaces should be updated. 
             if (this._map_object !== undefined && this._open === true) {
