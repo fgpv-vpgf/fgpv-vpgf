@@ -62,7 +62,7 @@ $.getScript('../../../../rv-main.js', function () {
         RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
         RZ.mapInstances[0].panelRegistry[0].controls;
 
-        RZ.mapInstances[0].panelRegistry[0].width = "50%";
-        RZ.mapInstances[0].panelRegistry[0].height = "50%";
+        RZ.mapInstances[0].panelRegistry[0].width = 300;
+        RZ.mapInstances[0].panelRegistry[0].height = 400;
     });
 });
