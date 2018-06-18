@@ -318,7 +318,7 @@ export class Panel {
     * Returns controls for panel
     * @return {(PanelElem)[]} - a list of controls for the panel. 
     */
-    get controls(): PanelElem[] {
+    get controls(): (PanelElem | Btn)[] {
         return this._controls;
     }
 
@@ -326,7 +326,7 @@ export class Panel {
     * Sets panel controls. 
     * @param {(PanelElem)[]} elems - the array of control elements that are set as panel controls
     */
-    set controls(elems: PanelElem[]) {
+    set controls(elems: (PanelElem | Btn)[]) {
         this._panel_controls.classList.remove('hidden');
         this._controls = elems;
         let body = this._panel_body;
@@ -346,9 +346,18 @@ export class Panel {
             }
             else if (elem._element.get(0).classList.length === 4 && elem._element.get(0).classList[1] === "toggle-btn") {
                 $(elem._element.get(0)).click(function () {
-                    if (elem._element.get(0).innerHTML === '+') {
-                        elem._element.get(0).innerHTML = '-';
+                    if (body.classList.contains('hidden')) {
                         body.classList.remove('hidden');
+                        let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
+
+
+                        let btn = new Btn();
+                        btn.icon = <SVGElement>minusSVG;
+                        btn._element.addClass('btn');
+                        btn._element.addClass('toggle-btn');
+
+                        elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
+                        elem._element.get(0).appendChild(<HTMLElement>minusSVG);
 
                         if (panel._contentsHeight !== undefined) {
                             panel._panel_contents.style.height = (panel._contentsHeight).toString() + 'px';
@@ -356,9 +365,14 @@ export class Panel {
 
                     }
                     else {
-                        elem._element.get(0).innerHTML = '+';
                         body.classList.add('hidden');
-
+                        let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
+                        let btn = new Btn();
+                        btn.icon = <SVGElement>plusSVG;
+                        btn._element.addClass('btn');
+                        btn._element.addClass('toggle-btn');
+                        elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
+                        elem._element.get(0).appendChild(<HTMLElement>plusSVG);
                         panel._panel_contents.style.height = (<number>$(panel._panel_controls).height() + 5).toString() + 'px';
 
                     }
@@ -590,8 +604,35 @@ export class Panel {
     }
 
     //if number, set to pixels, if string, set to %
+    //assume the user gives correct pixels/percent input
+    //catch errors javascript?
     set width(width: number | string) {
+
+        let bottomRightX: number;
+
         //check if panel position is set -> if not, error
+        if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined && this._open) {
+
+            let parentWidth = <number>$(this._map_object.innerShell).width();
+
+            if (typeof width === 'number') {
+
+                let panelWidth = (this._bottomRightX - this._topLeftX + 1) * 0.05 * parentWidth;
+
+                //as long as supplied width is within panel width, 
+                if (width <= panelWidth) {
+                    bottomRightX = this._topLeftX + width;
+                    this.changePosition(this._topLeftX, this._topLeftY, bottomRightX, this._bottomRightY)
+                }
+            }
+            else {
+                bottomRightX = this._bottomRightX;
+            }
+
+        }
+        else {
+            throw "Error: cannot set width if panel position is not set, or panel is not open."
+        }
         //if it is a string, chop the % and parseInt, set width to % of position
         //if it is a number, set to that amount of pixels
 
@@ -599,7 +640,17 @@ export class Panel {
 
     //if number, set to pixels, if string, set to %
     set height(width: number | string) {
-        //check if panel position is set -> if not, error
+        if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
+            if (typeof width === 'number') {
+
+            }
+            else {
+
+            }
+        }
+        else {
+            throw "Error: cannot set height if panel position is not set."
+        }
 
     }
 
@@ -735,7 +786,6 @@ export class PanelElem {
     */
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
-        let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
         let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
         let closeSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>')[0];
 
@@ -751,6 +801,7 @@ export class PanelElem {
                 btn.icon = <SVGElement>closeSVG;
                 this._element = btn.element;
                 this._element.addClass('btn');
+                this._element.addClass('close-btn');
 
             }
             //toggle button shortcut
@@ -823,9 +874,9 @@ export class Btn extends PanelElem {
         svg.classList.add('svg-style');
 
         //usually SVG element's children control fill property (eg when appending path object or rect object etc)
-        if(svg.firstChild !== null){
+        if (svg.firstChild !== null) {
             (<HTMLElement>svg.firstChild).classList.add('svg-style');
-        }        
+        }
         this._element.append(svg);
     }
 
