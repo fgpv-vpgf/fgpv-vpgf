@@ -166,6 +166,10 @@ export class Panel {
 
             //changes width/height to new percentage value of the map
             panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
+
+            //need to preserve previously set width and height for the panel.
+            panel.width = panel.width;
+            panel.height = panel.height;
         });
     }
 
@@ -408,6 +412,8 @@ export class Panel {
                         this.updateGridSpaces(1, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
                         this.updateGridSpaces(-1, this._minTopLeftX, this._minTopLeftY, this._minBottomRightX, this._minBottomRightY);
                         this._open = true;
+                        //this.width = (this._bottomRightX - this._topLeftX) * <number>$(this._map_object.innerShell).width() * 0.05;
+                        //this.height = (this._bottomRightY - this._topLeftY) * <number>$(this._map_object.innerShell).height() * 0.05;
                     }
                 }
             }
@@ -567,6 +573,9 @@ export class Panel {
         let topLeftY = Math.floor(topLeft / 20);
         let bottomRightX = (bottomRight) % 20;
         let bottomRightY = Math.floor(bottomRight / 20);
+        let parentHeight = <number>$(this._map_object.innerShell).height();
+        let parentWidth = <number>$(this._map_object.innerShell).width();
+
 
         if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
@@ -596,9 +605,9 @@ export class Panel {
                 this.open();
             }
 
+
         }
 
-        let parentHeight = <number>$(this._map_object.innerShell).height();
         this._contentsHeight = ((bottomRightY - topLeftY) * 0.05 * parentHeight);
 
     }
@@ -617,35 +626,72 @@ export class Panel {
 
             if (typeof width === 'number') {
 
-                let panelWidth = (this._bottomRightX - this._topLeftX + 1) * 0.05 * parentWidth;
+                let topLeftPx = this._topLeftX * 0.05 * parentWidth
+                let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
 
-                //as long as supplied width is within panel width, 
-                if (width <= panelWidth) {
-                    bottomRightX = this._topLeftX + width;
-                    this.changePosition(this._topLeftX, this._topLeftY, bottomRightX, this._bottomRightY)
+                //as long as supplied width is within panel width -> else ignored
+                if (topLeftPx + width <= bottomRightPx) {
+                    this._panel_contents.style.width = width.toString() + "px";
+                    this._width = width;
                 }
             }
             else {
-                bottomRightX = this._bottomRightX;
+                let numWidth = parseInt(width.slice(0, -1)) * 0.01; //convert the percent into a decimal
+                //as long as supplied width is within panel width in percents
+                if (numWidth >= 0 && numWidth <= 1) {
+
+                    let panelWidth = (this._bottomRightX - this._topLeftX + 1) * 0.05 * parentWidth;
+                    let newWidth = panelWidth * numWidth;   //converts percent width to pixel width
+                    let topLeftPx = this._topLeftX * 0.05 * parentWidth
+                    let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
+
+                    //as long as supplied width is within panel width -> else ignored
+                    if (topLeftPx + newWidth <= bottomRightPx) {
+                        this._panel_contents.style.width = newWidth.toString() + "px";
+                        this._width = newWidth;
+                    }
+                }
             }
 
         }
         else {
-            throw "Error: cannot set width if panel position is not set, or panel is not open."
+            throw "Error: cannot set width if panel position is not set, or panel is not open.";
         }
-        //if it is a string, chop the % and parseInt, set width to % of position
-        //if it is a number, set to that amount of pixels
-
     }
 
     //if number, set to pixels, if string, set to %
-    set height(width: number | string) {
+    set height(height: number | string) {
         if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
-            if (typeof width === 'number') {
+            let parentHeight = <number>$(this._map_object.innerShell).height();
 
+            if (typeof height === 'number') {
+
+                let topLeftPx = this._topLeftY * 0.05 * parentHeight;
+                let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
+
+                //as long as supplied height is within panel height -> else ignored
+                if (topLeftPx + height <= bottomRightPx) {
+                    this._panel_contents.style.height = height.toString() + "px";
+                    this._height = height;
+                }
             }
             else {
+                let numHeight = parseInt(height.slice(0, -1)) * 0.01; //convert the percent into a decimal
 
+                //as long as supplied height is within panel width in percents -> else ignored
+                if (numHeight >= 0 && numHeight <= 1) {
+
+                    let panelHeight = (this._bottomRightY - this._topLeftY + 1) * 0.05 * parentHeight;
+                    let newHeight = panelHeight * numHeight;   //converts percent width to pixel width
+                    let topLeftPx = this._topLeftY * 0.05 * parentHeight;
+                    let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
+
+                    //as long as supplied width is within panel width 
+                    if (topLeftPx + newHeight <= bottomRightPx) {
+                        this._panel_contents.style.height = newHeight.toString() + "px";
+                        this._height = newHeight;
+                    }
+                }
             }
         }
         else {
@@ -709,7 +755,7 @@ export class Panel {
     * Calculating according to 5% default grid blocks. 
     * @param {number} topLeftX - the x coordinate of the top left square (set as top left panel corner) 
     * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
-    * @param {number} bottomRightX - the y coordinate of the bottom right square (set as the bottom right panel corner)
+    * @param {number} bottomRightX - the x coordinate of the bottom right square (set as the bottom right panel corner)
     * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
     * @private
     */
