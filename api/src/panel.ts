@@ -599,8 +599,8 @@ export class Panel {
 
             this._positionChanged.next([topLeft, bottomRight]);
 
-            this._width = (this._bottomRightX - this._topLeftX) * parentWidth * 0.05;
-            this._height = (this._bottomRightY - this._topLeftY) * parentHeight * 0.05;
+            this._width = (this._bottomRightX - this._topLeftX + 1) * parentWidth * 0.05;
+            this._height = (this._bottomRightY - this._topLeftY + 1) * parentHeight * 0.05;
 
             //if panel already open, available spaces should be updated. 
             if (this._map_object !== undefined && this._open === true) {
