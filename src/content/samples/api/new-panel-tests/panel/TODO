@@ -41,6 +41,8 @@ DOUBLE CHECK:
 -restriction to inner shell
 -alt text, black toggle with buttons
 
+-bug where stretching the width past a certain point causes increase/decrease in width
+-update demo docs! 
 
 ---------------------------------------------------------------------------------------------------------------------------------
 Future features (?): 
