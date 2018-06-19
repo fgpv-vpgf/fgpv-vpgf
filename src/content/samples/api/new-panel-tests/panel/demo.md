@@ -174,8 +174,11 @@
     RZ.mapInstances[0].panelRegistry[0].setPosition(20, 145);
     RZ.mapInstances[0].panelRegistry[0].open();
     ```
+
+- **Tests:**
     ```js
-    /*panel should visibly change on screen*/
+    /*panel should visibly change on screen,
+    observables should fire*/
     RZ.mapInstances[0].panelRegistry[0].width = "50%";
     RZ.mapInstances[0].panelRegistry[0].height = 200;
     ```
@@ -203,6 +206,19 @@
     - Both widths and heights should be 100% of the panel's "potential" (according to position)
     ```js
     RZ.mapInstances[0].panelRegistry[0].setPosition(0, 145);
+    ```
+
+    - Setting width and height out of bounds of position: 
+    ```js
+    /*should be ignored, 
+    panel remains the same on screen*/
+    RZ.mapInstances[0].panelRegistry[0].width = "220%";
+    RZ.mapInstances[0].panelRegistry[0].height = 600;
+    ```
+
+    ```js
+    RZ.mapInstances[0].panelRegistry[0].width;
+    RZ.mapInstances[0].panelRegistry[0].height; //these should be calculated based on original position (no updates)
     ```
 ---
 
