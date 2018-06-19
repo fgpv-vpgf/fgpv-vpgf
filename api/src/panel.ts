@@ -70,6 +70,8 @@ export class Panel {
     private _widthChanged: Subject<any> = new Subject();
     private _heightChanged: Subject<any> = new Subject();
 
+    private _panel_positions: PanelPositions;
+
     _open: boolean; //whether panel is open or closed 
 
     //user accessible observables 
@@ -101,6 +103,8 @@ export class Panel {
 
         //create panel components and document fragment
         this.createPanelComponents();
+
+        this._panel_positions = new PanelPositions(this);
 
     }
 
@@ -652,7 +656,7 @@ export class Panel {
                     //as long as supplied width is within panel width -> else ignored
                     if (topLeftPx + newWidth <= bottomRightPx) {
                         this._panel_contents.style.width = newWidth.toString() + "px";
-                        this._width = width; 
+                        this._width = width;
                     }
                 }
             }
@@ -927,4 +931,32 @@ export class Btn extends PanelElem {
         this._element.html(txt);
         this._element.addClass('text-btn');
     }
+}
+
+export class PanelPositions {
+
+    private _topLeftX: number;
+    private _topLeftY: number;
+    private _bottomRightX: number;
+    private _bottomRightY: number;
+
+    private _minTopLeftX: number;
+    private _minTopLeftY: number;
+    private _minBottomRightX: number;
+    private _minBottomRightY: number;
+
+    private _panel: Panel;
+
+    constructor(panel: Panel) {
+        this._panel = panel;
+    }
+
+    get panelCoords(): number[] {
+        return [this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY];
+    }
+
+    setPanelPosition(topLeft: number, bottomRight: number){
+
+    }
+
 }
