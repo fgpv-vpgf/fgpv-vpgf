@@ -10,11 +10,11 @@
     position: absolute;
     top: 0px; 
     left: 0px;
-    padding: 5px;
+    padding: 15px;
     overflow: hidden;
 }
 .panel-controls {
-    border-bottom: lightslategray solid 1px;
+    border-bottom: #778899 solid 1px;
     padding: 3px;
 }
 .panel-body{
@@ -27,7 +27,8 @@
     height: 26px;
     margin: 2px;
     background-color: #ffffff;
-    border: 1px solid  #ffffff;
+    border: none;
+    outline: none;
     overflow: hidden;
 
 }
@@ -38,12 +39,14 @@
     padding: 2px;
     background-color: lightslategrey;
     border: 1px solid  lightslategrey;
+    outline: none;
     color: white;
     overflow: hidden;
 }
 .text-btn:hover {
     background-color: darkslategray;
     color: white;
+    outline: none;
 }
 .svg-style{
     width: 80%;
