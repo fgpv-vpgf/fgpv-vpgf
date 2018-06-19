@@ -42,7 +42,7 @@ DOUBLE CHECK:
 -alt text, black toggle with buttons
 
 -bug where stretching the width past a certain point causes increase/decrease in width
--update demo docs! 
+-update demo docs with set width/height methods
 
 ---------------------------------------------------------------------------------------------------------------------------------
 Future features (?): 

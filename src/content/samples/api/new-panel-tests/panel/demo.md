@@ -165,6 +165,46 @@
         ```
 
 ---
+### set width/ set height tests:
+
+- **Setup**
+    - Hint: first refresh page to clear the previous setup.
+    ```javascript 
+    RZ.mapInstances[0].createPanel('panel1');
+    RZ.mapInstances[0].panelRegistry[0].setPosition(20, 145);
+    RZ.mapInstances[0].panelRegistry[0].open();
+    ```
+    ```js
+    /*panel should visibly change on screen*/
+    RZ.mapInstances[0].panelRegistry[0].width = "50%";
+    RZ.mapInstances[0].panelRegistry[0].height = 200;
+    ```
+
+    - Get width and height: 
+    ```js
+
+    RZ.mapInstances[0].panelRegistry[0].width; 
+    RZ.mapInstances[0].panelRegistry[0].height; //both return in px regardless of whether set to px or percent
+    ```
+
+    ```js
+    RZ.mapInstances[0].innerShell.clientWidth() * 0.05 * 6; 
+    RZ.mapInstances[0].innerShell.clientHeight() * 0.05 * 7; //the above should be the appropriate fraction of these values
+    ```
+
+    - Available Spaces should remain the same: 
+    ```js
+    RZ.mapInstances[0].panelRegistry[0].availableSpaces();  //expect calculation based on a 6 x 7 panel
+    ```
+
+    - Resizing window should preserve panel proportions according to set width and height
+
+    - Changing panel position should update width and height to match new position on grid:
+    - Both widths and heights should be 100% of the panel's "potential" (according to position)
+    ```js
+    RZ.mapInstances[0].panelRegistry[0].setPosition(0, 145);
+    ```
+---
 
 ### Error Handling Examples:
 
