@@ -165,9 +165,9 @@
         ```
 
 ---
-### set width/ set height tests:
+### Set Width/ Set Height Tests:
 
-- **Setup**
+- ***Setup***
     - Hint: first refresh page to clear the previous setup.
     ```javascript 
     RZ.mapInstances[0].createPanel('panel1');
@@ -175,7 +175,7 @@
     RZ.mapInstances[0].panelRegistry[0].open();
     ```
 
-- **Tests:**
+- ***set / get width and height:***
     ```js
     /*panel should visibly change on screen,
     observables should fire*/
@@ -195,20 +195,19 @@
     RZ.mapInstances[0].innerShell.clientHeight() * 0.05 * 7; //the above should be the appropriate fraction of these values
     ```
 
-    - Available Spaces should remain the same: 
+- ***Available Spaces should remain the same***: 
     ```js
     RZ.mapInstances[0].panelRegistry[0].availableSpaces();  //expect calculation based on a 6 x 7 panel
     ```
 
-    - Resizing window should preserve panel proportions according to set width and height
+- ***Resizing window:*** panel proportions preserved according to set width and height
 
-    - Changing panel position should update width and height to match new position on grid:
-    - Both widths and heights should be 100% of the panel's "potential" (according to position)
+- ***Changing Panel Position:*** updates width and height to match new position on grid (and at 100% of panel's potential)
     ```js
     RZ.mapInstances[0].panelRegistry[0].setPosition(0, 145);
     ```
 
-    - Setting width and height out of bounds of position: 
+- ***Width and height out of bounds of position:*** 
     ```js
     /*should be ignored, 
     panel remains the same on screen*/
@@ -224,7 +223,7 @@
 
 ### Error Handling Examples:
 
-- **Setup:**
+- ***Setup:***
     - Hint: first refresh page to clear the previous setup.
     ```javascript 
     RZ.mapInstances[0].createPanel('panel1');
