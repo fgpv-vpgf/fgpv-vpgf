@@ -46,18 +46,6 @@ export class Panel {
 
     private _map_object: Map;
 
-    //Panel positioning/size 
-    private _topLeftX: number;
-    private _topLeftY: number;
-    private _bottomRightX: number;
-    private _bottomRightY: number;
-
-    //Min panel positioning/size
-    private _minTopLeftX: number;
-    private _minTopLeftY: number;
-    private _minBottomRightX: number;
-    private _minBottomRightY: number;
-
     private _width: number | string | undefined;
     private _height: number | string | undefined;
 
@@ -108,7 +96,9 @@ export class Panel {
 
     }
 
-
+    get map(): Map {
+        return this._map_object;
+    }
     /**
     * Helper method to see observables firing in console.
     * To be removed when API is finished. 
@@ -161,7 +151,8 @@ export class Panel {
         let panel = this;
 
         $(window).resize(function () {
-
+            let panelCoords = panel._panel_positions.panelCoords;
+            let parentHeight = $(panel._map_object.innerShell).height();
             //INNERSHELL
             //if current width is different from stored width, fire width changed
             if (panel._map_width !== $(panel._map_object.innerShell).width()) {
@@ -182,6 +173,10 @@ export class Panel {
             if (panel._width !== undefined && panel._height !== undefined) {
                 panel.width = panel._width;
                 panel.height = panel._height;
+            }
+
+            if (parentHeight) {
+                panel._contentsHeight = ((panelCoords[3] - panelCoords[1]) * 0.05 * parentHeight);
             }
         });
     }
@@ -237,7 +232,7 @@ export class Panel {
                 return Panel.availableSpaces(this._map_object.panelRegistry, width, height, this);
             }
             else {
-                return Panel.availableSpaces(this._map_object.panelRegistry, this.panelPositions.panelCoords[0] - this.panelPositions.panelCoords[1] + 1, this.panelPositions.panelCoords[2] - this.panelPositions.panelCoords[3] + 1, this);
+                return Panel.availableSpaces(this._map_object.panelRegistry, this.panelPositions.panelCoords[2] - this.panelPositions.panelCoords[0] + 1, this.panelPositions.panelCoords[3] - this.panelPositions.panelCoords[1] + 1, this);
             }
         }
     }
@@ -301,7 +296,7 @@ export class Panel {
                         btn._element.addClass('toggle-btn');
                         elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
                         elem._element.get(0).appendChild(<HTMLElement>plusSVG);
-                        panel._panel_contents.style.height = (<number>$(panel._panel_controls).height() + 5).toString() + 'px';
+                        panel._panel_contents.style.height = (panel._contentsHeight - <number>$(panel._panel_body).height() - <number>panel._map_height * 0.05).toString() + 'px';
 
                     }
                 });
@@ -474,88 +469,30 @@ export class Panel {
     //assume the user gives correct pixels/percent input
     //catch errors javascript?
     set width(width: number | string) {
+        if (this._open) {
 
-        let bottomRightX: number;
-
-        //check if panel position is set and open -> if not, error
-        if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined && this._open) {
-
-            let parentWidth = <number>$(this._map_object.innerShell).width();
-
-            if (typeof width === 'number') {
-
-                let topLeftPx = this._topLeftX * 0.05 * parentWidth
-                let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
-
-                //as long as supplied width is within panel width -> else ignored
-                if (topLeftPx + width <= bottomRightPx) {
-                    this._panel_contents.style.width = width.toString() + "px";
-                    this._width = width;
-                }
+            if (typeof this._panel_positions.setWidth(width) === "string") {
+                this._panel_contents.style.width = this._panel_positions.setWidth(width);
+                this._width = width;
             }
-            else {
-                let numWidth = parseInt(width.slice(0, -1)) * 0.01; //convert the percent into a decimal
-                //as long as supplied width is within panel width in percents
-                if (numWidth >= 0 && numWidth <= 1) {
-
-                    let panelWidth = (this._bottomRightX - this._topLeftX + 1) * 0.05 * parentWidth;
-                    let newWidth = panelWidth * numWidth;   //converts percent width to pixel width
-                    let topLeftPx = this._topLeftX * 0.05 * parentWidth
-                    let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
-
-                    //as long as supplied width is within panel width -> else ignored
-                    if (topLeftPx + newWidth <= bottomRightPx) {
-                        this._panel_contents.style.width = newWidth.toString() + "px";
-                        this._width = width;
-                    }
-                }
-            }
-
         }
         else {
-            throw "Error: cannot set width if panel position is not set, or panel is not open.";
+            throw "Exception: cannot set width if panel is not open."
         }
     }
 
     //if number, set to pixels, if string, set to %
     set height(height: number | string) {
-        if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined) {
-            let parentHeight = <number>$(this._map_object.innerShell).height();
+        if (this._open) {
 
-            if (typeof height === 'number') {
-
-                let topLeftPx = this._topLeftY * 0.05 * parentHeight;
-                let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
-
-                //as long as supplied height is within panel height -> else ignored
-                if (topLeftPx + height <= bottomRightPx) {
-                    this._panel_contents.style.height = height.toString() + "px";
-                    this._height = height;
-                }
-            }
-            else {
-                let numHeight = parseInt(height.slice(0, -1)) * 0.01; //convert the percent into a decimal
-
-                //as long as supplied height is within panel width in percents -> else ignored
-                if (numHeight >= 0 && numHeight <= 1) {
-
-                    let panelHeight = (this._bottomRightY - this._topLeftY + 1) * 0.05 * parentHeight;
-                    let newHeight = panelHeight * numHeight;   //converts percent width to pixel width
-                    let topLeftPx = this._topLeftY * 0.05 * parentHeight;
-                    let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
-
-                    //as long as supplied width is within panel width 
-                    if (topLeftPx + newHeight <= bottomRightPx) {
-                        this._panel_contents.style.height = newHeight.toString() + "px";
-                        this._height = height;
-                    }
-                }
+            if (typeof this._panel_positions.setHeight(height) === "string") {
+                this._panel_contents.style.width = this._panel_positions.setHeight(height);
+                this._height = height;
             }
         }
         else {
-            throw "Error: cannot set height if panel position is not set."
+            throw "Exception: cannot set height if panel is not open."
         }
-
     }
 
 
@@ -973,5 +910,71 @@ export class PanelPositions {
         }
 
         return availableSpaces;
+    }
+
+    setWidth(width: number | string): (string | null) {
+
+        let parentWidth = <number>$(this._panel.map.innerShell).width();
+
+        if (typeof width === 'number') {
+
+            let topLeftPx = this._topLeftX * 0.05 * parentWidth
+            let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
+
+            //as long as supplied width is within panel width -> else ignored
+            if (topLeftPx + width <= bottomRightPx) {
+                return width.toString() + "px";
+            }
+        }
+        else {
+            let numWidth = parseInt(width.slice(0, -1)) * 0.01; //convert the percent into a decimal
+            //as long as supplied width is within panel width in percents
+            if (numWidth >= 0 && numWidth <= 1) {
+
+                let panelWidth = (this._bottomRightX - this._topLeftX + 1) * 0.05 * parentWidth;
+                let newWidth = panelWidth * numWidth;   //converts percent width to pixel width
+                let topLeftPx = this._topLeftX * 0.05 * parentWidth
+                let bottomRightPx = this._bottomRightX * 0.05 * parentWidth;
+
+                //as long as supplied width is within panel width -> else ignored
+                if (topLeftPx + newWidth <= bottomRightPx) {
+                    return newWidth.toString() + "px";
+                }
+            }
+        }
+        return null;
+    }
+
+    setHeight(height: number | string): (string | null) {
+
+        let parentHeight = <number>$(this._panel.map.innerShell).height();
+
+        if (typeof height === 'number') {
+
+            let topLeftPx = this._topLeftY * 0.05 * parentHeight;
+            let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
+
+            //as long as supplied width is within panel width -> else ignored
+            if (topLeftPx + height <= bottomRightPx) {
+                return height.toString() + "px";
+            }
+        }
+        else {
+            let numHeight = parseInt(height.slice(0, -1)) * 0.01; //convert the percent into a decimal
+            //as long as supplied width is within panel width in percents
+            if (numHeight >= 0 && numHeight <= 1) {
+
+                let panelHeight = (this._bottomRightY - this._topLeftY + 1) * 0.05 * parentHeight;
+                let newHeight = panelHeight * numHeight;   //converts percent width to pixel width
+                let topLeftPx = this._topLeftY * 0.05 * parentHeight;
+                let bottomRightPx = this._bottomRightY * 0.05 * parentHeight;
+
+                //as long as supplied width is within panel width -> else ignored
+                if (topLeftPx + newHeight <= bottomRightPx) {
+                    return newHeight.toString() + "px";
+                }
+            }
+        }
+        return null;
     }
 }
