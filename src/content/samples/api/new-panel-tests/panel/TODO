@@ -20,7 +20,7 @@ but otherwise doesn't
 
 
 DOUBLE CHECK:
--toggle button
+-toggle button --> malfunctions on window resize, can refresh on position change
 -console.log/alerts
 -dangling code/comments
 -restriction to inner shell
