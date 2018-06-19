@@ -175,7 +175,7 @@
     RZ.mapInstances[0].panelRegistry[0].open();
     ```
 
-- ***set / get width and height:***
+- ***set width and height:***
     ```js
     /*panel should visibly change on screen,
     observables should fire*/
@@ -183,17 +183,12 @@
     RZ.mapInstances[0].panelRegistry[0].height = 200;
     ```
 
-    ```js
-    $(RZ.mapInstances[0].innerShell).width() * 0.05 * 6; 
-    $(RZ.mapInstances[0].innerShell).height() * 0.05 * 7; //the above should be the appropriate fraction of these values
-    ```
-
 - ***Available Spaces should remain the same***: 
     ```js
     RZ.mapInstances[0].panelRegistry[0].availableSpaces();  //expect calculation based on a 6 x 7 panel
     ```
 
-- ***Resizing window:*** panel proportions preserved according to set width and height
+- ***Resizing window:*** panel proportions preserved according to set width and height (consistent if px, change if %)
 
 - ***Changing Panel Position:*** updates width and height to match new position on grid (and at 100% of panel's potential)
     ```js
@@ -206,11 +201,6 @@
     panel remains the same on screen*/
     RZ.mapInstances[0].panelRegistry[0].width = "220%";
     RZ.mapInstances[0].panelRegistry[0].height = 600;
-    ```
-
-    ```js
-    RZ.mapInstances[0].panelRegistry[0].width;
-    RZ.mapInstances[0].panelRegistry[0].height; //these should be calculated based on original position (no updates)
     ```
 ---
 
