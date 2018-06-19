@@ -171,7 +171,7 @@
     - Hint: first refresh page to clear the previous setup.
     ```javascript 
     RZ.mapInstances[0].createPanel('panel1');
-    RZ.mapInstances[0].panelRegistry[0].setPosition(20, 145);
+    RZ.mapInstances[0].panelRegistry[0].setPosition(26, 151);
     RZ.mapInstances[0].panelRegistry[0].open();
     ```
 
@@ -183,16 +183,9 @@
     RZ.mapInstances[0].panelRegistry[0].height = 200;
     ```
 
-    - Get width and height: 
     ```js
-
-    RZ.mapInstances[0].panelRegistry[0].width; 
-    RZ.mapInstances[0].panelRegistry[0].height; //both return in px regardless of whether set to px or percent
-    ```
-
-    ```js
-    RZ.mapInstances[0].innerShell.clientWidth() * 0.05 * 6; 
-    RZ.mapInstances[0].innerShell.clientHeight() * 0.05 * 7; //the above should be the appropriate fraction of these values
+    $(RZ.mapInstances[0].innerShell).width() * 0.05 * 6; 
+    $(RZ.mapInstances[0].innerShell).height() * 0.05 * 7; //the above should be the appropriate fraction of these values
     ```
 
 - ***Available Spaces should remain the same***: 
