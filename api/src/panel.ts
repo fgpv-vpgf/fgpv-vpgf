@@ -58,8 +58,8 @@ export class Panel {
     private _minBottomRightX: number;
     private _minBottomRightY: number;
 
-    private _width: number | string;
-    private _height: number | string;
+    private _width: number | string | undefined;
+    private _height: number | string | undefined;
 
     private _contentsHeight: number;
 
@@ -167,9 +167,11 @@ export class Panel {
             //changes width/height to new percentage value of the map
             panel.changePosition(panel._topLeftX, panel._topLeftY, panel._bottomRightX, panel._bottomRightY);
 
-            //need to preserve previously set width and height for the panel.
-            panel.width = panel._width;
-            panel.height = panel._height;
+            //need to preserve previously defined width and height of panel
+            if (panel._width !== undefined && panel._height !== undefined) {
+                panel.width = panel._width;
+                panel.height = panel._height;
+            }
         });
     }
 
@@ -599,8 +601,9 @@ export class Panel {
 
             this._positionChanged.next([topLeft, bottomRight]);
 
-            this._width = (this._bottomRightX - this._topLeftX + 1) * parentWidth * 0.05;
-            this._height = (this._bottomRightY - this._topLeftY + 1) * parentHeight * 0.05;
+            //refresh width and height properties
+            this._width = undefined;
+            this._height = undefined;
 
             //if panel already open, available spaces should be updated. 
             if (this._map_object !== undefined && this._open === true) {
@@ -622,7 +625,7 @@ export class Panel {
 
         let bottomRightX: number;
 
-        //check if panel position is set -> if not, error
+        //check if panel position is set and open -> if not, error
         if (this._bottomRightX !== undefined && this._bottomRightY !== undefined && this._topLeftX !== undefined && this._topLeftY !== undefined && this._open) {
 
             let parentWidth = <number>$(this._map_object.innerShell).width();
@@ -635,7 +638,10 @@ export class Panel {
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + width <= bottomRightPx) {
                     this._panel_contents.style.width = width.toString() + "px";
-                    this._width = width;
+                    if (this._panel_contents !== undefined) {
+                        //convert to percentage of panel contents width
+                        this._width = (width * 100 / <number>$(this._panel_contents).width()).toString() + "%";
+                    }
                 }
             }
             else {
@@ -651,7 +657,7 @@ export class Panel {
                     //as long as supplied width is within panel width -> else ignored
                     if (topLeftPx + newWidth <= bottomRightPx) {
                         this._panel_contents.style.width = newWidth.toString() + "px";
-                        this._width = newWidth;
+                        this._width = width; //set _width to % value
                     }
                 }
             }
@@ -675,7 +681,10 @@ export class Panel {
                 //as long as supplied height is within panel height -> else ignored
                 if (topLeftPx + height <= bottomRightPx) {
                     this._panel_contents.style.height = height.toString() + "px";
-                    this._height = height;
+                    if (this._panel_contents !== undefined) {
+                        //convert to percentage of panel contents height
+                        this._height = (height * 100 / <number>$(this._panel_contents).height()).toString() + "%";
+                    }
                 }
             }
             else {
@@ -702,17 +711,6 @@ export class Panel {
         }
 
     }
-
-    //if number, set to pixels, if string, set to %
-    get width(): number | string {
-        return this._width;
-    }
-
-    //if number, set to pixels, if string, set to %
-    get height(): number | string {
-        return this._height;
-    }
-
 
 
     /**
