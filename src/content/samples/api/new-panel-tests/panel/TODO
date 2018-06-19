@@ -18,6 +18,7 @@ but otherwise doesn't
 
 -WHY DOES HACKY TOGGLE CODE WORK?
 
+-set width and height doesn't seem to be working (with percentage) on window resize
 
 DOUBLE CHECK:
 -toggle button --> malfunctions on window resize, can refresh on position change
