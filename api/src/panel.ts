@@ -486,7 +486,7 @@ export class Panel {
         if (this._open) {
 
             if (typeof this._panel_positions.setHeight(height) === "string") {
-                this._panel_contents.style.width = this._panel_positions.setHeight(height);
+                this._panel_contents.style.height = this._panel_positions.setHeight(height);
                 this._height = height;
             }
         }
@@ -923,6 +923,7 @@ export class PanelPositions {
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + width <= bottomRightPx) {
+                console.log('returning pixel conversion');
                 return width.toString() + "px";
             }
         }
@@ -938,6 +939,7 @@ export class PanelPositions {
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newWidth <= bottomRightPx) {
+                    console.log('returning percent conversion');
                     return newWidth.toString() + "px";
                 }
             }
@@ -956,6 +958,7 @@ export class PanelPositions {
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + height <= bottomRightPx) {
+                console.log('returning pixel conversion');
                 return height.toString() + "px";
             }
         }
@@ -971,6 +974,7 @@ export class PanelPositions {
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newHeight <= bottomRightPx) {
+                    console.log('returning percent conversion');
                     return newHeight.toString() + "px";
                 }
             }
