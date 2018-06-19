@@ -1,16 +1,6 @@
 - Actual css file in src/content/styles/api/panel.css
 
 TODO: 
-- Have the ability to set a panels width and height (based on its current position) as either:
-    - A percentage
-    - Setting the width and height to 50% of a 4x5 panel would make it appear to be a 2x2.5 panel. 
-    - For available spaces calculations this panel remains as a 4x5.
-
-or a pixel count
-- Pixels can be used as well but they cannot exceed the position on the grid. If they do the pixel count is ignored. This is to support things like map navigation controls that would exist in a panel with a fixed width of less than one grid square.
-
-- Panel controls are optional. If none set do not display the controls header.
-
 -pesky toggle button (seems to magically work sometimes?)
 
 
@@ -22,17 +12,12 @@ or a pixel count
 but otherwise doesn't
 -delete alerts and console.logs
 -structural changes to code
--set width/height change after new positon set?
--set width/height shrink when window size shrinks?
 -toggle button isn't going to go well after width change
 
 -circular click effect button
 
 -WHY DOES HACKY TOGGLE CODE WORK?
 
--width and height changed observables are also change when set width and set height are called
--for the ridiculously oversized percents and pixels simply make sure that it doesn't look like its going past 100%
-    -do an ignore test if need be
 
 DOUBLE CHECK:
 -toggle button
