@@ -610,8 +610,6 @@ export class Panel {
                 this.close();
                 this.open();
             }
-
-
         }
 
         this._contentsHeight = ((bottomRightY - topLeftY) * 0.05 * parentHeight);
@@ -638,10 +636,7 @@ export class Panel {
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + width <= bottomRightPx) {
                     this._panel_contents.style.width = width.toString() + "px";
-                    if (this._panel_contents !== undefined) {
-                        //convert to percentage of panel contents width
-                        this._width = (width * 100 / <number>$(this._panel_contents).width()).toString() + "%";
-                    }
+                    this._width = width;
                 }
             }
             else {
@@ -657,7 +652,7 @@ export class Panel {
                     //as long as supplied width is within panel width -> else ignored
                     if (topLeftPx + newWidth <= bottomRightPx) {
                         this._panel_contents.style.width = newWidth.toString() + "px";
-                        this._width = width; //set _width to % value
+                        this._width = width; 
                     }
                 }
             }
@@ -681,10 +676,7 @@ export class Panel {
                 //as long as supplied height is within panel height -> else ignored
                 if (topLeftPx + height <= bottomRightPx) {
                     this._panel_contents.style.height = height.toString() + "px";
-                    if (this._panel_contents !== undefined) {
-                        //convert to percentage of panel contents height
-                        this._height = (height * 100 / <number>$(this._panel_contents).height()).toString() + "%";
-                    }
+                    this._height = height;
                 }
             }
             else {
@@ -701,7 +693,7 @@ export class Panel {
                     //as long as supplied width is within panel width 
                     if (topLeftPx + newHeight <= bottomRightPx) {
                         this._panel_contents.style.height = newHeight.toString() + "px";
-                        this._height = newHeight;
+                        this._height = height;
                     }
                 }
             }
