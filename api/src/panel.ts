@@ -181,8 +181,17 @@ export class Panel {
                 panel.height = panel._height;
             }
 
-            //panel._panel_contents.style.height = panel._contentsHeight.toString() + "px";
+            if (parentHeight !== undefined) {
+                panel._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
 
+                //if the body is supposed to be hidden
+                if(panel._panel_body.classList.contains('hidden')){
+                    panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
+                }
+                else{
+                    panel._panel_contents.style.height = (panel._contentsHeight + 0.1 * parentHeight).toString() + "px";
+                }  
+            }
         });
     }
 
@@ -288,7 +297,7 @@ export class Panel {
                         elem._element.get(0).appendChild(<HTMLElement>minusSVG);
 
                         if (panel._contentsHeight !== undefined) {
-                            panel._panel_contents.style.height = (panel._contentsHeight).toString() + 'px';
+                            panel._panel_contents.style.height = (panel._contentsHeight + <number>panel._map_height * 0.10).toString() + 'px';
                         }
 
                     }
@@ -301,7 +310,7 @@ export class Panel {
                         btn._element.addClass('toggle-btn');
                         elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
                         elem._element.get(0).appendChild(<HTMLElement>plusSVG);
-                        panel._panel_contents.style.height = (panel._contentsHeight - <number>$(panel._panel_body).height() - <number>panel._map_height * 0.05).toString() + 'px';
+                        panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
 
                     }
                 });
