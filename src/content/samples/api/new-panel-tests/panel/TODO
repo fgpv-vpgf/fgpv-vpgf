@@ -1,9 +1,6 @@
 - Actual css file in src/content/styles/api/panel.css
 
 TODO June 20: 
--Private methods
--Good commenting (class descriptions)
--Look at JQuery forcecasting issues
 -Delete alerts and console.logs
 -Set width and height doesn't seem to be working (with percentage) on window resize/change position
 -Look over demo test cases
@@ -11,6 +8,7 @@ TODO June 20:
     - Explain the style - up to user to inster line breaks
 -set width/height width changed/height changed
 -remove observables subscribe
+-comment map.ts, API loader
 
 
 Tomorrow Noon: 
