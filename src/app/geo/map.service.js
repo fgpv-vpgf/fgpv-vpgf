@@ -11,7 +11,7 @@ import { IdentifyMode } from 'api/layers';
 angular.module('app.geo').factory('mapService', mapServiceFactory);
 
 function mapServiceFactory(
-    $timeout,
+    shellService,
     referenceService,
     gapiService,
     configService,
@@ -295,12 +295,11 @@ function mapServiceFactory(
     function _setMapListeners(mapConfig) {
         // we are returning a promise that resolves when the map load happens.
         const gapi = gapiService.gapi;
-        let mapLoadingTimeout;
 
         // a flag indicating if a feature is being hover over
         let isFeatureMousedOver = false;
 
-        _setLoadingFlag(true);
+        shellService.setLoadingFlag({ id: 'map-init' });
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
@@ -344,6 +343,8 @@ function mapServiceFactory(
                         _initMap();
                     }
                 }
+
+                shellService.clearLoadingFlag(res.layer.id, 300);
             },
             'layer-remove': res => {
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
@@ -368,9 +369,6 @@ function mapServiceFactory(
                         .catch(() => _initMap());   // promise rejected due to server issues, so initialize map
                 }
             },
-            'update-start': () => {
-                _setLoadingFlag(true, 300);
-            },
             'extent-change': data => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
                 if (angular.isObject(data.delta) && (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
@@ -391,8 +389,11 @@ function mapServiceFactory(
                 events.$broadcast(events.rvExtentChange, data);
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
+            'update-start': () => {
+                shellService.setLoadingFlag({ id: 'map-update', initDealy: 100 });
+            },
             'update-end': () => {
-                _setLoadingFlag(false, 100);
+                shellService.clearLoadingFlag('map-update', 300);
             },
             'zoom-start': () => {
                 events.$broadcast(events.rvMapZoomStart);
@@ -440,22 +441,9 @@ function mapServiceFactory(
                 mapConfig.isLoaded = true;
 
                 // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
-                _setLoadingFlag(false);
+                shellService.clearLoadingFlag('map-init', 300);
                 events.$broadcast(events.rvMapLoaded, mapConfig.instance);
             }
-        }
-
-        /**
-         * Sets `isMapLoading` flag indicating map layers are updating.
-         *
-         * @function _setLoadingFlag
-         * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
-         * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
-         * @private
-         */
-        function _setLoadingFlag(isLoading = true, delay = 0) {
-            $timeout.cancel(mapLoadingTimeout);
-            mapLoadingTimeout = $timeout(() => (mapConfig.isMapLoading = isLoading), delay);
         }
     }
 
