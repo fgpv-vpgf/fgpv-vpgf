@@ -11,7 +11,7 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, $timeout, referenceService, common, stateManager, graphicsService,
+function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
     geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
 
     const service = {
