@@ -600,7 +600,7 @@ export class PanelElem {
                 this._element.addClass('toggle-btn');
             }
             else {
-                this._element = $('<h1>' + element + '</h1>');
+                this._element = $('<h1 style="font-weight: normal">' + element + '</h1>');
             }
         }
         else {
@@ -650,31 +650,32 @@ export class PanelElem {
 
 export class Btn extends PanelElem {
 
-    _element = <JQuery<HTMLElement>>$('<button class="btn"></button>');
+    _element = <JQuery<HTMLElement>>$('<button class="btn"></button>');   
 
-    /**
-    * Sets an icon for the Btn
-    * @param {SVG} svg - the icon to be set for the Btn
-    */
-    set icon(svg: SVGElement) {
-        console.log(svg);
-        svg.classList.add('svg-style');
 
-        //usually SVG element's children control fill property (eg when appending path object or rect object etc)
-        if (svg.firstChild !== null) {
-            (<HTMLElement>svg.firstChild).classList.add('svg-style');
-        }
-        this._element.append(svg);
+/**
+* Sets an icon for the Btn
+* @param {SVG} svg - the icon to be set for the Btn
+*/
+set icon(svg: SVGElement) {
+    console.log(svg);
+    svg.classList.add('svg-style');
+
+    //usually SVG element's children control fill property (eg when appending path object or rect object etc)
+    if (svg.firstChild !== null) {
+        (<HTMLElement>svg.firstChild).classList.add('svg-style');
     }
+    this._element.append(svg);
+}
 
-    /**
-    * Sets text for the Btn
-    * @param {string} txt - the text to be set for the Btn
-    */
-    set text(txt: string) {
-        this._element.html(txt);
-        this._element.addClass('text-btn');
-    }
+/**
+* Sets text for the Btn
+* @param {string} txt - the text to be set for the Btn
+*/
+set text(txt: string) {
+    this._element.html(txt);
+    this._element.addClass('text-btn');
+}
 }
 
 export class PanelPositions {
