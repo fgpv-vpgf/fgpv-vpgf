@@ -79,22 +79,22 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 if (data.layers.length > 0) { // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
                 } else {
+                    const wfsResponse = {
+                        type: 'FeatureCollection',
+                        features: []
+                    };
+
+                    const urlSplit = serviceUrl.split('?');
+                    const url = urlSplit[0];   // url without any query parameters
+                    const queryVariables = urlSplit[1]; // url query parameters
+
+                    let startIndex, limit;
+                    if (queryVariables) {
+                        startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
+                        limit = getQueryVariable(queryVariables, 'limit') || 10;
+                    }
+
                     if (layerType === Geo.Layer.Types.OGC_WFS) {
-                        const wfsResponse = {
-                            type: 'FeatureCollection',
-                            features: []
-                        };
-
-                        const urlSplit = serviceUrl.split('?');
-                        const url = urlSplit[0];   // url without any query parameters
-                        const queryVariables = urlSplit[1]; // url query parameters
-
-                        let startIndex, limit;
-                        if (queryVariables) {
-                            startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
-                            limit = getQueryVariable(queryVariables, 'limit') || 10;
-                        }
-
                         // initially make the request with startIndex if provided else uses 0 (default), and limit if provided else uses 10 (default)
                         return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {
                             const updatedServiceInfo = {
@@ -109,7 +109,7 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                         return gapiService.gapi.layer.predictLayerUrl(serviceUrl)   // remove duplication after
                             .then(serviceInfo => {
                                 if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                                    return _getWFSData(serviceUrl).then(data => {   // if the esriRequest fails, use angular to make web request
+                                    return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {   // if the esriRequest fails, use angular to make web request
                                         // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
                                         // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
                                         const updatedServiceInfo = {
