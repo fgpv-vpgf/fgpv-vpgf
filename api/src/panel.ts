@@ -51,6 +51,7 @@ export class Panel {
     private _height: number | string | undefined;
 
     private _contentsHeight: number;
+    private _hidden: boolean;
 
     //subjects initialized for observables that are fired through method calls
     private _opening: Subject<any> = new Subject();
@@ -94,6 +95,7 @@ export class Panel {
         this.createPanelComponents();
 
         this._panel_positions = new PanelPositions(this);
+        this._hidden = false;
 
     }
 
@@ -185,12 +187,12 @@ export class Panel {
                 panel._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
 
                 //if the body is supposed to be hidden
-                if(panel._panel_body.classList.contains('hidden')){
+                if (panel._panel_body.classList.contains('hidden')) {
                     panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
                 }
-                else{
+                else {
                     panel._panel_contents.style.height = (panel._contentsHeight + 0.1 * parentHeight).toString() + "px";
-                }  
+                }
             }
         });
     }
@@ -292,7 +294,7 @@ export class Panel {
                         btn.icon = <SVGElement>minusSVG;
                         btn._element.addClass('btn');
                         btn._element.addClass('toggle-btn');
-
+                        panel._hidden = false;
                         elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
                         elem._element.get(0).appendChild(<HTMLElement>minusSVG);
 
@@ -308,6 +310,7 @@ export class Panel {
                         btn.icon = <SVGElement>plusSVG;
                         btn._element.addClass('btn');
                         btn._element.addClass('toggle-btn');
+                        panel._hidden = true;
                         elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
                         elem._element.get(0).appendChild(<HTMLElement>plusSVG);
                         panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
@@ -344,6 +347,10 @@ export class Panel {
                         //changes position on map and updates panel registry
                         this.changePosition();
                         this._panel_contents.classList.remove('hidden'); //hide panel before a call to open is made
+
+                        if (this._hidden) {
+                            this._panel_contents.style.height = (<number>$(this._panel_controls).height()).toString() + 'px';
+                        }
 
                         this._open = true;
                     }
@@ -560,6 +567,7 @@ export class Panel {
         //calculate width and height of panel according to bottom right. 
         this._panel_contents.style.width = ((panelCoords[2] - panelCoords[0] + 1) * 0.05 * parentWidth).toString() + "px";
         this._panel_contents.style.height = ((panelCoords[3] - panelCoords[1] + 1) * 0.05 * parentHeight).toString() + "px";
+
     }
 
 }
@@ -663,32 +671,32 @@ export class PanelElem {
 
 export class Btn extends PanelElem {
 
-    _element = <JQuery<HTMLElement>>$('<button class="btn"></button>');   
+    _element = <JQuery<HTMLElement>>$('<button class="btn"></button>');
 
 
-/**
-* Sets an icon for the Btn
-* @param {SVG} svg - the icon to be set for the Btn
-*/
-set icon(svg: SVGElement) {
-    console.log(svg);
-    svg.classList.add('svg-style');
+    /**
+    * Sets an icon for the Btn
+    * @param {SVG} svg - the icon to be set for the Btn
+    */
+    set icon(svg: SVGElement) {
+        console.log(svg);
+        svg.classList.add('svg-style');
 
-    //usually SVG element's children control fill property (eg when appending path object or rect object etc)
-    if (svg.firstChild !== null) {
-        (<HTMLElement>svg.firstChild).classList.add('svg-style');
+        //usually SVG element's children control fill property (eg when appending path object or rect object etc)
+        if (svg.firstChild !== null) {
+            (<HTMLElement>svg.firstChild).classList.add('svg-style');
+        }
+        this._element.append(svg);
     }
-    this._element.append(svg);
-}
 
-/**
-* Sets text for the Btn
-* @param {string} txt - the text to be set for the Btn
-*/
-set text(txt: string) {
-    this._element.html(txt);
-    this._element.addClass('text-btn');
-}
+    /**
+    * Sets text for the Btn
+    * @param {string} txt - the text to be set for the Btn
+    */
+    set text(txt: string) {
+        this._element.html(txt);
+        this._element.addClass('text-btn');
+    }
 }
 
 export class PanelPositions {
