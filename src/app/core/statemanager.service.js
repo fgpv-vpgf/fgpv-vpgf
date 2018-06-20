@@ -74,7 +74,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
     }
 
     /**
-     * Adds new items to the state collection with overrride;
+     * Adds new items to the state collection with override;
      * @function addState
      * @param {Array} items an array of state items
      */

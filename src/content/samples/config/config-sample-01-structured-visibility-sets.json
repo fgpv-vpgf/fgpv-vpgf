@@ -387,6 +387,7 @@
       {
         "id": "powerplant100mw-liquids",
         "name": "Liquids Pipeline",
+        "expectedResponseTime": 100,
         "layerType": "esriFeature",
         "state": {
           "visibility": true
