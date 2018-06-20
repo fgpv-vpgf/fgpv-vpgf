@@ -1,7 +1,6 @@
 - Actual css file in src/content/styles/api/panel.css
 
 TODO June 20: 
--Toggle button on window resize
 -Toggle button allowed to refresh on position change
 -Private methods
 -Good commenting (class descriptions)
@@ -12,6 +11,7 @@ TODO June 20:
 -Look over demo test cases
 -Update demo with panels centred on map for examples (and other additions if meed be)
     - Explain the style - up to user to inster line breaks
+-set width/height width changed/height changed
 
 
 Tomorrow Noon: 
