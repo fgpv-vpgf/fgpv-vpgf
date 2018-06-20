@@ -2,7 +2,6 @@
 
 TODO June 20: 
 -Toggle button on window resize
--Toggle button seems to shrink panel
 -Toggle button allowed to refresh on position change
 -Private methods
 -Good commenting (class descriptions)
@@ -12,6 +11,7 @@ TODO June 20:
 -Set width and height doesn't seem to be working (with percentage) on window resize/change position
 -Look over demo test cases
 -Update demo with panels centred on map for examples (and other additions if meed be)
+    - Explain the style - up to user to inster line breaks
 
 
 Tomorrow Noon: 
