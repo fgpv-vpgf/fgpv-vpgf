@@ -587,25 +587,45 @@ export class Panel {
 
 }
 
+/**
+ * PanelElems can be set as the contents or controls of the Panel. 
+ *
+ * `PanelElem` can be of type string, HTMLElement or JQuery<HTMLElement>. The can be constructed like so:
+ * ```js
+ * let panelElem2 = new RZ.PanelElem($("<div style='color: lightslategray'>Contents:</div>"));
+ * let panelElem3 = new RZ.PanelElem($.parseHTML('<input type="text" value="Search..." id="coolInput"></input>'));
+ * ``` 
+ * 
+ * Shortcuts can be used to create special `PanelElem`s inteded for use on panel controls. There are four shortcuts:
+ * ```js
+ * let panelElem1 = new RZ.PanelElem('Layers');   //Title shortcut
+ * let panelElem2 = new RZ.PanelElem('T'); //toggle shortcut
+ * let panelElem3 = new RZ.PanelElem('x'); //close button shortcut
+ * let panelElem4 = new RZ.PanelElem('|'); //controls divider shortcut
+ * ```
+ */
 export class PanelElem {
 
-    _id: string;
-    _document_fragment: DocumentFragment;
+    private _id: string;
+    private _document_fragment: DocumentFragment;
     _element: JQuery<HTMLElement>;
+
 
     /**
     * Constructs PanelElem object
+    * @constructor
     * @param {string | HTMLElement | JQuery<HTMLElement>} [element] - element to be set as PanelElem (strings assumed to be titles)
-    *                                                               - not to be specified for Btns
-    */
+    *                                                               - not to be specified for Btns    */
     constructor(element?: string | HTMLElement | JQuery<HTMLElement>) {
         this.setElement(element);
     }
 
+
     /**
     * Helper method, sets PanelElem object
     * @param {(string | HTMLElement | JQuery<HTMLElement>)} [element] - element to be set as PanelElem
-    * @throws {Exception} - cannot have multiple top level elements
+    *                                                                 - parameter should always be set if directly accessing PanelElem class (not from Btn)
+    * @throws {Exception} - cannot have multiple top level elements.
     */
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
@@ -635,6 +655,7 @@ export class PanelElem {
                 this._element.addClass('btn');
                 this._element.addClass('toggle-btn');
             }
+            //title shortcut
             else {
                 this._element = $('<h1 style="font-weight: normal">' + element + '</h1>');
             }
@@ -667,16 +688,16 @@ export class PanelElem {
     }
 
     /**
-    * Gets id of PanelElem object. 
-    * @return {string} - the id of this PanelElem 
+    * Gets the id of PanelElem object. 
+    * @return {string} - the id of this PanelElem.
     */
     get id(): string {
         return this._id;
     }
 
     /**
-    * Gets id of PanelElem object. 
-    * @return {JQuery<HTMLElement>} - this PanelElem
+    * Gets element of PanelElem object. 
+    * @return {JQuery<HTMLElement>} - this element that the PanelElem scopes.
     */
     get element(): JQuery<HTMLElement> {
         return this._element;
@@ -684,6 +705,22 @@ export class PanelElem {
 
 }
 
+
+/**
+ * `Btn`s can be set to SVG icons or text.  
+ *
+ * Creating `Btn`s:
+ * ```js
+ * // a text Btn
+ * let btn = new RZ.Btn();
+ * btn.text = "Btn.";
+ * 
+ * //an SVG Btn
+ * let svg = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>');
+ * let btn2 = new RZ.Btn();
+ * btn2.icon = svg[0];
+ * ``` 
+ */
 export class Btn extends PanelElem {
 
     _element = <JQuery<HTMLElement>>$('<button class="btn"></button>');
@@ -714,7 +751,13 @@ export class Btn extends PanelElem {
     }
 }
 
-export class PanelPositions {
+
+/**
+ * PanelPositions is used to abstract positioning information and positioning related calculations for Panels.
+ * The Panel class methods uses some PanelPositions methods as helpers.
+ * This is not meant to be used directly by the API user.
+ */
+class PanelPositions {
 
     private _topLeftX: number;
     private _topLeftY: number;
@@ -728,14 +771,29 @@ export class PanelPositions {
 
     private _panel: Panel;
 
+    /**
+    * Constructs PanelElem object
+    * @constructor
+    * @param {Panel} panel - Panel for which position relation computations are performed
+    */
     constructor(panel: Panel) {
         this._panel = panel;
     }
 
+    /**
+    * Constructs PanelElem object
+    * @return {number[]} - topLeft and bottomRight Panel coordinates
+    */
     get panelCoords(): number[] {
         return [this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY];
     }
 
+    /**
+    * Helper method to setPosition in Panel class.
+    * @param topLeft - the topLeft grid square of the Panel
+    * @param bottomRight - the bottomRight grid square of the Panel
+    * @throws {Exception} - invalid panel position supplied.
+    */
     setPanelPosition(topLeft: number, bottomRight: number): boolean {
         let topLeftX = (topLeft) % 20; //example panel topLeft of 20 means left is 0, 
         let topLeftY = Math.floor(topLeft / 20);
@@ -756,6 +814,13 @@ export class PanelPositions {
         return true;
     }
 
+
+    /**
+    * Helper method to setMinPosition in Panel class.
+    * @param topLeft - the topLeft grid square of the min Panel area.
+    * @param bottomRight - the bottomRight grid square of the min Panel area.
+    * @throws {Exception} - invalid position supplied. 
+    */
     setMinPanelPosition(topLeft: number, bottomRight: number): boolean {
 
         let topLeftX = topLeft % 20;
@@ -781,9 +846,14 @@ export class PanelPositions {
     /**
     * Helper Method: Checks to see if the panel is out of bounds of its map object.
     * Does not correct the panel - up to panel creator to properly place panel on the map.
+    * @param {boolean} isMin - true if checkOutOfBounds is to check if min position is subset of position
+    * @param {number} topLeftX - the x coordinate of the topLeft Panel square
+    * @param {number} topLeftY - the y coordinate of the topLeft Panel square
+    * @param {number} bottomRightX - the x coordinate of the bottomRight Panel square
+    * @param {number} bottomRightY - the y coordinate of the bottomRight Panel square
     * @throws {Exception} - panel is not contained within map grid.
-    * @return {boolean} - false is returned if  OutOfBoundsException not thrown
-    * @private
+    * @throws {Exception} - panel min position is not a subset of panel position
+    * @return {boolean} - false is returned if no exceptions are thrown
     */
     checkOutOfBounds(isMin: boolean, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): boolean {
 
@@ -812,6 +882,12 @@ export class PanelPositions {
         return false;
     }
 
+
+    /**
+    * Helper Method: Checks to see if panel that is being added causes a conflict with an existing Panel. Autoshrinks the Panel if possible.
+    * @param {Panel} panel - the Panel being checked for conflict.
+    * @throws {Exception} - panel cannot shrink any further to accomodate.
+    */
     conflictDetected(panel: Panel): void {
 
         let topLeftX = panel.panelPositions.panelCoords[0];
@@ -868,6 +944,14 @@ export class PanelPositions {
         }
     }
 
+    /**
+    * Helper Method to static availableSpaces in Panel class.
+    * @param {Panel[]} panelRegistry - the list of Panels on the map instance being checked.
+    * @param {number} width - the width of the Panel being checked
+    * @param {height} height - the height of the Panel being checked
+    * @param {Panel} [panel] - the Panel instance that available spaces are being checked for 
+    * @returns {number[][]} - the grid representation of available spaces on the Map instance
+    */
     static availableSpaces(panelRegistry: Panel[], width: number, height: number, panel?: Panel): number[][] {
 
         //initializes availableSpaces array
@@ -949,6 +1033,12 @@ export class PanelPositions {
         return availableSpaces;
     }
 
+
+    /**
+    * Helper Method to set width method in Panel class. 
+    * @param {number | string} width - the width that the Panel needs to be set to.
+    * @returns {string | null} - the px conversion of width
+    */
     setWidth(width: number | string): (string | null) {
 
         let parentWidth = <number>$(this._panel.map.innerShell).width();
@@ -984,6 +1074,11 @@ export class PanelPositions {
         return null;
     }
 
+    /**
+    * Helper Method to set height method in Panel class. 
+    * @param {number | string} height - the height that the Panel needs to be set to.
+    * @returns {string | null} - the px conversion of height
+    */
     setHeight(height: number | string): (string | null) {
 
         let parentHeight = <number>$(this._panel.map.innerShell).height();
