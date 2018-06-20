@@ -57,7 +57,7 @@
 
 .text-btn:hover {
     background-color: darkslategray;
-    border: 2px solid  darkslategrey;
+    border: 2px solid  darkslategray;
     color: white;
     outline: none;
 }

@@ -1,54 +1,92 @@
 .elem {
     max-width: 100%;
     max-height: 100%;
+    vertical-align: middle;
 }
 .panel-contents {
-    background: #F2F2F2; 
+    background-color: #ffffff; 
     border: 1px solid #ccc; 
     box-shadow: 1px 1px 2px #fff inset, -1px -1px 2px #fff inset; 
     display: inline-block;
     position: absolute;
     top: 0px; 
-    left: 0px;
-    padding: 5px;
+    left: 0px;    
     overflow: hidden;
 }
 .panel-controls {
-    border: grey solid 1px;
-    padding: 3px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.separator{
+    border-bottom: lightgrey solid 1px;
 }
 .panel-body{
     margin-top: 2px;
-    border: grey solid 1px;
     display: inline-block;
-    padding: 3px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .btn{
     width: 36px;
     height: 26px;
     margin: 2px;
+    background-color: #ffffff;
+    border: none;
+    outline: none;
+    vertical-align: middle;
 }
+
+.text-btn{
+    width: 36px;
+    height: 26px;
+    margin: 2px;
+    padding: 2px;
+    background-color: white;
+    border: 2px solid  slategrey;
+    outline: none;
+    color: slategrey;
+    overflow: hidden;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+}
+
+
+.text-btn:hover {
+    background-color: darkslategray;
+    border: 2px solid  darkslategray;
+    color: white;
+    outline: none;
+}
+
+.text-btn:click {
+    background-color: darkslategray;
+    color: white;
+    outline: none;
+}
+
 .svg-style{
     width: 80%;
     height: 80%;
+    top: 0px;
+    left: 0px;
+    fill: #778899;
+}
+.svg-style:hover{
+    fill: darkslategray;
 }
 .txt{
     width: 20%;
     height: 20%;
 }
-.close-btn{
-    color: white;
-    background-color: palevioletred;
-    border: white;
-}
-.toggle-btn{
-    color: palevioletred;
-}
 .hidden{
     visibility: hidden;
 }
 .divider{
-    border-left: 1px solid palevioletred;
+    border-left: 1px solid rgb(146, 167, 187);
     height: 36px;
     margin-left: 10px;
     padding-bottom: 0px;
