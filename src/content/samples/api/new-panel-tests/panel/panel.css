@@ -10,19 +10,25 @@
     display: inline-block;
     position: absolute;
     top: 0px; 
-    left: 0px;
-    padding-left: 15px;
-    padding-right: 15px;
+    left: 0px;    
     overflow: hidden;
 }
 .panel-controls {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.separator{
     border-bottom: lightgrey solid 1px;
-    padding: 3px;
 }
 .panel-body{
     margin-top: 2px;
     display: inline-block;
-    padding: 3px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .btn{
     width: 36px;
@@ -31,30 +37,8 @@
     background-color: #ffffff;
     border: none;
     outline: none;
-    overflow: hidden;
     vertical-align: middle;
-    overflow: hidden;
 }
-
-button:after {
-    z-index: 2;
-    display: block;
-    position: absolute;
-    height: 16px;
-    width: 16px;
-    top: calc(50% - 8px);
-    left: calc(50% - 8px);
-    background: grey;
-    border-radius: 50%;
-    transform: scale(0);
-    animation: ripple 0.75s;
-  }
-  @keyframes ripple {
-    100% {
-      opacity: 0;
-      transform: scale(2.5);
-    }
-  }
 
 .text-btn{
     width: 36px;
@@ -67,6 +51,7 @@ button:after {
     color: slategrey;
     overflow: hidden;
     vertical-align: middle;
+    text-overflow: ellipsis;
 }
 
 

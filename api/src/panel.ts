@@ -40,6 +40,7 @@ export class Panel {
     private _panel_controls: HTMLElement;
     private _panel_body: HTMLElement;
     private _document_fragment: DocumentFragment;
+    private _separator: HTMLElement;
 
     private _map_width: number | undefined;
     private _map_height: number | undefined;
@@ -136,10 +137,15 @@ export class Panel {
         this._panel_body.classList.add('panel-body');
         this._panel_body.classList.add('hidden');
 
+        this._separator = document.createElement('div');
+        this._separator.classList.add('separator');
+
+
         this._panel_contents.setAttribute('id', this._id.toString());
 
         //append panel controls/body to panel contents ("shell")
         this._panel_contents.appendChild(this._panel_controls);
+        this._panel_contents.appendChild(this._separator);
         this._panel_contents.appendChild(this._panel_body);
         this._panel_contents.classList.add('hidden'); //hide panel before a call to open is made
         //append panel contents ("shell") to document fragment
@@ -175,9 +181,8 @@ export class Panel {
                 panel.height = panel._height;
             }
 
-            if (parentHeight) {
-                panel._contentsHeight = ((panelCoords[3] - panelCoords[1]) * 0.05 * parentHeight);
-            }
+            //panel._panel_contents.style.height = panel._contentsHeight.toString() + "px";
+
         });
     }
 
@@ -302,7 +307,6 @@ export class Panel {
                 });
             }
         }
-
     }
 
     /**
@@ -459,7 +463,7 @@ export class Panel {
                 this.open();
             }
             if (parentHeight !== undefined) {
-                this._contentsHeight = ((panelCoords[3] - panelCoords[1]) * 0.05 * parentHeight);
+                this._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
             }
         }
 

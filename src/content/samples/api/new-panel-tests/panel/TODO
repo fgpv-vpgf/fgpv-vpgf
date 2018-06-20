@@ -1,40 +1,24 @@
 - Actual css file in src/content/styles/api/panel.css
 
-TODO: 
--pesky toggle button (seems to magically work sometimes?)
-
-
-- Documentation
-- Scrap map grid --> keep for debugging purposes, ask at meeting
+TODO June 20: 
+-Toggle button on window resize
+-Toggle button seems to shrink panel
+-Toggle button allowed to refresh on position change
 -Private methods
--Good commenting (add examples in)
--can't seem to get around force casing for jquery .height() and .width(). sometimes putting it in an if statement with !== undefined works
-but otherwise doesn't
--delete alerts and console.logs
--structural changes to code
--toggle button isn't going to go well after width change
+-Good commenting (class descriptions)
+-Look at JQuery forcecasting issues
+-Delete alerts and console.logs
+-Toggle button upon position changed
+-Set width and height doesn't seem to be working (with percentage) on window resize/change position
+-Look over demo test cases
+-Update demo with panels centred on map for examples (and other additions if meed be)
 
--circular click effect button
 
--WHY DOES HACKY TOGGLE CODE WORK?
-
--set width and height doesn't seem to be working (with percentage) on window resize
-
-DOUBLE CHECK:
--toggle button --> malfunctions on window resize, can refresh on position change
--console.log/alerts
--dangling code/comments
--restriction to inner shell
--alt text, black toggle with buttons
-
--bug where stretching the width past a certain point causes increase/decrease in width
--update demo docs with set width/height methods
-
+Tomorrow Noon: 
+-Doc pages
+-Check over everything
+-PR
 ---------------------------------------------------------------------------------------------------------------------------------
-Future features (?): 
--Remove coverable for now, don't worry about greying out
--Assume all panels are non-coverable and don't allow other panels to open on min positions
--registry's  1+ feature (example: 2 means two panels occupy that gridspace) to be set when panels become coverable
 
 
 DOCUMENTATION: 
