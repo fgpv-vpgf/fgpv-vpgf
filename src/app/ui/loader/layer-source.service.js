@@ -80,32 +80,46 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                     return _parseAsWMS(serviceUrl, data);
                 } else {
                     if (layerType === Geo.Layer.Types.OGC_WFS) {
-                        return $http.get(serviceUrl)    // use angular to make web request, instead of esriRequest
-                            .then(response => {
-                                const updatedServiceInfo = {
-                                    serviceType: 'wfs',
-                                    index: '-1',
-                                    tileSupport: false,
-                                    rawData: new TextEncoder('utf-8').encode(JSON.stringify(response.data))
-                                }
-                                return _parseAsSomethingElse(updatedServiceInfo);
-                            });
+                        const wfsResponse = {
+                            type: 'FeatureCollection',
+                            features: []
+                        };
+
+                        const urlSplit = serviceUrl.split('?');
+                        const url = urlSplit[0];   // url without any query parameters
+                        const queryVariables = urlSplit[1]; // url query parameters
+
+                        let startIndex, limit;
+                        if (queryVariables) {
+                            startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
+                            limit = getQueryVariable(queryVariables, 'limit') || 10;
+                        }
+
+                        // initially make the request with startIndex if provided else uses 0 (default), and limit if provided else uses 10 (default)
+                        return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {
+                            const updatedServiceInfo = {
+                                serviceType: 'wfs',
+                                index: '-1',
+                                tileSupport: false,
+                                rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
+                            }
+                            return _parseAsSomethingElse(updatedServiceInfo);
+                        });
                     } else {
                         return gapiService.gapi.layer.predictLayerUrl(serviceUrl)   // remove duplication after
                             .then(serviceInfo => {
                                 if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                                    return $http.get(serviceUrl)    // if the esriRequest fails, use angular to make web request
-                                        .then(response => {
-                                            // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
-                                            // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
-                                            const updatedServiceInfo = {
-                                                serviceType: 'wfs',
-                                                index: '-1',
-                                                tileSupport: false,
-                                                rawData: new TextEncoder('utf-8').encode(JSON.stringify(response.data))
-                                            }
-                                            return _parseAsSomethingElse(updatedServiceInfo);
-                                        });
+                                    return _getWFSData(serviceUrl).then(data => {   // if the esriRequest fails, use angular to make web request
+                                        // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
+                                        // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
+                                        const updatedServiceInfo = {
+                                            serviceType: 'wfs',
+                                            index: '-1',
+                                            tileSupport: false,
+                                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
+                                        }
+                                        return _parseAsSomethingElse(updatedServiceInfo);
+                                    });
                                 } else {
                                     return _parseAsSomethingElse(serviceInfo)
                                 }
@@ -121,6 +135,45 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 $q.reject(error));
 
         return fetchPromise;
+
+        /**
+         * @function _getWFSData
+         * @private
+         * @param {String} serviceUrl url of the WFS layer we are trying to parse
+         * @param {Number} startIndex the index to start the querying from. default 0
+         * @param {Number} limit the limit of how many results we want returned. default 10
+         * @param {Object} wfsResponse the resulting GeoJSON being populated as we receive layer information
+         * @return {Promise} a promsie resolving with the layer GeoJSON
+         */
+        function _getWFSData(serviceUrl, startIndex = 0, limit = 10, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
+            return $http.get(serviceUrl.concat(`?startindex=${startIndex}&limit=${limit}`))    // use angular to make web request, instead of esriRequest
+                .then(response => {
+                    const data = response.data;
+                    wfsResponse.features = [...wfsResponse.features, ...data.features]; // update the received features array
+
+                    const numReturned = data.numberReturned;
+                    const totalNumberReceived = startIndex + numReturned;
+                    const numMatched = data.numberMatched;
+                    if (typeof numReturned !== 'undefined' && typeof numMatched !== 'undefined' && totalNumberReceived < numMatched) {
+                        const limit = Math.min(10000, numMatched - totalNumberReceived);    // the limit is either 10k (max amount) or the number of remaining features
+                        return _getWFSData(serviceUrl, totalNumberReceived, limit, wfsResponse);
+                    } else {
+                        return wfsResponse
+                    }
+                });
+        }
+
+        // modified from: https://css-tricks.com/snippets/javascript/get-url-variables/
+        function getQueryVariable(queryVariables, variable) {
+            const vars = queryVariables.split("&");
+            for (let i = 0; i < vars.length; i++) {
+                const pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return parseInt(pair[1]);
+                }
+            }
+            return(false);
+        }
 
         /**
          * @function _parseAsSomethingElse

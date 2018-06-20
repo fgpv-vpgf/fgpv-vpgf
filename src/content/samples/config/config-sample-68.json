@@ -348,7 +348,10 @@
             ],
             "children": [
                 {
-                  "layerId": "hydrometric-stations"
+                  "layerId": "hydrometric-stations6k"
+                },
+                {
+                  "layerId": "hydrometric-stationsAll"
                 },
                 {
                   "layerId": "flurstuck"
@@ -393,12 +396,20 @@
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
       },
       {
-        "id": "hydrometric-stations",
-        "name": "Hydrometric Stations",
+        "id": "hydrometric-stations6k",
+        "name": "Hydrometric Stations - Start with 6000th index",
         "layerType": "ogcWfs",
         "nameField": "STATION_NAME",
-        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?limit=10000",
+        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=6000",
         "colour": "#FF0000"
+      },
+      {
+        "id": "hydrometric-stationsAll",
+        "name": "Hydrometric Stations - All features",
+        "layerType": "ogcWfs",
+        "nameField": "STATION_NAME",
+        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items",
+        "colour": "#00FF00"
       },
       {
         "id": "flurstuck",
