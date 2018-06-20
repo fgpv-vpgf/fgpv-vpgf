@@ -75,7 +75,8 @@ export class Panel {
     /**
 +    * Creates a new Panel.
 +    * @constructor
-+    * @param {string} id - the user defined ID name for this panel
++    * @param {string} id - the user defined ID name for this Panel
+     * @param {Map} map - the map instance that this Panel resides on
 +    */
     constructor(id: string, map: Map) {
 
@@ -99,9 +100,15 @@ export class Panel {
 
     }
 
+    /**
+    * Returns the Map object for this panel, used in set height and set width of the PanelPositions class.
+    * @return {Map} - the Map object for this Panel. 
+    */
     get map(): Map {
         return this._map_object;
     }
+
+
     /**
     * Helper method to see observables firing in console.
     * To be removed when API is finished. 
@@ -115,14 +122,15 @@ export class Panel {
     }
 
     /**
-     * Returns panel positions object 
-     */
+    * Returns the PanelPositions object for this panel
+    * @return {PanelPositions} - the PanelPositions object for this Panel. 
+    */
     get panelPositions(): PanelPositions {
         return this._panel_positions;
     }
 
     /**
-    * Helper method to create panel components and the document fragment. 
+    * Helper method to create panel components and the document fragment, and to specify panel behaviour on window resize.
     * @private
     */
     private createPanelComponents(): void {
@@ -159,19 +167,22 @@ export class Panel {
         let panel = this;
 
         $(window).resize(function () {
+
             let panelCoords = panel._panel_positions.panelCoords;
             let parentHeight = $(panel._map_object.innerShell).height();
-            //INNERSHELL
-            //if current width is different from stored width, fire width changed
-            if (panel._map_width !== $(panel._map_object.innerShell).width()) {
+            let parentWidth = $(panel._map_object.innerShell).width();
+            let controlsHeight = $(panel._panel_controls).height();
 
-                panel._widthChanged.next(<number>$(panel._map_object.innerShell)!.width() * 0.05);
-                panel._map_width = $(panel._map_object.innerShell).width();
+            //if current width is different from stored width, fire width changed
+            if (panel._map_width !== parentWidth && parentWidth !== undefined) {
+                panel._widthChanged.next(parentWidth * 0.05);
+                panel._map_width = parentWidth;
             }
+
             //if current height is different from stored height, fire height changed
-            else if (panel._map_height !== $(panel._map_object.innerShell).height()) {
-                panel._heightChanged.next(<number>$(panel._map_object.innerShell).height() * 0.05);
-                panel._map_height = <number>$(panel._map_object.innerShell).height();
+            else if (panel._map_height !== parentHeight && parentHeight !== undefined) {
+                panel._heightChanged.next(parentHeight * 0.05);
+                panel._map_height = parentHeight;
             }
 
             //changes width/height to new percentage value of the map
@@ -183,12 +194,12 @@ export class Panel {
                 panel.height = panel._height;
             }
 
+            //ensures that toggle (open/close of panel body) is preserved during position change 
             if (parentHeight !== undefined) {
                 panel._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
 
-                //if the body is supposed to be hidden
-                if (panel._panel_body.classList.contains('hidden')) {
-                    panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
+                if (panel._panel_body.classList.contains('hidden') && controlsHeight !== undefined) {
+                    panel._panel_contents.style.height = controlsHeight.toString() + 'px';
                 }
                 else {
                     panel._panel_contents.style.height = (panel._contentsHeight + 0.1 * parentHeight).toString() + "px";
@@ -198,17 +209,9 @@ export class Panel {
     }
 
     /**
-    * Helper method to setPosition(), setMinPosition(), set coverable(). Updates available spaces on the grid.
-    * @private
-    */
-    /*private updateGridSpaces(coverage: number, topLeftX: number, topLeftY: number, bottomRightX: number, bottomRightY: number): void {
-        this._map_object.updateMapGrid(coverage, topLeftX * 20 + topLeftY, bottomRightX * 20 + bottomRightY);
-    }*/
-
-    /**
     * Returns an array of arrays representing each grid square. An array value can be the following:
     * -1 : Invalid panel position (not coverable because it is some panel's min position, or user wants this area empty)
-    *  0 :  Valid panel position (no panels set in this area)
+    * 0 : Valid panel position (no panels set in this area)
     * 1+: Valid panel position with 1 or more other panels capable of covering it (panel is here, but coverable)
     *
     * If width and/or height are not provided the width/height can be computed from the panel position. 
@@ -216,25 +219,34 @@ export class Panel {
     * 
     * "If a panel of this dimension were to use this grid square as its top left corner would it fit?" computation based on using grid square as its top left position
     * 
-    * 
-    * @param {number} [width] - the panel width
-    * @param {number} [height] - the panel height
+    * @param {Panel[]} panelRegistry - the list of all the other Panels on the map instance
+    * @param {number} width - the Panel width
+    * @param {number} height - the Panel height
+    * @param {Panel} [panel] - the Panel instance to check available spaces for
     * @return {number[][]} - array of arrays representing each grid square 
+    * @throws {Exception} - map instance is not set, cannot retrieve grid.
     */
 
     static availableSpaces(panelRegistry: Panel[], width: number, height: number, panel?: Panel): number[][] {
+
         return PanelPositions.availableSpaces(panelRegistry, width, height, panel);
     }
 
 
     /**
-    * If no position is set, calculate based on a 1x1 panel. 
+    * Non static version of the method. Calculates available spaces on the grid for a specific panel instance based on:
+    *                                   - Panel position
+    *                                   - user supplied width and height
+    *                                   - a 1x1 panel if no height/width/position are set
+    * @param {number} [width] - user specified width for available space calculations
+    * @param {number} [height] - user specified height for available space calculations 
     * @return {number[][]} - array of arrays representing each grid square 
+    * @throws {Exception} - panel's map instance is undefined.
     */
     availableSpaces(width?: number, height?: number): number[][] {
 
         if (this._map_object === undefined) {
-            throw "this panel's map is not set; cannot retrieve grid.";
+            throw "Exception: this panel's map is not set; cannot retrieve grid.";
         }
 
         //if no position, width or height set calculate based on a 1x1 panel
@@ -242,20 +254,21 @@ export class Panel {
 
             return Panel.availableSpaces(this._map_object.panelRegistry, 1, 1);
         }
-        //
         else {
+            //calculate based on user supplied width and height
             if (width !== undefined && height !== undefined) {
                 return Panel.availableSpaces(this._map_object.panelRegistry, width, height, this);
             }
             else {
+                //calculate based on width and height from panel position
                 return Panel.availableSpaces(this._map_object.panelRegistry, this.panelPositions.panelCoords[2] - this.panelPositions.panelCoords[0] + 1, this.panelPositions.panelCoords[3] - this.panelPositions.panelCoords[1] + 1, this);
             }
         }
     }
 
     /**
-    * Returns controls for panel
-    * @return {(PanelElem)[]} - a list of controls for the panel. 
+    * Returns controls for the Panel
+    * @return {(PanelElem | Btn)[]} - a list of controls for the Panel. 
     */
     get controls(): (PanelElem | Btn)[] {
         return this._controls;
@@ -263,7 +276,7 @@ export class Panel {
 
     /**
     * Sets panel controls. 
-    * @param {(PanelElem)[]} elems - the array of control elements that are set as panel controls
+    * @param {(PanelElem | Btn)[]} elems - the array of control elements that are set as panel controls
     */
     set controls(elems: (PanelElem | Btn)[]) {
         this._panel_controls.classList.remove('hidden');
@@ -277,54 +290,58 @@ export class Panel {
         for (let elem of elems) {
             $(this._panel_controls).append(elem._element.get(0));
             elem._element.get(0).classList.add('inline');
+
             //if the control is a close button, then open/close panel upon clicking
             if (elem._element.get(0).classList.length === 4 && elem._element.get(0).classList[1] === "close-btn") {
                 $(elem._element.get(0)).click(function () {
                     panel.close();
                 });
             }
+            //if the control button is a toggle button, then allow it to toggle visibility of panel body
             else if (elem._element.get(0).classList.length === 4 && elem._element.get(0).classList[1] === "toggle-btn") {
                 $(elem._element.get(0)).click(function () {
+                    
+                    //initialize attributes
+                    let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
+                    let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
+                    let btn = new Btn();
+                    btn._element.addClass('btn');
+                    btn._element.addClass('toggle-btn');
+                    elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
+                    let controls = $(panel._panel_controls).height();
+                    let parentHeight = panel._map_height;
+
+                    // if user wants to expand panel
                     if (body.classList.contains('hidden')) {
                         body.classList.remove('hidden');
-                        let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
-
-
-                        let btn = new Btn();
                         btn.icon = <SVGElement>minusSVG;
-                        btn._element.addClass('btn');
-                        btn._element.addClass('toggle-btn');
                         panel._hidden = false;
-                        elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
-                        elem._element.get(0).appendChild(<HTMLElement>minusSVG);
-
-                        if (panel._contentsHeight !== undefined) {
-                            panel._panel_contents.style.height = (panel._contentsHeight + <number>panel._map_height * 0.10).toString() + 'px';
+                        elem._element.get(0).appendChild(minusSVG);
+                        if (panel._contentsHeight !== undefined && parentHeight !== undefined) {
+                            panel._panel_contents.style.height = (panel._contentsHeight + parentHeight * 0.10).toString() + 'px';
                         }
-
                     }
+                    //if user wants to shrink panel
                     else {
                         body.classList.add('hidden');
-                        let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
                         let btn = new Btn();
-                        btn.icon = <SVGElement>plusSVG;
-                        btn._element.addClass('btn');
-                        btn._element.addClass('toggle-btn');
+                        btn.icon = <SVGElement>plusSVG;                        
                         panel._hidden = true;
-                        elem._element.get(0).removeChild(<HTMLElement>elem._element.get(0).firstChild);
-                        elem._element.get(0).appendChild(<HTMLElement>plusSVG);
-                        panel._panel_contents.style.height = (<number>$(panel._panel_controls).height()).toString() + 'px';
-
+                        elem._element.get(0).appendChild(plusSVG);
+                        if (controls !== undefined){
+                            panel._panel_contents.style.height = controls.toString() + 'px';
+                        }            
                     }
                 });
             }
         }
     }
 
+
     /**
     * Opens the panel on the map. (For the user to see)
     * @throws {Exception} - panel positon is not set. 
-    * @throws {Exception} - panel is out of bounds of map. 
+    * @throws {Exception} - panel has not been added to the map instance.
     * 
     */
     open(): void {
@@ -332,6 +349,7 @@ export class Panel {
         let panelCoords = this._panel_positions.panelCoords;
 
         if (this._map_object !== undefined) {
+
             //check to see panel position is set
             if (panelCoords[0] !== undefined && panelCoords[1] !== undefined && panelCoords[2] !== undefined && panelCoords[3] !== undefined) {
 
@@ -357,18 +375,17 @@ export class Panel {
                 }
             }
             else {
-                throw "Exception: panel position is not set. Set position before opening panel.";
+                throw "Exception: Panel position is not set. Set position before opening panel.";
             }
         }
         else {
-            throw "Exception: panel can't be opened if it has not been added to a map."
+            throw "Exception: Panel can't be opened if it has not been added to a map."
         }
     }
 
     /**
     * Helper method to open(). Detects a conflict where an opening panel interferes with the opening of another panel. 
     * @returns {boolean} - returns false if conflict is not detected
-    * @throws {Exception} - ConflictDetectedError: Panel Unshrinkable!
     * @private
     */
     private conflictDetected(): boolean {
@@ -382,10 +399,9 @@ export class Panel {
         return false;
     }
 
-
-
     /**
     * Closes the panel on the map. (For the user to see).
+    * @throws {Exception} - panel is either: not added to the map, doesn't have a position set, is not open.
     */
     close(): void {
         let panelCoords = this._panel_positions.panelCoords;
@@ -394,9 +410,6 @@ export class Panel {
         if (this._map_object !== undefined && panelCoords[0] !== undefined && panelCoords[1] !== undefined && panelCoords[2] !== undefined && panelCoords[3] !== undefined && this._open === true) {
             this._closing.next();
             this._panel_contents.classList.add('hidden');
-            //updates panel registry
-
-            //this.updateGridSpaces(0, this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY);
             this._open = false;
         }
         else {
@@ -451,6 +464,7 @@ export class Panel {
     * Sets the position for the Panel according to the map grid layout. 
     * @param {number} topLeft - the grid square that is the panel's top left corner
     * @param {number} bottomRight - the grid square that is the panel's bottom right corner
+    * @throws {Exception} - positions supplied are out of bound of map grid.
     */
     setPosition(topLeft: number, bottomRight: number): void {
 
@@ -482,12 +496,13 @@ export class Panel {
                 this._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
             }
         }
-
     }
 
-    //if number, set to pixels, if string, set to %
-    //assume the user gives correct pixels/percent input
-    //catch errors javascript?
+    /**
+    * Sets the width for the Panel. 
+    * @param {number | string} width - the width of the panel in pixels (number) or percent (string).
+    * @throws {Exception} - cannot set width if panel is not open.
+    */
     set width(width: number | string) {
         if (this._open) {
 
@@ -501,7 +516,11 @@ export class Panel {
         }
     }
 
-    //if number, set to pixels, if string, set to %
+    /**
+    * Sets the height for the Panel. 
+    * @param {number | string} height - the height of the panel in pixels (number) or percent (string).
+    * @throws {Exception} - cannot set height if panel is not open.
+    */
     set height(height: number | string) {
         if (this._open) {
 
@@ -545,10 +564,6 @@ export class Panel {
     /**
     * Helper method: adjusts the css positioning of the panel on map.
     * Calculating according to 5% default grid blocks. 
-    * @param {number} topLeftX - the x coordinate of the top left square (set as top left panel corner) 
-    * @param {number} topLeftY - the y coordinate of the top left square (set as top left panel corner) 
-    * @param {number} bottomRightX - the x coordinate of the bottom right square (set as the bottom right panel corner)
-    * @param {number} bottomRightY - the y coordinate of the bottom right square (set as the bottom right panel corner)
     * @private
     */
     private changePosition(): void {

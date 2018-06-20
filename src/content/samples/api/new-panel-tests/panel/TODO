@@ -1,17 +1,16 @@
 - Actual css file in src/content/styles/api/panel.css
 
 TODO June 20: 
--Toggle button allowed to refresh on position change
 -Private methods
 -Good commenting (class descriptions)
 -Look at JQuery forcecasting issues
 -Delete alerts and console.logs
--Toggle button upon position changed
 -Set width and height doesn't seem to be working (with percentage) on window resize/change position
 -Look over demo test cases
 -Update demo with panels centred on map for examples (and other additions if meed be)
     - Explain the style - up to user to inster line breaks
 -set width/height width changed/height changed
+-remove observables subscribe
 
 
 Tomorrow Noon: 
