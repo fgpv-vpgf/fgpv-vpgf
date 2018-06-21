@@ -342,13 +342,13 @@ export class BaseGeometry {
  *
  * ```js
  * // image / data URL as icon
- * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
  *
  * // svg path as icon
- * var pointB = new RZ.GEO.Point(1, 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801', [79, 32]);
+ * var pointB = new RZ.GEO.Point(1, [79, 32], {icon: 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801'});
  *
  * // default icon
- * var pointC = new RZ.GEO.Point(2, '', [79, 43]);
+ * var pointC = new RZ.GEO.Point(2, [79, 43]);
  *
  * RZ.mapById('<mapID>').simpleLayer.addGeometry([pointA, pointB, pointC]);
  * ```
@@ -357,13 +357,24 @@ export class Point extends BaseGeometry {
     /** @ignore */
     _xy: XY;
     /** @ignore */
-    _icon: string;
+    _styleOptions: PointStyleOptions;
 
-    /** Constructs a Point from the given XY or XYLiteral. */
-    constructor(id: string | number, icon: string, xy: XY | XYLiteral) {
+    /** Constructs a Point from the given XY or XYLiteral.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>width:          number in pixels. default is `16.5`.
+     *     <li>height:         number in pixels. default is `16.5`.
+     *     <li>xOffset:        number in pixels. default is `0`.
+     *     <li>yOffset:        number in pixels. default is `0`.
+     *     <li>colour:         colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>icon:           string path of point icon. default is `''`.
+     *     <li>style:          string style of point. default is `CIRCLE`.<br/>
+     *     &emsp;&emsp;&nbsp;  one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
+     * </ul>
+    */
+    constructor(id: string | number, xy: XY | XYLiteral, opts?: any) {
         super(id.toString());
-
-        this._icon = icon;
 
         if (isXYLiteral(xy)) {
             this._xy = new XY(xy[0], xy[1]);
@@ -371,12 +382,7 @@ export class Point extends BaseGeometry {
             this._xy = xy;
         }
 
-        // TODO (maybe): add in an option to specify size (width/height) of point
-    }
-
-    /** Returns the URL or SVG path of icon displayed on the map. */
-    get icon(): string {
-        return this._icon;
+        this._styleOptions = new PointStyleOptions(opts);
     }
 
     /** Returns the contained XY. */
@@ -384,6 +390,10 @@ export class Point extends BaseGeometry {
         return this._xy;
     }
 
+    /** Returns the style options for the point */
+    get styleOptions(): PointStyleOptions {
+        return this._styleOptions;
+    }
     /** Returns the string 'Point'. */
     get type(): string {
         return 'Point';
@@ -398,11 +408,11 @@ export class Point extends BaseGeometry {
  * ```js
  * // same icon options as Point
  *
- * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RZ.GEO.Point(1, [79, 32]);
  *
  * // any existing point icons are ignored and the same icon (taken from multipoint) is used for all points
- * var multipointA = new RZ.GEO.MultiPoint(10, '', [pointA, pointB, [79, 43], [-79, 32]]);
+ * var multipointA = new RZ.GEO.MultiPoint(10, [pointA, pointB, [79, 43], [-79, 32]]);
  *
  * RZ.mapById('<mapID>').simpleLayer.addGeometry(multipointA);
  * ```
@@ -411,29 +421,39 @@ export class MultiPoint extends BaseGeometry {
     /** @ignore */
     _pointArray: Array<Point> = [];
     /** @ignore */
-    _icon: string;
+    _styleOptions: StyleOptions;
 
-    /** Constructs a MultiPoint from the given Points, XYs or XYLiterals. */
-    constructor(id: string | number, icon: string, elements: Array<Point | XY | XYLiteral>) {
+    /** Constructs a MultiPoint from the given Points, XYs or XYLiterals.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>width:          number in pixels. default is `16.5`.
+     *     <li>height:         number in pixels. default is `16.5`.
+     *     <li>xOffset:        number in pixels. default is `0`.
+     *     <li>yOffset:        number in pixels. default is `0`.
+     *     <li>colour:         colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>icon:           string path of point icon. default is `''`.
+     *     <li>style:          string style of point. default is `CIRCLE`.<br/>
+     *     &emsp;&emsp;&nbsp;  one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
+     * </ul>
+     *
+     * Style applies to all points and overrides any styling they may have
+    */
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts?: any) {
         super(id.toString());
 
-        this._icon = icon;
+        this._styleOptions = new PointStyleOptions(opts);
 
         elements.forEach((elem, index) => {
             const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isPointInstance(elem)) {
-                this._pointArray.push(new Point(newId, icon, elem.xy));
+                this._pointArray.push(new Point(newId, elem.xy, opts));
             } else {
-                this._pointArray.push(new Point(newId, icon, elem));
+                this._pointArray.push(new Point(newId, elem, opts));
             }
         });
-    }
-
-    /** Returns the data / image URL or SVG path of icon displayed on the map. */
-    get icon(): string {
-        return this._icon;
     }
 
     /** Returns an array of the contained points. A new array is returned each time this is called. */
@@ -451,6 +471,11 @@ export class MultiPoint extends BaseGeometry {
         return this._pointArray.length;
     }
 
+    /** Returns the style options for the points */
+    get styleOptions(): StyleOptions {
+        return this._styleOptions;
+    }
+
     /** Returns the string 'MultiPoint'. */
     get type(): string {
         return 'MultiPoint';
@@ -463,17 +488,29 @@ export class MultiPoint extends BaseGeometry {
  * @example Create a linestring and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RZ.GEO.Point(1, [79, 32]);
  * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
  *
  * RZ.mapById('<mapID>').simpleLayer.addGeometry(lineA);
  * ```
  */
 export class LineString extends MultiPoint {
-    /** Constructs a LineString from the given Points, XYs or XYLiterals. */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>) {
-        super(id, '', elements);
+
+    /** Constructs a LineString from the given Points, XYs or XYLiterals.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>width:          number in pixels. default is `2`.
+     *     <li>colour:         colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>style:          string style of line. default is `SOLID`.<br/>
+     *     &emsp;&emsp;&nbsp;  one of: `DASH, DASHDOT, DASHDOTDOT, DOT, NULL, SOLID`
+     * </ul>
+    */
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts?: any) {
+        super(id, elements, opts);
+
+        this._styleOptions = new LineStyleOptions(opts);
     }
 
     /** Returns the string 'LineString'. */
@@ -488,8 +525,8 @@ export class LineString extends MultiPoint {
  * @example Create a multilinestring and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, 'https://image.flaticon.com/icons/svg/17/17799.svg', [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, '', [79, 32]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RZ.GEO.Point(1, [79, 32]);
  * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
  * var multilineA = new RZ.GEO.MultiLineString(1000, [lineA, [[-70, 45], [-70, 57], [-55, 57], [-55, 45]], [[-10, 45], [-10, 57], [-20, 57], [-20, 45]]]);
  *
@@ -499,19 +536,34 @@ export class LineString extends MultiPoint {
 export class MultiLineString extends BaseGeometry {
     /** @ignore */
     _lineArray: Array<LineString> = [];
+    /** @ignore */
+    _styleOptions: LineStyleOptions;
 
-    /** Constructs a MultiLineString from the given LineStrings or arrays of positions. */
-    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>) {
+    /** Constructs a MultiLineString from the given LineStrings or arrays of positions.
+     *
+     * The different style options and values available are the following:
+     * <ul>
+     *     <li>width:          number in pixels. default is `2`.
+     *     <li>colour:         colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>style:          string style of line. default is `SOLID`.<br/>
+     *     &emsp;&emsp;&nbsp;  one of: `DASH, DASHDOT, DASHDOTDOT, DOT, NULL, SOLID`
+     * </ul>
+     *
+     * Style applies to all lines and overrides any styling they may have
+     */
+    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>, opts?: any) {
         super(id.toString());
+
+        this._styleOptions = new LineStyleOptions(opts);
 
         elements.forEach((elem, index) => {
             const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isLineInstance(elem)) {
-                this._lineArray.push(new LineString(newId, elem.pointArray));
+                this._lineArray.push(new LineString(newId, elem.pointArray, opts));
             } else {
-                this._lineArray.push(new LineString(newId, elem));
+                this._lineArray.push(new LineString(newId, elem, opts));
             }
         });
     }
@@ -531,6 +583,11 @@ export class MultiLineString extends BaseGeometry {
         return this._lineArray.length;
     }
 
+    /** Returns the style options for the points */
+    get styleOptions(): LineStyleOptions {
+        return this._styleOptions;
+    }
+
     /** Returns the string 'MultiLineString'. */
     get type(): string {
         return 'MultiLineString';
@@ -543,8 +600,8 @@ export class MultiLineString extends BaseGeometry {
  * @example Create polygons using different styles and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, '', [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, '', [-49, 70]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, [-49, 70]);
  *
  * // default settings - only the outline ring, no fill for polygon
  * var polygonA = new RZ.GEO.Polygon(10000, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
@@ -585,9 +642,9 @@ export class Polygon extends BaseGeometry {
                     const newId = this._id + '-' + subId;
 
                     if (isPointInstance(elem)) {
-                        this._pointArray.push(new Point(newId, '', elem.xy));
+                        this._pointArray.push(new Point(newId, elem.xy));
                     } else {
-                        this._pointArray.push(new Point(newId, '', elem));
+                        this._pointArray.push(new Point(newId, elem));
                     }
                 });
 
@@ -614,45 +671,32 @@ export class Polygon extends BaseGeometry {
     /** @ignore */
     _ringArray: Array<any> = [];    // type should be 'LinearRing', but that is not available any more
     /** @ignore */
-    _outlineColor: string = '#000000';
-    /** @ignore */
-    _outlineWidth: number = 1;
-    /** @ignore */
-    _fillColor: string = '#000000';
-    /** @ignore */
-    _fillOpacity: number = 0;
+    _styleOptions: PolygonStyleOptions;
 
     /**
      * Constructs a Polygon from the given array of points or ring coordinates.
      *
      * The different style options and values available are the following:
      * <ul>
-     *     <li>outlineColor:        string hex code. default is '#000000'.
-     *     <li>outlineWidth:        number in pixels. default is 1.
-     *     <li>fillColor:           string hex code. default is '#000000'.
+     *     <li>outlineColor:        colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>outlineWidth:        number in pixels. default is 2.
+     *     <li>outlineStyle:        string line style. default is `SOLID`.<br/>
+     *                              &emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;
+     *                              one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
+     *     <li>fillColor:           colour as string or array of numbers. default is `[0, 0, 0]`.
      *     <li>fillOpacity:         number between 0 and 1. default is 0.
+     *     <li>fillStyle:           string hex code. default is `SOLID`.<br/>
+     *                              &emsp;&emsp;&emsp;&nbsp;
+     *                              one of: `BDIAG, CROSS, DIAG_CROSS, FDIAG, HORIZONTAL, NULL, SOLID, VERTICAL`
      * </ul>
      *
      * NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
      * TODO: add option for polygon icon fill.
      */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, styleOptions?: PolygonStyleOptions) {
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, opts?: any) {
         super(id.toString());
 
-        if (styleOptions) {
-            if (styleOptions.outlineColor !== undefined) {
-                this._outlineColor = styleOptions.outlineColor;
-            }
-            if (styleOptions.outlineWidth !== undefined) {
-                this._outlineWidth = styleOptions.outlineWidth;
-            }
-            if (styleOptions.fillColor !== undefined) {
-                this._fillColor = styleOptions.fillColor;
-            }
-            if (styleOptions.fillOpacity !== undefined) {
-                this._fillOpacity = styleOptions.fillOpacity;
-            }
-        }
+        this._styleOptions = new PolygonStyleOptions(opts);
 
         if (elements[0] !== undefined && elements[0] instanceof Array && !isXYLiteral(elements[0])) {   // single ring added
             elements.forEach(element => {
@@ -672,24 +716,9 @@ export class Polygon extends BaseGeometry {
         return [ ...this._ringArray ];
     }
 
-    /** Returns the hex code of the color used for the lines of the ring. */
-    get outlineColor(): string {
-        return this._outlineColor;
-    }
-
-    /** Returns the width in pixels used for the lines of the ring. */
-    get outlineWidth(): number {
-        return this._outlineWidth;
-    }
-
-    /** Returns the hex code of the color used for the fill of the polygon. */
-    get fillColor(): string {
-        return this._fillColor;
-    }
-
-    /** Returns the opacity (between 0 and 1) for the fill of the polygon. */
-    get fillOpacity(): number {
-        return this._fillOpacity;
+    /** Returns style options object for the polygon */
+    get styleOptions(): PolygonStyleOptions {
+        return this._styleOptions;
     }
 
     /** Returns the string 'Polygon'. */
@@ -704,8 +733,8 @@ export class Polygon extends BaseGeometry {
  * @example Create a multipolygon and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, '', [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, '', [-49, 70]);
+ * var pointA = new RZ.GEO.Point(0, [-79, 43]);
+ * var pointB = new RZ.GEO.Point(1, [-49, 70]);
  *
  * // default settings - only the outline ring, no fill for polygon
  * var polygonA = new RZ.GEO.Polygon(100, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
@@ -723,51 +752,41 @@ export class MultiPolygon extends BaseGeometry {
     /** @ignore */
     _polygonArray: Array<Polygon> = [];
     /** @ignore */
-    _outlineColor: string = '#000000';
-    /** @ignore */
-    _outlineWidth: number = 1;
-    /** @ignore */
-    _fillColor: string = '#000000';
-    /** @ignore */
-    _fillOpacity: number = 0;
+    _styleOptions: PolygonStyleOptions;
+
 
     /**
      * Constructs a MultiPolygon from the given array of Polygons.
      *
      * The different style options and values available are the following:
      * <ul>
-     *     <li>outlineColor:        string hex code. default is '#000000'.
-     *     <li>outlineWidth:        number in pixels. default is 1.
-     *     <li>fillColor:           string hex code. default is '#000000'.
+     *     <li>outlineColor:        colour as string or array of numbers. default is `[0, 0, 0]`.
+     *     <li>outlineWidth:        number in pixels. default is 2.
+     *     <li>outlineStyle:        string line style. default is `SOLID`.<br/>
+     *                              &emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;
+     *                              one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
+     *     <li>fillColor:           colour as string or array of numbers. default is `[0, 0, 0]`.
      *     <li>fillOpacity:         number between 0 and 1. default is 0.
+     *     <li>fillStyle:           string hex code. default is `SOLID`.<br/>
+     *                              &emsp;&emsp;&emsp;&nbsp;
+     *                              one of: `BDIAG, CROSS, DIAG_CROSS, FDIAG, HORIZONTAL, NULL, SOLID, VERTICAL`
      * </ul>
+     *
+     * Style applies to all polygons and overrides any styling they may have
      *
      * TODO: add option for multipolygon icon fill.
      */
-    constructor(id: string | number, polygons: Array<Polygon>, styleOptions?: PolygonStyleOptions) {
+    constructor(id: string | number, polygons: Array<Polygon>, opts?: any) {
         super(id.toString());
 
-        if (styleOptions) {
-            if (styleOptions.outlineColor !== undefined) {
-                this._outlineColor = styleOptions.outlineColor;
-            }
-            if (styleOptions.outlineWidth !== undefined) {
-                this._outlineWidth = styleOptions.outlineWidth;
-            }
-            if (styleOptions.fillColor !== undefined) {
-                this._fillColor = styleOptions.fillColor;
-            }
-            if (styleOptions.fillOpacity !== undefined) {
-                this._fillOpacity = styleOptions.fillOpacity;
-            }
-        }
+        this._styleOptions = new PolygonStyleOptions(opts);
 
         polygons.forEach((polygon, index) => {
             const subId = (index < 10) ? '0' + index : index;
             const newId = id + '-' + subId;
 
             const points = polygon.ringArray.map(ring => ring.pointArray);
-            this._polygonArray.push(new Polygon(newId, points, styleOptions));
+            this._polygonArray.push(new Polygon(newId, points, opts));
         });
     }
 
@@ -776,30 +795,161 @@ export class MultiPolygon extends BaseGeometry {
         return [ ...this._polygonArray ];
     }
 
-    /** Returns the hex code of the color used for the lines of the ring. */
-    get outlineColor(): string {
-        return this._outlineColor;
-    }
-
-    /** Returns the width in pixels used for the lines of the ring. */
-    get outlineWidth(): number {
-        return this._outlineWidth;
-    }
-
-    /** Returns the hex code of the color used for the fill of the polygon. */
-    get fillColor(): string {
-        return this._fillColor;
-    }
-
-    /** Returns the opacity (between 0 and 1) for the fill of the polygon. */
-    get fillOpacity(): number {
-        return this._fillOpacity;
+    /** Returns style options object for the polygons */
+    get styleOptions(): PolygonStyleOptions {
+        return this._styleOptions;
     }
 
     /** Returns the string 'MultiPolygon'. */
     get type(): string {
         return 'MultiPolygon';
     }
+}
+
+// Style Classes -----------------------
+
+class StyleOptions {
+    /** @ignore */
+    _width: number;
+    /** @ignore */
+    _colour: Array<number> | string;
+    /** @ignore */
+    _style: string;
+
+    constructor(opts?: any) {
+        opts = opts || {}; // If opts is undefined set it to an empty obj
+
+        // if an attribute is not defined set it to a default
+        this._style = opts.style;
+        this._colour = opts.colour || [0, 0, 0];
+        this._width = opts.width;
+    }
+
+    /** Returns the specified width */
+    get width(): number {
+        return this._width;
+    }
+
+    /** Returns the specified colour */
+    get colour(): Array<number> | string {
+        return this._colour;
+    }
+
+    /** Returns the specified style */
+    get style(): string {
+        return this._style;
+    }
+
+}
+
+class PointStyleOptions extends StyleOptions {
+    /** @ignore */
+    _height: number;
+    /** @ignore */
+    _xOffset: number;
+    /** @ignore */
+    _yOffset: number;
+    /** @ignore */
+    _icon: string;
+
+    constructor(opts?: any) {
+        super(opts);
+
+        opts = opts || {};
+
+        this._icon = opts.icon || '';
+        this._style = opts.icon ? 'ICON' : this._style || 'CIRCLE';
+        this._height = opts.height || 16.5;
+        this._width = opts.width || 16.5;
+        this._xOffset = opts.xOffset || 0;
+        this._yOffset = opts.yOffset || 0;
+    }
+
+    /** Returns the specified height */
+    get height(): number {
+        return this._height;
+    }
+
+    /** Returns the specified x offset */
+    get xOffset(): number {
+        return this._xOffset;
+    }
+
+    /** Returns the specified y offset */
+    get yOffset(): number {
+        return this._yOffset;
+    }
+
+    /** Returns the specified icon */
+    get icon(): string {
+        return this._icon;
+    }
+}
+
+class LineStyleOptions extends StyleOptions {
+
+    constructor(opts?: any) {
+        super(opts);
+
+        opts = opts || {};
+
+        this._style = this._style || 'SOLID';
+        this._width = opts.width || 2;
+    }
+}
+
+class PolygonStyleOptions extends StyleOptions {
+    /** @ignore */
+    _outlineColor: Array<number> | string;
+    /** @ignore */
+    _outlineWidth: number;
+    /** @ignore */
+    _outlineStyle: string;
+    /** @ignore */
+    _fillColor: Array<number> | string;
+    /** @ignore */
+    _fillOpacity: number
+    /** @ignore */
+    _fillStyle: string;
+
+    constructor(opts?: any) {
+        super(opts);
+
+        opts = opts || {};
+
+        this._outlineColor = opts.outlineColor || this._colour;
+        this._outlineWidth = opts.outlineWidth || 2;
+        this._outlineStyle = opts.outlineStyle || 'SOLID';
+
+        this._fillColor = opts.fillColor || this._colour;
+        this._fillOpacity = opts.fillOpacity || 0;
+        this._fillStyle = opts.fillStyle || 'SOLID';
+    }
+
+    get outlineColor(): Array<number> | string {
+        return this._outlineColor;
+    }
+
+    get outlineWidth(): number {
+        return this._outlineWidth;
+    }
+
+    get outlineStyle(): string {
+        return this._outlineStyle;
+    }
+
+    get fillColor(): Array<number> | string {
+        return this._fillColor;
+    }
+
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    get fillStyle(): string {
+        return this._fillStyle;
+    }
+
 }
 
 // Descriptors -----------------------
@@ -834,13 +984,6 @@ interface HovertipOptions {
     xOffset: number;
     yOffset: number;
     followCursor: boolean;
-}
-
-interface PolygonStyleOptions {
-    outlineColor: string;
-    outlineWidth: number;
-    fillColor: string;
-    fillOpacity: number
 }
 
 // Type guards ------------------------
