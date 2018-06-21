@@ -44,6 +44,7 @@ const serviceType = {
     DynamicService: 'dynamicservice',
     ImageService: 'imageservice',
     WMS: 'wms',
+    WFS: 'wfs',
     Unknown: 'unknown',
     Error: 'error'
 };
@@ -97,7 +98,8 @@ function crawlEsriService(srvJson) {
         const mapper = {
             'Feature Layer': serviceType.FeatureLayer,
             'Raster Layer': serviceType.RasterLayer,
-            'Group Layer': serviceType.GroupLayer
+            'Group Layer': serviceType.GroupLayer,
+            'FeatureCollection': serviceType.WFS
         };
         return mapper[srvJson.type] || serviceType.Unknown;
 
@@ -221,6 +223,12 @@ function pokeEsriService(url, esriBundle, hint) {
         return info;
     };
 
+    srvHandler[serviceType.WFS] = srvJson => {
+        const info = makeInfo(serviceType.WFS);
+        info.rawData = stringToArrayBuffer(JSON.stringify(srvJson));
+        return info;
+    };
+
     // couldnt figure it out
     srvHandler[serviceType.Unknown] = () => {
         return makeInfo(serviceType.Unknown);
@@ -232,7 +240,7 @@ function pokeEsriService(url, esriBundle, hint) {
             url: url,
             content: { f: 'json' },
             callbackParamName: 'callback',
-            handleAs: 'json',
+            handleAs: 'json'
         });
 
         defService.then(srvResult => {
@@ -382,6 +390,7 @@ function predictLayerUrlBuilder(esriBundle) {
             hintToFlavour[serviceType.TileService] = 'F_ESRI';
             hintToFlavour[serviceType.DynamicService] = 'F_ESRI';
             hintToFlavour[serviceType.ImageService] = 'F_ESRI';
+            hintToFlavour[serviceType.WFS] = 'F_ESRI';
             hintToFlavour[serviceType.WMS] = 'F_WMS';
 
             flavourToHandler.F_ESRI = () => {
@@ -461,6 +470,18 @@ function predictLayerUrlBuilder(esriBundle) {
 function arrayBufferToString(buffer) {
     // handles UTF8 encoding
     return new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+}
+
+/**
+* Converts a string to an array buffer
+*
+* @method stringToArrayBuffer
+* @private
+* @param {String} str a string containing stuff
+* @returns {Arraybuffer} string in array buffer form
+*/
+function stringToArrayBuffer(str) {
+    return new TextEncoder('utf-8').encode(str);
 }
 
 /**
@@ -1247,6 +1268,7 @@ module.exports = function (esriBundle, geoApi) {
         bbox: bbox(esriBundle, geoApi),
         createImageRecord: createImageRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createWmsRecord: createWmsRecordBuilder(esriBundle, geoApi, layerClassBundle),
+        createWfsRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createTileRecord: createTileRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createDynamicRecord: createDynamicRecordBuilder(esriBundle, geoApi, layerClassBundle),
         createFeatureRecord: createFeatureRecordBuilder(esriBundle, geoApi, layerClassBundle),

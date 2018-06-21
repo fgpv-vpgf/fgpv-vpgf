@@ -20,6 +20,7 @@ const clientLayerType = {
     ESRI_GROUP: 'esriGroup',
     ESRI_RASTER: 'esriRaster',
     OGC_WMS: 'ogcWms',
+    OGC_WFS: 'ogcWfs',
     UNRESOLVED: 'unresolved',
     UNKNOWN: 'unknown'
 };
