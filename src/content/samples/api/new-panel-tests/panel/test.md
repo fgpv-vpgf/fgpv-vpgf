@@ -1,14 +1,16 @@
-# Panel API Demo Outline:
+# Panel API Tests:
+
+- testing can be done using `panel-test.js`. Tests can be performed in the `RZ.mapAdded.subscribe` function or in the console if need be.
 
 ### Creating and Opening the Panel:
 
 - First we create the panel on a map instance. We can check if it got added by looking at the panel registry.
-- For demo purposes, I have subscribed to all of the observables in this API which you can see fire in the console.
+- For demo purposes, I have subscribed to all of the observables in this API which you can see fire in the console (uncomment method in panel.ts).
     ```javascript
 
     RZ.mapInstances[0].createPanel('panel1');
     RZ.mapInstances[0].panelRegistry[0].id;
-    RZ.mapInstances[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES]
+    RZ.mapInstances[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES, need to first uncomment in panel.ts]
     
     ```        
 
@@ -75,6 +77,8 @@
     ```javascript
 
     //content setup
+    //as you can see it is up to the user to set linebreaks if needed
+    //they don't need to worry about style because elements will auto align
 
     let closeBtn = new RZ.PanelElem('x');
     $(panelElem2.element).append($("<br>"));
