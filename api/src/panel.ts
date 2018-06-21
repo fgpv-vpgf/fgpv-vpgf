@@ -113,13 +113,13 @@ export class Panel {
     * Helper method to see observables firing in console.
     * To be removed when API is finished. 
     */
-    observableSubscribe(): void {
+    /*observableSubscribe(): void {
         this.opening.subscribe(val => console.log("Panel opening..."));
         this.closing.subscribe(val => console.log("Panel closing..."));
         this.positionChanged.subscribe(pos => console.log([pos, 'position changed!']));
         this.widthChanged.subscribe(width => console.log([width, 'width changed!']));
         this.heightChanged.subscribe(height => console.log([height, 'height changed!']));
-    }
+    }*/
 
     /**
     * Returns the PanelPositions object for this panel
