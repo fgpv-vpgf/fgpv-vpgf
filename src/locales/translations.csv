@@ -243,9 +243,9 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
-,toc.layer.longload.message,{{name}} is taking longer than expected,1,[fr] {{name}},0
+,toc.layer.longload.message,{{name}} is taking longer than expected,1,{{name}} prend plus de temps que prévu,0
 ,toc.layer.longload.hide,Hide,1,Masquer,1
-,toc.layer.longload.failed,{{name}} failed to load,1,[fr] {{name}},0
+,toc.layer.longload.failed,{{name}} failed to load,1,{{name}} omis de charge,0
 ,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,La boîte recherches trop loin?,0
 ,toc.boundaryZoom.undo,fix,1,régler?,0
 Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganiser,1
