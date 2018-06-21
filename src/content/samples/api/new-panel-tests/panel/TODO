@@ -8,8 +8,6 @@ TODO June 20:
     - Explain the style - up to user to inster line breaks
 -set width/height width changed/height changed
 -remove observables subscribe
--comment map.ts, API loader
-
 
 Tomorrow Noon: 
 -Doc pages
