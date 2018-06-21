@@ -189,9 +189,12 @@ export class Panel {
             panel.changePosition();
 
             //need to preserve previously defined width and height of panel
-            if (panel._width !== undefined && panel._height !== undefined) {
+            if (panel._width !== undefined) {
                 panel.width = panel._width;
+            }
+            if (panel._height !== undefined) {
                 panel.height = panel._height;
+                console.log(panel._height);
             }
 
             //ensures that toggle (open/close of panel body) is preserved during position change 
@@ -300,7 +303,7 @@ export class Panel {
             //if the control button is a toggle button, then allow it to toggle visibility of panel body
             else if (elem._element.get(0).classList.length === 4 && elem._element.get(0).classList[1] === "toggle-btn") {
                 $(elem._element.get(0)).click(function () {
-                    
+
                     //initialize attributes
                     let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
                     let plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
@@ -325,12 +328,12 @@ export class Panel {
                     else {
                         body.classList.add('hidden');
                         let btn = new Btn();
-                        btn.icon = <SVGElement>plusSVG;                        
+                        btn.icon = <SVGElement>plusSVG;
                         panel._hidden = true;
                         elem._element.get(0).appendChild(plusSVG);
-                        if (controls !== undefined){
+                        if (controls !== undefined) {
                             panel._panel_contents.style.height = controls.toString() + 'px';
-                        }            
+                        }
                     }
                 });
             }
@@ -504,12 +507,9 @@ export class Panel {
     * @throws {Exception} - cannot set width if panel is not open.
     */
     set width(width: number | string) {
-        if (this._open) {
-
-            if (typeof this._panel_positions.setWidth(width) === "string") {
-                this._panel_contents.style.width = this._panel_positions.setWidth(width);
-                this._width = width;
-            }
+        if (typeof this._panel_positions.setWidth(width) === 'string') {
+            this._panel_contents.style.maxWidth = this._panel_positions.setWidth(width);
+            this._width = width;
         }
         else {
             throw "Exception: cannot set width if panel is not open."
@@ -524,8 +524,8 @@ export class Panel {
     set height(height: number | string) {
         if (this._open) {
 
-            if (typeof this._panel_positions.setHeight(height) === "string") {
-                this._panel_contents.style.height = this._panel_positions.setHeight(height);
+            if (typeof this._panel_positions.setHeight(height) === 'string') {
+                this._panel_contents.style.maxHeight = this._panel_positions.setHeight(height);
                 this._height = height;
             }
         }
