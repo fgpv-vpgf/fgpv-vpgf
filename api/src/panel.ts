@@ -489,6 +489,8 @@ export class Panel {
             //refresh width and height properties
             this._width = undefined;
             this._height = undefined;
+            this._panel_contents.style.maxHeight = "none";
+            this._panel_contents.style.maxWidth = "none";
 
             //if panel already open, available spaces should be updated. 
             if (this._map_object !== undefined && this._open === true) {
