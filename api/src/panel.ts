@@ -731,7 +731,6 @@ export class Btn extends PanelElem {
     * @param {SVG} svg - the icon to be set for the Btn
     */
     set icon(svg: SVGElement) {
-        console.log(svg);
         svg.classList.add('svg-style');
 
         //usually SVG element's children control fill property (eg when appending path object or rect object etc)
@@ -1021,7 +1020,6 @@ class PanelPositions {
                         if (minBottomX !== undefined && minBottomY !== undefined && minTopX !== undefined && minTopY !== undefined) {
                             //if min position completely misses this panel
                             if ((i + minTopX + 1) < originalTopLeftX || (j + minTopY) < originalTopLeftY || (i + minBottomX - 1) > bottomRightX || (j + minBottomY) > bottomRightY) {
-                                ///console.log([minTopX, minTopY, minBottomX, minBottomY]);
                                 availableSpaces[j][i] = 1;
                             }
                         }
@@ -1050,7 +1048,6 @@ class PanelPositions {
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + width <= bottomRightPx) {
-                console.log('returning pixel conversion');
                 return width.toString() + "px";
             }
         }
@@ -1066,7 +1063,6 @@ class PanelPositions {
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newWidth <= bottomRightPx) {
-                    console.log('returning percent conversion');
                     return newWidth.toString() + "px";
                 }
             }
@@ -1090,7 +1086,6 @@ class PanelPositions {
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + height <= bottomRightPx) {
-                console.log('returning pixel conversion');
                 return height.toString() + "px";
             }
         }
@@ -1106,7 +1101,6 @@ class PanelPositions {
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newHeight <= bottomRightPx) {
-                    console.log('returning percent conversion');
                     return newHeight.toString() + "px";
                 }
             }
