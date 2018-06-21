@@ -116,12 +116,11 @@
 
     ```javascript
 
-    RZ.mapInstances[0].createPanel('panel1').setPosition(64, 105);
+    RZ.mapInstances[0].createPanel('panel1').setPosition(70, 111);
     RZ.mapInstances[0].panelRegistry[0].open();
     RZ.mapInstances[0].createPanel('panel2');
-    RZ.mapInstances[0].panelRegistry[1].setPosition(22, 63);
+    RZ.mapInstances[0].panelRegistry[1].setPosition(28, 69);
     RZ.mapInstances[0].panelRegistry[1].open();
-
     ```
 
 - ***Static method uses:***
@@ -132,17 +131,12 @@
     RZ.Panel.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance
     ```
 
-    ```javascript
-    RZ.mapInstances[0].mapGrid; //compare to map grid representation (mapGrid only for debugging purposes)
-
-    ```
-
 - ***Non static method uses:*** for a specific panel instance. 
 
     - No height, width or position set (calculations based on 1x1 panel): 
         ```javascript
         RZ.mapInstances[0].createPanel('panel3');
-        RZ.mapInstances[0].panelRegistry[2].availableSpaces(); //
+        RZ.mapInstances[0].panelRegistry[2].availableSpaces();
         ````
     
     - Position is set: 
@@ -159,7 +153,7 @@
     - When a min position is set on a panel: 
         - 1 represents positions that cause overlap, -1 represents invalid positions
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].setMinPosition(42,43); 
+        RZ.mapInstances[0].panelRegistry[1].setMinPosition(48,49); 
 
         RZ.mapInstances[0].panelRegistry[1].availableSpaces();//available spaces for 'panel2' if it had a min position
         ```
@@ -171,14 +165,12 @@
     - Hint: first refresh page to clear the previous setup.
     ```javascript 
     RZ.mapInstances[0].createPanel('panel1');
-    RZ.mapInstances[0].panelRegistry[0].setPosition(26, 151);
+    RZ.mapInstances[0].panelRegistry[0].setPosition(30, 293);
     RZ.mapInstances[0].panelRegistry[0].open();
     ```
 
 - ***set width and height:***
     ```js
-    /*panel should visibly change on screen,
-    observables should fire*/
     RZ.mapInstances[0].panelRegistry[0].width = "50%";
     RZ.mapInstances[0].panelRegistry[0].height = 200;
     ```
