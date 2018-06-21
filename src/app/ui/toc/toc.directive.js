@@ -246,7 +246,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
     let deregisterListener = angular.noop;
 
     configService.onEveryConfigLoad(cfg => {
-        self.config = cfg
+        self.config = cfg;
 
         // check if we need to open a table panel by default
         if (self.config.ui.tableIsOpen[layoutService.currentLayout()]) {
