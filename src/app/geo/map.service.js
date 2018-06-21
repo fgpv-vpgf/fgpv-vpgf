@@ -390,7 +390,7 @@ function mapServiceFactory(
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {
-                shellService.setLoadingFlag({ id: 'map-update', initDealy: 100 });
+                shellService.setLoadingFlag({ id: 'map-update', initDelay: 100 });
             },
             'update-end': () => {
                 shellService.clearLoadingFlag('map-update', 300);

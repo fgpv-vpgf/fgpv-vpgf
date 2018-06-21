@@ -242,51 +242,51 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
             // enter key is pressed - trigger identify
-            case keyNames.ENTER:
-                // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
-                // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
-                    event.mapPoint = mapPntCntr;
-                    event.screenPoint = mapScrnCntr;
-                    identifyService.identify(event);
-                }
-                break;
-            // shift key pressed - pan distance increased
-            case keyNames.SHIFT:
-                hasShiftMultiplier = 2;
-                break;
-            // left arrow key pressed
-            case keyNames.LEFT_ARROW:
-                x -= mapPntHorDiff;
-                break;
-            // up arrow key pressed
-            case keyNames.UP_ARROW:
-                y += mapPntVertDiff;
-                break;
-            // right arrow key pressed
-            case keyNames.RIGHT_ARROW:
-                x += mapPntHorDiff;
-                break;
-            // down arrow key pressed
-            case keyNames.DOWN_ARROW:
-                y -= mapPntVertDiff;
-                break;
-            // + (plus) key pressed - zoom in
-            case keyNames.EQUAL_SIGN:
-                geoService.map.shiftZoom(1);
-                break;
-            // + (plus) key pressed - FF and IE
-            case keyNames.EQUALS_FIREFOX:
-                geoService.map.shiftZoom(1);
-                break;
-            // - (minus) key pressed - zoom out
-            case keyNames.DASH:
-                geoService.map.shiftZoom(-1);
-                break;
-            // - (minus) key pressed - FF and IE
-            case keyNames.MINUS_FIREFOX_MUTE_UNMUTE:
-                geoService.map.shiftZoom(-1);
-                break;
+                case keyNames.ENTER:
+                    // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
+                    // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
+                    if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
+                        event.mapPoint = mapPntCntr;
+                        event.screenPoint = mapScrnCntr;
+                        identifyService.identify(event);
+                    }
+                    break;
+                // shift key pressed - pan distance increased
+                case keyNames.SHIFT:
+                    hasShiftMultiplier = 2;
+                    break;
+                // left arrow key pressed
+                case keyNames.LEFT_ARROW:
+                    x -= mapPntHorDiff;
+                    break;
+                // up arrow key pressed
+                case keyNames.UP_ARROW:
+                    y += mapPntVertDiff;
+                    break;
+                // right arrow key pressed
+                case keyNames.RIGHT_ARROW:
+                    x += mapPntHorDiff;
+                    break;
+                // down arrow key pressed
+                case keyNames.DOWN_ARROW:
+                    y -= mapPntVertDiff;
+                    break;
+                // + (plus) key pressed - zoom in
+                case keyNames.EQUAL_SIGN:
+                    geoService.map.shiftZoom(1);
+                    break;
+                // + (plus) key pressed - FF and IE
+                case keyNames.EQUALS_FIREFOX:
+                    geoService.map.shiftZoom(1);
+                    break;
+                // - (minus) key pressed - zoom out
+                case keyNames.DASH:
+                    geoService.map.shiftZoom(-1);
+                    break;
+                // - (minus) key pressed - FF and IE
+                case keyNames.MINUS_FIREFOX_MUTE_UNMUTE:
+                    geoService.map.shiftZoom(-1);
+                    break;
             }
         }
 
