@@ -38,7 +38,7 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         // create north pole as point object and add to north pole layer
                         const northPoleLayer = new SimpleLayer(layerRecord, map);
                         const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
-                        let northPole = new Point('northPole', poleSource, new XY(-96, 90));
+                        let northPole = new Point('northPole', new XY(-96, 90), {xOffset: 7, yOffset: 7, style: 'ICON', icon: poleSource, colour: [255, 0, 0]});
                         northPoleLayer.addGeometry(northPole);
                     }
 
