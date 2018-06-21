@@ -149,6 +149,7 @@ export class Panel {
 
         this._separator = document.createElement('div');
         this._separator.classList.add('separator');
+        this._separator.classList.add('hidden');
 
 
         this._panel_contents.setAttribute('id', this._id.toString());
@@ -283,6 +284,7 @@ export class Panel {
     */
     set controls(elems: (PanelElem | Btn)[]) {
         this._panel_controls.classList.remove('hidden');
+        this._separator.classList.remove('hidden');
         this._controls = elems;
         let body = this._panel_body;
         //First empty existing controls
@@ -509,9 +511,13 @@ export class Panel {
     * @throws {Exception} - cannot set width if panel is not open.
     */
     set width(width: number | string) {
-        if (typeof this._panel_positions.setWidth(width) === 'string') {
-            this._panel_contents.style.maxWidth = this._panel_positions.setWidth(width);
-            this._width = width;
+        if (this._open) {
+            if (typeof this._panel_positions.setWidth(width) === 'string') {
+                this._panel_contents.style.maxWidth = this._panel_positions.setWidth(width);
+                this._panel_contents.style.width = this._panel_positions.setWidth(width);
+                this._panel_contents.style.minHeight = this._panel_positions.setHeight(width);
+                this._width = width;
+            }
         }
         else {
             throw "Exception: cannot set width if panel is not open."
@@ -527,7 +533,9 @@ export class Panel {
         if (this._open) {
 
             if (typeof this._panel_positions.setHeight(height) === 'string') {
+                this._panel_contents.style.height = this._panel_positions.setHeight(height);
                 this._panel_contents.style.maxHeight = this._panel_positions.setHeight(height);
+                this._panel_contents.style.minHeight = this._panel_positions.setHeight(height);
                 this._height = height;
             }
         }
