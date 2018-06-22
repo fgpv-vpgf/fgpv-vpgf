@@ -19,11 +19,15 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
     ```
 4. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
 
-5. Ensure your local master branch is up to date with the upstream master branch.
+    <p class="tip">
+        After the pull request is merged.  You local develop should be again synchronized with upstream develop.
+    </p>
 
     <p class="danger">
-        Please ensure upstream master and upstream develop are aligned i.e. mergeable.
+        Please ensure upstream master and upstream develop are mergeable (i.e. develop is not behind master) before you continue with the next step.
     </p>
+
+5. Ensure your local master branch is up to date with the upstream master branch.
 
 6. Checkout the local master branch , then do a rebase with the local develop branch.
 
@@ -71,11 +75,15 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
     ```
 6. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
 
-7. Ensure your local master branch is up to date with the upstream master branch.
+    <p class="tip">
+        After the pull request is merged.  You local develop should be again synchronized with upstream develop.
+    </p>
 
     <p class="danger">
-        Please ensure upstream master and upstream develop are aligned i.e. mergeable.
+        Please ensure upstream master and upstream develop are mergeable (i.e. develop is not behind master) before you continue with the next step.
     </p>
+
+7. Ensure your local master branch is up to date with the upstream master branch.
 
 8. Checkout the local master branch , then do a rebase with the local develop branch.
 
