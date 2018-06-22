@@ -1,6 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
+const toggle = require('../../src/content/images/iconsets/toggle-icons.svg');
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
@@ -70,6 +71,9 @@ export class Panel {
     widthChanged: Observable<number>
     heightChanged: Observable<number>
 
+    minusSVG: SVGElement;
+    plusSVG: SVGElement;
+    closeSVG: SVGElement;
 
     /**
 +    * Creates a new Panel.
@@ -97,6 +101,7 @@ export class Panel {
 
         this._panel_positions = new PanelPositions(this);
         this._hidden = false;
+        console.log(toggle);
 
     }
 
@@ -304,6 +309,7 @@ export class Panel {
                     //initialize attributes
                     const minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
                     const plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
+
                     let btn = new Btn();
                     btn._element.addClass('btn');
                     btn._element.addClass('toggle-btn');
@@ -634,8 +640,10 @@ export class PanelElem {
     */
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
-        let minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
-        let closeSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>')[0];
+        const minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
+        const plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
+        const closeSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>')[0];
+
 
         //if the element is a string either control divider, close button or title
         if (typeof element === "string") {
