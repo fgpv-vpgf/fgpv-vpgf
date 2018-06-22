@@ -130,6 +130,30 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     userDisabledControls: []
                 }
             },
+            [Geo.Layer.Types.OGC_WFS]: {
+                state: {
+                    opacity: 1,
+                    visibility: true,
+                    boundingBox: false,
+                    query: true,
+                    userAdded: false
+                },
+                controls: [
+                    'opacity',
+                    'visibility',
+                    'boundingBox',
+                    'query',
+                    'metadata',
+                    'boundaryZoom',
+                    'refresh',
+                    'reload',
+                    'remove',
+                    'settings',
+                    'data'
+                ],
+                disabledControls: [],
+                userDisabledControls: []
+            },
             [Geo.Layer.Types.ESRI_DYNAMIC]: {
                 state: {
                     opacity: 1,
@@ -795,6 +819,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 legendMimeType: this.legendMimeType
             });
         }
+    }
+
+    class WFSLayerNode extends FeatureLayerNode {
     }
 
     class DynamicLayerEntryNode extends LayerEntryNode {
@@ -2579,6 +2606,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             FeatureLayerNode,
             DynamicLayerNode,
             WMSLayerNode,
+            WFSLayerNode,
 
             DynamicLayerEntryNode,
             WMSLayerEntryNode

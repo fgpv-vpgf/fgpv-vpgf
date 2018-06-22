@@ -91,7 +91,7 @@ function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
 
     self.includeRefreshInterval = () => {
         const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
-        return layerRecord ? !layerRecord.isFileLayer() : false;
+        return layerRecord ? layerRecord.dataSource() === 'esri' : false;
     }
 
     /**

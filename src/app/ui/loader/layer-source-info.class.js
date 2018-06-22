@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerSourceInfo', LayerSourceInfoFactory);
 
-function LayerSourceInfoFactory(Geo, gapiService) {
+function LayerSourceInfoFactory(Geo, gapiService, $q) {
 
     class Info {
         constructor(config) {
@@ -36,7 +36,11 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         get type () { return Geo.Service.Types.Unknown; }
     }
 
-    class ServiceInfo extends Info { }
+    class ServiceInfo extends Info {
+        validate() {
+            return $q.resolve();
+        }
+    }
 
     class FeatureServiceInfo extends ServiceInfo {
         constructor(config, fields) {
@@ -162,6 +166,10 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         get type () { return Geo.Service.Types.GeoJSON; }
     }
 
+    class WFSServiceInfo extends FileInfo {
+        get type () { return Geo.Service.Types.WFSServiceInfo; }
+    }
+
     class ShapefileFileInfo extends FileInfo {
         get type () { return Geo.Service.Types.Shapefile; }
         get formattedData() { return this._rawData; }
@@ -171,6 +179,7 @@ function LayerSourceInfoFactory(Geo, gapiService) {
         FeatureServiceInfo,
         DynamicServiceInfo,
         WMSServiceInfo,
+        WFSServiceInfo,
         // RasterServiceInfo,
         ImageServiceInfo,
         TileServiceInfo,
