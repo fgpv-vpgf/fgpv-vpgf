@@ -472,38 +472,54 @@ export class Panel {
     * @param {number} bottomRight - the grid square that is the panel's bottom right corner
     * @throws {Exception} - positions supplied are out of bound of map grid.
     */
-    setPosition(topLeft: number, bottomRight: number): void {
+    setPosition(topLeftCoord: number | number[], bottomRightCoord: number | number[]): void {
+
+        let topLeft: number;
+        let bottomRight: number;
+
+        if (typeof topLeftCoord !== 'number' && typeof bottomRightCoord !== 'number') {
+            topLeft = topLeftCoord[0] + topLeftCoord[1] * 20;
+            bottomRight = bottomRightCoord[0] + bottomRightCoord[1] * 20;
+            console.log(topLeft, bottomRight);
+        }
+        else {
+            topLeft = <number>topLeftCoord;
+            bottomRight = <number>bottomRightCoord;
+        }
 
         let parentHeight = $(this._map_object.innerShell).height();
 
-        if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
-            throw "Exception: positions cannot be less than 0 or greater than 399.";
+        if (topLeft !== undefined && bottomRight !== undefined) {
+            if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
+                throw "Exception: positions cannot be less than 0 or greater than 399.";
+            }
+
+            if (this._panel_positions.setPanelPosition(topLeft, bottomRight)) {
+
+                let panelCoords = this._panel_positions.panelCoords;
+
+                //change min positions to new default -> user changes away from default if they want
+                this.setMinPosition(topLeft, bottomRight);
+
+                this._positionChanged.next([topLeft, bottomRight]);
+
+                //refresh width and height properties
+                this._width = undefined;
+                this._height = undefined;
+                this._panel_contents.style.maxHeight = "none";
+                this._panel_contents.style.maxWidth = "none";
+
+                //if panel already open, available spaces should be updated.
+                if (this._map_object !== undefined && this._open === true) {
+                    this.close();
+                    this.open();
+                }
+                if (parentHeight !== undefined) {
+                    this._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
+                }
+            }
         }
 
-        if (this._panel_positions.setPanelPosition(topLeft, bottomRight)) {
-
-            let panelCoords = this._panel_positions.panelCoords;
-
-            //change min positions to new default -> user changes away from default if they want
-            this.setMinPosition(topLeft, bottomRight);
-
-            this._positionChanged.next([topLeft, bottomRight]);
-
-            //refresh width and height properties
-            this._width = undefined;
-            this._height = undefined;
-            this._panel_contents.style.maxHeight = "none";
-            this._panel_contents.style.maxWidth = "none";
-
-            //if panel already open, available spaces should be updated.
-            if (this._map_object !== undefined && this._open === true) {
-                this.close();
-                this.open();
-            }
-            if (parentHeight !== undefined) {
-                this._contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
-            }
-        }
     }
 
     /**
@@ -551,7 +567,19 @@ export class Panel {
     * @param {number} topLeft - the grid square representing the top left corner of the panel
     * @param {number} bottomRight - the grid square representing the bottom right corner of the panel
     */
-    setMinPosition(topLeft: number, bottomRight: number): void {
+    setMinPosition(topLeftCoord: number | number[], bottomRightCoord: number | number[]): void {
+
+        let topLeft: number;
+        let bottomRight: number;
+
+        if (typeof topLeftCoord !== 'number' && typeof bottomRightCoord !== 'number') {
+            topLeft = topLeftCoord[0] + topLeftCoord[1] * 20;
+            bottomRight = bottomRightCoord[0] + bottomRightCoord[1] * 20;
+        }
+        else {
+            topLeft = <number>topLeftCoord;
+            bottomRight = <number>bottomRightCoord;
+        }
 
         let panelCoords = this._panel_positions.panelCoords;
 
