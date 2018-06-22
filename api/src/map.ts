@@ -52,7 +52,6 @@ export default class Map {
     private _layers: LayerGroup;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
-    private _map_grid: number[][];
     private _inner_shell: HTMLElement;
     private _panel_registry: Panel[];
 
