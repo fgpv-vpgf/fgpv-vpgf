@@ -15,7 +15,7 @@
  */
 
 import { Observable, Subject, fromEvent } from 'rxjs';
-import { map }  from 'rxjs/internal/operators/map';
+import { map } from 'rxjs/internal/operators/map';
 import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
 import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
@@ -67,7 +67,6 @@ export default class Map {
 
         // config set implies viewer loading via API
         if (config) {
-
             // type guard for cases where config object is given, store on window for config.service to find
             if (isConfigSchema(config)) {
                 (<any>window)[`rzConfig${this._id}`] = config;
@@ -75,7 +74,6 @@ export default class Map {
             } else {
                 this.mapDiv.attr('rv-config', config);
             }
-
             // startup the map
             seeder(mapDiv);
             this.mapDiv.attr('is', 'rv-map'); // needed for css styling issues
@@ -90,7 +88,7 @@ export default class Map {
      * Returns the inner shell (rv-inner-shell) of this Map instance (this is where Panels reside on the Map)
      * @return {HTMLElement} - rv-inner-shell div.
      */
-    get innerShell():HTMLElement{
+    get innerShell(): HTMLElement {
         return this._inner_shell;
     }
 
@@ -98,7 +96,7 @@ export default class Map {
      * Returns the list of Panels on this map instance.
      * @return {Panel[]} - the list of Panels on this Map instance.
      */
-    get panelRegistry(){
+    get panelRegistry() {
         return this._panel_registry;
     }
 
@@ -119,9 +117,9 @@ export default class Map {
      */
     deletePanel(id: string) {
         $("#" + id).remove();
-        for (let panel of this.panelRegistry){
+        for (let panel of this.panelRegistry) {
             let index;
-            if (panel.id === id){
+            if (panel.id === id) {
                 index = this._panel_registry.indexOf(panel);
                 this._panel_registry.splice(index, 1);
             }
