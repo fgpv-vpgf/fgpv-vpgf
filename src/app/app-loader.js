@@ -37,3 +37,4 @@ import '../plugins/core/coord-info.js';
 import '../plugins/core/area-of-interest.js';
 import '../content/styles/main.scss';
 import './ui/fancyHover';
+import '../content/styles/api/panel.css'
