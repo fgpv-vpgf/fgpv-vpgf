@@ -34,6 +34,8 @@
     .main-appbar {
         @extend %appbar;
 
+        width: inherit;
+
         .rv-appbar-title {
             @extend %appbar-title;
         }
