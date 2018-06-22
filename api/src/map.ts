@@ -45,8 +45,6 @@ import { Panel } from 'api/panel';
  */
 export default class Map {
     private _id: string;
-    //private _width: number;
-    //private _height: number;
     private _fgpMap: Object;
     private _bounds: geo.XYBounds;
     private _boundsChanged: Observable<geo.XYBounds>;
@@ -58,7 +56,7 @@ export default class Map {
     private _inner_shell: HTMLElement;
     private _panel_registry: Panel[];
 
-   
+    /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
         this._id = this.mapDiv.attr('id') || '';
@@ -67,6 +65,7 @@ export default class Map {
         this._inner_shell = <HTMLElement>document.getElementsByClassName('rv-inner-shell')[0];
         this._panel_registry = [];
 
+        // config set implies viewer loading via API
         if (config) {
 
             // type guard for cases where config object is given, store on window for config.service to find
@@ -96,7 +95,7 @@ export default class Map {
     }
 
     /**
-     * Returns the list of Panels on this map instance. 
+     * Returns the list of Panels on this map instance.
      * @return {Panel[]} - the list of Panels on this Map instance.
      */
     get panelRegistry(){
@@ -104,12 +103,12 @@ export default class Map {
     }
 
     /**
-     * Creates a Panel on this Map instance. 
+     * Creates a Panel on this Map instance.
      * @param {string} id - the ID of the panel to be created
      * @return {Panel} - the Panel that was created
      */
     createPanel(id: string): Panel {
-        let panel = new Panel(id, this); 
+        let panel = new Panel(id, this);
         this.panelRegistry.push(panel);
         return panel;
     }
