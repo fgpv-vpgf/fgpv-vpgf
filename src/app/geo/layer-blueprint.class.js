@@ -266,7 +266,9 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                         if (configFileSource.colour) {
                             this._layerSource.colour = configFileSource.colour; // need to also change colour manually, if provided, since colour is also auto-generated
                         }
-                        this.config = this._layerSource.config;
+                        if (!configFileSource.name) {
+                            this.config.name = this._layerSource.config.name;
+                        }
                         return this._layerSource.validate().then(() => this.validateLayerSource().then(() => this));
                     });
             } else if (userAddedSource) {

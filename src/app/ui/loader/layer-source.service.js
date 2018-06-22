@@ -145,7 +145,7 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @param {Object} wfsResponse the resulting GeoJSON being populated as we receive layer information
          * @return {Promise} a promsie resolving with the layer GeoJSON
          */
-        function _getWFSData(serviceUrl, startIndex = 0, limit = 10, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
+        function _getWFSData(serviceUrl, startIndex = 0, limit = 1000, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
             return $http.get(serviceUrl.concat(`?startindex=${startIndex}&limit=${limit}`))    // use angular to make web request, instead of esriRequest
                 .then(response => {
                     const data = response.data;
@@ -155,7 +155,7 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                     const totalNumberReceived = startIndex + numReturned;
                     const numMatched = data.numberMatched;
                     if (typeof numReturned !== 'undefined' && typeof numMatched !== 'undefined' && totalNumberReceived < numMatched) {
-                        const limit = Math.min(10000, numMatched - totalNumberReceived);    // the limit is either 10k (max amount) or the number of remaining features
+                        const limit = Math.min(1000, numMatched - totalNumberReceived);    // the limit is either 1k or the number of remaining features
                         return _getWFSData(serviceUrl, totalNumberReceived, limit, wfsResponse);
                     } else {
                         return wfsResponse

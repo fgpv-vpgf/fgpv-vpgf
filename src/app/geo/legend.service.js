@@ -131,7 +131,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @param {pos} optional position for layer to be on the legend
      * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
-     * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
     function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
         const blueprintPromise = createBlueprint(layerDefinition);

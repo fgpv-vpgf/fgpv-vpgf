@@ -413,7 +413,6 @@
       },
       {
         "id": "flurstuck",
-        "name": "Flurstuck",
         "layerType": "ogcWfs",
         "nameField": "OBJECTID",
         "url": "https://www.ldproxy.nrw.de/rest/services/kataster/collections/flurstueck/items"
