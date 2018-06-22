@@ -10,9 +10,12 @@ import { IdentifyMode } from 'api/layers';
  */
 angular.module('app.geo').factory('identifyService', identifyService);
 
-function identifyService($q, configService, stateManager, events) {
+function identifyService($q, configService, gapiService, referenceService, stateManager, events) {
     const service = {
-        identify
+        identify,
+        addGraphicHighlight,
+        clearHighlight,
+        toggleHighlightHaze
     };
 
     let mApi = null;
@@ -133,9 +136,12 @@ function identifyService($q, configService, stateManager, events) {
             mapPoint: clickEvent.mapPoint
         };
 
-        // show details panel only when there is data and the idenityfMode is set to `Details`
+        // show details panel only when there is data and the identifyMode is set to `Details`
         if (mApi.layers.identifyMode === IdentifyMode.Details) {
             stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+        } else if (mApi.layers.identifyMode === IdentifyMode.Highlight) {
+            // highlight if the identifyMode is set fo 'Highlight'
+            highlightIdentifyResults({ details, requester });
         } else {
             return { details, requester };
         }
@@ -154,6 +160,89 @@ function identifyService($q, configService, stateManager, events) {
             const modifiedPromise = $q(resolve => promise.then(() => resolve(true)).catch(() => resolve(true)));
 
             return modifiedPromise;
+        }
+    }
+
+    /**
+     * Highlights all resolved identify results. Accepts the identify response returned by the identify service call.
+     *
+     * @param {Object} { details, requester }: { details: { isLoaded: Promise<boolean>, data: IdentifyResult[] }, requester: { mapPoint: MapPoint }}
+     */
+    function highlightIdentifyResults({ details, requester }) {
+        // if `details` is not set, the identify call hasn't been complete (no layers added to the map, for example)
+        if (!details) {
+            return;
+        }
+
+        const mapConfig = configService.getSync.map;
+        let isCleared = false;
+
+        details.isLoaded.then(() => {
+            // details.data contains a list of identify results; one result per feature layer or dynamic sublayer or wms layer
+            details.data.forEach(identifyResult =>
+                identifyResult.data.forEach(dataItem => {
+                    // clear everything before adding more highlights, but only once after it's clear there is at least one result
+                    if (!isCleared) {
+                        isCleared = true;
+                        clearHighlight();
+                    }
+
+                    const graphiBundlePromise = identifyResult.requester.proxy.fetchGraphic(dataItem.oid, {
+                        map: mapConfig.instance,
+                        geom: true,
+                        attribs: true
+                    });
+                    addGraphicHighlight(graphiBundlePromise, true);
+                })
+            );
+        });
+    }
+
+    /**
+     * Adds the provided graphic to the highlight layer. Also can turn the "haze" on or off.
+     *
+     * @function addGraphicHighlight
+     * @param {Object} graphicBundlePromise the promise resolving with the graphic bundle; these bundles are returned by `fetchGraphic` when called on a proxy layer object
+     * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+     */
+    function addGraphicHighlight(graphicBundlePromise, showHaze = false) {
+        const gapi = gapiService.gapi;
+        const mapConfig = configService.getSync.map;
+
+        graphicBundlePromise.then(graphicBundle => {
+            const ubGraphics = gapi.hilight.getUnboundGraphics([graphicBundle], mapConfig.instance.spatialReference);
+
+            ubGraphics[0].then(unboundG => {
+                console.log('unbound graphic for hilighting ', unboundG);
+                mapConfig.highlightLayer.addHilight(unboundG);
+            });
+        });
+
+        toggleHighlightHaze(showHaze);
+    }
+
+    /**
+     * Removes the highlighted features and markers.
+     *
+     * @function clearHighlight
+     * @param {Boolean | null} [showHaze = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+     */
+    function clearHighlight(showHaze = null) {
+        const mapConfig = configService.getSync.map;
+        mapConfig.highlightLayer.clearHilight();
+
+        toggleHighlightHaze(showHaze);
+    }
+
+    /**
+     * Toggles the "haze" obscuring all other features and layers except the highlight layer.
+     *
+     * @function toggleHighlightHaze
+     * @param {Boolean | null} value [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
+     */
+    function toggleHighlightHaze(value = null) {
+        if (value !== null) {
+            angular.element(referenceService.mapNode).toggleClass('rv-map-highlight', value);
         }
     }
 }
