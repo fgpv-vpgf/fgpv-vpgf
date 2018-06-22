@@ -305,7 +305,7 @@ function mapServiceFactory(
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
 
-            if (mApi.layers.identifyMode !== 'none') {
+            if (mApi.layers.identifyMode !== IdentifyMode.None) {
                 mapConfig.instance.setMapCursor(value ? 'pointer' : '');
             }
         });
