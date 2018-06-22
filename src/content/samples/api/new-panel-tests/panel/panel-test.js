@@ -16,7 +16,7 @@ $.getScript('../../../../rv-main.js', function () {
         //creating Panel + opening
         RZ.mapInstances[0].createPanel('panel1');
         RZ.mapInstances[0].panelRegistry[0].id;
-        RZ.mapInstances[0].panelRegistry[0].setPosition(30, 293);
+        RZ.mapInstances[0].panelRegistry[0].setPosition([10, 1], [13, 14]);
         RZ.mapInstances[0].panelRegistry[0].open();
 
         //creating PanelElems
