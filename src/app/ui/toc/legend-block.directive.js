@@ -29,7 +29,7 @@ angular
     .module('app.ui')
     .directive('rvLegendBlock', rvLegendBlock);
 
-function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject) {
+function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject, expandImageService) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -82,7 +82,7 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
         // only allow the image to be enlarged if it has been shrunk
         const img = new Image();
         img.onload = function() {
-            self.block.canEnlarge = this.width > self.element.width();
+            self.block.canEnlarge = this.width > self.element.parents(".rv-toc").width();
         }
         img.src = self.block.content;
 
@@ -96,6 +96,11 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
                 element.empty().append($compile(template)(scope));
             }
         });
+
+         // open dialog with fullsize image
+         self.onExpandClick = content => {
+            expandImageService.open(content);
+        }
 
         /**
          * Maps tooltip direction on the legend items to the current layout size:
