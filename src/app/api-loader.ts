@@ -39,7 +39,6 @@ class RZ {
     }
 
     /**Returns the Panel class and PanelElem class */
-    get Panel(): typeof Panel { return Panel; }
     get PanelElem(): typeof PanelElem { return PanelElem; }
     get Btn(): typeof Btn { return Btn; }
 }
