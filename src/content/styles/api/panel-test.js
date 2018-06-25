@@ -14,19 +14,19 @@ $.getScript('../../../../rv-main.js', function () {
     RZ.mapAdded.subscribe(mapi => {
 
         //creating Panel + opening
-        RZ.mapInstances[0].createPanel('panel1');
-        RZ.mapInstances[0].panelRegistry[0].id;
-        RZ.mapInstances[0].panelRegistry[0].setPosition([10, 1], [13, 14]);
-        RZ.mapInstances[0].panelRegistry[0].open();
+        let panel1 = RZ.mapInstances[0].createPanel('panel1');
+        panel1.id;
+        panel1.setPosition([10, 1], [13, 14]);
+        panel1.open();
 
         //creating PanelElems
-        let panelElem1 = new RZ.PanelElem("Layers");
-        let panelElem2 = new RZ.PanelElem($("<div style='color: lightslategray'>Contents:</div>"));
-        let panelElem3 = new RZ.PanelElem($.parseHTML('<input type="text" value="Search..." id="coolInput"></input>'));
-        let panelElem4 = new RZ.PanelElem($('<p style="color: lightslategray">Controls:</p>'))
-        let imgElem = new RZ.PanelElem($("<img id='coolImg' src='http://www.geographicguide.com/planet/images/mercator.jpg'></img>"));
+        let panelElem1 = panel1.createPanelElem("Layers");
+        let panelElem2 = panel1.createPanelElem($("<div style='color: lightslategray'>Contents:</div>"));
+        let panelElem3 = panel1.createPanelElem($.parseHTML('<input type="text" value="Search..." id="coolInput"></input>'));
+        let panelElem4 = panel1.createPanelElem($('<p style="color: lightslategray">Controls:</p>'))
+        let imgElem = panel1.createPanelElem($("<img id='coolImg' src='http://www.geographicguide.com/planet/images/mercator.jpg'></img>"));
 
-        let btn = new RZ.Btn();
+        let btn = panel1.createBtn();
         btn.text = "Btn.";
         $(btn.element).click(function () {
             alert('Btn element clicked!')
@@ -38,11 +38,11 @@ $.getScript('../../../../rv-main.js', function () {
 
         //assigning it to the btn2
 
-        let btn2 = new RZ.Btn();
+        let btn2 = panel1.createBtn();
         btn2.icon = svg[0];
 
         //content setup
-        let closeBtn = new RZ.PanelElem('x');
+        let closeBtn = panel1.createPanelElem('x');
         $(panelElem2.element).append($("<br>"));
         $(panelElem2.element).append($("<br>"));
         $(panelElem2.element).append(btn.element);
@@ -52,11 +52,11 @@ $.getScript('../../../../rv-main.js', function () {
         $(panelElem2.element).append(imgElem.element);
 
         //assigning contents
-        RZ.mapInstances[0].panelRegistry[0].content = panelElem2;
-        RZ.mapInstances[0].panelRegistry[0].content;
+        panel1.content = panelElem2;
+        panel1.content;
 
         //assinging controls
-        RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4, panelElem3];
-        RZ.mapInstances[0].panelRegistry[0].controls;
+        panel1.controls = [closeBtn, panel1.createPanelElem('|'), panel1.createPanelElem('T'), panelElem1, panel1.createPanelElem($('<br>')), panelElem4, panelElem3];
+        panel1.controls;
     });
 });
