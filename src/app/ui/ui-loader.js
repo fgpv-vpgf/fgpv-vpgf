@@ -29,7 +29,7 @@ import './common/truncate.directive.js';
 import './common/stepper/stepper-item.directive.js';
 import './common/stepper/stepper.class.js';
 import './common/minicolor.directive.js';
-import './common/expand-image.service.js';
+import './common/expand-image.directive.js';
 
 import './details/detail.service.js';
 import './details/details-content.directives.js';
