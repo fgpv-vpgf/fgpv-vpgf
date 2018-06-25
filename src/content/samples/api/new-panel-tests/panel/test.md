@@ -11,10 +11,10 @@
     RZ.mapInstances[0].createPanel('panel1');
     RZ.mapInstances[0].panelRegistry[0].id;
     RZ.mapInstances[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES, need to first uncomment in panel.ts]
-    
-    ```        
 
-- Once the panel is created, we need to set its position on the map and open it. 
+    ```
+
+- Once the panel is created, we need to set its position on the map and open it.
     ```javascript
 
     RZ.mapInstances[0].panelRegistry[0].setPosition(25, 288);
@@ -30,7 +30,7 @@
 
 - ***PanelElems*** such as Btns, text, pictures etc can be added either as Panel controls or content.
     - PanelElems can be `string`, `HTMLElement`, `JQuery<HTMLElement>`
-    
+
 
     ```javascript
 
@@ -41,7 +41,7 @@
     let imgElem = new RZ.PanelElem($("<img id='coolImg' src='https://images.pexels.com/photos/240040/pexels-photo-240040.jpeg?auto=compress&cs=tinysrgb&h=350'></img>"));
 
     ```
-    
+
 - ***Btns*** can be set to SVG or text (uniform sizes)
 
     ```javascript
@@ -52,7 +52,7 @@
         alert('Btn element clicked!')
     });
 
-    
+
     //setting up the SVG icon
 
     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -96,7 +96,7 @@
     - Hint: copy/paste the following only after the previous setup has been copy/pasted into the console
     ```javascript
 
-    
+
     RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4,panelElem3];
 
     RZ.mapInstances[0].panelRegistry[0].controls;
@@ -104,16 +104,16 @@
     ```
 
 - ***Set/Get Content:*** panel contents are a single PanelElem
-    
+
     ```javascript
-    
+
     RZ.mapInstances[0].panelRegistry[0].content = panelElem2;
     RZ.mapInstances[0].panelRegistry[0].content;
     ```
 
 ---
 
-### Available Spaces 
+### Available Spaces
 
 - ***Setup:***
     - Hint: first refresh page to clear the previous setup.
@@ -135,29 +135,29 @@
     RZ.Panel.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance
     ```
 
-- ***Non static method uses:*** for a specific panel instance. 
+- ***Non static method uses:*** for a specific panel instance.
 
-    - No height, width or position set (calculations based on 1x1 panel): 
+    - No height, width or position set (calculations based on 1x1 panel):
         ```javascript
         RZ.mapInstances[0].createPanel('panel3');
         RZ.mapInstances[0].panelRegistry[2].availableSpaces();
         ````
-    
-    - Position is set: 
+
+    - Position is set:
         ```javascript
 
         RZ.mapInstances[0].panelRegistry[1].availableSpaces(); //available spaces for 'panel2'
         ```
-    
-    - When checking what would happen if the panel was another width/height: 
+
+    - When checking what would happen if the panel was another width/height:
         ```javascript
         RZ.mapInstances[0].panelRegistry[1].availableSpaces(3, 4); //available spaces for 'panel2' if it were 3x4
         ```
-    
-    - When a min position is set on a panel: 
+
+    - When a min position is set on a panel:
         - 1 represents positions that cause overlap, -1 represents invalid positions
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].setMinPosition(48,49); 
+        RZ.mapInstances[0].panelRegistry[1].setMinPosition(48,49);
 
         RZ.mapInstances[0].panelRegistry[1].availableSpaces();//available spaces for 'panel2' if it had a min position
         ```
@@ -167,7 +167,7 @@
 
 - ***Setup***
     - Hint: first refresh page to clear the previous setup.
-    ```javascript 
+    ```javascript
     RZ.mapInstances[0].createPanel('panel1');
     RZ.mapInstances[0].panelRegistry[0].setPosition(30, 155);
     RZ.mapInstances[0].panelRegistry[0].open();
@@ -179,7 +179,7 @@
     RZ.mapInstances[0].panelRegistry[0].height = 200;
     ```
 
-- ***Available Spaces should remain the same***: 
+- ***Available Spaces should remain the same***:
     ```js
     RZ.mapInstances[0].panelRegistry[0].availableSpaces();  //expect calculation based on a 6 x 7 panel
     ```
@@ -191,9 +191,9 @@
     RZ.mapInstances[0].panelRegistry[0].setPosition(0, 145);
     ```
 
-- ***Width and height out of bounds of position:*** 
+- ***Width and height out of bounds of position:***
     ```js
-    /*should be ignored, 
+    /*should be ignored,
     panel remains the same on screen*/
     RZ.mapInstances[0].panelRegistry[0].width = "220%";
     RZ.mapInstances[0].panelRegistry[0].height = 600;
@@ -204,39 +204,39 @@
 
 - ***Setup:***
     - Hint: first refresh page to clear the previous setup.
-    ```javascript 
+    ```javascript
     RZ.mapInstances[0].createPanel('panel1');
     RZ.mapInstances[0].createPanel('panel2');
     RZ.mapInstances[0].createPanel('panel3');
 
     RZ.mapInstances[0].panelRegistry[0].setPosition(20, 105);
     RZ.mapInstances[0].panelRegistry[1].setPosition(20, 85);
-    
+
     RZ.mapInstances[0].panelRegistry[0].open();
 
     ```
 
-- Setting a min position that is not a subset of actual position: 
+- Setting a min position that is not a subset of actual position:
 
-    ```javascript        
+    ```javascript
     RZ.mapInstances[0].panelRegistry[0].setMinPosition(20, 125);
     ```
 
-- Opening a panel whose min is within another panel's min: 
+- Opening a panel whose min is within another panel's min:
     ```javascript
     RZ.mapInstances[0].panelRegistry[1].open() //within 'panel1''s min position
     ```
 
-- Autoshrinking panels when non-min positions overlap: 
+- Autoshrinking panels when non-min positions overlap:
     -Alert message should pop up telling you which dimension shrunk (might need to wait a bit)
     ```javascript
-    
+
     RZ.mapInstances[0].panelRegistry[0].setPosition(0, 105);
 
     RZ.mapInstances[0].panelRegistry[1].setPosition(0, 145);
     RZ.mapInstances[0].panelRegistry[1].setMinPosition(120, 145);
     RZ.mapInstances[0].panelRegistry[1].open();
-    
+
 
     ```
 
@@ -248,22 +248,22 @@
 
 ---
 
-### Documentation page: 
+### Documentation page:
 
 ---
 
 ### Post-Demo:
 
-- ***More Test Cases:*** 
+- ***More Test Cases:***
 
     - Opening/closing a panel before position is set:
-        ```javascript    
+        ```javascript
         RZ.mapInstances[0].createPanel('panel4');
         RZ.mapInstances[0].panelRegistry[3].open();
         RZ.mapInstances[0].panelRegistry[3].close();
 
         ```
-    
+
     - Setting a position with invalid values:
         ```javascript
 
@@ -271,13 +271,13 @@
 
         ```
 
-    - setMinPosition before setPosition: 
+    - setMinPosition before setPosition:
         ```javascript
 
         RZ.mapInstances[0].panelRegistry[3].setMinPosition(0, 65);
 
         ```
-    
+
     - Setting a PanelElem to have multiple top level elements:
         ```javascript
 
@@ -288,13 +288,13 @@
         let panelElem3 = new RZ.PanelElem($.parseHTML('<div>Hello<p>there</p></div>')); //works
 
         ```
-    
+
 - ***Explanation of Map Grid:***
-    
+
     - 20 rows x 20 columns
     - Each grid square has a value between 0-399
-    - First row: 0-19, Second row: 20-39, Third row: 40-59 and so on. 
+    - First row: 0-19, Second row: 20-39, Third row: 40-59 and so on.
 
-    - ***Example:*** setPosition(25, 149); 
+    - ***Example:*** setPosition(25, 149);
         - Top left corner 25: 2nd row, 6th column
         - Bottom right corner 149: 8th row, 10th column
