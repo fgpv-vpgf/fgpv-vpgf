@@ -1,4 +1,5 @@
 'use strict';
+const agol = require('./agol.js');
 const attribute = require('./attribute.js');
 const events = require('./events.js');
 const hilight = require('./hilight.js');
@@ -24,6 +25,7 @@ function initAll(esriBundle, window) {
     api.events = events();
     api.query = query(esriBundle);
     api.shared = shared(esriBundle);
+    api.agol = agol(esriBundle);
     api.debug = function () {
         if (arguments.length === 1) {
             debug = arguments[0] === true;
