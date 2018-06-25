@@ -127,22 +127,6 @@ export default class Map {
         }
     }
 
-    /**
-     * Returns the specified Panel on this Map instance.
-     * @param id
-     */
-    getPanel(id: string) {
-        let retPanel;
-        for (let panel of this.panelRegistry) {
-            let index;
-            if (panel.id === id) {
-                retPanel = panel;
-            }
-        }
-        return retPanel;
-    }
-
-
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
         this._fgpMap = fgpMap;

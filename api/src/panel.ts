@@ -115,6 +115,22 @@ export class Panel {
     }
 
     /**
+    * Returns a newly created Btn
+    * @return {Btn} - the Btn that was created.
+    */
+    createBtn(): Btn {
+        return new Btn();
+    }
+
+    /**
+    * Returns a newly created PanelElem
+    * @return {Btn} - the PanelElem that was created.
+    */
+    createPanelElem(element: string | HTMLElement | JQuery<HTMLElement>): PanelElem {
+        return new PanelElem(element);
+    }
+
+    /**
     * Helper method to create panel components and the document fragment, and to specify panel behaviour on window resize.
     * @private
     */
