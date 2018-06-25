@@ -9,16 +9,16 @@
     ```javascript
 
     RZ.mapInstances[0].createPanel('panel1');
-    RZ.mapInstances[0].panelRegistry[0].id;
-    RZ.mapInstances[0].panelRegistry[0].observableSubscribe(); //[ONLY FOR DEMO PURPOSES, need to first uncomment in panel.ts]
+    RZ.mapInstances[0].getPanel('panel1').id;
+    RZ.mapInstances[0].getPanel('panel1').observableSubscribe(); //[ONLY FOR DEMO PURPOSES, need to first uncomment in panel.ts]
 
     ```
 
 - Once the panel is created, we need to set its position on the map and open it.
     ```javascript
 
-    RZ.mapInstances[0].panelRegistry[0].setPosition(25, 288);
-    RZ.mapInstances[0].panelRegistry[0].open();
+    RZ.mapInstances[0].getPanel('panel1').setPosition(25, 288);
+    RZ.mapInstances[0].getPanel('panel1').open();
 
     ```
 
@@ -97,9 +97,9 @@
     ```javascript
 
 
-    RZ.mapInstances[0].panelRegistry[0].controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4,panelElem3];
+    RZ.mapInstances[0].getPanel('panel1').controls = [closeBtn, new RZ.PanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4,panelElem3];
 
-    RZ.mapInstances[0].panelRegistry[0].controls;
+    RZ.mapInstances[0].getPanel('panel1').controls;
 
     ```
 
@@ -107,8 +107,8 @@
 
     ```javascript
 
-    RZ.mapInstances[0].panelRegistry[0].content = panelElem2;
-    RZ.mapInstances[0].panelRegistry[0].content;
+    RZ.mapInstances[0].getPanel('panel1').content = panelElem2;
+    RZ.mapInstances[0].getPanel('panel1').content;
     ```
 
 ---
@@ -121,10 +121,10 @@
     ```javascript
 
     RZ.mapInstances[0].createPanel('panel1').setPosition(70, 111);
-    RZ.mapInstances[0].panelRegistry[0].open();
+    RZ.mapInstances[0].getPanel('panel1').open();
     RZ.mapInstances[0].createPanel('panel2');
-    RZ.mapInstances[0].panelRegistry[1].setPosition(28, 69);
-    RZ.mapInstances[0].panelRegistry[1].open();
+    RZ.mapInstances[0].getPanel('panel2').setPosition(28, 69);
+    RZ.mapInstances[0].getPanel('panel2').open();
     ```
 
 - ***Static method uses:***
@@ -140,26 +140,26 @@
     - No height, width or position set (calculations based on 1x1 panel):
         ```javascript
         RZ.mapInstances[0].createPanel('panel3');
-        RZ.mapInstances[0].panelRegistry[2].availableSpaces();
+        RZ.mapInstances[0].getPanel('panel3').availableSpaces();
         ````
 
     - Position is set:
         ```javascript
 
-        RZ.mapInstances[0].panelRegistry[1].availableSpaces(); //available spaces for 'panel2'
+        RZ.mapInstances[0].getPanel('panel2').availableSpaces(); //available spaces for 'panel2'
         ```
 
     - When checking what would happen if the panel was another width/height:
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].availableSpaces(3, 4); //available spaces for 'panel2' if it were 3x4
+        RZ.mapInstances[0].getPanel('panel2').availableSpaces(3, 4); //available spaces for 'panel2' if it were 3x4
         ```
 
     - When a min position is set on a panel:
         - 1 represents positions that cause overlap, -1 represents invalid positions
         ```javascript
-        RZ.mapInstances[0].panelRegistry[1].setMinPosition(48,49);
+        RZ.mapInstances[0].getPanel('panel2').setMinPosition(48,49);
 
-        RZ.mapInstances[0].panelRegistry[1].availableSpaces();//available spaces for 'panel2' if it had a min position
+        RZ.mapInstances[0].getPanel('panel2').availableSpaces();//available spaces for 'panel2' if it had a min position
         ```
 
 ---
@@ -169,34 +169,34 @@
     - Hint: first refresh page to clear the previous setup.
     ```javascript
     RZ.mapInstances[0].createPanel('panel1');
-    RZ.mapInstances[0].panelRegistry[0].setPosition(30, 155);
-    RZ.mapInstances[0].panelRegistry[0].open();
+    RZ.mapInstances[0].getPanel('panel1').setPosition(30, 155);
+    RZ.mapInstances[0].getPanel('panel1').open();
     ```
 
 - ***set width and height:***
     ```js
-    RZ.mapInstances[0].panelRegistry[0].width = "50%";
-    RZ.mapInstances[0].panelRegistry[0].height = 200;
+    RZ.mapInstances[0].getPanel('panel1').width = "50%";
+    RZ.mapInstances[0].getPanel('panel1').height = 200;
     ```
 
 - ***Available Spaces should remain the same***:
     ```js
-    RZ.mapInstances[0].panelRegistry[0].availableSpaces();  //expect calculation based on a 6 x 7 panel
+    RZ.mapInstances[0].getPanel('panel1').availableSpaces();  //expect calculation based on a 6 x 7 panel
     ```
 
 - ***Resizing window:*** panel proportions preserved according to set width and height (consistent if px, change if %)
 
 - ***Changing Panel Position:*** updates width and height to match new position on grid (and at 100% of panel's potential)
     ```js
-    RZ.mapInstances[0].panelRegistry[0].setPosition(0, 145);
+    RZ.mapInstances[0].getPanel('panel1').setPosition(0, 145);
     ```
 
 - ***Width and height out of bounds of position:***
     ```js
     /*should be ignored,
     panel remains the same on screen*/
-    RZ.mapInstances[0].panelRegistry[0].width = "220%";
-    RZ.mapInstances[0].panelRegistry[0].height = 600;
+    RZ.mapInstances[0].getPanel('panel1').width = "220%";
+    RZ.mapInstances[0].getPanel('panel1').height = 600;
     ```
 ---
 
@@ -209,33 +209,33 @@
     RZ.mapInstances[0].createPanel('panel2');
     RZ.mapInstances[0].createPanel('panel3');
 
-    RZ.mapInstances[0].panelRegistry[0].setPosition(20, 105);
-    RZ.mapInstances[0].panelRegistry[1].setPosition(20, 85);
+    RZ.mapInstances[0].getPanel('panel1').setPosition(20, 105);
+    RZ.mapInstances[0].getPanel('panel2').setPosition(20, 85);
 
-    RZ.mapInstances[0].panelRegistry[0].open();
+    RZ.mapInstances[0].getPanel('panel1').open();
 
     ```
 
 - Setting a min position that is not a subset of actual position:
 
     ```javascript
-    RZ.mapInstances[0].panelRegistry[0].setMinPosition(20, 125);
+    RZ.mapInstances[0].getPanel('panel1').setMinPosition(20, 125);
     ```
 
 - Opening a panel whose min is within another panel's min:
     ```javascript
-    RZ.mapInstances[0].panelRegistry[1].open() //within 'panel1''s min position
+    RZ.mapInstances[0].getPanel('panel2').open() //within 'panel1''s min position
     ```
 
 - Autoshrinking panels when non-min positions overlap:
     -Alert message should pop up telling you which dimension shrunk (might need to wait a bit)
     ```javascript
 
-    RZ.mapInstances[0].panelRegistry[0].setPosition(0, 105);
+    RZ.mapInstances[0].getPanel('panel1').setPosition(0, 105);
 
-    RZ.mapInstances[0].panelRegistry[1].setPosition(0, 145);
-    RZ.mapInstances[0].panelRegistry[1].setMinPosition(120, 145);
-    RZ.mapInstances[0].panelRegistry[1].open();
+    RZ.mapInstances[0].getPanel('panel2').setPosition(0, 145);
+    RZ.mapInstances[0].getPanel('panel2').setMinPosition(120, 145);
+    RZ.mapInstances[0].getPanel('panel2').open();
 
 
     ```
@@ -243,7 +243,7 @@
 - Setting position out of bounds of grid:
     ```javascript
 
-    RZ.mapInstances[0].panelRegistry[1].setPosition(-1, 409);
+    RZ.mapInstances[0].getPanel('panel2').setPosition(-1, 409);
     ```
 
 ---
@@ -259,22 +259,22 @@
     - Opening/closing a panel before position is set:
         ```javascript
         RZ.mapInstances[0].createPanel('panel4');
-        RZ.mapInstances[0].panelRegistry[3].open();
-        RZ.mapInstances[0].panelRegistry[3].close();
+        RZ.mapInstances[0].getPanel('panel4').open();
+        RZ.mapInstances[0].getPanel('panel4').close();
 
         ```
 
     - Setting a position with invalid values:
         ```javascript
 
-        RZ.mapInstances[0].panelRegistry[3].setPosition(35, 100);  //topLeft is at 6th column, bottomRight is at 1st column!
+        RZ.mapInstances[0].getPanel('panel4').setPosition(35, 100);  //topLeft is at 6th column, bottomRight is at 1st column!
 
         ```
 
     - setMinPosition before setPosition:
         ```javascript
 
-        RZ.mapInstances[0].panelRegistry[3].setMinPosition(0, 65);
+        RZ.mapInstances[0].getPanel('panel4').setMinPosition(0, 65);
 
         ```
 
