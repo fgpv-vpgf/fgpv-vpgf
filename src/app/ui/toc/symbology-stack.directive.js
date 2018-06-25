@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, $mdDialog, $translate) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, expandImageService) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -169,14 +169,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
         self.onExpandClick = name => {
             const image = self.symbology.images[name];
-            const htmlContent = "<img src=" + image + "></img>";
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .htmlContent(htmlContent)
-                    .ariaLabel($translate.instant('toc.tooltip.fullsizeImage'))
-                    .ok($translate.instant('toc.fullsizeImage.close'))
-            );
+            expandImageService.open(image);
         }
 
         scope.$watch('self.showSymbologyToggle', value => {

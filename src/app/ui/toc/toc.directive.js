@@ -16,7 +16,7 @@ angular
     .module('app.ui')
     .directive('rvToc', rvToc);
 
-function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService, $mdDialog, $translate) {
+function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -113,18 +113,6 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
             }
         };
         // jscs:enable requireSpacesInAnonymousFunctionExpression
-
-        // open dialog with fullsize image
-        self.onExpandClick = content => {
-            const htmlContent = "<img src=" + content + "></img>";
-            $mdDialog.show(
-                $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .htmlContent(htmlContent)
-                    .ariaLabel($translate.instant('toc.tooltip.fullsizeImage'))
-                    .ok($translate.instant('toc.fullsizeImage.close'))
-            );
-        }
 
         // set an empty animation object in the event a method is called prior
         // to a scroll animation being created
