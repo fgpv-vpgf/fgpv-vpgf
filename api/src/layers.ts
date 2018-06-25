@@ -534,7 +534,7 @@ export class ConfigLayer extends BaseLayer {
     //  */
     // setLayerConditions(layerDefinition: string): void {
     //     // TODO: need to see how to apply values in table correctly  ?
-    //     if (!this._viewerLayer.isFileLayer() && this._viewerLayer.config.table) {
+    //     if (this._viewerLayer.dataSource() === 'esri' && this._viewerLayer.config.table) {
     //         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
     //             this._layerProxy.setDefinitionQuery(layerDefinition);
 

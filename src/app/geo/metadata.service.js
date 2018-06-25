@@ -11,7 +11,7 @@ angular
     .module('app.geo')
     .factory('metadataService', metadataService);
 
-function metadataService($q, $http, $translate, Geo) {
+function metadataService($q, $http, $translate) {
 
     const cache = {};
 

@@ -11,6 +11,9 @@ const THROTTLE_TIMEOUT = 3000;
  * @requires mapService
  * @requires layerTypes
  * @requires configDefaults
+ * @requires $translate
+ * @requires shellService
+ * @requires errorService
  * @description
  *
  * The `layerRegistry` factory tracks active layers and constructs legend, provide all layer-related functionality like registering, removing, changing visibility, changing opacity, etc.
@@ -20,7 +23,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
+function layerRegistryFactory($rootScope, $filter, $translate, shellService, errorService, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -128,8 +131,14 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         let layerRecord = getLayerRecord(layerBlueprint.config.id);
 
         if (!layerRecord) {
+            // register a loading process for this layer record
+            _setLoadingFlagHelper(layerBlueprint.config);
+
             layerRecord = layerBlueprint.generateLayer();
             layerRecords.push(layerRecord);
+
+            // start tracking layer record events to update/clear its loading process
+            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
         }
 
         ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord);
@@ -188,10 +197,16 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const index = layerRecords.indexOf(layerRecord);
 
         if (index !== -1) {
+            // register a loading process for this layer record
+            _setLoadingFlagHelper(layerBlueprint.config);
+
             common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
             map.removeLayer(layerRecord._layer);
             layerRecord = layerBlueprint.generateLayer();
             layerRecords[index] = layerRecord;
+
+            // start tracking layer record events to update/clear its loading process
+            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
         }
     }
 
@@ -274,43 +289,45 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
         const layerRecord = ref.loadingQueue.shift();
 
         let isRefreshed = false;
-        layerRecord.addStateListener(_onLayerRecordLoad);
+        layerRecord.addStateListener(_onLayerRecordInitialLoad);
         layerRecord.addAttribListener(_onLayerAttribDownload);
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount ++;
 
         // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.isFileLayer() && layerRecord._layer.loaded)) {
+        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded)) {
             isRefreshed = true;
-            _onLayerRecordLoad('rv-loaded');
+            _onLayerRecordInitialLoad('rv-loaded');
         }
 
         // when a layer takes too long to load, it could be a slow service or a failed service
         // in any case, the queue will advance after THROTTLE_TIMEOUT
         // failed layers will be marked as failed when the finally resolve
         // slow layers will load on their own at some point
-        const throttleTimeoutHandle = $timeout(_advanceLoadingQueue, THROTTLE_TIMEOUT);
+        const throttleTimeoutHandle = common.$timeout(_advanceLoadingQueue, THROTTLE_TIMEOUT);
 
         /**
-         * Waits fro the layer to load or fail.
+         * Waits for the layer to load or fail.
          *
          * // TODO: check if there is a better way to wait for layer to load than to wait for 'refresh' -> 'load' event chain
-         * @function _onLayerRecordLoad
+         * @function _onLayerRecordInitialLoad
          * @private
          * @param {String} state name of the new LayerRecord state
          * @private
          */
-        function _onLayerRecordLoad(state) {
+        function _onLayerRecordInitialLoad(state) {
+
             if (state === 'rv-refresh') {
                 isRefreshed = true;
             } else if (
                 (isRefreshed && state === 'rv-loaded') ||
                 (state === 'rv-error')
             ) {
-                layerRecord.removeStateListener(_onLayerRecordLoad);
+
+                layerRecord.removeStateListener(_onLayerRecordInitialLoad);
 
                 events.$broadcast(events.rvLayerRecordLoaded, layerRecord.config.id);
-                $timeout.cancel(throttleTimeoutHandle);
+                common.$timeout.cancel(throttleTimeoutHandle);
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
             }
@@ -355,6 +372,53 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     }
 
     /**
+     * Tracks layer record lifecycle events to update corresponding loading processes.
+     * 
+     * @param {object} layerRecord layer record
+     * @param {string} state current state of the layer record
+     */
+    function _onLayerLifecycleEvents(layerRecord, state) {
+        switch (state) {
+            case 'rv-refresh':
+                _setLoadingFlagHelper(layerRecord.config);
+                break;
+
+            case 'rv-loaded':
+                shellService.clearLoadingFlag(layerRecord.config.id, 300);
+                break;
+
+            case 'rv-error':
+                shellService.clearLoadingFlag(layerRecord.config.id);
+                errorService.display({
+                    textContent: $translate.instant('toc.layer.longload.failed', { name: `"${layerRecord.config.name}"` })
+                    // TODO: add reload action
+                    // action: 'reload'
+                })// .then(response => response === 'ok' ? dostuff() : {});
+                break;
+        }
+    }
+
+    /**
+     * A helper function to set or update a new loading process corresponding to a layer updating.
+     *
+     * @param {object} config layer record or layer blueprint config
+     */
+    function _setLoadingFlagHelper(config) {
+        shellService.setLoadingFlag({
+            id: config.id,
+            messageDelay: config.expectedResponseTime,
+            message: $translate.instant('toc.layer.longload.message', { name: `"${config.name}"` }),
+            action: $translate.instant('toc.layer.longload.hide')
+        })
+        /* .then(response => {
+            if (response === 'ok') {
+                // do stuff like reload layer or something
+            }
+        }) */
+        ;
+    }
+
+    /**
      * Synchronizes the layer order as seen by the user in the layer selector and the internal layer map stack order.
      * This should be used every time a new layer is added to the map or legend nodes in the layer selector are reordered.
      *
@@ -382,7 +446,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
                     .map(layer => layer.id)
                     .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
             )
-            .map(getLayerRecord); // get appropriate layer records
+                .map(getLayerRecord); // get appropriate layer records
 
         const mapLayerStacks = {
             0: mapBody.graphicsLayerIds,
@@ -526,7 +590,7 @@ function layerRegistryFactory($rootScope, $timeout, $filter, events, gapiService
     function _setHoverTips(layerRecord) {
         // TODO: layerRecord returns a promise on layerType to be consistent with dynamic children which don't know their type upfront
         // to not wait on promise, check the layerRecord config
-        if (layerRecord.config.layerType !== Geo.Layer.Types.ESRI_FEATURE) {
+        if (layerRecord.config.layerType !== Geo.Layer.Types.ESRI_FEATURE && layerRecord.config.layerType !== Geo.Layer.Types.OGC_WFS) {
             return;
         }
 

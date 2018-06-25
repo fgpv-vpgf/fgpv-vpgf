@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService) {
+function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookmarkService, configService, layerSource) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -117,6 +117,12 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
             }
         }
 
+        // no validation required for services. mock a vlidation process for consistency.
+        // only instances of LayerFileBlueprint required validation; that class overrides this function
+        validateLayerSource() {
+            return $q.resolve();
+        }
+
         set config(value) {
             if (this._config) {
                 console.warn('config is already set');
@@ -182,7 +188,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 [layerTypes.ESRI_FEATURE]: ConfigObject.layers.FeatureLayerNode,
                 [layerTypes.ESRI_IMAGE]: ConfigObject.layers.BasicLayerNode,
                 [layerTypes.ESRI_DYNAMIC]: ConfigObject.layers.DynamicLayerNode,
-                [layerTypes.OGC_WMS]: ConfigObject.layers.WMSLayerNode
+                [layerTypes.OGC_WMS]: ConfigObject.layers.WMSLayerNode,
+                [layerTypes.OGC_WFS]: ConfigObject.layers.WFSLayerNode
             }
         }
 
@@ -194,7 +201,8 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 [layerTypes.ESRI_FEATURE]: gapiLayer.createFeatureRecord,
                 [layerTypes.ESRI_IMAGE]: gapiLayer.createImageRecord,
                 [layerTypes.ESRI_DYNAMIC]: gapiLayer.createDynamicRecord,
-                [layerTypes.OGC_WMS]: gapiLayer.createWmsRecord
+                [layerTypes.OGC_WMS]: gapiLayer.createWmsRecord,
+                [layerTypes.OGC_WFS]: gapiLayer.createWfsRecord
             }
         }
     }
@@ -214,7 +222,7 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
                 this.config = userAddedSource.config;
             }
 
-            return;
+            return this.validateLayerSource().then(() => this);
         }
 
         /**
@@ -244,13 +252,33 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
      * @return {String}           service type: 'csv', 'shapefile', 'geojson'
      */
     class LayerFileBlueprint extends LayerBlueprint {
-        constructor(layerSource) {
+        constructor(configFileSource = null, userAddedSource = null) {
+
             super();
-            this._layerSource = layerSource;
-            this.config = this._layerSource.config;
+
+            if (configFileSource) {
+                this.source = configFileSource;
+                return layerSource.fetchServiceInfo(configFileSource.url, configFileSource.layerType)
+                    .then(({ options: layerSourceOptions, preselectedIndex }) => {
+                        this._layerSourceOptions = layerSourceOptions;
+                        this._layerSource = layerSourceOptions[preselectedIndex];
+                        this._layerSource.config._id = configFileSource.id;     // need to change id manually since id given is auto-generated from file logic
+                        if (configFileSource.colour) {
+                            this._layerSource.colour = configFileSource.colour; // need to also change colour manually, if provided, since colour is also auto-generated
+                        }
+                        if (!configFileSource.name) {
+                            this.config.name = this._layerSource.config.name;
+                        }
+                        return this._layerSource.validate().then(() => this.validateLayerSource().then(() => this));
+                    });
+            } else if (userAddedSource) {
+                this._layerSource = userAddedSource;
+                this.config = this._layerSource.config;
+                return this.validateLayerSource().then(() => this);
+            }
         }
 
-        validateFileLayerSource() {
+        validateLayerSource() {
             // clone data because the makeSomethingLayer functions mangle the config data
             const formattedDataCopy = angular.copy(this._layerSource.formattedData);
 
@@ -290,9 +318,41 @@ function LayerBlueprintFactory($q, $http, gapiService, Geo, ConfigObject, bookma
     }
 
     const service = {
-        service: LayerServiceBlueprint,
-        file: LayerFileBlueprint
+        buildLayer: layerSource => {
+            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {   // file or WFS added through importer
+                return new LayerFileBlueprint(null, layerSource);
+            } else if (layerSource.config) {                            // service added through importer
+                return new LayerServiceBlueprint(null, layerSource);
+            } else {                                                    // any file / service added through config
+                switch (layerSource.layerType) {
+                    case Geo.Layer.Types.OGC_WFS:
+                        layerSource.type = Geo.Service.Types.GeoJSON;
+                        return new LayerFileBlueprint(layerSource);
+                    case Geo.Layer.Types.ESRI_GRAPHICS:
+                    case Geo.Layer.Types.ESRI_DYNAMIC:
+                    case Geo.Layer.Types.ESRI_IMAGE:
+                    case Geo.Layer.Types.ESRI_TILE:
+                    case Geo.Layer.Types.OGC_WMS:
+                    case Geo.Layer.Types.ESRI_FEATURE:  // may need to split this into two, one for services and one for files
+                        return new LayerServiceBlueprint(layerSource);
+                    default:
+                        return new LayerFileBlueprint(layerSource);
+                }
+            }
+        }
     };
+
+    /**
+     * Checks if the layer being added is a file layer or a WFS layer based on its type.
+     * @function _isFileOrWFSLayer
+     * @private
+     * @param {String} source a string representing the type of layer being added
+     * @return {Boolean} true if the layer type matches one of the file layer constants
+     */
+    function _isFileOrWFSLayer(source) {
+        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.GeoJSON, Geo.Service.Types.Shapefile];
+        return (fileTypes.indexOf(source.type) !== -1);
+    }
 
     return service;
 }

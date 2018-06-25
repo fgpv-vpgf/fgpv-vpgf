@@ -1,4 +1,3 @@
-
 /**
  * @memberof app.core
  * @module common
@@ -8,16 +7,14 @@
  * The `common` service provides access to commonly used services and functions like $timeout, $broadcast, $q, logger, etc.
  *
  */
-angular
-    .module('app.core')
-    .factory('common', common);
+angular.module('app.core').factory('common', common);
 
 // TODO: add helper function to common
 function common($timeout, $interval, $q) {
     const service = {
-        $timeout: $timeout,
-        $interval: $interval,
-        $q: $q,
+        $timeout,
+        $interval,
+        $q,
         intersect,
         removeFromArray
     };
@@ -38,8 +35,7 @@ function common($timeout, $interval, $q) {
      * @return {Array} intersection of the first and second arrays
      */
     function intersect(array1 = [], array2 = []) {
-        return array1.filter(item =>
-            array2.indexOf(item) !== -1);
+        return array1.filter(item => array2.indexOf(item) !== -1);
     }
 
     /**

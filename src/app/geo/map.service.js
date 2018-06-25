@@ -11,7 +11,7 @@ import { IdentifyMode } from 'api/layers';
 angular.module('app.geo').factory('mapService', mapServiceFactory);
 
 function mapServiceFactory(
-    $timeout,
+    shellService,
     referenceService,
     gapiService,
     configService,
@@ -295,17 +295,16 @@ function mapServiceFactory(
     function _setMapListeners(mapConfig) {
         // we are returning a promise that resolves when the map load happens.
         const gapi = gapiService.gapi;
-        let mapLoadingTimeout;
 
         // a flag indicating if a feature is being hover over
         let isFeatureMousedOver = false;
 
-        _setLoadingFlag(true);
+        shellService.setLoadingFlag({ id: 'map-init' });
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
 
-            if (mApi.layers.identifyMode !== 'none') {
+            if (mApi.layers.identifyMode !== IdentifyMode.None) {
                 mapConfig.instance.setMapCursor(value ? 'pointer' : '');
             }
         });
@@ -344,6 +343,8 @@ function mapServiceFactory(
                         _initMap();
                     }
                 }
+
+                shellService.clearLoadingFlag(res.layer.id, 300);
             },
             'layer-remove': res => {
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
@@ -368,9 +369,6 @@ function mapServiceFactory(
                         .catch(() => _initMap());   // promise rejected due to server issues, so initialize map
                 }
             },
-            'update-start': () => {
-                _setLoadingFlag(true, 300);
-            },
             'extent-change': data => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
                 if (angular.isObject(data.delta) && (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
@@ -391,8 +389,11 @@ function mapServiceFactory(
                 events.$broadcast(events.rvExtentChange, data);
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
+            'update-start': () => {
+                shellService.setLoadingFlag({ id: 'map-update', initDelay: 100 });
+            },
             'update-end': () => {
-                _setLoadingFlag(false, 100);
+                shellService.clearLoadingFlag('map-update', 300);
             },
             'zoom-start': () => {
                 events.$broadcast(events.rvMapZoomStart);
@@ -419,12 +420,8 @@ function mapServiceFactory(
                 }
 
                 // run identify query
+                // handles highlights and details
                 const identifyResponse = identifyService.identify(clickEvent);
-
-                // highlight any results if in `Highlight` mode
-                if (mApi.layers.identifyMode === IdentifyMode.Highlight) {
-                    highlightIdentifyResults(identifyResponse);
-                }
             }
         });
 
@@ -444,58 +441,10 @@ function mapServiceFactory(
                 mapConfig.isLoaded = true;
 
                 // TODO: maybe it makes sense to fire `mapReady` event here instead of in geo service
-                _setLoadingFlag(false);
+                shellService.clearLoadingFlag('map-init', 300);
                 events.$broadcast(events.rvMapLoaded, mapConfig.instance);
             }
         }
-
-        /**
-         * Sets `isMapLoading` flag indicating map layers are updating.
-         *
-         * @function _setLoadingFlag
-         * @param {Boolean} isLoading defaults to true; flag indicating if one or more layers begins updating their content
-         * @param {Number}  delay     defaults to 0; delay before setting `isMapLoading` state; useful to avoid setting indicator for a small amounts of time
-         * @private
-         */
-        function _setLoadingFlag(isLoading = true, delay = 0) {
-            $timeout.cancel(mapLoadingTimeout);
-            mapLoadingTimeout = $timeout(() => (mapConfig.isMapLoading = isLoading), delay);
-        }
-    }
-
-    /**
-     * Highlights all resolved identify results. Accepts the identify response returned by the identify service call.
-     *
-     * @param {Object} { details, requester }: { details: { isLoaded: Promise<boolean>, data: IdentifyResult[] }, requester: { mapPoint: MapPoint }}
-     */
-    function highlightIdentifyResults({ details, requester }) {
-        // if `details` is not set, the identify call hasn't been complete (no layers added to the map, for example)
-        if (!details) {
-            return;
-        }
-
-        const mapConfig = configService.getSync.map;
-        let isCleared = false;
-
-        details.isLoaded.then(() => {
-            // details.data contains a list of identify results; one result per feature layer or dynamic sublayer or wms layer
-            details.data.forEach(identifyResult =>
-                identifyResult.data.forEach(dataItem => {
-                    // clear everything before adding more highlights, but only once after it's clear there is at least one result
-                    if (!isCleared) {
-                        isCleared = true;
-                        clearHighlight();
-                    }
-
-                    const graphiBundlePromise = identifyResult.requester.proxy.fetchGraphic(dataItem.oid, {
-                        map: mapConfig.instance,
-                        geom: true,
-                        attribs: true
-                    });
-                    addGraphicHighlight(graphiBundlePromise, true);
-                })
-            );
-        });
     }
 
     /**
@@ -506,19 +455,7 @@ function mapServiceFactory(
      * @param {Boolean | null} showHaze [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
      */
     function addGraphicHighlight(graphicBundlePromise, showHaze = false) {
-        const gapi = gapiService.gapi;
-        const mapConfig = configService.getSync.map;
-
-        graphicBundlePromise.then(graphicBundle => {
-            const ubGraphics = gapi.hilight.getUnboundGraphics([graphicBundle], mapConfig.instance.spatialReference);
-
-            ubGraphics[0].then(unboundG => {
-                console.log('unbound graphic for hilighting ', unboundG);
-                mapConfig.highlightLayer.addHilight(unboundG);
-            });
-        });
-
-        _toggleHighlightHaze(showHaze);
+        identifyService.addGraphicHighlight(graphicBundlePromise, showHaze);
     }
 
     /**
@@ -530,7 +467,7 @@ function mapServiceFactory(
     function addMarkerHighlight(mapPoint, showHaze = null) {
         const mapConfig = configService.getSync.map;
         mapConfig.highlightLayer.addMarker(mapPoint);
-        _toggleHighlightHaze(showHaze);
+        identifyService.toggleHighlightHaze(showHaze);
     }
 
     /**
@@ -540,23 +477,7 @@ function mapServiceFactory(
      * @param {Boolean | null} [showHaze = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
      */
     function clearHighlight(showHaze = null) {
-        const mapConfig = configService.getSync.map;
-        mapConfig.highlightLayer.clearHilight();
-
-        _toggleHighlightHaze(showHaze);
-    }
-
-    /**
-     * Toggles the "haze" obscuring all other features and layers except the highlight layer.
-     *
-     * @function _toggleHighlightHaze
-     * @private
-     * @param {Boolean | null} value [optional = null] `true` turns on the "haze"; `false`, turns it off; `null` keeps it's current state
-     */
-    function _toggleHighlightHaze(value = null) {
-        if (value !== null) {
-            angular.element(referenceService.mapNode).toggleClass('rv-map-highlight', value);
-        }
+        identifyService.clearHighlight(showHaze);
     }
 
     /**

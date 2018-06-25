@@ -11,7 +11,7 @@ angular
     .module('app.ui')
     .factory('layerSource', layerSource);
 
-function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, configService) {
+function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject, configService) {
     const ref = {
         idCounter: 0, // layer counter for generating layer ids
         serviceType: Geo.Service.Types
@@ -32,12 +32,16 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
      *
      * @function fetchServiceInfo
      * @param {String} serviceUrl a service url to load
+     * @param {String} layerType string representing the layer type. used to know which type of request to make (angular web request for WFS)
      * @return {Promise} a promise resolving with an array of at least one LayerSourceInfo objects; will reject if there is an error accessing the service or parsing its response;
      */
-    function fetchServiceInfo(serviceUrl) {
+    function fetchServiceInfo(serviceUrl, layerType) {
         const matrix = {
             [geoServiceTypes.FeatureService]: () =>
                 [_parseAsFeature],
+
+            [geoServiceTypes.WFS]: () =>
+                [_parseAsWfs],
 
             [geoServiceTypes.ImageService]: () =>
                 [_parseAsImage],
@@ -75,8 +79,52 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 if (data.layers.length > 0) { // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
                 } else {
-                    return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(serviceInfo =>
-                        _parseAsSomethingElse(serviceInfo));
+                    const wfsResponse = {
+                        type: 'FeatureCollection',
+                        features: []
+                    };
+
+                    const urlSplit = serviceUrl.split('?');
+                    const url = urlSplit[0];   // url without any query parameters
+                    const queryVariables = urlSplit[1]; // url query parameters
+
+                    let startIndex, limit;
+                    if (queryVariables) {
+                        startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
+                        limit = getQueryVariable(queryVariables, 'limit') || 10;
+                    }
+
+                    if (layerType === Geo.Layer.Types.OGC_WFS) {
+                        // initially make the request with startIndex if provided else uses 0 (default), and limit if provided else uses 10 (default)
+                        return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {
+                            const updatedServiceInfo = {
+                                serviceType: 'wfs',
+                                index: '-1',
+                                tileSupport: false,
+                                rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
+                            }
+                            return _parseAsSomethingElse(updatedServiceInfo);
+                        });
+                    } else {
+                        return gapiService.gapi.layer.predictLayerUrl(serviceUrl)   // remove duplication after
+                            .then(serviceInfo => {
+                                if (serviceInfo.serviceType === Geo.Service.Types.Error) {
+                                    return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {   // if the esriRequest fails, use angular to make web request
+                                        // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
+                                        // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
+                                        const updatedServiceInfo = {
+                                            serviceType: 'wfs',
+                                            index: '-1',
+                                            tileSupport: false,
+                                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
+                                        }
+                                        return _parseAsSomethingElse(updatedServiceInfo);
+                                    });
+                                } else {
+                                    return _parseAsSomethingElse(serviceInfo)
+                                }
+                            });
+                    }
                 }
             })
             .then(options => ({
@@ -87,6 +135,45 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 $q.reject(error));
 
         return fetchPromise;
+
+        /**
+         * @function _getWFSData
+         * @private
+         * @param {String} serviceUrl url of the WFS layer we are trying to parse
+         * @param {Number} startIndex the index to start the querying from. default 0
+         * @param {Number} limit the limit of how many results we want returned. default 10
+         * @param {Object} wfsResponse the resulting GeoJSON being populated as we receive layer information
+         * @return {Promise} a promsie resolving with the layer GeoJSON
+         */
+        function _getWFSData(serviceUrl, startIndex = 0, limit = 1000, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
+            return $http.get(serviceUrl.concat(`?startindex=${startIndex}&limit=${limit}`))    // use angular to make web request, instead of esriRequest
+                .then(response => {
+                    const data = response.data;
+                    wfsResponse.features = [...wfsResponse.features, ...data.features]; // update the received features array
+
+                    const numReturned = data.numberReturned;
+                    const totalNumberReceived = startIndex + numReturned;
+                    const numMatched = data.numberMatched;
+                    if (typeof numReturned !== 'undefined' && typeof numMatched !== 'undefined' && totalNumberReceived < numMatched) {
+                        const limit = Math.min(1000, numMatched - totalNumberReceived);    // the limit is either 1k or the number of remaining features
+                        return _getWFSData(serviceUrl, totalNumberReceived, limit, wfsResponse);
+                    } else {
+                        return wfsResponse
+                    }
+                });
+        }
+
+        // modified from: https://css-tricks.com/snippets/javascript/get-url-variables/
+        function getQueryVariable(queryVariables, variable) {
+            const vars = queryVariables.split("&");
+            for (let i = 0; i < vars.length; i++) {
+                const pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return parseInt(pair[1]);
+                }
+            }
+            return(false);
+        }
 
         /**
          * @function _parseAsSomethingElse
@@ -176,6 +263,35 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
             });
 
             const layerInfo = new LayerSourceInfo.FeatureServiceInfo(layerConfig, data.fields);
+
+            return layerInfo;
+        }
+
+        /**
+         * Parses the supplied service url as if it's a WFS service.
+         *
+         * @function _parseAsWfs
+         * @private
+         * @param {String} url a service url to be used
+         * @param {Object} data service info data from the geoApi predition call
+         * @return {Promise} a promsie resolving with a LayerSourceInfo.WFSServiceInfo object
+         */
+        function _parseAsWfs(url, data) {
+            const splitUrl = url.split('/');
+            const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
+
+            const layerConfig = new ConfigObject.layers.WFSLayerNode({
+                id: `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`,
+                url: url,
+                layerType: Geo.Layer.Types.OGC_WFS,
+                name: splitUrl[indexOfItems - 1],   // may not be the best way to find the name
+                state: {
+                    userAdded: true
+                }
+            });
+
+            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
+            const layerInfo = new LayerSourceInfo.GeoJSONFileInfo(layerConfig, data.rawData, targetWkid);
 
             return layerInfo;
         }
@@ -344,7 +460,7 @@ function layerSource($q, gapiService, Geo, LayerSourceInfo, ConfigObject, config
                 }
             });
 
-            const targetWkid = configService.getSync.map.instance.spatialReference.wkid
+            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const fileInfoOptions = [

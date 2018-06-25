@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0" 
+<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0"
     aria-label="{{ 'geo.aria.mapdescription' | translate }}"
     aria-describedby="rv-crosshairs-description"></div>
 
@@ -82,5 +82,4 @@
 
 <rv-basemap></rv-basemap>
 
-
-<md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.config.map.isMapLoading"></md-progress-linear>
+<md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.shellService.isLoading"></md-progress-linear>

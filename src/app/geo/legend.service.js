@@ -110,14 +110,17 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
         });
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const layerBlueprints = newDefinitions.map(createBlueprint);
+        const blueprintPromises = newDefinitions.map(createBlueprint);
 
-        // create mapping for all layer blueprints
-        mapConfig.layerBlueprints.forEach(lb =>
-            (legendMappings[lb.config.id] = []));
+        // wait for all promises to resolve then show info
+        Promise.all(blueprintPromises).then(() => {
+            // create mapping for all layer blueprints
+            mapConfig.layerBlueprints.forEach(lb =>
+                (legendMappings[lb.config.id] = []));
 
-        const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
-        mapConfig.legendBlocks = legendBlocks;
+            const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
+            mapConfig.legendBlocks = legendBlocks;
+        });
     }
 
     /**
@@ -128,10 +131,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      * @param {LayerDefinition} layerDefinition a layer definition from the config file or RCS snippets
      * @param {pos} optional position for layer to be on the legend
      * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
-     * @returns {LegendBlock} returns a corresponding, newly created legend block
      */
     function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
-        return importLayerBlueprint(createBlueprint(layerDefinition), pos, addToLegend);
+        const blueprintPromise = createBlueprint(layerDefinition);
+        blueprintPromise.then(def => importLayerBlueprint(def, pos, addToLegend));
     }
 
     /**
@@ -142,9 +145,12 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
-        const blueprint = new LayerBlueprint.service(layerDefinition);
-        configService.getSync.map.layerBlueprints.push(blueprint);
-        return blueprint;
+        const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition);
+
+        return blueprintPromise.then(blueprint => {
+            configService.getSync.map.layerBlueprints.push(blueprint);
+            return blueprint;
+        });
     }
 
     /**
