@@ -264,23 +264,23 @@
     - Setting a position with invalid values:
         ```javascript
 
-        panel4.setPosition(35, 100);  //topLeft is at 6th column, bottomRight is at 1st column!
+        panel4.setPosition(35, 100); /*panel4.setPosition([15, 1], [0, 5])*/
 
         ```
 
     - setMinPosition before setPosition:
         ```javascript
 
-        panel4.setMinPosition(0, 65);
+        panel4.setMinPosition(0, 65);/*panel4.setPosition([0, 0], [5, 3])*/
 
         ```
 
     - Setting a PanelElem to have multiple top level elements:
         ```javascript
 
-        let panelElem1 = panel4.createPanelElem('<p>Hello</p><p>there</p>')); //doesn't work
+        let panelElem1 = panel4.createPanelElem('<p>Hello</p><p>there</p>'); //doesn't work
 
-        let panelElem2 = panel4.createPanelElem('<p>Hello there</p>')); //works
+        let panelElem2 = panel4.createPanelElem('<p>Hello there</p>'); //works
 
         let panelElem3 = panel4.createPanelElem($.parseHTML('<div>Hello<p>there</p></div>')); //works
 
