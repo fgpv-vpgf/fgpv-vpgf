@@ -37,10 +37,6 @@ class RZ {
     mapById(id: string): Map | undefined {
         return this.mapInstances.find(mi => mi.id === id);
     }
-
-    /**Returns the Panel class and PanelElem class */
-    get PanelElem(): typeof PanelElem { return PanelElem; }
-    get Btn(): typeof Btn { return Btn; }
 }
 
 const RZInstance = new RZ();
