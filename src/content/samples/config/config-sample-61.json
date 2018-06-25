@@ -363,6 +363,33 @@
         }]
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "GeoChrone***33c61115",
+        "name": "Time filtering",
+        "url":"https://geoappext.nrcan.gc.ca/arcgis/rest/services/GSCC/Geochronology/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [{
+            "index": 0,
+            "table": {
+                "title": "",
+                "maximize": false,
+                "columns": [
+                    {
+                        "data": "OBJECTID",
+                        "title": "OBJECTID"
+                    },
+                    {
+                        "data": "LAST_UPDATED",
+                        "title": "LAST_UPDATED",
+                        "filter": {
+                            "type": "date",
+                            "value": "2005-02-22,2005-04-30"
+                        }
+                    }
+                ]
+            }
+        }]
       }
     ],
     "tileSchemas": [
