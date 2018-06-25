@@ -89,7 +89,6 @@ export default class Map {
     get innerShell(): HTMLElement {
         let mapDiv = <HTMLElement>document.getElementById(this._id);
         let innerShell = mapDiv.getElementsByClassName('rv-inner-shell')[0];
-        console.log(innerShell);
         return <HTMLElement>innerShell;
     }
 

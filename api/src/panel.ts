@@ -15,10 +15,9 @@ import { S_IFMT } from 'constants';
  *      - top-left corner: 2nd row, 6th column
  *      - bottom-right corner: 8th row, 10th column
  *
- * Panels require a map instance upon creation. While this can be manually passed in by the user, a new Panel is easily created like so:
+ * Panels require a map instance upon creation. A new Panel is easily created like so:
  * ```js
  * mapInstance.createPanel('panelID');   //do this
- * let panel = new Panel('panelID', mapInstance); //instead of this
  * ```
  *
  * Map instances track panels through their panelRegistry. Thus to retrieve a panel on a map, the following can be done:
@@ -124,6 +123,7 @@ export class Panel {
 
     /**
     * Returns a newly created PanelElem
+    * @param {string | HTMLElement | JQuery<HTMLElement>} element - the element to be scoped by the PanelElem
     * @return {Btn} - the PanelElem that was created.
     */
     createPanelElem(element: string | HTMLElement | JQuery<HTMLElement>): PanelElem {
@@ -202,7 +202,6 @@ export class Panel {
             }
             if (panel._height !== undefined) {
                 panel.height = panel._height;
-                console.log(panel._height);
             }
 
             //ensures that toggle (open/close of panel body) is preserved during position change
@@ -438,6 +437,7 @@ export class Panel {
         return this._content;
     }
 
+
     /**
     * Sets the contents for the Panel
     * @param {PanelElem} content - the PanelElem to be used as panel's contents (scopes other PanelElems)
@@ -487,7 +487,6 @@ export class Panel {
         if (typeof topLeftCoord !== 'number' && typeof bottomRightCoord !== 'number') {
             topLeft = topLeftCoord[0] + topLeftCoord[1] * 20;
             bottomRight = bottomRightCoord[0] + bottomRightCoord[1] * 20;
-            console.log(topLeft, bottomRight);
         }
         else {
             topLeft = <number>topLeftCoord;
@@ -637,16 +636,16 @@ export class Panel {
  *
  * `PanelElem` can be of type string, HTMLElement or JQuery<HTMLElement>. The can be constructed like so:
  * ```js
- * let panelElem2 = new RZ.PanelElem($("<div style='color: lightslategray'>Contents:</div>"));
- * let panelElem3 = new RZ.PanelElem($.parseHTML('<input type="text" value="Search..." id="coolInput"></input>'));
+ * let panelElem2 = panel1.createPanelElem($("<div style='color: lightslategray'>Contents:</div>"));
+ * let panelElem3 = panel1.createPanelElem($.parseHTML('<input type="text" value="Search..." id="coolInput"></input>'));
  * ```
  *
  * Shortcuts can be used to create special `PanelElem`s inteded for use on panel controls. There are four shortcuts:
  * ```js
- * let panelElem1 = new RZ.PanelElem('Layers');   //Title shortcut
- * let panelElem2 = new RZ.PanelElem('T'); //toggle shortcut
- * let panelElem3 = new RZ.PanelElem('x'); //close button shortcut
- * let panelElem4 = new RZ.PanelElem('|'); //controls divider shortcut
+ * let panelElem1 = panel1.createPanelElem('Layers');   //Title shortcut
+ * let panelElem2 = panel1.createPanelElem('T'); //toggle shortcut
+ * let panelElem3 = panel1.createPanelElem('x'); //close button shortcut
+ * let panelElem4 = panel1.createPanelElem('|'); //controls divider shortcut
  * ```
  */
 export class PanelElem {
@@ -760,7 +759,7 @@ export class PanelElem {
  * ```js
  *
  * // a text Btn
- * let btn = new RZ.Btn();
+ * let btn = panel1.createBtn();
  * btn.text = "Btn.";
  *
  * //an SVG Btn
@@ -769,7 +768,7 @@ export class PanelElem {
  * let svg = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>');
  *
  * //assigning it to the Btn
- * let btn2 = new RZ.Btn();
+ * let btn2 = panel1.createBtn();
  * btn2.icon = svg[0];
  * ```
  */
