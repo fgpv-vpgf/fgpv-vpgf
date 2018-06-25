@@ -92,7 +92,7 @@ export class Panel {
 
         //create panel components and document fragment
         this.createPanelComponents();
-        this.windowResize();
+        this.windowResize(this);
 
         this._panel_positions = new PanelPositions(this);
         this._hidden = false;
@@ -172,25 +172,23 @@ export class Panel {
     * Helper method to deal with Panel behaviour when the map grid changes size.
     * @private
     */
-    private windowResize(): void {
-
-        let panel = this;
+    private windowResize(panel: Panel): void {
 
         $(window).resize(function () {
 
-            let panelCoords = panel._panel_positions.panelCoords;
+            let panelCoords = panel.panelPositions.panelCoords;
             let parentHeight = $(panel._map_object.innerShell).height();
             let parentWidth = $(panel._map_object.innerShell).width();
             let controlsHeight = $(panel._panel_controls).height();
 
             //if current width is different from stored width, fire width changed
-            if (panel._map_width !== parentWidth && parentWidth !== undefined) {
+            if (panel._map_width !== undefined && panel._map_width !== parentWidth && parentWidth !== undefined) {
                 panel._widthChanged.next(parentWidth * 0.05);
                 panel._map_width = parentWidth;
             }
 
             //if current height is different from stored height, fire height changed
-            else if (panel._map_height !== parentHeight && parentHeight !== undefined) {
+            else if (panel._map_width !== undefined && panel._map_height !== parentHeight && parentHeight !== undefined) {
                 panel._heightChanged.next(parentHeight * 0.05);
                 panel._map_height = parentHeight;
             }
@@ -263,7 +261,7 @@ export class Panel {
         }
 
         //if no position, width or height set calculate based on a 1x1 panel
-        if (this.panelPositions.panelCoords[0] === undefined && this.panelPositions.panelCoords[1] === undefined && this.panelPositions.panelCoords[2] === undefined && this.panelPositions.panelCoords[3] === undefined && width === undefined && height === undefined) {
+        if (this.panelPositions.panelCoords.every(coord => coord === undefined) && width === undefined && height === undefined) {
 
             return Panel.availableSpaces(this._map_object.panelRegistry, 1, 1);
         }
@@ -361,15 +359,15 @@ export class Panel {
     */
     open(): void {
 
-        let panelCoords = this._panel_positions.panelCoords;
+        let panelCoords = this.panelPositions.panelCoords;
 
         if (this._map_object !== undefined) {
 
             //check to see panel position is set
-            if (panelCoords[0] !== undefined && panelCoords[1] !== undefined && panelCoords[2] !== undefined && panelCoords[3] !== undefined) {
+            if (panelCoords.every(coord => coord !== undefined)) {
 
                 //check to see if panel position is out of bounds of grid
-                if (this._panel_positions.checkOutOfBounds(false, panelCoords[0], panelCoords[1], panelCoords[2], panelCoords[3]) === false) {
+                if (this.panelPositions.checkOutOfBounds(false, panelCoords[0], panelCoords[1], panelCoords[2], panelCoords[3]) === false) {
 
                     //If there is no conflict with an existing panel, allow the panel to open
                     if (!this.conflictDetected()) {
@@ -408,7 +406,7 @@ export class Panel {
         //first check all currently open panels for panel's min position, if conflict then throw exception
         for (let panel of this._map_object.panelRegistry) {
             if (panel._open === true && panel !== this) {
-                this._panel_positions.conflictDetected(panel);
+                this.panelPositions.conflictDetected(panel);
             }
         }
         return false;
@@ -419,10 +417,10 @@ export class Panel {
     * @throws {Exception} - panel is either: not added to the map, doesn't have a position set, is not open.
     */
     close(): void {
-        let panelCoords = this._panel_positions.panelCoords;
+        let panelCoords = this.panelPositions.panelCoords;
 
         //if the map doesn't exist or the position hasn't been set then the map hasn't been added to a map
-        if (this._map_object !== undefined && panelCoords[0] !== undefined && panelCoords[1] !== undefined && panelCoords[2] !== undefined && panelCoords[3] !== undefined && this._open === true) {
+        if (this._map_object !== undefined && panelCoords.every(coord => coord !== undefined) && this._open === true) {
             this._closing.next();
             this._panel_contents.classList.add('hidden');
             this._open = false;
@@ -503,9 +501,9 @@ export class Panel {
                 throw "Exception: positions cannot be less than 0 or greater than 399.";
             }
 
-            if (this._panel_positions.setPanelPosition(topLeft, bottomRight)) {
+            if (this.panelPositions.setPanelPosition(topLeft, bottomRight)) {
 
-                let panelCoords = this._panel_positions.panelCoords;
+                let panelCoords = this.panelPositions.panelCoords;
 
                 //change min positions to new default -> user changes away from default if they want
                 this.setMinPosition(topLeft, bottomRight);
@@ -538,10 +536,10 @@ export class Panel {
     */
     set width(width: number | string) {
         if (this._open) {
-            if (typeof this._panel_positions.setWidth(width) === 'string') {
-                this._panel_contents.style.maxWidth = this._panel_positions.setWidth(width);
-                this._panel_contents.style.width = this._panel_positions.setWidth(width);
-                this._panel_contents.style.minHeight = this._panel_positions.setHeight(width);
+            if (typeof this.panelPositions.setWidth(width) === 'string') {
+                this._panel_contents.style.maxWidth = this.panelPositions.setWidth(width);
+                this._panel_contents.style.width = this.panelPositions.setWidth(width);
+                this._panel_contents.style.minHeight = this.panelPositions.setHeight(width);
                 this._width = width;
             }
         }
@@ -558,10 +556,10 @@ export class Panel {
     set height(height: number | string) {
         if (this._open) {
 
-            if (typeof this._panel_positions.setHeight(height) === 'string') {
-                this._panel_contents.style.height = this._panel_positions.setHeight(height);
-                this._panel_contents.style.maxHeight = this._panel_positions.setHeight(height);
-                this._panel_contents.style.minHeight = this._panel_positions.setHeight(height);
+            if (typeof this.panelPositions.setHeight(height) === 'string') {
+                this._panel_contents.style.height = this.panelPositions.setHeight(height);
+                this._panel_contents.style.maxHeight = this.panelPositions.setHeight(height);
+                this._panel_contents.style.minHeight = this.panelPositions.setHeight(height);
                 this._height = height;
             }
         }
@@ -569,7 +567,6 @@ export class Panel {
             throw "Exception: cannot set height if panel is not open."
         }
     }
-
 
     /**
     * Sets the position for the Panel according to the map grid layout (such that panel has a minimum size).
@@ -590,17 +587,17 @@ export class Panel {
             bottomRight = <number>bottomRightCoord;
         }
 
-        let panelCoords = this._panel_positions.panelCoords;
+        let panelCoords = this.panelPositions.panelCoords;
 
         if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
         }
 
-        if (panelCoords[0] === undefined || panelCoords[1] === undefined || panelCoords[2] === undefined || panelCoords[3] === undefined) {
+        if (! panelCoords.every(coord => coord !== undefined)) {
             throw "Exception: cannot set min position before a valid position is set.";
         }
 
-        if (this._panel_positions.setMinPanelPosition(topLeft, bottomRight)) {
+        if (this.panelPositions.setMinPanelPosition(topLeft, bottomRight)) {
             //if panel already open, available spaces should be updated. (everything outside min is coverable)
             if (this._map_object !== undefined && this._open === true) {
                 this.close();
@@ -616,7 +613,7 @@ export class Panel {
     */
     private changePosition(): void {
 
-        let panelCoords = this._panel_positions.panelCoords;
+        let panelCoords = this.panelPositions.panelCoords;
 
         //set left position (5% * parentWidth * topLeftX)
         let parentWidth = <number>$(this._map_object.innerShell).width();
