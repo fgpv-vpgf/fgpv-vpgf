@@ -24,7 +24,7 @@ angular
     .module('app.ui')
     .factory('exportGenerators', exportGenerators);
 
-function exportGenerators($q, $filter, $translate, $templateCache, gapiService, configService, graphicsService,
+function exportGenerators($q, $filter, $translate, configService, graphicsService,
     exportLegendService, geoService, mapToolService) {
 
     const service = {

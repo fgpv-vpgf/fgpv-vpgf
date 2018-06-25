@@ -581,6 +581,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 gapiService.gapi.Map.getExtentFromJson(source.extent) :
                 undefined;
             this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
+            this._expectedResponseTime = source.expectedResponseTime !== undefined ? source.expectedResponseTime : 4000;
 
             const defaults = DEFAULTS.layer[this.layerType];
 
@@ -617,6 +618,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get refreshInterval () {        return this._refreshInterval; }
         set refreshInterval (value) {   this._refreshInterval = value; }
+
+        /**
+         * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+         * Default: 4000
+         *
+         * @memberof LayerNode
+         */
+        get expectedResponseTime () {        return this._expectedResponseTime; }
+        set expectedResponseTime (value) {   this._expectedResponseTime = value; }
 
         get initialFilteredQuery() { return this._initialFilteredQuery; }
         set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
@@ -662,6 +672,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 layerType: this.layerType,
                 extent: this.source.extent,
                 refreshInterval: this.refreshInterval,
+                expectedResponseTime: this.expectedResponseTime,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 state: this.state.JSON
@@ -2033,10 +2044,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._instance = instance;
             this._isLoaded = false;
         }
-
-        _isLoading = true;
-        get isLoading () { return this._isLoading; }
-        set isLoading (value) { this._isLoading = value;}
 
         _startPoint = null;
         get startPoint () {         return this._startPoint; }

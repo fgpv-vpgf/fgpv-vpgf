@@ -16,6 +16,7 @@ import './plugin.service.js';
 import './reload.service.js';
 import './statemanager.constant.service.js';
 import './statemanager.service.js';
+import './shell.service.js';
 import './translation.service.js';
 import './version.service.js';
 import './intention.service.js';

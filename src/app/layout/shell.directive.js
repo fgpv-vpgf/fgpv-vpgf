@@ -14,7 +14,7 @@ angular
     .module('app.layout')
     .directive('rvShell', rvShell);
 
-function rvShell($rootElement, $rootScope, events, stateManager, configService, layoutService, referenceService,
+function rvShell($rootElement, events, stateManager, configService, layoutService, referenceService,
     mapToolService, debounceService, geoService, keyNames) {
 
     const directive = {
@@ -137,9 +137,10 @@ function rvShell($rootElement, $rootScope, events, stateManager, configService, 
     }
 }
 
-function Controller(geoService) {
+function Controller(geoService, shellService) {
     'ngInject';
     const self = this;
 
     self.geoService = geoService;
+    self.shellService = shellService;
 }
