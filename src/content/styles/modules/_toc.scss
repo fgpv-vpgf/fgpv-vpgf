@@ -299,6 +299,20 @@ $layer-item-height-touch: rem(7.2);
             }
         }
     }
+
+    .rv-expanded-dialog {
+        border-radius: 0;
+
+        .expanded-content {
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .rv-expanded-image {
+            display: block;
+            margin: 0 auto;
+        }
+    }
 }
 
 @mixin sort-group($index) {
