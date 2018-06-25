@@ -15,7 +15,7 @@
 - Once the panel is created, we need to set its position on the map and open it.
     ```javascript
 
-    panel1.setPosition(25, 288);
+    panel1.setPosition(25, 288); /*panel1.setPosition([5 , 1], [8, 14]);*/
     panel1.open();
 
     ```
@@ -95,7 +95,7 @@
     ```javascript
 
 
-    panel1.controls = [closeBtn, panel1.createPanelElem('|'), new RZ.PanelElem('T'), panelElem1, new RZ.PanelElem($('<br>')), panelElem4,panelElem3];
+    panel1.controls = [closeBtn, panel1.createPanelElem('|'), panel1.createPanelElem('T'), panelElem1, panel1.createPanelElem($('<br>')), panelElem4,panelElem3];
 
     panel1.controls;
 
@@ -117,7 +117,7 @@
     - Hint: first refresh page to clear the previous setup.
 
     ```javascript
-
+    let panel1 = RZ.mapInstances[0].createPanel('panel1');
     panel1.setPosition(70, 111);
     panel1.open();
     let panel2 = RZ.mapInstances[0].createPanel('panel2');
@@ -130,7 +130,7 @@
     ```javascript
 
     let panelRegistry = RZ.mapInstances[0].panelRegistry;
-    RZ.Panel.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance
+    panel1.constructor.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance, static
     ```
 
 - ***Non static method uses:*** for a specific panel instance.
@@ -155,7 +155,7 @@
     - When a min position is set on a panel:
         - 1 represents positions that cause overlap, -1 represents invalid positions
         ```javascript
-        panel2.setMinPosition(48,49);
+        panel2.setMinPosition(48,49); /*panel2.setMinPosition([8,2],[9,2]);*/
 
         panel2.availableSpaces();//available spaces for 'panel2' if it had a min position
         ```
