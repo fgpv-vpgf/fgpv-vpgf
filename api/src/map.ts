@@ -52,7 +52,6 @@ export default class Map {
     private _layers: LayerGroup;
     private _simpleLayer: SimpleLayer;
     private _legendStructure: LegendStructure;
-    private _inner_shell: HTMLElement;
     private _panel_registry: Panel[];
 
     /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
@@ -61,8 +60,8 @@ export default class Map {
         this._id = this.mapDiv.attr('id') || '';
         this._ui = new UI(this);
         this._layers = new LayerGroup(this);
-        this._inner_shell = <HTMLElement>document.getElementsByClassName('rv-inner-shell')[0];
         this._panel_registry = [];
+        this._layers = new LayerGroup(this);
 
         // config set implies viewer loading via API
         if (config) {
@@ -88,7 +87,10 @@ export default class Map {
      * @return {HTMLElement} - rv-inner-shell div.
      */
     get innerShell(): HTMLElement {
-        return this._inner_shell;
+        let mapDiv = <HTMLElement>document.getElementById(this._id);
+        let innerShell = mapDiv.getElementsByClassName('rv-inner-shell')[0];
+        console.log(innerShell);
+        return <HTMLElement>innerShell;
     }
 
     /**

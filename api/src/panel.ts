@@ -1,7 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
-const toggle = require('../../src/content/images/iconsets/toggle-icons.svg');
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
@@ -71,10 +70,6 @@ export class Panel {
     widthChanged: Observable<number>
     heightChanged: Observable<number>
 
-    minusSVG: SVGElement;
-    plusSVG: SVGElement;
-    closeSVG: SVGElement;
-
     /**
 +    * Creates a new Panel.
 +    * @constructor
@@ -101,8 +96,6 @@ export class Panel {
 
         this._panel_positions = new PanelPositions(this);
         this._hidden = false;
-        console.log(toggle);
-
     }
 
     /**
@@ -831,6 +824,10 @@ class PanelPositions {
     */
     get panelCoords(): number[] {
         return [this._topLeftX, this._topLeftY, this._bottomRightX, this._bottomRightY];
+    }
+
+    get minPanelCoords(): number[] {
+        return [this._minTopLeftX, this._minTopLeftY, this._minBottomRightY, this._minBottomRightY]
     }
 
     /**
