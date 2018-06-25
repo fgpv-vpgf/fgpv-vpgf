@@ -7,16 +7,16 @@
     <p ng-switch-when="text" ng-bind-html="self.block.content | markdown: { sanitize: false }"></p>
 
     <div ng-switch-when="image">
-        <img ng-src="{{ self.block.content }}" alt="">
+        <img rv-expand-image ng-src="{{ self.block.content }}" alt="">
 
-        <md-button
+        <!-- <md-button
             class="md-icon-button rv-icon-20 rv-image-expand"
             ng-click="self.onExpandClick(self.block.content)"
             ng-if="self.block.canEnlarge"
             aria-label="{{ 'toc.tooltip.fullsizeImage' | translate }}">
             <md-icon md-svg-src="action:zoom_in"></md-icon>
             <md-tooltip md-direction="top">{{ 'toc.tooltip.fullsizeImage' | translate }}</md-tooltip>
-        </md-button>
+        </md-button> -->
     </div>
 
     <div

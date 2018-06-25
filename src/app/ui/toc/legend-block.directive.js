@@ -29,7 +29,7 @@ angular
     .module('app.ui')
     .directive('rvLegendBlock', rvLegendBlock);
 
-function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject, expandImageService) {
+function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -99,7 +99,6 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
 
          // open dialog with fullsize image
          self.onExpandClick = content => {
-            expandImageService.open(content);
         }
 
         /**
