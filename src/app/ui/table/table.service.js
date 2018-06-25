@@ -188,7 +188,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
                     } else if (column.type === 'number') {
                         column.filter.min = '';
                         column.filter.max = '';
-                    } else if (column.type === 'rv-date') {
+                    } else if (column.type === 'date') {
                         column.filter.min = null;
                         column.filter.max = null;
                     }
@@ -208,7 +208,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
                 if (!column.filter.static) {
                     if (column.filter.type === 'selector') {
                         column.filter.value = [];
-                    } else if (column.filter.type === 'rv-date') {
+                    } else if (column.filter.type === 'date') {
                         column.filter.value = {};
                     } else {
                         column.filter.value = '';
@@ -283,7 +283,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
                 if (typeof column.filter !== 'undefined') {
                     if (column.filter.type === 'selector') {
                         column.filter.value = [];
-                    } else if (column.filter.type === 'rv-date') {
+                    } else if (column.filter.type === 'date') {
                         column.filter.value = {};
                     } else {
                         column.filter.value = '';
@@ -349,9 +349,9 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             if (max !== '') {
                 defs.push(`${column.name} <= ${max}`);
             }
-        } else if (column.type === 'rv-date') {
-            const min = column.filter.min;
-            const max = column.filter.max;
+        } else if (column.type === 'date') {
+            const min = new Date(column.filter.min);
+            const max = new Date(column.filter.max);
 
             if (min) {
                 const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
@@ -493,7 +493,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // show processing
         $rootElement.find('.dataTables_processing').css('display', 'block');
 
-        // keep filter state to know when to show apply map button
+         // keep filter state to know when to show apply map button
         setFiltersState(column, `${min}${max}`);
 
         // redraw table to filter (filters for range date are added on the table itself in table-definition.directive)

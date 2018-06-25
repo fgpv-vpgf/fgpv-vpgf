@@ -553,7 +553,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 column.filter.type = 'string';
                 break;
             case 'esriFieldTypeDate':
-                column.filter.type = 'rv-date';
+                column.filter.type = 'date';
                 break;
             default:
                 column.filter.type = 'number';
