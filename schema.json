@@ -545,6 +545,7 @@
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "refreshInterval": { "type": "number", "default": 0, "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
+                "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
@@ -564,10 +565,30 @@
                 "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "refreshInterval": { "type": "number", "default": 0, "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
+                "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
                 "toggleSymbology": { "type": "boolean", "default": true, "description": "Allows individual symbols to have visibility toggled on/off." },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" }
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "wfsLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "colour": { "type": "string", "description": "The hex code representing the layer symbology colour." },
+                "layerType": { "type": "string", "enum": [ "ogcWfs" ] },
                 "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
@@ -585,6 +606,7 @@
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "refreshInterval": { "type": "number", "default": 0, "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
+                "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerEntries": {
@@ -610,6 +632,7 @@
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "refreshInterval": { "type": "number", "default": 0, "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
+                "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
                 "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
@@ -635,6 +658,7 @@
             "oneOf": [
                 { "$ref": "#/definitions/basicLayerNode" },
                 { "$ref": "#/definitions/featureLayerNode" },
+                { "$ref": "#/definitions/wfsLayerNode" },
                 { "$ref": "#/definitions/wmsLayerNode" },
                 { "$ref": "#/definitions/dynamicLayerNode" }
             ]

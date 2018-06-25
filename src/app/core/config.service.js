@@ -38,7 +38,7 @@ angular
     .module('app.core')
     .factory('configService', configService);
 
-function configService($q, $rootElement, $timeout, $http, $translate, $mdToast, events, gapiService, errorService, ConfigObject, Geo) {
+function configService($q, $rootElement, $http, $translate, events, gapiService, errorService, ConfigObject, Geo) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
 
     const States = {

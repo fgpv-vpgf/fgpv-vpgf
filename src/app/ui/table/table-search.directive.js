@@ -68,7 +68,7 @@ function rvTableSearch(tableService, stateManager, $rootScope, events) {
     }
 }
 
-function Controller(tableService, debounceService, $timeout, $rootElement, stateManager, $rootScope, events, $scope) {
+function Controller(tableService, debounceService, $timeout, $rootElement, stateManager, $rootScope, events, $scope, $filter) {
     'ngInject';
     const self = this;
 
@@ -217,9 +217,15 @@ function Controller(tableService, debounceService, $timeout, $rootElement, state
                 if (!userValue.some(isNaN)) {
                     // set filter type and if it is a date, create date object
                     filter.type = (userValue.length <= 2) ? 'number' : 'date';
-                    filter.searchTerm = (filter.type === 'number') ?
-                        userValue :
-                        [new Date(userValue.splice(0, 3).join('-')), new Date(userValue.splice(0, 3).join('-'))];
+
+                    if (filter.type === 'number') {
+                        filter.searchTerm = userValue;
+                    } else {
+                        const min = $filter('dateTimeZone')(userValue.splice(0, 3).join('-'), '');
+                        const max = $filter('dateTimeZone')(userValue.splice(0, 3).join('-'), '');
+
+                        filter.searchTerm = [new Date(min), new Date(max)];
+                    }
                 }
             }
         }
@@ -256,7 +262,8 @@ function Controller(tableService, debounceService, $timeout, $rootElement, state
                     if (filter.type === 'number') {
                         value = parseFloat(value);
                     } else if (filter.type === 'date') {
-                        value = new Date(value.split(' ')[0]);
+                        const time = $filter('dateTimeZone')(value.split(' ')[0], '')
+                        value = new Date(time);
                     }
 
                     // check if it pass the filter

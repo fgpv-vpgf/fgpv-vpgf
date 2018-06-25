@@ -42,6 +42,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         Geo.Service.Types.TileService,
         Geo.Service.Types.ImageService,
         Geo.Service.Types.WMS,
+        Geo.Service.Types.WFS,
         Geo.Service.Types.RasterLayer
     ];
 
@@ -115,7 +116,11 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             reset: configureReset
         },
         form: null,
-        defaultOptions: {}
+        defaultOptions: {},
+        colourPickerSettings: {
+            theme: 'bootstrap',
+            position: 'top right'
+        }
     };
 
     self.layerBlueprint = null;
@@ -231,10 +236,24 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function selectOnContinue
      */
     function selectOnContinue() {
+        // for WFS layers, there is a validation process
+        // for consistency, also mock a validation for non-WFS services
+        let validationPromise;
 
-        // we don't validate service layer info source;
-        // it seem not to be possible to tell if the layer will work on not until the layer is build and added to the map
-        stepper.nextStep($q.resolve());
+        try {
+            validationPromise = self.layerSource.validate();
+        } catch (e) {
+            console.error('loaderServiceDirective', 'service type is wrong', e);
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+            return;
+        }
+
+        validationPromise.catch(error => {
+            console.error('loaderServiceDirective', 'service type is wrong', error);
+            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
+        });
+
+        stepper.nextStep(validationPromise);
 
         /*
         const validationPromise = self.layerBlueprint.validate();
@@ -242,11 +261,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // TODO: move reseting options to defaults into blueprint; this can be done upon successful validation
         self.configure.defaultOptions = angular.copy(self.layerBlueprint.config);
         stepper.nextStep(validationPromise);
-
-        validationPromise.catch(error => {
-            console.error('loaderServiceDirective', 'service type is wrong', error);
-            toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
-        });*/
+        */
     }
 
     // FIXME add docs
@@ -265,18 +280,21 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         // reset wrong service type error message
         toggleErrorMessage(self.select.form, 'serviceType', 'wrong', true);
     }
+
     /**
      * Builds layer with the specified options and adds it to the map; displays error message if something is not right.
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const layerBlueprint = new LayerBlueprint.service(null, self.layerSource);
+        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
 
-        legendService.importLayerBlueprint(layerBlueprint);
-
-        // TODO: display error message if something breaks
-        // TODO: close import wizard if build is successful
-        closeLoaderService();
+        blueprintPromise.then(layerBlueprint => {
+            legendService.importLayerBlueprint(layerBlueprint);
+            closeLoaderService();
+        }).catch(error => {
+            console.warn('loaderServiceDirective', 'service is invalid ', error);
+            self.configure.form.$setValidity('invalid', false);
+        });
     }
 
     /**

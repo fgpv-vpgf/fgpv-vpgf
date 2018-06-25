@@ -1,4 +1,3 @@
-const moment = window.moment;
 
 // fields blueprints to be added to the table header for large layout and inside setting panel
 // `self` property is named so intentionally, as it will be passed on a scope to the FILTERS_TEMPLATE
@@ -38,7 +37,7 @@ const FILTERS = {
             prevent: angular.noop
         }
     },
-    'rv-date': {
+    date: {
         name: 'rv-filter-date',
         scope: null,
         self: {
@@ -101,7 +100,7 @@ const FILTERS_TEMPLATE = {
                         ng-disabled="self.${column}.static" />
             </md-input-container>
         </div>`,
-    'rv-date': column =>
+    date: column =>
         `<div class="rv-filter-date" ng-show="self.${column}.filtersVisible">
             <md-datepicker
                 ng-click="self.prevent($event)"
@@ -140,7 +139,7 @@ angular
  * @function rvTableDefinition
  * @return {object} directive body
  */
-function rvTableDefinition(stateManager, events, $compile, tableService, referenceService, $rootScope) {
+function rvTableDefinition(stateManager, events, $compile, tableService, referenceService, $rootScope, $filter) {
     const directive = {
         restrict: 'A',
         template: '',
@@ -168,7 +167,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
             number: {
                 callback: 'onFilterNumberChange'
             },
-            'rv-date': {
+            date: {
                 callback: 'onFilterDateChange'
             }
         };
@@ -223,7 +222,7 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
                         // set string filter from existing value
                         if (column.type === 'number') {
                             setNumberFilter(filterInfo.scope, i);
-                        } else if (column.type === 'rv-date') {
+                        } else if (column.type === 'date') {
                             setDateFilter(filterInfo.scope, i);
                         } else if (column.type === 'string') {
                             const val = `^${column.filter.value.replace(/\*/g, '.*')}.*$`;
@@ -336,38 +335,24 @@ function rvTableDefinition(stateManager, events, $compile, tableService, referen
                     return !filter.min && !filter.max;
                 }
 
-                const date = data[i].split('-');
-                // length 3 when in the format [YYYY, MM, DD HH:mm:ss]
-                if (date.length !== 3) { return false; }  // different column that isn't a date
-
-                const day = date[2].split(' ');     // get the date without the time
-
-                // use moment timezone to parse dates
-                const userTimeZone = moment.tz.guess();
-                // IE does not like dates not in ISO format, so need to add leading 0 if necessary
-                const time = moment.tz(`${date[0]}-${('0' + date[1]).slice(-2)}-${('0' + day[0]).slice(-2)}`, userTimeZone);
+                const dateOnly = data[i].split(' ')[0];
+                const time = $filter('dateTimeZone')(dateOnly, '');
 
                 let val = false;
                 if (time !== 'Invalid date') {
-                    const date = new Date(time);
-                    // apply time offset to ensure date entered is not given in UTC (a day behind)
-                    // will allow for correct applying of filters
-                    val = new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
+                    val = new Date(time);
                 }
 
                 if (val && !isNaN(val.getTime())) {
-                    // set date to filter values or minimum / maximum date value
-                    // remove the time part from the filter values
-                    let min = filter.min ? filter.min.toDateString() : new Date(-8640000000000000);
-                    let max = filter.max ? filter.max.toDateString() : new Date(8640000000000000);
+                    const min = filter.min ? filter.min : new Date(-8640000000000000);
+                    const max = filter.max ? filter.max : new Date(8640000000000000);
 
-                    // create a new date object with the time set to beginning of the day
-                    min = new Date(min);
-                    max = new Date(max);
-                    val = new Date(val.toDateString());
+                    // Get the primitive value
+                    const minPrim = min.valueOf();
+                    const maxPrim = max.valueOf();
+                    const valPrim = val.valueOf();
 
-                    // check date; only compare the date and not time
-                    return (val >= min && val <= max)
+                    return (valPrim >= minPrim && valPrim <= maxPrim)
                 } else {
                     return false;
                 }

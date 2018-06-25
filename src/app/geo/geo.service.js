@@ -13,8 +13,8 @@ angular
     .module('app.geo')
     .factory('geoService', geoService);
 
-function geoService($http, $q, $rootScope, events, mapService, layerRegistry, configService,
-    identifyService, /*LayerBlueprint,*/ bookmarkService, ConfigObject, legendService, $timeout, intentionService) {
+function geoService($rootScope, events, mapService, layerRegistry, configService,
+    bookmarkService, legendService, intentionService) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder

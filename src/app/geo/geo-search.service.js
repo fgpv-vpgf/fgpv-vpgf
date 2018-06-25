@@ -9,7 +9,7 @@ angular
     .module('app.geo')
     .factory('geoSearch', geoSearch);
 
-function geoSearch($http, $q, configService, geoService, mapService, gapiService, $rootScope, events, $translate) {
+function geoSearch($http, $q, configService, geoService, mapService, gapiService, $translate) {
     let provinceList; // list of provinces fulfilled by getProvinces
     let typeList; // list of types fulfilled by getTypes
     let manualExtent; // extent object if manual extent filtering is required
