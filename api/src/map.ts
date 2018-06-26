@@ -43,32 +43,23 @@ import { Panel } from 'api/panel';
  * mapInstance.identify = false;
  * ```
  */
-export default class Map {
-    private _id: string;
-    private _fgpMap: Object;
-    private _bounds: geo.XYBounds;
-    private _boundsChanged: Observable<geo.XYBounds>;
-    private _ui: UI;
-    private _layers: LayerGroup;
-    private _simpleLayer: SimpleLayer;
-    private _legendStructure: LegendStructure;
-    private _panel_registry: Panel[];
+export class Map {
 
     /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
-        this._id = this.mapDiv.attr('id') || '';
-        this._ui = new UI(this);
-        this._layers = new LayerGroup(this);
-        this._panel_registry = [];
-        this._layers = new LayerGroup(this);
+        this.identifier = this.mapDiv.attr('id') || '';
+        this.uiObj = new UI(this);
+        this.layersObj = new LayerGroup(this);
+        this.panel_registry = [];
+        this.layersObj = new LayerGroup(this);
 
         // config set implies viewer loading via API
         if (config) {
             // type guard for cases where config object is given, store on window for config.service to find
             if (isConfigSchema(config)) {
-                (<any>window)[`rzConfig${this._id}`] = config;
-                this.mapDiv.attr('rv-config', `rzConfig${this._id}`);
+                (<any>window)[`rzConfig${this.identifier}`] = config;
+                this.mapDiv.attr('rv-config', `rzConfig${this.identifier}`);
             } else {
                 this.mapDiv.attr('rv-config', config);
             }
@@ -79,7 +70,7 @@ export default class Map {
     }
 
     get layers(): LayerGroup {
-        return this._layers;
+        return this.layersObj;
     }
 
     /**
@@ -87,7 +78,7 @@ export default class Map {
      * @return {HTMLElement} - rv-inner-shell div.
      */
     get innerShell(): HTMLElement {
-        let mapDiv = <HTMLElement>document.getElementById(this._id);
+        let mapDiv = <HTMLElement>document.getElementById(this.identifier);
         let innerShell = mapDiv.getElementsByClassName('rv-inner-shell')[0];
         return <HTMLElement>innerShell;
     }
@@ -97,7 +88,7 @@ export default class Map {
      * @return {Panel[]} - the list of Panels on this Map instance.
      */
     get panelRegistry() {
-        return this._panel_registry;
+        return this.panel_registry;
     }
 
     /**
@@ -120,23 +111,23 @@ export default class Map {
         for (let panel of this.panelRegistry) {
             let index;
             if (panel.id === id) {
-                index = this._panel_registry.indexOf(panel);
-                this._panel_registry.splice(index, 1);
+                index = this.panel_registry.indexOf(panel);
+                this.panel_registry.splice(index, 1);
             }
         }
     }
 
     /** Once set, we know the map instance is ready. */
     set fgpMap(fgpMap: Object) {
-        this._fgpMap = fgpMap;
+        this.fgpMapObj = fgpMap;
         this.setBounds(this.mapI.extent, false);
         initObservables.apply(this);
     }
 
     /** Returns the current structured legend JSON. If auto legend, returns undefined */
     get legendConfig(): Array<JSON> | undefined {
-        if (this._legendStructure.type === 'structured') {  // use constant
-            return this._legendStructure.JSON.root.children;
+        if (this.legendStructure.type === 'structured') {  // use constant
+            return this.legendStructure.JSON.root.children;
         }
     }
 
@@ -147,8 +138,8 @@ export default class Map {
      */
     set legendConfig(value: Array<JSON> | undefined) {
         if (value) {
-            const structure = this._legendStructure.JSON;
-            if (this._legendStructure.type === 'structured') {    // use constant
+            const structure = this.legendStructure.JSON;
+            if (this.legendStructure.type === 'structured') {    // use constant
                 structure.root.children = value;
                 this.mapI.setLegendConfig(structure);
             }
@@ -156,7 +147,7 @@ export default class Map {
     }
 
     get simpleLayer(): SimpleLayer {
-        return this._simpleLayer;
+        return this.simpleLayerObj;
     }
 
     /**
@@ -169,10 +160,10 @@ export default class Map {
             if (bounds.spatialReference.wkid !== 4326) {
                 const weirdExtent = (<any>window).RZ.GAPI.proj.localProjectExtent(bounds, 4326);
 
-                this._bounds = new geo.XYBounds([weirdExtent.x1, weirdExtent.y1], [weirdExtent.x0, weirdExtent.y0]);
+                this.boundsObj = new geo.XYBounds([weirdExtent.x1, weirdExtent.y1], [weirdExtent.x0, weirdExtent.y0]);
             }
         } else {
-            this._bounds = bounds;
+            this.boundsObj = bounds;
         }
 
         if (propagate) {
@@ -181,8 +172,8 @@ export default class Map {
     }
 
     set boundsChanged(observable: Observable<geo.XYBounds>) {
-        this._boundsChanged = observable;
-        this._boundsChanged.subscribe(xyBounds => {
+        this.boundsChangedObj = observable;
+        this.boundsChangedObj.subscribe(xyBounds => {
             this.setBounds(xyBounds, false);
         });
     }
@@ -199,12 +190,12 @@ export default class Map {
 
     /** Returns the boundary of the map, similar to extent. */
     get bounds(): geo.XYBounds {
-        return this._bounds;
+        return this.boundsObj;
     }
 
     /** Returns the id assigned to the viewer. */
     get id(): string {
-        return this._id;
+        return this.identifier;
     }
 
     get center(): geo.XY {
@@ -276,12 +267,12 @@ export default class Map {
      * @event boundsChanged
      */
     get boundsChanged(): Observable<geo.XYBounds> {
-        return this._boundsChanged;
+        return this.boundsChangedObj;
     }
 
     /** Returns the viewer map instance as an `any` type for convenience.  */
     get mapI(): any {
-        return <any>this._fgpMap;
+        return <any>this.fgpMapObj;
     }
 
     /** Pans the map to the center point provided. */
@@ -307,9 +298,24 @@ export default class Map {
     }
 
     get ui(): UI {
-        return this._ui;
+        return this.uiObj;
     }
 }
+
+//Map objects prototype
+export interface Map {
+    identifier: string;
+    fgpMapObj: Object;
+    boundsObj: geo.XYBounds;
+    boundsChangedObj: Observable<geo.XYBounds>;
+    uiObj: UI;
+    layersObj: LayerGroup;
+    simpleLayerObj: SimpleLayer;
+    legendStructure: LegendStructure;
+    panel_registry: Panel[];
+}
+
+export default Map;
 
 function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerConfigSchema {
     return (<ViewerConfigSchema>config).version !== undefined;
