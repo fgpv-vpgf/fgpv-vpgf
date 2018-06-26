@@ -278,9 +278,9 @@
     - Setting a PanelElem to have multiple top level elements:
         ```javascript
 
-        let panelElem1 = panel4.createPanelElem('<p>Hello</p><p>there</p>'); //doesn't work
+        let panelElem1 = panel4.createPanelElem($.parseHTML('<p>Hello</p><p>there</p>')); //doesn't work
 
-        let panelElem2 = panel4.createPanelElem('<p>Hello there</p>'); //works
+        let panelElem2 = panel4.createPanelElem($.parseHTML('<p>Hello there</p>')); //works
 
         let panelElem3 = panel4.createPanelElem($.parseHTML('<div>Hello<p>there</p></div>')); //works
 
@@ -295,3 +295,4 @@
     - ***Example:*** setPosition(25, 149);
         - Top left corner 25: 2nd row, 6th column
         - Bottom right corner 149: 8th row, 10th column
+        - alternatively: setPosition([5,1], [9,7]);
