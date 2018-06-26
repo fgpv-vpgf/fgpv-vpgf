@@ -25,6 +25,7 @@ import { S_IFMT } from 'constants';
  * mapInstance.panelRegistry[2]; // retrieves the third panel added to the map instance
  * ```
  */
+
 export class Panel {
 
     private _id: string;
@@ -406,6 +407,8 @@ export class Panel {
         for (let panel of this._map_object.panelRegistry) {
             if (panel._open === true && panel !== this) {
                 this.panelPositions.conflictDetected(panel);
+                this.changePosition();
+                panel.changePosition();
             }
         }
         return false;
@@ -592,7 +595,7 @@ export class Panel {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
         }
 
-        if (! panelCoords.every(coord => coord !== undefined)) {
+        if (!panelCoords.every(coord => coord !== undefined)) {
             throw "Exception: cannot set min position before a valid position is set.";
         }
 
@@ -628,7 +631,6 @@ export class Panel {
         this._panel_contents.style.height = ((panelCoords[3] - panelCoords[1] + 1) * 0.05 * parentHeight).toString() + "px";
 
     }
-
 }
 
 /**
@@ -944,18 +946,26 @@ class PanelPositions {
     */
     conflictDetected(panel: Panel): void {
 
+        //these are the positions of the "enemy panel"
         let topLeftX = panel.panelPositions.panelCoords[0];
         let topLeftY = panel.panelPositions.panelCoords[1];
         let bottomRightX = panel.panelPositions.panelCoords[2];
         let bottomRightY = panel.panelPositions.panelCoords[3];
 
-        //if panel  doesn't completely avoid panel, then panel needs to be shrunk incrementally up to min position
-        //avoiding happens when opening panel's min is to left OR top OR bottom OR right (or some combo)
+        //these are the min positions of the "enemy panel"
+        let minTopLeftX = panel.panelPositions.minPanelCoords[0];
+        let minTopLeftY = panel.panelPositions.minPanelCoords[1];
+        let minBottomRightX = panel.panelPositions.minPanelCoords[2];
+        let minBottomRightY = panel.panelPositions.minPanelCoords[3];
+
+
+        //if our panel doesn't completely avoid "enemy panel", then one of the panels is shrunk incrementally to min position
+        //avoiding happens when our panel's min is to left OR top OR bottom OR right (or some combo) relative to enemy
         if (!(this._bottomRightX < topLeftX || this._bottomRightY < topLeftY || this._topLeftX > bottomRightX || this._topLeftY > bottomRightY)) {
 
-            //if panel's min doesn't completely avoid panel, then panel can't open
-            if (!(this._minBottomRightX < topLeftX || this._minBottomRightY < topLeftY || this._minTopLeftX > bottomRightX || this._minTopLeftY > bottomRightY)) {
-                throw "Exception: conflicting panels, this panel cannot shrink any further to accomodate, panel closing.";
+            //if our panel's min doesn't completely avoid enemy panel's min, then our panel can't open
+            if (!(this._minBottomRightX < minTopLeftX || this._minBottomRightY < minTopLeftY || this._minTopLeftX > minBottomRightX || this._minTopLeftY > minBottomRightY)) {
+                throw "Exception: conflicting panels, panels cannot shrink any further to accomodate, panel closing.";
             }
             else {
 
@@ -968,9 +978,15 @@ class PanelPositions {
                 let oldMinRight = this._minBottomRightX;
                 let oldMinBottom = this._minBottomRightY;
 
-                //if min position avoided panel by being on left, decrease right position of this panel to get closer to min
+
+                //if our min position avoided enemy panel by being on left, decrease right position of this panel to get closer to min
                 if (this._minBottomRightX < topLeftX && this._bottomRightX > this._minBottomRightX) {
                     newRight = topLeftX - 1;
+                    console.log("Shrinking right!");
+                }
+                //if enemy min position avoided our panel by being on left, decrease right position of enemy panel to get closer to min
+                else if (minBottomRightX < this._topLeftX && bottomRightX > minBottomRightX) {
+                    bottomRightX = this._topLeftX - 1;
                     console.log("Shrinking right!");
                 }
 
@@ -979,10 +995,20 @@ class PanelPositions {
                     newBottom = topLeftY - 1;
                     console.log("Shrinking bottom!");
                 }
+                //if enemy min position avoided our panel by being on top, decrease bottom position of enemy panel to get closer to min
+                else if (minBottomRightY < this._topLeftY && bottomRightY > minBottomRightY) {
+                    bottomRightY = this._topLeftY - 1;
+                    console.log("Shrinking bottom!");
+                }
 
                 //if min position avoided panel by being on right, increase left position of this panel to get closer to min
                 if (this._minTopLeftX > bottomRightX && this._topLeftX < this._minTopLeftX) {
                     newLeft = bottomRightX + 1;
+                    console.log("Shrinking left!");
+                }
+                //if enemy min position avoided our panel by being on right, increase left position of enemy panel to get closer to min
+                else if (minTopLeftX > this._bottomRightX && topLeftX < minTopLeftX) {
+                    topLeftX = this._bottomRightX + 1;
                     console.log("Shrinking left!");
                 }
 
@@ -991,9 +1017,17 @@ class PanelPositions {
                     newTop = bottomRightY + 1;
                     console.log("Shrinking top!");
                 }
+                //if enemy min position avoided our panel by being on bottom, increase top position of enemy panel to get closer to min
+                else if (minTopLeftY > this._bottomRightY && topLeftY < minTopLeftY) {
+                    topLeftY = this._bottomRightY + 1;
+                    console.log("Shrinking top!");
+                }
 
                 this.setPanelPosition(newTop * 20 + newLeft, newBottom * 20 + newRight);
                 this.setMinPanelPosition(oldMinTop * 20 + oldMinLeft, oldMinBottom * 20 + oldMinRight);
+
+                panel.panelPositions.setPanelPosition(topLeftY * 20 + topLeftX, bottomRightY * 20 + bottomRightY);
+                panel.panelPositions.setMinPanelPosition(minTopLeftY * 20 + minTopLeftX, minBottomRightY * 20 + minBottomRightX);
             }
         }
     }

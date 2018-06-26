@@ -3,7 +3,6 @@ import * as GEO from 'api/geometry';
 import { ConfigLayer, SimpleLayer } from 'api/layers';
 import { Subject } from 'rxjs';
 import * as $ from "jquery";
-import { Panel, PanelElem, Btn } from 'api/panel';
 
 const mapInstances: Array<Map> = [];
 
