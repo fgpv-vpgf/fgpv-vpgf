@@ -90,6 +90,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
 
+        const canvas = document.createElement('canvas');
+
         // returns true if all toggle symbology checkboxes are checked, false otherwise
         function allSymbolsVisible() {
             const toggleListKeys = Object.keys(self.toggleList);
@@ -308,8 +310,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             if (!self.symbology.isInteractive) {
                 return;
             }
-
-            const canvas = document.createElement('canvas');
 
             // find all symbology items and their parts including the cover symbol if it exists
             [ref.symbolItems, ref.coverSymbolItem] = element
@@ -534,11 +534,22 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
             const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
 
-            const labelHeight = symbolItem.label.outerHeight();
 
             // calculate symbology item's dimensions based on max width
             const itemWidth = Math.min(ref.maxItemWidth, imageWidth);
             const itemHeight = imageWidth !== 0 ? itemWidth / imageWidth * imageHeight : 0; // in cases when image urls are broken its size is 0
+
+            // extremely convoluted math to calculate an aproximation of the label's height
+            // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
+
+            let labelHeight = 0;
+            const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
+            if (textWidth > 0 ) {
+                const lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
+                const padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
+                const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
+                labelHeight = Math.ceil(textWidth / (itemWidth - sidePadding)) * lineHeight + padding;
+            }
 
             // animate symbology container's size
             // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
