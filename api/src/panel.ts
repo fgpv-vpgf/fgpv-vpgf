@@ -974,7 +974,7 @@ class PanelPositions {
                 this.setPanelPosition(newTop * 20 + newLeft, newBottom * 20 + newRight);
                 this.setMinPanelPosition(oldMinTop * 20 + oldMinLeft, oldMinBottom * 20 + oldMinRight);
 
-                panel.panelPositions.setPanelPosition(topLeftY * 20 + topLeftX, bottomRightY * 20 + bottomRightY);
+                panel.panelPositions.setPanelPosition(topLeftY * 20 + topLeftX, bottomRightY * 20 + bottomRightX);
                 panel.panelPositions.setMinPanelPosition(minTopLeftY * 20 + minTopLeftX, minBottomRightY * 20 + minBottomRightX);
             }
         }
