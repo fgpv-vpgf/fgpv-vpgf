@@ -5,6 +5,9 @@ angular.module('app.ui').directive('rvCrosshairs', rvCrosshairs);
 /**
  * `rvCrosshairs` directive body. Displays the keyboard nav crossharis on the map.
  *
+ * @param {object} $rootElement app root element
+ * @param {object} events events service
+ * @param {object} tooltipService tooltip service
  * @return {object} directive body
  */
 function rvCrosshairs($rootElement, events, tooltipService) {
@@ -24,7 +27,11 @@ function rvCrosshairs($rootElement, events, tooltipService) {
         const self = scope.self;
 
         const targetElement = element.find('.rv-target');
-        const [targetElmWidth, targetElmHeight] = [targetElement.outerWidth(), targetElement.outerHeight()];
+
+        // the size of the crosshairs element will be 24x24 until its svg image is rendered
+        // deffer getting the crosshairs dimensions
+        let targetElmWidth;
+        let targetElmHeight;
 
         const jQwindow = $(window);
 
@@ -48,6 +55,11 @@ function rvCrosshairs($rootElement, events, tooltipService) {
             // if not in keyboard mode, do nothing
             if (!$rootElement.hasClass('rv-keyboard')) {
                 return;
+            }
+
+            // get the crosshairs dimensions if not yet defined
+            if (!targetElmWidth) {
+                [targetElmWidth, targetElmHeight] = [targetElement.outerWidth(), targetElement.outerHeight()];
             }
 
             isCrosshairsActive = true;
