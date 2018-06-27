@@ -11,7 +11,6 @@ class Types {
     filterComplete: boolean = false;
 
     constructor(language: string) {
-        console.error(language, types);
         Object.keys(types[language]).forEach(typeKey => {
             this.allTypes[typeKey] = (<any>types[language])[typeKey];
             this.validTypes[typeKey] = (<any>types[language])[typeKey];
