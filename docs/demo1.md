@@ -52,34 +52,30 @@
 ### Installation
 
 #### Package manager
-Using a package manager such as npm or yarn:
+Using the npm package manager:
 
 ```bash
-npm i --save github:RAMP-PCAR/geosearch
-
-or
-
-yarn add github:RAMP-PCAR/geosearch
+npm i --save rz-geosearch
 ```
 
-Then import or require `GeoSearch` from `src/index.ts`.
+Then import it:
+
+```js
+import 'geosearch';
+```
 
 #### Precompiled
 
-This repo contains a `dist` folder where you'll find various precomiled library versions ready to be included in a `script` tag on your page. Chose one of:
-- `geosearch-polyd.js`
-- `geosearch.js`
+This repo contains a `dist` folder where you'll find a precompiled library version ready to be included in a `script` tag on your page.
 
-<p class="danger">
-    A global window object will be created on `window.GeoSearch`. The file size of `geosearch-polyd.js` is much larger than `geosearch.js` because it contains polyfills for IE support. Use `geosearch.js` if your webpage already has polyfills or you don't care to support IE. You should only include one of the scripts in the `dist` folder, you don't need to include all of them.
-</p>
+A global window object named `GeoSearch` will be created.
 
 ### Examples
 You can pass an optional configuration object to `GeoSearch`. After instantiating an instance, you append its HTML output on your page. 
 
 #### Auto Generated
 ````html
-<script src="dist/geosearch.js"></script>
+<script src="geosearch.js"></script>
 <div id="autoSearch"></div>
 
 <script>    
@@ -90,7 +86,7 @@ You can pass an optional configuration object to `GeoSearch`. After instantiatin
 
 #### Custom Elements
 ````html
-<script src="dist/geosearch.js"></script>
+<script src="geosearch.js"></script>
 
 <input id="searchField" name="searchField" type="text">
 <div id="feature"></div>

@@ -16,7 +16,7 @@ export function make(config: defs.MainConfig, query: string): Query {
             return q;
         });
         return q;
-    // posible street address search (not supported) or contains special characters
+    // possible street address search (not supported) or contains special characters
     } else {
         const q = new Query(config, query);
         q.onComplete = new Promise((resolve, reject) => resolve(q));

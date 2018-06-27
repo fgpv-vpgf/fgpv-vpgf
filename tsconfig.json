@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
-        "declaration": false,
+        "declaration": true,
+        "declarationDir": "./",
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "lib": ["dom", "es6", "es2016", "es2015.promise", "es2017.object"],
-        "outDir": "./dist/",
+        "outDir": "./src/",
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": true,

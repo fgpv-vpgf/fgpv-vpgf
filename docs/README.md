@@ -26,7 +26,4 @@ See [the UI demo page](/demo1) for the possible feature object types and the reg
 
 GeoSearch has functionality to make integrating search easy [in a webpage (demo)](/demo1). GeoSearch can also be implemented [programmatically](/demo2) for more advanced usage and control. 
 
-There are precompiled javascript versions that can be found in the `dist` folder, as well as being able to import/require this library with a package manager.
-
-
-
+There is a precompiled javascript version that can be found in the `dist` folder, as well as being able to import this library with the npm package manager.

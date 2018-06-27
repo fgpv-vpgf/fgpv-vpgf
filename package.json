@@ -1,43 +1,38 @@
 {
-    "name": "geosearch",
-    "version": "1.0.0",
+    "name": "rz-geosearch",
+    "version": "2.0.0",
     "description": "Configurable geolocation search library",
-    "main": "dist/geosearch.js",
+    "main": "src/geosearch.js",
     "repository": "git@github.com:RAMP-PCAR/geosearch.git",
     "author": "Miles Petrov",
     "license": "MIT",
     "devDependencies": {
-        "@types/jasmine": "^2.8.6",
-        "@types/jest": "^22.2.0",
-        "babel-core": "^6.26.0",
-        "babel-jest": "^22.4.1",
-        "babel-loader": "^7.1.2",
-        "babel-preset-latest": "^6.24.1",
-        "babel-preset-stage-2": "^6.24.1",
-        "docute-cli": "^0.6.0",
-        "jasmine": "^3.1.0",
-        "jasmine-ts": "^0.2.1",
-        "jest": "^22.4.2",
-        "node-fetch": "^2.0.0",
-        "nodemon": "^1.17.1",
-        "ts-jest": "^22.4.1",
-        "ts-loader": "^3.3.1",
-        "tslint": "^5.9.1",
-        "tslint-loader": "^3.6.0",
-        "typescript": "^2.6.2",
-        "webpack": "^3.10.0",
-        "webpack-shell-plugin": "^0.5.0"
+        "@types/jasmine": "2.8.8",
+        "@types/jest": "23.1.2",
+        "docute-cli": "0.6.0",
+        "dts-webpack-plugin": "0.0.9",
+        "jasmine": "3.1.0",
+        "jasmine-ts": "0.2.1",
+        "jest": "23.2.0",
+        "node-fetch": "2.1.2",
+        "nodemon": "1.17.5",
+        "ts-jest": "22.4.6",
+        "ts-loader": "4.4.1",
+        "tslint": "5.10.0",
+        "tslint-loader": "3.6.0",
+        "typescript": "2.9.2",
+        "webpack": "4.12.2",
+        "webpack-cli": "3.0.8"
     },
     "scripts": {
         "build": "webpack",
         "test": "jest",
         "fetchdata": "node scripts/typeCompiler.js && node scripts/provinceCompiler.js"
     },
-    "dependencies": {
-        "babel-polyfill": "^6.26.0"
-    },
     "jest": {
-        "transform": {".*": "<rootDir>/node_modules/ts-jest/preprocessor.js"},
+        "transform": {
+            ".*": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        },
         "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
         "moduleFileExtensions": [
             "ts",
