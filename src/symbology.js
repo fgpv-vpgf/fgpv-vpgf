@@ -396,6 +396,7 @@ function _listToSymbology(conversionFunction, list) {
     const results = list.map(({ text, image }) => {
         const result = {
             name: text,
+            image: image,
             svgcode: null
         };
 
