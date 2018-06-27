@@ -66,9 +66,7 @@ import 'geosearch';
 
 #### Precompiled
 
-This repo contains a `dist` folder where you'll find a precompiled library version ready to be included in a `script` tag on your page.
-
-A global window object named `GeoSearch` will be created.
+This repo contains a precompiled file located at `src/geosearch.js` which can be included in a `script` tag on your page. A global window object named `GeoSearch` will be created.
 
 ### Examples
 You can pass an optional configuration object to `GeoSearch`. After instantiating an instance, you append its HTML output on your page. 

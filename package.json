@@ -27,6 +27,7 @@
     "scripts": {
         "build": "webpack",
         "test": "jest",
+        "docute": "docute",
         "fetchdata": "node scripts/typeCompiler.js && node scripts/provinceCompiler.js"
     },
     "jest": {

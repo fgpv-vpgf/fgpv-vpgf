@@ -3,8 +3,8 @@ import * as jsonprovs from '../data/provinces.json';
 import * as jsonfsaToProv from '../data/fsa_to_prov.json';
 
 const provinceObj: {[key: string]: Provinces} = {};
-const fsaToProv = (<any>jsonfsaToProv);
-const provs: defs.GenericObjectType = (<any>jsonprovs);
+const fsaToProv = (<any>jsonfsaToProv).default;
+const provs: defs.GenericObjectType = (<any>jsonprovs).default;
 
 class Provinces {
     list: defs.GenericObjectType = {};
