@@ -167,10 +167,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             maxItemWidth: 350
         };
 
-        self.onExpandClick = name => {
-            const image = self.symbology.images[name];
-        }
-
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
                 element.find('.md-icon-button').addClass('show');
@@ -554,14 +550,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 labelHeight = Math.ceil(textWidth / (itemWidth - sidePadding)) * lineHeight + padding;
             }
 
-            const element = symbolItem.image.parent().find('.rv-symbol-expand');
-            if (itemWidth !== imageWidth) {
-                element.css('display', 'block');
-                symbolItem.image.find('svg').after(element);
-            } else {
-                element.css('display', 'none');
-            }
-
             // animate symbology container's size
             // note that animate starts at `RV_DURATION / 3 * 2` giving the items time to move down from the stack
             // so they don't overlay legend entry
@@ -639,9 +627,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const symbologyListItemMargin = 8;
 
             const itemSize = 32; // icon size is fixed
-
-            const element = symbolItem.image.parent().find('.rv-symbol-expand');
-            element.css('display', 'none');
 
             // expand symbology container width and align it to the left (first and last items are fanned out)
             timeline.to(
@@ -756,8 +741,6 @@ function symbologyStack(ConfigObject, gapiService) {
             this._fannedOut = false;
             this._expanded = false;
 
-            this._images = null;
-
             const renderStyleSwitch = {
                 [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
                 [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
@@ -770,15 +753,7 @@ function symbologyStack(ConfigObject, gapiService) {
                 // custom symbology lists coming from the config file need to be converted to svg first
                 this._symbols =
                     symbols.length > 0 && symbols[0].image ? renderStyleSwitch[renderStyle](symbols) : symbols;
-                if (renderStyle === ConfigObject.legend.Entry.IMAGES) {
-                    this._images = {};
-                    for (let symbol of symbols) {
-                        this._images[symbol.text] = symbol.image;
-                    }
-                }
             }
-
-
 
             // if a cover icon is specified, convert it to svg as well
             if (coverIcon) {
@@ -808,9 +783,6 @@ function symbologyStack(ConfigObject, gapiService) {
         }
         get coverIcon() {
             return this._coverIcon;
-        }
-        get images() {
-            return this._images;
         }
 
         get fannedOut() {
