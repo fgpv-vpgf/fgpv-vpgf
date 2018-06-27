@@ -51,7 +51,7 @@ export class Map {
         this.identifier = this.mapDiv.attr('id') || '';
         this.uiObj = new UI(this);
         this.layersObj = new LayerGroup(this);
-        this.panel_registry = [];
+        this.panelRegistryAttr = [];
         this.layersObj = new LayerGroup(this);
 
         // config set implies viewer loading via API
@@ -88,7 +88,7 @@ export class Map {
      * @return {Panel[]} - the list of Panels on this Map instance.
      */
     get panelRegistry() {
-        return this.panel_registry;
+        return this.panelRegistryAttr;
     }
 
     /**
@@ -111,8 +111,8 @@ export class Map {
         for (let panel of this.panelRegistry) {
             let index;
             if (panel.id === id) {
-                index = this.panel_registry.indexOf(panel);
-                this.panel_registry.splice(index, 1);
+                index = this.panelRegistryAttr.indexOf(panel);
+                this.panelRegistryAttr.splice(index, 1);
             }
         }
     }
@@ -312,7 +312,7 @@ export interface Map {
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
     legendStructure: LegendStructure;
-    panel_registry: Panel[];
+    panelRegistryAttr: Panel[];
 }
 
 export default Map;
