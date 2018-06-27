@@ -1,6 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
+import {minusSVG, plusSVG, closeSVG} from '../theme/assets/images/panel-icons';
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
@@ -38,29 +39,29 @@ export class Panel {
     constructor(id: string, map: Map) {
 
         //init class attributes
-        this.id_attr = id;
-        this.open_attr = false;
+        this.idAttr = id;
+        this.openAttr = false;
 
-        this.opening_attr = new Subject();
-        this.closing_attr = new Subject();
-        this.position_changed = new Subject();
-        this.width_changed = new Subject();
-        this.height_changed = new Subject();
+        this.openingAttr = new Subject();
+        this.closingAttr = new Subject();
+        this.positionChangedAttr = new Subject();
+        this.widthChangedAttr = new Subject();
+        this.heightChangedAttr = new Subject();
 
-        this.opening = this.opening_attr.asObservable();
-        this.closing = this.closing_attr.asObservable();
-        this.positionChanged = this.position_changed.asObservable();
-        this.widthChanged = this.width_changed.asObservable();
-        this.heightChanged = this.height_changed.asObservable();
-        this.map_object = map;
-        this.map_height = $(this.map_object.innerShell).height();
-        this.map_width = $(this.map_object.innerShell).width();
+        this.opening = this.openingAttr.asObservable();
+        this.closing = this.closingAttr.asObservable();
+        this.positionChanged = this.positionChangedAttr.asObservable();
+        this.widthChanged = this.widthChangedAttr.asObservable();
+        this.heightChanged = this.heightChangedAttr.asObservable();
+        this.mapObject = map;
+        this.mapHeight = $(this.mapObject.innerShell).height();
+        this.mapWidth = $(this.mapObject.innerShell).width();
 
         //create panel components and document fragment
         this.createPanelComponents();
         this.windowResize(this);
 
-        this.panel_positions = new PanelPositions(this);
+        this.panelPositionsAttr = new PanelPositions(this);
         this.hidden = false;
     }
 
@@ -69,7 +70,7 @@ export class Panel {
     * @return {Map} - the Map object for this Panel.
     */
     get map(): Map {
-        return this.map_object;
+        return this.mapObject;
     }
 
     /**
@@ -77,7 +78,7 @@ export class Panel {
     * @return {PanelPositions} - the PanelPositions object for this Panel.
     */
     get panelPositions(): PanelPositions {
-        return this.panel_positions;
+        return this.panelPositionsAttr;
     }
 
     /**
@@ -104,34 +105,34 @@ export class Panel {
     private createPanelComponents(): void {
 
         //create panel components as HTMLElements
-        this.panel_contents = document.createElement("div");
-        this.panel_contents.classList.add('panel-contents');
+        this.panelContents = document.createElement("div");
+        this.panelContents.classList.add('panel-contents');
 
-        this.panel_controls = document.createElement("div");
-        this.panel_controls.classList.add('panel-controls');
-        this.panel_controls.classList.add('hidden');
+        this.panelControls = document.createElement("div");
+        this.panelControls.classList.add('panel-controls');
+        this.panelControls.classList.add('hidden');
 
-        this.panel_body = document.createElement("div");
-        this.panel_body.classList.add('panel-body');
-        this.panel_body.classList.add('hidden');
+        this.panelBody = document.createElement("div");
+        this.panelBody.classList.add('panel-body');
+        this.panelBody.classList.add('hidden');
 
         this.separator = document.createElement('div');
         this.separator.classList.add('separator');
         this.separator.classList.add('hidden');
 
 
-        this.panel_contents.setAttribute('id', this.id_attr.toString());
+        this.panelContents.setAttribute('id', this.idAttr.toString());
 
         //append panel controls/body to panel contents ("shell")
-        this.panel_contents.appendChild(this.panel_controls);
-        this.panel_contents.appendChild(this.separator);
-        this.panel_contents.appendChild(this.panel_body);
-        this.panel_contents.classList.add('hidden'); //hide panel before a call to open is made
+        this.panelContents.appendChild(this.panelControls);
+        this.panelContents.appendChild(this.separator);
+        this.panelContents.appendChild(this.panelBody);
+        this.panelContents.classList.add('hidden'); //hide panel before a call to open is made
         //append panel contents ("shell") to document fragment
-        this.document_fragment = document.createDocumentFragment();
-        this.document_fragment.appendChild(this.panel_contents);
+        this.documentFragment = document.createDocumentFragment();
+        this.documentFragment.appendChild(this.panelContents);
 
-        $(this.map_object.innerShell).append(this.document_fragment);
+        $(this.mapObject.innerShell).append(this.documentFragment);
     }
 
 
@@ -144,42 +145,42 @@ export class Panel {
         $(window).resize(function () {
 
             let panelCoords = panel.panelPositions.panelCoords;
-            let parentHeight = $(panel.map_object.innerShell).height();
-            let parentWidth = $(panel.map_object.innerShell).width();
-            let controlsHeight = $(panel.panel_controls).height();
+            let parentHeight = $(panel.mapObject.innerShell).height();
+            let parentWidth = $(panel.mapObject.innerShell).width();
+            let controlsHeight = $(panel.panelControls).height();
 
             //if current width is different from stored width, fire width changed
-            if (panel.map_width !== undefined && panel.map_width !== parentWidth && parentWidth !== undefined) {
-                panel.width_changed.next(parentWidth * 0.05);
-                panel.map_width = parentWidth;
+            if (panel.mapWidth !== undefined && panel.mapWidth !== parentWidth && parentWidth !== undefined) {
+                panel.widthChangedAttr.next(parentWidth * 0.05);
+                panel.mapWidth = parentWidth;
             }
 
             //if current height is different from stored height, fire height changed
-            else if (panel.map_width !== undefined && panel.map_height !== parentHeight && parentHeight !== undefined) {
-                panel.height_changed.next(parentHeight * 0.05);
-                panel.map_height = parentHeight;
+            else if (panel.mapWidth !== undefined && panel.mapHeight !== parentHeight && parentHeight !== undefined) {
+                panel.heightChangedAttr.next(parentHeight * 0.05);
+                panel.mapHeight = parentHeight;
             }
 
             //changes width/height to new percentage value of the map
             panel.changePosition();
 
             //need to preserve previously defined width and height of panel
-            if (panel.width_attr !== undefined) {
-                panel.width = panel.width_attr;
+            if (panel.widthAttr !== undefined) {
+                panel.width = panel.widthAttr;
             }
-            if (panel.height_attr !== undefined) {
-                panel.height = panel.height_attr;
+            if (panel.heightAttr !== undefined) {
+                panel.height = panel.heightAttr;
             }
 
             //ensures that toggle (open/close of panel body) is preserved during position change
             if (parentHeight !== undefined) {
-                panel.contents_height = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
+                panel.contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
 
-                if (panel.panel_body.classList.contains('hidden') && controlsHeight !== undefined) {
-                    panel.panel_contents.style.height = controlsHeight.toString() + 'px';
+                if (panel.panelBody.classList.contains('hidden') && controlsHeight !== undefined) {
+                    panel.panelContents.style.height = controlsHeight.toString() + 'px';
                 }
                 else {
-                    panel.panel_contents.style.height = (panel.contents_height + 0.1 * parentHeight).toString() + "px";
+                    panel.panelContents.style.height = (panel.contentsHeight + 0.1 * parentHeight).toString() + "px";
                 }
             }
         });
@@ -222,23 +223,23 @@ export class Panel {
     */
     availableSpaces(width?: number, height?: number): number[][] {
 
-        if (this.map_object === undefined) {
+        if (this.mapObject === undefined) {
             throw "Exception: this panel's map is not set; cannot retrieve grid.";
         }
 
         //if no position, width or height set calculate based on a 1x1 panel
         if (this.panelPositions.panelCoords.every(coord => coord === undefined) && width === undefined && height === undefined) {
 
-            return Panel.availableSpaces(this.map_object.panelRegistry, 1, 1);
+            return Panel.availableSpaces(this.mapObject.panelRegistry, 1, 1);
         }
         else {
             //calculate based on user supplied width and height
             if (width !== undefined && height !== undefined) {
-                return Panel.availableSpaces(this.map_object.panelRegistry, width, height, this);
+                return Panel.availableSpaces(this.mapObject.panelRegistry, width, height, this);
             }
             else {
                 //calculate based on width and height from panel position
-                return Panel.availableSpaces(this.map_object.panelRegistry, this.panelPositions.panelCoords[2] - this.panelPositions.panelCoords[0] + 1, this.panelPositions.panelCoords[3] - this.panelPositions.panelCoords[1] + 1, this);
+                return Panel.availableSpaces(this.mapObject.panelRegistry, this.panelPositions.panelCoords[2] - this.panelPositions.panelCoords[0] + 1, this.panelPositions.panelCoords[3] - this.panelPositions.panelCoords[1] + 1, this);
             }
         }
     }
@@ -248,7 +249,7 @@ export class Panel {
     * @return {(PanelElem | Btn)[]} - a list of controls for the Panel.
     */
     get controls(): (PanelElem | Btn)[] {
-        return this.controls_attr;
+        return this.controlsAttr;
     }
 
     /**
@@ -256,48 +257,45 @@ export class Panel {
     * @param {(PanelElem | Btn)[]} elems - the array of control elements that are set as panel controls
     */
     set controls(elems: (PanelElem | Btn)[]) {
-        this.panel_controls.classList.remove('hidden');
+        this.panelControls.classList.remove('hidden');
         this.separator.classList.remove('hidden');
-        this.controls_attr = elems;
-        let body = this.panel_body;
+        this.controlsAttr = elems;
+        let body = this.panelBody;
         //First empty existing controls
-        this.panel_controls.innerHTML = '';
+        this.panelControls.innerHTML = '';
         let panel = this;
 
         //then fill in new controls
         for (let elem of elems) {
-            $(this.panel_controls).append(elem.element_attr.get(0));
-            elem.element_attr.get(0).classList.add('inline');
+            $(this.panelControls).append(elem.elementAttr.get(0));
+            elem.elementAttr.get(0).classList.add('inline');
 
             //if the control is a close button, then open/close panel upon clicking
-            if (elem.element_attr.get(0).classList.length === 4 && elem.element_attr.get(0).classList[1] === "close-btn") {
-                $(elem.element_attr.get(0)).click(function () {
+            if (elem.elementAttr.get(0).classList.length === 4 && elem.elementAttr.get(0).classList[1] === "close-btn") {
+                $(elem.elementAttr.get(0)).click(function () {
                     panel.close();
                 });
             }
             //if the control button is a toggle button, then allow it to toggle visibility of panel body
-            else if (elem.element_attr.get(0).classList.length === 4 && elem.element_attr.get(0).classList[1] === "toggle-btn") {
-                $(elem.element_attr.get(0)).click(function () {
+            else if (elem.elementAttr.get(0).classList.length === 4 && elem.elementAttr.get(0).classList[1] === "toggle-btn") {
+                $(elem.elementAttr.get(0)).click(function () {
 
-                    //initialize attributes
-                    const minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
-                    const plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
 
                     let btn = new Btn();
-                    btn.element_attr.addClass('btn');
-                    btn.element_attr.addClass('toggle-btn');
-                    elem.element_attr.get(0).removeChild(<HTMLElement>elem.element_attr.get(0).firstChild);
-                    let controls = $(panel.panel_controls).height();
-                    let parentHeight = panel.map_height;
+                    btn.elementAttr.addClass('btn');
+                    btn.elementAttr.addClass('toggle-btn');
+                    elem.elementAttr.get(0).removeChild(<HTMLElement>elem.elementAttr.get(0).firstChild);
+                    let controls = $(panel.panelControls).height();
+                    let parentHeight = panel.mapHeight;
 
                     // if user wants to expand panel
                     if (body.classList.contains('hidden')) {
                         body.classList.remove('hidden');
                         btn.icon = <SVGElement>minusSVG;
                         panel.hidden = false;
-                        elem.element_attr.get(0).appendChild(minusSVG);
-                        if (panel.contents_height !== undefined && parentHeight !== undefined) {
-                            panel.panel_contents.style.height = (panel.contents_height + parentHeight * 0.10).toString() + 'px';
+                        elem.elementAttr.get(0).appendChild(minusSVG);
+                        if (panel.contentsHeight !== undefined && parentHeight !== undefined) {
+                            panel.panelContents.style.height = (panel.contentsHeight + parentHeight * 0.10).toString() + 'px';
                         }
                     }
                     //if user wants to shrink panel
@@ -306,9 +304,9 @@ export class Panel {
                         let btn = new Btn();
                         btn.icon = <SVGElement>plusSVG;
                         panel.hidden = true;
-                        elem.element_attr.get(0).appendChild(plusSVG);
+                        elem.elementAttr.get(0).appendChild(plusSVG);
                         if (controls !== undefined) {
-                            panel.panel_contents.style.height = controls.toString() + 'px';
+                            panel.panelContents.style.height = controls.toString() + 'px';
                         }
                     }
                 });
@@ -327,7 +325,7 @@ export class Panel {
 
         let panelCoords = this.panelPositions.panelCoords;
 
-        if (this.map_object !== undefined) {
+        if (this.mapObject !== undefined) {
 
             //check to see panel position is set
             if (panelCoords.every(coord => coord !== undefined)) {
@@ -339,17 +337,17 @@ export class Panel {
                     if (!this.conflictDetected()) {
 
                         //fires opening observable
-                        this.opening_attr.next()
+                        this.openingAttr.next()
 
                         //changes position on map and updates panel registry
                         this.changePosition();
-                        this.panel_contents.classList.remove('hidden'); //hide panel before a call to open is made
+                        this.panelContents.classList.remove('hidden'); //hide panel before a call to open is made
 
                         if (this.hidden) {
-                            this.panel_contents.style.height = (<number>$(this.panel_controls).height()).toString() + 'px';
+                            this.panelContents.style.height = (<number>$(this.panelControls).height()).toString() + 'px';
                         }
 
-                        this.open_attr = true;
+                        this.openAttr = true;
                     }
                 }
             }
@@ -370,8 +368,8 @@ export class Panel {
     private conflictDetected(): boolean {
 
         //first check all currently open panels for panel's min position, if conflict then throw exception
-        for (let panel of this.map_object.panelRegistry) {
-            if (panel.open_attr === true && panel !== this) {
+        for (let panel of this.mapObject.panelRegistry) {
+            if (panel.openAttr === true && panel !== this) {
                 this.panelPositions.conflictDetected(panel);
                 this.changePosition();
                 panel.changePosition();
@@ -388,10 +386,10 @@ export class Panel {
         let panelCoords = this.panelPositions.panelCoords;
 
         //if the map doesn't exist or the position hasn't been set then the map hasn't been added to a map
-        if (this.map_object !== undefined && panelCoords.every(coord => coord !== undefined) && this.open_attr === true) {
-            this.closing_attr.next();
-            this.panel_contents.classList.add('hidden');
-            this.open_attr = false;
+        if (this.mapObject !== undefined && panelCoords.every(coord => coord !== undefined) && this.openAttr === true) {
+            this.closingAttr.next();
+            this.panelContents.classList.add('hidden');
+            this.openAttr = false;
         }
         else {
             throw "Exception: can't close a panel that has not been added to a map, whose position is not set or that is not open.";
@@ -403,7 +401,7 @@ export class Panel {
     * @return {PanelElem} - the PanelElem that scopes the Panel's contents
     */
     get content(): PanelElem {
-        return this.content_attr;
+        return this.contentAttr;
     }
 
 
@@ -413,15 +411,15 @@ export class Panel {
     */
     set content(content: PanelElem) {
 
-        this.panel_body.classList.remove('hidden');
+        this.panelBody.classList.remove('hidden');
 
-        this.content_attr = content;
+        this.contentAttr = content;
 
         //First empty existing content
-        this.panel_body.innerHTML = '';
+        this.panelBody.innerHTML = '';
 
         //then fill in new contents
-        $(this.panel_body).append(content.element);
+        $(this.panelBody).append(content.element);
     }
 
     /**
@@ -429,7 +427,7 @@ export class Panel {
     * @return {string} - the panel id
     */
     get id(): string {
-        return this.id_attr;
+        return this.idAttr;
     }
 
 
@@ -438,7 +436,7 @@ export class Panel {
     * @return {JQuery<HTMLElement>} - shell element that holds controls and content of panel
     */
     get element(): JQuery<HTMLElement> {
-        return $(this.panel_contents);
+        return $(this.panelContents);
     }
 
 
@@ -462,7 +460,7 @@ export class Panel {
             bottomRight = <number>bottomRightCoord;
         }
 
-        let parentHeight = $(this.map_object.innerShell).height();
+        let parentHeight = $(this.mapObject.innerShell).height();
 
         if (topLeft !== undefined && bottomRight !== undefined) {
             if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
@@ -476,21 +474,21 @@ export class Panel {
                 //change min positions to new default -> user changes away from default if they want
                 this.setMinPosition(topLeft, bottomRight);
 
-                this.position_changed.next([topLeft, bottomRight]);
+                this.positionChangedAttr.next([topLeft, bottomRight]);
 
                 //refresh width and height properties
-                this.width_attr = undefined;
-                this.height_attr = undefined;
-                this.panel_contents.style.maxHeight = "none";
-                this.panel_contents.style.maxWidth = "none";
+                this.widthAttr = undefined;
+                this.heightAttr = undefined;
+                this.panelContents.style.maxHeight = "none";
+                this.panelContents.style.maxWidth = "none";
 
                 //if panel already open, available spaces should be updated.
-                if (this.map_object !== undefined && this.open_attr === true) {
+                if (this.mapObject !== undefined && this.openAttr === true) {
                     this.close();
                     this.open();
                 }
                 if (parentHeight !== undefined) {
-                    this.contents_height = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
+                    this.contentsHeight = ((panelCoords[3] - panelCoords[1] - 1) * 0.05 * parentHeight);
                 }
             }
         }
@@ -503,12 +501,12 @@ export class Panel {
     * @throws {Exception} - cannot set width if panel is not open.
     */
     set width(width: number | string) {
-        if (this.open_attr) {
+        if (this.openAttr) {
             if (typeof this.panelPositions.setWidth(width) === 'string') {
-                this.panel_contents.style.maxWidth = this.panelPositions.setWidth(width);
-                this.panel_contents.style.width = this.panelPositions.setWidth(width);
-                this.panel_contents.style.minHeight = this.panelPositions.setHeight(width);
-                this.width_attr = width;
+                this.panelContents.style.maxWidth = this.panelPositions.setWidth(width);
+                this.panelContents.style.width = this.panelPositions.setWidth(width);
+                this.panelContents.style.minHeight = this.panelPositions.setHeight(width);
+                this.widthAttr = width;
             }
         }
         else {
@@ -522,13 +520,13 @@ export class Panel {
     * @throws {Exception} - cannot set height if panel is not open.
     */
     set height(height: number | string) {
-        if (this.open_attr) {
+        if (this.openAttr) {
 
             if (typeof this.panelPositions.setHeight(height) === 'string') {
-                this.panel_contents.style.height = this.panelPositions.setHeight(height);
-                this.panel_contents.style.maxHeight = this.panelPositions.setHeight(height);
-                this.panel_contents.style.minHeight = this.panelPositions.setHeight(height);
-                this.height_attr = height;
+                this.panelContents.style.height = this.panelPositions.setHeight(height);
+                this.panelContents.style.maxHeight = this.panelPositions.setHeight(height);
+                this.panelContents.style.minHeight = this.panelPositions.setHeight(height);
+                this.heightAttr = height;
             }
         }
         else {
@@ -567,7 +565,7 @@ export class Panel {
 
         if (this.panelPositions.setMinPanelPosition(topLeft, bottomRight)) {
             //if panel already open, available spaces should be updated. (everything outside min is coverable)
-            if (this.map_object !== undefined && this.open_attr === true) {
+            if (this.mapObject !== undefined && this.openAttr === true) {
                 this.close();
                 this.open();
             }
@@ -584,17 +582,17 @@ export class Panel {
         let panelCoords = this.panelPositions.panelCoords;
 
         //set left position (5% * parentWidth * topLeftX)
-        let parentWidth = <number>$(this.map_object.innerShell).width();
-        this.panel_contents.style.left = (0.05 * parentWidth * panelCoords[0]).toString() + "px";
+        let parentWidth = <number>$(this.mapObject.innerShell).width();
+        this.panelContents.style.left = (0.05 * parentWidth * panelCoords[0]).toString() + "px";
 
         //set top position (5% * parentHeight * topLeftY)
         //need to forcecast because height and width return undefined
-        let parentHeight = <number>$(this.map_object.innerShell).height();
-        this.panel_contents.style.top = (0.05 * parentHeight * panelCoords[1]).toString() + "px";
+        let parentHeight = <number>$(this.mapObject.innerShell).height();
+        this.panelContents.style.top = (0.05 * parentHeight * panelCoords[1]).toString() + "px";
 
         //calculate width and height of panel according to bottom right.
-        this.panel_contents.style.width = ((panelCoords[2] - panelCoords[0] + 1) * 0.05 * parentWidth).toString() + "px";
-        this.panel_contents.style.height = ((panelCoords[3] - panelCoords[1] + 1) * 0.05 * parentHeight).toString() + "px";
+        this.panelContents.style.width = ((panelCoords[2] - panelCoords[0] + 1) * 0.05 * parentWidth).toString() + "px";
+        this.panelContents.style.height = ((panelCoords[3] - panelCoords[1] + 1) * 0.05 * parentHeight).toString() + "px";
 
     }
 }
@@ -636,63 +634,58 @@ class PanelElem {
     */
     setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
 
-        const minusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H5V11H19V13Z"/></svg>')[0];
-        const plusSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" /></svg>')[0];
-        const closeSVG = $.parseHTML('<svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#ffffff" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>')[0];
-
-
         //if the element is a string either control divider, close button or title
         if (typeof element === "string") {
             //divider shortcut
             if (element === "|") {
-                this.element_attr = $('<div class="divider"></div>')
+                this.elementAttr = $('<div class="divider"></div>')
             }
             //close button shortcut
             else if (element === "x") {
                 var btn = new Btn();
                 btn.icon = <SVGElement>closeSVG;
-                this.element_attr = btn.element;
-                this.element_attr.addClass('btn');
-                this.element_attr.addClass('close-btn');
+                this.elementAttr = btn.element;
+                this.elementAttr.addClass('btn');
+                this.elementAttr.addClass('close-btn');
 
             }
             //toggle button shortcut
             else if (element === 'T') {
                 var btn = new Btn();
                 btn.icon = <SVGElement>minusSVG;
-                this.element_attr = btn.element;
-                this.element_attr.addClass('btn');
-                this.element_attr.addClass('toggle-btn');
+                this.elementAttr = btn.element;
+                this.elementAttr.addClass('btn');
+                this.elementAttr.addClass('toggle-btn');
             }
             //title shortcut
             else {
-                this.element_attr = $('<h1 style="font-weight: normal">' + element + '</h1>');
+                this.elementAttr = $('<h1 style="font-weight: normal">' + element + '</h1>');
             }
         }
         else {
-            this.element_attr = $(element);
+            this.elementAttr = $(element);
 
             //Throw exception if there's multiple top level elements
-            let children = this.element_attr.html();
-            let checkElem = this.element_attr.empty();
+            let children = this.elementAttr.html();
+            let checkElem = this.elementAttr.empty();
             if (checkElem.length > 1) {
                 throw "Exception: cannot have multiple top level elements.";
             }
-            this.element_attr = this.element_attr.append(children);
+            this.elementAttr = this.elementAttr.append(children);
         }
 
 
         //If element already has id attribute, set id to that id, otherwise set to randomly generated id
-        if (this.element_attr !== undefined && this.element_attr.attr('id') !== undefined) {
-            this.id_attr = this.element_attr.attr('id');
+        if (this.elementAttr !== undefined && this.elementAttr.attr('id') !== undefined) {
+            this.idAttr = this.elementAttr.attr('id');
         }
         else {
-            this.id_attr = "PanelElem" + Math.round(Math.random() * 10000).toString(); //random id autogenerated
-            this.element_attr.attr('id', this.id_attr);
+            this.idAttr = "PanelElem" + Math.round(Math.random() * 10000).toString(); //random id autogenerated
+            this.elementAttr.attr('id', this.idAttr);
         }
 
         //Adds elem style from stylesheet
-        this.element_attr.addClass("elem");
+        this.elementAttr.addClass("elem");
 
     }
 
@@ -701,7 +694,7 @@ class PanelElem {
     * @return {string} - the id of this PanelElem.
     */
     get id(): string {
-        return this.id_attr;
+        return this.idAttr;
     }
 
     /**
@@ -709,7 +702,7 @@ class PanelElem {
     * @return {JQuery<HTMLElement>} - this element that the PanelElem scopes.
     */
     get element(): JQuery<HTMLElement> {
-        return this.element_attr;
+        return this.elementAttr;
     }
 
 }
@@ -737,7 +730,7 @@ class PanelElem {
  */
 class Btn extends PanelElem {
 
-    element_attr = <JQuery<HTMLElement>>$('<button class="btn"></button>');
+    elementAttr = <JQuery<HTMLElement>>$('<button class="btn"></button>');
 
 
     /**
@@ -751,7 +744,7 @@ class Btn extends PanelElem {
         if (svg.firstChild !== null) {
             (<HTMLElement>svg.firstChild).classList.add('svg-style');
         }
-        this.element_attr.append(svg);
+        this.elementAttr.append(svg);
     }
 
     /**
@@ -759,8 +752,8 @@ class Btn extends PanelElem {
     * @param {string} txt - the text to be set for the Btn
     */
     set text(txt: string) {
-        this.element_attr.html(txt);
-        this.element_attr.addClass('text-btn');
+        this.elementAttr.html(txt);
+        this.elementAttr.addClass('text-btn');
     }
 }
 
@@ -778,7 +771,7 @@ class PanelPositions {
     * @param {Panel} panel - Panel for which position relation computations are performed
     */
     constructor(panel: Panel) {
-        this.panel_attr = panel;
+        this.panelAttr = panel;
     }
 
     /**
@@ -786,11 +779,11 @@ class PanelPositions {
     * @return {number[]} - topLeft and bottomRight Panel coordinates
     */
     get panelCoords(): number[] {
-        return [this.topLeftX_val, this.topLeftY_val, this.bottomRightX_val, this.bottomRightY_val];
+        return [this.topLeftXVal, this.topLeftYVal, this.bottomRightXVal, this.bottomRightYVal];
     }
 
     get minPanelCoords(): number[] {
-        return [this.minTopLeftX_val, this.minTopLeftY_val, this.minBottomRightY_val, this.minBottomRightY_val]
+        return [this.mintopLeftXVal, this.mintopLeftYVal, this.minbottomRightYVal, this.minbottomRightYVal]
     }
 
     /**
@@ -811,10 +804,10 @@ class PanelPositions {
         }
         else {
             //set position values
-            this.topLeftX_val = topLeftX;
-            this.topLeftY_val = topLeftY;
-            this.bottomRightX_val = bottomRightX;
-            this.bottomRightY_val = bottomRightY;
+            this.topLeftXVal = topLeftX;
+            this.topLeftYVal = topLeftY;
+            this.bottomRightXVal = bottomRightX;
+            this.bottomRightYVal = bottomRightY;
         }
         return true;
     }
@@ -839,10 +832,10 @@ class PanelPositions {
         }
 
         if (this.checkOutOfBounds(true, topLeftX, topLeftY, bottomRightX, bottomRightY) === false) {
-            this.minTopLeftX_val = topLeftX;
-            this.minTopLeftY_val = topLeftY;
-            this.minBottomRightX_val = bottomRightX;
-            this.minBottomRightY_val = bottomRightY;
+            this.mintopLeftXVal = topLeftX;
+            this.mintopLeftYVal = topLeftY;
+            this.minbottomRightXVal = bottomRightX;
+            this.minbottomRightYVal = bottomRightY;
         }
 
         return true;
@@ -878,7 +871,7 @@ class PanelPositions {
 
         //min position not within specified positioning
         if (isMin === true) {
-            let minErrorConds = bottomRightX > this.bottomRightX_val || bottomRightY > this.bottomRightY_val || topLeftX < this.topLeftX_val || topLeftY < this.topLeftY_val;
+            let minErrorConds = bottomRightX > this.bottomRightXVal || bottomRightY > this.bottomRightYVal || topLeftX < this.topLeftXVal || topLeftY < this.topLeftYVal;
             if (minErrorConds) {
                 throw "Exception: the minPosition Panel is not contained within Panel position.";
             }
@@ -909,65 +902,65 @@ class PanelPositions {
 
         //if our panel doesn't completely avoid "enemy panel", then one of the panels is shrunk incrementally to min position
         //avoiding happens when our panel's min is to left OR top OR bottom OR right (or some combo) relative to enemy
-        if (!(this.bottomRightX_val < topLeftX || this.bottomRightY_val < topLeftY || this.topLeftX_val > bottomRightX || this.topLeftY_val > bottomRightY)) {
+        if (!(this.bottomRightXVal < topLeftX || this.bottomRightYVal < topLeftY || this.topLeftXVal > bottomRightX || this.topLeftYVal > bottomRightY)) {
 
             //if our panel's min doesn't completely avoid enemy panel's min, then our panel can't open
-            if (!(this.minBottomRightX_val < minTopLeftX || this.minBottomRightY_val < minTopLeftY || this.minTopLeftX_val > minBottomRightX || this.minTopLeftY_val > minBottomRightY)) {
+            if (!(this.minbottomRightXVal < minTopLeftX || this.minbottomRightYVal < minTopLeftY || this.mintopLeftXVal > minBottomRightX || this.mintopLeftYVal > minBottomRightY)) {
                 throw "Exception: conflicting panels, panels cannot shrink any further to accomodate, panel closing.";
             }
             else {
 
-                let newLeft = this.topLeftX_val;
-                let newTop = this.topLeftY_val;
-                let newBottom = this.bottomRightY_val;
-                let newRight = this.bottomRightX_val;
-                let oldMinLeft = this.minTopLeftX_val;
-                let oldMinTop = this.minTopLeftY_val;
-                let oldMinRight = this.minBottomRightX_val;
-                let oldMinBottom = this.minBottomRightY_val;
+                let newLeft = this.topLeftXVal;
+                let newTop = this.topLeftYVal;
+                let newBottom = this.bottomRightYVal;
+                let newRight = this.bottomRightXVal;
+                let oldMinLeft = this.mintopLeftXVal;
+                let oldMinTop = this.mintopLeftYVal;
+                let oldMinRight = this.minbottomRightXVal;
+                let oldMinBottom = this.minbottomRightYVal;
 
 
                 //if our min position avoided enemy panel by being on left, decrease right position of this panel to get closer to min
-                if (this.minBottomRightX_val < topLeftX && this.bottomRightX_val > this.minBottomRightX_val) {
+                if (this.minbottomRightXVal < topLeftX && this.bottomRightXVal > this.minbottomRightXVal) {
                     newRight = topLeftX - 1;
                     console.log("Shrinking right!");
                 }
                 //if enemy min position avoided our panel by being on left, decrease right position of enemy panel to get closer to min
-                else if (minBottomRightX < this.topLeftX_val && bottomRightX > minBottomRightX) {
-                    bottomRightX = this.topLeftX_val - 1;
+                else if (minBottomRightX < this.topLeftXVal && bottomRightX > minBottomRightX) {
+                    bottomRightX = this.topLeftXVal - 1;
                     console.log("Shrinking right!");
                 }
 
                 //if min position avoided panel by being on top, decrease bottom position of this panel to get closer to min
-                if (this.minBottomRightY_val < topLeftY && this.bottomRightY_val > this.minBottomRightY_val) {
+                if (this.minbottomRightYVal < topLeftY && this.bottomRightYVal > this.minbottomRightYVal) {
                     newBottom = topLeftY - 1;
                     console.log("Shrinking bottom!");
                 }
                 //if enemy min position avoided our panel by being on top, decrease bottom position of enemy panel to get closer to min
-                else if (minBottomRightY < this.topLeftY_val && bottomRightY > minBottomRightY) {
-                    bottomRightY = this.topLeftY_val - 1;
+                else if (minBottomRightY < this.topLeftYVal && bottomRightY > minBottomRightY) {
+                    bottomRightY = this.topLeftYVal - 1;
                     console.log("Shrinking bottom!");
                 }
 
                 //if min position avoided panel by being on right, increase left position of this panel to get closer to min
-                if (this.minTopLeftX_val > bottomRightX && this.topLeftX_val < this.minTopLeftX_val) {
+                if (this.mintopLeftXVal > bottomRightX && this.topLeftXVal < this.mintopLeftXVal) {
                     newLeft = bottomRightX + 1;
                     console.log("Shrinking left!");
                 }
                 //if enemy min position avoided our panel by being on right, increase left position of enemy panel to get closer to min
-                else if (minTopLeftX > this.bottomRightX_val && topLeftX < minTopLeftX) {
-                    topLeftX = this.bottomRightX_val + 1;
+                else if (minTopLeftX > this.bottomRightXVal && topLeftX < minTopLeftX) {
+                    topLeftX = this.bottomRightXVal + 1;
                     console.log("Shrinking left!");
                 }
 
                 //if min position avoided panel by being on bottom, increase top position of this panel to get closer to min
-                if (this.minTopLeftY_val > bottomRightY && this.topLeftY_val < this.minTopLeftY_val) {
+                if (this.mintopLeftYVal > bottomRightY && this.topLeftYVal < this.mintopLeftYVal) {
                     newTop = bottomRightY + 1;
                     console.log("Shrinking top!");
                 }
                 //if enemy min position avoided our panel by being on bottom, increase top position of enemy panel to get closer to min
-                else if (minTopLeftY > this.bottomRightY_val && topLeftY < minTopLeftY) {
-                    topLeftY = this.bottomRightY_val + 1;
+                else if (minTopLeftY > this.bottomRightYVal && topLeftY < minTopLeftY) {
+                    topLeftY = this.bottomRightYVal + 1;
                     console.log("Shrinking top!");
                 }
 
@@ -1005,15 +998,15 @@ class PanelPositions {
         //if the user supplies the panel
         if (panel !== undefined) {
             //if the min position is different than regular position, take this into account
-            if (panel.panelPositions.bottomRightX_val !== panel.panelPositions.minBottomRightX_val || panel.panelPositions.bottomRightY_val !== panel.panelPositions.minBottomRightY_val || panel.panelPositions.topLeftX_val !== panel.panelPositions.minTopLeftX_val || panel.panelPositions.topLeftY_val !== panel.panelPositions.minTopLeftY_val) {
+            if (panel.panelPositions.bottomRightXVal !== panel.panelPositions.minbottomRightXVal || panel.panelPositions.bottomRightYVal !== panel.panelPositions.minbottomRightYVal || panel.panelPositions.topLeftXVal !== panel.panelPositions.mintopLeftXVal || panel.panelPositions.topLeftYVal !== panel.panelPositions.mintopLeftYVal) {
 
                 //how far removed the min topLeft from topLeft?
-                minTopX = panel.panelPositions.minTopLeftX_val - panel.panelPositions.topLeftX_val;
-                minTopY = panel.panelPositions.minTopLeftY_val - panel.panelPositions.topLeftY_val;
+                minTopX = panel.panelPositions.mintopLeftXVal - panel.panelPositions.topLeftXVal;
+                minTopY = panel.panelPositions.mintopLeftYVal - panel.panelPositions.topLeftYVal;
 
                 //how far removed is minBottomRight topLeft?
-                minBottomX = panel.panelPositions.minBottomRightX_val - panel.panelPositions.topLeftX_val;
-                minBottomY = panel.panelPositions.minBottomRightY_val - panel.panelPositions.topLeftY_val;
+                minBottomX = panel.panelPositions.minbottomRightXVal - panel.panelPositions.topLeftXVal;
+                minBottomY = panel.panelPositions.minbottomRightYVal - panel.panelPositions.topLeftYVal;
             }
         }
 
@@ -1028,15 +1021,15 @@ class PanelPositions {
 
         //for every open panel in panel registry
         for (let panelObj of panelRegistry) {
-            if (panelObj.open_attr === true && panelObj !== panel) {
+            if (panelObj.openAttr === true && panelObj !== panel) {
 
                 //panel position will be invalid if the topLeft coordinate of the panel when treated as the bottomRight corner overlaps
-                let topLeftX = panelObj.panelPositions.topLeftX_val - width + 1;
-                let originalTopLeftX = panelObj.panelPositions.topLeftX_val;
-                let topLeftY = panelObj.panelPositions.topLeftY_val - height + 1;
-                let originalTopLeftY = panelObj.panelPositions.topLeftY_val;
-                let bottomRightX = panelObj.panelPositions.bottomRightX_val;
-                let bottomRightY = panelObj.panelPositions.bottomRightY_val;
+                let topLeftX = panelObj.panelPositions.topLeftXVal - width + 1;
+                let originalTopLeftX = panelObj.panelPositions.topLeftXVal;
+                let topLeftY = panelObj.panelPositions.topLeftYVal - height + 1;
+                let originalTopLeftY = panelObj.panelPositions.topLeftYVal;
+                let bottomRightX = panelObj.panelPositions.bottomRightXVal;
+                let bottomRightY = panelObj.panelPositions.bottomRightYVal;
 
                 //if these are out of bounds of map, just use the zeroth coordinates
                 if (topLeftX < 0) {
@@ -1075,12 +1068,12 @@ class PanelPositions {
     */
     setWidth(width: number | string): (string | null) {
 
-        let parentWidth = <number>$(this.panel_attr.map.innerShell).width();
+        let parentWidth = <number>$(this.panelAttr.map.innerShell).width();
 
         if (typeof width === 'number') {
 
-            let topLeftPx = this.topLeftX_val * 0.05 * parentWidth
-            let bottomRightPx = this.bottomRightX_val * 0.05 * parentWidth;
+            let topLeftPx = this.topLeftXVal * 0.05 * parentWidth
+            let bottomRightPx = this.bottomRightXVal * 0.05 * parentWidth;
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + width <= bottomRightPx) {
@@ -1092,10 +1085,10 @@ class PanelPositions {
             //as long as supplied width is within panel width in percents
             if (numWidth >= 0 && numWidth <= 1) {
 
-                let panelWidth = (this.bottomRightX_val - this.topLeftX_val + 1) * 0.05 * parentWidth;
+                let panelWidth = (this.bottomRightXVal - this.topLeftXVal + 1) * 0.05 * parentWidth;
                 let newWidth = panelWidth * numWidth;   //converts percent width to pixel width
-                let topLeftPx = this.topLeftX_val * 0.05 * parentWidth
-                let bottomRightPx = this.bottomRightX_val * 0.05 * parentWidth;
+                let topLeftPx = this.topLeftXVal * 0.05 * parentWidth
+                let bottomRightPx = this.bottomRightXVal * 0.05 * parentWidth;
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newWidth <= bottomRightPx) {
@@ -1113,12 +1106,12 @@ class PanelPositions {
     */
     setHeight(height: number | string): (string | null) {
 
-        let parentHeight = <number>$(this.panel_attr.map.innerShell).height();
+        let parentHeight = <number>$(this.panelAttr.map.innerShell).height();
 
         if (typeof height === 'number') {
 
-            let topLeftPx = this.topLeftY_val * 0.05 * parentHeight;
-            let bottomRightPx = this.bottomRightY_val * 0.05 * parentHeight;
+            let topLeftPx = this.topLeftYVal * 0.05 * parentHeight;
+            let bottomRightPx = this.bottomRightYVal * 0.05 * parentHeight;
 
             //as long as supplied width is within panel width -> else ignored
             if (topLeftPx + height <= bottomRightPx) {
@@ -1130,10 +1123,10 @@ class PanelPositions {
             //as long as supplied width is within panel width in percents
             if (numHeight >= 0 && numHeight <= 1) {
 
-                let panelHeight = (this.bottomRightY_val - this.topLeftY_val + 1) * 0.05 * parentHeight;
+                let panelHeight = (this.bottomRightYVal - this.topLeftYVal + 1) * 0.05 * parentHeight;
                 let newHeight = panelHeight * numHeight;   //converts percent width to pixel width
-                let topLeftPx = this.topLeftY_val * 0.05 * parentHeight;
-                let bottomRightPx = this.bottomRightY_val * 0.05 * parentHeight;
+                let topLeftPx = this.topLeftYVal * 0.05 * parentHeight;
+                let bottomRightPx = this.bottomRightYVal * 0.05 * parentHeight;
 
                 //as long as supplied width is within panel width -> else ignored
                 if (topLeftPx + newHeight <= bottomRightPx) {
@@ -1147,40 +1140,40 @@ class PanelPositions {
 
 export interface Panel {
 
-    id_attr: string;
+    idAttr: string;
 
     //Panel items
-    content_attr: PanelElem;
-    controls_attr: (PanelElem)[];
+    contentAttr: PanelElem;
+    controlsAttr: (PanelElem)[];
 
     //HTML parent Components
-    panel_contents: HTMLElement;
-    panel_controls: HTMLElement;
-    panel_body: HTMLElement;
-    document_fragment: DocumentFragment;
+    panelContents: HTMLElement;
+    panelControls: HTMLElement;
+    panelBody: HTMLElement;
+    documentFragment: DocumentFragment;
     separator: HTMLElement;
 
-    map_width: number | undefined;
-    map_height: number | undefined;
+    mapWidth: number | undefined;
+    mapHeight: number | undefined;
 
-    map_object: Map;
+    mapObject: Map;
 
-    width_attr: number | string | undefined;
-    height_attr: number | string | undefined;
+    widthAttr: number | string | undefined;
+    heightAttr: number | string | undefined;
 
-    contents_height: number;
+    contentsHeight: number;
     hidden: boolean;
 
     //subjects initialized for observables that are fired through method calls
-    opening_attr: Subject<any>;
-    closing_attr: Subject<any>;
-    position_changed: Subject<any>;
-    width_changed: Subject<any>;
-    height_changed: Subject<any>;
+    openingAttr: Subject<any>;
+    closingAttr: Subject<any>;
+    positionChangedAttr: Subject<any>;
+    widthChangedAttr: Subject<any>;
+    heightChangedAttr: Subject<any>;
 
-    panel_positions: PanelPositions;
+    panelPositionsAttr: PanelPositions;
 
-    open_attr: boolean; //whether panel is open or closed
+    openAttr: boolean; //whether panel is open or closed
 
     //user accessible observables
     opening: Observable<any>;
@@ -1191,21 +1184,21 @@ export interface Panel {
 }
 
 interface PanelElem {
-    id_attr: string;
-    document_fragment: DocumentFragment;
-    element_attr: JQuery<HTMLElement>;
+    idAttr: string;
+    documentFragment: DocumentFragment;
+    elementAttr: JQuery<HTMLElement>;
 }
 
 interface PanelPositions {
-    topLeftX_val: number;
-    topLeftY_val: number;
-    bottomRightX_val: number;
-    bottomRightY_val: number;
+    topLeftXVal: number;
+    topLeftYVal: number;
+    bottomRightXVal: number;
+    bottomRightYVal: number;
 
-    minTopLeftX_val: number;
-    minTopLeftY_val: number;
-    minBottomRightX_val: number;
-    minBottomRightY_val: number;
+    mintopLeftXVal: number;
+    mintopLeftYVal: number;
+    minbottomRightXVal: number;
+    minbottomRightYVal: number;
 
-    panel_attr: Panel;
+    panelAttr: Panel;
 }
