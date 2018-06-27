@@ -64,12 +64,12 @@ $layer-item-height-touch: rem(7.2);
         @for $i from 0 to 2 {
             @include sort-group($i);
         }
+    }
 
-        .rv-image-expand {
-            position: absolute;
-            top: 2.5px;
-            right: 2.5px;
-        }
+    .rv-image-expand {
+        position: absolute;
+        top: 2.5px;
+        right: 2.5px;
     }
 
     // provide indentations for nested elements

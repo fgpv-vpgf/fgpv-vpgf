@@ -10,15 +10,7 @@
     </div>
 
     <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index }">
-        <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
-        <md-button
-            class="md-icon-button rv-icon-20 rv-symbol-expand"
-            ng-click="self.onExpandClick(symbol.name)"
-            ng-show="self.symbology.expanded"
-            aria-label="{{ 'toc.tooltip.viewFullsizeImage' | translate }}">
-            <md-icon md-svg-src="action:zoom_in"></md-icon>
-            <md-tooltip md-direction="top">{{ 'toc.tooltip.viewFullsizeImage' | translate }}</md-tooltip>
-        </md-button>
+        <rv-svg rv-expand-image class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
 
         <div class="rv-symbol-label-container">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
