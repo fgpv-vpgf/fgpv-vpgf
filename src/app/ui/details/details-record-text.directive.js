@@ -42,7 +42,7 @@ function rvDetailsRecordText(detailService) {
 
         // get template to override basic details output, null/undefined => show default
         self.templateUrl = l.config._source.templateUrl;
-        
+
         if (!l.config._source.parserUrl) {
             return;
         }
