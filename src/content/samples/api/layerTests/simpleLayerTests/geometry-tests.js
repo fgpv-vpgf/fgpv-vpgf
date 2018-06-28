@@ -15,55 +15,57 @@ $.getScript('../../../../rv-main.js', function () {
         // create hoverpoint instances and add them to the different points
         const hoverPointA = new RZ.GEO.Hover(0, 'my annotation', { position: 'right' });
         const hoverPointB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, position: 'left' });
-        pointA.addHoverpoint(hoverPointA);
-        pointE.addHoverpoint(hoverPointB);
 
         // create a line instance using pre-existing API points
         const lineD = new RZ.GEO.LineString(12, [pointA, pointE]);
         // create a hoverpoint instance and add it to the line
         const hoverPointD = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Line Hover!</a>', { keepOpen: true, followCursor: true, position: 'bottom' });
 
-        simpleLayer.addGeometry([pointA, pointE]);
 
         //////////////////////////      TESTS       ///////////////////////////////////////////////////////////////////////////////
-
-
-
-
-        //add hoverpoints to points
-        document.getElementById("AddHover").onclick = function () {
-            pointA.hover = hoverPointA;
-            pointE.hover = hoverPointB;
-            document.getElementById("AddHover").disabled = true;
-            document.getElementById("RemoveHover").disabled = false;
-        }
 
         //ADD GEOMETRIES (Points and Hoverpoints): SUBSCRIPTION
         simpleLayer.geometryAdded.subscribe(l => {
             console.log('Geometry added');
-            document.getElementById("AddPoints").style.backgroundColor = "#00FF00";
+            // confirm hoverpoint and geometry got added correctly, test passes
+            if (simpleLayer.geometry.length === 2 && simpleLayer.geometry[0].hover !== null && simpleLayer.geometry[1].hover !== null) {
+                document.getElementById("AddHover").style.backgroundColor = "#00FF00";
+            }
+        });
 
-            $("button").click(function () {
-                //if a geometry added --> change disabled button HTML to success
-                if (this.id === "AddMultiPoint" || this.id === "AddLine") {
-                    document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                }
-                if (this.id === "AddHover") {
-                    // confirm hoverpoint and geometry got added correctly
-                    if(simpleLayer.geometry.length === 2 || simpleLayer.geometry[0].hoverpoint !== null || simpleLayer.geometry[1].hoverpoint !== null){
-                        document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                    }
-                }
+        simpleLayer.geometryRemoved.subscribe(l => {
+
+        })
+
+        document.getElementById("AddHover").onclick = function () {
+            pointA.hover = hoverPointA;
+            pointE.hover = hoverPointB;
+            simpleLayer.addGeometry([pointA, pointE]);
+            document.getElementById("AddHover").disabled = true;
+            document.getElementById("RemoveHover").disabled = false;
+        }
+
+        document.getElementById("RemoveHover").onclick = function () {
+
+            //remove hoverpoints
+            simpleLayer.geometry.forEach(geometry => {
+                geometry.removeHover();
             });
 
-        });
+            //if hoverpoints have been removed, test passes
+            if(simpleLayer.geometry[0].hover === null && simpleLayer.geometry[1].hover === null){
+                document.getElementById("RemoveHover").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveHover").disabled = true;
+            }
+            else{
+                document.getElementById("RemoveHover").style.backgroundColor = "red";
+                document.getElementById("RemoveHover").disabled = true;
+            }
+        }
 
 
     });
-
-    $('#main').append(`
-        <div id="fgpmap" style="height:900px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>
-    `);
+    $('#main').append(`<div id="fgpmap" style="height:700px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>`);
 
     const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 });
