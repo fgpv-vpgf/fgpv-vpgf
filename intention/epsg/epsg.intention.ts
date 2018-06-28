@@ -21,7 +21,7 @@ export default {
         }
 
         return new Promise((resolve, reject) => {
-            $.get(`http://epsg.io/${matcher[1]}.proj4`)
+            $.get((location.protocol === 'https:' ? 'https:' : 'http:') + `//epsg.io/${matcher[1]}.proj4`)
                 .done(resolve)
                 .fail(reject);
         });
