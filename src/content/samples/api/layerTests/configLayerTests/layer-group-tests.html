@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue">Layer Group Tests</span>
+    </h1>
+
+    <div class="row" id="main" style="display:flex">
+        <div style="width:30%; height:700px; overflow-y: scroll; padding:10px; background-color:lightgrey; border:solid;" class="column">
+            <h2>Tests:</h2>
+            <p>Green means pass, red means fail.</p>
+
+            <div id="AddLayer">
+                <h4>1. Layer 0 added to the layer group?</h4>
+                <button id="AddLayerCheck">Add Layer Check</button>
+                <br>
+            </div>
+
+            <div id="AllLayersTest">
+                <h4>2. All layers added to the layer group?</h4>
+                <button id="AllLayersCheck">All Layers Check</button>
+                <br>
+            </div>
+
+            <div id="GetLayersByID">
+                <h4>3. Get Layer 0 by ID.</h4>
+                <button id="LayersByID">Get ID 0</button>
+                <br>
+            </div>
+
+            <div id="GetLayersByType">
+                <h4>4. Get config layer by type.</h4>
+                <button id="LayersByType">Get ConfigLayer Type</button>
+                <br>
+            </div>
+
+            <div id="FetchAttributesDiv">
+                <h4>5. Fetch Attributes for specific config layer.</h4>
+                <button id="FetchAttributes">Fetch Attributes</button>
+                <br>
+            </div>
+
+            <div id="SetAttributesDiv">
+                <h4>6. Set attributes for...</h4>
+                <p>(double check with datagrid)</p>
+                <button id="SetAttribute">country field of OID: 1</button>
+                <button id="SetAllAttributes">all attributes of OID: 2</button>
+                <br>
+            </div>
+
+            <div id="SetAttributesDiv">
+                <h4>7. Remove attributes for ...</h4>
+                <p>(double check with datagrid)</p>
+                <button id="RemoveAttribute">Remove OID5</button>
+                <button id="RemoveAllAttributes">Remove All</button>
+                <br>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="layer-group-tests.js"></script>
+</body>
+
+</html>

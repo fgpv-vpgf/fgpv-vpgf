@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Simple Layer Tests</span></h1>
+
+    <div class="row" id="main" style="display:flex">
+    <div style="width:25%; padding:10px; background-color:lightgrey; border:solid;" class="column">
+        <div id = "Add Geometry Tests">
+            <h2>Add Geometries: </h2>
+            <button id="AddSVG">SVG (1)</button>
+            <button id="AddJPG">JPG (1)</button>
+            <button id="AddDefault">Default(2)</button>
+        </div>
+
+        <div id = "Remove Geometry Tests">
+            <h2>Remove Geometries: </h2>
+            <p>(Buttons activated when geometries added)</p>
+            <button id="RemoveSVG" disabled>SVG (1)</button>
+            <button id="RemoveDefault" disabled>Default (2)</button>
+            <button id="RemoveAll" disabled>All (4)</button>
+        </div>
+
+        <div id = "Layer Name Tests">
+            <h2>Toggle Layer Name: </h2>
+            <p>If layer name + layer id changes properly, button will toggle.<p>
+            <button id="ChangeName">to 'new Name'</button>
+        </div>
+
+        <div id = "Opacity Tests">
+            <h2>Toggle Opacity: </h2>
+            <p>If opacity changes properly, button will toggle.<p>
+            <button id="ChangeOpacity">to 0.3</button>
+        </div>
+
+        <div id = "Visibility Tests">
+            <h2>Toggle Visibility: </h2>
+            <p>If visibility changes properly, button will toggle.<p>
+            <button id="ChangeVisibility">Make Invisible</button>
+        </div>
+    </div>
+</div>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="simple-layer-tests.js"></script>
+</body>
+</html>
