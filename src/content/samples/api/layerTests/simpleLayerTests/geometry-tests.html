@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Geometry Tests</span></h1>
+
+    <div class="row" id="main" style="display:flex">
+    <div style="width:25%; padding:10px; background-color:lightgrey; border:solid;" class="column">
+        <div id = "Point Geometries Tests">
+            <h2>Point Geometries Tests: </h2>
+            <button id="AddHoverpoints">Add HoverPoints to Layer</button>
+            <p>Hover over A and expect an annotation to open to the right of the point as long as the point is still being hovered on.
+            Hover over E and expect an annotation to remain open to the left of the point even if the point is not being hovered on any longer</p>
+            <button id="RemoveHoverpoints">Remove Hoverpoints</button>
+            <p>Hover over either point and expect no annotation to open</p>
+            <button id="Reset">Reset Map</button>
+        </div>
+
+        <div id = "MultiPoint Geometry Tests">
+            <h2>MultiPoint Geometries Tests:</h2>
+            <button id="AddMultiPoint" disabled>Add MultiPoint</button>
+            <p>Hover over any of the points and expect an annotation to open which will follow the cursor as long as the point is being hovered on.</p>
+            <button id="RemoveDefault" disabled>Default (2)</button>
+            <button id="RemoveAll" disabled>All (4)</button>
+        </div>
+
+        <div id = "Layer Name Tests">
+            <h2>Toggle Layer Name: </h2>
+            <p>If layer name + layer id changes properly, button will toggle.<p>
+            <button id="ChangeName">to 'new Name'</button>
+        </div>
+
+        <div id = "Opacity Tests">
+            <h2>Toggle Opacity: </h2>
+            <p>If opacity changes properly, button will toggle.<p>
+            <button id="ChangeOpacity">to 0.3</button>
+        </div>
+
+        <div id = "Visibility Tests">
+            <h2>Toggle Visibility: </h2>
+            <p>If visibility changes properly, button will toggle.<p>
+            <button id="ChangeVisibility">Make Invisible</button>
+        </div>
+    </div>
+</div>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="geometry-tests.js"></script>
+</body>
+</html>
