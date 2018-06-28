@@ -24,7 +24,6 @@ function errorService($mdToast, $q) {
      *
      * @param {String | null} [id=null] id of the toast to remove; if not specified, the toast currently displayed will be removed
      * @param {Object} toastMsg is a promise object returned by the display function
-     * @returns
      */
     function remove(id = null, toastMsg) {
         // if the current toast is not defined, the queue is empty; return

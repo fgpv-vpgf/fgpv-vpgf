@@ -12,6 +12,9 @@
   <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
   <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
   <script>
+      var tag = window.location.href.match(/\.com\/([\d|\w|\.|-]+)/);
+      var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
+
     docute.init({
         nav: [
             {title: 'Home', path: '/'},
@@ -22,7 +25,7 @@
             {title: 'API', type: 'dropdown', items: [
                 {title: 'An Introduction', path: '/api/welcome'},
                 {title: 'Core extensions', path: '/api/core-extensions'},
-                {title: 'Technical Documentation', path: 'http://fgpv-vpgf.github.io/fgpv-vpgf/api/developer/index.html'}
+                {title: 'Technical Documentation', path: `${url}api/developer`}
             ]},
             {title: 'Intentions', type: 'dropdown', items: [
                 {title: 'An Introduction', path: '/intentions/introduction'},
@@ -32,7 +35,7 @@
                 {title: 'An overview', path: '/developer/getting_started'},
                 {title: 'How to contribute', path: '/developer/contributing_guide'},
                 {title: 'Writing extensions', path: '/developer/plugins'},
-                {title: 'Technical JSDocs', path: 'https://ramp-docs.fgpv-vpgf.com/v2.4.0/developer/jsDocs/'},
+                {title: 'Technical JSDocs', path: `${url}developer/jsDocs/`},
                 {title: 'Release Tutorial', path: '/developer/release_tutorial'}
             ]}
         ],
