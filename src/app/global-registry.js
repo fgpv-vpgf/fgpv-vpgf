@@ -25,9 +25,6 @@ const RV = window.RV; // just a reference
 Object.keys(rvDefaults)
     .forEach(key => applyDefault(key, rvDefaults[key]));
 
-// initialize gapi and store a return promise
-RV.gapiPromise = geoapi(RV.dojoURL, window);
-
 /**
  * Checks if a property is already set and applies the default.
  * @param  {String} name  property name

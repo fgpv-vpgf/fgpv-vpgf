@@ -1,7 +1,7 @@
 /* global RV */
 
 import schemaUpgrade from './schema-upgrade.service.js';
-
+import geoapi from 'geoApi';
 /**
  * @module configService
  * @memberof app.core
@@ -318,15 +318,21 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             configList.push(new Config(configAttr || defConfigAttr, svcAttr, lang));
         });
 
-        // load first config once gapi is ready, other configs will be loaded as needed
-        $q.all([gapiService.isReady, configList[0].promise]).then(() => {
-            _loadingState = States.LOADED;
-            events.$broadcast(events.rvCfgInitialized);
-        });
+        // load first config, other configs will be loaded as needed
+        configList[0].promise.then(config => {
+            // initialize gapi and store a return promise
+            if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== "") {
+                RV.dojoURL = config.services._esriLibUrl;
+            }
+            RV.gapiPromise = geoapi(RV.dojoURL, window);
 
-        // For switching Config
-        gapiService.isReady.then(function() {
-            _loadingState = States.LOADED;
+            RV.gapiPromise.then(() => {
+                gapiService.init();
+                gapiService.isReady.then(() => {
+                    _loadingState = States.LOADED;
+                    events.$broadcast(events.rvCfgInitialized);
+                });
+            });
         });
     }
 

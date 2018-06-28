@@ -1813,6 +1813,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (source) {
             this._proxyUrl = source.proxyUrl;
             this._exportMapUrl = source.exportMapUrl;
+            this._esriLibUrl = source.esriLibUrl;
             this._geometryUrl = source.geometryUrl;
             this._googleAPIKey = source.googleAPIKey;
             this._geolocation = source.geolocation;
@@ -1825,6 +1826,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get proxyUrl () { return this._proxyUrl; }
         get exportMapUrl () { return this._exportMapUrl; }
+        get esriLibUrl () { return this._esriLibUrl; }
         get geometryUrl () { return this._geometryUrl; }
         get googleAPIKey () { return this._googleAPIKey; }
         get geolocation () { return this._geolocation; }
@@ -1838,6 +1840,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             return {
                 proxyUrl: this.proxyUrl,
                 exportMapUrl: this.exportMapUrl,
+                esriLibUrl: this.esriLibUrl,
                 geometryUrl: this.geometryUrl,
                 googleAPIKey: this.googleAPIKey,
                 geolocation: this.geolocation,
