@@ -541,6 +541,12 @@ export class Panel {
     */
     setMinPosition(topLeftCoord: number | number[], bottomRightCoord: number | number[]): void {
 
+        let panelCoords = this.panelPositions.panelCoords;
+
+        if (!panelCoords.every(coord => coord !== undefined)) {
+            throw "Exception: cannot set min position before a valid position is set.";
+        }
+
         let topLeft: number;
         let bottomRight: number;
 
@@ -553,14 +559,8 @@ export class Panel {
             bottomRight = <number>bottomRightCoord;
         }
 
-        let panelCoords = this.panelPositions.panelCoords;
-
         if (topLeft < 0 || topLeft > 399 || bottomRight < 0 || bottomRight > 399) {
             throw "Exception: positions cannot be less than 0 or greater than 399.";
-        }
-
-        if (!panelCoords.every(coord => coord !== undefined)) {
-            throw "Exception: cannot set min position before a valid position is set.";
         }
 
         if (this.panelPositions.setMinPanelPosition(topLeft, bottomRight)) {
