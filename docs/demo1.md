@@ -61,8 +61,10 @@ npm i --save rz-geosearch
 Then import it:
 
 ```js
-import 'geosearch';
+import 'rz-geosearch';
 ```
+
+You'll then have access to the `GeoSearch` class namespace.
 
 #### Precompiled
 
