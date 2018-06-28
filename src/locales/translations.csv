@@ -6,7 +6,7 @@ Language name (French),lang.fr,anglais,1,français,1
 Language name (native),lang.native,English,1,Français,1
 Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,1,Couches,1
 Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
-Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Feature details,1,Détails sur l'élément,1
+Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Details,1,Détails,1
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
 Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1,Recherche géolocalisée,1
 ,appbar.tooltip.geosearchshort,Geo Search,1,Recherche géo,1

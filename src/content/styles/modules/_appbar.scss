@@ -34,6 +34,8 @@
     .main-appbar {
         @extend %appbar;
 
+        overflow: hidden;
+
         .rv-appbar-title {
             @extend %appbar-title;
         }
