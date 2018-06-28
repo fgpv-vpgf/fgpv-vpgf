@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
-import {minusSVG, plusSVG, closeSVG} from '../theme/assets/images/panel-icons';
+import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons';
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
@@ -783,7 +783,7 @@ class PanelPositions {
     }
 
     get minPanelCoords(): number[] {
-        return [this.mintopLeftXVal, this.mintopLeftYVal, this.minbottomRightYVal, this.minbottomRightYVal]
+        return [this.mintopLeftXVal, this.mintopLeftYVal, this.minbottomRightXVal, this.minbottomRightYVal]
     }
 
     /**
@@ -886,19 +886,16 @@ class PanelPositions {
     * @throws {Exception} - panel cannot shrink any further to accomodate.
     */
     conflictDetected(panel: Panel): void {
-
         //these are the positions of the "enemy panel"
         let topLeftX = panel.panelPositions.panelCoords[0];
         let topLeftY = panel.panelPositions.panelCoords[1];
         let bottomRightX = panel.panelPositions.panelCoords[2];
         let bottomRightY = panel.panelPositions.panelCoords[3];
-
         //these are the min positions of the "enemy panel"
         let minTopLeftX = panel.panelPositions.minPanelCoords[0];
         let minTopLeftY = panel.panelPositions.minPanelCoords[1];
         let minBottomRightX = panel.panelPositions.minPanelCoords[2];
         let minBottomRightY = panel.panelPositions.minPanelCoords[3];
-
 
         //if our panel doesn't completely avoid "enemy panel", then one of the panels is shrunk incrementally to min position
         //avoiding happens when our panel's min is to left OR top OR bottom OR right (or some combo) relative to enemy
@@ -914,54 +911,122 @@ class PanelPositions {
                 let newTop = this.topLeftYVal;
                 let newBottom = this.bottomRightYVal;
                 let newRight = this.bottomRightXVal;
+
                 let oldMinLeft = this.mintopLeftXVal;
                 let oldMinTop = this.mintopLeftYVal;
                 let oldMinRight = this.minbottomRightXVal;
                 let oldMinBottom = this.minbottomRightYVal;
 
+                let shrunk = false; // here so that panels don't shrink twice
 
                 //if our min position avoided enemy panel by being on left, decrease right position of this panel to get closer to min
                 if (this.minbottomRightXVal < topLeftX && this.bottomRightXVal > this.minbottomRightXVal) {
                     newRight = topLeftX - 1;
                     console.log("Shrinking right!");
+                    shrunk = true;
                 }
                 //if enemy min position avoided our panel by being on left, decrease right position of enemy panel to get closer to min
                 else if (minBottomRightX < this.topLeftXVal && bottomRightX > minBottomRightX) {
                     bottomRightX = this.topLeftXVal - 1;
+                    console.log("Shrinking enemy right!");
+                    shrunk = true;
+                }
+                //if min position avoided enemy min by being on left of enemy min
+                else if (this.minbottomRightXVal < minTopLeftX && this.bottomRightXVal > this.minbottomRightXVal) {
+                    newRight = oldMinRight; //we shrink this panel's right down to its min
+                    topLeftX = oldMinRight + 1; // we shrink the enemy's left to fit on right of this panel
                     console.log("Shrinking right!");
+                    shrunk = true;
+                }
+                //if enemy min position avoided enemy min by being on left of this panel's min
+                else if (minBottomRightX < this.mintopLeftXVal && bottomRightX > minBottomRightX) {
+                    bottomRightX = minBottomRightX; //we shrink enemy's right down to its min
+                    newLeft = minBottomRightX + 1; //we shrink this panel's left  to fit on right of enemy panel
+                    console.log("Shrinking enemy right!")
+                    shrunk = true;
                 }
 
-                //if min position avoided panel by being on top, decrease bottom position of this panel to get closer to min
-                if (this.minbottomRightYVal < topLeftY && this.bottomRightYVal > this.minbottomRightYVal) {
-                    newBottom = topLeftY - 1;
-                    console.log("Shrinking bottom!");
+                //if issue was resolved don't shrink another dimension (want to max out space)
+                if (!shrunk) {
+                    //if min position avoided panel by being on top, decrease bottom position of this panel to get closer to min
+                    if (this.minbottomRightYVal < topLeftY && this.bottomRightYVal > this.minbottomRightYVal) {
+                        newBottom = topLeftY - 1;
+                        console.log("Shrinking bottom!");
+                        shrunk = true;
+
+                    }
+                    //if enemy min position avoided our panel by being on top, decrease bottom position of enemy panel to get closer to min
+                    else if (minBottomRightY < this.topLeftYVal && bottomRightY > minBottomRightY) {
+                        bottomRightY = this.topLeftYVal - 1;
+                        console.log("Shrinking enemy bottom!");
+                        shrunk = true;
+
+                    }
+                    //if min position avoided enemy min by being on top of enemy min
+                    else if (this.minbottomRightYVal < topLeftY && this.bottomRightYVal > this.minbottomRightYVal) {
+                        newBottom = oldMinBottom; //we shrink this panel's bottom down to its min
+                        topLeftY = oldMinBottom + 1; // we shrink the enemy's top to fit right below this panel
+                        console.log("Shrinking bottom!");
+                        shrunk = true;
+
+                    }
+                    else if (minBottomRightY < this.mintopLeftYVal && bottomRightY > minBottomRightY) {
+                        bottomRightY = minBottomRightY; //we shrink enemy panel's bottom down to its min
+                        newTop = minBottomRightY + 1; // we shrink the this panel's top to fit right below enemy
+                        console.log("Shrinking enemy bottom!");
+                        shrunk = true;
+                    }
                 }
-                //if enemy min position avoided our panel by being on top, decrease bottom position of enemy panel to get closer to min
-                else if (minBottomRightY < this.topLeftYVal && bottomRightY > minBottomRightY) {
-                    bottomRightY = this.topLeftYVal - 1;
-                    console.log("Shrinking bottom!");
+                if (!shrunk) {
+                    //if min position avoided panel by being on right, increase left position of this panel to get closer to min
+                    if (this.mintopLeftXVal > minBottomRightX && this.topLeftXVal < this.mintopLeftXVal) {
+                        newLeft = bottomRightX + 1;
+                        console.log("Shrinking left!");
+                        shrunk = true;
+                    }
+                    //if enemy min position avoided enemy min position by being on right, increase left position of enemy panel to get closer to min
+                    else if (minTopLeftX > this.bottomRightXVal && topLeftX < minTopLeftX) {
+                        topLeftX = oldMinLeft;
+                        console.log("Shrinking enemy left!");
+                        shrunk = true;
+                    }
+                    //if min position avoided enemy min by being on right of enemy min
+                    else if (this.mintopLeftXVal > minBottomRightX && this.topLeftXVal < this.mintopLeftXVal) {
+                        newLeft = oldMinLeft; //we shrink this panel's left down to its min
+                        bottomRightX = oldMinLeft - 1; // we shrink the enemy's right to fit right at left of enemy min
+                        console.log("Shrinking left!");
+                        shrunk = true;
+                    }
+                    else if (minTopLeftX > this.minbottomRightXVal && topLeftX < minTopLeftX) {
+                        topLeftX = minTopLeftX; //we shrink the enemy's left down to its min
+                        newRight = minTopLeftX - 1; //we shrink this panel's right to fit at left of the enemy min
+                        console.log("Shrinking enemy left!");
+                        shrunk = true;
+                    }
                 }
 
-                //if min position avoided panel by being on right, increase left position of this panel to get closer to min
-                if (this.mintopLeftXVal > bottomRightX && this.topLeftXVal < this.mintopLeftXVal) {
-                    newLeft = bottomRightX + 1;
-                    console.log("Shrinking left!");
-                }
-                //if enemy min position avoided our panel by being on right, increase left position of enemy panel to get closer to min
-                else if (minTopLeftX > this.bottomRightXVal && topLeftX < minTopLeftX) {
-                    topLeftX = this.bottomRightXVal + 1;
-                    console.log("Shrinking left!");
-                }
-
-                //if min position avoided panel by being on bottom, increase top position of this panel to get closer to min
-                if (this.mintopLeftYVal > bottomRightY && this.topLeftYVal < this.mintopLeftYVal) {
-                    newTop = bottomRightY + 1;
-                    console.log("Shrinking top!");
-                }
-                //if enemy min position avoided our panel by being on bottom, increase top position of enemy panel to get closer to min
-                else if (minTopLeftY > this.bottomRightYVal && topLeftY < minTopLeftY) {
-                    topLeftY = this.bottomRightYVal + 1;
-                    console.log("Shrinking top!");
+                if (!shrunk) {
+                    //if min position avoided panel by being on bottom, increase top position of this panel to get closer to min
+                    if (this.mintopLeftYVal > bottomRightY && this.topLeftYVal < this.mintopLeftYVal) {
+                        newTop = bottomRightY + 1;
+                        console.log("Shrinking top!");
+                    }
+                    //if enemy min position avoided our panel by being on bottom, increase top position of enemy panel to get closer to min
+                    else if (minTopLeftY > this.bottomRightYVal && topLeftY < minTopLeftY) {
+                        topLeftY = this.bottomRightYVal + 1;
+                        console.log("Shrinking enemy top!");
+                    }
+                    //if min position avoided enemy min by being on bottom of enemy min
+                    else if (this.mintopLeftYVal > minBottomRightY && this.topLeftYVal < this.mintopLeftYVal) {
+                        newTop = oldMinTop; //we shrink this panel's top down to its min
+                        bottomRightY = oldMinTop - 1; // we shrink the enemy's bottom to fit right on top of this panel
+                        console.log("Shrinking top!");
+                    }
+                    else if (minTopLeftY > this.minbottomRightYVal && topLeftY < minTopLeftY) {
+                        topLeftY = minTopLeftY; //we shrink the enemy's top down to its min
+                        newBottom = minTopLeftY - 1; // we shrink the this panel's bottom to fit right on top of the enemy panel
+                        console.log("Shrinking enemy top!");
+                    }
                 }
 
                 this.setPanelPosition(newTop * 20 + newLeft, newBottom * 20 + newRight);
