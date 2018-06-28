@@ -158,6 +158,7 @@ function Controller($scope, events, tableService, stateManager, $timeout) {
         $scope.columns = self.columns;
         self.title = stateManager.display.table.data.filter.title;
         self.tableService.isSettingOpen = false;
+        self.index = stateManager.display.table.requester.legendEntry.itemIndex;
 
         self.sortStatus = sortStatus;
         self.sortAll = sortAll;
@@ -175,13 +176,18 @@ function Controller($scope, events, tableService, stateManager, $timeout) {
      */
     function init() {
         sortColumns();
-
+        const index = self.index.toString();
         // toggle the visibility
+        // also toggles visisbility for details panel
+        let hiddenColumns = [];
         self.columns.forEach(column => {
             if (!column.display) {
                 self.tableService.getTable().column(`${column.name}:name`).visible(false);
+                hiddenColumns.push(column.data);
             }
         });
+        stateManager.display.details.hidden = stateManager.display.details.hidden || {};
+        stateManager.display.details.hidden[index] = hiddenColumns;
     }
 
     /**
@@ -275,6 +281,18 @@ function Controller($scope, events, tableService, stateManager, $timeout) {
     function onDisplay(columnInfo) {
         // get column
         const column = self.tableService.getTable().column(`${columnInfo.name}:name`);
+
+        // toggle the visibility in the details panel
+        const layerIndex = self.index.toString();
+        let hidden = stateManager.display.details.hidden[layerIndex];
+        if (!columnInfo.display) {
+            hidden.push(columnInfo.data);
+        } else {
+            let index = hidden.indexOf(columnInfo.data);
+            if (index > -1) {
+                hidden.splice(index, 1);
+            }
+        }
 
         // toggle the visibility and class name use to show/hide collumn when export or print
         column.visible(columnInfo.display);
