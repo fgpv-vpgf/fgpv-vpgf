@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
 import { S_IFMT } from 'constants';
-import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons';
+import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons'; //import svg files
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
