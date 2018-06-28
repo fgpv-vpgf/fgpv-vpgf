@@ -19,7 +19,7 @@ angular
  * @function rvDetailsRecordText
  * @return {object} directive body
  */
-function rvDetailsRecordText() {
+function rvDetailsRecordText(detailService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -27,12 +27,40 @@ function rvDetailsRecordText() {
             item: '=',
             mapPoint: '='
         },
+        link: link,
         controller: Controller,
         controllerAs: 'self',
         bindToController: true
     };
 
     return directive;
+
+    /*****/
+    
+    function link(scope) {
+        const self = scope.self;
+        
+        const l = self.item.requester.proxy._source;
+        
+        // get template to override basic details output, null/undefined => show default
+        self.templateUrl = l.config._source.templateUrl;
+        if (l.config._source.parserUrl) {
+            detailService.getParser(l.layerId, l.config._source.parserUrl)
+                .then(data => {
+                    // if data is already retrieved
+                    if (self.item.data.length > 0) {
+                        self.layer = eval(`${data}(self.item.data[0]);`);
+                    } else {
+                        // data not here yet, wait for it
+                        scope.$watch('self.item.data', () => {
+                            self.layer = eval(`${data}(self.item.data[0]);`);
+                        });
+                    }
+                    // push update so that template gets the info from the parser
+                    scope.$apply();
+                });
+        }
+    }
 }
 
 function Controller($scope, events, mapService) {

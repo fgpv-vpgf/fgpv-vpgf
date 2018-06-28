@@ -15,7 +15,7 @@ angular
     .module('app.ui')
     .directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -49,6 +49,13 @@ function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
         self.item.data = self.item.data.filter(column =>
             excludedColumns.indexOf(column.key) === -1);
 
+        self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
+        if (self.templateUrl) {
+            // creates an object from the details array of {field.key: field.value, etc.}
+            // for use in the template
+            self.layer = self.item.data.reduce((prev, current) => {prev[current['key']] = current['value']; return prev;}, {});
+        }
+
         // wrap raw symbology item into a symbology stack object
         self.item.symbologyStack = new SymbologyStack({}, self.item.symbology);
 
@@ -57,7 +64,7 @@ function rvDetailsRecordEsrifeatureItem(geoService, Geo, SymbologyStack) {
     }
 }
 
-function Controller(mapService) {
+function Controller() {
     'ngInject';
     const self = this;
 

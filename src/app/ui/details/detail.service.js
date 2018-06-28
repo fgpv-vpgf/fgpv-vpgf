@@ -16,8 +16,11 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
 
     const service = {
         expandPanel,
-        closeDetails
+        closeDetails,
+        getParser
     };
+
+    const parserFunctions = [];
 
     return service;
 
@@ -60,5 +63,21 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
         } else {
             stateManager.setActive({ mainDetails: false });
         }
+    }
+
+    function getParser(layerId, parserUrl) {
+        return new Promise((resolve) => {
+            if (parserFunctions[layerId]) {
+                resolve(parserFunctions[layerId]);
+            } else {            
+                $.ajax({method: 'GET', dataType: 'text', url: parserUrl})
+                    .then(data => { 
+                        let f = `(${data})`
+                        parserFunctions[layerId] = f;
+        
+                        resolve(f)
+                    });
+            }
+        })
     }
 }

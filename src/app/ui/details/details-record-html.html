@@ -1,1 +1,4 @@
-<div class="rv-details-text" ng-bind-html="self.item.data[0]"></div>
+<div class="rv-details-html" ng-if="self.templateUrl" ng-show="self.item.data[0]">
+    <div ng-include="self.templateUrl"></div>
+</div>
+<div class="rv-details-text" ng-bind-html="self.item.data[0]" ng-if="!self.templateUrl"></div>
