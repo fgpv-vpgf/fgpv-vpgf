@@ -2,9 +2,9 @@ The viewer allows you to display identify/details results with a custom template
 
 There are 2 config attributes that are needed:
 
-**templateUrl** is needed for any type of layer that wants a template, this is an *absolute* path to your template.
+**templateUrl** is needed for any type of layer that wants a template, this path can be *relative* to the site (or *absolute*).
 
-**parserUrl** is needed for layers that return HTML/text responses as those cannot be handled in a general way. This is an *absolute* path to your parser file.
+**parserUrl** is needed for layers that return HTML/text responses as those cannot be handled in a general way. This path can be *relative* to the site (or *absolute*).
 
 
 ###Templates:
