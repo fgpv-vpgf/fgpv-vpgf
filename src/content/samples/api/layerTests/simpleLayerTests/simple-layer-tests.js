@@ -3,8 +3,6 @@ $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '..
 $.getScript('../../../../rv-main.js', function () {
     RZ.mapAdded.subscribe(mapi => {
 
-
-
         //SETUP:
         //add simpleLayer
         mapi.layers.addLayer('simpleLayer');
@@ -17,54 +15,46 @@ $.getScript('../../../../rv-main.js', function () {
         //default icons
         const DEF1 = new RZ.GEO.Point(2, '', [-80, 59]);
         const DEF2 = new RZ.GEO.Point(3, '', [-85, 57]);
-        //subscribe to stream
-        //simpleLayer.addGeometry(SVG);
-        //simpleLayer.removeGeometry(SVG);
 
         // subscribe to geometry added
-        //TODO: why isn't first geometry to be clicked not registering?
         simpleLayer.geometryAdded.subscribe(l => {
             console.log('Geometry added');
-
-            $("button").click(function () {
-                //if a geometry added --> change disabled button HTML to success
-                if (this.id == "AddSVG" || this.id == "AddJPG" || this.id == "AddDefault") {
-                    document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                    //user is allowed to remove all geometries
-                    document.getElementById("RemoveAll").disabled = false;
-
-                    //If SVG added --> User allowed to remove SVG
-                    if (this.id == "AddSVG") {
-                        document.getElementById("RemoveSVG").disabled = false;
-                    }
-                    //If Defaults added --> User allowed to remove defaults
-                    else if (this.id == "AddDefault") {
-                        document.getElementById("RemoveDefault").disabled = false;
-                    }
-                }
-            });
-
+            //if all four geometries are added to the map, then test passes
+            if (simpleLayer.geometry.length === 4) {
+                document.getElementById("AddGeometries").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveAll").disabled = false;
+                document.getElementById("RemoveSVG").disabled = false;
+                document.getElementById("RemoveDefault").disabled = false;
+            }
         });
 
-        //ADD GEOMETRY TEST:
-        //Add geometry buttons clicked --> Add geometry buttons disabled
-        document.getElementById("AddSVG").onclick = function () {
-            simpleLayer.addGeometry(SVG);
-            document.getElementById("AddSVG").disabled = true;
-        }
+        //subscribe to geometry removed
+        simpleLayer.geometryRemoved.subscribe(l => {
+            console.log('Geometry removed');
 
-        document.getElementById("AddJPG").onclick = function () {
-            simpleLayer.addGeometry(JPG);
-            document.getElementById("AddJPG").disabled = true;
-        }
+            if (simpleLayer.geometry.find(geo => geo.id === '0') === undefined) {
+                //if geometry removed and not found, test is a success
+                document.getElementById("RemoveSVG").style.backgroundColor = "#00FF00";
+            }
 
-        document.getElementById("AddDefault").onclick = function () {
-            simpleLayer.addGeometry([DEF1, DEF2]);
-            document.getElementById("AddDefault").disabled = true;
-        }
+            if (simpleLayer.geometry.find(geo => geo.id === '2' || geo.id == '3') === undefined) {//if geometry removed and not found, test is a success
+                document.getElementById("RemoveDefault").style.backgroundColor = "#00FF00";
+            }
+
+            if (simpleLayer.geometry.length === 0) {
+                document.getElementById("RemoveAll").style.backgroundColor = "#00FF00";
+            }
+        });
+
+
+        //add gemoetries
+        simpleLayer.addGeometry(SVG);
+        simpleLayer.addGeometry(JPG);
+        simpleLayer.addGeometry([DEF1, DEF2]);
+
 
         //ADD NAME CHANGE TESTS:
-        // subscribe to name changed
+        // subscribe to name changed, and toggle button if layer name is successfully changed
         simpleLayer.nameChanged.subscribe(l => {
             console.log('Name changed');
 
@@ -81,7 +71,7 @@ $.getScript('../../../../rv-main.js', function () {
 
         });
 
-        //Click button, change name
+        //Click button, change layer name
         document.getElementById("ChangeName").onclick = function () {
             if (simpleLayer.name == "simpleLayer") {
                 simpleLayer.name = "new Name";
@@ -92,7 +82,7 @@ $.getScript('../../../../rv-main.js', function () {
         }
 
         //ADD OPACITY TESTS:
-        // subscribe to opacity changed
+        // subscribe to opacity changed, and toggle button if opacity is successfully changed
         simpleLayer.opacityChanged.subscribe(l => {
             console.log('Opacity changed');
 
@@ -107,7 +97,7 @@ $.getScript('../../../../rv-main.js', function () {
             }
         });
 
-        //Click button, opacity changes
+        //Click button, change opacity
         document.getElementById("ChangeOpacity").onclick = function () {
             if (simpleLayer.opacity == 1) {
                 simpleLayer.opacity = 0.3;
@@ -118,7 +108,7 @@ $.getScript('../../../../rv-main.js', function () {
         }
 
         //ADD Visibility TESTS:
-        // subscribe to visibility changed
+        // subscribe to visibility changed, and toggle button if visibility changes
         simpleLayer.visibilityChanged.subscribe(l => {
             console.log('Visibility changed');
 
@@ -134,6 +124,7 @@ $.getScript('../../../../rv-main.js', function () {
 
         });
 
+        //click button, change visibility
         document.getElementById("ChangeVisibility").onclick = function () {
             if (simpleLayer.visibility == false) {
                 simpleLayer.visibility = true;
@@ -143,50 +134,7 @@ $.getScript('../../../../rv-main.js', function () {
             }
         }
 
-        //REMOVE GEOMETRY
-
-        // subscribe to geometry removed
-        simpleLayer.geometryRemoved.subscribe(l => {
-            console.log('Geometry removed');
-
-            $("button").click(function () {
-                if (this.id == "RemoveSVG" || this.id == "RemoveDefault" || this.id == "RemoveAll") {
-
-                    //activate "Find Tests" to verify geometries can't be found on layer
-                    if (this.id == "RemoveSVG") {
-                        if (simpleLayer.geometry.find(geo => geo.id === '0') === undefined) {
-                            //if geometry removed and not found, test is a success
-                            document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                        }
-                        else {
-                            console.log("Test failed because geo.id '0' found")
-                            document.getElementById(this.id).style.backgroundColor = "#cd0000";
-                        }
-                    }
-                    if (this.id == "RemoveDefault") {
-                        if (simpleLayer.geometry.find(geo => geo.id === '2' || geo.id == '3') === undefined) {//if geometry removed and not found, test is a success
-                            document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                        }
-                        else {
-                            console.log("Test failed because geo.id '2' and geo.id '3' found")
-                            document.getElementById(this.id).style.backgroundColor = "#cd0000";
-                        }
-                    }
-                    if (this.id == "RemoveAll") {
-                        if (simpleLayer.geometry.length === 0) {
-                            document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                        }
-                        else {
-                            console.log("Test failed because geometry.length =/= 0");
-                            document.getElementById(this.id).style.backgroundColor = "#cd0000";
-                        }
-                    }
-                }
-            });
-
-        });
-
-        //Once user removes elements --> remove options become disabled
+        //REMOVE GEOMETRIES BUTTONS
         document.getElementById("RemoveSVG").onclick = function () {
             simpleLayer.removeGeometry('0');
             document.getElementById("RemoveSVG").disabled = true;
@@ -207,7 +155,7 @@ $.getScript('../../../../rv-main.js', function () {
     });
 
     $('#main').append(`
-        <div id="fgpmap" style="height:900px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>
+        <div id="fgpmap" style="height:700px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>
     `);
 
     const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
