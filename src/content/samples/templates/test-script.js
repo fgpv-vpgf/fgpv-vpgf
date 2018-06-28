@@ -1,0 +1,1 @@
+function parser(stuff) {return {"Country": "Canada"}}
