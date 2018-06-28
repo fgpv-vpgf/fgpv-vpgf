@@ -14,10 +14,9 @@ angular
 function gapi($q, globalRegistry) {
     const service = {
         gapi: null, // actual gapi interface; available after gapiPromise resovles
-        isReady: null
+        isReady: null,
+        init
     };
-
-    init();
 
     return service;
 
@@ -30,12 +29,12 @@ function gapi($q, globalRegistry) {
      */
     function init() {
         // wait for `gapiPromise` from the global registry to resolve
-        service.isReady = globalRegistry.gapiPromise
+        service.isReady = RV.gapiPromise
             .then(gapi => {
                 service.gapi = gapi;
                 return $q.resolve(null);
             })
-            .catch((e) => {
+            .catch(e => {
                 console.error(e);
                 console.error('gapiService', 'gapi is not ready');
             });

@@ -12,22 +12,13 @@ angular
  *
  * The `runBlock` triggers config and locale file loading, sets language of the app.
  */
-function runBlock($rootScope, $rootElement, $q, globalRegistry, reloadService, events, configService,
-    gapiService, appInfo) {
+function runBlock($rootScope, $rootElement, globalRegistry, reloadService, events, configService, appInfo) {
 
-    const promises = [
-        configService.initialize(),
-        gapiService.isReady
-    ];
+    // initialize config service
+    configService.initialize();
 
     // wait on the config and geoapi
-    $q.all(promises)
-        .then(() => {
-            readyDelay();
-        })
-        .catch(reason => {
-            console.error('runBlock', 'fatal error', reason);
-        });
+    events.$on(events.rvCfgInitialized, () => readyDelay());
 
     $rootScope.uid = uid;
 
