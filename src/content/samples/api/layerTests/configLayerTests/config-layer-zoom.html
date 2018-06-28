@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Config Layer Tests (Part 2)</span></h1>
+
+    <div class="row" id="main" style="display:flex">
+    <div style="width:30%; height:700px; padding:10px; background-color:lightgrey; border:solid;" class="column">
+        <div id = "Zoom Tests">
+            <h2>Zoom and Pan Tests: </h2>
+            <p>1. Zoom in as far as possible. Check zoom level.<p>
+            <button id="CheckZoomLevel">Zoom In Check</button><br>
+            <p>2. Zoom out as much possible. Check zoom level.<p>
+            <button id="CheckZoomLevel2">Zoom Out Check</button><br>
+            <p>3. Layer will not be visible at current scale. Zoom to scale. Layer will now be visible.</p>
+            <button id="ZoomToScale" disabled>Zoom To Scale (Part 1)</button>
+            <br><textarea rows="2" cols="25" id="output1">Output should be 8.</textarea><br><br>
+            <p>4. Now zoom in a bit more and check zoom level. Both numbers should be greater than 8 and the same. Layer should still be visble at current scale.</p>
+            <button id="ZoomToScale2" disabled>Zoom To Scale (Part 2)</button>
+            <br><textarea rows="2" cols="25" id="output2">Output should be greater than 8.</textarea><br><br>
+            <p>5. Pan to map boundary, expect zoom level to have changed. Bounding box should be visible.</p>
+            <button id="PanToBoundary">Pan To Boundary</button>
+            <br><textarea rows="2" cols="25" id="output3">Output should be 3.</textarea><br><br>
+        </div>
+    </div>
+</div>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="config-layer-zoom.js"></script>
+</body>
+</html>
