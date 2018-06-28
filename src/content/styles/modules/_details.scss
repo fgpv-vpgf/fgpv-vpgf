@@ -334,7 +334,8 @@ $details-record-height: rem(6.0);
 
 @mixin HTML {
     .rv-details-html {
-
+        padding: rem(0.8) rem(1.6);
+        margin: 0;
     }
 }
 

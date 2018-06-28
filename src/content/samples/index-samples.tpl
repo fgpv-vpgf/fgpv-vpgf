@@ -160,6 +160,7 @@
                 <option value="config/config-sample-66.json">66. Map with navigation restricted</option>
                 <option value="">67. Map with no config provided</option>
                 <option value="config/config-sample-68.json">68. WFS layer defined in config</option>
+                <option value="config/config-sample-70.json">70. Details panel templating</option>
             </select>
         </div>
 
