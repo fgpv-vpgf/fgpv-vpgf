@@ -11,9 +11,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  * Identify results is rendered when the collapsed section header is hovered over or receives focus. This removes the slight delay when compiled html is inseted into the template on section expand.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
+angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
 function rvDetailsRecordEsrifeatureItem(SymbologyStack) {
     const directive = {
@@ -46,14 +44,16 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack) {
         self.isRendered = self.solorecord;
 
         // pre-filter the columns used by the datagrid out of the returned data
-        self.item.data = self.item.data.filter(column =>
-            excludedColumns.indexOf(column.key) === -1);
+        self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.key) === -1);
 
         self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
         if (self.templateUrl) {
             // creates an object from the details array of {field.key: field.value, etc.}
             // for use in the template
-            self.layer = self.item.data.reduce((prev, current) => {prev[current['key']] = current['value']; return prev;}, {});
+            self.layer = self.item.data.reduce((prev, current) => {
+                prev[current['key']] = current['value'];
+                return prev;
+            }, {});
         }
 
         // wrap raw symbology item into a symbology stack object

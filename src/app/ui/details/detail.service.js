@@ -8,12 +8,9 @@ const templateUrl = require('./details-modal.html');
  * The `detailService` is responsible over detailed layer views
  *
  */
-angular
-    .module('app.ui')
-    .factory('detailService', detailService);
+angular.module('app.ui').factory('detailService', detailService);
 
 function detailService($mdDialog, stateManager, mapService, referenceService) {
-
     const service = {
         expandPanel,
         closeDetails,
@@ -66,18 +63,17 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
     }
 
     function getParser(layerId, parserUrl) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (parserFunctions[layerId]) {
                 resolve(parserFunctions[layerId]);
-            } else {            
-                $.ajax({method: 'GET', dataType: 'text', url: parserUrl})
-                    .then(data => { 
-                        let f = `(${data})`
-                        parserFunctions[layerId] = f;
-        
-                        resolve(f)
-                    });
+            } else {
+                $.ajax({ method: 'GET', dataType: 'text', url: parserUrl }).then(data => {
+                    let f = `(${data})`;
+                    parserFunctions[layerId] = f;
+
+                    resolve(f);
+                });
             }
-        })
+        });
     }
 }
