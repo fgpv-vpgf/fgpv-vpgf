@@ -6,7 +6,9 @@
 
     <p ng-switch-when="text" ng-bind-html="self.block.content | markdown: { sanitize: false }"></p>
 
-    <img ng-switch-when="image" ng-src="{{ self.block.content }}" alt="">
+    <div ng-switch-when="image">
+        <img rv-expand-image ng-src="{{ self.block.content }}" alt="">
+    </div>
 
     <div
         ng-switch-when="unboundLayer"

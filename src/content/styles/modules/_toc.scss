@@ -66,6 +66,12 @@ $layer-item-height-touch: rem(7.2);
         }
     }
 
+    .rv-image-expand {
+        position: absolute;
+        top: 2.5px;
+        right: 2.5px;
+    }
+
     // provide indentations for nested elements
     .rv-legend-level {
         @for $i from 0 to 10 {
@@ -291,6 +297,20 @@ $layer-item-height-touch: rem(7.2);
             .md-icon-button {
                 margin: 0;
             }
+        }
+    }
+
+    .rv-expanded-dialog {
+        border-radius: 0;
+
+        .expanded-content {
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .rv-expanded-image {
+            display: block;
+            margin: 0 auto;
         }
     }
 }

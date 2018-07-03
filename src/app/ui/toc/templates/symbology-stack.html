@@ -1,7 +1,6 @@
 <div
     class="rv-symbology-container rv-render-{{ self.symbology.renderStyle }}"
     ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-compound" : self.symbology.stack.length > 1 }]'>
-
     <div class="rv-description-container">
         <span class="rv-description">{{ ::self.description }}</span>
     </div>
@@ -11,7 +10,8 @@
     </div>
 
     <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index }">
-        <rv-svg class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
+        <rv-svg rv-expand-image class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
+
         <div class="rv-symbol-label-container">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
         </div>

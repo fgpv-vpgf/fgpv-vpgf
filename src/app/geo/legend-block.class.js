@@ -383,6 +383,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._symbologyStack =
                 new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle, true);
+
+            this._canEnlarge = false;
         }
 
         get blockType () {              return TYPES.INFO; }
@@ -394,6 +396,9 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get description () {            return this.blockConfig.description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
+
+        get canEnlarge () {             return this._canEnlarge; }
+        set canEnlarge (value) {        this._canEnlarge = value; }
 
         get isVisibleOnExport () {
             return configService.getSync.services.export.legend.showInfoSymbology;

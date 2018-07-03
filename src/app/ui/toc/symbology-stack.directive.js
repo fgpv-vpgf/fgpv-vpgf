@@ -541,7 +541,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // extremely convoluted math to calculate an aproximation of the label's height
             // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
-
             let labelHeight = 0;
             const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
             if (textWidth > 0 ) {
