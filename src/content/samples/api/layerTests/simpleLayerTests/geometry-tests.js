@@ -25,7 +25,6 @@ $.getScript('../../../../rv-main.js', function () {
         //subscribe to geometry added
         simpleLayer.geometryAdded.subscribe(l => {
             console.log('Geometry added');
-            console.log(multipointAdded);
 
             // confirm hoverpoint and hover got added correctly, test passes
             if (addPoint === true && !document.getElementById("AddHover").disabled) {
