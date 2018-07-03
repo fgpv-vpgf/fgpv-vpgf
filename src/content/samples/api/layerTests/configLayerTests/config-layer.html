@@ -17,79 +17,53 @@
 
             <div id="Layer Name Tests">
                 <h2>Toggle Layer Name: </h2>
-                <p>If layer name + layer id changes properly, button will toggle.
-                    <p>
-                        <button id="ChangeName">to 'new Name'</button>
+                <p>If layer name + layer id changes properly, button will toggle.</p>
+                <button id="ChangeName">to 'new Name'</button>
             </div>
             <br>
 
             <div id="Opacity Tests">
                 <h2>Toggle Opacity: </h2>
-                <p>If opacity changes properly, button will toggle.
-                    <p>
-                        <button id="ChangeOpacity">to 0.3</button>
+                <p>If opacity changes properly, button will toggle.</p>
+                <button id="ChangeOpacity">to 0.3</button>
             </div>
             <br>
 
             <div id="Visibility Tests">
                 <h2>Toggle Visibility: </h2>
-                <p>If visibility changes properly, button will toggle.
-                    <p>
-                        <button id="ChangeVisibility">Make Invisible</button>
+                <p>If visibility changes properly, button will toggle.</p>
+                <button id="ChangeVisibility">Make Invisible</button>
             </div>
             <br>
 
             <div id="Attributes Tests">
                 <h2>Attributes Tests: </h2>
-                <p>1. If button is already green, no need to click it.
-                    <p>
-                        <button id="FetchAttributes">Fetch Attributes</button>
-                        <br>
-                        <br>
-
-                        <!--disabled until Fetch Attributes activated-->
-                        <p>2. Set Attributes:</p>
-                        <p>Check attribute in datatable. Click on button. Check for changes in Datatable.</p>
-                        <button id="SetAttribute" disabled>(OID 1): Set Country Name </button>
-                        <br>
-                        <ul>
-                            <li>Country Name of Entry #1 should now be 'new Country'</li>
-                        </ul>
-                        <button id="SetAllAttributes" disabled>(OID 2): Set Country Name + Change OID</button>
-                        <ul>
-                            <li>Entry #2 will now have "ObjectID" field set to -1 </li>
-                        </ul>
-                        <br>
-                        <br>
-                        <p>3. Double check Pipeline output with datagrid.</p>
-                        <button id="GetAttribute" disabled>Get Attribute (OID 5)</button>
-                        <button id="GetAllAttributes" disabled>Get All Attributes</button>
-                        <br>
-                        <br>
-                        <textarea rows="4" cols="50" id="output"></textarea>
-                        <br>
-                        <br>
-                        <p>4. Remove attributes. Double check with datagrid.</p>
-                        <button id="RemoveAttribute" disabled>Remove Attribute (OID 5)</button>
-                        <button id="RemoveAllAttributes" disabled>Remove All Attributes</button>
+                <h4>1. If button is already green, no need to click it.</h4>
+                <button id="FetchAttributes">Fetch Attributes</button>
+                <br>
+                <br>
+                <!--disabled until Fetch Attributes activated-->
+                <h4>2. Set Attributes. Double check with datagrid.</h4>
+                <button id="SetAttribute" disabled>(OID 1): Set Country Name </button>
+                <br>
+                <p>Country Name of Entry #1 should now be 'new Country'</p>
+                <button id="SetAllAttributes" disabled>(OID 2): Set Country Name + Change OID</button>
+                <p>Entry #2 will now have "ObjectID" field set to -1 </p>
+                <br>
+                <br>
+                <h4>3. Double check Pipeline output with datagrid.</h4>
+                <button id="GetAttribute" disabled>Get Attribute (OID 5)</button>
+                <button id="GetAllAttributes" disabled>Get All Attributes</button>
+                <br>
+                <br>
+                <textarea rows="4" cols="50" id="output"></textarea>
+                <br>
+                <br>
+                <h4>4. Remove attributes. Double check with datagrid.</h4>
+                <button id="RemoveAttribute" disabled>Remove Attribute (OID 5)</button>
+                <button id="RemoveAllAttributes" disabled>Remove All Attributes</button>
             </div>
             <br>
-
-            <!--<div id = "Zoom Tests">
-            <h2>Zoom Tests: </h2>
-            <p>1. Zoom in as far as possible. Check zoom level.<p>
-            <button id="CheckZoomLevel">Zoom In Check</button><br>
-            <p>2. Zoom out as possible. Check zoom level.<p>
-            <button id="CheckZoomLevel2">Zoom Out Check</button><br>
-            <p>3. Automatic Checks:</p>
-            <button id="PanToBoundary">Pan To Boundary</button>
-            <button id="ZoomToScale" disabled>Zoom To Scale (Part 1)</button><br>
-            <p>4. Activated by successful Part 1. Zoom in bit more, click on button.</p>
-            <p>   (Hint: Click Part 1 in case of accidental zoom out)</p>
-            <button id="ZoomToScale2" disabled>Zoom To Scale (Part 2)</button><br>
-        </div>-->
-
-
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
