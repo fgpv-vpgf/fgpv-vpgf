@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Layer Group Tests (Part 2)</span></h1>
+
+    <div class="row" id="main" style="display:flex">
+        <div style="width:25%; height:800px; padding:10px; background-color:lightgrey; border:solid; overflow-y: scroll" class="column">
+            <h2>Tests:</h2>
+            <p>Do the tests in the order they are listed in.</p>
+
+            <div id="FetchAttributesDiv">
+                <h4>1. Fetch Attributes for specific config layer.</h4>
+                <button id="FetchAttributes">Fetch Attributes</button>
+                <br>
+            </div>
+
+            <div id="SetAttributesDiv">
+                <h4>2. Set attributes for...</h4>
+                <p>(double check with datagrid)</p>
+                <button id="SetAttribute">country field of OID: 1</button>
+                <button id="SetAllAttributes">all attributes of OID: 2</button>
+                <br>
+            </div>
+
+            <div id="RemAttributesDiv">
+                <h4>3. Remove attributes for ...</h4>
+                <p>(double check with datagrid)</p>
+                <button id="RemoveAttribute">Remove OID5</button>
+                <button id="RemoveAllAttributes">Remove All</button>
+                <br>
+            </div>
+            <div>
+                <h4>4. Click on a Layer (button should turn green)</h4>
+                <button id="ClickLayer">Click Layer</button>
+                <br>
+            </div>
+            <div>
+                <h4>5. Remove Layer</h4>
+                <button id="RemoveLayer">Remove Layer</button>
+                <br>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="layer-group-2.js"></script>
+</body>
+
+</html>
