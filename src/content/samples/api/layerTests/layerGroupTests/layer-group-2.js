@@ -143,7 +143,7 @@ $.getScript('../../../../rv-main.js', function () {
     });
 
     $('#main').append(`
-        <div id="fgpmap" style="height:600px; width:85%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
+        <div id="fgpmap" style="height:700px; width:85%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
     `);
 
     const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
