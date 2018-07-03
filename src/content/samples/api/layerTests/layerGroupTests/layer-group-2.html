@@ -9,15 +9,17 @@
 
 <body style="padding:20px;">
     <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Layer Group Tests (Part 2)</span></h1>
-
+    <h2><a href="../index.html">Directory</a></h2>
     <div class="row" id="main" style="display:flex">
-        <div style="width:25%; height:800px; padding:10px; background-color:lightgrey; border:solid; overflow-y: scroll" class="column">
+        <div style="width:25%; height:600px; padding:10px; background-color:lightgrey; border:solid; overflow-y: scroll" class="column">
             <h2>Tests:</h2>
             <p>Do the tests in the order they are listed in.</p>
 
             <div id="FetchAttributesDiv">
-                <h4>1. Fetch Attributes for specific config layer.</h4>
+                <h4>1. Click on Liquids Pipeline in the Legend.</h4>
+                <p>Both buttons should turn green</p>
                 <button id="FetchAttributes">Fetch Attributes</button>
+                <button id="ClickLayer">Click Layer</button>
                 <br>
             </div>
 
@@ -37,12 +39,7 @@
                 <br>
             </div>
             <div>
-                <h4>4. Click on a Layer (button should turn green)</h4>
-                <button id="ClickLayer">Click Layer</button>
-                <br>
-            </div>
-            <div>
-                <h4>5. Remove Layer</h4>
+                <h4>4. Remove Layer</h4>
                 <button id="RemoveLayer">Remove Layer</button>
                 <br>
             </div>
