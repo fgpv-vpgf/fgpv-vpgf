@@ -15,7 +15,6 @@ $.getScript('../../../../rv-main.js', function () {
             "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/2"
         };
 
-
         //add config layer
         mapi.layers.addLayer(layerJSON);
 
@@ -30,6 +29,8 @@ $.getScript('../../../../rv-main.js', function () {
                 document.getElementById("CheckZoomLevel").onclick = function () {
                     if (mapi.zoom === 17) {
                         document.getElementById("CheckZoomLevel").style.backgroundColor = "#00FF00";
+                        document.getElementById("CheckZoomLevel").disabled = true;
+                        document.getElementById("PanToBoundary").disabled = false;
                     }
                     else {
                         console.log("Test failed (though it could be because user did not zoom enough).")
@@ -43,6 +44,7 @@ $.getScript('../../../../rv-main.js', function () {
                     if (mapi.zoom === 0) {
                         document.getElementById("CheckZoomLevel2").style.backgroundColor = "#00FF00";
                         //activates zooom to scale if successful (makes sense to do this when zoomed out to 0)
+                        document.getElementById("CheckZoomLevel2").disabled = true;
                         document.getElementById("ZoomToScale").disabled = false;
                     }
                     else {
@@ -57,29 +59,54 @@ $.getScript('../../../../rv-main.js', function () {
 
                     // turn on the bounding box for the layer whose boundary is being panned to and then pan to layer boundary
                     configLayer.panToBoundary();
-                    //expect map zoom level to have changed accordingly
-                    document.getElementById("output3").innerHTML = " ";
-                    document.getElementById("output3").innerHTML = mapi.zoom;
+                    if (mapi.zoom === 3) {
+                        document.getElementById("PanToBoundary").style.backgroundColor = "#00FF00";
+                        document.getElementById("PanToBoundary").disabled = true;
+                    }
+                    else {
+                        document.getElementById("PanToBoundary").style.backgroundColor = "#cd0000";
+                        console.log("Test failed because map wasn't changed to correct zoom level (3).");
+                    }
                 }
+
+                mapi.zoomChanged.subscribe(zoom => {
+                    console.log('zoom');
+                })
 
                 document.getElementById("ZoomToScale").onclick = function () {
                     // zoom to layer scale
                     configLayer.zoomToScale();
 
-                    //expect map zoom level to have changed accordingly
-                    document.getElementById("output1").innerHTML = " ";
-                    document.getElementById("output1").innerHTML = mapi.zoom;
-                    document.getElementById("ZoomToScale2").disabled = false;
+                    //takes couple of milliseconds for mapi.zoom to update (otherwise always fails this test because returns 0)
+                    window.setTimeout(function () {
+                        if (mapi.zoom >= 6) {
+                            document.getElementById("ZoomToScale").style.backgroundColor = "#00FF00";
+                            document.getElementById("ZoomToScale").disabled = true;
+                            document.getElementById("ZoomToScale2").disabled = false;
+                        }
+                        else {
+                            document.getElementById("ZoomToScale").style.backgroundColor = "#cd0000";
+                            console.log('Map zoom level not >=6 on zoom to scale');
+                        }
+                    }, 500);
                 }
 
                 //TODO: need to double check once get zoom to scale working.
                 //No associated subscribe function
                 document.getElementById("ZoomToScale2").onclick = function () {
-                    document.getElementById("output2").innerHTML = " ";
-                    const prevZoom = mapi.zoom;
+                    const prev = mapi.zoom;
                     configLayer.zoomToScale();
-                    const currZoom = mapi.zoom;
-                    document.getElementById("output2").innerHTML = [prevZoom, " " + currZoom];
+                    //takes couple of milliseconds for mapi.zoom to update (so wait to see if it actually didn't update)
+                    window.setTimeout(function () {
+                        if (mapi.zoom === prev) {
+                            document.getElementById("ZoomToScale2").style.backgroundColor = "#00FF00";
+                            document.getElementById("ZoomToScale2").disabled = true;
+                        }
+                        else {
+                            document.getElementById("ZoomToScale2").style.backgroundColor = "#cd0000";
+                            console.log('Map zoom level not >=6 on zoom to scale');
+                        }
+                    }, 500);
                 }
 
             }
