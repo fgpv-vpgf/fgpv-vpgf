@@ -24,7 +24,9 @@ $.getScript('../../../../rv-main.js', function () {
         mapi.layers.addLayer(layerJSON);
 
         mapi.layers.layerAdded.subscribe(layer => {
+
             let attributesGone = false;
+
             if (layer.id === '0') {
                 // set the config layer to a constant for ease of use
                 const configLayer = mapi.layers.getLayersById('0')[0];
@@ -34,6 +36,7 @@ $.getScript('../../../../rv-main.js', function () {
                     console.log('Attributes added');
                     document.getElementById("FetchAttributes").style.backgroundColor = "#00FF00";
                     configLayer.getAttributes();
+
                     //enables ability to set attributes/get attributes for already downloaded attributes.
                     if (!attributesGone) {
                         document.getElementById("SetAttribute").disabled = false;
@@ -46,7 +49,6 @@ $.getScript('../../../../rv-main.js', function () {
                 });
 
                 // subscribe to attributes changed
-                //TODO: First set attribute not registered as green.
                 configLayer.attributesChanged.subscribe(l => {
                     console.log('Attributes changed');
                     if (setAttrib === true) {
@@ -64,7 +66,7 @@ $.getScript('../../../../rv-main.js', function () {
                     configLayer.fetchAttributes();
                 }
 
-                //CHANGE ATTRIBUTES:
+                // change attribute of OID 1
                 document.getElementById("SetAttribute").onclick = function () {
                     setAttrib = true;
                     configLayer.setAttributes(1, 'Country', 'new Country');
@@ -72,6 +74,7 @@ $.getScript('../../../../rv-main.js', function () {
                     document.getElementById("SetAttribute").disabled = true;
                 }
 
+                // change multiple attributes of OID 2
                 document.getElementById("SetAllAttributes").onclick = function () {
                     setAttrib = false;
                     setAttribs = true;
@@ -80,13 +83,13 @@ $.getScript('../../../../rv-main.js', function () {
                     document.getElementById("SetAllAttributes").disabled = true;
                 }
 
-                //GET ATTRIBUTES (no associated subscribe function):
-                //TODO: how to get Country/county name to verify attributes
+                //get OID5 attribute
                 document.getElementById("GetAttribute").onclick = function () {
                     document.getElementById("output").innerHTML = " ";
                     document.getElementById("output").innerHTML = configLayer.getAttributes(5)["Pipeline"];
                 }
 
+                //get all attributes in layer
                 document.getElementById("GetAllAttributes").onclick = function () {
                     document.getElementById("output").innerHTML = " ";
                     for (let attrib of configLayer.getAttributes()) {
@@ -94,10 +97,7 @@ $.getScript('../../../../rv-main.js', function () {
                     }
                 }
 
-                //REMOVE ATTRIBUTES:
-
-                // subscribe to attributes removed
-                //TODO: First thing clicked on doesn't turn green.
+                //subscribe to attributes removed
                 configLayer.attributesRemoved.subscribe(l => {
                     console.log('Attributes removed');
 
@@ -124,6 +124,7 @@ $.getScript('../../../../rv-main.js', function () {
                     }
                 });
 
+                //remove single attribute (OID5)
                 document.getElementById("RemoveAttribute").onclick = function () {
                     document.getElementById("GetAttribute").disabled = true;
                     document.getElementById("RemoveAttribute").disabled = true;
@@ -133,6 +134,7 @@ $.getScript('../../../../rv-main.js', function () {
                     configLayer.removeAttributes(5);
                 }
 
+                //remove all attributes
                 document.getElementById("RemoveAllAttributes").onclick = function () {
                     // remove single attribute field of layer whose attributes are already downloaded
                     document.getElementById("GetAllAttributes").disabled = true;
