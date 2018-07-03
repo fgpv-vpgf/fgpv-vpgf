@@ -35,94 +35,58 @@ $.getScript('../../../../rv-main.js', function () {
             //set the layers being tested to a constant for ease of use
             const configLayers = layerGroup.getLayersById('0');
 
-            $("#FetchAttributes").click(function () {
-                configLayers[0].fetchAttributes();
-            });
-
-            //CHANGE ATTRIBUTES:
-            document.getElementById("SetAttribute").onclick = function () {
-                setAttrib = true;
-                configLayers[0].setAttributes(1, 'Country', 'new Country');
-                //disable after attribute is set, so user can't set again.
-            }
-
-            document.getElementById("SetAllAttributes").onclick = function () {
-                setAttrib = false;
-                setAttribs = true;
-                configLayers[0].setAttributes(2, { Country: 'Country is new', OBJECTID: -1 });
-            }
-
-            layerGroup.attributesRemoved.subscribe(l => {
-                console.log('Layer removed');
-
-                if (remOne === true) {
-                    if (configLayers[0].getAttributes(5) === undefined && configLayers[0].getAttributes(10) !== undefined) {
-                        document.getElementById("RemoveAttribute").style.backgroundColor = "lightgreen";
-                    }
-                    else {
-                        document.getElementById("RemoveAttribute").style.backgroundColor = "red";
-                        console.log('did not successfully remove attribute!')
-                    }
+            //test to see if layer added correctly
+            $("#AddLayerCheck").click(function () {
+                if (layerGroup.contains(0) === true) {
+                    $("#AddLayerCheck").css('background-color', 'lightgreen');
                 }
-
-                if (remAll === true) {
-                    if (configLayers[0].getAttributes(10) === undefined) {
-                        if (configLayers[0].getAttributes().length === 0) {
-                            configLayers[0].removeAttributes();
-                            document.getElementById("RemoveAllAttributes").style.backgroundColor = "lightgreen";
-                        }
-                        else {
-                            document.getElementById("RemoveAllAttributes").style.backgroundColor = "red";
-                            console.log('did not successfully remove attributes!')
-                        }
-                    }
-                    else {
-                        document.getElementById("RemoveAllAttributes").style.backgroundColor = "red";
-                        console.log('did not successfully remove attributes!')
-                    }
-                }
-
-            });
-
-            $("#RemoveAttribute").click(function () {
-                remOne = true;
-                configLayers[0].removeAttributes(5);
-            });
-
-
-            $("#RemoveAllAttributes").click(function () {
-                remOne = false;
-                remAll = true;
-                configLayers[0].removeAttributes();
-            });
-
-            layerGroup.layerRemoved.subscribe(l => {
-                console.log('Layer removed')
-                if(layerGroup.contains(0)===false){
-                    document.getElementById("RemoveLayer").style.backgroundColor = "lightgreen";
-                }
-                else{
-                    document.getElementById("RemoveLayer").style.backgroundColor = "red";
-                    console.log('Did not successfully remove layer!')
+                else {
+                    $("#AddLayerCheck").css('background-color', 'red');
+                    console.log("Layer group doesn't contain Layer 0");
                 }
             });
 
-            layerGroup.click.subscribe(l => {
-                console.log('Layer clicked');
-                document.getElementById("ClickLayer").style.backgroundColor = "lightgreen";
+            //expect that layers are being added to the group and populating the array
+            $("#AllLayersCheck").click(function () {
+                if (layerGroup.allLayers.length > 0) {
+                    $("#AllLayersCheck").css('background-color', 'lightgreen');
+                }
+                else {
+                    $("#AllLayersCheck").css('background-color', 'red');
+                    console.log("allLayers array is not populated");
+                }
             });
 
-            $("#RemoveLayer").click(function () {
-                layerGroup.removeLayer(0);
+            //getLayersByID test
+            $("#LayersByID").click(function () {
+                //if this evaluates to true, layerGroup.getLayersByID works
+                if (configLayers.length > 0) {
+                    $("#LayersByID").css('background-color', 'lightgreen');
+                }
+                else {
+                    $("#LayersByID").css('background-color', 'red');
+                    console.log("getLayersByID probably doesn't work");
+                }
             });
 
+            //getLayersByType test
+            $("#LayersByType").click(function () {
+                //if this evaluates to true, layerGroup.getLayersByType works
+                if (layerGroup.getLayersByType(RZ.LAYERS.ConfigLayer).length > 0) {
+                    $("#LayersByType").css('background-color', 'lightgreen');
+                }
+                else {
+                    $("#LayersByType").css('background-color', 'red');
+                    console.log("getLayersByType probably doesn't work");
+                }
+            });
 
         });
 
     });
 
     $('#main').append(`
-        <div id="fgpmap" style="height:800px; width:85%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
+        <div id="fgpmap" style="height:600px; width:85%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
     `);
 
     const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
