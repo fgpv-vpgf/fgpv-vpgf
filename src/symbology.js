@@ -390,12 +390,13 @@ function generateWMSSymbology(name, imageUri) {
  * @function _listToSymbology
  * @param {Function} conversionFunction a conversion function to wrap the supplied image into an image or an icon style symbology container
  * @param {Array} list a list of config-supplied symbology items in the form of [ { text: <String>, image: <String> }, ... ] wher `image` can be dataURL or an actual url
- * @return {Array} an array of converted symbology symbols in the form of [ { name: <String>, svgcode: <String> }, ... ]; items will be populated async as conversions are done
+ * @return {Array} an array of converted symbology symbols in the form of [ { name: <String>, image: <String>, svgcode: <String> }, ... ]; items will be populated async as conversions are done
  */
 function _listToSymbology(conversionFunction, list) {
     const results = list.map(({ text, image }) => {
         const result = {
             name: text,
+            image, // url
             svgcode: null
         };
 
