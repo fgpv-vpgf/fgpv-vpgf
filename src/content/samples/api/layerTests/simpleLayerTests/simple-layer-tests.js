@@ -15,6 +15,7 @@ $.getScript('../../../../rv-main.js', function () {
         //default icons
         const DEF1 = new RZ.GEO.Point(2, '', [-80, 59]);
         const DEF2 = new RZ.GEO.Point(3, '', [-85, 57]);
+
         let svgRem = false;
         let defRem = false
         let allRem = false;
@@ -31,6 +32,7 @@ $.getScript('../../../../rv-main.js', function () {
             }
             else {
                 document.getElementById("AddGeometries").style.backgroundColor = "red";
+                console.log("All four geometries were not added successfully to the map!");
             }
         });
 
@@ -38,6 +40,7 @@ $.getScript('../../../../rv-main.js', function () {
         simpleLayer.geometryRemoved.subscribe(l => {
             console.log('Geometry removed');
 
+            //check to see if SVG was removed
             if (svgRem === true) {
                 if (simpleLayer.geometry.find(geo => geo.id === '0') === undefined) {
                     //if geometry removed and not found, test is a success
@@ -45,19 +48,22 @@ $.getScript('../../../../rv-main.js', function () {
                 }
                 else {
                     document.getElementById("RemoveSVG").style.backgroundColor = "red";
+                    console.log("SVG star was not successfully removed!");
                 }
             }
 
-            if (defRem === true) {//if geometry removed and not found, test is a success
+            //check to see if default points were removed
+            if (defRem === true) {
                 if (simpleLayer.geometry.find(geo => geo.id === '2' || geo.id == '3') === undefined) {
                     document.getElementById("RemoveDefault").style.backgroundColor = "#00FF00";
                 }
                 else {
                     document.getElementById("RemoveDefault").style.backgroundColor = "red";
+                    console.log("Default points were not successfully removed!");
                 }
             }
 
-
+            //check to see if all points were removed
             if (allRem === true) {
                 if (simpleLayer.geometry.length === 0) {
                     document.getElementById("RemoveAll").style.backgroundColor = "#00FF00";
@@ -66,6 +72,7 @@ $.getScript('../../../../rv-main.js', function () {
                 }
                 else {
                     document.getElementById("RemoveAll").style.backgroundColor = "red";
+                    console.log("All points were not successfully removed!");
                 }
             }
 
@@ -77,8 +84,6 @@ $.getScript('../../../../rv-main.js', function () {
         simpleLayer.addGeometry(JPG);
         simpleLayer.addGeometry([DEF1, DEF2]);
 
-
-        //ADD NAME CHANGE TESTS:
         // subscribe to name changed, and toggle button if layer name is successfully changed
         simpleLayer.nameChanged.subscribe(l => {
             console.log('Name changed');
@@ -106,7 +111,6 @@ $.getScript('../../../../rv-main.js', function () {
             }
         }
 
-        //ADD OPACITY TESTS:
         // subscribe to opacity changed, and toggle button if opacity is successfully changed
         simpleLayer.opacityChanged.subscribe(l => {
             console.log('Opacity changed');
@@ -132,7 +136,6 @@ $.getScript('../../../../rv-main.js', function () {
             }
         }
 
-        //ADD Visibility TESTS:
         // subscribe to visibility changed, and toggle button if visibility changes
         simpleLayer.visibilityChanged.subscribe(l => {
             console.log('Visibility changed');
@@ -159,19 +162,21 @@ $.getScript('../../../../rv-main.js', function () {
             }
         }
 
-        //REMOVE GEOMETRIES BUTTONS
+        //remove purple star
         document.getElementById("RemoveSVG").onclick = function () {
             svgRem = true;
             simpleLayer.removeGeometry('0');
             document.getElementById("RemoveSVG").disabled = true;
         }
 
+        //remove two red points
         document.getElementById("RemoveDefault").onclick = function () {
             defRem = true;
             simpleLayer.removeGeometry(['2', '3']);
             document.getElementById("RemoveDefault").disabled = true;
         }
 
+        //remove all points (purple star, orange star, two red points)
         document.getElementById("RemoveAll").onclick = function () {
             allRem = true;
             simpleLayer.removeGeometry();

@@ -24,8 +24,7 @@ $.getScript('../../../../rv-main.js', function () {
                 // set the config layer to a constant for ease of use
                 const configLayer = mapi.layers.getLayersById('0')[0];
 
-                //WORKS
-                //No associated subscribe function
+                //checks zoom level when zoomed in to the furthest possible
                 document.getElementById("CheckZoomLevel").onclick = function () {
                     if (mapi.zoom === 17) {
                         document.getElementById("CheckZoomLevel").style.backgroundColor = "#00FF00";
@@ -38,8 +37,7 @@ $.getScript('../../../../rv-main.js', function () {
                     }
                 }
 
-                //WORKS
-                //No associated subscribe function
+                //checks zoom level when zoomed out to the furthest possible
                 document.getElementById("CheckZoomLevel2").onclick = function () {
                     if (mapi.zoom === 0) {
                         document.getElementById("CheckZoomLevel2").style.backgroundColor = "#00FF00";
@@ -53,8 +51,7 @@ $.getScript('../../../../rv-main.js', function () {
                     }
                 }
 
-                //No associated subscribe function
-                //works good job.
+                //zooms out so that the bounding box is visible
                 document.getElementById("PanToBoundary").onclick = function () {
 
                     // turn on the bounding box for the layer whose boundary is being panned to and then pan to layer boundary
@@ -69,17 +66,13 @@ $.getScript('../../../../rv-main.js', function () {
                     }
                 }
 
-                mapi.zoomChanged.subscribe(zoom => {
-                    console.log('zoom');
-                })
-
+                // zoom to layer scale
                 document.getElementById("ZoomToScale").onclick = function () {
-                    // zoom to layer scale
                     configLayer.zoomToScale();
 
                     //takes couple of milliseconds for mapi.zoom to update (otherwise always fails this test because returns 0)
                     window.setTimeout(function () {
-                        if (mapi.zoom >= 6) {
+                        if (mapi.zoom === 8) {
                             document.getElementById("ZoomToScale").style.backgroundColor = "#00FF00";
                             document.getElementById("ZoomToScale").disabled = true;
                             document.getElementById("ZoomToScale2").disabled = false;
@@ -91,8 +84,7 @@ $.getScript('../../../../rv-main.js', function () {
                     }, 500);
                 }
 
-                //TODO: need to double check once get zoom to scale working.
-                //No associated subscribe function
+                //check if zoom level remains the same if already zoomed to scale previously
                 document.getElementById("ZoomToScale2").onclick = function () {
                     const prev = mapi.zoom;
                     configLayer.zoomToScale();
