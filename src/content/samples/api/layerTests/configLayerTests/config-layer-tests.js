@@ -15,6 +15,11 @@ $.getScript('../../../../rv-main.js', function () {
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
         };
 
+        let setAttrib = false;
+        let setAttribs = false;
+        let remAttrib = false;
+        let remAttribs = false;
+
         //add config layer to map
         mapi.layers.addLayer(layerJSON);
 
@@ -111,6 +116,7 @@ $.getScript('../../../../rv-main.js', function () {
                 configLayer.attributesAdded.subscribe(l => {
                     console.log('Attributes added');
                     document.getElementById("FetchAttributes").style.backgroundColor = "#00FF00";
+                    configLayer.getAttributes();
                     //enables ability to set attributes/get attributes for already downloaded attributes.
                     if (!attributesGone) {
                         document.getElementById("SetAttribute").disabled = false;
@@ -126,12 +132,13 @@ $.getScript('../../../../rv-main.js', function () {
                 //TODO: First set attribute not registered as green.
                 configLayer.attributesChanged.subscribe(l => {
                     console.log('Attributes changed');
+                    if (setAttrib === true) {
+                        document.getElementById("SetAttribute").style.backgroundColor = "#00FF00";
+                    }
 
-                    $("button").click(function () {
-                        if (this.id === "SetAttribute" || this.id === "SetAllAttributes") {
-                            document.getElementById(this.id).style.backgroundColor = "#00FF00";
-                        }
-                    });
+                    if (setAttribs === true) {
+                        document.getElementById("SetAllAttributes").style.backgroundColor = "#00FF00";
+                    }
                 });
 
 
@@ -142,12 +149,15 @@ $.getScript('../../../../rv-main.js', function () {
 
                 //CHANGE ATTRIBUTES:
                 document.getElementById("SetAttribute").onclick = function () {
+                    setAttrib = true;
                     configLayer.setAttributes(1, 'Country', 'new Country');
                     //disable after attribute is set, so user can't set again.
                     document.getElementById("SetAttribute").disabled = true;
                 }
 
                 document.getElementById("SetAllAttributes").onclick = function () {
+                    setAttrib = false;
+                    setAttribs = true;
                     configLayer.setAttributes(2, { Country: 'Country is new', OBJECTID: -1 });
                     //disable after attribute is set, so user can't set again.
                     document.getElementById("SetAllAttributes").disabled = true;
@@ -174,33 +184,27 @@ $.getScript('../../../../rv-main.js', function () {
                 configLayer.attributesRemoved.subscribe(l => {
                     console.log('Attributes removed');
 
-                    $("button").click(function () {
-
-                        if (this.id === "RemoveAttribute") {
-                            // confirm attribute for OID 5 removed, but others still persist
-                            if (configLayer.getAttributes(5) === undefined && configLayer.getAttributes(10) !== undefined) {
-                                document.getElementById("RemoveAttribute").style.backgroundColor = "#00FF00";
-                            }
-                            else {
-                                console.log("Test failed because attribute was not removed successfully, or removed wrong attribute")
-                                document.getElementById("RemoveAttribute").style.backgroundColor = "#cd0000";
-                            }
+                    if (remAttrib) {
+                        // confirm attribute for OID 5 removed, but others still persist
+                        if (configLayer.getAttributes(5) === undefined && configLayer.getAttributes(10) !== undefined) {
+                            document.getElementById("RemoveAttribute").style.backgroundColor = "#00FF00";
                         }
-
-                        if (this.id === "RemoveAllAttributes") {
-                            // confirm previously present attribute was removed, and attributes list is now empty
-                            if (configLayer.getAttributes(10) === undefined && configLayer.getAttributes().length() === 0) {
-                                document.getElementById("RemoveAllAttributes").style.backgroundColor = "#00FF00";
-                            }
-                            else {
-                                console.log("Test failed because attributes were not removed successfully")
-                                document.getElementById("RemoveAllAttributes").style.backgroundColor = "#cd0000";
-                            }
+                        else {
+                            console.log("Test failed because attribute was not removed successfully, or removed wrong attribute")
+                            document.getElementById("RemoveAttribute").style.backgroundColor = "#cd0000";
                         }
+                    }
 
-
-                    });
-
+                    if (remAttribs) {
+                        // confirm previously present attribute was removed, and attributes list is now empty
+                        if (configLayer.getAttributes(10) === undefined && configLayer.getAttributes().length === 0) {
+                            document.getElementById("RemoveAllAttributes").style.backgroundColor = "#00FF00";
+                        }
+                        else {
+                            console.log("Test failed because attributes were not removed successfully")
+                            document.getElementById("RemoveAllAttributes").style.backgroundColor = "#cd0000";
+                        }
+                    }
                 });
 
                 document.getElementById("RemoveAttribute").onclick = function () {
@@ -208,6 +212,7 @@ $.getScript('../../../../rv-main.js', function () {
                     document.getElementById("RemoveAttribute").disabled = true;
                     // remove single attribute field of layer whose attributes are already downloaded
                     attributesGone = true;
+                    remAttrib = true;
                     configLayer.removeAttributes(5);
                 }
 
@@ -220,6 +225,8 @@ $.getScript('../../../../rv-main.js', function () {
                     document.getElementById("SetAttribute").disabled = true;
                     document.getElementById("SetAllAttributes").disabled = true;
                     attributesGone = true;
+                    remAttrib = false;
+                    remAttribs = true;
                     configLayer.removeAttributes();
                 }
 
