@@ -20,50 +20,151 @@ $.getScript('../../../../rv-main.js', function () {
         const lineD = new RZ.GEO.LineString(12, [pointA, pointE]);
         // create a hoverpoint instance and add it to the line
         const hoverPointD = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Line Hover!</a>', { keepOpen: true, followCursor: true, position: 'bottom' });
-
+        let multipointAdded = false;
+        let addPoint = false;
+        let lineAdded = false;
 
         //////////////////////////      TESTS       ///////////////////////////////////////////////////////////////////////////////
 
         //ADD GEOMETRIES (Points and Hoverpoints): SUBSCRIPTION
         simpleLayer.geometryAdded.subscribe(l => {
             console.log('Geometry added');
+            console.log(multipointAdded);
+
             // confirm hoverpoint and geometry got added correctly, test passes
-            if (simpleLayer.geometry.length === 2 && simpleLayer.geometry[0].hover !== null && simpleLayer.geometry[1].hover !== null) {
-                document.getElementById("AddHover").style.backgroundColor = "#00FF00";
+            if (addPoint === true && !document.getElementById("AddHover").disabled) {
+                if (simpleLayer.geometry.length === 2 && simpleLayer.geometry[0].hover !== null && simpleLayer.geometry[1].hover !== null) {
+                    document.getElementById("AddHover").style.backgroundColor = "#00FF00";
+                    document.getElementById("RemoveHover").disabled = false;
+                }
+                else {
+                    document.getElementById("AddHover").style.backgroundColor = "#FF0000";
+                }
             }
+
+            if (multipointAdded === true && !document.getElementById("AddMultiPoint").disabled) {
+                if (simpleLayer.geometry.length === 1 && simpleLayer.geometry[0].hover !== null) {
+                    document.getElementById("AddMultiPoint").style.backgroundColor = "#00FF00";
+                    document.getElementById("RemoveHover2").disabled = false;
+                }
+                else {
+                    document.getElementById("AddMultiPoint").style.backgroundColor = "#FF0000";
+                }
+            }
+
+            if (lineAdded === true) {
+                if (simpleLayer.geometry.length === 1 && simpleLayer.geometry[0].hover !== null) {
+                    document.getElementById("AddLine").style.backgroundColor = "#00FF00";
+                    document.getElementById("RemoveHover3").disabled = false;
+                }
+                else {
+                    document.getElementById("AddLine").style.backgroundColor = "#FF0000";
+                }
+            }
+
+
         });
 
         simpleLayer.geometryRemoved.subscribe(l => {
-
+            if (simpleLayer.geometry.length === 0 && multipointAdded === false) {
+                document.getElementById("RemovePoints").style.backgroundColor = "#00FF00";
+                document.getElementById("RemovePoints").disabled = true;
+            }
+            else if (simpleLayer.geometry.length === 0 && multipointAdded === true) {
+                document.getElementById("RemovePoints2").style.backgroundColor = "#00FF00";
+                document.getElementById("RemovePoints2").disabled = true;
+            }
         })
 
         document.getElementById("AddHover").onclick = function () {
             pointA.hover = hoverPointA;
             pointE.hover = hoverPointB;
+            addPoint = true;
             simpleLayer.addGeometry([pointA, pointE]);
             document.getElementById("AddHover").disabled = true;
-            document.getElementById("RemoveHover").disabled = false;
         }
 
-        document.getElementById("RemoveHover").onclick = function () {
+        document.getElementById("AddMultiPoint").onclick = function () {
+            const multipointB = new RZ.GEO.MultiPoint(11, '', [pointA, pointE, [79, 43], [-79, 32]]);
+            // create a hoverpoint instance and add it to the multipoint
+            const hoverPointB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { followCursor: true, position: 'right' });
+            multipointB.hover = hoverPointB;
+            multipointAdded = true;
+            simpleLayer.addGeometry(multipointB);
+            document.getElementById("AddMultiPoint").disabled = true;
+        }
 
+        document.getElementById("AddLine").onclick = function () {
+            // create a line instance using pre-existing API points
+            const lineB = new RZ.GEO.LineString(12, [pointA, pointE]);
+            // create a hoverpoint instance and add it to the line
+            const hoverPointB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, followCursor: true, position: 'bottom' });
+            lineB.hover = hoverPointB;
+            // add line to the layer
+            lineAdded = true;
+            simpleLayer.addGeometry([lineB]);
+            document.getElementById("AddLine").disabled = true;
+        }
+        //remove hover from points
+        document.getElementById("RemoveHover").onclick = function () {
             //remove hoverpoints
             simpleLayer.geometry.forEach(geometry => {
                 geometry.removeHover();
             });
-
-            //if hoverpoints have been removed, test passes
-            if(simpleLayer.geometry[0].hover === null && simpleLayer.geometry[1].hover === null){
+            //if hoverpoints have been removed, test passes (green), fails (red)
+            if (simpleLayer.geometry[0].hover === null && simpleLayer.geometry[1].hover === null) {
                 document.getElementById("RemoveHover").style.backgroundColor = "#00FF00";
                 document.getElementById("RemoveHover").disabled = true;
+                document.getElementById("RemovePoints").disabled = false;
             }
-            else{
-                document.getElementById("RemoveHover").style.backgroundColor = "red";
+            else {
+                document.getElementById("RemoveHover").style.backgroundColor = "#FF0000";
                 document.getElementById("RemoveHover").disabled = true;
             }
         }
+        //remove hover from multipoint geometry
+        document.getElementById("RemoveHover2").onclick = function () {
+            //remove hoverpoints
+            simpleLayer.geometry.forEach(geometry => {
+                geometry.removeHover();
+            });
+            //if hoverpoints have been removed, test passes (green), fails (red)
+            if (simpleLayer.geometry[0].hover === null) {
+                document.getElementById("RemoveHover2").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveHover2").disabled = true;
+                document.getElementById("RemovePoints2").disabled = false;
+            }
+            else {
+                document.getElementById("RemoveHover2").style.backgroundColor = "#FF0000";
+                document.getElementById("RemoveHover2").disabled = true;
+            }
+        }
 
+        //remove hover from line geomtries
+        document.getElementById("RemoveHover3").onclick = function () {
+            //remove hoverpoints
+            simpleLayer.geometry.forEach(geometry => {
+                geometry.removeHover();
+            });
+            //if hoverpoints have been removed, test passes (green), fails (red)
+            if (simpleLayer.geometry[0].hover === null) {
+                document.getElementById("RemoveHover3").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveHover3").disabled = true;
+            }
+            else {
+                document.getElementById("RemoveHover3").style.backgroundColor = "#FF0000";
+                document.getElementById("RemoveHover3").disabled = true;
+            }
+        }
 
+        document.getElementById("RemovePoints").onclick = function () {
+            simpleLayer.removeGeometry();
+            document.getElementById("AddMultiPoint").disabled = false;
+        }
+        document.getElementById("RemovePoints2").onclick = function () {
+            simpleLayer.removeGeometry();
+            document.getElementById("AddLine").disabled = false;
+        }
     });
     $('#main').append(`<div id="fgpmap" style="height:700px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>`);
 

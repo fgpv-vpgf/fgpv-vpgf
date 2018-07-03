@@ -15,6 +15,9 @@ $.getScript('../../../../rv-main.js', function () {
         //default icons
         const DEF1 = new RZ.GEO.Point(2, '', [-80, 59]);
         const DEF2 = new RZ.GEO.Point(3, '', [-85, 57]);
+        let svgRem = false;
+        let defRem = false
+        let allRem = false;
 
         // subscribe to geometry added
         simpleLayer.geometryAdded.subscribe(l => {
@@ -26,23 +29,37 @@ $.getScript('../../../../rv-main.js', function () {
                 document.getElementById("RemoveSVG").disabled = false;
                 document.getElementById("RemoveDefault").disabled = false;
             }
+            else{
+                document.getElementById("AddGeometries").style.backgroundColor = "red";
+            }
         });
 
         //subscribe to geometry removed
         simpleLayer.geometryRemoved.subscribe(l => {
             console.log('Geometry removed');
 
-            if (simpleLayer.geometry.find(geo => geo.id === '0') === undefined) {
+            if (svgRem && simpleLayer.geometry.find(geo => geo.id === '0') === undefined) {
                 //if geometry removed and not found, test is a success
                 document.getElementById("RemoveSVG").style.backgroundColor = "#00FF00";
             }
-
-            if (simpleLayer.geometry.find(geo => geo.id === '2' || geo.id == '3') === undefined) {//if geometry removed and not found, test is a success
-                document.getElementById("RemoveDefault").style.backgroundColor = "#00FF00";
+            else{
+                document.getElementById("RemoveSVG").style.backgroundColor = "red";
             }
 
-            if (simpleLayer.geometry.length === 0) {
+            if (defRem && simpleLayer.geometry.find(geo => geo.id === '2' || geo.id == '3') === undefined) {//if geometry removed and not found, test is a success
+                document.getElementById("RemoveDefault").style.backgroundColor = "#00FF00";
+            }
+            else{
+                document.getElementById("RemoveDefault").style.backgroundColor = "red";
+            }
+
+            if (allRem && simpleLayer.geometry.length === 0) {
                 document.getElementById("RemoveAll").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveSVG").style.backgroundColor = "#00FF00";
+                document.getElementById("RemoveDefault").style.backgroundColor = "#00FF00";
+            }
+            else{
+                document.getElementById("RemoveAll").style.backgroundColor = "red";
             }
         });
 
@@ -136,16 +153,19 @@ $.getScript('../../../../rv-main.js', function () {
 
         //REMOVE GEOMETRIES BUTTONS
         document.getElementById("RemoveSVG").onclick = function () {
+            svgRem = true;
             simpleLayer.removeGeometry('0');
             document.getElementById("RemoveSVG").disabled = true;
         }
 
         document.getElementById("RemoveDefault").onclick = function () {
+            defRem = true;
             simpleLayer.removeGeometry(['2', '3']);
             document.getElementById("RemoveDefault").disabled = true;
         }
 
         document.getElementById("RemoveAll").onclick = function () {
+            allRem = true;
             simpleLayer.removeGeometry();
             document.getElementById("RemoveSVG").disabled = true;
             document.getElementById("RemoveDefault").disabled = true;

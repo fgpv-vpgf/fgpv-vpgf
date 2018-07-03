@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en" dir="ltr">
+
 <head>
     <meta charset="utf-8">
     <title>FGP Viewer</title>
@@ -7,30 +8,36 @@
 </head>
 
 <body style="padding:20px;">
-    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Geometry Tests</span></h1>
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Geometry Tests</span>
+    </h1>
 
     <div class="row" id="main" style="display:flex">
-    <div style="width:25%; padding:10px; background-color:lightgrey; border:solid" class="column">
-        <div id = "Point Geometries Tests">
-            <h2>Point Geometries Tests: </h2>
-            <button id="AddHover">Add Points + Hovers</button>
-            <button id="RemoveHover" disabled>Remove Hovers</button>
+        <div style="width:25%; padding:10px; background-color:lightgrey; border:solid" class="column">
+            <h2>Intro: </h2>
+            <p>"Hover" annotations appear when points are hovered over.</p>
+            <div id="Point Geometries Tests">
+                <h2>Point Geometries Tests: </h2>
+                <button id="AddHover">Add Points + Hovers</button>
+                <button id="RemoveHover" disabled>Remove Hovers</button><br>
+                <button id="RemovePoints" disabled>Reset</button>
+            </div>
+            <div id="MultiPoint Geometry Tests">
+                <h2>MultiPoint Geometries Tests:</h2>
+                <button id="AddMultiPoint" disabled>Add MultiPoint + Hover</button>
+                <button id="RemoveHover2" disabled>Remove Hover</button>
+                <button id="RemovePoints2" disabled>Reset</button>
+            </div>
+            <div id="Line Geometry Tests">
+                <h2>Line Geometries Tests:</h2>
+                <button id="AddLine" disabled>Add Line + Hover</button>
+                <button id="RemoveHover3" disabled>Remove Hover</button>
+            </div>
         </div>
-        <br>
-        <div id = "MultiPoint Geometry Tests">
-            <h2>MultiPoint Geometries Tests:</h2>
-            <button id="AddMultiPoint" disabled>Add MultiPoint</button>
-            <p>Hover over any of the points and expect an annotation to open which will follow the cursor as long as the point is being hovered on.</p>
-            <button id="RemoveDefault" disabled>Default (2)</button>
-            <button id="RemoveAll" disabled>All (4)</button>
-        </div>
-
     </div>
-</div>
-    <script
-        src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
     <script src="geometry-tests.js"></script>
 </body>
+
 </html>
