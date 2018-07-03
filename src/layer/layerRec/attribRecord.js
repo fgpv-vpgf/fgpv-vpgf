@@ -192,6 +192,9 @@ class AttribRecord extends layerRecord.LayerRecord {
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
         // simple array of text mapping for demonstration purposes. fancy grid formatting later?
         // ignore any functions hanging around on the attribute.
+        if (fields) {
+            attribs = attribFC.AttribFC.unAliasAttribs(attribs, fields);
+        }
         return Object.keys(attribs)
             .filter(key => typeof attribs[key] !== 'function')
             .map(key => {
