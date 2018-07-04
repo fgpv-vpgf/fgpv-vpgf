@@ -1278,6 +1278,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._description = entrySource.description || '';
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
+            this._symbologyExpanded = entrySource.symbologyExpanded;
             this._hidden = entrySource.hidden === true;
 
         }
@@ -1295,6 +1296,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get symbologyRenderStyle () { return this._symbologyRenderStyle; }
         set symbologyRenderStyle (value) { this._symbologyRenderStyle = value; }
+
+        get symbologyExpanded () { return this._symbologyExpanded; }
 
         /**
          * Specifies if the legend block should be hidden from the UI.
@@ -1316,6 +1319,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 description: this.description,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle,
+                symbologyExpanded: this.symbologyExpanded,
                 hidden: this.hidden,
                 entryType: this.entryType
             };
@@ -1393,6 +1397,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._coverIcon = entrySource.coverIcon;
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
+            this._symbologyExpanded = entrySource.symbologyExpanded;
+
         }
 
         get infoType () {               return this._infoType; }
@@ -1403,6 +1409,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get coverIcon () {      return this._coverIcon; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
+        get symbologyExpanded() {       return this._symbologyExpanded; }
 
         get entryType () { return TYPES.legend.INFO; }
 
@@ -1415,7 +1422,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 description: this.description,
                 coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
-                symbologyRenderStyle: this.symbologyRenderStyle
+                symbologyRenderStyle: this.symbologyRenderStyle,
+                symbologyExpanded: this.symbologyExpanded
             };
         }
     }

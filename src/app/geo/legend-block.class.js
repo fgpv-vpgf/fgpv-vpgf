@@ -382,7 +382,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             super(blockConfig);
 
             this._symbologyStack =
-                new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle, true);
+                new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle,
+                    this.symbologyExpanded, true);
 
             this._canEnlarge = false;
         }
@@ -396,6 +397,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get description () {            return this.blockConfig.description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
+        get symbologyExpanded () {      return this.blockConfig.symbologyExpanded; }
 
         get canEnlarge () {             return this._canEnlarge; }
         set canEnlarge (value) {        this._canEnlarge = value; }
@@ -462,7 +464,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._aggregateStates = ref.aggregateStates;
             this._symbologyStack = new SymbologyStack(
-                this.mainProxy, blockConfig.symbologyStack, blockConfig.coverIcon, blockConfig.symbologyRenderStyle, true);
+                this.mainProxy, blockConfig.symbologyStack, blockConfig.coverIcon, blockConfig.symbologyRenderStyle,
+                blockConfig.symbologyExpanded, true);
         }
 
         get mainProxyWrapper () { return this._mainProxyWrapper; }
