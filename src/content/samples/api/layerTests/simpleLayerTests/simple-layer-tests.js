@@ -26,9 +26,23 @@ $.getScript('../../../../rv-main.js', function () {
             //if all four geometries are added to the map, then test passes
             if (simpleLayer.geometry.length === 4) {
                 document.getElementById("AddGeometries").style.backgroundColor = "#00FF00";
+
+                //in case of reset, activate disabled remove tests
                 document.getElementById("RemoveAll").disabled = false;
                 document.getElementById("RemoveSVG").disabled = false;
                 document.getElementById("RemoveDefault").disabled = false;
+
+                document.getElementById("Reset").disabled = true;
+
+                //in case of reset, reset to default button colour
+                document.getElementById("RemoveAll").style.backgroundColor = '';
+                document.getElementById("RemoveSVG").style.backgroundColor = '';
+                document.getElementById("RemoveDefault").style.backgroundColor = '';
+
+                //inc ase of reset, reset to default button click values
+                svgRem = false;
+                defRem = false
+                allRem = false;
             }
             else {
                 document.getElementById("AddGeometries").style.backgroundColor = "red";
@@ -183,6 +197,14 @@ $.getScript('../../../../rv-main.js', function () {
             document.getElementById("RemoveSVG").disabled = true;
             document.getElementById("RemoveDefault").disabled = true;
             document.getElementById("RemoveAll").disabled = true;
+            document.getElementById("Reset").disabled = false;
+        }
+
+        //reset remove test by adding geometries back
+        document.getElementById("Reset").onclick = function () {
+            simpleLayer.addGeometry(SVG);
+            simpleLayer.addGeometry(JPG);
+            simpleLayer.addGeometry([DEF1, DEF2]);
         }
 
     });

@@ -15,15 +15,23 @@ $.getScript('../../../../rv-main.js', function () {
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
         };
 
-        let setAttrib = false;
-        let setAttribs = false;
-        let remAttrib = false;
-        let remAttribs = false;
+        let setAttrib;
+        let setAttribs;
+        let remAttrib;
+        let remAttribs;
 
         //add config layer to map
         mapi.layers.addLayer(layerJSON);
 
+        const layerGroup = mapi.layers;
+
         mapi.layers.layerAdded.subscribe(layer => {
+
+            //reset values of different button click events to false
+            setAttrib = false;
+            setAttribs = false;
+            remAttrib = false;
+            remAttribs = false;
 
             let attributesGone = false;
 
@@ -37,7 +45,8 @@ $.getScript('../../../../rv-main.js', function () {
                     document.getElementById("FetchAttributes").style.backgroundColor = "#00FF00";
                     configLayer.getAttributes();
 
-                    //enables ability to set attributes/get attributes for already downloaded attributes.
+                    //enables ability to set attributes/get attributes for already downloaded attributes
+                    //resets button colors to default in case reset was pressed
                     if (!attributesGone) {
                         document.getElementById("SetAttribute").disabled = false;
                         document.getElementById("SetAllAttributes").disabled = false;
@@ -45,6 +54,12 @@ $.getScript('../../../../rv-main.js', function () {
                         document.getElementById("GetAttribute").disabled = false;
                         document.getElementById("RemoveAttribute").disabled = false;
                         document.getElementById("RemoveAllAttributes").disabled = false;
+                        document.getElementById("SetAttribute").style.backgroundColor = '';
+                        document.getElementById("SetAllAttributes").style.backgroundColor = '';
+                        document.getElementById("GetAllAttributes").style.backgroundColor = '';
+                        document.getElementById("GetAttribute").style.backgroundColor = '';
+                        document.getElementById("RemoveAttribute").style.backgroundColor = '';
+                        document.getElementById("RemoveAllAttributes").style.backgroundColor = '';
                     }
                 });
 
@@ -148,7 +163,12 @@ $.getScript('../../../../rv-main.js', function () {
                     remAttribs = true;
                     configLayer.removeAttributes();
                 }
+            }
 
+            //resets tests
+            document.getElementById("Reset").onclick = function () {
+                layerGroup.removeLayer(0);
+                layerGroup.addLayer(layerJSON);
             }
 
         });

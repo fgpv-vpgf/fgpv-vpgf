@@ -27,10 +27,13 @@ $.getScript('../../../../rv-main.js', function () {
             console.log('Geometry added');
 
             // confirm hoverpoint and hover got added correctly, test passes
-            if (addPoint === true && !document.getElementById("AddHover").disabled) {
+            if (addPoint === true) {
                 if (simpleLayer.geometry.length === 2 && simpleLayer.geometry[0].hover !== null && simpleLayer.geometry[1].hover !== null) {
                     document.getElementById("AddHover").style.backgroundColor = "lightgreen";
                     document.getElementById("RemoveHover").disabled = false;
+                    multipointAdded = false;
+                    addPoint = false;
+                    lineAdded = false;
                 }
                 else {
                     document.getElementById("AddHover").style.backgroundColor = "red";
@@ -38,14 +41,20 @@ $.getScript('../../../../rv-main.js', function () {
                 }
             }
             //confirm multipoint and hover got added correctly, test passes
-            if (multipointAdded === true && !document.getElementById("AddMultiPoint").disabled) {
+            if (multipointAdded === true) {
                 if (simpleLayer.geometry.length === 1 && simpleLayer.geometry[0].hover !== null) {
                     document.getElementById("AddMultiPoint").style.backgroundColor = "lightgreen";
                     document.getElementById("RemoveHover2").disabled = false;
+                    multipointAdded = false;
+                    addPoint = false;
+                    lineAdded = false;
                 }
                 else {
                     document.getElementById("AddMultiPoint").style.backgroundColor = "red";
                     console.log("Either the hover or multipoint was not added!")
+                    multipointAdded = false;
+                    addPoint = false;
+                    lineAdded = false;
                 }
             }
 
@@ -67,30 +76,11 @@ $.getScript('../../../../rv-main.js', function () {
         //subsribe to geometry removed
         simpleLayer.geometryRemoved.subscribe(l => {
 
-            //testing for if multipoint removed
-            if (multipointAdded === true) {
-                if (simpleLayer.geometry.length === 0) {
-                    document.getElementById("RemovePoints2").style.backgroundColor = "lightgreen";
-                    document.getElementById("RemovePoints2").disabled = true;
-                }
-                else{
-                    document.getElementById("RemovePoints2").style.backgroundColor = "red";
-                    console.log("Multipoint was not removed successfully!");
-                }
+            if (!simpleLayer.geometry.length === 0) {
+                document.getElementById("RemovePoints").style.backgroundColor = "red";
+                console.log("Points were not removed successfully!");
             }
-            //testing for if points were removed
-            else{
-                if (simpleLayer.geometry.length === 0) {
-                    document.getElementById("RemovePoints").style.backgroundColor = "lightgreen";
-                    document.getElementById("RemovePoints").disabled = true;
-                }
-                else{
-                    document.getElementById("RemovePoints").style.backgroundColor = "red";
-                    console.log("Points were not removed successfully!");
-                }
-            }
-
-        })
+        });
 
         //add points with hover
         document.getElementById("AddHover").onclick = function () {
@@ -130,7 +120,6 @@ $.getScript('../../../../rv-main.js', function () {
             if (simpleLayer.geometry[0].hover === null && simpleLayer.geometry[1].hover === null) {
                 document.getElementById("RemoveHover").style.backgroundColor = "lightgreen";
                 document.getElementById("RemoveHover").disabled = true;
-                document.getElementById("RemovePoints").disabled = false;
             }
             else {
                 document.getElementById("RemoveHover").style.backgroundColor = "red";
@@ -150,7 +139,6 @@ $.getScript('../../../../rv-main.js', function () {
             if (simpleLayer.geometry[0].hover === null) {
                 document.getElementById("RemoveHover2").style.backgroundColor = "lightgreen";
                 document.getElementById("RemoveHover2").disabled = true;
-                document.getElementById("RemovePoints2").disabled = false;
             }
             else {
                 document.getElementById("RemoveHover2").style.backgroundColor = "red";
@@ -177,19 +165,32 @@ $.getScript('../../../../rv-main.js', function () {
             }
         }
 
-        //resets map after points have been added
+        //resets tests
         document.getElementById("RemovePoints").onclick = function () {
+
+            //first remove existing geometry on map
             simpleLayer.removeGeometry();
+
+            //allow to add any type of geometry
+            document.getElementById("AddHover").disabled = false;
             document.getElementById("AddMultiPoint").disabled = false;
-        }
-
-        //resets map after multipoints have been added
-        document.getElementById("RemovePoints2").onclick = function () {
-            simpleLayer.removeGeometry();
             document.getElementById("AddLine").disabled = false;
+
+            //can't add hovers until geometries added
+            document.getElementById("RemoveHover").disabled = true;
+            document.getElementById("RemoveHover2").disabled = true;
+            document.getElementById("RemoveHover3").disabled = true;
+
+            //reset to default button colour (grey)
+            document.getElementById("AddHover").style.backgroundColor = '';
+            document.getElementById("AddMultiPoint").style.backgroundColor = '';
+            document.getElementById("AddLine").style.backgroundColor = '';
+            document.getElementById("RemoveHover").style.backgroundColor = '';
+            document.getElementById("RemoveHover2").style.backgroundColor = '';
+            document.getElementById("RemoveHover3").style.backgroundColor = '';
         }
 
-        function removeHover(){
+        function removeHover() {
             simpleLayer.geometry.forEach(geometry => {
                 geometry.removeHover();
             });

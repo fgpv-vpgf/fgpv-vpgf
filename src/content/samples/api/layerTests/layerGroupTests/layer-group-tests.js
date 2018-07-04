@@ -81,6 +81,14 @@ $.getScript('../../../../rv-main.js', function () {
                 }
             });
 
+            //resets tests
+            $("#Reset").click(function () {
+                $("#LayersByType").css('background-color', '');
+                $("#LayersByID").css('background-color', '');
+                $("#AllLayersCheck").css('background-color', '');
+                $("#AddLayerCheck").css('background-color', '');
+            });
+
         });
 
     });

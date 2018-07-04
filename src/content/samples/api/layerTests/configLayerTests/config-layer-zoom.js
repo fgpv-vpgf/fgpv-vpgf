@@ -101,6 +101,20 @@ $.getScript('../../../../rv-main.js', function () {
                     }, 500);
                 }
 
+                //Resets tests
+                document.getElementById("Reset").onclick = function () {
+                    document.getElementById("CheckZoomLevel").style.backgroundColor = "";
+                    document.getElementById("CheckZoomLevel").disabled = false;
+                    document.getElementById("CheckZoomLevel2").style.backgroundColor = "";
+                    document.getElementById("CheckZoomLevel2").disabled = false;
+                    document.getElementById("PanToBoundary").style.backgroundColor = "";
+                    document.getElementById("PanToBoundary").disabled = true;
+                    document.getElementById("ZoomToScale").style.backgroundColor = "";
+                    document.getElementById("ZoomToScale").disabled = true;
+                    document.getElementById("ZoomToScale2").style.backgroundColor = "";
+                    document.getElementById("ZoomToScale2").disabled = true;
+                }
+
             }
 
         });

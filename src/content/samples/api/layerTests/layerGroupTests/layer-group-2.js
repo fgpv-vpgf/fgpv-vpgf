@@ -11,7 +11,6 @@ $.getScript('../../../../rv-main.js', function () {
         let remOne;
         let remAll;
 
-
         // JSON snippet to be added as a ConfigLayer
         const layerJSON = {
             "id": "0",
@@ -26,16 +25,30 @@ $.getScript('../../../../rv-main.js', function () {
         //add layer to map
         layerGroup.addLayer(layerJSON);
 
-
         //Subscribe to layer added
         layerGroup.layerAdded.subscribe(layer => {
 
             console.log('Layer added');
 
+            //resets to default button colour in case reset button was clicked
+            document.getElementById("SetAttribute").style.backgroundColor = "";
+            document.getElementById("SetAllAttributes").style.backgroundColor = "";
+            document.getElementById("RemoveAttribute").style.backgroundColor = "";
+            document.getElementById("RemoveAllAttributes").style.backgroundColor = "";
+            document.getElementById("FetchAttributes").style.backgroundColor = "";
+            document.getElementById("ClickLayer").style.backgroundColor = "";
+            document.getElementById("RemoveLayer").style.backgroundColor = "";
+
+            //resets values to unclicked in case reset button was clicked
+            setAttrib = false;
+            setAttribs = false;
+            remOne = false;
+            remAll = false;
+
             //set the layers being tested to a constant for ease of use
             const configLayers = layerGroup.getLayersById('0');
 
-           //if attributes were added, fetch attribute test passes
+            //if attributes were added, fetch attribute test passes
             layerGroup.attributesAdded.subscribe(l => {
                 console.log('Attributes added');
                 $("#FetchAttributes").css('background-color', 'lightgreen');
@@ -117,10 +130,10 @@ $.getScript('../../../../rv-main.js', function () {
             //subscribe to layer removed
             layerGroup.layerRemoved.subscribe(l => {
                 console.log('Layer removed')
-                if(layerGroup.contains(0)===false){
+                if (layerGroup.contains(0) === false) {
                     document.getElementById("RemoveLayer").style.backgroundColor = "lightgreen";
                 }
-                else{
+                else {
                     document.getElementById("RemoveLayer").style.backgroundColor = "red";
                     console.log('Did not successfully remove layer!')
                 }
@@ -137,7 +150,11 @@ $.getScript('../../../../rv-main.js', function () {
                 layerGroup.removeLayer(0);
             });
 
+        });
 
+        //resets tests
+        $("#Reset").click(function () {
+            layerGroup.addLayer(layerJSON);
         });
 
     });
