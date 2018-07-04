@@ -932,6 +932,7 @@
                 "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous" },
                 "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
                 "googleAPIKey": { "type": "string", "description": "Google API key to enable geo location and share link shortening." },
+                "esriLibUrl": { "type": "string", "description": "ESRI JavaSCript API endpoint. Note, we can't use a version greater than v3.22" },
                 "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
                 "print": { "type": "object", "additionalProperties": true, "description": "FIXME" },
