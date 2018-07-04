@@ -41,11 +41,11 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
         const index = self.requester.proxy.itemIndex
         // check for specified columns in config (in table)
         let includedColumns = [];
-        if (self.requester.proxy._source.initialConfig) {
-            const tableColumns = self.requester.proxy._source.initialConfig.table.columns;
+        if (self.requester.proxy._source.config) {
+            const tableColumns = self.requester.proxy._source.config.table.columns;
             includedColumns = tableColumns.map(col => col.data);
         }
-        let excludedColumns = ['SHAPE', 'rvSymbol', 'rvInteractive']; // anything that should be hidden by default
+        let excludedColumns = ['SHAPE', 'Shape', 'rvSymbol', 'rvInteractive']; // anything that should be hidden by default
         if (stateManager.display.details.hidden) {
             excludedColumns = excludedColumns.concat(stateManager.display.details.hidden[index]);
         }
