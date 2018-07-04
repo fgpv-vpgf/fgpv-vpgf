@@ -13,7 +13,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -38,15 +38,32 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack) {
     function link(scope, el) {
         const self = scope.self;
 
-        const excludedColumns = ['rvSymbol', 'rvInteractive'];
+        const index = self.requester.proxy.itemIndex
+        // check for specified columns in config (in table)
+        let includedColumns = [];
+        if (self.requester.proxy._source.config) {
+            const tableColumns = self.requester.proxy._source.config.table.columns;
+            includedColumns = tableColumns.map(col => col.data);
+        }
+        let excludedColumns = ['SHAPE', 'Shape', 'rvSymbol', 'rvInteractive']; // anything that should be hidden by default
+        if (stateManager.display.details.hidden) {
+            excludedColumns = excludedColumns.concat(stateManager.display.details.hidden[index]);
+        }
 
         self.isExpanded = self.solorecord;
         self.isRendered = self.solorecord;
 
         // pre-filter the columns used by the datagrid out of the returned data
-        self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.key) === -1);
+        // if there specific columns for the table set by the config use them
+        if (includedColumns.length) {
+            self.item.data = self.item.data.filter(column => includedColumns.indexOf(column.field) > -1);
+        }
+        // filter out any items hidden in the table
+        self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.field) === -1);
 
-        self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
+        if (self.requester.proxy._source.config) {
+            self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
+        }
         if (self.templateUrl) {
             // creates an object from the details array of {field.key: field.value, etc.}
             // for use in the template
