@@ -713,7 +713,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             //      to data that is already aliased.
                             identifyResult.data.push({
                                 name: ele.value,
-                                data: this.attributesToDetails(ele.feature.attributes),
+                                data: this.attributesToDetails(ele.feature.attributes, lData.fields),
                                 oid: unAliasAtt[lData.oidField],
                                 symbology: [{
                                     svgcode: this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer)
