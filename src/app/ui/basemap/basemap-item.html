@@ -5,13 +5,17 @@
     </div>
 
     <div ng-switch-when="3978" ng-if="!self.basemap.thumbnailUrl">
-        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/268"/>
-        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/285/269"/>
+        <div class="rv-basemap-thumb" ng-repeat="layer in self.basemap.layers">
+                <img alt="" ng-src="{{ layer.url }}/tile/8/285/268"/ ng-style="{ opacity: layer.opacity }">
+                <img alt="" ng-src="{{ layer.url }}/tile/8/285/269"/ ng-style="{ opacity: layer.opacity }">
+        </div>
     </div>
 
     <div ng-switch-when="102100" ng-if="!self.basemap.thumbnailUrl">
-        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/74"/>
-        <img alt="" ng-src="{{ self.basemap.url }}/tile/8/91/75"/>
+        <div class="rv-basemap-thumb" ng-repeat="layer in self.basemap.layers">
+            <img alt="" ng-src="{{ layer.url }}/tile/8/91/74"/ ng-style="{ opacity: layer.opacity }">
+            <img alt="" ng-src="{{ layer.url }}/tile/8/91/75"/ ng-style="{ opacity: layer.opacity }">
+        </div>
     </div>
 </div>
 
