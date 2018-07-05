@@ -1,4 +1,5 @@
 import Map from 'api/map';
+import { PanelElem } from 'api/panel';
 import { BasemapGroup } from 'api/ui';
 import gtm from '../tag-manager';
 
@@ -17,8 +18,8 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, ConfigObject, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames) {
+function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval,
+    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames, $compile) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -90,6 +91,11 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
                 events.$broadcast(events.rvApiPrePlugin, apiMap);
+                // api panel elements need a reference to the internal angular compiler
+                PanelElem.prototype.angularCompiler = function(html, compilerScope = scope) {
+                    return $compile(html)(compilerScope);
+                }
+
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
                 gtm(apiMap);

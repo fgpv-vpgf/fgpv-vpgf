@@ -1,7 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import Map from 'api/map';
-import { S_IFMT } from 'constants';
-import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons';
+import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons'; //import svg files
 
 /**
  * Panel is a box to be displayed on the map. It can be positioned, sized, and has contents and controls.
@@ -28,16 +27,12 @@ import { minusSVG, plusSVG, closeSVG } from '../theme/assets/images/panel-icons'
  */
 
 export class Panel {
-
-
     /**
-+    * Creates a new Panel.
-+    * @constructor
-+    * @param {string} id - the user defined ID name for this Panel
-     * @param {Map} map - the map instance that this Panel resides on
-+    */
+     * Creates a new Panel.
+     * @param {string}  id      - the user defined ID name for this Panel
+     * @param {Map}     map     - the map instance that this Panel resides on
+     */
     constructor(id: string, map: Map) {
-
         //init class attributes
         this.idAttr = id;
         this.openAttr = false;
@@ -83,10 +78,9 @@ export class Panel {
 
     /**
     * Returns a newly created Btn
-    * @return {Btn} - the Btn that was created.
     */
-    createBtn(): Btn {
-        return new Btn();
+    get button() {
+        return Btn;
     }
 
     /**
@@ -94,8 +88,8 @@ export class Panel {
     * @param {string | HTMLElement | JQuery<HTMLElement>} element - the element to be scoped by the PanelElem
     * @return {Btn} - the PanelElem that was created.
     */
-    createPanelElem(element: string | HTMLElement | JQuery<HTMLElement>): PanelElem {
-        return new PanelElem(element);
+    get container() {
+        return PanelElem;
     }
 
     /**
@@ -614,7 +608,7 @@ export class Panel {
  * let panelElem4 = panel1.createPanelElem('|'); //controls divider shortcut
  * ```
  */
-class PanelElem {
+export class PanelElem {
 
     /**
     * Constructs PanelElem object
@@ -622,7 +616,16 @@ class PanelElem {
     * @param {string | HTMLElement | JQuery<HTMLElement>} [element] - element to be set as PanelElem (strings assumed to be titles)
     *                                                               - not to be specified for Btns    */
     constructor(element?: string | HTMLElement | JQuery<HTMLElement>) {
-        this.setElement(element);
+        if (element)
+            this.setElement(element);
+    }
+
+    set title(title: string) {
+        this.elementAttr = $('<h1 style="font-weight: normal">' + title + '</h1>');
+    }
+
+    get divider(): JQuery<HTMLElement> {
+        return $('<div class="divider"></div>');
     }
 
 
@@ -632,35 +635,14 @@ class PanelElem {
     *                                                                 - parameter should always be set if directly accessing PanelElem class (not from Btn)
     * @throws {Exception} - cannot have multiple top level elements.
     */
-    setElement(element?: string | HTMLElement | JQuery<HTMLElement>): void {
+    setElement(element: string | HTMLElement | JQuery<HTMLElement>): void {
+
+        this.elementAttr = this.angularCompiler($(element)[0]);
+        
 
         //if the element is a string either control divider, close button or title
         if (typeof element === "string") {
-            //divider shortcut
-            if (element === "|") {
-                this.elementAttr = $('<div class="divider"></div>')
-            }
-            //close button shortcut
-            else if (element === "x") {
-                var btn = new Btn();
-                btn.icon = <SVGElement>closeSVG;
-                this.elementAttr = btn.element;
-                this.elementAttr.addClass('btn');
-                this.elementAttr.addClass('close-btn');
-
-            }
-            //toggle button shortcut
-            else if (element === 'T') {
-                var btn = new Btn();
-                btn.icon = <SVGElement>minusSVG;
-                this.elementAttr = btn.element;
-                this.elementAttr.addClass('btn');
-                this.elementAttr.addClass('toggle-btn');
-            }
-            //title shortcut
-            else {
-                this.elementAttr = $('<h1 style="font-weight: normal">' + element + '</h1>');
-            }
+            
         }
         else {
             this.elementAttr = $(element);
@@ -732,6 +714,24 @@ class Btn extends PanelElem {
 
     elementAttr = <JQuery<HTMLElement>>$('<button class="btn"></button>');
 
+    constructor(type?: string) {
+        super();
+        // close button
+        if (type === "x") {
+            this.icon = <SVGElement>closeSVG;
+            this.elementAttr = this.element;
+            this.elementAttr.addClass('btn');
+            this.elementAttr.addClass('close-btn');
+
+        }
+        //toggle button
+        else if (type === 'T') {
+            this.icon = <SVGElement>minusSVG;
+            this.elementAttr = this.element;
+            this.elementAttr.addClass('btn');
+            this.elementAttr.addClass('toggle-btn');
+        }
+    }
 
     /**
     * Sets an icon for the Btn
@@ -1248,10 +1248,11 @@ export interface Panel {
     heightChanged: Observable<number>
 }
 
-interface PanelElem {
+export interface PanelElem {
     idAttr: string;
     documentFragment: DocumentFragment;
     elementAttr: JQuery<HTMLElement>;
+    angularCompiler: (html: Element) => JQuery<HTMLElement>
 }
 
 interface PanelPositions {
