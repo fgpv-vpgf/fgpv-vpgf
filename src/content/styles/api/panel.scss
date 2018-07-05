@@ -7,28 +7,28 @@
     background-color: #ffffff;
     border: 1px solid #ccc;
     box-shadow: 1px 1px 2px #fff inset, -1px -1px 2px #fff inset;
-    display: inline-block;
     position: absolute;
     top: 0px;
     left: 0px;
+    width: 100%;
     overflow: hidden;
+
+    .rv-button-24 {
+        height: inherit;
+    }
 }
 .panel-controls {
-    padding-left: 18px;
-    padding-right: 18px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 4px 12px 4px 18px;
+    height: 40px;
+    overflow: hidden;
 }
 .separator{
     border-bottom: lightgrey solid 1px;
 }
 .panel-body{
-    margin-top: 2px;
-    display: inline-block;
-    padding-left: 18px;
-    padding-right: 18px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px 18px;
+    overflow-y: scroll;
+    height: 91.5%;
 }
 .btn{
     width: 36px;
