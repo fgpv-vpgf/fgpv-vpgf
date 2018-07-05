@@ -6,4 +6,4 @@
  */
 // TODO: refactor to flatten the app.ui module
 angular
-    .module('app.ui', []);
+    .module('app.ui', ['rzModule']);

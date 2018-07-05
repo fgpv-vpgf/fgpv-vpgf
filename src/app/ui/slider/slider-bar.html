@@ -1,0 +1,76 @@
+<md-button
+    ng-if="self.isLocked"
+    aria-label="{{ 'slider.bar.lock' | translate }}"
+    class="md-icon-button primary"
+    ng-click="self.lock()">
+    <md-tooltip>{{ 'slider.bar.lock' | translate }}</md-tooltip>
+    <md-icon md-svg-src="action:lock"></md-icon>
+</md-button>
+<md-button
+    ng-if="!self.isLocked"
+    aria-label="{{ 'slider.bar.unlock' | translate }}"
+    class="md-icon-button primary"
+    ng-click="self.lock()">
+    <md-tooltip>{{ 'slider.bar.unlock' | translate }}</md-tooltip>
+    <md-icon md-svg-src="action:lock_open"></md-icon>
+</md-button>
+
+<div class="rv-slider-barcontrols">
+    <md-button
+        aria-label="{{ 'slider.bar.previous' | translate }}"
+        class="md-icon-button primary"
+        ng-click="self.step('down')">
+        <md-tooltip>{{ 'slider.bar.previous' | translate }}</md-tooltip>
+         <md-icon md-svg-src="av:skip_previous"></md-icon>
+    </md-button>
+    <md-button
+        ng-if="self.isPlaying"
+        aria-label="{{ 'slider.bar.play' | translate }}"
+        class="md-icon-button primary"
+        ng-click="self.pause()">
+        <md-tooltip>{{ 'slider.bar.play' | translate }}</md-tooltip>
+        <md-icon md-svg-src="av:pause"></md-icon>
+    </md-button>
+    <md-button
+        ng-if="!self.isPlaying"
+        aria-label="{{ 'slider.bar.pause' | translate }}"
+        class="md-icon-button primary"
+        ng-click="self.play()">
+        <md-tooltip>{{ 'slider.bar.pause' | translate }}</md-tooltip>
+        <md-icon md-svg-src="av:play_arrow"></md-icon>
+    </md-button>
+    <md-button
+        aria-label="{{ 'slider.bar.foward' | translate }}"
+        class="md-icon-button primary"
+        ng-click="self.step('up')">
+        <md-tooltip>{{ 'slider.bar.foward' | translate }}</md-tooltip>
+        <md-icon md-svg-src="av:skip_next"></md-icon>
+    </md-button>
+    <md-input-container class="md-block" md-no-float flex>
+        <label>{{ 'slider.bar.delay' | translate }}</label>
+        <md-select
+            aria-label="{{ 'slider.bar.delay' | translate }}"
+            ng-model="self.selectedDelay">
+            <md-option ng-repeat="(key, value) in {} | rvRange: '3':'10':'1':'1000':' sec'" ng-value="{{ key }}" ng-selected="{{ key }} === 5000">
+                {{ value }}
+            </md-option>
+            </md-select>
+        </md-input-container>
+</div>
+
+<md-switch
+    aria-label="Gif"
+    class="rv-slider-switch"
+    ng-class="md-primary"
+    ng-model="self.gif">
+    {{ 'slider.bar.gif' | translate }}
+    <md-tooltip>{{ 'slider.tooltip.gif' | translate }}</md-tooltip>
+</md-switch>
+<md-button
+    aria-label="{{ 'slider.bar.refresh' | translate }}"
+    class="md-icon-button primary rv-slider-refresh"
+    ng-click="self.refresh()">
+    <md-tooltip>{{ 'slider.bar.refresh' | translate }}</md-tooltip>
+    <md-icon md-svg-src="navigation:refresh"></md-icon>
+</md-button>
+

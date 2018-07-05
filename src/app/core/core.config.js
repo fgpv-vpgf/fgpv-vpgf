@@ -3,6 +3,7 @@ const moment = window.moment;
 const iconTemplateUrls = {
     action: require('../../content/svgCache/action.svg'),
     alert: require('../../content/svgCache/alert.svg'),
+    av: require('../../content/svgCache/av.svg'),
     communication: require('../../content/svgCache/communication.svg'),
     community: require('../../content/svgCache/community.svg'),
     content: require('../../content/svgCache/content.svg'),
@@ -111,6 +112,7 @@ function configBlock($translateProvider, $mdIconProvider, $parseProvider, $mdThe
             .defaultIconSet(iconTemplateUrls.default)
             .iconSet('action', iconTemplateUrls.action)
             .iconSet('alert', iconTemplateUrls.alert)
+            .iconSet('av', iconTemplateUrls.av)
             .iconSet('communication', iconTemplateUrls.communication)
             .iconSet('community', iconTemplateUrls.community)
             .iconSet('content', iconTemplateUrls.content)

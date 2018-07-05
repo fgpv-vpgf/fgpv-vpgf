@@ -1,0 +1,121 @@
+@mixin slider {
+
+    rv-slider:hover {
+        opacity: 1;
+    }
+
+    rv-slider {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+        max-width: 1800px;
+        background-color: white;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        bottom: 30px;
+        opacity: 0.80;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+
+        rv-slider-setting {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+
+            .rv-slider-limits {
+                md-input-container {
+                    flex: 0 1 10%;
+                    height: 30px;
+                    margin-left: 15px;
+
+                    md-select {
+                        height: 30px;
+                    }
+                }
+            }
+
+            .rv-slider-list-item {
+                display: flex;
+                align-items: center;
+
+                .rv-slider-item-name {
+                    flex: 0 1 20%;
+                }
+
+                .rv-slider-item-filter {
+                    flex: 0 1 10%;
+                }
+
+                md-input-container:first-child {
+                    flex: 0 1 20%;
+                    height: 30px;
+                    margin-left: 15px;
+
+                    md-select {
+                        height: 30px;
+                    }
+                }
+
+                md-input-container {
+                    flex: 0 1 20%;
+                    height: 30px;
+                    margin-left: 15px;
+
+                    md-select {
+                        height: 30px;
+                    }
+                }
+            }
+        }
+
+        .rv-slider-content {
+            display: flex;
+
+            .rv-slider-buttons {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+
+            .rv-slider-controls {
+                display: flex;
+                flex-direction: column;
+                width: 95%;
+                margin: auto;
+
+                .rv-slider-histo {
+                    height: 50px;
+                    width: 100%;
+                    margin-left: 12px;
+                }
+
+                rv-slider-bar {
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+
+                    .rv-slider-barcontrols {
+                        margin-left: auto;
+                        margin-right: auto;
+
+                        md-input-container {
+                            display: inline-block;
+                            margin: 10px 0;
+                            width: 80px;
+                        }
+                    }
+
+                    .rv-slider-switch {
+                        margin: 0;
+                        flex-direction: row-reverse;
+
+                        div:last-of-type {
+                            margin-right: 5px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

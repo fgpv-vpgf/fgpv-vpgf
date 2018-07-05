@@ -1792,6 +1792,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    class RangeSliderComponent extends ComponentBase {
+        constructor (source) {
+            source = typeof source === 'undefined' ? { enabled: false } : source;
+            super(source);
+        }
+    }
+
     class Components {
         constructor (componentsSource) {
             this._source = componentsSource;
@@ -1803,6 +1810,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._overviewMap = new OverviewMapComponent(componentsSource.overviewMap);
             this._scaleBar = new ScaleBarComponent(componentsSource.scaleBar);
             this._basemap = new BasemapComponent(componentsSource.basemap);
+            this._rangeSlider = new RangeSliderComponent(componentsSource.rangeSlider);
         }
 
         get geoSearch () { return this._geoSearch; }
@@ -1812,6 +1820,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get overviewMap () { return this._overviewMap; }
         get scaleBar () { return this._scaleBar; }
         get basemap () { return this._basemap; }
+        get rangeSlider () { return this._rangeSlider; }
 
         get JSON() {
             return {
@@ -1821,7 +1830,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 northArrow: this.northArrow.JSON,
                 overviewMap: this.overviewMap.JSON,
                 scaleBar: this.scaleBar.JSON,
-                basemap: this.basemap.JSON
+                basemap: this.basemap.JSON,
+                rangeSlider: this.rangeSlider.JSON
             };
         }
     }

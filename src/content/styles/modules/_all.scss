@@ -13,6 +13,7 @@
 @import "_mapnav.scss";
 @import "_esri-map.scss";
 @import "_setting-controls.scss";
+@import "_slider.scss";
 @import "_toc.scss";
 @import "_basemap.scss";
 @import "_typography.scss";
@@ -47,6 +48,7 @@
 @include mapnav;
 @include esri-map;
 @include setting-controls;
+@include slider;
 @include toc;
 @include basemap;
 @include rv-whiteframe-set;

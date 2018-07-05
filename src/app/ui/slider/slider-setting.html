@@ -1,0 +1,138 @@
+<div ng-show="self.sliderService.isSettingOpen">
+    <div class="rv-slider-limits" style="display:flex">
+            <md-input-container class="md-block" md-no-float flex>
+                <label>{{ 'slider.settings.interval' | translate }}</label>
+                <md-select
+                    aria-label="{{ 'slider.settings.interval' | translate }}" translate
+                    ng-model="self.activeLayer.slider.interval"
+                    md-on-close="self.updateInterval()">
+                    <md-option ng-repeat="(key, value) in {} | rvRange: '2':'100'" ng-value="{{ key }}" ng-selected="{{ key }} === 10">
+                        {{ value }}
+                        </md-option>
+                </md-select>
+            </md-input-container>
+            <div ng-if="self.selectedType === 'number'">
+                <md-input-container>
+                    <input type="number" md-no-asterisk="true"
+                        aria-label="{{ 'slider.settings.limitmin' | translate }}" translate
+                        ng-pattern="/\d/"
+                        step="any"
+                        placeholder="{{ 'slider.settings.limitmin' | translate }}"
+                        ng-model="self.activeLayer.slider.limits.number.min"
+                        ng-model-options="{ debounce: { default: 750, blur: 0 } }"
+                        ng-change="self.updateLimits()">
+                 </md-input-container>
+                <md-input-container>
+                    <input type="number" md-no-asterisk="true"
+                        aria-label="{{ 'slider.settings.limitmax' | translate }}" translate
+                        ng-pattern="/\d/"
+                        step="any"
+                        placeholder="{{ 'slider.settings.limitmax' | translate }}"
+                        ng-model="self.activeLayer.slider.limits.number.max"
+                        ng-model-options="{ debounce: { default: 750, blur: 0 } }"
+                        ng-change="self.updateLimits()">
+                </md-input-container>
+            </div>
+            <div ng-if="self.selectedType === 'date'">
+                <md-input-container>
+                    <label>{{ 'slider.settings.limitmin' | translate }}</label>
+                    <md-datepicker
+                        ng-click="self.prevent($event)"
+                        ng-change="self.updateLimits()"
+                        ng-model="self.activeLayer.slider.limits.date.min"
+                        md-placeholder="{{ 'slider.settings.limitmin' | translate }}">
+                </md-datepicker>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{ 'slider.settings.limitmax' | translate }}</label>
+                    <md-datepicker
+                        ng-click="self.prevent($event)"
+                        ng-change="self.updateLimits()"
+                        ng-model="self.activeLayer.slider.limits.date.max"
+                        md-placeholder="{{ 'slider.settings.limitmax' | translate }}">
+                    </md-datepicker>
+                </md-input-container>
+            </div>
+    </div>
+    <md-divider></md-divider>
+    <ul class="rv-list rv-slider-list">
+        <li class="rv-slider-list-item">
+            <div class="rv-slider-item-name">
+                <md-input-container class="md-block" md-no-float flex>
+                    <label>{{ 'slider.settings.layer' | translate }}</label>
+                    <md-select
+                        aria-label="{{ 'slider.settings.layer' | translate }}" translate
+                        ng-model="self.selectedLayerId"
+                        ng-change="self.updateLayer()">
+                        <md-option ng-repeat="(key, value) in self.sliderService.layersName" ng-value="key" ng-selected="$index === 0">
+                                {{ value }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <div class="rv-slider-item-filter">
+                <md-input-container class="md-block" md-no-float flex>
+                    <label>{{ 'slider.settings.field' | translate }}</label>
+                    <md-select
+                        aria-label="{{ 'slider.settings.field' | translate }}" translate
+                        ng-model="self.activeLayer.slider.field"
+                        md-on-close="self.updateAttribute()">
+                        <md-option ng-repeat="(key, value) in self.activeLayer.slider.fields" ng-value="key">
+                                {{ value }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <div ng-if="self.selectedType === 'number'">
+                <md-input-container>
+                    <input type="number" md-no-asterisk="true"
+                        aria-label="{{ 'slider.settings.rangemin' | translate }}" translate
+                        ng-pattern="/\d/"
+                        step="any"
+                        placeholder="{{ 'slider.settings.rangemin' | translate }}"
+                        ng-model="self.activeLayer.slider.ranges.number.min"
+                        ng-model-options="{ debounce: { default: 750, blur: 0 } }"
+                        ng-change="self.updateRange()">
+                </md-input-container>
+                <md-input-container>
+                    <input type="number" md-no-asterisk="true"
+                        aria-label="{{ 'slider.settings.rangemax' | translate }}" translate
+                        ng-pattern="/\d/"
+                        step="any"
+                        placeholder="{{ 'slider.settings.rangemax' | translate }}"
+                        ng-model="self.activeLayer.slider.ranges.number.max"
+                        ng-model-options="{ debounce: { default: 750, blur: 0 } }"
+                        ng-change="self.updateRange()">
+                </md-input-container>
+            </div>
+            <div ng-if="self.selectedType === 'date'">
+                <md-input-container>
+                    <label>{{ 'slider.settings.rangemin' | translate }}</label>
+                    <md-datepicker
+                        ng-click="self.prevent($event)"
+                        ng-change="self.updateRange()"
+                        ng-model="self.activeLayer.slider.ranges.date.min"
+                        md-placeholder="{{ 'slider.settings.rangemin' | translate }">
+                    </md-datepicker>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{ 'slider.settings.rangemax' | translate }}</label>
+                    <md-datepicker
+                        ng-click="self.prevent($event)"
+                        ng-change="self.updateRange()"
+                        ng-model="self.activeLayer.slider.ranges.date.max"
+                        md-placeholder="{{ 'slider.settings.rangemax' | translate }}">
+                    </md-datepicker>
+                </md-input-container>
+            </div>
+            <md-input-container>
+                <label>{{ 'slider.settings.selected' | translate }}</label>
+                <input type="string" readonly
+                    aria-label="{{ 'slider.settings.selected' | translate }}" translate
+                    value="{{ self.activeLayer.slider.selectCount }} - {{ self.activeLayer.slider.percentCount }}%">
+                </input>
+            </md-input-container>
+        </li>
+    </ul>
+    <md-divider></md-divider>
+</div>

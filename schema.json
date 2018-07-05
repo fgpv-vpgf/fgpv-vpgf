@@ -851,6 +851,12 @@
                         "expandFactor": { "type": "number", "default": 2 }
                     }
                 },
+                "rangeSlider": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": false }
+                    }
+                },
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" },
                 "areaOfInterest": {

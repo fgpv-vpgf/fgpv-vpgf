@@ -465,6 +465,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                     },
                     "scaleBar": {
                         "enabled": true
+                    },
+                    "rangeSlider": {
+                        "enabled": false
                     }
                 },
                 "extentSets": [

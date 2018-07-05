@@ -17,6 +17,7 @@
     "angular-sanitize": "1.6.10",
     "angular-translate": "2.17.1",
     "angular-translate-loader-static-files": "2.17.1",
+    "angularjs-slider": "6.6.0",
     "csvtojson": "1.1.11",
     "datatables.net": "1.10.16",
     "datatables.net-buttons": "1.5.1",
@@ -24,9 +25,12 @@
     "datatables.net-dt": "1.10.16",
     "datatables.net-scroller": "1.4.4",
     "datatables.net-select": "1.2.5",
+    "dom-to-image": "2.6.0",
     "dotjem-angular-tree": "github:dotJEM/angular-tree",
     "file-saver": "1.3.8",
     "geoApi": "github:fgpv-vpgf/geoApi#v2.5.0-21",
+    "gif.js": "0.2.0",
+    "gifshot": "0.4.5",
     "imports-loader": "0.8.0",
     "linkifyjs": "2.1.6",
     "marked": "0.4.0",
@@ -34,6 +38,7 @@
     "remove-markdown": "0.2.2",
     "rxjs": "6.1.0",
     "screenfull": "3.3.2",
+    "svg.js": "2.6.5",
     "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js"
   },
   "devDependencies": {

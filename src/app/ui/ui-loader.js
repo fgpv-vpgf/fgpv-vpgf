@@ -19,6 +19,7 @@ import './common/morph.directive.js';
 import './common/crosshairs.directive.js';
 import './common/north-arrow.directive.js';
 import './common/plug-slide.animation.js';
+import './common/range.filter.js';
 import './common/reverse.filter.js';
 import './common/select-menu.decorator.js';
 import './common/select.decorator.js';
@@ -94,6 +95,11 @@ import './settings/settings.directive.js';
 import './sidenav/menulink.directive.js';
 import './sidenav/sidenav.directive.js';
 import './sidenav/sidenav.service.js';
+
+import './slider/slider.directive.js';
+import './slider/slider-bar.directive.js';
+import './slider/slider-setting.directive.js';
+import './slider/slider.service.js';
 
 import './toc/templates/expand-menu.directive.js';
 import './toc/templates/visibility-menu.directive.js';

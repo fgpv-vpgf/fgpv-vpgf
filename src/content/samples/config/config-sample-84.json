@@ -1,5 +1,6 @@
 {
-  "ui": {
+    "ui": {
+    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -11,6 +12,9 @@
     },
     "sideMenu": {
       "logo": true
+    },
+    "help": {
+      "folderName": "default"
     },
     "legend": {
       "isOpen": {
@@ -31,7 +35,7 @@
       },
       "map": {},
       "mapElements": {},
-      "legend": {},
+      "legend":{},
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
       }
@@ -68,82 +72,16 @@
       },
       "overviewMap": {
         "enabled": true,
-        "layerType": "imagery"
+        "layerType": "imagery",
+        "initiallyExpanded": false
       },
       "scaleBar": {
         "enabled": true
+      },
+      "rangeSlider": {
+        "enabled": true
       }
     },
-    "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "layerId": "somepowerplants"
-          },
-          {
-            "name": "feature group",
-            "children": [
-              {
-                "layerId": "powerplant100mw-electric"
-              },
-              {
-                "layerId": "powerplant100mw-naturalGas"
-              },
-              {
-                "layerId": "powerplant100mw-liquids"
-              }
-            ]
-          }
-        ]
-      }
-    },
-    "layers": [
-      {
-        "id": "somepowerplants",
-        "name": "Power Plants Proper Subset",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 17,
-            "nameField": "OBJECTID",
-            "name": "Custom name field (OBJECTID)"
-          },
-          {
-            "index": 19,
-            "nameField": "Address",
-            "name": "Custom name field (Address)"
-          },
-          {
-            "index": 21,
-            "name": "Default name field (Facility)"
-          }
-        ],
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
-      },
-      {
-        "id": "powerplant100mw-electric",
-        "name": "Tooltip field (City) different from name field (OBJECTID)",
-        "nameField": "OBJECTID",
-        "tooltipField": "City",
-        "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-      },
-      {
-        "id": "powerplant100mw-naturalGas",
-        "name": "Tooltip field same as name field (Period)",
-        "nameField": "Period",
-        "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
-      },
-      {
-        "id": "powerplant100mw-liquids",
-        "name": "Default tooltip and name field (Country)",
-        "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
-      }
-    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -378,6 +316,55 @@
         ]
       }
     ],
+    "legend": {
+      "type": "structured",
+      "root": {
+        "name": "root",
+        "children": [
+          {
+            "layerId": "GeoChronology",
+            "symbologyExpanded": true
+          },
+          {
+            "layerId": "WindPotential"
+          },
+          {
+            "layerId": "CERP"
+          }
+        ]
+      }
+    },
+    "layers": [
+      {
+        "id": "GeoChronology",
+        "name": "GeoChronology",
+        "layerType": "esriDynamic",
+        "layerEntries": [{
+          "index": 0
+        }],
+        "state": {
+          "visibility": true
+        },
+        "singleEntryCollapse": true,
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/GSCC/Geochronology/MapServer/"
+      }, {
+        "id": "WindPotential",
+        "name": "Wind Potential (Energy)",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": false
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/clean_energy_wind_potential/MapServer/6"
+      }, {
+        "id": "CERP",
+        "name": "Clean Power Energy",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": false
+        },
+        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/clean_energy_generating_stations_fgp/MapServer/0"
+      }
+    ],
     "tileSchemas": [
       {
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
@@ -406,7 +393,16 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "attribution": {
+          "text": {
+            "enabled": true,
+            "value": "Custom Attribution"
+          },
+          "logo": {
+            "enabled": true
+          }
+        }
       },
       {
         "id": "baseSimple",

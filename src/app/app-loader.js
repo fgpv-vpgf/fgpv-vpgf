@@ -7,6 +7,7 @@ import '../material/angular-material.min.js';
 import 'angular-messages';
 import 'angular-sanitize';
 import 'angular-translate';
+import { name as angularSlider } from 'angularjs-slider';
 import 'dotjem-angular-tree/src/directives/dxTree.js';
 import 'angular-translate-loader-static-files';
 import 'datatables.net';

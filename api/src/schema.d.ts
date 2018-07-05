@@ -407,6 +407,10 @@ export interface FgpvConfigSchema {
         expandFactor?: number;
         [k: string]: any;
       };
+      rangeSlider?: {
+        enabled?: boolean;
+        [k: string]: any;
+      };
       scaleBar?: {
         [k: string]: any;
       };

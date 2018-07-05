@@ -1,0 +1,31 @@
+<div ng-if="self.isActive">
+    <rv-slider-setting></rv-slider-setting>
+    <div class="rv-slider-content">
+        <div class="rv-slider-buttons">
+            <md-button
+                aria-label="{{ 'slider.tooltip.layers' | translate }}"
+                class="md-icon-button primary"
+                ng-click="self.toggleSetting()">
+                <md-tooltip>{{ 'slider.tooltip.layers' | translate }}</md-tooltip>
+                <md-icon md-svg-src="maps:layers"></md-icon>
+            </md-button>
+            <md-button
+                aria-label="{{ 'slider.tooltip.svv' | translate }}"
+                class="md-icon-button primary"
+                ng-click="self.toggleHisto()">
+                <md-tooltip>{{ 'slider.tooltip.svg' | translate }}</md-tooltip>
+                <md-icon md-svg-src="editor:insert_chart"></md-icon>
+            </md-button>
+        </div>
+        <div class="rv-slider-controls">
+            <div class="rv-slider-histo" ng-show="self.sliderService.isHistoOpen">
+                <div id="drawing"></div>
+            </div>
+            <rzslider rz-slider-model="self.sliderService.slider.minValue"
+                rz-slider-high="self.sliderService.slider.maxValue"
+                rz-slider-options="self.sliderService.slider.options">
+            </rzslider>
+            <rv-slider-bar></rv-slider-bar>
+        </div>
+    </div>
+</div>
