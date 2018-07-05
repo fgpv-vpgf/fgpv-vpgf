@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en" dir="ltr">
-
 <head>
     <meta charset="utf-8">
     <title>FGP Viewer</title>
@@ -18,7 +17,7 @@
         <div style="width:25%; padding:10px; background-color:lightgrey; border:solid;" class="column">
             <div id="Add Geometry Test">
                 <h2>Add Geometries: (Automatic)</h2>
-                <button id="AddGeometries">Geometries Added!</button>
+                <button id="AddGeometries" disabled>Geometries Added!</button>
             </div>
 
             <div id="Remove Geometry Tests">
@@ -31,19 +30,17 @@
 
             <div id="Layer Name Tests">
                 <h2>Toggle Layer Name: </h2>
-                <p>If layer name + layer id changes properly, button will toggle.</p>
-                <button id="ChangeName">to 'new Name'</button>
+                <button id="ChangeName">Change to 'new Name'</button>
+                <textarea rows="1" cols="20" id="output">Expect correct name!</textarea>
             </div>
 
             <div id="Opacity Tests">
                 <h2>Toggle Opacity: </h2>
-                <p>If opacity changes properly, button will toggle.</p>
                 <button id="ChangeOpacity">to 0.3</button>
             </div>
 
             <div id="Visibility Tests">
                 <h2>Toggle Visibility: </h2>
-                <p>If visibility changes properly, button will toggle.</p>
                 <button id="ChangeVisibility">Make Invisible</button>
             </div>
         </div>

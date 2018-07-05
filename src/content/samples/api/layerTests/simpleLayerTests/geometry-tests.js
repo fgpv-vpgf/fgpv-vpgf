@@ -14,8 +14,8 @@ $.getScript('../../../../rv-main.js', function () {
         const lineB = new RZ.GEO.LineString(12, [pointA, pointE]);
 
         // create hovers
-        const hoverPointA = new RZ.GEO.Hover(0, 'my annotation', { position: 'right' });
-        const hoverPointB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, position: 'left' });
+        const hoverPointA = new RZ.GEO.Hover(0, 'This hover closes.', { position: 'right' });
+        const hoverPointB = new RZ.GEO.Hover(1, 'This hover is kept open.', { keepOpen: true, position: 'left' });
 
         let multipointAdded = false;
         let addPoint = false;
