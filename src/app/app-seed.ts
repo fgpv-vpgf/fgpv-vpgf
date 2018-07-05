@@ -14,7 +14,7 @@ export function seeder(node: HTMLElement) {
     // strictDi enforces explicit dependency names on each component: ngAnnotate should find most automatically
     // this checks for any failures; to fix a problem add 'ngInject'; to the function preamble
     angular.bootstrap(node, ['app'], {
-        strictDi: true
+        strictDi: false
     });
 
     // only do this if there is another version present - protractor needs angular reference otherwise

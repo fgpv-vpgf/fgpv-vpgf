@@ -16,7 +16,7 @@ angular
         'app.ui',
         'app.layout'
     ])
-    .config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider) => {
+    .config(($mdInkRippleProvider) => {
         // to improve IE performance disable ripple effects globally and debug info
         if (RV.isIE) {
             $mdInkRippleProvider.disableInkRipple();
