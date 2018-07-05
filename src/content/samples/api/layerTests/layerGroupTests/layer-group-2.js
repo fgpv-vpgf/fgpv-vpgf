@@ -76,7 +76,33 @@ $.getScript('../../../../rv-main.js', function () {
             document.getElementById("SetAllAttributes").onclick = function () {
                 setAttrib = false;
                 setAttribs = true;
-                configLayers[0].setAttributes(2, { Country: 'Country is new', OBJECTID: -1 });
+                configLayers[0].setAttributes(2, {
+                    Country: 'New Country',
+                    OBJECTID: 2, Pipeline: 'New Pipeline',
+                    Owner: 'New Owner',
+                    Latitude: 31.74,
+                    Longitude: -99.510534,
+                    City: "New City",
+                    County: "New County",
+                    StateProv: "New State",
+                    ToState: "New Province",
+                    CountryFrom: "Newe Country",
+                    ToCountry: "Newer Country",
+                    TypeProd: "New Resource",
+                    NumPipes: 3,
+                    Diam_Inch: "5",
+                    MaxOP_psi: "280000",
+                    Vol_Mbpd: "2",
+                    Source: "New Country: Department of Energy",
+                    Period: 2017,
+                    Diam_mm: "609.6",
+                    MaxOP_kPa: "1930532",
+                    Vol_km3d: "",
+                    ZipCode: "M3J M3J",
+                    Address: "",
+                    FrmState: "",
+                    FrmCountry: "",
+                });
             }
 
             //subscribe to attributes removed

@@ -9,7 +9,7 @@
 
 <body style="padding:20px;">
     <h1>Federal Geospatial Platform Visualiser -
-        <span style="color:blue"> Layer Group Tests (Part 2)</span>
+        <span style="color:blue"> Layer Group Tests ( Attributes and Removal )</span>
     </h1>
     <h2>
         <a href="../index.html">Directory</a>
@@ -19,24 +19,26 @@
             <h2>Tests:</h2>
             <p>Do the tests in the order they are listed in.</p>
             <div id="FetchAttributesDiv">
-                <h4>1. Click on Liquids Pipeline in the Legend.</h4>
+                <h4>1. Click on Liquids Pipeline in the Legend (not the buttons).</h4>
                 <p>Both buttons should turn green</p>
-                <button id="FetchAttributes">Fetch Attributes</button>
-                <button id="ClickLayer">Click Layer</button>
+                <button id="FetchAttributes" disabled>Fetch Attributes</button>
+                <button id="ClickLayer" disabled>Click Layer</button>
                 <br>
             </div>
 
             <div id="SetAttributesDiv">
                 <h4>2. Set attributes (double check with datagrid)</h4>
+                <p><i>Note: you need to re-open the datagrid to see changes.</i></p>
                 <button id="SetAttribute">(OID 1): Set Country Name</button>
                 <p>Country Name of Entry #1 should now be 'new Country'</p>
-                <button id="SetAllAttributes">(OID 2): Set Country Name + Change OID</button>
-                <p>Entry #2 will now have "ObjectID" field set to -1 </p>
+                <button id="SetAllAttributes">(OID 2): Reset all Attributes</button>
+                <p>Entry #2 has all fields reset except ObjectID</p>
                 <br>
             </div>
 
             <div id="RemAttributesDiv">
                 <h4>3. Remove attributes (double check with datagrid)</h4>
+                <p><i>Note: Expect errors to be thrown. You need to re-open the datagrid to see changes.<i></p>
                 <button id="RemoveAttribute">Remove OID5</button>
                 <button id="RemoveAllAttributes">Remove All</button>
                 <br>

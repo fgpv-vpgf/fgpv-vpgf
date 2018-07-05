@@ -102,13 +102,15 @@ $.getScript('../../../../rv-main.js', function () {
         simpleLayer.nameChanged.subscribe(l => {
             console.log('Name changed');
 
-            if ($("#ChangeName").text() == "to 'simpleLayer'") {
+            if ($("#ChangeName").text() == "Change to 'simpleLayer'") {
                 if (simpleLayer.name == "simpleLayer" && simpleLayer.id == "simpleLayer") {
-                    $("#ChangeName").text("to 'new Name'");
+                    $("#ChangeName").text("Change to 'new Name'");
+                    document.getElementById("output").innerHTML = "simpleLayer";
                 }
             } else {
                 if (simpleLayer.name == "new Name" && simpleLayer.id == "new Name") {
-                    $("#ChangeName").text("to 'simpleLayer'");
+                    $("#ChangeName").text("Change to 'simpleLayer'");
+                    document.getElementById("output").innerHTML = "new Name";
                 }
             }
 
