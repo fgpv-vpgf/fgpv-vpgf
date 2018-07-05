@@ -19,4 +19,3 @@ import './statemanager.service.js';
 import './shell.service.js';
 import './translation.service.js';
 import './version.service.js';
-import './intention.service.js';

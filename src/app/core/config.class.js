@@ -1878,42 +1878,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     /**
-     * EPSG Intention.
-     * @class EPSG
-     */
-    class EPSG {
-        constructor(method) {
-            this._method = method;
-            this._lookup = (() => {});
-        }
-
-        get method() { return this._method; }
-        get lookup() { return this._lookup; }
-
-        set lookup(lookup) { this._lookup = lookup; }
-    }
-
-    /**
      * Intentions(internal extentions)
      * @class Intentions
      */
     class Intentions {
         constructor(source) {
             if (!source || Object.keys(source).length === 0) {
-                this._epsg = new EPSG('default');
-                this._instructions = {
-                    epsg: 'default'
-                };
+                this.epsg = 'default';
             } else {
-                this._epsg = new EPSG(source.epsg);
-                this._instructions = source;
+                this.epsg = source.epsg;
             }
-        }
-
-        get epsg() { return this._epsg; }
-
-        get instructions() {
-            return this._instructions;
         }
     }
 
