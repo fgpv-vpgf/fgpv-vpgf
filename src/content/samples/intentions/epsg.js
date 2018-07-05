@@ -24,11 +24,11 @@ window.customEPSG = {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
         const epsgRegex = /EPSG:(\d+)/;
         let matcher = String(code).match(urnRegex) || String(code).match(epsgRegex) || [];
-    
+
         if (matcher.length < 2) {
             throw new Error('Invalid code provided.');
         }
-    
+
         return new Promise((resolve, reject) => {
             $.get(`http://epsg.io/${matcher[1]}.proj4`)
                 .done(resolve)

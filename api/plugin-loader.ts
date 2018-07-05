@@ -60,7 +60,7 @@ export default class Loader {
         this.pluginList.forEach(p => {
             if (p.preInit) {
                 let returnedValue = p.preInit(this.config);
-    
+
                 // check if a promise like object is returned
                 if (returnedValue && returnedValue.then) {
                     this.preInitPromises.push(returnedValue);
