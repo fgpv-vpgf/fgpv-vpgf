@@ -163,6 +163,7 @@
                 <option value="config/config-sample-69.json">69. Big images in layer info/symbology</option>
                 <option value="config/config-sample-70.json">70. Details panel templating</option>
                 <option value="config/config-sample-71.json">71. Custom ESRI API location</option>
+                <option value="config/config-sample-72.json">72. Symbology stack expand by default</option>
             </select>
         </div>
 

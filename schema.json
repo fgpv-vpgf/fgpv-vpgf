@@ -354,7 +354,8 @@
                 "coverIcon": { "type": "string", "description": "An optional icon, if present it will be used to primarily represent the layer" },
                 "description": { "type": "string", "default": "", "description": "Optional description displayed above the symbology stack." },
                 "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
-                "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" }
+                "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" },
+                "symbologyExpanded": { "type": "boolean", "default": false, "description": "Indicates if symbology stack is expand by default" }
             },
             "required": [ "layerId" ],
             "additionalProperties": false
@@ -384,7 +385,8 @@
                         "layerName": { "type": "string", "description": "Name to display in legend" },
                         "description": { "type": "string", "default": "", "description": "Optional description displayed above the symbology stack." },
                         "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
-                        "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" }
+                        "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" },
+                        "symbologyExpanded": { "type": "boolean", "default": false, "description": "Indicates if symbology stack is expand by default" }
                     },
                     "additionalProperties": false
                 },

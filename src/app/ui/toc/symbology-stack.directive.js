@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval) {
+function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -238,6 +238,9 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             'self.symbology.fannedOut',
             (newValue, oldValue) => (newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop)
         );
+
+        // expand the symbology stack if needed
+        $timeout(() => expandSymbology(self.symbology.expanded), 0);
 
         return true;
 
@@ -726,6 +729,7 @@ function symbologyStack(ConfigObject, gapiService) {
          * @param {Array} symbols [optional = null] array of alternative symbology svg graphic elements; can be either [ { name: <String>, svgcode: <String> }, ... ] or [ { text: <String>, image: <String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
          * @param {String} coverIcon [optional <String> ] a graphic to be displayed as a cover icon for the symbology stack but which stays put and does not move
          * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
+         * @param {String} expanded [optional = false] specifies if symbolbogy stack is expanded
          * @param {Boolean} isInteractive [optional = false] specifies if the user can interact with the symbology stack
          */
         constructor(
@@ -733,13 +737,14 @@ function symbologyStack(ConfigObject, gapiService) {
             symbols = null,
             coverIcon = null,
             renderStyle = ConfigObject.legend.Entry.ICONS,
+            expanded = false,
             isInteractive = false
         ) {
             this._proxy = proxy;
             this._renderStyle = renderStyle;
 
             this._fannedOut = false;
-            this._expanded = false;
+            this._expanded = expanded;
 
             const renderStyleSwitch = {
                 [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
