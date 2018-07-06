@@ -339,7 +339,7 @@
           "visibility": false
         },
         "jsonTable": {
-          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json"
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/NaturalGasPipelineTable.json"
         }
       }
     ],
