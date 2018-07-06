@@ -32,16 +32,24 @@ $.getScript('../../../../rv-main.js', function () {
     //once map is added
     RZ.mapAdded.subscribe(mapi => {
 
-        //creating Panel + opening
-        let panel1 = mapi.createPanel('panel1');
-        panel1.setPosition([10, 1], [16, 14]);
-        panel1.controls = [new panel1.container(`
-            <md-button class="rv-close md-icon-button black rv-button-24">
-                <md-icon md-svg-src="navigation:close"></md-icon>
-            </md-button>`)];
-        panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form">
+      //creating Panel + opening
+      let panel0 = mapi.createPanel('panel0');
+      panel0.setPosition([6, 0], [9, 14]);
+      
+      closeBtn = new panel0.button('X');
+      closeBtn.element.css('float', 'right');
+      panel0.controls = [new panel0.button('T'), closeBtn];
+      panel0.content = new panel0.container(`<div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form">`);
+      panel0.open();
 
-
+      //creating Panel + opening
+      let panel1 = mapi.createPanel('panel1');
+      panel1.setPosition([10, 0], [16, 14]);
+      panel1.controls = [new panel1.container(`
+          <md-button class="rv-close md-icon-button black rv-button-24">
+              <md-icon md-svg-src="navigation:close"></md-icon>
+          </md-button>`)];
+      panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form">
           <div>
             <md-input-container>
               <label>Title</label>
