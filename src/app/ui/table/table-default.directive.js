@@ -296,7 +296,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             function initColumns() {
                 // if it is the first time table is initialize, set columns and table info
                 let order = stateManager.display.table.data.filter.order || [];
-                const config = requester.legendEntry.mainProxyWrapper.layerConfig.table;
+                const layerConfig = requester.legendEntry.mainProxyWrapper.layerConfig;
+                const config = layerConfig.table;
                 if (!displayData.filter.isInit) {
                     // if there are no columns defined in config we know we need all of the columns
                     // create column nodes for all of the columns and store them
@@ -314,8 +315,11 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     tableService.filter.isApplied = stateManager.display.table.data.filter.isApplied =
                         initialFilters.length === 0 || config.applied;
 
-                    // add the column interactive buttons renderer
-                    addColumnInteractivity();
+                    // add the column interactive buttons renderer only if the table isn't defined through a json file
+                    if (!layerConfig.hasJsonTable) {
+                        addColumnInteractivity();
+                    }
+
                     // set width from field length if it is a string field type. If it is the oid field,
                     // set width to 100px because we have the oid, the details and zoom to button. If it is
                     // another type of field, set width to be the title.

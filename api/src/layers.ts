@@ -468,7 +468,7 @@ export class ConfigLayer extends BaseLayer {
     /** The viewer downloads attributes when needed - call this function to force an attribute download if not downloaded previously.
      * The `attributes_added` event will trigger when the download is complete (if a download was forced). */
     fetchAttributes(): void {
-        const attribs = this._layerProxy.attribs;
+        const attribs = this._mapInstance.instance.getAttributes(this);
 
         if (attribs) {
             attribs

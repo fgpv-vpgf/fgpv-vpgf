@@ -257,9 +257,10 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
 
         get isVisible () {
             // data control is visible for all feature layers unless the controls is disallowed or disabled in the config
+            // data control also available for other layers if a JSON file is provided containing attributes
             return super.isVisible &&
                 !this.block.isControlDisabled(this._controlName) &&
-                this.block.layerType === Geo.Layer.Types.ESRI_FEATURE;
+                (this.block.layerType === Geo.Layer.Types.ESRI_FEATURE || this.block.mainProxyWrapper.layerConfig.hasJsonTable);
         }
 
         _debouncedAction = debounceService.registerDebounce(
@@ -495,7 +496,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
             // data flag is visible for all feature layers unless the controls is disallowed or disabled in the config
             return super.isVisible &&
                 !this.block.isControlDisabled(this._controlName) &&
-                this.block.layerType === Geo.Layer.Types.ESRI_FEATURE;
+                (this.block.layerType === Geo.Layer.Types.ESRI_FEATURE || this.block.mainProxyWrapper.layerConfig.hasJsonTable);
         }
     }
 

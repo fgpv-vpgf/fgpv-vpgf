@@ -12,7 +12,7 @@ angular
     .module('app.geo')
     .factory('LegendBlock', LegendBlockFactory);
 
-function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo) {
+function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo, $http) {
 
     let legendBlockCounter = 0;
 
@@ -103,7 +103,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get geometryType () {       return this._proxy.geometryType; }
         get extent () {             return this._proxy.extent; }
         get symbology() {           return this._proxy.symbology; }
-        get formattedAttributes() { return this._proxy.formattedAttributes; }
+
+        getFormattedAttributes(request, url) {
+            return this._proxy.formattedAttributes(request, url);
+        }
+
         get itemIndex () {          return this._proxy.itemIndex; }
 
         get opacity () {            return this._proxy.opacity; }
@@ -678,7 +682,17 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 this._stopFeatureCountInterval = this._predictLoadedFeatureCount(this);
             }
 
-            return this._mainProxyWrapper.formattedAttributes;
+            return this._mainProxyWrapper.getFormattedAttributes(_retrieveJSONData, this._mainProxyWrapper.layerConfig.jsonTableUrl);
+
+            function _retrieveJSONData(url) {
+                return $http.get(url)
+                    .then(
+                        result => result.data,
+                        error => {
+                            console.error('Data retrieval failed.');
+                            throw error;
+                        });
+            }
         }
 
         /**

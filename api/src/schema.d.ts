@@ -42,7 +42,7 @@ export type LegendEntryControls = (
   | "settings"
   | "data"
   | "styles")[];
-export type LayerNode = BasicLayerNode | FeatureLayerNode | WmsLayerNode | DynamicLayerNode;
+export type LayerNode = BasicLayerNode | FeatureLayerNode | WfsLayerNode | WmsLayerNode | DynamicLayerNode;
 export type SymbologyStack = {
   image: string;
   text: string;
@@ -71,6 +71,10 @@ export type InfoSection =
        * An optional style, describes how the symbology stack should be rendered
        */
       symbologyRenderStyle?: "icons" | "images";
+      /**
+       * Indicates if symbology stack is expand by default
+       */
+      symbologyExpanded?: boolean;
     }
   | {
       infoType?: "text";
@@ -193,6 +197,10 @@ export interface FgpvConfigSchema {
      * Google API key to enable geo location and share link shortening.
      */
     googleAPIKey?: string;
+    /**
+     * ESRI JavaSCript API endpoint. Note, we can't use a version greater than v3.22
+     */
+    esriLibUrl?: string;
     /**
      * FIXME
      */
@@ -620,6 +628,10 @@ export interface TileSchemaNode {
      */
     refreshInterval?: number;
     /**
+     * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+     */
+    expectedResponseTime?: number;
+    /**
      * The metadata url of the layer service
      */
     metadataUrl?: string;
@@ -648,7 +660,49 @@ export interface TileSchemaNode {
       | "data"
       | "styles")[];
     state?: InitialLayerSettings;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    templateUrl?: string;
+    /**
+     * Settings for the table
+     */
+    table?: {
+      /**
+       * Specifies the table title to apply.
+       */
+      title?: string;
+      /**
+       * Specifies the additional information to display in the setting panel to give more information about a table.
+       */
+      description?: string;
+      /**
+       * Specifies the default table size when first open. True: maximize view; False: split view.
+       */
+      maximize?: boolean;
+      search?: {
+        [k: string]: any;
+      };
+      /**
+       * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+       */
+      applyMap?: boolean;
+      /**
+       * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+       */
+      columns?: ColumnNode[];
+    };
+    /**
+     * Settings for a table defined through a JSON file
+     */
+    jsonTable?: {
+      url: string;
+    };
   };
+  /**
+   * Indicates if the map projection includes a north pole.  Defaults to false to avoid errors.
+   */
+  hasNorthPole?: boolean;
 }
 export interface ExtentWithReferenceNode {
   xmin: number;
@@ -682,6 +736,57 @@ export interface InitialLayerSettings {
    * Disable hover tips
    */
   hovertips?: boolean;
+}
+/**
+ * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
+ */
+export interface ColumnNode {
+  /**
+   * Specifies the field name (data) to use to link to the layer column. Must exist in the layer.
+   */
+  data: string;
+  /**
+   * Specifies the column title, uses the layer column name or alias if missing.
+   */
+  title?: string;
+  /**
+   * Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
+   */
+  description?: string;
+  /**
+   * Specifies if column is visible by default. True: column is visible; False: column is hidden.
+   */
+  visible?: boolean;
+  /**
+   * Specifies the column width. If missing, calculated column width will be use.
+   */
+  width?: number;
+  /**
+   * Specifies if column is sort. If missing, no sort is applied.
+   */
+  sort?: "asc" | "desc";
+  /**
+   * Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use.
+   */
+  searchable?: boolean;
+  filter?: FilterNode;
+}
+/**
+ * Specifies the filter information for a column.
+ */
+export interface FilterNode {
+  /**
+   * Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails.
+   */
+  type: "string" | "number" | "date" | "selector";
+  /**
+   * Specifies the filter value. For date and number values are split by ',' (e.g. 0,100). For selector it needs an array like ["Fire", "Fatality"]
+   */
+  value?: string;
+  /**
+   * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
+   */
+  static?: boolean;
 }
 export interface BaseMapNode {
   /**
@@ -772,6 +877,10 @@ export interface BasicLayerNode {
    */
   refreshInterval?: number;
   /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
+  /**
    * The metadata url of the layer service
    */
   metadataUrl?: string;
@@ -800,6 +909,44 @@ export interface BasicLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
+  /**
+   * Settings for the table
+   */
+  table?: {
+    /**
+     * Specifies the table title to apply.
+     */
+    title?: string;
+    /**
+     * Specifies the additional information to display in the setting panel to give more information about a table.
+     */
+    description?: string;
+    /**
+     * Specifies the default table size when first open. True: maximize view; False: split view.
+     */
+    maximize?: boolean;
+    search?: {
+      [k: string]: any;
+    };
+    /**
+     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     */
+    applyMap?: boolean;
+    /**
+     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+     */
+    columns?: ColumnNode[];
+  };
+  /**
+   * Settings for a table defined through a JSON file
+   */
+  jsonTable?: {
+    url: string;
+  };
 }
 export interface FeatureLayerNode {
   /**
@@ -822,6 +969,10 @@ export interface FeatureLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -887,57 +1038,91 @@ export interface FeatureLayerNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
+  /**
+   * Settings for a table defined through a JSON file
+   */
+  jsonTable?: {
+    url: string;
+  };
 }
-/**
- * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
- */
-export interface ColumnNode {
+export interface WfsLayerNode {
   /**
-   * Specifies the field name (data) to use to link to the layer column. Must exist in the layer.
+   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
    */
-  data: string;
+  id: string;
   /**
-   * Specifies the column title, uses the layer column name or alias if missing.
+   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
    */
-  title?: string;
+  name?: string;
   /**
-   * Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
+   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
    */
-  description?: string;
+  nameField?: string;
   /**
-   * Specifies if column is visible by default. True: column is visible; False: column is hidden.
+   * The service endpoint of the layer.  It should match the type provided in layerType.
    */
-  visible?: boolean;
+  url: string;
   /**
-   * Specifies the column width. If missing, calculated column width will be use.
+   * The hex code representing the layer symbology colour.
    */
-  width?: number;
+  colour?: string;
+  layerType: "ogcWfs";
   /**
-   * Specifies if column is sort. If missing, no sort is applied.
+   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
    */
-  sort?: "asc" | "desc";
+  tolerance?: number;
+  extent?: ExtentWithReferenceNode;
+  controls?: LegendEntryControls;
   /**
-   * Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use.
+   * A list of controls which are visible, but disabled for user modification
    */
-  searchable?: boolean;
-  filter?: FilterNode;
-}
-/**
- * Specifies the filter information for a column.
- */
-export interface FilterNode {
+  disabledControls?: (
+    | "opacity"
+    | "visibility"
+    | "boundingBox"
+    | "query"
+    | "snapshot"
+    | "metadata"
+    | "boundaryZoom"
+    | "refresh"
+    | "reload"
+    | "remove"
+    | "settings"
+    | "data"
+    | "styles")[];
+  state?: InitialLayerSettings;
   /**
-   * Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails.
+   * Settings for the table
    */
-  type: "string" | "number" | "date" | "selector";
-  /**
-   * Specifies the filter value. For date and number values are split by ',' (e.g. 0,100). For selector it needs an array like ["Fire", "Fatality"]
-   */
-  value?: string;
-  /**
-   * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
-   */
-  static?: boolean;
+  table?: {
+    /**
+     * Specifies the table title to apply.
+     */
+    title?: string;
+    /**
+     * Specifies the additional information to display in the setting panel to give more information about a table.
+     */
+    description?: string;
+    /**
+     * Specifies the default table size when first open. True: maximize view; False: split view.
+     */
+    maximize?: boolean;
+    search?: {
+      [k: string]: any;
+    };
+    /**
+     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     */
+    applyMap?: boolean;
+    /**
+     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+     */
+    columns?: ColumnNode[];
+  };
 }
 export interface WmsLayerNode {
   /**
@@ -956,6 +1141,10 @@ export interface WmsLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -994,6 +1183,48 @@ export interface WmsLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
+  /**
+   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+   */
+  parserUrl?: string;
+  /**
+   * Settings for the table
+   */
+  table?: {
+    /**
+     * Specifies the table title to apply.
+     */
+    title?: string;
+    /**
+     * Specifies the additional information to display in the setting panel to give more information about a table.
+     */
+    description?: string;
+    /**
+     * Specifies the default table size when first open. True: maximize view; False: split view.
+     */
+    maximize?: boolean;
+    search?: {
+      [k: string]: any;
+    };
+    /**
+     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     */
+    applyMap?: boolean;
+    /**
+     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+     */
+    columns?: ColumnNode[];
+  };
+  /**
+   * Settings for a table defined through a JSON file
+   */
+  jsonTable?: {
+    url: string;
+  };
 }
 export interface WmsLayerEntryNode {
   /**
@@ -1032,6 +1263,10 @@ export interface DynamicLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -1078,6 +1313,10 @@ export interface DynamicLayerNode {
    * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
    */
   imageFormat?: "png" | "png8" | "png24" | "png32" | "jpg" | "pdf" | "bmp" | "gif" | "svg";
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
 }
 export interface DynamicLayerEntryNode {
   /**
@@ -1136,6 +1375,12 @@ export interface DynamicLayerEntryNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * Settings for a table defined through a JSON file
+   */
+  jsonTable?: {
+    url: string;
+  };
 }
 export interface LegendAuto {
   type: "autopopulate";
@@ -1188,4 +1433,8 @@ export interface Entry {
    * An optional style, describes how the symbology stack should be rendered
    */
   symbologyRenderStyle?: "icons" | "images";
+  /**
+   * Indicates if symbology stack is expand by default
+   */
+  symbologyExpanded?: boolean;
 }

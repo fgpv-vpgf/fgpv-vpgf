@@ -372,7 +372,10 @@
           "visibility": false,
           "boundingBox": false
         },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2",
+        "jsonTable": {
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json"
+        }
       },
       {
         "id": "crops",
@@ -406,7 +409,10 @@
               "currentStyle": "WINDARROWKMH"
             }
         ],
-        "url":"http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
+        "url":"http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities",
+        "jsonTable": {
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json"
+        }
       }
     ],
     "tileSchemas": [

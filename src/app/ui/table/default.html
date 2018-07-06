@@ -15,7 +15,7 @@
         <div class="rv-table-splash rv-hide-animate"
             ng-if="!self.display.requester.error"
             ng-class="{ 'rv-hide': !self.display.isLoading, 'rv-splash-count-done': self.display.requester.legendEntry.loadedFeatureCount === self.display.requester.legendEntry.featureCount }">
-            <div class="rv-splash-count">
+            <div class="rv-splash-count" ng-if="!self.display.requester.legendEntry.mainProxyWrapper.layerConfig.hasJsonTable">
                 <span class="rv-splash-count-current">{{ self.display.requester.legendEntry.loadedFeatureCount | number:0 }}</span>
                 <svg class="rv-splash-count-slash" height="50" width="25">
                     <line x1="0" y1="50" x2="25" y2="0"></line>

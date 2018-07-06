@@ -56,10 +56,10 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
         // pre-filter the columns used by the datagrid out of the returned data
         // if there specific columns for the table set by the config use them
         if (includedColumns.length) {
-            self.item.data = self.item.data.filter(column => includedColumns.indexOf(column.field) > -1);
+            self.item.data = self.item.data ? self.item.data.filter(column => includedColumns.indexOf(column.field) > -1) : [];
         }
         // filter out any items hidden in the table
-        self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.field) === -1);
+        self.item.data = self.item.data ? self.item.data.filter(column => excludedColumns.indexOf(column.field) === -1) : [];
 
         if (self.requester.proxy._source.config) {
             self.templateUrl = self.requester.proxy._source.config._source.templateUrl;

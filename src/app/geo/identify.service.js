@@ -10,7 +10,7 @@ import { IdentifyMode } from 'api/layers';
  */
 angular.module('app.geo').factory('identifyService', identifyService);
 
-function identifyService($q, configService, gapiService, referenceService, stateManager, events) {
+function identifyService($q, $http, configService, gapiService, referenceService, stateManager, events) {
     const service = {
         identify,
         addGraphicHighlight,
@@ -57,7 +57,7 @@ function identifyService($q, configService, gapiService, referenceService, state
                 const apiLayer =  mApi.layers.getLayersById(layerRecord.layerId)[0];
                 const layerTolerance = apiLayer ? apiLayer.identifyBuffer : undefined;
                 opts.tolerance = layerTolerance;
-                return layerRecord.identify(opts);
+                return layerRecord.identify(opts, _retrieveJSONData, layerRecord.config.jsonTableUrl);
             })
             // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
             .filter(identifyInstance => typeof identifyInstance.identifyResults !== 'undefined');
@@ -160,6 +160,16 @@ function identifyService($q, configService, gapiService, referenceService, state
             const modifiedPromise = $q(resolve => promise.then(() => resolve(true)).catch(() => resolve(true)));
 
             return modifiedPromise;
+        }
+
+        function _retrieveJSONData(url) {
+            return $http.get(url)
+                .then(
+                    result => result.data,
+                    error => {
+                        console.error('Data retrieval failed.');
+                        throw error;
+                    });
         }
     }
 

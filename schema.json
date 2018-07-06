@@ -294,7 +294,8 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel" }
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel" },
+                "jsonTable": { "$ref": "#/definitions/jsonTableNode", "description": "Settings for a table defined through a JSON file" }
             },
             "required": [ "index" ],
             "additionalProperties": false
@@ -422,6 +423,16 @@
             "additionalProperties": false
         },
 
+        "jsonTableNode": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [ "url" ],
+            "additionalProperties": false
+        },
         "tableNode": {
             "type": "object",
             "properties": {
@@ -555,7 +566,9 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."},
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "jsonTable": { "$ref": "#/definitions/jsonTableNode", "description": "Settings for a table defined through a JSON file" }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -579,7 +592,8 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."},
+                "jsonTable": { "$ref": "#/definitions/jsonTableNode", "description": "Settings for a table defined through a JSON file" }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -626,7 +640,9 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."},
-                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."}
+                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "jsonTable": { "$ref": "#/definitions/jsonTableNode", "description": "Settings for a table defined through a JSON file" }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false

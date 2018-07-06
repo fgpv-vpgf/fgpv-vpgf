@@ -589,6 +589,19 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._state = new InitialLayerSettings(defaultedSource.state);
             this._controls = defaultedSource.controls;
+
+            this._hasJsonTable = !!(source.jsonTable && source.jsonTable.url);
+            if (this._hasJsonTable) {
+                this._jsonTableUrl = source.jsonTable.url;
+
+                // add datatable as an available control for those layers which don't actually have the option available
+                // but in this case we have attributes defined in JSON file, allowing for table to be populated
+                if (this._controls.indexOf('data') === -1) {
+                    this._controls.push('data');
+                    this._table = new TableNode(source.table);
+                }
+            }
+
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
             this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
@@ -604,6 +617,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get id () {                     return this._id; }
         get layerType () {              return this._layerType; }
+
+        get hasJsonTable () {           return this._hasJsonTable; }
+        get jsonTableUrl () {           return this._jsonTableUrl; }
+
+        get table () { return this._table; }
 
         get name () {                   return this._name; }
         set name (value) {
@@ -705,7 +723,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         set nameField (value) { this._nameField = value; }
 
         get tolerance () { return this._tolerance; }
-        get table () { return this._table; }
 
         get queryUrl () { return this._queryUrl; }
 
@@ -847,6 +864,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
+
+            this._hasJsonTable = !!(source.jsonTable && source.jsonTable.url);
+            if (this._hasJsonTable) {
+                this._jsonTableUrl = source.jsonTable.url;
+            }
         }
 
         get outfields () { return this._outfields; }
@@ -854,6 +876,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get extent () { return this._extent; }
         get table () { return this._table; }
         get layerType () { return layerTypes.ESRI_DYNAMIC; }
+
+        get hasJsonTable () { return this._hasJsonTable; }
+        get jsonTableUrl () { return this._jsonTableUrl; }
 
         get JSON() {
             return angular.merge(super.JSON, {
@@ -886,7 +911,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._layerEntries = value;
         }
         get tolerance () { return this._tolerance; }
-        get table () { return this._table; }
 
         get queryUrl () { return this._queryUrl; }
 

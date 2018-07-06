@@ -23,7 +23,7 @@ angular
     .module('app.geo')
     .factory('layerRegistry', layerRegistryFactory);
 
-function layerRegistryFactory($rootScope, $filter, $translate, shellService, errorService, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
+function layerRegistryFactory($rootScope, $filter, $http, $translate, shellService, errorService, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
         makeLayerRecord,
@@ -102,6 +102,21 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
             configService.getSync.map.instance.removeLayer(layerRecord._layer);
             _removeLayerFromApiMap(layerRecord);
         };
+
+        configService.getSync.map.instance.getAttributes = apiLayer => {
+            const dataUrl = apiLayer._viewerLayer.config.jsonTableUrl;
+            return apiLayer._layerProxy.attribs(_retrieveJSONData, dataUrl);
+
+            function _retrieveJSONData(url) {
+                return $http.get(url)
+                    .then(
+                        result => result.data,
+                        error => {
+                            console.error('Data retrieval failed.');
+                            throw error;
+                        });
+            }
+        }
     });
 
     /**
@@ -373,7 +388,7 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
 
     /**
      * Tracks layer record lifecycle events to update corresponding loading processes.
-     * 
+     *
      * @param {object} layerRecord layer record
      * @param {string} state current state of the layer record
      */
