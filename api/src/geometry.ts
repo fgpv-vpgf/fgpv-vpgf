@@ -373,7 +373,7 @@ export class Point extends BaseGeometry {
      *     &emsp;&emsp;&nbsp;  one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
      * </ul>
     */
-    constructor(id: string | number, xy: XY | XYLiteral, opts?: any) {
+    constructor(id: string | number, xy: XY | XYLiteral, opts = {}) {
         super(id.toString());
 
         if (isXYLiteral(xy)) {
@@ -439,7 +439,7 @@ export class MultiPoint extends BaseGeometry {
      *
      * Style applies to all points and overrides any styling they may have
     */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts?: any) {
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts = {}) {
         super(id.toString());
 
         this._styleOptions = new PointStyleOptions(opts);
@@ -507,7 +507,7 @@ export class LineString extends MultiPoint {
      *     &emsp;&emsp;&nbsp;  one of: `DASH, DASHDOT, DASHDOTDOT, DOT, NULL, SOLID`
      * </ul>
     */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts?: any) {
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts = {}) {
         super(id, elements, opts);
 
         this._styleOptions = new LineStyleOptions(opts);
@@ -551,7 +551,7 @@ export class MultiLineString extends BaseGeometry {
      *
      * Style applies to all lines and overrides any styling they may have
      */
-    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>, opts?: any) {
+    constructor(id: string | number, elements: Array<LineString | Array<Point | XY | XYLiteral>>, opts = {}) {
         super(id.toString());
 
         this._styleOptions = new LineStyleOptions(opts);
@@ -693,7 +693,7 @@ export class Polygon extends BaseGeometry {
      * NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
      * TODO: add option for polygon icon fill.
      */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, opts?: any) {
+    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, opts = {}) {
         super(id.toString());
 
         this._styleOptions = new PolygonStyleOptions(opts);
@@ -776,7 +776,7 @@ export class MultiPolygon extends BaseGeometry {
      *
      * TODO: add option for multipolygon icon fill.
      */
-    constructor(id: string | number, polygons: Array<Polygon>, opts?: any) {
+    constructor(id: string | number, polygons: Array<Polygon>, opts = {}) {
         super(id.toString());
 
         this._styleOptions = new PolygonStyleOptions(opts);
