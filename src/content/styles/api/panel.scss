@@ -22,14 +22,19 @@
     padding: 4px 12px 4px 18px;
     height: 40px;
     overflow: hidden;
+
+    .md-icon-button {
+        width: 24px;
+        height: 32px;
+    }
 }
 .separator{
     border-bottom: lightgrey solid 1px;
 }
 .panel-body{
     padding: 5px 18px;
-    overflow-y: scroll;
-    height: 91.5%;
+    overflow-y: auto;
+    height: 92.1%;
 }
 .btn{
     width: 36px;
@@ -92,7 +97,7 @@
     margin-left: 10px;
     padding-bottom: 0px;
 }
-.inline{
+.z  {
     display: inline-block;
     padding: 5px;
 }
