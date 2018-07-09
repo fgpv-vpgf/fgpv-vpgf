@@ -12,12 +12,16 @@ const templateUrl = require('./details-record-html.html');
 angular.module('app.ui').directive('rvDetailsRecordHtml', rvDetailsRecordHtml);
 
 /**
+ *
  * `rvDetailsRecordHtml` directive body.
  *
  * @function rvDetailsRecordHtml
- * @return {object} directive body
+ * @param {object} $translate translation service
+ * @param {object} events events list
+ * @param {object} detailService details service
+ * @returns {object} directive body
  */
-function rvDetailsRecordHtml(detailService) {
+function rvDetailsRecordHtml($translate, events, detailService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -40,6 +44,9 @@ function rvDetailsRecordHtml(detailService) {
 
         const l = self.item.requester.proxy._source;
 
+        self.lang = $translate.use();
+        events.$on(events.rvLanguageChanged, () => (self.lang = $translate.use()));
+
         // get template to override basic details output, null/undefined => show default
         self.templateUrl = l.config._source.templateUrl;
 
@@ -47,18 +54,21 @@ function rvDetailsRecordHtml(detailService) {
             return;
         }
 
-        detailService.getParser(l.layerId, l.config._source.parserUrl).then(data => {
+        detailService.getParser(l.layerId, l.config._source.parserUrl).then(parseFunction => {
             // if data is already retrieved
             if (self.item.data.length > 0) {
-                self.layer = eval(`${data}(self.item.data[0]);`);
+                parse();
             } else {
                 // data not here yet, wait for it
-                scope.$watch('self.item.data', () => {
-                    self.layer = eval(`${data}(self.item.data[0]);`);
-                });
+                scope.$watchCollection('self.item.data', parse);
             }
             // push update so that template gets the info from the parser
             scope.$apply();
+
+            function parse() {
+                // TODO: maybe instead of passing just the language, pass the full config
+                self.layer = eval(`${parseFunction}(self.item.data[0], self.lang);`);
+            }
         });
     }
 }

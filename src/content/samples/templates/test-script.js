@@ -1,1 +1,4 @@
-function parser(stuff) {return {"Country": "Canada"}}
+function parser(stuff, lang) {
+    console.log(lang);
+    return { Country: 'Canada' };
+}

@@ -20,10 +20,10 @@ Your template would include `<h1>{{ self.layer['Country'] }}</h1>`
 
 These are plain Javascript functions of the form
 ```
-function(*data*){
+function(*data*, *lang*){
     //...use data
     return *objectMadeFromData*
 }
 ```
 
-The function should expect the data in the form of a string, and whatever your function returns will be given to you on `self.layer` to use in your template.
+The function should expect the data in the form of a string, and whatever your function returns will be given to you on `self.layer` to use in your template. The current language code is passed to the parser function as the second argument and is also avaialbe on the scope as `self.lang`.
