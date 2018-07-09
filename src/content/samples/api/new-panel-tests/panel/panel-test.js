@@ -1,5 +1,47 @@
 $.getScript('../../../../rv-main.js', function () {
 
+  angular
+  .module('app')
+  .controller('BasicDemoCtrl', function DemoCtrl($mdDialog) {
+    var originatorEv;
+
+    this.openMenu = function($mdMenu, ev) {
+      originatorEv = ev;
+      $mdMenu.open(ev);
+    };
+
+    this.notificationsEnabled = true;
+    this.toggleNotifications = function() {
+      this.notificationsEnabled = !this.notificationsEnabled;
+    };
+
+    this.importFile = function() {
+      $mdDialog.show(
+        $mdDialog.alert()
+          .targetEvent(originatorEv)
+          .clickOutsideToClose(true)
+          .parent('body')
+          .title('Ok, importing a file')
+          .textContent('Not really, just a test :)')
+          .ok('Great, thanks')
+      );
+
+      originatorEv = null;
+    };
+
+    this.importService = function() {
+      $mdDialog.show(
+        $mdDialog.alert()
+          .targetEvent(originatorEv)
+          .clickOutsideToClose(true)
+          .parent('body')
+          .title('Ok, importing a service')
+          .textContent('Not really, just a test :)')
+          .ok('Great, thanks')
+      );
+    };
+  });
+
     angular
         .module('app')
         .controller('DemoCtrl', function($scope) {
@@ -38,18 +80,44 @@ $.getScript('../../../../rv-main.js', function () {
       
       closeBtn = new panel0.button('X');
       closeBtn.element.css('float', 'right');
-      panel0.controls = [new panel0.button('T'), closeBtn];
-      panel0.content = new panel0.container(`<div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form">`);
+      closeBtn.element.on('click', function(evt) {
+        console.error('close btn clicked', evt);
+      });
+
+      menuButton = new panel0.container(`
+  <div ng-controller="BasicDemoCtrl as ctrl" class="menu-demo-container" style="display: inline;" layout-align="center center" layout="column">
+    <md-menu>
+      <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="ctrl.openMenu($mdMenu, $event)">
+        <md-icon md-menu-origin md-svg-icon="maps:layers"></md-icon>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="ctrl.importFile($event)">
+            <md-icon md-svg-icon="editor:insert_drive_file" md-menu-align-target></md-icon>
+            Import File
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ng-click="ctrl.importService()">
+            <md-icon md-svg-icon="file:cloud"></md-icon>
+            Import Service
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+  </div>
+
+      `);
+
+      panel0.controls = [new panel0.button('T'), menuButton, new panel0.container('<h2 style="font-weight: normal;display:inline;vertical-align: middle;">Hello, World!</h2>'), closeBtn];
+      panel0.content = new panel0.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">`);
       panel0.open();
 
       //creating Panel + opening
       let panel1 = mapi.createPanel('panel1');
       panel1.setPosition([10, 0], [16, 14]);
-      panel1.controls = [new panel1.container(`
-          <md-button class="rv-close md-icon-button black rv-button-24">
-              <md-icon md-svg-src="navigation:close"></md-icon>
-          </md-button>`)];
-      panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form">
+      panel1.controls = [new panel0.button('X')];
+      panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">
           <div>
             <md-input-container>
               <label>Title</label>

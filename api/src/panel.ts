@@ -273,6 +273,7 @@ export class Panel {
                     if (body.hasClass('hidden')) {
                         body.removeClass('hidden');
                         panel.hidden = false;
+                        elem.contents = '<md-icon md-svg-src="content:remove"></md-icon>';
                         if (panel.contentsHeight !== undefined && parentHeight !== undefined) {
                             panel.panelContents.css('height', (panel.contentsHeight + parentHeight * 0.10) + 'px');
                         }
@@ -281,6 +282,7 @@ export class Panel {
                     else {
                         body.addClass('hidden');
                         panel.hidden = true;
+                        elem.contents = '<md-icon md-svg-src="content:add"></md-icon>';
                         if (controls !== undefined) {
                             panel.panelContents.css('height', (controls + 10) + 'px');
                         }
@@ -609,7 +611,7 @@ export class PanelElem {
     }
 
     set title(title: string) {
-        this.elementAttr = $('<h1 style="font-weight: normal">' + title + '</h1>');
+        this.elementAttr = $('<h2 style="font-weight: normal;display:inline;vertical-align: middle;">' + title + '</h2>');
     }
 
     get divider(): JQuery<HTMLElement> {
@@ -679,10 +681,10 @@ export class PanelElem {
  */
 class Btn extends PanelElem {
 
-    elementAttr = <JQuery<HTMLElement>>$(`<md-button class="btn md-icon-button black rv-button-24"></md-button>`);
+    elementAttr = $(`<md-button class="btn md-icon-button black rv-button-24"></md-button>`);
     type: string = 'custom';
 
-    constructor(type: string) {
+    constructor(type?: string) {
         super();
         // close button
         if (type === 'X') {
@@ -691,28 +693,29 @@ class Btn extends PanelElem {
         }
         //toggle button
         else if (type === 'T') {
-            this.icon = <SVGElement>minusSVG;
+            this.contents = minusSVG;
             this.type = 'toggle';
         
         } else {
-            this.elementAttr.html(type);
+            this.elementAttr.html(type || '');
         }
 
-        this.setElement(this.elementAttr); // compiles the element 
+        this.setElement(this.elementAttr); // compiles the element
     }
 
     /**
     * Sets an icon for the Btn
     * @param {SVG} svg - the icon to be set for the Btn
     */
-    set icon(svg: SVGElement) {
-        svg.classList.add('svg-style');
+    set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
+        contents = $(contents);
+        contents.addClass('svg-style');
+        this.elementAttr.html('');
 
-        //usually SVG element's children control fill property (eg when appending path object or rect object etc)
-        if (svg.firstChild !== null) {
-            (<HTMLElement>svg.firstChild).classList.add('svg-style');
-        }
-        this.elementAttr.append(svg);
+        contents.find(':first-child').addClass('svg-style');
+
+        let compiledContents = this.angularCompiler(contents[0]);
+        this.elementAttr.append(compiledContents);
     }
 
     /**
