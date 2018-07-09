@@ -35,6 +35,7 @@
     padding: 5px 18px;
     overflow-y: auto;
     height: 92.1%;
+    border-top: lightgrey solid 1px;
 }
 .btn{
     width: 36px;
@@ -89,7 +90,7 @@
     height: 20%;
 }
 .hidden{
-    visibility: hidden;
+    display: none;
 }
 .divider{
     border-left: 1px solid rgb(146, 167, 187);
