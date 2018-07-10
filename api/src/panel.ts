@@ -93,24 +93,6 @@ export class Panel {
         //then fill in new controls
         elems.forEach(elem => {
             this.panelControls.append(elem.elementAttr);
-
-            //if the control is a close button, then open/close panel upon clicking
-            if (elem instanceof Btn && elem.type === 'close') {
-                elem.elementAttr.click(function () {
-                    panel.close();
-                });
-            } else if (elem instanceof Btn && elem.type === 'toggle') {
-                elem.elementAttr.click(function () {
-                    // if user wants to expand panel
-                    if (body.css('display') === 'none') {
-                        body.css('display', 'block');
-                        elem.contents = '<md-icon md-svg-src="content:remove"></md-icon>'; // update icon
-                    } else {
-                        body.css('display', 'none');
-                        elem.contents = '<md-icon md-svg-src="content:add"></md-icon>'; // update icon
-                    }
-                });
-            }
         });
     }
 
@@ -120,15 +102,15 @@ export class Panel {
     open(): void {
         //fires opening observable
         this.openingSubject.next();
-        //changes position on map and updates panel registry
-        this.panelContents.removeClass('hidden'); //hide panel before a call to open is made
+        this.panelContents.removeClass('hidden');
     }
 
     /**
     * Closes the panel on the map. (For the user to see).
     */
     close(): void {
-        
+        this.closingSubject.next();
+        this.panelContents.addClass('hidden');
     }
 
     /**
@@ -243,27 +225,33 @@ export class PanelElem {
 }
 
 class Btn extends PanelElem {
-
-    elementAttr = $(`<md-button class="btn md-icon-button black rv-button-24"></md-button>`);
-    type: string = 'custom';
-
     constructor(scope: Panel, type?: string) {
-        super(scope);
+        super(scope, $('<md-button class="btn md-icon-button black rv-button-24"></md-button>'));
         // close button
         if (type === 'X') {
-            this.elementAttr.html('<md-icon md-svg-src="navigation:close"></md-icon>');
-            this.type = 'close';
+            this.contents = '<md-icon md-svg-src="navigation:close"></md-icon>';
+            $(this.panel.panelContents).on('click', '#' + this.id, () => {
+                this.panel.close();
+            });
         }
         //toggle button
         else if (type === 'T') {
-            this.elementAttr.html('<md-icon md-svg-src="content:remove"></md-icon>');
-            this.type = 'toggle';
+            this.contents = '<md-icon md-svg-src="content:remove"></md-icon>';
+            $(this.panel.panelContents).on('click', '#' + this.id, () => {
+                // if user wants to expand panel
+                if (this.panel.panelBody.css('display') === 'none') {
+                    this.panel.panelBody.css('display', 'block');
+                    this.contents = '<md-icon md-svg-src="content:remove"></md-icon>'; // update icon
+                } else {
+                    this.panel.panelBody.css('display', 'none');
+                    this.contents = '<md-icon md-svg-src="content:add"></md-icon>'; // update icon
+                }
+            });
         
         } else {
             this.elementAttr.html(type || '');
         }
 
-        this.setElement(this.elementAttr); // compiles the element
     }
 
     /**
