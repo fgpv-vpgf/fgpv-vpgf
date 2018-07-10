@@ -77,6 +77,24 @@ $.getScript('../../../../rv-main.js', function () {
       //creating Panel + opening
       let panel0 = mapi.createPanel('panel0');
       panel0.position([432, 0], [700, 500]);
+
+      $(`<style>
+          .rv-medium #panel0 { 
+            width: 100% !important;
+            height: 100% !important;
+            top: -10px !important;
+            left: -10px !important;
+            z-index: 2;
+          }
+
+          #panel1 {
+            top: 0px;
+            left: 710px;
+            right: 0px;
+            width: auto;
+          }
+        </style>
+      `).appendTo("head");
       
       closeBtn = new panel0.button('X');
       closeBtn.element.css('float', 'right');
@@ -116,7 +134,8 @@ $.getScript('../../../../rv-main.js', function () {
       //creating Panel + opening
       let panel1 = mapi.createPanel('panel1');
       panel1.position([710, 0], [1200, 500]);
-      panel1.controls = [new panel0.button('X')];
+
+      panel1.controls = [new panel1.button('X')];
       panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">
           <div>
             <md-input-container>
