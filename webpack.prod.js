@@ -9,6 +9,7 @@ const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = function(env) {
     return Merge(CommonConfig(env), {
@@ -36,7 +37,7 @@ module.exports = function(env) {
             new WebpackShellPlugin({
                 onBuildStart: ['rm -rf dist'],
                 onBuildEnd: ['rm -rf build/help']
-            }),
+            })
         ],
         optimization: {
             minimizer: [
@@ -50,6 +51,11 @@ module.exports = function(env) {
                                 'console.info'
                             ]
                         }
+                    }
+                }),
+                new OptimizeCSSAssetsPlugin({
+                    cssProcessorOptions: {
+                        map: { inline: false }
                     }
                 })
             ]
