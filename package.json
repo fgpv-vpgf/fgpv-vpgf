@@ -59,6 +59,7 @@
     "ng-annotate-loader": "0.6.1",
     "ngtemplate-loader": "2.0.1",
     "node-sass": "4.9.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.3",
     "protractor": "5.3.1",
     "raw-loader": "0.5.1",
     "sass-loader": "7.0.1",
