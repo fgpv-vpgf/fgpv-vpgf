@@ -42,7 +42,7 @@ export type LegendEntryControls = (
   | "settings"
   | "data"
   | "styles")[];
-export type LayerNode = BasicLayerNode | FeatureLayerNode | WmsLayerNode | DynamicLayerNode;
+export type LayerNode = BasicLayerNode | FeatureLayerNode | WfsLayerNode | WmsLayerNode | DynamicLayerNode;
 export type SymbologyStack = {
   image: string;
   text: string;
@@ -71,6 +71,10 @@ export type InfoSection =
        * An optional style, describes how the symbology stack should be rendered
        */
       symbologyRenderStyle?: "icons" | "images";
+      /**
+       * Indicates if symbology stack is expand by default
+       */
+      symbologyExpanded?: boolean;
     }
   | {
       infoType?: "text";
@@ -193,6 +197,10 @@ export interface FgpvConfigSchema {
      * Google API key to enable geo location and share link shortening.
      */
     googleAPIKey?: string;
+    /**
+     * ESRI JavaSCript API endpoint. Note, we can't use a version greater than v3.22
+     */
+    esriLibUrl?: string;
     /**
      * FIXME
      */
@@ -620,6 +628,10 @@ export interface TileSchemaNode {
      */
     refreshInterval?: number;
     /**
+     * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+     */
+    expectedResponseTime?: number;
+    /**
      * The metadata url of the layer service
      */
     metadataUrl?: string;
@@ -648,7 +660,15 @@ export interface TileSchemaNode {
       | "data"
       | "styles")[];
     state?: InitialLayerSettings;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    templateUrl?: string;
   };
+  /**
+   * Indicates if the map projection includes a north pole.  Defaults to false to avoid errors.
+   */
+  hasNorthPole?: boolean;
 }
 export interface ExtentWithReferenceNode {
   xmin: number;
@@ -772,6 +792,10 @@ export interface BasicLayerNode {
    */
   refreshInterval?: number;
   /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
+  /**
    * The metadata url of the layer service
    */
   metadataUrl?: string;
@@ -800,6 +824,10 @@ export interface BasicLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
 }
 export interface FeatureLayerNode {
   /**
@@ -822,6 +850,10 @@ export interface FeatureLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -887,6 +919,10 @@ export interface FeatureLayerNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
 }
 /**
  * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
@@ -939,6 +975,81 @@ export interface FilterNode {
    */
   static?: boolean;
 }
+export interface WfsLayerNode {
+  /**
+   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
+   */
+  id: string;
+  /**
+   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+   */
+  name?: string;
+  /**
+   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+   */
+  nameField?: string;
+  /**
+   * The service endpoint of the layer.  It should match the type provided in layerType.
+   */
+  url: string;
+  /**
+   * The hex code representing the layer symbology colour.
+   */
+  colour?: string;
+  layerType: "ogcWfs";
+  /**
+   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+   */
+  tolerance?: number;
+  extent?: ExtentWithReferenceNode;
+  controls?: LegendEntryControls;
+  /**
+   * A list of controls which are visible, but disabled for user modification
+   */
+  disabledControls?: (
+    | "opacity"
+    | "visibility"
+    | "boundingBox"
+    | "query"
+    | "snapshot"
+    | "metadata"
+    | "boundaryZoom"
+    | "refresh"
+    | "reload"
+    | "remove"
+    | "settings"
+    | "data"
+    | "styles")[];
+  state?: InitialLayerSettings;
+  /**
+   * Settings for the table
+   */
+  table?: {
+    /**
+     * Specifies the table title to apply.
+     */
+    title?: string;
+    /**
+     * Specifies the additional information to display in the setting panel to give more information about a table.
+     */
+    description?: string;
+    /**
+     * Specifies the default table size when first open. True: maximize view; False: split view.
+     */
+    maximize?: boolean;
+    search?: {
+      [k: string]: any;
+    };
+    /**
+     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     */
+    applyMap?: boolean;
+    /**
+     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+     */
+    columns?: ColumnNode[];
+  };
+}
 export interface WmsLayerNode {
   /**
    * The id of the layer for referencing within the viewer (does not relate directly to any external service)
@@ -956,6 +1067,10 @@ export interface WmsLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -994,6 +1109,14 @@ export interface WmsLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
+  /**
+   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+   */
+  parserUrl?: string;
 }
 export interface WmsLayerEntryNode {
   /**
@@ -1032,6 +1155,10 @@ export interface DynamicLayerNode {
    * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
    */
   refreshInterval?: number;
+  /**
+   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+   */
+  expectedResponseTime?: number;
   /**
    * The metadata url of the layer service
    */
@@ -1078,6 +1205,10 @@ export interface DynamicLayerNode {
    * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
    */
   imageFormat?: "png" | "png8" | "png24" | "png32" | "jpg" | "pdf" | "bmp" | "gif" | "svg";
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
 }
 export interface DynamicLayerEntryNode {
   /**
@@ -1188,4 +1319,8 @@ export interface Entry {
    * An optional style, describes how the symbology stack should be rendered
    */
   symbologyRenderStyle?: "icons" | "images";
+  /**
+   * Indicates if symbology stack is expand by default
+   */
+  symbologyExpanded?: boolean;
 }
