@@ -96,7 +96,7 @@ export interface FgpvConfigSchema {
   /**
    * The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer.
    */
-  version: "2.0";
+  version: "2.0" | "2.1" | "2.2" | "2.3";
   /**
    * ISO 639-1 code indicating the language of strings in the schema file
    */
@@ -185,6 +185,10 @@ export interface FgpvConfigSchema {
      * An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers.
      */
     proxyUrl?: string;
+    /**
+     * A boolean indicating that all services are CORS enabled.  This is mutually exclusive with proxyUrl.
+     */
+    corsEverywhere?: boolean;
     /**
      * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous
      */
