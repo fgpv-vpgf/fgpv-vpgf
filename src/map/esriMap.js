@@ -9,6 +9,7 @@ function esriMap(esriBundle, geoApi) {
     let basemapErrored = false;
 
     let basemaps = null;
+    let corsEverywhere = false;
     let overviewExpand = null;
 
     class Map {
@@ -34,6 +35,7 @@ function esriMap(esriBundle, geoApi) {
          * - lods: array of level of details. See config schema lodSetNode.lods
          * - tileSchema: object describing schema of map. See config schema tileSchemaNode
          * - proxyUrl: url to proxy for use by mapping api. optional
+         * - corsEverywhere: boolean to be set if every layer on the map is CORS enabled, mutually exclusive with proxyUrl, optional
          *
          * @param {Object} domNode  the DOM node where the map will be created
          * @param {Object} opts     options object for the map (see above)
@@ -54,9 +56,18 @@ function esriMap(esriBundle, geoApi) {
             if (opts.proxyUrl) {
                 this.proxy = opts.proxyUrl;
             }
+            if (opts.corsEverywhere) {
+                if (this.corsEverywhere === true && this.proxy) {
+                    throw new Error('proxyUrl and corsEverywhere are mutually exclusive');
+                }
+                corsEverywhere = opts.corsEverywhere;
+            }
 
             if (opts.basemaps) {
                 basemaps = opts.basemaps;
+                basemaps.forEach(bm => {
+                    bm._layers.forEach(l => this.checkCorsException(l.url));
+                })
             } else {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
@@ -78,6 +89,7 @@ function esriMap(esriBundle, geoApi) {
                     // if we want to enhance to have other layer types, will need to determine
                     // how to go about it. we could just use raw objects in a switch statement here,
                     // or attempt to wire in the layer records.
+                    this.checkCorsException(opts.tileSchema.overviewUrl.url);
                     const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
                     customOverview.on('load', () => {
                         this.initOverviewMap(overviewExpand, customOverview);
@@ -91,6 +103,20 @@ function esriMap(esriBundle, geoApi) {
             this.zoomPromise = Promise.resolve();
             this.zoomCounter = 0;
 
+        }
+
+        checkCorsException(url) {
+            if (corsEverywhere) {
+                const hostRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?([^:\/\n]+)/i;
+                const match = hostRegex.exec(url);
+                if (match !== null) {
+                    const hostname = match[1];
+                    if (esriBundle.esriConfig.defaults.io.corsEnabledServers.indexOf(hostname) < 0) {
+                        console.debug('layer added cors ', hostname);
+                        esriBundle.esriConfig.defaults.io.corsEnabledServers.push(hostname);
+                    }
+                }
+            }
         }
 
         initGallery() {
