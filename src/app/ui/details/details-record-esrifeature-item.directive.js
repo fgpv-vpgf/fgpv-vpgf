@@ -13,7 +13,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -50,6 +50,9 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
             excludedColumns = excludedColumns.concat(stateManager.display.details.hidden[index]);
         }
 
+        self.lang = $translate.use();
+        events.$on(events.rvLanguageChanged, () => (self.lang = $translate.use()));
+
         self.isExpanded = self.solorecord;
         self.isRendered = self.solorecord;
 
@@ -62,12 +65,11 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.field) === -1);
 
         if (self.requester.proxy._source.config) {
-            self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
-            self.parserUrl = self.requester.proxy._source.config._source.parserUrl;
+            self.details = self.requester.proxy._source.config.details;
         }
-        if (self.templateUrl) {
-            if (self.parserUrl) {
-                detailService.getParser(self.requester.proxy._source.layerId, self.parserUrl).then(parseFunction => {
+        if (self.details.template) {
+            if (self.details.parser) {
+                detailService.getParser(self.requester.proxy._source.layerId, self.details.parser).then(parseFunction => {
                     // TODO: maybe instead of passing just the language, pass the full config
                     self.layer = eval(`${parseFunction}(self.item.data, self.lang);`);
 
