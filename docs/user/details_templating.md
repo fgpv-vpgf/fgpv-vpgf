@@ -1,10 +1,12 @@
 The viewer allows you to display identify/details results with a custom template.
 
-There are 2 config attributes that are needed:
+The related config options:
 
-**templateUrl** is needed for any type of layer that wants a template, this path can be *relative* to the site (or *absolute*).
+**details** an object containing two properties:
 
-**parserUrl** is needed for layers that return HTML/text responses as those cannot be handled in a general way. This path can be *relative* to the site (or *absolute*).
+**template** is needed for any type of layer that wants a template, this path can be *relative* to the site (or *absolute*).
+
+**parser** is needed for layers that return HTML/text responses as those cannot be handled in a general way. This path can be *relative* to the site (or *absolute*).
 
 
 ###Templates:

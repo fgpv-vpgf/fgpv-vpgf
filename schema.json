@@ -555,8 +555,15 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "details" : {
+                    "type": "object", 
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -580,8 +587,15 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
-                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "details" : {
+                    "type": "object", 
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -601,8 +615,15 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
-                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "details" : {
+                    "type": "object", 
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
@@ -629,8 +650,15 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."},
-                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."}
+                "details" : {
+                    "type": "object", 
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false
@@ -659,8 +687,16 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "imageFormat": { "type": "string", "enum": [ "png", "png8", "png24", "png32", "jpg", "pdf", "bmp", "gif", "svg" ],
-                    "default": "png32", "description": "The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided" },
-                    "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                "default": "png32", "description": "The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided" },
+                "details" : {
+                    "type": "object", 
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
             "additionalProperties": false

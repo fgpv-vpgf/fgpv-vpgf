@@ -48,13 +48,13 @@ function rvDetailsRecordHtml($translate, events, detailService) {
         events.$on(events.rvLanguageChanged, () => (self.lang = $translate.use()));
 
         // get template to override basic details output, null/undefined => show default
-        self.templateUrl = l.config._source.templateUrl;
+        self.details = l.config.details;
 
-        if (!l.config._source.parserUrl) {
+        if (!self.details.parser) {
             return;
         }
 
-        detailService.getParser(l.layerId, l.config._source.parserUrl).then(parseFunction => {
+        detailService.getParser(l.layerId, self.details.parser).then(parseFunction => {
             // if data is already retrieved
             if (self.item.data.length > 0) {
                 parse();

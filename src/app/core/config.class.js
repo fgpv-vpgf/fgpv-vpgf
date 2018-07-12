@@ -594,6 +594,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
             this._toggleSymbology = typeof source.toggleSymbology === 'boolean' ? source.toggleSymbology : true;
 
+            this._details = source.details;
+
             // remove metadata control if no metadata url is specified after applying defaults
             if (!source.metadataUrl) {
                 common.removeFromArray(this._controls, 'metadata');
@@ -657,6 +659,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get userDisabledControls () {   return this._userDisabledControls; }
         get state () {                  return this._state; }
 
+        get details () {                return this._details; }
+
         applyBookmark (value) {
             this._state = new InitialLayerSettings(value.state);
             this._source.state = value.state;
@@ -675,7 +679,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 expectedResponseTime: this.expectedResponseTime,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
-                state: this.state.JSON
+                state: this.state.JSON,
+                details: this.details
             };
         }
     }
