@@ -36,6 +36,11 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
      * @return {Promise} a promise resolving with an array of at least one LayerSourceInfo objects; will reject if there is an error accessing the service or parsing its response;
      */
     function fetchServiceInfo(serviceUrl, layerType) {
+
+        // fetchServiceInfo can precede layer creation so CORS checking has to be done here as well
+        // if ESRI JSAPI fixes it's CORS bug this can be removed
+        configService.getSync.map.instance.checkCorsException(serviceUrl);
+
         const matrix = {
             [geoServiceTypes.FeatureService]: () =>
                 [_parseAsFeature],

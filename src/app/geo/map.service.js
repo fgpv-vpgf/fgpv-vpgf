@@ -179,6 +179,9 @@ function mapServiceFactory(
         if (servicesConfig.proxyUrl) {
             mapSettings.proxyUrl = servicesConfig.proxyUrl;
         }
+        if (servicesConfig.corsEverywhere) {
+            mapSettings.corsEverywhere = servicesConfig.corsEverywhere;
+        }
         const mapInstance = new gapi.Map(mapNode[0], mapSettings);
 
         // create a fake GeoJSON file to ensure an esri layer gets created which will trigger the load event on the esri map instance
