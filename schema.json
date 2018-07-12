@@ -1071,6 +1071,11 @@
                     "description": "Intention for displaying data",
                     "type": "string",
                     "default": "none"
+                },
+                "geoSearch" : {
+                    "description": "intention for geoSearch",
+                    "type": "string",
+                    "default": "none"
                 }
             },
             "additionalProperties": false

@@ -10,11 +10,24 @@ angular
     .module('app.ui')
     .factory('geosearchService', geosearchService);
 
-function geosearchService($q, $rootScope, stateManager, referenceService, geoSearch, events, debounceService) {
+function geosearchService($q, $rootScope, stateManager, referenceService, events, debounceService, mapService, geoService, gapiService, configService, appInfo) {
+    const queryParams = {}; // params to apply on filter
+    let GSservice; // geosearch service from the geosearch intention
+
+    events.$on(events.rvApiReady, () => {  // initilize geosearch intention
+        let GSintention = appInfo.plugins.find(x => x.intention === 'geoSearch');
+        if (!GSintention) {
+            console.error('Geosearch intention not found');
+        } else {
+            let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
+            GSservice = new (appInfo.plugins.find(x => x.intention === 'geoSearch')).GeoSearchUI({language});
+        }
+    });
 
     const service = {
         isLoading: false, // waiting for results
         isResultsVisible: false, // showing results when we get some
+        externalApiError: false,
         noResultsSearchValue: '', // the (previous) search term which returned no results
 
         searchValue: '', // current search term
@@ -25,7 +38,16 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
 
         toggle: toggleBuilder(),
         onClose,
-        zoomTo
+
+        setProvince,
+        setType,
+        setExtent,
+        getProvinces,
+        getTypes,
+
+        zoomTo,
+        zoomScale,
+        zoomSearchExtent
     };
 
     const ref = {
@@ -124,7 +146,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
         // show loading indicator
         service.isLoading = true;
 
-        return geoSearch.query(`${service.searchValue}*`).then(data => {
+        return GSservice.query(`${service.searchValue}*`).then(data => {
 
             // hide loading indicator
             service.isLoading = false;
@@ -132,7 +154,8 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
 
             // discard any old results
             if (requestCount === ref.runningRequestCount) {
-                service.searchResults = data.results || [];
+                let filteredData = filter(data);
+                service.searchResults = filteredData || [];
 
                 service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
             }
@@ -148,12 +171,198 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
      */
     function zoomTo(result) {
         if (typeof result.bbox !== 'undefined') {
-            geoSearch.zoomSearchExtent(result.bbox, result.position);
+            zoomSearchExtent(result.bbox, result.position);
         } else {
             // zoom to a scale
             // name contain the search value inside result panel
             // in the case of a scale, it will be something like 1:100 000 (geo-search.service.js line 334)
-            geoSearch.zoomScale(result.name.split(':')[1]);
+            zoomScale(result.name.split(':')[1]);
         }
+    }
+
+    /**
+     * Helper function that filters based on query parameters.
+     *
+     * @function filter
+     * @param data {Array} An array of locations from the query
+     */
+    function filter(data) {
+        if (queryParams.extent) {
+            data = data.filter(r => !(r.bbox[0] > queryParams.extent[2] || r.bbox[2] < queryParams.extent[0] ||
+                r.bbox[3] < queryParams.extent[1] || r.bbox[1] > queryParams.extent[3]));
+        }
+        if (queryParams.province) {
+            data = data.filter(r => r.location.province.name === queryParams.province);
+        }
+        if (queryParams.type) {
+            data = data.filter(r => r.type.name === queryParams.type);
+        }
+        return data;
+    }
+
+    /**
+     * Helper function which sets query parameters, or deletes them entirely iff
+     * value is undefined
+     *
+     * @function setQueryParam
+     * @private
+     * @param   {String}    paramName   a valid geoName query parameter
+     * @param   {String}    value       the geoName query parameter value
+     */
+    function setQueryParam(paramName, value) {
+        queryParams[paramName] = value;
+
+        if (typeof queryParams[paramName] === 'undefined') {
+            delete queryParams[paramName];
+        }
+    }
+
+    /**
+     * Include results with the given type. Passing a value of undefined clears the type.
+     *
+     * @function setType
+     * @param   {String}    type   the type code all results must have
+     */
+    function setType(type) {
+        setQueryParam('type', type);
+    }
+
+    /**
+     * Include results in the given province. Passing a value of undefined clears the province.
+     *
+     * @function setProvince
+     * @param   {String}    province   the province code all results must be in
+     */
+    function setProvince(province) {
+        setQueryParam('province', province);
+    }
+
+    /**
+     * Include results in the given extent. Passing a value of undefined clears the province. Note that
+     * a string can also be passed with a value of 'visible' (converted to current extent) or 'canada' (converted to whole of Canada extent)
+     *
+     * @function setExtent
+     * @param   {Object}    extent   mapObject extent object, or string value of either 'visible' or 'canada'
+     */
+    function setExtent(extent) {
+        if (extent === 'visible') { // get the viewers current extent
+            extent = geoService.currentExtent;
+        } else if (extent === 'canada') { // get the full extent of Canada
+            extent = geoService.fullExtent;
+        }
+
+        if (typeof extent === 'object') { // convert to lat/long geoName readable string
+            // use the extent to reproject because it use a densify object that keep
+            // proportion and in the end good values for min and max. If we use points
+            // the results are bad, especially in LCC
+            const projExtent = gapiService.gapi.proj.localProjectExtent(extent, { wkid: 4326 });
+
+            extent = [projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1].join(',');
+        }
+
+        extent = extent.split(',').map(parseFloat);
+        setQueryParam('extent', extent);
+    }
+
+    /**
+     * Fetches the list of all possible provinces in a geoName query.
+     *
+     * @function getProvinces
+     * @return   {Promise}    resolves to a list of all provinces in the form
+     *                          {
+     *                              code: numeric province code (i.e. ontario is 35)
+     *                              abbr: short hand notation (Ontario is ON)
+     *                              name: full province name
+     *                          }
+     */
+    function getProvinces() {
+        return $q(resolve => {
+            events.$on(events.rvApiReady, () => {
+                if (!GSservice) {
+                    console.error('Geosearch intention not found');
+                } else {
+                    GSservice.fetchProvinces().then(val => {
+                        let provinceList = val;
+                        resolve(provinceList);
+                    });
+                }
+            });
+        }, () => {
+            service.externalApiError = true;
+        });
+    }
+
+    /**
+     * Fetches the list of all possible types in a geoName query.
+     *
+     * @function getTypes
+     * @return   {Promise}    resolves to a list of all types in the form
+     *                          {
+     *                              code: Short form code (i.e. TERR)
+     *                              name: Full type name (i.e. Territory)
+     *                          }
+     */
+    function getTypes() {
+        return $q(resolve => {
+            events.$on(events.rvApiReady, () => {
+                if (!GSservice) {
+                    console.error('Geosearch intention not found');
+                } else {
+                    GSservice.fetchTypes().then(val => {
+                        let typeList = val;
+                        resolve(typeList);
+                    });
+                }
+            });
+        }, () => {
+            service.externalApiError = true;
+        });
+    }
+
+    /**
+     * Zoom to scale
+     *
+     * @function zoomScale
+     * @private
+     * @param   {String}    scale   the scale to zoom to
+     */
+    function zoomScale(scale) {
+        // remove space if scale is like 1 000 000 then use map to zoom to scale
+        geoService.setScale(parseInt(scale.replace(/ /g, '')));
+    }
+
+    /**
+     * Zoom to the search extent bbox and show map pin at location
+     *
+     * @function zoomSearchExtent
+     * @param   {Array}    bbox     4 coordinates for the bbox in the form of [xmin, ymin, xmax, ymax]
+     * @param   {Array}    position       2 coordinates for the position in the form of [x, y]
+     */
+    function zoomSearchExtent(bbox, position) {
+        //const mapObject = geoService.mapObject;
+        const mapSR = geoService.currentExtent.spatialReference; //mapObject.spatialReference;
+        const gapi = gapiService.gapi;
+
+        // set extent from bbox
+        const latlongExtent = gapi.Map.Extent(...bbox, { wkid: 4326 });
+
+        // reproject extent
+        const projExtent = gapi.proj.localProjectExtent(
+            latlongExtent, mapSR);
+
+        // set extent from reprojected values
+        const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0,
+            projExtent.x1, projExtent.y1, projExtent.sr);
+
+        // zoom to location (expand the bbox to include all the area)
+        geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
+            // get reprojected point and create point
+            const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid,
+                [parseFloat(position[0]), parseFloat(position[1])]);
+            const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
+
+            // show pin on the map
+            mapService.addMarkerHighlight(projPt, false);
+        });
     }
 }

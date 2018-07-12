@@ -12,7 +12,7 @@ angular
     .module('app.ui')
     .factory('geosearchFiltersService', geosearchFiltersService);
 
-function geosearchFiltersService($translate, events, configService, geoSearch, geoService) {
+function geosearchFiltersService($translate, events, configService, geoService, geosearchService) {
 
     const service = {
         provinces: [], // filter drop downs will be empty until province and type lists are loaded
@@ -44,7 +44,7 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
      * @param {String} provinceCode code of the province to be set
      */
     function setProvince(provinceCode) {
-        geoSearch.setProvince(provinceCode);
+        geosearchService.setProvince(provinceCode);
     }
 
     /**
@@ -54,7 +54,7 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
      * @param {String} typeCode code of the results type to be set
      */
     function setType(typeCode) {
-        geoSearch.setType(typeCode);
+        geosearchService.setType(typeCode);
     }
 
     /**
@@ -90,7 +90,7 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
 
             console.log('geosearchFiltersService', 'setting isvisible to', visibleOnly, targetExtentValue);
 
-            geoSearch.setExtent(targetExtentValue);
+            geosearchService.setExtent(targetExtentValue);
         }
     }
 
@@ -105,10 +105,10 @@ function geosearchFiltersService($translate, events, configService, geoSearch, g
         service.provinces = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
         service.types = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
 
-        geoSearch.getProvinces().then(values =>
+        geosearchService.getProvinces().then(values =>
             (service.provinces = values));
 
-        geoSearch.getTypes().then(values =>
+        geosearchService.getTypes().then(values =>
             (service.types = values));
     }
 }

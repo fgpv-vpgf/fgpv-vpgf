@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/fgpv-vpgf/fgpv-vpgf/issues"
   },
-  "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme"
+  "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme",
+  "dependencies": {
+    "rz-geosearch": "^2.0.3"
+  }
 }

@@ -1,6 +1,6 @@
 # Intentions
 
-Intentions are default RAMP features that can be easily disabled or replaced. They are bundled with RAMP and no additional setup is needed to use them. They are similar to extensions and differ only in how they are loaded and what methods and properties are expected of them. 
+Intentions are default RAMP features that can be easily disabled or replaced. They are bundled with RAMP and no additional setup is needed to use them. They are similar to extensions and differ only in how they are loaded and what methods and properties are expected of them.
 
 ## Loading
 
@@ -49,6 +49,7 @@ Then in the configuration file:
 ## Intention List
 
 - [EPSG](#epsg)
+- [Geosearch](#geosearch)
 
 ### EPSG
 
@@ -62,3 +63,82 @@ lookup: (code: string | number) => Promise<"proj4 string definition">
 #### Required properties
 
 None
+
+### Geosearch
+
+#### Required methods
+
+```js
+/**
+ * A constructor that consumes an optional config object to
+ * create an object/interface that provides geosearch services
+ */
+GeoSearchUI(config)
+```
+
+The fellowing are the valid config object properties:
+```js
+{
+    includeTypes: string | Array<string>,
+    excludeTypes: string | Array<string>,
+    language: string,
+    maxResults: number,
+    geoLocateUrl: string,
+    geoNameUrl: string
+}
+```
+
+`GeoSearchUi` is required to have the fellowing methods
+```js
+/**
+ * Given some string query, returns a promise that resolves as a formated location objects
+ *
+ * Valid location object prototype:
+ * {
+ *      name: string,
+ *      bbox: Array<number>, // exactly 4 entries. Longitudes and latitudes respectively twice
+ *      type: {
+ *          name: string
+ *      },
+ *      position: Array<number>, // exactly 2 entries. Longitude and latitude respectively
+ *      location: {
+ *          city: string,
+ *          latitude: number,
+ *          longitude: number,
+ *          province: string
+ *      }
+ * }
+ *
+ * @param {string} q the search string this query is based on
+ * @return {Promise} the promise that resolves as a formated location objects
+ */
+query(q)
+
+/**
+ * Retrun a promise that resolves as a list of formated province objects
+ *
+ * Valid province object
+ * {
+ *      code: string,
+ *      abbr: string,
+ *      name: string
+ * }
+ *
+ *
+ * @return {Promise} the promise that resolves as a formated province objects
+ */
+fetchProvinces()
+
+/**
+ * Retrun a promise that resolves as a list of formated type objects
+ *
+ * Valid type object
+ * {
+ *      code: string,
+ *      name: string
+ * }
+ *
+ * @return {Promise} the promise that resolves as a formated type objects
+ */
+fetchTypes()
+```
