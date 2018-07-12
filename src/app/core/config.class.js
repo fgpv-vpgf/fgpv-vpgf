@@ -1825,6 +1825,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     class Services {
         constructor (source) {
             this._proxyUrl = source.proxyUrl;
+            this._corsEverywhere = source.corsEverywhere;
             this._exportMapUrl = source.exportMapUrl;
             this._esriLibUrl = source.esriLibUrl;
             this._geometryUrl = source.geometryUrl;
@@ -1838,6 +1839,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
 
         get proxyUrl () { return this._proxyUrl; }
+        get corsEverywhere () { return this._corsEverywhere; }
         get exportMapUrl () { return this._exportMapUrl; }
         get esriLibUrl () { return this._esriLibUrl; }
         get geometryUrl () { return this._geometryUrl; }
@@ -1852,6 +1854,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return {
                 proxyUrl: this.proxyUrl,
+                corsEverywhere: this.corsEverywhere,
                 exportMapUrl: this.exportMapUrl,
                 esriLibUrl: this.esriLibUrl,
                 geometryUrl: this.geometryUrl,

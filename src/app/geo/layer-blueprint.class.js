@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, bookmarkService, appInfo, layerSource) {
+function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService, bookmarkService, appInfo, layerSource) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -21,6 +21,16 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, bookmarkServi
     const { Layer: { Types: layerTypes }, Service: { Types: serviceTypes } } = Geo;
 
     class LayerBlueprint {
+
+        /**
+         * 
+         * @param {string} url the URL of the layer endpoint, optional
+         */
+        constructor(url) {
+            // if ESRI JSAPI fixes it's CORS bug this can be removed
+            configService.getSync.map.instance.checkCorsException(url);
+        }
+
         /**
          * Get the layer definition query
          *
@@ -207,10 +217,10 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, bookmarkServi
          */
         constructor(configFileSource = null, userAddedSource = null) {
 
-            super();
+            super(configFileSource ? configFileSource.url : userAddedSource.config.url);
 
             if (configFileSource) {
-                this.source = configFileSource;
+                this.source = configFileSource; // FYI this sets this.config via setter
             } else if (userAddedSource) {
                 this.config = userAddedSource.config;
             }
@@ -245,7 +255,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, bookmarkServi
     class LayerFileBlueprint extends LayerBlueprint {
         constructor(configFileSource = null, userAddedSource = null) {
 
-            super();
+            super(configFileSource ? configFileSource.url : null);
 
             if (configFileSource) {
                 this.source = configFileSource;
