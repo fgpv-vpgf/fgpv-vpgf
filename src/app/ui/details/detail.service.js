@@ -10,6 +10,9 @@ const templateUrl = require('./details-modal.html');
  */
 angular.module('app.ui').factory('detailService', detailService);
 
+const parserFunctions = [];
+const templates = [];
+
 function detailService($mdDialog, stateManager, mapService, referenceService) {
     const service = {
         expandPanel,
@@ -17,9 +20,6 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
         getParser,
         getTemplate
     };
-
-    const parserFunctions = [];
-    const templates = [];
 
     return service;
 
