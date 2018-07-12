@@ -1,5 +1,4 @@
 import './gapi.service.js';
-import './geo-search.service.js';
 import './geo.constant.service.js';
 import './geo.service.js';
 import './identify.service.js';
