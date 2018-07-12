@@ -53,7 +53,7 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate
         });
 
         events.$on(events.rvMapLoaded, (_, mapI) => {
-            mapI.basemapGallery.on('error', basemapToast);
+            mapI.basemapGallery.onError = basemapToast;
         });
 
         const self = scope.self;
