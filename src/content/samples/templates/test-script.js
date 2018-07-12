@@ -1,4 +1,4 @@
-function parser(stuff, lang) {
+function parser(data, lang) {
     console.log(lang);
-    return { Country: 'Canada' };
+    return { Country: 'Canada', 'Name of Pipeline': 'Parser output' };
 }
