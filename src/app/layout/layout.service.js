@@ -54,10 +54,6 @@ function layoutService($rootElement, fullScreenService) {
     * @return  {String} either 'short' or null for not being short
     */
     function isShort() {
-        if ($rootElement.height() < 450) {
-            return true;
-        }
-
-        return false;
+        return $rootElement.height() < 450;
     }
 }

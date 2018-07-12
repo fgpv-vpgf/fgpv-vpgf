@@ -56,7 +56,7 @@ function Controller(geosearchFiltersService) {
      * @private
      */
     function setProvince() {
-        self.service.setProvince(self.selectedProvince.code);
+        self.service.setProvince(self.selectedProvince.name);
         self.onUpdate();
 
         // reset the selection like clear to unselect the option if -1
@@ -73,7 +73,7 @@ function Controller(geosearchFiltersService) {
      * @private
      */
     function setType() {
-        self.service.setType(self.selectedType.code);
+        self.service.setType(self.selectedType.name);
         self.onUpdate();
 
         // reset the selection like clear to unselect the option if -1

@@ -19,8 +19,7 @@ angular
  * @function rvGeosearch
  * @return {object} directive body
  */
-function rvGeosearch(layoutService, referenceService, debounceService, globalRegistry, $rootElement, $rootScope,
-    stateManager, events) {
+function rvGeosearch(referenceService, debounceService, globalRegistry, $rootElement, $rootScope, events) {
     const directive = {
         restrict: 'E',
         templateUrl,
