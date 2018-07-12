@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "FGPV Config Schema",
     "type": "object",
-    "version": 2.2,
+    "version": 2.3,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
     "additionalProperties": false,
 
@@ -923,7 +923,7 @@
     },
 
     "properties": {
-        "version": { "type": "string", "enum": [ "2.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "version": { "type": "string", "enum": [ "2.0", "2.1", "2.2", "2.3" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
         "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
 
         "ui": {
@@ -971,6 +971,7 @@
             "type": "object",
             "properties": {
                 "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers." },
+                "corsEverywhere": { "type": "boolean", "description": "A boolean indicating that all services are CORS enabled.  This is mutually exclusive with proxyUrl." },
                 "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous" },
                 "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
                 "googleAPIKey": { "type": "string", "description": "Google API key to enable geo location and share link shortening." },
