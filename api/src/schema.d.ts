@@ -660,14 +660,16 @@ export interface TileSchemaNode {
       | "data"
       | "styles")[];
     state?: InitialLayerSettings;
-    /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-     */
-    parserUrl?: string;
-    /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-     */
-    templateUrl?: string;
+    details?: {
+      /**
+       * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+       */
+      parser?: string;
+      /**
+       * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+       */
+      template: string;
+    };
   };
   /**
    * Indicates if the map projection includes a north pole.  Defaults to false to avoid errors.
@@ -828,14 +830,16 @@ export interface BasicLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
-  /**
-   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-   */
-  parserUrl?: string;
-  /**
-   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-   */
-  templateUrl?: string;
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 export interface FeatureLayerNode {
   /**
@@ -927,14 +931,16 @@ export interface FeatureLayerNode {
      */
     columns?: ColumnNode[];
   };
-  /**
-   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-   */
-  parserUrl?: string;
-  /**
-   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-   */
-  templateUrl?: string;
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 /**
  * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
@@ -1061,14 +1067,16 @@ export interface WfsLayerNode {
      */
     columns?: ColumnNode[];
   };
-  /**
-   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-   */
-  parserUrl?: string;
-  /**
-   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-   */
-  templateUrl?: string;
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 export interface WmsLayerNode {
   /**
@@ -1129,14 +1137,16 @@ export interface WmsLayerNode {
     | "data"
     | "styles")[];
   state?: InitialLayerSettings;
-  /**
-   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-   */
-  templateUrl?: string;
-  /**
-   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-   */
-  parserUrl?: string;
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 export interface WmsLayerEntryNode {
   /**
@@ -1225,10 +1235,16 @@ export interface DynamicLayerNode {
    * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
    */
   imageFormat?: "png" | "png8" | "png24" | "png32" | "jpg" | "pdf" | "bmp" | "gif" | "svg";
-  /**
-   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-   */
-  templateUrl?: string;
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 export interface DynamicLayerEntryNode {
   /**

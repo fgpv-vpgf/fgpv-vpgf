@@ -328,8 +328,10 @@
               }
           ],
           "url":"http://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&LAYERS=RDPA.24F_PR",
-          "parserUrl": "templates/test-script.js",
-          "templateUrl": "templates/test-template.html",
+          "details": {
+            "parser": "templates/test-script.js",
+            "template": "templates/test-template.html"
+          },
           "featureInfoMimeType":"text/plain"
         },
         {
@@ -341,7 +343,7 @@
             "visibility": true
           },
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3",
-          "templateUrl": "templates/test-template.html"
+          "details": { "template": "templates/test-template.html" }
         },
         {
           "id": "powerplant100mw-electric",
@@ -355,8 +357,10 @@
             "boundingBox": false
           },
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1",
-          "parserUrl": "templates/test-script.js",
-          "templateUrl": "templates/test-template.1.html"
+          "details": {
+            "parser": "templates/test-script.js",
+            "template": "templates/test-template.1.html"
+          }
         }
       ],
       "tileSchemas": [

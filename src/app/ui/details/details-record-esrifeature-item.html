@@ -40,10 +40,10 @@
     </div>
 </div>
 
-<div class="rv-details-list-wrapper" ng-show="self.isExpanded" ng-if="self.templateUrl">
-        <div class="rv-details-list" ng-include="self.templateUrl"></div></div>
+<div class="rv-details-list-wrapper" ng-show="self.isExpanded" ng-if="self.details.template">
+        <div class="rv-details-list" ng-include="self.details.template"></div></div>
 
-<div class="rv-details-list-wrapper" ng-if="self.isRendered && !self.templateUrl">
+<div class="rv-details-list-wrapper" ng-if="self.isRendered && !self.details.template">
     <ul class="rv-details-list rv-toggle-slide ng-hide" ng-show="self.isExpanded">
 
         <li rv-lightbox ng-repeat="row in self.item.data" ng-switch on="row.type">
