@@ -14,10 +14,12 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
     const service = {
         expandPanel,
         closeDetails,
-        getParser
+        getParser,
+        getTemplate
     };
 
     const parserFunctions = [];
+    const templates = [];
 
     return service;
 
@@ -75,5 +77,19 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
                 });
             }
         });
+    }
+
+    function getTemplate(layerId, templatePath) {
+        return new Promise(resolve => {
+            if(templates[layerId]) {
+                resolve(templates[layerId]);
+            } else {
+                $.ajax({ method: 'GET', dataType: 'text', url: templatePath }).then(data => {
+                    templates[layerId] = data;
+
+                    resolve(data);
+                });
+            }
+        })
     }
 }
