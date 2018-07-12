@@ -1,8 +1,11 @@
 import EPSG from '../intention/epsg/epsg.intention';
+import geoSearch from '../intention/geosearch/geosearch.intention.js';
+
 import { FgpvConfigSchema } from 'api/schema';
 
 const iDict: any = {
-    epsg: EPSG
+    epsg: EPSG,
+    geoSearch
 };
 
 // Each map instance will make a Loader instance
@@ -14,7 +17,7 @@ export default class Loader {
     pluginList : Array<any> = []; // a list of all intentions and extensions
 
     constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
-        this.config = Object.freeze(config); // no changes permitted 
+        this.config = Object.freeze(config); // no changes permitted
         this.mapElem = mapElem;
 
         this.loadIntentions();
@@ -43,7 +46,7 @@ export default class Loader {
     }
 
     /**
-     * Extensions are strictly loaded from the `rz-extensions` map element property. 
+     * Extensions are strictly loaded from the `rz-extensions` map element property.
      * We expect the string value, possibly comma-separated, to be present on the global window object which points to the extension.
      */
     loadExtensions() {
