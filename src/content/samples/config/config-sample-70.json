@@ -355,6 +355,7 @@
             "boundingBox": false
           },
           "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1",
+          "parserUrl": "templates/test-script.js",
           "templateUrl": "templates/test-template.1.html"
         }
       ],

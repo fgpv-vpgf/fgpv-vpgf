@@ -555,6 +555,7 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
                 "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
             },
             "required": [ "id", "layerType", "url" ],
@@ -579,6 +580,7 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
                 "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
             },
             "required": [ "id", "layerType", "url" ],
@@ -598,7 +600,9 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" }
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "parserUrl": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                "templateUrl": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
             },
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
