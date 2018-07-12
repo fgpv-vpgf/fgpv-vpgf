@@ -21,7 +21,7 @@ angular.module('app.ui').directive('rvDetailsRecordHtml', rvDetailsRecordHtml);
  * @param {object} detailService details service
  * @returns {object} directive body
  */
-function rvDetailsRecordHtml($translate, events, detailService) {
+function rvDetailsRecordHtml($translate, events, detailService, $compile) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -39,7 +39,7 @@ function rvDetailsRecordHtml($translate, events, detailService) {
 
     /*****/
 
-    function link(scope) {
+    function link(scope, el) {
         const self = scope.self;
 
         const l = self.item.requester.proxy._source;
@@ -50,24 +50,34 @@ function rvDetailsRecordHtml($translate, events, detailService) {
         // get template to override basic details output, null/undefined => show default
         self.details = l.config.details;
 
-        if (!self.details.parser) {
-            return;
-        }
-
-        detailService.getParser(l.layerId, self.details.parser).then(parseFunction => {
-            // if data is already retrieved
-            if (self.item.data.length > 0) {
-                parse();
-            } else {
-                // data not here yet, wait for it
-                scope.$watchCollection('self.item.data', parse);
+        detailService.getTemplate(l.layerId, self.details.template).then(template => {
+            if (!self.details.parser) {
+                compileTemplate();
+                return;
             }
-            // push update so that template gets the info from the parser
-            scope.$apply();
 
-            function parse() {
-                // TODO: maybe instead of passing just the language, pass the full config
-                self.layer = eval(`${parseFunction}(self.item.data[0], self.lang);`);
+            detailService.getParser(l.layerId, self.details.parser).then(parseFunction => {
+                // if data is already retrieved
+                if (self.item.data.length > 0) {
+                    parse();
+                } else {
+                    // data not here yet, wait for it
+                    scope.$watchCollection('self.item.data', parse);
+                }
+
+                function parse() {
+                    // TODO: maybe instead of passing just the language, pass the full config
+                    self.layer = eval(`${parseFunction}(self.item.data[0], self.lang);`);
+                    compileTemplate();
+                }
+            });
+
+            function compileTemplate() {
+                // push update so that template gets the info from the parser
+                scope.$apply(() => {
+                    // compile the template with the scope and append it to the mount
+                    el.find('.template-mount').append($compile(template)(scope));
+                });
             }
         });
     }

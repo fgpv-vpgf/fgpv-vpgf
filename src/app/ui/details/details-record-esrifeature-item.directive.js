@@ -13,7 +13,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events, $compile) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -68,22 +68,35 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
             self.details = self.requester.proxy._source.config.details;
         }
         if (self.details.template) {
-            if (self.details.parser) {
-                detailService.getParser(self.requester.proxy._source.layerId, self.details.parser).then(parseFunction => {
-                    // TODO: maybe instead of passing just the language, pass the full config
-                    self.layer = eval(`${parseFunction}(self.item.data, self.lang);`);
+            detailService.getTemplate(self.requester.proxy._source.layerId, self.details.template).then(template => {
+                if (self.details.parser) {
+                    detailService
+                        .getParser(self.requester.proxy._source.layerId, self.details.parser)
+                        .then(parseFunction => {
+                            // TODO: maybe instead of passing just the language, pass the full config
+                            self.layer = eval(`${parseFunction}(self.item.data, self.lang);`);
 
+                            compileTemplate();
+                        });
+                } else {
+                    // creates an object from the details array of {field.key: field.value, etc.}
+                    // for use in the template
+                    self.layer = self.item.data.reduce((prev, current) => {
+                        prev[current['key']] = current['value'];
+                        return prev;
+                    }, {});
+                    compileTemplate();
+                }
+
+                function compileTemplate() {
                     // push update so that template gets the info from the parser
-                    scope.$apply();
-                });
-            } else {
-                // creates an object from the details array of {field.key: field.value, etc.}
-                // for use in the template
-                self.layer = self.item.data.reduce((prev, current) => {
-                    prev[current['key']] = current['value'];
-                    return prev;
-                }, {});
-            }
+                    scope.$apply(() => {
+                        // compile the template with the scope and append it to the mount
+                        el.find('.template-mount').append($compile(template)(scope));
+                        console.log("lang", self.lang);
+                    });
+                }
+            });
         }
 
         // wrap raw symbology item into a symbology stack object
