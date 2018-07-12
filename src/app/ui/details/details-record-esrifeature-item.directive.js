@@ -13,7 +13,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -38,7 +38,7 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
     function link(scope, el) {
         const self = scope.self;
 
-        const index = self.requester.proxy.itemIndex
+        const index = self.requester.proxy.itemIndex;
         // check for specified columns in config (in table)
         let includedColumns = [];
         if (self.requester.proxy._source.config) {
@@ -63,14 +63,25 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager) {
 
         if (self.requester.proxy._source.config) {
             self.templateUrl = self.requester.proxy._source.config._source.templateUrl;
+            self.parserUrl = self.requester.proxy._source.config._source.parserUrl;
         }
         if (self.templateUrl) {
-            // creates an object from the details array of {field.key: field.value, etc.}
-            // for use in the template
-            self.layer = self.item.data.reduce((prev, current) => {
-                prev[current['key']] = current['value'];
-                return prev;
-            }, {});
+            if (self.parserUrl) {
+                detailService.getParser(self.requester.proxy._source.layerId, self.parserUrl).then(parseFunction => {
+                    // TODO: maybe instead of passing just the language, pass the full config
+                    self.layer = eval(`${parseFunction}(self.item.data, self.lang);`);
+
+                    // push update so that template gets the info from the parser
+                    scope.$apply();
+                });
+            } else {
+                // creates an object from the details array of {field.key: field.value, etc.}
+                // for use in the template
+                self.layer = self.item.data.reduce((prev, current) => {
+                    prev[current['key']] = current['value'];
+                    return prev;
+                }, {});
+            }
         }
 
         // wrap raw symbology item into a symbology stack object

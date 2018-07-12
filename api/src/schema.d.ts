@@ -661,6 +661,10 @@ export interface TileSchemaNode {
       | "styles")[];
     state?: InitialLayerSettings;
     /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parserUrl?: string;
+    /**
      * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
      */
     templateUrl?: string;
@@ -825,6 +829,10 @@ export interface BasicLayerNode {
     | "styles")[];
   state?: InitialLayerSettings;
   /**
+   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+   */
+  parserUrl?: string;
+  /**
    * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
    */
   templateUrl?: string;
@@ -919,6 +927,10 @@ export interface FeatureLayerNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+   */
+  parserUrl?: string;
   /**
    * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
    */
@@ -1049,6 +1061,14 @@ export interface WfsLayerNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+   */
+  parserUrl?: string;
+  /**
+   * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+   */
+  templateUrl?: string;
 }
 export interface WmsLayerNode {
   /**
