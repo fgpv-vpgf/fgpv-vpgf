@@ -316,11 +316,14 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
 
     const service = {
         buildLayer: layerSource => {
-            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {   // file or WFS added through importer
+            // User added CSV or Shapefile added through the importer
+            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {
                 return new LayerFileBlueprint(null, layerSource);
-            } else if (layerSource.config) {                            // service added through importer
+            } else if (layerSource.config) {
                 return new LayerServiceBlueprint(null, layerSource);
-            } else {                                                    // any file / service added through config
+            }
+            // File/service added through config and GeoJSON Files
+            else {
                 switch (layerSource.layerType) {
                     case Geo.Layer.Types.OGC_WFS:
                         layerSource.type = Geo.Service.Types.GeoJSON;
@@ -340,14 +343,14 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
     };
 
     /**
-     * Checks if the layer being added is a file layer or a WFS layer based on its type.
+     * Checks if the layer being added is a CSV or Shape File.
      * @function _isFileOrWFSLayer
      * @private
      * @param {String} source a string representing the type of layer being added
      * @return {Boolean} true if the layer type matches one of the file layer constants
      */
     function _isFileOrWFSLayer(source) {
-        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.GeoJSON, Geo.Service.Types.Shapefile];
+        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.Shapefile];
         return (fileTypes.indexOf(source.type) !== -1);
     }
 
