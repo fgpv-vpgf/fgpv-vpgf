@@ -89,6 +89,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
                 $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
+                events.$broadcast(events.rvApiPrePlugin, apiMap);
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
                 gtm(apiMap);

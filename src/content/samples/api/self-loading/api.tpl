@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en" dir="ltr">
+<html class="no-js" lang="fr" dir="ltr">
 <head>
     <meta charset="utf-8">
     <title>FGP Viewer</title>
