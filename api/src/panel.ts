@@ -260,10 +260,7 @@ class Btn extends PanelElem {
     */
     set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
         contents = $(contents);
-        contents.addClass('svg-style');
         this.elementAttr.html('');
-
-        contents.find(':first-child').addClass('svg-style');
 
         let compiledContents = this.angularCompiler(contents[0]);
         this.elementAttr.append(compiledContents);
