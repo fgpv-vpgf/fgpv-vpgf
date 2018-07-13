@@ -224,7 +224,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
 }
 
 function Controller($scope, tocService, layerRegistry, stateManager, geoService, keyNames, configService,
-    $rootScope, events, layoutService, Geo, LegendBlock, appInfo) {
+    $rootScope, events, layoutService, Geo) {
 
     'ngInject';
     const self = this;
@@ -237,8 +237,6 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
     self.toggleTableFull = toggleTableFull;
     self.toggleReorderMode = toggleReorderMode;
     self.tocKeyDownHandler = tocKeyDownHandler;
-
-    self.notifyApiClick = notifyApiClick;
 
     self.geoService = geoService;
     self.config = tocService.data;
@@ -380,29 +378,5 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
     function killEvent(event) {
         event.preventDefault(true);
         event.stopPropagation(true);
-    }
-
-    /**
-     * Triggers the API layer group observable when a layer is clicked on the legend
-     *
-     * @function notifyApiClick
-     * @private
-     * @param {LegendBlock} legendBlock legend block that was clicked
-     */
-    function notifyApiClick(block) {
-        let layer;
-        if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {  // make sure the item clicked is a node, and not group or other
-            if (block.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                layer = appInfo.mapi.layers.allLayers.find(l =>
-                    l.id === block.layerRecordId &&
-                    l.layerIndex === parseInt(block.itemIndex));
-            } else {
-                layer = appInfo.mapi.layers.getLayersById(block.layerRecordId)[0];
-            }
-
-            if (layer) {
-                appInfo.mapi.layers._click.next(layer);
-            }
-        }
     }
 }

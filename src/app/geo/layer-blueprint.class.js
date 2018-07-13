@@ -32,95 +32,6 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
             configService.getSync.map.instance.checkCorsException(url);
         }
 
-        /**
-         * Get the layer definition query
-         *
-         * @method _getFilterDefintion
-         * @private
-         * @param {Array} columns an array of columns of a layer
-         * @return {String} the Assembled query definition of the layer
-         */
-        _getFilterDefintion(columns) {
-            let defs = [];
-
-            columns.forEach(column => {
-                if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
-                    defs = this._getColumnFilterDefintion(defs, column);
-                }
-            });
-
-            return defs.join(' AND ');
-        }
-
-        /**
-         * Set the layer definition query
-         *
-         * @method _getColumnFilterDefintion
-         * @private
-         * @param   {Array}   defs   array of definition queries
-         * @param   {Object}   column   column object
-         * @return {Array} defs definition queries array
-         */
-        _getColumnFilterDefintion(defs, column) {
-            if (column.filter.type === 'string') {
-                // replace ' by '' to be able to perform the search in the datatable
-                // relpace * wildcard and construct the query (add wildcard at the end)
-                const val = column.filter.value.replace(/'/g, /''/);
-                if (val !== '') {
-                    defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
-                }
-            } else if (column.filter.type === 'selector') {
-                const val =  column.filter.value.join(`' , '`);
-                if (val !== '') {
-                    defs.push(`UPPER(${column.data}) IN (\'${val.toUpperCase()}\')`);
-                }
-            } else if (column.filter.type === 'number') {
-                const values = column.filter.value.split(',');
-                const min = values[0];
-                const max = values[1];
-
-                if (min !== '') {
-                    defs.push(`${column.data} >= ${min}`);
-                }
-                if (max !== '') {
-                    defs.push(`${column.data} <= ${max}`);
-                }
-            } else if (column.filter.type === 'date') {
-                const min = column.filter.value.min;
-                const max = column.filter.value.max;
-
-                if (min) {
-                    const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
-                    defs.push(`${column.data} >= DATE \'${dateMin}\'`);
-                }
-                if (max) {
-                    const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
-                    defs.push(`${column.data} <= DATE \'${dateMax}\'`);
-                }
-            }
-            return defs;
-        }
-
-        /**
-         * Apply layer definition query on the layer node object
-         *
-         * @method _applyFilterQuery
-         * @private
-         * @param   {LayerNode}   layerSource   layer source object
-         */
-        _applyFilterQuery(layerSource) {
-            if (layerSource.layerType === layerTypes.ESRI_DYNAMIC) {
-                // walk through sub layers in dynamic layer
-                for (let i = 0; i < layerSource.layerEntries.length; i++) {
-                    if (layerSource.layerEntries[i].table && (layerSource.layerEntries[i].table.applyMap || layerSource.layerEntries[i].table.applied)) {
-                        layerSource.layerEntries[i].initialFilteredQuery = this._getFilterDefintion(layerSource.layerEntries[i].table.columns);
-                    }
-                }
-            } else if (layerSource.table && (layerSource.table.applyMap || layerSource.table.applied)) {
-                layerSource.initialFilteredQuery = this._getFilterDefintion(layerSource.table.columns);
-            }
-        }
-
         // no validation required for services. mock a vlidation process for consistency.
         // only instances of LayerFileBlueprint required validation; that class overrides this function
         validateLayerSource() {
@@ -156,8 +67,6 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
                 console.warn('source is already set');
                 return;
             }
-
-            this._applyFilterQuery(value);
 
             this._source = value;
             this.config = new LayerBlueprint.LAYER_TYPE_TO_LAYER_NODE[this._source.layerType](this._source);
@@ -359,7 +268,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
 
     const service = {
         buildLayer: layerSource => {
-            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {   // file or WFS added through importer
+            if (layerSource.type && _isFile(layerSource)) {   // file or WFS added through importer
                 return new LayerFileBlueprint(null, layerSource);
             } else if (layerSource.config) {                            // service added through importer
                 return new LayerServiceBlueprint(null, layerSource);
@@ -383,14 +292,17 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
     };
 
     /**
-     * Checks if the layer being added is a file layer or a WFS layer based on its type.
-     * @function _isFileOrWFSLayer
+     * Checks if the layer being added is a file layer
+     * @function _isFile
      * @private
      * @param {String} source a string representing the type of layer being added
      * @return {Boolean} true if the layer type matches one of the file layer constants
      */
-    function _isFileOrWFSLayer(source) {
+    function _isFile(source) {
         const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.GeoJSON, Geo.Service.Types.Shapefile];
+        if (source.layerType && source.layerType === 'ogcWfs'){
+            return false;
+        }
         return (fileTypes.indexOf(source.type) !== -1);
     }
 

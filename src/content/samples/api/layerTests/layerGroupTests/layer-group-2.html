@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Layer Group Tests ( Attributes and Removal )</span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:25%; height:700px; padding:10px; background-color:lightgrey; border:solid; overflow-y: scroll" class="column">
+            <h2>Tests:</h2>
+            <p>Do the tests in the order they are listed in.</p>
+            <div id="FetchAttributesDiv">
+                <h4>1. Click on Liquids Pipeline in the Legend (not the buttons).</h4>
+                <p>Both buttons should turn green</p>
+                <button id="FetchAttributes" disabled>Fetch Attributes</button>
+                <button id="ClickLayer" disabled>Click Layer</button>
+                <br>
+            </div>
+
+            <div id="SetAttributesDiv">
+                <h4>2. Set attributes (double check with datagrid)</h4>
+                <p><i>Note: you need to re-open the datagrid to see changes.</i></p>
+                <button id="SetAttribute">(OID 1): Set Country Name</button>
+                <p>Country Name of Entry #1 should now be 'new Country'</p>
+                <button id="SetAllAttributes">(OID 2): Reset all Attributes</button>
+                <p>Entry #2 has all fields reset except ObjectID</p>
+                <br>
+            </div>
+
+            <div id="RemAttributesDiv">
+                <h4>3. Remove attributes (double check with datagrid)</h4>
+                <p><i>Note: Expect errors to be thrown. You need to re-open the datagrid to see changes.<i></p>
+                <button id="RemoveAttribute">Remove OID5</button>
+                <button id="RemoveAllAttributes">Remove All</button>
+                <br>
+            </div>
+            <div>
+                <h4>4. Remove Layer</h4>
+                <button id="RemoveLayer">Remove Layer</button>
+                <br>
+            </div>
+            <div>
+                <h4>5. Reset (optional)</h4>
+                <button id="Reset">Reset</button>
+                <br>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="layer-group-2.js"></script>
+</body>
+
+</html>

@@ -319,14 +319,25 @@
     },
     "layers": [
       {
-        "id": "default",
-        "name": "Default",
+        "id": "natural_gas_pipeline",
+        "name": "Natural Gas Pipeline",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
+            "name": "Natural Gas Pipeline",
             "index": 2
-          },
+          }
+        ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+
+      {
+        "id": "liquids_pipeline",
+        "name": "Liquids Pipeline",
+        "layerType": "esriDynamic",
+        "layerEntries": [
           {
+            "name": "Liquids Pipeline",
             "index": 3
           }
         ],

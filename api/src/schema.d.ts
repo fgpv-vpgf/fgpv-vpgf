@@ -61,7 +61,15 @@ export type InfoSection =
       /**
        * Name to display in legend
        */
+      content?: string;
+      /**
+       * [deprecated] Name to display in legend. Use `content` instead.
+       */
       layerName?: string;
+      /**
+       * An optional icon, if present it will be used to primarily represent the unbound layer
+       */
+      coverIcon?: string;
       /**
        * Optional description displayed above the symbology stack.
        */
@@ -436,6 +444,10 @@ export interface FgpvConfigSchema {
      * Intention for displaying data
      */
     table?: string;
+    /**
+     * intention for geoSearch.  geoSearch will be disabled in the viewer if set to none
+     */
+    geoSearch?: string;
   };
 }
 /**
@@ -863,6 +875,10 @@ export interface FeatureLayerNode {
    */
   nameField?: string;
   /**
+   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+   */
+  tooltipField?: string;
+  /**
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
   url: string;
@@ -1014,6 +1030,10 @@ export interface WfsLayerNode {
    * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
    */
   nameField?: string;
+  /**
+   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+   */
+  tooltipField?: string;
   /**
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
@@ -1268,6 +1288,10 @@ export interface DynamicLayerEntryNode {
    */
   name?: string;
   /**
+   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+   */
+  nameField?: string;
+  /**
    * A comma separated list of attribute names that should be requested on query.
    */
   outfields?: string;
@@ -1328,12 +1352,20 @@ export interface EntryGroup {
    * Title of the group
    */
   name: string;
+  /**
+   * Indicates that the legend group will be hidden from the UI and all its controls will be inaccessible to the user.
+   */
+  hidden?: boolean;
   expanded?: boolean;
   children: (EntryGroup | VisibilitySet | Entry | InfoSection)[];
   controls?: LegendGroupControls;
   disabledControls?: LegendGroupControls;
 }
 export interface VisibilitySet {
+  /**
+   * Renders a visiblity set as a single (currently selected) legend entry. The selection cannot be directly changed by the user, but can be modified through the API or other legend entries linked to the same layers.
+   */
+  collapse?: boolean;
   exclusiveVisibility: (EntryGroup | Entry)[];
 }
 export interface Entry {

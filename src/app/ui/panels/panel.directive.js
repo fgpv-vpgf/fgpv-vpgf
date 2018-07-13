@@ -1,7 +1,6 @@
 import { Panel } from 'api/ui';
 
 const templateUrls = {
-    table: require('./table-panel.html'),
     main: require('./main-panel.html'),
     other: require('./other-panel.html'),
     side: require('./side-panel.html')
@@ -13,7 +12,7 @@ const templateUrls = {
  * @memberof app.ui
  * @description
  *
- * The `rvPanel` directive is reused by all the core panels of the viewer; main, side and table.
+ * The `rvPanel` directive is reused by all the core panels of the viewer; main, and side.
  *
  * HTML example:
  * <rv-panel type="main" close-button="false"></rv-panel>

@@ -1,5 +1,3 @@
-/* global RV */
-
 import schemaUpgrade from './schema-upgrade.service.js';
 import geoapi from 'geoApi';
 /**
@@ -123,7 +121,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         /**
          * Processes RCS keys if any are present
          *
-         * @return  {Promise}   resolves with config object when rcs lookup is complete
+         * @return  {Promise}   resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
         processRCS() {
             if (this._rcsKeys.length === 0) {
@@ -164,8 +162,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                         }
                     });
 
-                    this.config.map.layers.push(...result);
-                    events.$broadcast(events.rvCfgUpdated, result);
+                    if (this.config) {
+                        this.config.map.layers.push(...result);
+                        events.$broadcast(events.rvCfgUpdated, result);
+                    }
 
                     return this.config;
             },  resp => {
@@ -320,13 +320,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
 
         // load first config, other configs will be loaded as needed
         configList[0].promise.then(config => {
+            let dojoUrl = (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.22/init.js';
             // initialize gapi and store a return promise
             if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== "") {
-                RV.dojoURL = config.services._esriLibUrl;
+                dojoUrl = config.services._esriLibUrl;
             }
-            RV.gapiPromise = geoapi(RV.dojoURL, window);
 
-            RV.gapiPromise.then(() => {
+            // TODO v3: change this
+            window.RZ.gapiPromise = geoapi(dojoUrl, window);
+            window.RZ.gapiPromise.then(() => {
                 gapiService.init();
                 gapiService.isReady.then(() => {
                     _loadingState = States.LOADED;

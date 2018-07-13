@@ -4,6 +4,22 @@
 ## Testing
 <!-- Have you added unit tests for this code?  If not explain why. -->
 
+### Checklist
+<!-- check all that apply (some items wont apply to all PRs) -->
+- [ ] works in IE
+- [ ] works with projection change
+- [ ] works with language change
+- [ ] works via config file
+- [ ] works via wizard
+- [ ] works via API
+- [ ] works via RCS
+- [ ] works via bookmark load
+- [ ] works in auto-legend
+- [ ] works in structured legend
+- [ ] works on layer reload
+- [ ] datagrid works
+- [ ] identify works
+
 ## Documentation
 <!-- Which areas of documentation have been changed: jsdoc, tutorials, samples, wiki -->
 
@@ -14,6 +30,7 @@
 - [ ] Release notes have been updated
 - [ ] PR targets the correct release version
 - [ ] Help files and documentation have been updated
+- [ ] orignal issue has been reviewed & updated to reflect the PR content
 
 Remember, it is a *muffin offence* to open a PR with any of the above checklist items incomplete.
 

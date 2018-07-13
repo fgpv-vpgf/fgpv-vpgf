@@ -11,11 +11,8 @@
             height: 100%;
         }
     </style>
-    <script src="./extensions/enhancedTable.js"></script>
-    <link rel="stylesheet" href="./extensions/enhancedTable.css" />
 
-    <script src="./intentions/epsg.js"></script>
-    
+    <script src="./extensions/extension.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -24,30 +21,14 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
-    
-    <script>
-    window.rzTest = {
-        preInit: () => {
-            console.warn('Loading delayed by 5 seconds.');
-            return new Promise(a => setTimeout(a, 5000));
-        },
-
-        init: (mApi) => {
-            console.warn(mApi);
-        }
-    };
-    </script>
 </head>
 
-<!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
-
 <body>
-    <div class="myMap" id="intention-map" is="rv-map"
-        rv-config="config/config-sample-57.json"
+    <div class="myMap" id="https-map" is="rv-map"
+        rv-config="config/config-https.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark"
-        rz-extensions="rzTest,enhancedTable">
+        rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -96,8 +77,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RV.getMap('https-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('https-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {
@@ -122,11 +103,11 @@
         if (keys) {
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
-            RV.getMap('intention-map').restoreSession(keysArr);
+            RV.getMap('https-map').restoreSession(keysArr);
         } else {
             var bookmark = queryStr.rv;
             // console.log(bookmark);
-            RV.getMap('intention-map').initialBookmark(bookmark);
+            RV.getMap('https-map').initialBookmark(bookmark);
         }
     </script>
 </body>

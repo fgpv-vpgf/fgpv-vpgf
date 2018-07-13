@@ -163,7 +163,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             trigger: null, // expand self.trigger node
 
             // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
-            containerWidth: 350,
+            containerWidth: 343,
             maxItemWidth: 350
         };
 
@@ -342,22 +342,23 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // symbology item cannot be wider than the panel
             ref.maxItemWidth = Math.min(
                 Math.max(
-                    ...ref.symbolItems.map(symbolItem =>
-                        Math.max(
-                            symbolItem.image.find('svg')[0].viewBox.baseVal.width,
+                    ...ref.symbolItems.map(symbolItem => {
+                        const svgImage = symbolItem.image.find('svg')[0];
+                        return Math.max(
+                            svgImage ? svgImage.viewBox.baseVal.width : 0,
                             getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
-                        )
+                        );
+                    }
+
                     )
                 ),
                 ref.containerWidth
             );
 
-            // console.log('ref.maxItemWidth', ref.maxItemWidth);
-
             ref.expandTimeline = makeExpandTimeline();
             ref.fanOutTimeline = makeWiggleTimeline();
 
-            ref.isReady = true;
+            ref.isReady = ref.maxItemWidth > 0;
         }
 
         function makeExpandTimeline() {
@@ -390,7 +391,9 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                 // briefly show the description node to grab it's height, and hide it again
                 ref.descriptionItem.show();
-                const descriptionHeight = ref.descriptionItem.height();
+                let width  = getTextWidth(canvas, ref.descriptionItem.text(), ref.descriptionItem.css('font'));
+                let height = Math.ceil(width / ref.descriptionItem.width()) * parseInt(ref.descriptionItem.css('line-height').slice(0, -2));
+                const descriptionHeight = ref.descriptionItem.height() >= 0 ? ref.descriptionItem.height() : height;
                 ref.descriptionItem.hide();
 
                 // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
@@ -534,8 +537,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         function imageLegendItem(timeline, symbolItem, totalHeight, isLast) {
             const symbologyListItemMargin = 16;
 
-            const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
-            const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
+            const imageWidth = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.width : 0;
+            const imageHeight = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.height : 0;
 
 
             // calculate symbology item's dimensions based on max width

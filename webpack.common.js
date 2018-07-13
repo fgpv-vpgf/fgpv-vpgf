@@ -63,7 +63,7 @@ module.exports = function (env) {
                     test: /\.s?[ac]ss$/,
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
-                        'css-loader',
+                        {loader: 'css-loader', options: {minimize: env.prod}},
                         'sass-loader'
                     ]
                 },
@@ -86,11 +86,6 @@ module.exports = function (env) {
             new MiniCssExtractPlugin({
                 filename: "rv-styles.css"
             }),
-
-            new webpack.ContextReplacementPlugin(
-                /moment[\/\\]locale$/,
-                /en|fr/
-            ),
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
@@ -149,6 +144,7 @@ module.exports = function (env) {
 
         devServer: {
             host: '0.0.0.0',
+            https: !!env.https,
             publicPath: '/',
             historyApiFallback: {
                 index: '/samples/webpack-note.html',

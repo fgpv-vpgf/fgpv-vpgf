@@ -1,4 +1,4 @@
-import { skip } from 'rxjs/operators';
+import { skip } from 'rxjs/internal/operators/skip';
 
 const dataLayer = window.RZ.gtmDL;
 

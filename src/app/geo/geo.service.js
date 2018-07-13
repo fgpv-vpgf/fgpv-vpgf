@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('geoService', geoService);
 
-function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo) {
+function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo, translationService) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -59,6 +59,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                 const pluginLoader = new PluginLoader(config, $rootElement);
 
                 pluginLoader.isReady.then(() => {
+                    pluginLoader.loadTranslations(translationService);
                     mapService.makeMap();
                     appInfo.plugins = pluginLoader.pluginList;
                     legendService.constructLegend(config.map.layers, config.map.legend);
@@ -76,6 +77,11 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                         if (orderdBookmarkIds.length !== 0) {   // it is a bookmark
                             for (let i = 0; i < orderdBookmarkIds.length; i++) {
                                 if (orderdBookmarkIds[i] === layer.id) {
+                                    legendService.addLayerDefinition(layer, i);
+                                    break;
+                                } else if (layer.id.split('.')[0] === 'rcs' && orderdBookmarkIds[i].split('.')[1] === layer.id.split('.')[1]) {
+                                    // if the layer is RCS and has the same key include it
+                                    // fixes issues with using a bookmark to preserve state on page language switches
                                     legendService.addLayerDefinition(layer, i);
                                     break;
                                 }

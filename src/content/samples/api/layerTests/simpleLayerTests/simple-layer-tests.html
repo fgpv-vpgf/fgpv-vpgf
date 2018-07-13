@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Simple Layer Tests</span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:25%; padding:10px; background-color:lightgrey; border:solid;" class="column">
+            <div id="Add Geometry Test">
+                <h2>Add Geometries: (Automatic)</h2>
+                <button id="AddGeometries" disabled>Geometries Added!</button>
+            </div>
+
+            <div id="Remove Geometry Tests">
+                <h2>Remove Geometries: </h2>
+                <button id="RemoveSVG" disabled>Purple Star</button>
+                <button id="RemoveDefault" disabled>Black Circles</button>
+                <button id="RemoveAll" disabled>All Shapes</button>
+                <button id="Reset" disabled>Reset</button>
+            </div>
+
+            <div id="Layer Name Tests">
+                <h2>Toggle Layer Name: </h2>
+                <button id="ChangeName">Change to 'new Name'</button>
+                <textarea rows="1" cols="20" id="output">Expect correct name!</textarea>
+            </div>
+
+            <div id="Opacity Tests">
+                <h2>Toggle Opacity: </h2>
+                <button id="ChangeOpacity">to 0.3</button>
+            </div>
+
+            <div id="Visibility Tests">
+                <h2>Toggle Visibility: </h2>
+                <button id="ChangeVisibility">Make Invisible</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="simple-layer-tests.js"></script>
+</body>
+
+</html>

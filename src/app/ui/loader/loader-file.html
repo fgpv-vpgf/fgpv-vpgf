@@ -130,22 +130,39 @@
                     </div-->
                 </md-input-container>
 
-                <md-input-container class="md-block">
-                    <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
-                    <md-select
-                        name="primaryField"
-                        md-on-open="self.configure.configureResetValidation()"
-                        ng-model="self.layerSource.config.nameField"
-                        required>
-                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
-                            {{ field.name }}
-                        </md-option>
-                    </md-select>
-                    <!-- TODO: decide whether and how to display a hint or error messages -->
-                    <!--div  ng-messages="self.configure.form.primaryField.$error">
-                        <div ng-message="required">Required</div>
-                    </div-->
-                </md-input-container>
+                <div>
+                    <md-input-container class="md-block">
+                        <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
+                        <md-select
+                            name="primaryField"
+                            md-on-open="self.configure.configureResetValidation()"
+                            ng-model="self.layerSource.config.nameField"
+                            required>
+                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                                {{ field.name }}
+                            </md-option>
+                        </md-select>
+                        <!-- TODO: decide whether and how to display a hint or error messages -->
+                        <!--div  ng-messages="self.configure.form.primaryField.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label>{{ 'import.layer.configure.tooltipField' | translate }}</label>
+                        <md-select
+                            name="tooltipField"
+                            md-on-open="self.configure.configureResetValidation()"
+                            ng-model="self.layerSource.config.tooltipField">
+                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                                {{ field.name }}
+                            </md-option>
+                        </md-select>
+                        <!-- TODO: decide whether and how to display a hint or error messages -->
+                        <!--div  ng-messages="self.configure.form.primaryField.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                    </md-input-container>
+                </div>
 
                 <div layout="row" ng-switch-when="csv">
                     <md-input-container class="md-block" flex>

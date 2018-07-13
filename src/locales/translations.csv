@@ -41,7 +41,7 @@ DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entr
 DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,1,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments,1
 DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,1,Affichage de l'élément 0 à 0 sur 0 élément,1
 DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),1,(filtrés de _MAX_ éléments au total),1
-DataTable text for Postfix,filter.default.label.postfix,,1,,1
+DataTable text for Postfix,filter.default.label.postfix,,0,,0
 DataTable text for Loading Records,filter.default.label.loadrec,Loading...,1,Chargement en cours...,1
 DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,1,Aucun élément à afficher,1
 DataTable text for Empty table,filter.default.label.emptytable,No data available in table,1,Aucune donnée disponible dans le tableau,1
@@ -117,7 +117,7 @@ Basemap broken close toast,basemap.close,Close,1,Fermer,0
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
 WKIDs to name other,wkids.other,Other,1,Autre,1
-,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"[fr] Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",0
+,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"Utilisez <strong>les flèches</strong>, les touches <strong>+</strong> et <strong>-</strong> pour naviguer dans la carte et <strong>Entrée</strong> pour sélectionner.",0
 Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
 Map Navigation slider text,nav.slider,slider,1,Curseur,1
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
@@ -217,6 +217,8 @@ Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic La
 Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer {{content}},1,Couche dynamique d'ESRI {{content}},1
 Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
 Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
+Table of Content wfs layer flag label,toc.label.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},0
+Table of Content wfs layer flag tootlip,toc.tooltip.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},0
 Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
@@ -339,12 +341,14 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1
 ,import.service.configure.primaryfield,Primary Field,1,Champ clé,1
+,import.service.configure.tooltipField,Tooltip Field,1,Champ de l'info-bulle,0
 ,import.service.configure.layers,Layers,1,Couches,1
 ,import.service.configure.multipleselection,You can select several layers,1,Vous pouvez sélectionner plusieurs couches,1
 ,import.service.configure.selectall,Select All,1,Tout Sélectionner,1
 ,import.service.configure.singleentrycollapse,Display as a group,1,Affichage en groupe,1
 ,import.layer.configure.layername,Layer Name,1,Nom de la couche,1
 ,import.layer.configure.primaryfield,Primary Field,1,Champ clé,1
+,import.layer.configure.tooltipField,Tooltip Field,1,Champ de l'info-bulle,0
 ,import.layer.configure.colourfield,Colour,1,Couleur,1
 ,stepper.continue,Continue,1,Continuer,1
 ,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,1,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.,1

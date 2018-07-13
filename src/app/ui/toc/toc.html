@@ -51,8 +51,7 @@
                     class="rv-legend-{{ block.template }}"
                     block="block"
                     is-reorder="self.isReorder"
-                    ng-class="{ 'rv-selected': block.isSelected }"
-                    ng-click="self.notifyApiClick(block)"></rv-legend-block>
+                    ng-class="{ 'rv-selected': block.isSelected }"></rv-legend-block>
 
                 <!-- regular group children list -->
                 <ul
@@ -72,7 +71,7 @@
                 <!-- visibility set children list -->
                 <ul
                     class="rv-legend-list rv-legend-set"
-                    ng-class="{ 'rv-legend-set-highlight': block.highlight }"
+                    ng-class="{ 'rv-legend-set-highlight': block.highlight, 'rv-legend-set-collapse': block.blockConfig.collapse }"
                     ng-if="block.blockType === 'set'"
                     dx-connect="block"></ul>
 

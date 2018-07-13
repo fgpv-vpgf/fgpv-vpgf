@@ -22,12 +22,12 @@ function translationService($q, translations, $translate) {
 
         // add translations to existing languages
         } else {
-            Object.keys(options).forEach(key => {
-                if (translationData[key]) {
-                    if (!translationData[key].plugin) {
-                        translationData[key].plugin = {};
+            Object.keys(options).forEach(lang => {
+                if (translationData[lang]) {
+                    if (!translationData[lang].t) {
+                        translationData[lang].t = {};
                     }
-                    Object.assign(translationData[key].plugin, options[key].plugin);
+                    Object.assign(translationData[lang].t, options[lang]);
                     $translate.refresh();
                 }
             });

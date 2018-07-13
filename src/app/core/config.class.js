@@ -429,6 +429,76 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    /**
+     * Get the layer definition query
+     *
+     * @method _getFilterDefintion
+     * @private
+     * @param {Array} columns an array of columns of a layer
+     * @return {String} the Assembled query definition of the layer
+     */
+    function _getFilterDefintion(columns) {
+        let defs = [];
+
+        columns.forEach(column => {
+            if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
+                defs = _getColumnFilterDefintion(defs, column);
+            }
+        });
+
+        return defs.join(' AND ');
+    }
+
+    /**
+     * Set the layer definition query
+     *
+     * @method _getColumnFilterDefintion
+     * @private
+     * @param   {Array}   defs   array of definition queries
+     * @param   {Object}   column   column object
+     * @return {Array} defs definition queries array
+     */
+    function _getColumnFilterDefintion(defs, column) {
+        if (column.filter.type === 'string') {
+            // replace ' by '' to be able to perform the search in the datatable
+            // relpace * wildcard and construct the query (add wildcard at the end)
+            const val = column.filter.value.replace(/'/g, /''/);
+            if (val !== '') {
+                defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
+            }
+        } else if (column.filter.type === 'selector') {
+            const val = column.filter.value.join(`' , '`);
+            if (val !== '') {
+                defs.push(`UPPER(${column.data}) IN (\'${val.toUpperCase()}\')`);
+            }
+        } else if (column.filter.type === 'number') {
+            const values = column.filter.value.split(',');
+            const min = values[0];
+            const max = values[1];
+
+            if (min !== '') {
+                defs.push(`${column.data} >= ${min}`);
+            }
+            if (max !== '') {
+                defs.push(`${column.data} <= ${max}`);
+            }
+        } else if (column.filter.type === 'date') {
+            const min = column.filter.value.min;
+            const max = column.filter.value.max;
+
+            if (min) {
+                const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
+                defs.push(`${column.data} >= DATE \'${dateMin}\'`);
+            }
+            if (max) {
+                const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
+                defs.push(`${column.data} <= DATE \'${dateMax}\'`);
+            }
+        }
+        return defs;
+    }
+
+
     class FilterNode {
         constructor(source = {}) {
             this._source = source;
@@ -591,7 +661,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._controls = defaultedSource.controls;
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
-            this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
+
             this._toggleSymbology = typeof source.toggleSymbology === 'boolean' ? source.toggleSymbology : true;
 
             this._details = source.details;
@@ -703,14 +773,23 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super(source);
 
             this._nameField = source.nameField;
+            this._tooltipField = source.tooltipField;
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
+
+            // apply layer definition query on the layer node object
+            if (this.table.applyMap || this.table.applied) {
+                this._initialFilteredQuery = _getFilterDefintion(this.table.columns);
+            }
         }
 
         _hovertipEnabled = true;
 
         get nameField () { return this._nameField; }
         set nameField (value) { this._nameField = value; }
+
+        get tooltipField () { return this._tooltipField; }
+        set tooltipField (value) { this._tooltipField = value; }
 
         get tolerance () { return this._tolerance; }
         get table () { return this._table; }
@@ -720,6 +799,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
+                tooltipField: this.tooltipField,
                 tolerance: this.tolerance,
                 table: this.table.JSON
             });
@@ -733,10 +813,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._index = source.index;
             this._name = source.name;
-
-            // the initial filters to be applied for the layer
-            // applied on source object so the property is not lost when applying layer node defaults
-            this._initialFilteredQuery = source.initialFilteredQuery;
 
             // state and controls defaults cannot be applied here;
             // need to wait until dynamic/wms layer is loaded before parent/child defaulting can be applied; this is done in the legend service;
@@ -847,6 +923,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (source) {
             super(source);
 
+            this._nameField = source.nameField;
             this._outfields = source.outfields || '*';
             this._stateOnly = source.stateOnly;
             this._extent = source.extent ?
@@ -855,7 +932,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
+
+            // apply layer definition query on the layer node object
+            if (this.table.applyMap || this.table.applied) {
+                this._initialFilteredQuery = _getFilterDefintion(this.table.columns);
+            }
         }
+
+        get nameField () { return this._nameField; }
+        set nameField (value) { this._nameField = value; }
 
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
@@ -865,6 +950,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get JSON() {
             return angular.merge(super.JSON, {
+                nameField: this.nameField,
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent,
@@ -1250,11 +1336,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super();
             this._exclusiveVisibility = visibilitySetSource.exclusiveVisibility.map(childConfig =>
                 _makeChildObject(childConfig));
+            this._collapse = visibilitySetSource.collapse === true;
 
             this._walk = ref.walkFunction.bind(this);
         }
 
         get exclusiveVisibility () { return this._exclusiveVisibility; }
+        get collapse () { return this._collapse; }
 
         get entryType () { return TYPES.legend.SET; }
 
@@ -1266,6 +1354,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             return {
                 exclusiveVisibility: this.exclusiveVisibility.map(child =>
                     child.JSON),
+                collapse: this.collapse,
                 entryType: this.entryType
             };
         }
@@ -1359,7 +1448,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 DEFAULTS.legend[TYPES.legend.GROUP].controls) :
                 [];
 
-            this._expanded = entryGroupSource.expanded || false;
+            this._expanded = typeof entryGroupSource.expanded !== 'undefined' ? entryGroupSource.expanded : true;
+            this._hidden = entryGroupSource.hidden === true;
 
             this._walk = ref.walkFunction.bind(this);
         }
@@ -1370,6 +1460,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get disabledControls () { return this._disabledControls; }
         get userDisabledControls () { return this._userDisabledControls; }
         get expanded () { return this._expanded; }
+
+        /**
+         * Specifies if the legend group should be hidden from the UI.
+         *
+         * @return {Boolean} if true, the legend group will not be rendered in legend UI
+         */
+        get hidden () { return this._hidden; }
 
         get entryType () { return TYPES.legend.GROUP; }
 
@@ -1385,6 +1482,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 expanded: this.expanded,
+                hidden: this.hidden,
                 entryType: this.entryType
             };
         }
@@ -1398,9 +1496,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (entrySource) {
             super();
             this._infoType = entrySource.infoType;
-            this._content = entrySource.content;
+            this._content = entrySource.content || entrySource.layerName || '';
 
-            this._layerName = entrySource.layerName || '';
             this._description = entrySource.description || '';
             this._coverIcon = entrySource.coverIcon;
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
@@ -1411,8 +1508,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get infoType () {               return this._infoType; }
         get content () {                return this._content; }
-
-        get layerName () {              return this._layerName; }
         get description () {            return this._description; }
         get coverIcon () {      return this._coverIcon; }
         get symbologyStack () {         return this._symbologyStack; }
@@ -1426,7 +1521,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 infoType: this.infoType,
                 content: this.content,
                 entryType: this.entryType,
-                layerName: this.layerName,
                 description: this.description,
                 coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
@@ -1896,10 +1990,14 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor(source) {
             if (!source || Object.keys(source).length === 0) {
                 this.epsg = 'default';
-                this.table = 'default';
+                this.geoSearch = 'default'
+                //TODO fancyTable
+                //this.table = 'default';
             } else {
-                this.epsg = source.epsg;
-                this.table = source.table;
+                this.epsg = source.epsg || 'default';
+                this.geoSearch = source.geoSearch || 'default';
+                //TODO fancyTable
+                //this.table = source.table || 'default';
             }
         }
     }
@@ -2466,7 +2564,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled) {
+            if (!this.map.components.geoSearch.enabled || this.intentions.geoSearch === 'none') {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;

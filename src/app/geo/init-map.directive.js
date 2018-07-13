@@ -18,8 +18,7 @@ angular
     .module('app.geo')
     .directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames, $compile) {
+function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval, identifyService, api, appInfo, gapiService, $mdDialog, keyNames, $compile, $controllerProvider) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -46,7 +45,6 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
 
         $rootScope.$on(events.rvMapLoaded, (_, i) => {
             mapInstance = i;
-            const api = window.RZ;
 
             mapInstance.disableKeyboardNavigation();
 
@@ -79,6 +77,7 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
 
                 // API related initialization ------------------
                 api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
+                api.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
                 apiMap._legendStructure = configService.getSync.map.legend;
@@ -87,14 +86,17 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
                 // Required for FM to function properly
-                globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+                api.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
                 $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
                 events.$broadcast(events.rvApiPrePlugin, apiMap);
                 // api panel elements need a reference to the internal angular compiler
-                PanelElem.prototype.angularCompiler = function(html, compilerScope = scope) {
+                PanelElem.prototype.angularCompiler = function(html, compilerScope = $rootScope) {
                     return $compile(html)(compilerScope);
                 }
+
+                // allows plugins to register components on the angular instance, usually to provide angular material support
+                apiMap.agControllerRegister = $controllerProvider.register;
 
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);
@@ -252,7 +254,7 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 case keyNames.ENTER:
                     // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                     // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                    if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
+                    if ($rootElement.attr('rv-focus-status') === api.focusStatusTypes.ACTIVE) {
                         event.mapPoint = mapPntCntr;
                         event.screenPoint = mapScrnCntr;
                         identifyService.identify(event);
