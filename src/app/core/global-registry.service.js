@@ -9,4 +9,4 @@
  */
 angular
     .module('app.core')
-    .constant('globalRegistry', window.RV);
+    .constant('api', window.RZ);

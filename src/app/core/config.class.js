@@ -2027,10 +2027,14 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor(source) {
             if (!source || Object.keys(source).length === 0) {
                 this.epsg = 'default';
-                this.table = 'default';
+                this.geoSearch = 'default'
+                //TODO fancyTable
+                //this.table = 'default';
             } else {
-                this.epsg = source.epsg;
-                this.table = source.table;
+                this.epsg = source.epsg || 'default';
+                this.geoSearch = source.geoSearch || 'default';
+                //TODO fancyTable
+                //this.table = source.table || 'default';
             }
         }
     }
@@ -2597,7 +2601,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled) {
+            if (!this.map.components.geoSearch.enabled || this.intentions.geoSearch === 'none') {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;

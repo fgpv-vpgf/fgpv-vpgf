@@ -79,54 +79,26 @@
     },
     "layers": [
       {
-        "id": "0",
-        "name": "Electric Transmission Line",
-        "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-      },
-      {
-        "id": "1",
+        "id": "natural_gas_pipeline",
         "name": "Natural Gas Pipeline",
-        "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
-      },
-      {
-        "id": "2",
-        "name": "Liquids Pipeline",
-        "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
-      },
-      {
-        "id": "3",
-        "name": "Dyanamic Layer 1",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 21
-          },
-          {
-            "index": 17
-          },
-          {
-            "index": 19
+            "name": "Natural Gas Pipeline",
+            "index": 2
           }
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
       },
+
       {
-        "id": "4",
-        "name": "Dyanamic Layer 2",
+        "id": "liquids_pipeline",
+        "name": "Liquids Pipeline",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
-            "index": 22
-          },
-          {
-            "index": 23
-          },
-          {
-            "index": 24
+            "name": "Liquids Pipeline",
+            "index": 3
           }
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
