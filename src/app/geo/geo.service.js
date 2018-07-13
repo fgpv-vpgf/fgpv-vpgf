@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('geoService', geoService);
 
-function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo) {
+function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo, translationService) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -59,6 +59,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                 const pluginLoader = new PluginLoader(config, $rootElement);
 
                 pluginLoader.isReady.then(() => {
+                    pluginLoader.loadTranslations(translationService);
                     mapService.makeMap();
                     appInfo.plugins = pluginLoader.pluginList;
                     legendService.constructLegend(config.map.layers, config.map.legend);

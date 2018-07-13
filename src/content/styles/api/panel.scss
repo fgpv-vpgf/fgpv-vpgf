@@ -10,12 +10,20 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 100%;
     overflow: hidden;
     margin: 10px;
 
     .rv-button-24 {
-        height: inherit;
+        overflow: visible;
+        line-height: 24px;
+        min-height: 24px;
+        width: 24px;
+        min-width: 24px;
+
+        [md-icon] {
+            max-height: 24px;
+            max-width: 24px;
+        }
     }
 }
 .panel-controls {
@@ -27,15 +35,40 @@
         width: 24px;
         height: 32px;
     }
+
+    md-input-container {
+        margin: inherit;
+
+        > md-icon {
+            top: auto;
+        }
+    }
+
+    h2 {
+        position: absolute;
+        top: -5px;
+        font-weight: normal;
+        display:inline;
+        vertical-align: middle;
+    }
 }
 .separator{
     border-bottom: lightgrey solid 1px;
 }
-.panel-body{
+.panel-body {
     padding: 5px 18px;
-    overflow-y: auto;
-    height: 92.1%;
     border-top: lightgrey solid 1px;
+    height: calc(100% - 38px); // 100% minus the headers
+
+    &.ag-theme-balham {
+        border-top: initial;
+        margin: -1px;
+        padding: inherit;
+
+        > div:first-child {
+            height: 100%;
+        }
+    }
 }
 .btn{
     width: 36px;
@@ -75,22 +108,12 @@
     outline: none;
 }
 
-.svg-style{
-    width: 80%;
-    height: 80%;
-    top: 0px;
-    left: 0px;
-    fill: #778899;
-}
-.svg-style:hover{
-    fill: darkslategray;
-}
 .txt{
     width: 20%;
     height: 20%;
 }
 .hidden{
-    display: none;
+    visibility: hidden;
 }
 .divider{
     border-left: 1px solid rgb(146, 167, 187);
