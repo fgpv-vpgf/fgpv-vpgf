@@ -40,8 +40,7 @@
     </div>
 </div>
 
-<div class="rv-details-list-wrapper" ng-show="self.isExpanded" ng-if="self.details.template">
-        <div class="rv-details-list" ng-include="self.details.template"></div></div>
+<div class="rv-details-list template-mount" ng-show="self.isExpanded" ng-if="self.details.template"></div>
 
 <div class="rv-details-list-wrapper" ng-if="self.isRendered && !self.details.template">
     <ul class="rv-details-list rv-toggle-slide ng-hide" ng-show="self.isExpanded">
