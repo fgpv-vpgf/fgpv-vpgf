@@ -41,9 +41,9 @@ angular
     .factory('sideNavigationService', sideNavigationService);
 
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
+function sideNavigationService($mdSidenav, $rootElement, configService, stateManager,
     basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, pluginService, geosearchService, appInfo, $mdDateLocale, events) {
+    translations, $mdDialog, geosearchService, $mdDateLocale, events) {
 
     const service = {
         open,
@@ -175,19 +175,6 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
 
     init();
 
-    // TODO: is this affected by the config reload at all?
-    // Add any MenuItem plugins as they are created to the menu
-    pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
-        // first plugin created should add the plugin group
-        if (service.controls.plugins.children.length === 0) {
-            SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
-        }
-
-        mItem.label = mItem.name;
-        mItem.isChecked = () => mItem.isActive;
-        service.controls.plugins.children.push(mItem);
-    });
-
     return service;
 
     function ShareController(scope, $mdDialog, $rootElement, $http, configService) {
@@ -226,17 +213,8 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         * @function getLongLink
         */
         function getLongLink() {
-            if (typeof URLS.long === 'undefined' && globalRegistry.getMap(appInfo.id)) { // no cached url exists
-                // eslint-disable-next-line no-return-assign
-                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
-                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
-                }).then(() => {
-                    selectURL();
-                });
-            } else { // cache exists
                 self.url = URLS.long;
                 selectURL();
-            }
         }
 
         /**

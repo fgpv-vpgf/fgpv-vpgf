@@ -28,7 +28,7 @@
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
-        ng-if="self.config.map.components.geoSearch.enabled && !self.geoSearch.externalApiError && self.config.ui.appBar.geoSearch">
+        ng-if="self.config.map.components.geoSearch.enabled && !self.geosearchService.externalApiError && self.config.ui.appBar.geoSearch">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>
@@ -37,7 +37,7 @@
     <div
         class="md-icon-button primary rv-app-geosearch"
         disabled="disabled"
-        ng-if="self.geoSearch.externalApiError"
+        ng-if="self.geosearchService.externalApiError"
         aria-label="{{ 'appbar.aria.geosearch' | translate }}">
         <md-tooltip>{{ 'appbar.aria.geoApiError' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>

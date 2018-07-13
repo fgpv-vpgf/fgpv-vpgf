@@ -1085,6 +1085,16 @@
                     "description": "Intention for displaying data",
                     "type": "string",
                     "default": "none"
+                },
+                "table": {
+                    "description": "Intention for displaying data",
+                    "type": "string",
+                    "default": "none"
+                },
+                "geoSearch" : {
+                    "description": "intention for geoSearch.  geoSearch will be disabled in the viewer if set to none",
+                    "type": "string",
+                    "default": "none"
                 }
             },
             "additionalProperties": false
