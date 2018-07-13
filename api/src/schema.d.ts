@@ -444,6 +444,10 @@ export interface FgpvConfigSchema {
      * Intention for displaying data
      */
     table?: string;
+    /*
+     * intention for geoSearch
+     */
+    geoSearch?: string;
   };
 }
 /**
