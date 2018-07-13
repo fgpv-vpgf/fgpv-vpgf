@@ -219,7 +219,7 @@ class ViewerGroup {
 
 const viewerGroup = new ViewerGroup();
 
-RV.focusManager = {
+window.RZ.focusManager = {
     addViewer
 };
 
@@ -548,7 +548,7 @@ function onFocusout(event) {
 }
 
 // for consistency angular should use the status object when trying to infer a status string
-RV.focusStatusTypes = statuses;
+window.RZ.focusStatusTypes = statuses;
 
 $(document)
     .on('keydown', onKeydown)

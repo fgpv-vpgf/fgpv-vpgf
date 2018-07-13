@@ -1,9 +1,12 @@
 import EPSG from '../intention/epsg/epsg.intention';
+import geoSearch from '../intention/geosearch/geosearch.intention.js';
+
 import { FgpvConfigSchema } from 'api/schema';
 
 const iDict: any = {
     epsg: EPSG,
-    table: {} // TODO: replace with simpleTable
+    table: {}, // TODO: replace with simpleTable
+    geoSearch
 };
 
 // Each map instance will make a Loader instance
@@ -11,11 +14,11 @@ export default class Loader {
     private config: FgpvConfigSchema;
     private mapElem: JQuery<HTMLElement>;
     private preInitPromises: Promise<void>[] = []; // all preInit promises must resolve prior to map loading
-    
+
     pluginList : Array<any> = []; // a list of all intentions and extensions
 
     constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
-        this.config = Object.freeze(config); // no changes permitted 
+        this.config = Object.freeze(config); // no changes permitted
         this.mapElem = mapElem;
 
         this.loadIntentions();
@@ -50,7 +53,7 @@ export default class Loader {
     }
 
     /**
-     * Extensions are strictly loaded from the `rz-extensions` map element property. 
+     * Extensions are strictly loaded from the `rz-extensions` map element property.
      * We expect the string value, possibly comma-separated, to be present on the global window object which points to the extension.
      */
     loadExtensions() {
@@ -64,7 +67,11 @@ export default class Loader {
      * If a promise is returned, adds it to the `preInitPromises` list.
      */
     preInit() {
-        this.pluginList.forEach(p => {
+        this.pluginList.forEach((p, i, a) => {
+
+            a[i] = typeof p === 'function' ? new p() : p;
+            p = a[i];
+
             if (p.preInit) {
                 let returnedValue = p.preInit(this.config);
 
@@ -83,6 +90,14 @@ export default class Loader {
         this.pluginList.forEach(p => {
             if (p.init) {
                 p.init(api);
+            }
+        });
+    }
+
+    loadTranslations(translationService: any) {
+        this.pluginList.forEach(p => {
+            if (p.translations) {
+                translationService(p.translations);
             }
         });
     }
