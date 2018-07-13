@@ -345,15 +345,12 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             return;
         }
 
-        const langAttr = $rootElement.attr('rv-langs');
-        languages = DEFAULT_LANGS;
-        if (langAttr) {
-            try {
-                languages = angular.fromJson(langAttr);
-            } catch (e) {
-                console.warn(`Could not parse langs, defaulting to ${DEFAULT_LANGS}`);
-                // TODO: better way to handle when no languages are specified?
-            }
+        languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
+            .map(l => l.length === 2 ? l + '-CA' : l)
+            .filter(l => l);
+
+        if (languages.length === 0) {
+            languages = DEFAULT_LANGS;
         }
 
         let configAttr = $rootElement.attr('rv-config');
