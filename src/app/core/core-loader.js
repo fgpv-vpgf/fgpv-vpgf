@@ -12,7 +12,6 @@ import './formatters.filter.js';
 import './global-registry.service.js';
 import './graphics.service.js';
 import './keycodes.constant.js';
-import './plugin.service.js';
 import './reload.service.js';
 import './statemanager.constant.service.js';
 import './statemanager.service.js';

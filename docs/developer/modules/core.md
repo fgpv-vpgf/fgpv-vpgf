@@ -25,10 +25,6 @@ This file also initializes multi language support, and initializes RCS calls.
 
 Used for time limiting the rate at which a function is executed. It is useful to limit, for example, the number of clicks made on an element where there is a heavy compute cost associated with each click.
 
-# plugin.service.js
-
-Stores all currently registered plugins and manages a list of registered viewer components that which to be notified when a new plugin is registered.
-
 # reload.service.js
 
 There are instances where the viewer needs to be completely reloaded:

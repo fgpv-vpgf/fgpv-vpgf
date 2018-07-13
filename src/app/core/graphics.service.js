@@ -1,3 +1,5 @@
+import 'svg.textflow.js';
+
 /**
  * @name graphicsService
  * @constant

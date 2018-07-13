@@ -31,7 +31,7 @@ const INFO_FONT_SIZE = 14;
  */
 angular.module('app.ui').service('exportLegendService', exportLegendService);
 
-function exportLegendService($q, $rootElement, LegendBlock, configService, gapiService, graphicsService) {
+function exportLegendService($q, $rootElement, api, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
         generate
     };
@@ -509,13 +509,13 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                     const content = entry.layerName || entry.content;
 
                     // ie can't handle fancy markdown image rendering so we strip markdown entirely
-                    if (RV.isIE) {
-                        return Promise.resolve({
+                    if (api.isIE) {
+                        return {
                             name: removeMd(content),
                             items: _cleanSymbologyStack(entry.symbologyStack.stack) || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
-                        });
+                        };
                     }
 
                     const contentToHtml = marked(content);
