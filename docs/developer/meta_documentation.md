@@ -27,19 +27,6 @@ The following is a quick reference of useful markup tags.
 
 All services in Angular should be linked to modules.  In jsdoc we tag the service as `@module` and the module as `@namespace` (this is confusing, but it seems to work best with the doc output).
 
-### Sample
-
-```js
-    /**
-     * @module globalRegistry
-     * @memberof app.core
-     * @description
-     *
-     * The `globalRegistry` constant wraps around RV global registry for a single point of reference. Use this to access `RV` global.
-     * It's useful if we need to change the name of the global registry.
-     */
-```
-
 ### Notes
 
 - `@memberof` should reference the angular module (`@namespace` in jsdoc)

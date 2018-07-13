@@ -1,6 +1,7 @@
 {
   "intentions": {
-    "epsg": "default"
+    "epsg": "default",
+    "geoSearch": "default"
   },
   "ui": {
     "title": "Custom Title",

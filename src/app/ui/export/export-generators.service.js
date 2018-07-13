@@ -1,7 +1,3 @@
-/* global RV */
-
-import 'svg.textflow.js';
-
 const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 const RETRY_LIMIT = 3;
 

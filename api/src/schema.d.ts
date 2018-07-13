@@ -448,6 +448,10 @@ export interface FgpvConfigSchema {
      * Intention for displaying data
      */
     table?: string;
+    /**
+     * intention for geoSearch.  geoSearch will be disabled in the viewer if set to none
+     */
+    geoSearch?: string;
   };
 }
 /**
