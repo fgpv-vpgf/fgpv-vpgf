@@ -436,6 +436,10 @@ export interface FgpvConfigSchema {
      * intention for EPSG Lookup
      */
     epsg?: string;
+    /**
+     * intention for geoSearch
+     */
+    geoSearch?: string;
   };
 }
 /**
