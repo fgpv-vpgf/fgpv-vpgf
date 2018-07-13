@@ -90,13 +90,23 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                     };
 
                     const urlSplit = serviceUrl.split('?');
-                    const url = urlSplit[0];   // url without any query parameters
+                    let url = urlSplit[0];   // url without any query parameters
                     const queryVariables = urlSplit[1]; // url query parameters
 
                     let startIndex, limit;
                     if (queryVariables) {
                         startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
-                        limit = getQueryVariable(queryVariables, 'limit') || 10;
+                        limit = getQueryVariable(queryVariables, 'limit') || 10; // certain services with low items counts error if the limit is too much
+
+                        // need to remove the start & limit params, but add back any other params
+                        const qNuggets = queryVariables.split('&');
+                        const newQ = qNuggets
+                            .filter(qn => (!(qn.startsWith('startindex=') || qn.startsWith('limit='))))
+                            .join('&');
+
+                        if (newQ.length > 0) {
+                            url += '?' + newQ;
+                        }
                     }
 
                     if (layerType === Geo.Layer.Types.OGC_WFS) {
@@ -151,7 +161,11 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @return {Promise} a promsie resolving with the layer GeoJSON
          */
         function _getWFSData(serviceUrl, startIndex = 0, limit = 1000, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
-            return $http.get(serviceUrl.concat(`?startindex=${startIndex}&limit=${limit}`))    // use angular to make web request, instead of esriRequest
+
+            const paramToken = serviceUrl.indexOf('?') < 0 ? '?' : '&';
+
+            // use angular to make web request, instead of esriRequest. this is because we can't rely on services having jsonp
+            return $http.get(serviceUrl.concat(`${paramToken}startindex=${startIndex}&limit=${limit}`))
                 .then(response => {
                     const data = response.data;
                     wfsResponse.features = [...wfsResponse.features, ...data.features]; // update the received features array
