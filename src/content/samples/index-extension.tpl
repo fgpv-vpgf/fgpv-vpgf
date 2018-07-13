@@ -16,7 +16,6 @@
 
     <script src="./intentions/epsg.js"></script>
     
-
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
@@ -24,19 +23,6 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
-    
-    <script>
-    window.rzTest = {
-        preInit: () => {
-            console.warn('Loading delayed by 5 seconds.');
-            return new Promise(a => setTimeout(a, 5000));
-        },
-
-        init: (mApi) => {
-            console.warn(mApi);
-        }
-    };
-    </script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -47,7 +33,7 @@
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
         rv-restore-bookmark="bookmark"
-        rz-extensions="rzTest,enhancedTable">
+        rz-extensions="enhancedTable">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -80,55 +66,6 @@
             <script src="<%= htmlWebpackPlugin.files.js[index] %>"></script>
         <% } %>
     <% } %>
-
-    <script>
-        // https://css-tricks.com/snippets/javascript/get-url-variables/
-        function getQueryVariable(variable)
-        {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
-                    var pair = vars[i].split("=");
-                    if(pair[0] == variable){return pair[1];}
-            }
-            return(false);
-        }
-
-        // plugins
-        const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-
-        function bookmark(){
-            return new Promise(function (resolve) {
-                var thing = getQueryVariable("rv");
-                console.log(thing);
-                resolve(thing);
-            });
-        }
-
-        function queryStringToJSON(q) {
-            var pairs = q.search.slice(1).split('&');
-            var result = {};
-            pairs.forEach(function(pair) {
-                pair = pair.split('=');
-                result[pair[0]] = decodeURIComponent(pair[1] || '');
-            });
-            return JSON.parse(JSON.stringify(result));
-        }
-        // grab & process the url
-        var queryStr = queryStringToJSON(document.location);
-        var keys = queryStr.keys;
-        if (keys) {
-            // turn keys into an array, pass them to the map
-            var keysArr = keys.split(',');
-            RV.getMap('intention-map').restoreSession(keysArr);
-        } else {
-            var bookmark = queryStr.rv;
-            // console.log(bookmark);
-            RV.getMap('intention-map').initialBookmark(bookmark);
-        }
-    </script>
 </body>
 
 </html>
