@@ -78,6 +78,11 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                                 if (orderdBookmarkIds[i] === layer.id) {
                                     legendService.addLayerDefinition(layer, i);
                                     break;
+                                } else if (layer.id.split('.')[0] === 'rcs' && orderdBookmarkIds[i].split('.')[1] === layer.id.split('.')[1]) {
+                                    // if the layer is RCS and has the same key include it
+                                    // fixes issues with using a bookmark to preserve state on page language switches
+                                    legendService.addLayerDefinition(layer, i);
+                                    break;
                                 }
                             }
                         } else {
