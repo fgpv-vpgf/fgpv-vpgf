@@ -43,7 +43,7 @@ angular
 // need to find a more elegant way to include all these dependencies
 function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
     basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, pluginService, geosearchService, appInfo, $mdDateLocale) {
+    translations, $mdDialog, pluginService, geosearchService, appInfo, $mdDateLocale, events) {
 
     const service = {
         open,
@@ -168,6 +168,10 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             children: []
         }
     };
+
+    events.$on(events.rvApiPrePlugin, (_, mApi) => {
+        mApi.changeLanguage = reloadService.loadNewLang;
+    });
 
     init();
 
