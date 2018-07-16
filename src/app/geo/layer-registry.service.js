@@ -287,17 +287,25 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
 
         const mapBody = mapConfig.instance;
         const layerRecord = ref.loadingQueue.shift();
-
         let isRefreshed = false;
-        layerRecord.addStateListener(_onLayerRecordInitialLoad);
-        layerRecord.addAttribListener(_onLayerAttribDownload);
-        mapBody.addLayer(layerRecord._layer);
-        ref.loadingCount ++;
 
-        // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded)) {
-            isRefreshed = true;
-            _onLayerRecordInitialLoad('rv-loaded');
+        if (layerRecord.canAddToMap) {
+            // normal situation
+            layerRecord.addStateListener(_onLayerRecordInitialLoad);
+            layerRecord.addAttribListener(_onLayerAttribDownload);
+            mapBody.addLayer(layerRecord._layer);
+            ref.loadingCount ++;
+    
+            // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+            if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded)) {
+                isRefreshed = true;
+                _onLayerRecordInitialLoad('rv-loaded');
+            }
+        } else {
+            // WFS HACK
+            // our layer is still secretly being created in another promise.
+            // put on the back of the queue. this will repeat until it's done, then will hit the above block
+            ref.loadingQueue.push(layerRecord);
         }
 
         // when a layer takes too long to load, it could be a slow service or a failed service
