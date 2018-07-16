@@ -67,7 +67,7 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         if (self.requester.proxy._source.config) {
             self.details = self.requester.proxy._source.config.details;
         }
-        if (self.details.template) {
+        if (self.details && self.details.template) {
             detailService.getTemplate(self.requester.proxy._source.layerId, self.details.template).then(template => {
                 if (self.details.parser) {
                     detailService

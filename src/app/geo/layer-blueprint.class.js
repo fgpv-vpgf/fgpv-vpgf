@@ -13,7 +13,8 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService, bookmarkService, appInfo, layerSource) {
+function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService, bookmarkService, appInfo,
+    layerSource, LayerSourceInfo) {
 
     let idCounter = 0; // layer counter for generating layer ids
 
@@ -233,7 +234,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
          * Takes a layer in the config format and generates an appropriate layer object.
          *
          * @param {Object} layerConfig a configuration fragment for a single layer
-         * @return {Promise} resolving with a LayerRecord object matching one of the esri/layers objects based on the layer type
+         * @return {Object} a LayerRecord object matching one of the esri/layers objects based on the layer type
          */
         generateLayer() {
             const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
@@ -257,12 +258,26 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
 
             super(configFileSource ? configFileSource.url : null);
 
+            // WFS HACK
+            // a flag to track wfs case. false for most
+            this.wfsConfig = false;
+
             if (configFileSource) {
+                // this flag tells another part of code that things are squirrely and it needs to be aware of the below promise.
+                // once things are unsquirreled, the flag will be set back to true and things behave normal
+                this.wfsConfig = true;
                 this.source = configFileSource;
-                return layerSource.fetchServiceInfo(configFileSource.url, configFileSource.layerType)
+
+                // TODO we want to move this promise to the generateLayer function.
+                //      that way when we reload, we trigger the loading again.
+                // we can't have server hits in the blueprint constructor. it blocks blueprint creation long enough to cause race conditions
+                this._configSourceDelayedServer = layerSource.fetchServiceInfo(configFileSource.url, configFileSource.layerType)
                     .then(({ options: layerSourceOptions, preselectedIndex }) => {
                         this._layerSourceOptions = layerSourceOptions;
                         this._layerSource = layerSourceOptions[preselectedIndex];
+
+                        // even though we did a bit of this below on the main thread, do it again, as .fetchServiceInfo
+                        // will obliterate some objects.
                         this._layerSource.config._id = configFileSource.id;     // need to change id manually since id given is auto-generated from file logic
                         if (configFileSource.colour) {
                             this._layerSource.colour = configFileSource.colour; // need to also change colour manually, if provided, since colour is also auto-generated
@@ -270,8 +285,25 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
                         if (!configFileSource.name) {
                             this.config.name = this._layerSource.config.name;
                         }
-                        return this._layerSource.validate().then(() => this.validateLayerSource().then(() => this));
+
+                        return this._layerSource.validate().then(() => this.validateLayerSource());
                     });
+
+                // set up basic stuff
+                // TODO this needs to be refactored badly. doing things this way to get CCCS working
+                // TODO this will break loading files on servers from the config.  fix later.
+
+                // fake layer source
+                // TODO fix hardcoded WKID (if required). or ideally this just disappears with a proper WFS solution
+                this._layerSource = new LayerSourceInfo.WMSServiceInfo(configFileSource, null, 3978);
+
+                // above object obliterates colour, re-apply
+                if (configFileSource.colour) {
+                    this._layerSource.colour = configFileSource.colour; // need to also change colour manually, if provided, since colour is also auto-generated
+                }
+
+                return Promise.resolve(this);
+
             } else if (userAddedSource) {
                 this._layerSource = userAddedSource;
                 this.config = this._layerSource.config;
@@ -305,12 +337,23 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
         }
 
         /**
-         * Generate actual esri layer object from the file data, config and user options.
-         * @return {Promise} promise resolving with the esri layer object
+         * Generate actual esri layer object from the file data, config and user options. Wrapped in LayerRecord object.
+         * @return {Object} the geoApi layer record object
          */
         generateLayer() {
+            // WFS HACK
             const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
-            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, this.__layer__, epsg.lookup);
+
+            this.config.wfsConfig = this.wfsConfig; // tell the geoApi if this is a wfs loading from a confg (i.e. not the wizard).
+            const layerRecord =  LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](this.config, null, epsg.lookup);
+
+            if (this.wfsConfig) {
+                // we need to wait for the data to finish loading.  when it does, we have to hot-swap the esri layer thats inside
+                // our layerRecord
+                this._configSourceDelayedServer.then(() => layerRecord.updateWfsSource(this.__layer__));
+            }
+
+            return layerRecord;
         }
     }
 
