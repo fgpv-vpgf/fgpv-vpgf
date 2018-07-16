@@ -23,7 +23,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
     class LayerBlueprint {
 
         /**
-         * 
+         *
          * @param {string} url the URL of the layer endpoint, optional
          */
         constructor(url) {
@@ -69,7 +69,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
                     defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
                 }
             } else if (column.filter.type === 'selector') {
-                const val =  column.filter.value.join(',').replace(/"/g, '\'');
+                const val = column.filter.value.join(',').replace(/"/g, '\'');
                 if (val !== '') {
                     defs.push(`${column.data} IN (${val})`);
                 }
@@ -316,13 +316,14 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
 
     const service = {
         buildLayer: layerSource => {
-            // User added CSV or Shapefile added through the importer
-            if (layerSource.type && _isFileOrWFSLayer(layerSource)) {
+            //user imported files
+            if (layerSource.type && _isFile(layerSource)) {
                 return new LayerFileBlueprint(null, layerSource);
-            } else if (layerSource.config) {
+            }
+            else if (layerSource.config) {
                 return new LayerServiceBlueprint(null, layerSource);
             }
-            // File/service added through config and GeoJSON Files
+            // File/service added through config
             else {
                 switch (layerSource.layerType) {
                     case Geo.Layer.Types.OGC_WFS:
@@ -343,14 +344,21 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
     };
 
     /**
-     * Checks if the layer being added is a CSV or Shape File.
-     * @function _isFileOrWFSLayer
+     * Checks if the layer being added is a user added file.
+     * @function _isFile
      * @private
      * @param {String} source a string representing the type of layer being added
      * @return {Boolean} true if the layer type matches one of the file layer constants
      */
-    function _isFileOrWFSLayer(source) {
-        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.Shapefile];
+    function _isFile(source) {
+
+        const fileTypes = [Geo.Service.Types.CSV, Geo.Service.Types.Shapefile, Geo.Service.Types.GeoJSON];
+
+        //filter out Wfs layers defined in the config
+        if (source.layerType && source.layerType === 'ogcWfs') {
+            return false;
+        }
+
         return (fileTypes.indexOf(source.type) !== -1);
     }
 
