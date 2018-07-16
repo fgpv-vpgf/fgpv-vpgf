@@ -163,7 +163,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             trigger: null, // expand self.trigger node
 
             // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
-            containerWidth: 350,
+            containerWidth: 343,
             maxItemWidth: 350
         };
 
