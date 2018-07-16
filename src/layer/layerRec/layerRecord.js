@@ -540,7 +540,7 @@ class LayerRecord extends root.Root {
     getProxy () {
         // NOTE baseclass used by things like WMSRecord, ImageRecord, TileRecord
         if (!this._rootProxy) {
-            this._rootProxy = new layerInterface.LayerInterface(this, this.initialConfig.controls);
+            this._rootProxy = new layerInterface.LayerInterface(this);
             this._rootProxy.convertToSingleLayer(this);
         }
         return this._rootProxy;
@@ -601,6 +601,7 @@ class LayerRecord extends root.Root {
         this._user = false;
         this._epsgLookup = epsgLookup;
         this.extent = config.extent; // if missing, will fill more values after layer loads
+        this.canAddToMap = true; // WFS HACK . fancy flag to prevent a pre-loading wfs from being added to map. neg
 
         // TODO verify we still use passthrough bindings.
         this._layerPassthroughBindings.forEach(bindingName =>
@@ -613,7 +614,12 @@ class LayerRecord extends root.Root {
             Object.defineProperty(this, propName, descriptor);
         });
 
-        if (esriLayer) {
+        if (config.wfsConfig) {
+            // funny case where we have to kind of pause everything
+            // need this in layerRecord as it's constructor is executed before featureRecord's constructor
+            this._state = shared.states.LOADING;
+            this.canAddToMap = false;
+        } else if (esriLayer) {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
             this.bindEvents(this._layer);

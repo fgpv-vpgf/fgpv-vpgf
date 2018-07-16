@@ -28,7 +28,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // handles placeholder symbol, possibly other things
         // if we were passed a pre-loaded layer, we skip this (it will run after the load triggers
         // in the super-constructor, thus overwriting our good results)
-        if (!esriLayer) {
+        if (!esriLayer || config.wfsConfig) {
             this._defaultFC = '0';
             this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
             this._fcount = undefined;
@@ -89,7 +89,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      */
     getProxy () {
         if (!this._rootProxy) {
-            this._rootProxy = new layerInterface.LayerInterface(this, this.initialConfig.controls);
+            this._rootProxy = new layerInterface.LayerInterface(this);
             this._rootProxy.convertToFeatureLayer(this);
         }
         return this._rootProxy;
@@ -156,6 +156,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
         loadPromises.push(pLD, pFC, pLS);
         Promise.all(loadPromises).then(() => {
+            this.canAddToMap = true;
             this._stateChange(shared.states.LOADED);
         });
     }
@@ -357,6 +358,23 @@ class FeatureRecord extends attribRecord.AttribRecord {
     setDefinitionQuery (query) {
         // very difficult.
         this._layer.setDefinitionExpression(query);
+    }
+
+    /**
+     * Hot swaps the core underlying layer of this record.
+     * THIS IS VERY VERY BAD.
+     * Doing this as a workaround to our fundamental WFS loading problem.
+     *
+     * @function updateWfsSource
+     * @param {Object} esriLayer an esri layer. specifically a FeatureLayer that's been pre-created from GeoJSON source
+     */
+    updateWfsSource (esriLayer) {
+        this._layer = esriLayer;
+        this.bindEvents(this._layer);
+        this._snapshot = true; // possibly redundant
+
+        // do the loading activites.  will trigger the loaded event.
+        this.onLoad();
     }
 
 }

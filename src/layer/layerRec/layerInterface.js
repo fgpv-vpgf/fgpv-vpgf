@@ -23,7 +23,7 @@ class LayerInterface {
 
     get isPlaceholder () { return this._isPlaceholder; } // returns Boolean
 
-    // these expose ui controls available on the interface and indicate which ones are disabled
+    // the symbology for the layer
     get symbology () { return undefined; } // returns Array
 
     // can be group or node name
