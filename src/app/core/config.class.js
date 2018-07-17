@@ -1898,8 +1898,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 this.epsg = 'default';
                 this.geoSearch = 'default'
             } else {
-                this.epsg = source.epsg;
-                this.geoSearch = source.geoSearch;
+                this.epsg = source.epsg || 'default';
+                this.geoSearch = source.geoSearch || 'default';
             }
         }
     }
@@ -2466,7 +2466,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled) {
+            if (!this.map.components.geoSearch.enabled || !this.intentions.geoSearch === 'none') {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;
