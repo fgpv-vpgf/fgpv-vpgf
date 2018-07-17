@@ -23,6 +23,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
     };
 
     let mApi = null;
+    const apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
@@ -110,7 +111,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
         });
 
         // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const blueprintPromises = newDefinitions.map(createBlueprint);
+        const blueprintPromises = newDefinitions.map(createBlueprint).concat(apiBlueprints);
 
         // wait for all promises to resolve then show info
         Promise.all(blueprintPromises).then(() => {
@@ -134,6 +135,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      */
     function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
         const blueprintPromise = createBlueprint(layerDefinition);
+        apiBlueprints.push(blueprintPromise);
         blueprintPromise.then(def => importLayerBlueprint(def, pos, addToLegend));
     }
 
