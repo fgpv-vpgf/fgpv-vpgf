@@ -342,11 +342,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // symbology item cannot be wider than the panel
             ref.maxItemWidth = Math.min(
                 Math.max(
-                    ...ref.symbolItems.map(symbolItem =>
-                        Math.max(
-                            symbolItem.image.find('svg')[0].viewBox.baseVal.width,
+                    ...ref.symbolItems.map(symbolItem => {
+                        const svgImage = symbolItem.image.find('svg')[0];
+                        return Math.max(
+                            svgImage ? svgImage.viewBox.baseVal.width : 0,
                             getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
-                        )
+                        );
+                    }
+
                     )
                 ),
                 ref.containerWidth
@@ -534,8 +537,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         function imageLegendItem(timeline, symbolItem, totalHeight, isLast) {
             const symbologyListItemMargin = 16;
 
-            const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
-            const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
+            const imageWidth = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.width : 0;
+            const imageHeight = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.height : 0;
 
 
             // calculate symbology item's dimensions based on max width
