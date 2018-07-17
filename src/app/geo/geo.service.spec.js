@@ -148,6 +148,9 @@ describe('geo', () => {
                     },
                     {
                         layerType: 'ogcWms'
+                    },
+                    {
+                        layerType: 'ogcWfs'
                     }
             ]
             };

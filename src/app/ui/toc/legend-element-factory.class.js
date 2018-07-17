@@ -427,6 +427,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
                 esriDynamicLayerEntry: 'toc.label.flag.dynamic',
                 ogcWms: 'toc.label.flag.wms',
                 ogcWmsLayerEntry: 'toc.label.flag.wms',
+                ogcWfs: 'toc.label.flag.wfs',
                 esriImage: 'toc.label.flag.image',
                 esriTile: 'toc.label.flag.tile'
             };
@@ -463,7 +464,7 @@ function LegendElementFactory($translate, Geo, ConfigObject, tocService, debounc
 
         get style () {   return this._styles[this.block.parentLayerType || TypeFlag.unresolvedType]; }
         get icon () {    return this._icons[this.block.parentLayerType || TypeFlag.unresolvedType]; }
-        get label () {   return this._labels[this.block.parentLayerType || TypeFlag.unresolvedType]; }
+        get label () {   return this._labels[this.block.mainProxyWrapper.layerConfig.layerType || this.block.parentLayerType || TypeFlag.unresolvedType]; }
 
         get isVisible () { return true; }
     }
