@@ -48,6 +48,21 @@ class PlaceholderFC extends root.Root {
     // feature Record (feature layer) vs a dynamic Record (dynamic layer)
     get parentLayerType () { return this._parent.layerType; }
 
+    /**
+     * Indicates if the feature class is not visible at the given scale,
+     * and if so, if we need to zoom in to see it or zoom out. Placeholder is always in scale
+     *
+     * @function isOffScale
+     * @param {Integer}  mapScale the scale to test against
+     * @returns {Object} has boolean properties `offScale` and `zoomIn`
+     */
+    isOffScale (mapScale) {
+        return {
+            offScale: false,
+            zoomIn: false
+        };
+    }
+
 }
 
 module.exports = () => ({
