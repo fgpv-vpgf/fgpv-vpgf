@@ -437,7 +437,7 @@ export interface FgpvConfigSchema {
      */
     epsg?: string;
     /**
-     * intention for geoSearch
+     * intention for geoSearch.  geoSearch will be disabled in the viewer if set to none
      */
     geoSearch?: string;
   };
