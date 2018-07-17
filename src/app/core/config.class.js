@@ -1996,8 +1996,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             } else {
                 this.epsg = source.epsg || 'default';
                 this.geoSearch = source.geoSearch || 'default';
+<<<<<<< HEAD
                 //TODO fancyTable
                 //this.table = source.table || 'default';
+=======
+>>>>>>> fix(intention): geosearch intention improvement
             }
         }
     }
@@ -2564,7 +2567,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled) {
+            if (!this.map.components.geoSearch.enabled || !this.intentions.geoSearch === 'none') {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;

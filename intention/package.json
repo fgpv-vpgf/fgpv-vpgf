@@ -1,6 +1,6 @@
 {
   "name": "intentions",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Home for all RAMP related intentions that we will create and maintain in step with our RAMP release cycle",
   "repository": {
     "type": "git",
@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme",
   "dependencies": {
-    "rz-geosearch": "^2.0.3"
+    "rz-geosearch": "2.0.3"
   }
 }

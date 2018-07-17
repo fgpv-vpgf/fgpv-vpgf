@@ -5,8 +5,11 @@
 
 import 'rz-geosearch';
 
-const host = `http://geogratis.gc.ca/services/geoname/`
-
+const HOST = `http://geogratis.gc.ca/services/geoname/`; // host for requests
+const CODE_TO_ABBR = ({"10":"NL","11":"PE","12":"NS","13":"NB",
+                        "24":"QC","35":"ON","46":"MB","47":"SK",
+                        "48":"AB","59":"BC","60":"YU","61":"NT",
+                        "62":"NU","72":"UF","73":"IW"});
 
 /**
  * A class/interface that wraps around a GeoSearch object and provides extra servinces.
@@ -67,7 +70,46 @@ class GeoSearchUI {
     query(q) {
         return new Promise((resolve) => {
             this._geoSearhObj.query(q).onComplete.then(q => {
-                let results = q.results.map(item => ({
+                let featureResult = [];
+                let results = [];
+                if (q.featureResults) { // it is a feature query
+                    if (q.featureResults.fsa) { // FSA query
+                        const bboxRange = 0.02;
+                        featureResult = [{
+                            name: q.featureResults.fsa,
+                            bbox: [
+                                q.featureResults.LatLon.lon + bboxRange,
+                                q.featureResults.LatLon.lat - bboxRange,
+                                q.featureResults.LatLon.lon - bboxRange,
+                                q.featureResults.LatLon.lat + bboxRange
+                            ],
+                            type: {
+                                name: q.featureResults.desc
+                            },
+                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                            location: {
+                                latitude: q.featureResults.LatLon.lat,
+                                longitude: q.featureResults.LatLon.lon,
+                                province: this.findProvinceObj(q.featureResults.province)
+                            }
+                        }];
+                    } else if (q.featureResults.nts) {  // NTS query
+                        featureResult = [{
+                            name: q.featureResults.nts,
+                            bbox: q.featureResults.bbox,
+                            type: {
+                                name: q.featureResults.desc
+                            },
+                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                            location: {
+                                city: q.featureResults.location,
+                                latitude: q.featureResults.LatLon.lat,
+                                longitude: q.featureResults.LatLon.lon
+                            }
+                        }];
+                    }
+                }
+                let queryResult = q.results.map(item => ({
                     name: item.name,
                     bbox: item.bbox,
                     type: {
@@ -81,6 +123,7 @@ class GeoSearchUI {
                         province: this.findProvinceObj(item.province)
                     }
                 }));
+                results = featureResult.concat(queryResult);
                 resolve(results);
             });
         });
@@ -94,15 +137,28 @@ class GeoSearchUI {
      */
     fetchProvinces() {
         return new Promise((resolve) => {
-            let request = new XMLHttpRequest();
-            request.open('GET', host + this.lang + '/codes/province.json', false);
-            request.send();
-            let rawProvinces = JSON.parse(request.response).definitions;
-            let provinceList = rawProvinces.map(prov => ({
-                code: prov.code,
-                abbr: prov.term,
-                name: prov.description
-            }));
+            if (this.provinceList.length > 0) resolve(this.provinceList); // in cache
+            let provinceList = [];
+            if (this._geoSearhObj.config.provinces.list) { // in geosearch module
+                let rawProvinces = this._geoSearhObj.config.provinces.list;
+                for (let code in rawProvinces) {
+                    provinceList.push({
+                        code: code,
+                        abbr: CODE_TO_ABBR[code],
+                        name: rawProvinces[code]
+                    });
+                }
+            } else {
+                let request = new XMLHttpRequest();
+                request.open('GET', HOST + this.lang + '/codes/province.json', false);
+                request.send();
+                let rawProvinces = JSON.parse(request.response).definitions;
+                provinceList = rawProvinces.map(prov => ({
+                    code: prov.code,
+                    abbr: prov.term,
+                    name: prov.description
+                }));
+            }
             this.provinceList = provinceList;
             resolve(provinceList);
         });
@@ -115,14 +171,26 @@ class GeoSearchUI {
      */
     fetchTypes() {
         return new Promise((resolve) => {
-            let request = new XMLHttpRequest();
-            request.open('GET', host + this.lang + '/codes/concise.json', false);
-            request.send();
-            let rawTypes = JSON.parse(request.response).definitions;
-            let typeList = rawTypes.map(type => ({
-                code: type.code,
-                name: type.term
-            }));
+            if (this.typeList.length > 0) resolve(this.typeList); // in cache
+            let typeList = [];
+            if (this._geoSearhObj.config.types.allTypes) { // in geosearch module
+                let rawTypes = this._geoSearhObj.config.types.allTypes;
+                for (let type in rawTypes) {
+                    typeList.push({
+                        code: type,
+                        name: rawTypes[type]
+                    });
+                }
+            } else {
+                let request = new XMLHttpRequest();
+                request.open('GET', HOST + this.lang + '/codes/concise.json', false);
+                request.send();
+                let rawTypes = JSON.parse(request.response).definitions;
+                typeList = rawTypes.map(type => ({
+                    code: type.code,
+                    name: type.term
+                }));
+            }
             this.typeList = typeList;
             resolve(typeList);
         });

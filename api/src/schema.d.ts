@@ -441,11 +441,15 @@ export interface FgpvConfigSchema {
      */
     epsg?: string;
     /**
+<<<<<<< HEAD
      * Intention for displaying data
      */
     table?: string;
     /*
      * intention for geoSearch
+=======
+     * intention for geoSearch.  geoSearch will be disabled in the viewer if set to none
+>>>>>>> fix(intention): geosearch intention improvement
      */
     geoSearch?: string;
   };
