@@ -2567,7 +2567,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled || !this.intentions.geoSearch === 'none') {
+            if (!this.map.components.geoSearch.enabled || this.intentions.geoSearch === 'none') {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;
