@@ -1111,6 +1111,10 @@ export interface WmsLayerNode {
    * The catalogue url of the layer service
    */
   catalogueUrl?: string;
+  /**
+   * Prevents a getCapabilities request, instead relying on info provided in layerEntries
+   */
+  suppressGetCapabilities?: boolean;
   layerEntries: WmsLayerEntryNode[];
   layerType: "ogcWms";
   /**
@@ -1157,6 +1161,10 @@ export interface WmsLayerEntryNode {
    * The id of the layer entry in the WMS
    */
   id: string;
+  /**
+   * The title to display in the legend
+   */
+  title?: string;
   /**
    * A descriptive name for the layer.  To be used in the legend.
    */

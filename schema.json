@@ -271,6 +271,7 @@
             "type": "object",
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
+                "title": { "type": "string", "description": "The title to display in the legend" },
                 "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
                 "allStyles": {
                     "type": "array",
@@ -638,6 +639,7 @@
                 "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "suppressGetCapabilities": { "type": "boolean", "default": false, "description": "Prevents a getCapabilities request, instead relying on info provided in layerEntries" },
                 "layerEntries": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/wmsLayerEntryNode" },
