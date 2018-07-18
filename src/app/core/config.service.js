@@ -345,15 +345,14 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             return;
         }
 
-        const langAttr = $rootElement.attr('rv-langs');
-        languages = DEFAULT_LANGS;
-        if (langAttr) {
-            try {
-                languages = angular.fromJson(langAttr);
-            } catch (e) {
-                console.warn(`Could not parse langs, defaulting to ${DEFAULT_LANGS}`);
-                // TODO: better way to handle when no languages are specified?
-            }
+        // TODO: consider alternate to appending '-CA' if language code has a length of two. 'es' should be 'es-ES' but now
+        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end. 
+        languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
+            .map(l => l.length === 2 ? l + '-CA' : l)
+            .filter(l => l);
+
+        if (languages.length === 0) {
+            languages = DEFAULT_LANGS;
         }
 
         let configAttr = $rootElement.attr('rv-config');
