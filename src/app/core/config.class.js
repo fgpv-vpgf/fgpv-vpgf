@@ -582,7 +582,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 undefined;
             this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
             this._expectedResponseTime = source.expectedResponseTime !== undefined ? source.expectedResponseTime : 4000;
-
+            this._suppressGetCapabilities = source.suppressGetCapabilities !== undefined ? source.suppressGetCapabilities : false;
             const defaults = DEFAULTS.layer[this.layerType];
 
             const defaultedSource = applyLayerNodeDefaults(source, defaults);
@@ -629,6 +629,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          */
         get expectedResponseTime () {        return this._expectedResponseTime; }
         set expectedResponseTime (value) {   this._expectedResponseTime = value; }
+
+        get suppressGetCapabilities() { return this._suppressGetCapabilities; }
 
         get initialFilteredQuery() { return this._initialFilteredQuery; }
         set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
@@ -677,6 +679,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 extent: this.source.extent,
                 refreshInterval: this.refreshInterval,
                 expectedResponseTime: this.expectedResponseTime,
+                suppressGetCapabilities: this.suppressGetCapabilities,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 state: this.state.JSON,

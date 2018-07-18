@@ -345,6 +345,8 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             return;
         }
 
+        // TODO: consider alternate to appending '-CA' if language code has a length of two. 'es' should be 'es-ES' but now
+        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end. 
         languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
             .map(l => l.length === 2 ? l + '-CA' : l)
             .filter(l => l);

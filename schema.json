@@ -638,6 +638,7 @@
                 "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
                 "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
                 "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "suppressGetCapabilities": { "type": "boolean", "default": false, "description": "Prevents a getCapabilities request, instead relying on info provided in layerEntries" },
                 "layerEntries": {
                     "type": "array",
                     "items": { "$ref": "#/definitions/wmsLayerEntryNode" },
