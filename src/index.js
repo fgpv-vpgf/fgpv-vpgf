@@ -73,6 +73,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/layers/ImageParameters', 'ImageParameters'],
         ['esri/layers/LayerDrawingOptions', 'LayerDrawingOptions'],
         ['esri/layers/WMSLayer', 'WmsLayer'],
+        ['esri/layers/WMSLayerInfo', 'WMSLayerInfo'],
         ['esri/map', 'Map'],
         ['esri/request', 'esriRequest'],
         ['esri/SpatialReference', 'SpatialReference'],

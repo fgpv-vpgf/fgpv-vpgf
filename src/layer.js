@@ -1283,6 +1283,7 @@ module.exports = function (esriBundle, geoApi) {
         validateFile,
         csvPeek,
         serviceType,
-        validateLatLong
+        validateLatLong,
+        WMSLayerInfo: esriBundle.WMSLayerInfo
     };
 };
