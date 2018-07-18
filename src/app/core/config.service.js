@@ -164,8 +164,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                         }
                     });
 
-                    this.config.map.layers.push(...result);
-                    events.$broadcast(events.rvCfgUpdated, result);
+                    if (this.config) {
+                        this.config.map.layers.push(...result);
+                        events.$broadcast(events.rvCfgUpdated, result);
+                    }
 
                     return this.config;
             },  resp => {
