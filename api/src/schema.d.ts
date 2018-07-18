@@ -1111,6 +1111,10 @@ export interface WmsLayerNode {
    * The catalogue url of the layer service
    */
   catalogueUrl?: string;
+  /**
+   * Prevents a getCapabilities request, instead relying on info provided in layerEntries
+   */
+  suppressGetCapabilities?: boolean;
   layerEntries: WmsLayerEntryNode[];
   layerType: "ogcWms";
   /**

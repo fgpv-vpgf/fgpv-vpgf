@@ -582,7 +582,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 undefined;
             this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
             this._expectedResponseTime = source.expectedResponseTime !== undefined ? source.expectedResponseTime : 4000;
-
+            this._suppressGetCapabilities = source.suppressGetCapabilities !== undefined ? source.suppressGetCapabilities : false;
             const defaults = DEFAULTS.layer[this.layerType];
 
             const defaultedSource = applyLayerNodeDefaults(source, defaults);
@@ -629,6 +629,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          */
         get expectedResponseTime () {        return this._expectedResponseTime; }
         set expectedResponseTime (value) {   this._expectedResponseTime = value; }
+
+        get suppressGetCapabilities() { return this._suppressGetCapabilities; }
 
         get initialFilteredQuery() { return this._initialFilteredQuery; }
         set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
@@ -677,6 +679,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 extent: this.source.extent,
                 refreshInterval: this.refreshInterval,
                 expectedResponseTime: this.expectedResponseTime,
+                suppressGetCapabilities: this.suppressGetCapabilities,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 state: this.state.JSON,
@@ -780,6 +783,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._level = source.level;
             this._desc = source.desc;
             this._id = source.id;
+            this._title = source.title;
             this._allStyles = source.allStyles;
             this._styleToURL = source.styleToURL;
             this._currentStyle = source.currentStyle;
@@ -791,6 +795,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get layerType () { return layerTypes.OGC_WMS; }
 
+        get title () { return this._title; }
         get allStyles () { return this._allStyles; }
         get styleToURL () { return this._styleToURL; }
 
@@ -800,6 +805,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return angular.merge(super.JSON, {
                 id: this.id,
+                title: this.title,
                 allStyles: this.allStyles,
                 styleToURL: this.styleToURL,
                 currentStyle: this.currentStyle
