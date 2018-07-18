@@ -24,6 +24,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
     let mApi = null;
     const apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
+    const apiBlueprintsIds = [];
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
@@ -106,7 +107,15 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             }
             // there is no blueprint already created for the layer, need to create one
             else {
-                newDefinitions.push(ld);
+                // to avoid calling createBlueprint twice in the .map call below,
+                // we need to see if it's already been called when adding the layer
+                // via the API
+                // TODO need to investigate why layers being added via the API will not make it into newDefinitions
+                //      when the app has recently started, but do make it into newDefinitions if added later on.
+                //      probably one of many race conditions lurking with blueprints.
+                if (!apiBlueprintsIds.includes(ld.id)) {
+                    newDefinitions.push(ld);
+                }
             }
         });
 
@@ -136,6 +145,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
     function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
         const blueprintPromise = createBlueprint(layerDefinition);
         apiBlueprints.push(blueprintPromise);
+        apiBlueprintsIds.push(layerDefinition.id);
         blueprintPromise.then(def => importLayerBlueprint(def, pos, addToLegend));
     }
 
