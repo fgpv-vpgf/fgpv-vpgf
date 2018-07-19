@@ -13,7 +13,7 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events, $compile) {
+function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events, $compile, $timeout) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -90,10 +90,9 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
 
                 function compileTemplate() {
                     // push update so that template gets the info from the parser
-                    scope.$apply(() => {
+                    $timeout(() => {
                         // compile the template with the scope and append it to the mount
                         el.find('.template-mount').append($compile(template)(scope));
-                        console.log("lang", self.lang);
                     });
                 }
             });

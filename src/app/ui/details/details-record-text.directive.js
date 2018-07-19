@@ -17,11 +17,13 @@ angular.module('app.ui').directive('rvDetailsRecordText', rvDetailsRecordText);
  *
  * @function rvDetailsRecordText
  * @param {object} $translate translation service
+ * @param {object} $compile
+ * @param {object} $timeout
  * @param {object} events events list
  * @param {object} detailService details service
  * @returns {object} directive body
  */
-function rvDetailsRecordText($translate, $compile, $templateCache, events, detailService) {
+function rvDetailsRecordText($translate, $compile, $timeout, events, detailService) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -40,45 +42,52 @@ function rvDetailsRecordText($translate, $compile, $templateCache, events, detai
     /*****/
 
     function link(scope, el) {
-        const self = scope.self;
+        scope.$watch('self.item', () => {
+            const self = scope.self;
 
-        const l = self.item.requester.proxy._source;
+            const l = self.item.requester.proxy._source;
 
-        self.lang = $translate.use();
-        events.$on(events.rvLanguageChanged, () => (self.lang = $translate.use()));
+            self.lang = $translate.use();
+            events.$on(events.rvLanguageChanged, () => (self.lang = $translate.use()));
 
-        // get template to override basic details output, null/undefined => show default
-        self.details = l.config.details;
+            // get template to override basic details output, null/undefined => show default
+            self.details = l.config.details;
 
-        detailService.getTemplate(l.layerId, self.details.template).then(template => {
-            if (!self.details.parser) {
-                compileTemplate();
+            if (!self.details || !self.details.template) {
                 return;
             }
 
-            detailService.getParser(l.layerId, self.details.parser).then(parseFunction => {
-                // if data is already retrieved
-                if (self.item.data.length > 0) {
-                    parse();
-                } else {
-                    // data not here yet, wait for it
-                    scope.$watchCollection('self.item.data', parse);
+            detailService.getTemplate(l.layerId, self.details.template).then(template => {
+                if (!self.details.parser) {
+                    compileTemplate();
+                    return;
                 }
 
-                function parse() {
-                    // TODO: maybe instead of passing just the language, pass the full config
-                    self.layer = eval(`${parseFunction}(self.item.data[0], self.lang);`);
-                    compileTemplate();
+                detailService.getParser(l.layerId, self.details.parser).then(parseFunction => {
+                    // if data is already retrieved
+                    if (self.item.data.length > 0) {
+                        parse();
+                    } else {
+                        // data not here yet, wait for it
+                        scope.$watchCollection('self.item.data', parse);
+                    }
+
+                    function parse() {
+                        // TODO: maybe instead of passing just the language, pass the full config
+                        self.layer = eval(`${parseFunction}(self.item.data[0], self.lang);`);
+                        compileTemplate();
+                    }
+                });
+
+                function compileTemplate() {
+                    // Causes the template compilation to wait for next digest cycle
+                    // this ensures we have the data and don't display and "{{ VARIABLE }}"s
+                    $timeout(() =>{
+                        // compile the template with the scope and append it to the mount
+                        el.find('.template-mount').empty().append($compile(template)(scope));
+                    });
                 }
             });
-
-            function compileTemplate() {
-                // push update so that template gets the info from the parser
-                scope.$apply(() => {
-                    // compile the template with the scope and append it to the mount
-                    el.find('.template-mount').append($compile(template)(scope));
-                });
-            }
         });
     }
 }
