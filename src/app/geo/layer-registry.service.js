@@ -295,9 +295,18 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
             layerRecord.addAttribListener(_onLayerAttribDownload);
             mapBody.addLayer(layerRecord._layer);
             ref.loadingCount ++;
-    
+
+            // TODO need better solution for local wms layers that don't "load" when invisible.
+            const localWms = layerRecord.dataSource() === 'wms' && layerRecord.config.suppressGetCapabilities;
+            if (localWms) {
+                layerRecord.onLoad();
+            }
+
             // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-            if (layerRecord.state === Geo.Layer.States.LOADED || (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded)) {
+            //       extending the hack to wms layers who are supressing a server handshake.
+            if (layerRecord.state === Geo.Layer.States.LOADED ||
+               (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded) ||
+               (localWms)) {
                 isRefreshed = true;
                 _onLayerRecordInitialLoad('rv-loaded');
             }
