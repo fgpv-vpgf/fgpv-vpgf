@@ -42,6 +42,7 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
     * @function  northArrow
     * @returns  {Object}    an object containing data needed for either static or moving north arrows
     */
+    // eslint-disable-next-line max-statements
     function northArrow() {
         // TODO: fix after config service is done
         const map = geoService.map;
@@ -78,13 +79,19 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
             { x: -96, y: 90 });
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
+            let triangle = {x: offsetX, y:  mapScrnCntr.y, m: 1};
+            if (screenNorthPoint.x < 2400 && screenNorthPoint.x > -1300 && -screenNorthPoint.y < 3000) {
+                triangle.x = screenNorthPoint.x;
+                triangle.y = -screenNorthPoint.y;
+                triangle.m = -1;
+            }
             // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
-            const z = mapScrnCntr.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
-
+            const z = triangle.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
+            const tempAngle = 270 - map.getNorthArrowAngle({point: arrowPoint});
             // this would be the bottom of our triangle, the length from center to where the arrow should be placed
             screenX = screenY < 0 ?
-                offsetX + (Math.sin((90 - angleDegrees) * 0.01745329252) * z) :
-                    screenNorthPoint.x;
+                triangle.x + triangle.m * (Math.sin((90 - angleDegrees) * 0.01745329252) * z) - arrowWidth / 2 :
+                screenNorthPoint.x;
             // Limit the arrow to the bounds of the inner shell
             screenX = Math.max(offsetX - shellWidth, Math.min(screenX, offsetX + shellWidth));
         }
