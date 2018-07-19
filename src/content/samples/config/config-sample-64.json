@@ -76,37 +76,44 @@
        "scaleBar": {
          "enabled": true
      },
-     "areaOfInterest": [{
-        "title": "My first area",
-        "xmin": -100,
-        "xmax": -90,
-        "ymin": 50,
-        "ymax": 60,
-        "thumbnailUrl": ""
-     },
-     {
-        "title": "My second area",
-        "xmin": -76,
-        "xmax": -75,
-        "ymin": 45,
-        "ymax": 46,
-        "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
-     },{
-        "title": "My third area",
-        "xmin": -76,
-        "xmax": -75,
-        "ymin": 45,
-        "ymax": 46,
-        "thumbnailUrl": ""
-     },{
-        "title": "My last area",
-        "xmin": -76,
-        "xmax": -75,
-        "ymin": 45,
-        "ymax": 46,
-        "thumbnailUrl": ""
-     }]
-     },
+     "areaOfInterest": {
+      "areas": [
+        {
+          "title": "Reservoir Manicougan, Quebec, Canada",
+          "xmin": -69,
+          "xmax": -68,
+          "ymin": 51,
+          "ymax": 53,
+          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
+        },
+        {
+          "title": "New Jersey, USA",
+          "xmin": -76,
+          "xmax": -72,
+          "ymin": 41,
+          "ymax": 41,
+          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
+        },
+        {
+          "title": "Washington, DC, USA",
+          "xmin": -77,
+          "xmax": -77,
+          "ymin": 38,
+          "ymax": 40,
+          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
+        },
+        {
+          "title": "Delaware, USA",
+          "xmin": -75,
+          "xmax": -75,
+          "ymin": 38,
+          "ymax": 40,
+          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
+        }
+      ],
+      "noPicture": false
+    }
+    },
      "extentSets": [
        {
          "id": "EXT_NRCAN_Lambert_3978",
