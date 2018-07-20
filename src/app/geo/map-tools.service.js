@@ -78,8 +78,11 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
             { x: -96, y: 90 });
             const screenNorthPoint = map.toScreen(northPoint);
             screenY = screenNorthPoint.y;
-            let triangle = {x: offsetX, y:  mapScrnCntr.y, m: 1};
-            if (screenNorthPoint.x < 2400 && screenNorthPoint.x > -1300 && -screenNorthPoint.y < 3000) {
+            // if the extent is near the north pole be more precise otherwise use the original math
+            // note: using the precise math would be ideal but when zooming in, the calculations make very
+            // large adjustments so reverting to the old less precise math provides a better experience.
+            let triangle = {x: offsetX, y:  mapScrnCntr.y, m: 1}; // original numbers
+            if (screenNorthPoint.x < 2400 && screenNorthPoint.x > -1300 && -screenNorthPoint.y < 3000) { // more precise
                 triangle.x = screenNorthPoint.x;
                 triangle.y = -screenNorthPoint.y;
                 triangle.m = -1;
