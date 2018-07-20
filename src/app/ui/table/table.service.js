@@ -334,10 +334,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             }
         }
 
-        if (column.type === 'selector') {
-            const val =  column.filter.value.join(',').replace(/"/g, '\'');
+         if (column.type === 'selector') {
+            const val =  column.filter.value.join(`' , '`);
             if (val !== '') {
-                defs.push(`${column.name} IN (${val})`);
+                defs.push(`UPPER(${column.name}) IN (\'${val.toUpperCase()}\')`);
             }
         } else if (column.type === 'number') {
             const min = column.filter.min;

@@ -24,7 +24,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
     class LayerBlueprint {
 
         /**
-         * 
+         *
          * @param {string} url the URL of the layer endpoint, optional
          */
         constructor(url) {
@@ -70,9 +70,9 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
                     defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
                 }
             } else if (column.filter.type === 'selector') {
-                const val =  column.filter.value.join(',').replace(/"/g, '\'');
+                const val =  column.filter.value.join(`' , '`);
                 if (val !== '') {
-                    defs.push(`${column.data} IN (${val})`);
+                    defs.push(`UPPER(${column.name}) IN (\'${val.toUpperCase()}\')`);
                 }
             } else if (column.filter.type === 'number') {
                 const values = column.filter.value.split(',');
