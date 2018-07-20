@@ -72,7 +72,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
             } else if (column.filter.type === 'selector') {
                 const val =  column.filter.value.join(`' , '`);
                 if (val !== '') {
-                    defs.push(`UPPER(${column.name}) IN (\'${val.toUpperCase()}\')`);
+                    defs.push(`UPPER(${column.data}) IN (\'${val.toUpperCase()}\')`);
                 }
             } else if (column.filter.type === 'number') {
                 const values = column.filter.value.split(',');
