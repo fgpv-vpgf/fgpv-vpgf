@@ -4,13 +4,12 @@ import { SimpleLayer } from 'api/layers';
 angular.module('app.ui')
     .directive('rvNorthArrow', rvNorthArrow);
 
-const flagIcon = 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z';
 /**
  * `rvNorthArrow` directive body. Displays the north arrow on the map.
  *
  * @return {object} directive body
  */
-function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $compile, gapiService) {
+function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $compile, gapiService, $mdIcon) {
     const directive = {
         restrict: 'E',
         link
@@ -36,10 +35,12 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         map.instance.addLayer(layerRecord._layer);
 
                         // create north pole as point object and add to north pole layer
-                        const northPoleLayer = new SimpleLayer(layerRecord, map);
-                        const poleSource = mapConfig.northArrow.poleIcon || flagIcon;
-                        let northPole = new Point('northPole', new XY(-96, 90), {xOffset: 7, yOffset: 7, style: 'ICON', icon: poleSource, colour: [255, 0, 0]});
-                        northPoleLayer.addGeometry(northPole);
+                        $mdIcon('flag').then(flagIcon => {
+                            const northPoleLayer = new SimpleLayer(layerRecord, map);
+                            const poleSource = mapConfig.northArrow.poleIcon || flagIcon.getElementsByTagName('path')[0].getAttribute('d');
+                            let northPole = new Point('northPole', new XY(-96, 90), {xOffset: 7, yOffset: 7, style: 'ICON', icon: poleSource, colour: [255, 0, 0]});
+                            northPoleLayer.addGeometry(northPole);
+                        });
                     }
 
                     updateNorthArrow(); // set initial position

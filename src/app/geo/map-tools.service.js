@@ -66,7 +66,6 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
             const shellLeftOffset = $('.rv-inner-shell').offset().left - $('rv-shell').offset().left; // offset for arrow position calculations
             const shellWidth = $('.rv-inner-shell').width() / 2; // inner shell width for min/max x calculations
             const arrowWidth = $('.rv-north-arrow').width(); // arrow width to correct arrow positioning
-            const realY = $('.rv-inner-shell').offset().top - $('rv-shell').offset().top;
             const offsetX = shellLeftOffset + shellWidth - arrowWidth / 2;
             let arrowPoint = map.toMap({x: offsetX, y: 0});
             arrowPoint.y = mapBottomY;
@@ -87,7 +86,6 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
             }
             // z is the hypotenuse line from center point to the top of the viewer. The triangle is always a right triangle
             const z = triangle.y / Math.sin(angleDegrees * 0.01745329252); // 0.01745329252 is the radian conversion
-            const tempAngle = 270 - map.getNorthArrowAngle({point: arrowPoint});
             // this would be the bottom of our triangle, the length from center to where the arrow should be placed
             screenX = screenY < 0 ?
                 triangle.x + triangle.m * (Math.sin((90 - angleDegrees) * 0.01745329252) * z) - arrowWidth / 2 :
