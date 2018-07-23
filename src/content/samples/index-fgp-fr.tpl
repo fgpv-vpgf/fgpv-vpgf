@@ -363,7 +363,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-inline margin-bottom-none">
-                            <li><a lang="fr" href="index-fgp-en.html">English</a></li>
+                            <li><a lang="fr" href="javascript:toggleLanguage();">English</a></li>
                         </ul>
                     </div>
                 </div>
@@ -590,6 +590,19 @@
             RV.getMap('fgpmap').initialBookmark(bookmark);
         }
 
+        // Toggle language
+        function toggleLanguage(){
+            RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
+                var cururl;
+                cururl = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+                if (cururl.includes('fgp-en')) {
+                    cururl = cururl.replace('fgp-en','fgp-fr');
+                } else if (cururl.includes('fgp-fr')) {
+                    cururl = cururl.replace('fgp-fr','fgp-en');
+                }
+              location.replace(cururl);
+            });
+        }
         function getBookmark(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {
                 document.getElementById("bookmarkDisplay").value = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
