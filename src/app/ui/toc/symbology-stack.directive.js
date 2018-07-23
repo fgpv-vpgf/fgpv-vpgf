@@ -381,6 +381,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // in pixels
             const symbologyListTopOffset = 48; // offset to cover the height of the legend entry node
             const symbologyListMargin = 16; // gap between the legend endtry and the symbology stack
+            const defaultDescribeHeight = 20;
 
             // keep track of the total height of symbology stack so far
             let totalHeight = symbologyListTopOffset + symbologyListMargin;
@@ -391,7 +392,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                 // briefly show the description node to grab it's height, and hide it again
                 ref.descriptionItem.show();
-                const descriptionHeight = ref.descriptionItem.height();
+                const descriptionHeight = ref.descriptionItem.height() >= 0 ? ref.descriptionItem.height() : defaultDescribeHeight;
                 ref.descriptionItem.hide();
 
                 // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
