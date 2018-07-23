@@ -70,10 +70,14 @@ if (zones !== undefined) {
     }
 }
 
+//delete previously added area of interest panel (useful for language switch)
+if(document.getElementById('area-of-interest')){
+    map.deletePanel('area-of-interest');
+}
 
 //creating Panel + opening
 let height = $('#' + mapInstance.id).height();
-let panel0 = mapInstance.createPanel('panel0');
+let panel0 = mapInstance.createPanel('area-of-interest');
 panel0.position([-10, -10], [290, height - 52]);
 $('div').removeClass('hidden');
 let closeBtn = new panel0.button('X');
