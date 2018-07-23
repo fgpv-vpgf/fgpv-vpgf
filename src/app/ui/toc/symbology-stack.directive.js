@@ -355,12 +355,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 ref.containerWidth
             );
 
-            // console.log('ref.maxItemWidth', ref.maxItemWidth);
-
             ref.expandTimeline = makeExpandTimeline();
             ref.fanOutTimeline = makeWiggleTimeline();
 
-            ref.isReady = true;
+            ref.isReady = ref.maxItemWidth > 0;
         }
 
         function makeExpandTimeline() {
