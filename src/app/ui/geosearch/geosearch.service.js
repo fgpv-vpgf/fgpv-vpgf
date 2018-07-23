@@ -15,10 +15,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     let GSservice; // geosearch service from the geosearch intention
 
     events.$on(events.rvApiReady, () => {  // initilize geosearch intention
-        let GSintention = appInfo.plugins.find(x => x.intention === 'geoSearch');
-        if (!GSintention) {
-            console.error('Geosearch intention not found');
-        } else {
+        if (configService.getSync.intentions.geoSearch !== 'none') {
             let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
             GSservice = new (appInfo.plugins.find(x => x.intention === 'geoSearch')).GeoSearchUI({language});
         }
@@ -278,14 +275,10 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     function getProvinces() {
         return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
-                if (!GSservice) {
-                    console.error('Geosearch intention not found');
-                } else {
-                    GSservice.fetchProvinces().then(val => {
-                        let provinceList = val;
-                        resolve(provinceList);
-                    });
-                }
+                GSservice.fetchProvinces().then(val => {
+                    let provinceList = val;
+                    resolve(provinceList);
+                });
             });
         }, () => {
             service.externalApiError = true;
@@ -305,14 +298,10 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     function getTypes() {
         return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
-                if (!GSservice) {
-                    console.error('Geosearch intention not found');
-                } else {
-                    GSservice.fetchTypes().then(val => {
-                        let typeList = val;
-                        resolve(typeList);
-                    });
-                }
+                GSservice.fetchTypes().then(val => {
+                    let typeList = val;
+                    resolve(typeList);
+                });
             });
         }, () => {
             service.externalApiError = true;
