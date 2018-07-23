@@ -14,4 +14,6 @@
 - [ ] release notes have been updated
 - [ ] all commit messages are descriptive and follow guidelines
 - [ ] PR targets the correct release version
+- [ ] has been tested in IE
+- [ ] orignal issue has been reviewed & updated to reflect the PR content
 - I will assign this PR to the primary reviewer
