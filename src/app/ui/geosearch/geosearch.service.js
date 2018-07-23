@@ -276,7 +276,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      *                          }
      */
     function getProvinces() {
-        return $q(resolve => {
+        return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
                 if (!GSservice) {
                     console.error('Geosearch intention not found');
@@ -303,7 +303,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      *                          }
      */
     function getTypes() {
-        return $q(resolve => {
+        return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
                 if (!GSservice) {
                     console.error('Geosearch intention not found');

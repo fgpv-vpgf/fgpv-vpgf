@@ -5,7 +5,6 @@
 
 import 'rz-geosearch';
 
-const HOST = `http://geogratis.gc.ca/services/geoname/`; // host for requests
 const CODE_TO_ABBR = ({"10":"NL","11":"PE","12":"NS","13":"NB",
                         "24":"QC","35":"ON","46":"MB","47":"SK",
                         "48":"AB","59":"BC","60":"YU","61":"NT",
@@ -39,7 +38,6 @@ class GeoSearchUI {
 
     set provinceList(val) { this._provinceList = val; }
     set typeList(val) { this._typeList = val; }
-
 
     /**
      * Find and return the province object in the province list
@@ -139,25 +137,13 @@ class GeoSearchUI {
         return new Promise((resolve) => {
             if (this.provinceList.length > 0) resolve(this.provinceList); // in cache
             let provinceList = [];
-            if (this._geoSearhObj.config.provinces.list) { // in geosearch module
-                let rawProvinces = this._geoSearhObj.config.provinces.list;
-                for (let code in rawProvinces) {
-                    provinceList.push({
-                        code: code,
-                        abbr: CODE_TO_ABBR[code],
-                        name: rawProvinces[code]
-                    });
-                }
-            } else {
-                let request = new XMLHttpRequest();
-                request.open('GET', HOST + this.lang + '/codes/province.json', false);
-                request.send();
-                let rawProvinces = JSON.parse(request.response).definitions;
-                provinceList = rawProvinces.map(prov => ({
-                    code: prov.code,
-                    abbr: prov.term,
-                    name: prov.description
-                }));
+            let rawProvinces = this._geoSearhObj.config.provinces.list;
+            for (let code in rawProvinces) {
+                provinceList.push({
+                    code: code,
+                    abbr: CODE_TO_ABBR[code],
+                    name: rawProvinces[code]
+                });
             }
             this.provinceList = provinceList;
             resolve(provinceList);
@@ -173,23 +159,12 @@ class GeoSearchUI {
         return new Promise((resolve) => {
             if (this.typeList.length > 0) resolve(this.typeList); // in cache
             let typeList = [];
-            if (this._geoSearhObj.config.types.allTypes) { // in geosearch module
-                let rawTypes = this._geoSearhObj.config.types.allTypes;
-                for (let type in rawTypes) {
-                    typeList.push({
-                        code: type,
-                        name: rawTypes[type]
-                    });
-                }
-            } else {
-                let request = new XMLHttpRequest();
-                request.open('GET', HOST + this.lang + '/codes/concise.json', false);
-                request.send();
-                let rawTypes = JSON.parse(request.response).definitions;
-                typeList = rawTypes.map(type => ({
-                    code: type.code,
-                    name: type.term
-                }));
+            let rawTypes = this._geoSearhObj.config.types.allTypes;
+            for (let type in rawTypes) {
+                typeList.push({
+                    code: type,
+                    name: rawTypes[type]
+                });
             }
             this.typeList = typeList;
             resolve(typeList);
