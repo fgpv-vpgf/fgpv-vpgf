@@ -9,12 +9,12 @@ $.getScript('../../../../rv-main.js', function () {
         // set the config layer to a constant for ease of use
         const simpleLayer = mapi.layers.getLayersById('simpleLayer')[0];
         //svg path as icon
-        const SVG = new RZ.GEO.Point(0, 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Purple_star_unboxed.svg/120px-Purple_star_unboxed.svg', [-85, 59]);
+        const SVG = new RZ.GEO.Point(0, [-85, 59], {icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Purple_star_unboxed.svg/120px-Purple_star_unboxed.svg'});
         //jpg as icon
-        const JPG = new RZ.GEO.Point(1, 'http://www.oneworldkids.net/Star%20orange%20copy.jpg', [-89, 59]);
+        const JPG = new RZ.GEO.Point(1, [-89, 59], {icon: 'http://www.oneworldkids.net/Star%20orange%20copy.jpg'});
         //default icons
-        const DEF1 = new RZ.GEO.Point(2, '', [-80, 59]);
-        const DEF2 = new RZ.GEO.Point(3, '', [-85, 57]);
+        const DEF1 = new RZ.GEO.Point(2, [-80, 59]);
+        const DEF2 = new RZ.GEO.Point(3, [-85, 57]);
 
         let svgRem = false;
         let defRem = false
