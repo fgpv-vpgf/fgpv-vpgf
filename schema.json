@@ -830,7 +830,7 @@
                 "scaleBar": { "type": "object" },
                 "basemap": { "type": "object" },
                 "areaOfInterest": {
-                     "type": "array",
+                     "type": "object",
                      "items": {
                          "type": "object",
                          "properties": {
