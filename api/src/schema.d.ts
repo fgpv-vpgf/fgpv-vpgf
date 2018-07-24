@@ -66,6 +66,10 @@ export type InfoSection =
        * Optional description displayed above the symbology stack.
        */
       description?: string;
+      /**
+       * An optional icon, if present it will be used to primarily represent the layer
+       */
+      coverIcon?: string;
       symbologyStack?: SymbologyStack;
       /**
        * An optional style, describes how the symbology stack should be rendered
