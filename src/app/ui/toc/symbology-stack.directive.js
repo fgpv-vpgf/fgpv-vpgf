@@ -392,7 +392,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 // briefly show the description node to grab it's height, and hide it again
                 ref.descriptionItem.show();
                 const descriptionHeight = (ref.descriptionItem.height() >= 0 ?
-                    ref.descriptionItem.height() : parseInt(ref.descriptionItem.css('line-height').slice(0, -2)));
+                    ref.descriptionItem.height() : parseInt(ref.descriptionItem.css('height').slice(0, -2)));
                 ref.descriptionItem.hide();
 
                 // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
