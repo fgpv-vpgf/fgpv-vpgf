@@ -9,4 +9,4 @@
 */
 module.exports = function(env = {}) {
     return require(`./webpack.${env.prod ? 'prod' : 'dev'}.js`)(env);
-}
+};
