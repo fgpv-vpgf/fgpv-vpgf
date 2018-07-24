@@ -29,6 +29,8 @@ function fullScreenService($rootElement, configService, $interval, events, $time
     let lastChangedElement = $rootElement;
     let lastKnownCenter;
     let stopInterval;
+    let stopPanListen;
+    let stopZoomListen;
 
     // override default brower full screen exiting action
     document.addEventListener('fullscreenchange', exitFullScreenHandler);
@@ -107,8 +109,19 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         screenfull.toggle(body[0]);
         onChange();
     }
-
+    /**
+     * Call center map on change to or out of fullscreen
+     *
+     * @function onChange
+     */
     function onChange() {
+        // reset/create pan and zoom listeners
+        _listenPanAndZoom();
+        // if there is a centerMap call waiting cancel it to avoid stacking when entering and exiting
+        // fullscreen mode repeatedly
+        if (stopInterval) {
+            $interval.cancel(stopInterval);
+        }
         // give browser/esri some time to update center, time it will take is unknown (roughly 0.5s to 1s)
         stopInterval = $interval(centerMap, 100);
         centerMap(); // invoke immediately just in case the transition was faster than 100ms
@@ -116,13 +129,57 @@ function fullScreenService($rootElement, configService, $interval, events, $time
 
     /**
      * Re-centers the map iff the center has changed anytime after the fullscreen toggle has been called.
+     *
+     * @function centerMap
      */
     function centerMap() {
         const cntr = configService.getSync.map.instance.extent.getCenter();
         if (lastKnownCenter.x !== cntr.x || lastKnownCenter.y !== cntr.y) {
             configService.getSync.map.instance.centerAt(lastKnownCenter);
             $interval.cancel(stopInterval);
+            stopInterval = null;
         }
+    }
+
+    /**
+     * Creates/resets listeners to stop recenter interval on pan or zoom
+     *
+     * @function _listenPanAndZoom
+     * @private
+     */
+    function _listenPanAndZoom() {
+        if (stopPanListen) {
+            stopPanListen();
+            stopPanListen = null;
+        }
+        if (stopZoomListen) {
+            stopZoomListen();
+            stopZoomListen = null;
+        }
+
+        // cancel any waiting center call on map pan/zoom to prevent initial lock to center when
+        // toggling fullscreen doesn't change the center
+        stopPanListen = events.$on(events.rvMapPan, () => {
+            _listener(stopPanListen);
+        });
+        stopZoomListen = events.$on(events.rvMapZoomStart, () => {
+            _listener(stopZoomListen);
+        });
+    }
+
+    /**
+     *  Deregister lisener and stop recenter interval
+     *
+     * @function _listener
+     * @private
+     */
+    function _listener(f) {
+        f();
+        if (stopInterval) {
+            $interval.cancel(stopInterval);
+            stopInterval = null;
+        }
+        f = null;
     }
 
 }
