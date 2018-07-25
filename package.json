@@ -29,7 +29,7 @@
     "geoApi": "github:fgpv-vpgf/geoApi#v2.5.0-9",
     "imports-loader": "0.8.0",
     "linkifyjs": "2.1.6",
-    "marked": "0.3.19",
+    "marked": "0.4.0",
     "rcolor": "1.0.1",
     "remove-markdown": "0.2.2",
     "rxjs": "6.1.0",
