@@ -29,13 +29,11 @@ angular
  *
  * The `configBlock` does three things right now:
  * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
- * - configure theme colours for angular material
  */
-function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $parseProvider, $mdDateLocaleProvider) {
+function configBlock($translateProvider, $mdIconProvider, $parseProvider, $mdDateLocaleProvider) {
 
     configureParser();
     configureTranslations();
-    configureTheme();
     configureIconsets();
 
     /**
@@ -86,18 +84,6 @@ function configBlock($translateProvider, $mdThemingProvider, $mdIconProvider, $p
     function configureTranslations() {
         $translateProvider.directivePriority(222);
         $translateProvider.useLoader('translationService', { action: 'loader' });
-    }
-
-    /**
-     * Set theme colours from material desing colour palette.
-     * @inner
-     * @memberof app.core
-     * @function
-     */
-    function configureTheme() {
-        $mdThemingProvider.theme('default')
-            .primaryPalette('blue-grey')
-            .accentPalette('cyan');
     }
 
     /**

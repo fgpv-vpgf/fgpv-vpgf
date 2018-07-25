@@ -12,7 +12,7 @@
     "angular-animate": "1.6.10",
     "angular-aria": "1.6.10",
     "angular-dragula": "1.2.8",
-    "angular-material": "1.1.9",
+    "angular-material-tools": "^1.0.0-beta.8",
     "angular-messages": "1.6.10",
     "angular-sanitize": "1.6.10",
     "angular-translate": "2.17.1",
@@ -56,6 +56,7 @@
     "jsdoc": "3.5.5",
     "json-schema-to-typescript": "5.5.0",
     "mini-css-extract-plugin": "0.4.0",
+    "mv": "^2.1.1",
     "ng-annotate-loader": "0.6.1",
     "ngtemplate-loader": "2.0.1",
     "node-sass": "4.9.0",
@@ -88,6 +89,7 @@
     "protractor": "node scripts/protractor/run.js",
     "docs": "jsdoc -p -r -c .jsdoc.json -R README.md -d ./docs/developer/jsDocs ./src/app && typedoc --target ES6 --out docs/api/developer api/src",
     "svgcache": "node scripts/svgCache.js",
+    "angular-material": "node scripts/generateAngularMaterial.js",
     "docute": "docute ./docs",
     "install-all": "npm install && (cd intention && npm install)"
   }
