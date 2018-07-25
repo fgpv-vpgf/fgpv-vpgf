@@ -13,55 +13,31 @@ const geometryTypes = {
     MULTIPOLYGON: 'MultiPolygon'
 }
 
-const defaultSymbols = {
-    POINT: {
-        width: 16.5,
-        height: 16.5,
-        type: 'esriSMS',
-        color: [255, 0, 0],
-        outline: {
-            color: [0, 0, 0],
-            width: 1,
-            type: 'esriSLS',
-            style: 'esriSLSSolid'
-        }
-    },
-    MULTIPOINT: {
-        width: 16.5,
-        height: 16.5,
-        type: 'esriSMS',
-        color: [0, 255, 0],
-        outline: {
-            color: [0, 0, 0],
-            width: 1,
-            type: 'esriSLS',
-            style: 'esriSLSSolid'
-        }
-    },
-    LINESTRING: {
-        width: 2,
-        type: 'esriSLS',
-        color: [255, 0, 0],
-        style:' esriSLSSolid',
-        outline: {
-            color: [0, 0, 0],
-            width: 1,
-            type: 'esriSLS',
-            style: 'esriSLSSolid'
-        }
-    },
-    MULTILINESTRING: {
-        width: 2,
-        type: 'esriSLS',
-        color: [0, 255, 0],
-        style:' esriSLSSolid',
-        outline: {
-            color: [0, 0, 0],
-            width: 1,
-            type: 'esriSLS',
-            style: 'esriSLSSolid'
-        }
-    }
+const pointStyles = {
+    CIRCLE: 'esriSMSCircle',
+    CROSS: 'esriSMSCross',
+    DIAMOND: 'esriSMSDiamond',
+    SQUARE: 'esriSMSSquare',
+    X: 'esriSMSX',
+    TRIANGLE: 'esriSMSTriangle'
+}
+const lineStyles = {
+    DASH: 'esriSLSDash',
+    DASHDOT: 'esriSLSDashDot',
+    DASHDOTDOT: 'esriSLSDashDotDot',
+    DOT: 'esriSLSDot',
+    NULL: 'esriSLSNull',
+    SOLID: 'esriSLSSolid'
+}
+const fillStyles = {
+    BDIAG: 'backwarddiagonal',
+    CROSS: 'cross',
+    DIAG_CROSS: 'diagonalcross',
+    FDIAG: 'forwarddiagonal',
+    HORIZONTAL: 'horizontal',
+    NULL: 'none',
+    SOLID: 'solid',
+    VERTICAL: 'vertical'
 }
 
 /**
@@ -238,21 +214,21 @@ class GraphicsRecord extends root.Root {
             const id = geometry.id;
             if (geometry.type === geometryTypes.POINT) {
                 const coords = geometry.xy.projectToPoint(spatialReference);
-                const icon = geometry.icon;
-                this._addPoint(coords, spatialReference, icon, id);
+                const icon = geometry.styleOptions.icon;
+                this._addPoint(coords, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
                 const points = geometry.pointArray.map(point => {
                     const p = point.xy.projectToPoint(spatialReference);
                     return [p.x, p.y];
                 });
-                const icon = geometry.icon;
-                this._addMultiPoint(points, spatialReference, icon, id);
+                const icon = geometry.styleOptions.icon;
+                this._addMultiPoint(points, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.LINESTRING) {
                 const path = geometry.pointArray.map(point => {
                     const p = point.xy.projectToPoint(spatialReference);
                     return [p.x, p.y];
                 });
-                this._addLine(path, spatialReference, id);
+                this._addLine(path, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
                 const path = geometry.lineArray.map(line =>
                     line.pointArray.map(point => {
@@ -260,7 +236,7 @@ class GraphicsRecord extends root.Root {
                         return [p.x, p.y];
                     })
                 );
-                this._addMultiLine(path, spatialReference, id);
+                this._addMultiLine(path, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.POLYGON) {
                 const rings = geometry.ringArray.map(ring =>
                     ring.pointArray.map(point => {
@@ -268,13 +244,7 @@ class GraphicsRecord extends root.Root {
                         return [p.x, p.y];
                     })
                 );
-                const style = {
-                    outlineColor: geometry.outlineColor,
-                    outlineWidth: geometry.outlineWidth,
-                    fillColor: geometry.fillColor,
-                    fillOpacity: geometry.fillOpacity
-                };
-                this._addPolygon(rings, spatialReference, id, style);
+                this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
                 const multiPolyRings = geometry.polygonArray.map(polygon =>
                     polygon.ringArray.map(ring =>
@@ -285,15 +255,9 @@ class GraphicsRecord extends root.Root {
                     )
                 );
                 const rings = [].concat.apply([], multiPolyRings);
-                const multiPolyStyle = {
-                    outlineColor: geometry.outlineColor,
-                    outlineWidth: geometry.outlineWidth,
-                    fillColor: geometry.fillColor,
-                    fillOpacity: geometry.fillOpacity
-                };
 
                 // addPolygon functions works for MultiPolygon as well, since we set up the rings in the proper format
-                this._addPolygon(rings, spatialReference, id, multiPolyStyle);
+                this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
             }
         });
     }
@@ -307,8 +271,9 @@ class GraphicsRecord extends root.Root {
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} icon                      data / image url or svg path for layer icon. defaults to a red point
      * @param {String} id                        id of api geometry being added to map
+     * @param {Object} opts                      options to apply to point
      */
-    _addPoint(coords, spatialReference, icon, id) {
+    _addPoint(coords, spatialReference, icon, id, opts) {
         const point = new this._bundle.Point({
             x: coords.x,
             y: coords.y,
@@ -316,20 +281,36 @@ class GraphicsRecord extends root.Root {
         });
 
         let symbol, marker;
-        if (icon) {
+        if (opts.style === 'ICON') {
             if (this._isUrl(icon)) {
                 // TODO: discuss how to handle the width / height issue when passing in an icon
-                symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
+                symbol = new this._bundle.PictureMarkerSymbol(icon, opts.width, opts.height);
+                symbol.setOffset(opts.xOffset, opts.yOffset);
             } else {
                 symbol = new this._bundle.SimpleMarkerSymbol();
                 symbol.setPath(icon);
-                symbol.setColor([255, 0, 0]);
-                symbol.setSize('auto');
+                symbol.setColor(opts.colour);
+                symbol.setSize(opts.width);
+                symbol.setOffset(opts.xOffset, opts.yOffset);
             }
             marker = new this._bundle.Graphic(point, symbol);
         } else {
-            marker = new this._bundle.Graphic({ symbol: defaultSymbols.POINT });
-            marker.setGeometry(point);
+            const options = {
+                color: opts.colour,
+                size: opts.width,
+                xoffset: opts.xOffset,
+                yoffset: opts.yOffset,
+                type: 'esriSMS',
+                style: pointStyles[opts.style],
+                outline: {
+                    color: [0, 0, 0],
+                    width: 1,
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid'
+                }
+            }
+            symbol = new this._bundle.SimpleMarkerSymbol(options);
+            marker = new this._bundle.Graphic(point, symbol);
         }
 
         marker.geometry.apiId = id;
@@ -346,15 +327,16 @@ class GraphicsRecord extends root.Root {
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} icon                      data / image url or svg path for layer icon. defaults to a green point
      * @param {String} id                        id of api geometry being added to map
+     * @param {Object} opts                      options to apply to points
      */
-    _addMultiPoint(coords, spatialReference, icon, id) {
+    _addMultiPoint(coords, spatialReference, icon, id, opts) {
         const points = new this._bundle.Multipoint({
             points: coords,
             spatialReference: spatialReference
         });
 
         let symbol, marker;
-        if (icon) {
+        if (opts.style === 'ICON') {
             if (this._isUrl(icon)) {
                 // TODO: discuss how to handle the width / height issue when passing in an icon
                 symbol = new this._bundle.PictureMarkerSymbol(icon, 16.5, 16.5);
@@ -366,8 +348,22 @@ class GraphicsRecord extends root.Root {
             }
             marker = new this._bundle.Graphic(points, symbol);
         } else {
-            marker = new this._bundle.Graphic({ symbol: defaultSymbols.MULTIPOINT });
-            marker.setGeometry(points);
+            const options = {
+                color: opts.colour,
+                size: opts.width,
+                xoffset: opts.xOffset,
+                yoffset: opts.yOffset,
+                type: 'esriSMS',
+                style: pointStyles[opts.style],
+                outline: {
+                    color: [0, 0, 0],
+                    width: 1,
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid'
+                }
+            }
+            symbol = new this._bundle.SimpleMarkerSymbol(options);
+            marker = new this._bundle.Graphic(points, symbol);
         }
 
         marker.geometry.apiId = id;
@@ -382,14 +378,27 @@ class GraphicsRecord extends root.Root {
      * @param {Array} path                       an array of long and lat to use as the path for the line
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
+     * @param {Object} opts                      options to apply to line
      */
-    _addLine(path, spatialReference, id) {
+    _addLine(path, spatialReference, id, opts) {
         const line = new this._bundle.Polyline({
             paths: [ path ],
             spatialReference: spatialReference
         });
 
-        const marker = new this._bundle.Graphic({ symbol: defaultSymbols.LINESTRING });
+        const symbol = {
+            width: opts.width,
+            type: 'esriSLS',
+            color: opts.colour,
+            style: opts.style,
+            outline: {
+                color: [0, 0, 0],
+                width: 1,
+                type: 'esriSLS',
+                style: 'esriSLSSolid'
+            }
+        }
+        const marker = new this._bundle.Graphic({ symbol: symbol });
         marker.setGeometry(line);
 
         marker.geometry.apiId = id;
@@ -404,14 +413,27 @@ class GraphicsRecord extends root.Root {
      * @param {Array} paths                      a 3D array of long and lat to use as the paths for the lines
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
+     * @param {Object} opts                      options to apply to lines
      */
-    _addMultiLine(paths, spatialReference, id) {
+    _addMultiLine(paths, spatialReference, id, opts) {
         const lines = new this._bundle.Polyline({
             paths,
             spatialReference
         });
 
-        const marker = new this._bundle.Graphic({ symbol: defaultSymbols.MULTILINESTRING });
+        const symbol = {
+            width: opts.width,
+            type: 'esriSLS',
+            color: opts.colour,
+            style: opts.style,
+            outline: {
+                color: [0, 0, 0],
+                width: 1,
+                type: 'esriSLS',
+                style: 'esriSLSSolid'
+            }
+        }
+        const marker = new this._bundle.Graphic({ symbol: symbol });
         marker.setGeometry(lines);
 
         marker.geometry.apiId = id;
@@ -426,22 +448,24 @@ class GraphicsRecord extends root.Root {
      * @param {Array} rings                      an array of rings containing an array of coordinates
      * @param {Object} spatialReference          the projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
-     * @param {Object} style                     settings such as color and opacity for the polygon
+     * @param {Object} opts                      settings such as color and opacity for the polygon
      */
-    _addPolygon(rings, spatialReference, id, style) {
+    _addPolygon(rings, spatialReference, id, opts) {
         const polygon = new this._bundle.Polygon({
             rings,
             spatialReference
         });
 
         const lineSymbol = new this._bundle.SimpleLineSymbol();
-        lineSymbol.setColor(style.outlineColor);
-        lineSymbol.setWidth(style.outlineWidth);
+        lineSymbol.setColor(opts.outlineColor);
+        lineSymbol.setWidth(opts.outlineWidth);
+        lineSymbol.setStyle(lineStyles[opts.outlineStyle]);
 
-        const fillColor = new this._bundle.Color(style.fillColor);
-        fillColor.a = style.fillOpacity;
+        const fillColor = new this._bundle.Color(opts.fillColor);
+        fillColor.a = opts.fillOpacity;
 
         const fillSymbol = new this._bundle.SimpleFillSymbol();
+        fillSymbol.setStyle(fillStyles[opts.fillStyle]);
         fillSymbol.setColor(fillColor);
         fillSymbol.setOutline(lineSymbol);
 

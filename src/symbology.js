@@ -432,7 +432,7 @@ function renderSymbologyImage(imageUri, draw = null) {
             return draw.svg();
         })
         .catch(err => {
-            console.error('Cannot draw symbology iamge; returning empty', err);
+            console.error('Cannot draw symbology image; returning empty', err);
             return draw.svg();
         });
 
