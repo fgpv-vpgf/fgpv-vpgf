@@ -63,7 +63,7 @@ module.exports = function (env) {
                     test: /\.s?[ac]ss$/,
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
-                        'css-loader',
+                        {loader: 'css-loader', options: {minimize: env.prod}},
                         'sass-loader'
                     ]
                 },
