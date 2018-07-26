@@ -201,6 +201,12 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         return configService.getSync.language;
     }
 
+    //wire in a hook to change extent
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.changeExtent = extent => setExtent(extent);
+    });
+
+
     /**
      * Load RCS layers after the map has been instantiated
      *
@@ -253,11 +259,6 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         configService.getSync.map.instance.setZoom(zoom);
         configService.getSync.map.instance.centerAt(zoomPoint);
     }
-
-    //wire in a hook to get api for a map instance
-    events.$on(events.rvMapLoaded, () => {
-        configService.getSync.map.instance.getApi = () => service
-    });
 
     /**
      * Set extent of the map.

@@ -124,6 +124,21 @@ export class Map {
         initObservables.apply(this);
     }
 
+    /**
+     * Sets the extent of the map
+     * @param {object} extent - the extent of the map
+     *      @param {number} extent.xmin - The xmin coord value (lower left corner)
+     *      @param {number} extent.xmax - The xmax coord value (upper right corner)
+     *      @param {number} extent.ymin - The ymin coord value (lower left corner)
+     *      @param {number} extent.ymax - The ymax coord value (upper right corner)
+     *      @param {object} extent.spatialReference - spatial reference object
+     *          @param {number} extent.spatialReference.wkid - well known ID of a spatial reference
+     * @example this.extent = {xmin: 2, xmax: 4, ymin: 5, ymax: 10, spatialReference: {wkid: 4326}}
+     */
+    set extent(extent: object){
+        this.mapI.changeExtent(extent);
+    }
+
     /** Returns the current structured legend JSON. If auto legend, returns undefined */
     get legendConfig(): Array<JSON> | undefined {
         if (this.legendStructure.type === 'structured') {  // use constant
@@ -149,6 +164,7 @@ export class Map {
     get simpleLayer(): SimpleLayer {
         return this.simpleLayerObj;
     }
+
 
     /**
      * Changes the map boundaries based on the given extent. Any projection supported by Proj4 can be provided.
