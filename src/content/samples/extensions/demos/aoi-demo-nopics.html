@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <title>FGP Viewer</title>
     <meta content="width=device-width,initial-scale=1" name="viewport">
+    <script src='../areas-of-interest.js'></script>
 </head>
 
 <body style="padding:20px;">
     <h1>Federal Geospatial Platform Visualiser -
-        <span style="color:blue">Areas of Interest Demo (No Pictures)</span>
+        <span style="color:blue">Areas of Interest Demo</span>
     </h1>
     <p>
         <a href="./aoi-demo-pics.html">Pictures Demo</a>
@@ -17,13 +18,14 @@
         crossorigin="anonymous"></script>
 </body>
 <script>
-    $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css') );
+    $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css'));
+
 
     $.getScript('../../../rv-main.js', function () {
         $('body').append(`
-        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-extensions="../areas-of-interest.js"></div>
-    `);
-        new RZ.Map(document.getElementById('fgpmap'), '../../config/config-sample-73.json');
+        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rz-extensions="areasOfInterest"></div>
+        `);
+        new RZ.Map(document.getElementById('fgpmap'), '../../config/config-sample-64-b.json');
     });
 </script>
 
