@@ -99,7 +99,7 @@
             //also get option to enable/disable thumbnail pictures
             let zoneList = this.api.getConfig('map').components.areaOfInterest._source.areas;
             this.noPic = this.api.getConfig('map').components.areaOfInterest._source.noPicture;
-            if(zoneList){
+            if (zoneList){
                 zoneList = zoneList.enabled ? [] : zoneList;
                 for (let zone of zoneList) {
                     zones.push(zone);
