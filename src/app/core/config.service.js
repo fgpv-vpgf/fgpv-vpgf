@@ -123,7 +123,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         /**
          * Processes RCS keys if any are present
          *
-         * @return  {Promise}   resolves with config object when rcs lookup is complete
+         * @return  {Promise}   resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
         processRCS() {
             if (this._rcsKeys.length === 0) {
@@ -164,8 +164,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                         }
                     });
 
-                    this.config.map.layers.push(...result);
-                    events.$broadcast(events.rvCfgUpdated, result);
+                    if (this.config) {
+                        this.config.map.layers.push(...result);
+                        events.$broadcast(events.rvCfgUpdated, result);
+                    }
 
                     return this.config;
             },  resp => {
