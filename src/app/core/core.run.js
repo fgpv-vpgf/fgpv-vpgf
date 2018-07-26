@@ -254,11 +254,6 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         configService.getSync.map.instance.centerAt(zoomPoint);
     }
 
-    //wire in a hook to get api for a map instance
-    events.$on(events.rvMapLoaded, () => {
-        configService.getSync.map.instance.getApi = () => service
-    });
-
     /**
      * Set extent of the map.
      *
