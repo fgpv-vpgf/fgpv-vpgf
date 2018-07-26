@@ -8,7 +8,7 @@
 
 **/
 const MaterialTools = require('angular-material-tools');
-const mv = require('mv');
+const fs = require('fs-extra');
 
 let tools = new MaterialTools({
   destination: './angular_material',
@@ -25,6 +25,7 @@ let tools = new MaterialTools({
     'icon',
     'divider',
     'input',
+    'autocomplete',
     'checkbox',
     'select',
     'sidenav',
@@ -43,19 +44,19 @@ function moveComplete(err, name) {
   if (err) {
     console.log(`${name} could not be moved`);
     console.log(err);
-  } else {
-    console.log(`${name} succesfully moved`);
   }
 }
 
 const successHandler = () => {
   console.log('Build was successful.');
-  mv('./angular_material/LICENSE', './src/material/LICENSE', {mkdirp: true}, err => moveComplete(err, 'LICENSE'));
-  mv('./angular_material/angular-material.min.js', './src/material/angular-material.min.js', {mkdirp: true}, err => moveComplete(err, 'angular-material.min.js'));
-  mv('./angular_material/angular-material.themes.min.css', './src/material/angular-material.themes.min.css', {mkdirp: true}, err => moveComplete(err, 'angular-material.themes.min.css'));
-  mv('./.material-cache/1.1.9/module/angular-material.scss', './src/material/angular-material.scss', {mkdirp: true}, err => moveComplete(err, 'angular-material.scss'));
-
+  fs.copy('./angular_material/angular-material.min.js', './src/material/angular-material.min.js', {overwrite: true}, err => moveComplete(err, 'angular-material.min.js'));
+  fs.copy('./angular_material/angular-material.themes.min.css', './src/material/angular-material.themes.min.css', {overwrite: true}, err => moveComplete(err, 'angular-material.themes.min.css'));
+  fs.copy('./.material-cache/1.1.9/module/angular-material.scss', './src/material/angular-material.scss', {overwrite: true}, err => moveComplete(err, 'angular-material.scss'));
+  fs.copy('./.material-cache/1.1.9/module/LICENSE', './src/material/LICENSE', {overwrite: true}, err => moveComplete(err, 'LICENSE'));
 };
 const errorHandler = error => console.error(error);
 
+fs.removeSync('./angular_material');
+fs.removeSync('./.material-cache');
+fs.removeSync('./src/material');
 tools.build().then(successHandler).catch(errorHandler); // Build all JS/CSS/themes
