@@ -16,10 +16,11 @@ angular
         'app.ui',
         'app.layout'
     ])
-    .config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider) => {
+    .config(($compileProvider, $mdInkRippleProvider, $mdGestureProvider, $mdAriaProvider) => {
         // to improve IE performance disable ripple effects globally and debug info
         if (RV.isIE) {
             $mdInkRippleProvider.disableInkRipple();
+            $mdGestureProvider.disableAll();
         }
     });
 
