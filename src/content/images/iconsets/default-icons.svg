@@ -24,7 +24,7 @@
         </g>
       </g>
     </g>
-    <g id="flag"><path d="M6 3a1 1 0 0 1 1 1v.88C8.06 4.44 9.5 4 11 4c3 0 3 2 5 2 3 0 4-2 4-2v8s-1 2-4 2-3-2-5-2c-3 0-4 2-4 2v7H5V4a1 1 0 0 1 1-1m1 4.25v4.25S9 10 11 10s3 2 5 2 2-1 2-1V7.5S17 8 16 8c-2 0-3-2-5-2S7 7.25 7 7.25z"/></g>
+    <g id="flag"><path fill="#fff" d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z" /></g>
     <g fill="#545353" stroke="#fff" id="crosshairs">
       <ellipse ry=".254" rx=".262" id="path3808" cx="12" cy="12" stroke-width=".076"/>
       <path d="M.045 12.047l6.093.051 4.264.068v-.332l-4.264.067-6.093.064v.039z" id="rect4632-6" stroke-width=".09"/>
