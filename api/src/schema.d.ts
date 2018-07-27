@@ -75,6 +75,10 @@ export type InfoSection =
        * Indicates if symbology stack is expand by default
        */
       symbologyExpanded?: boolean;
+      /**
+       * An optional icon, if present it will be used to primarily represent the unbound layer
+       */
+      coverIcon?: string;
     }
   | {
       infoType?: "text";
