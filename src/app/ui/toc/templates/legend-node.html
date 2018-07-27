@@ -1,7 +1,8 @@
 <div
     class="rv-list-item-body"
     ng-mouseover="self.block.symbologyStack.fannedOut = true"
-    ng-mouseleave="self.block.symbologyStack.fannedOut = false">
+    ng-mouseleave="self.block.symbologyStack.fannedOut = false"
+    ng-click="self.notifyApiClick(self.block)">
 
     <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
 

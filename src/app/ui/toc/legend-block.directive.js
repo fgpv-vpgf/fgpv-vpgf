@@ -29,7 +29,7 @@ angular
     .module('app.ui')
     .directive('rvLegendBlock', rvLegendBlock);
 
-function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject) {
+function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common, configService, ConfigObject, Geo, LegendBlock) {
     const directive = {
         restrict: 'E',
         scope: {
@@ -82,6 +82,7 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
         self.intersect = common.intersect;
         self.getTooltipDirection = getTooltipDirection;
         self.getTooltipDelay = getTooltipDelay;
+        self.notifyApiClick = notifyApiClick;
 
         scope.$watch('self.block.template', newTemplate => {
             if (newTemplate) {
@@ -114,6 +115,30 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
          */
         function getTooltipDelay() {
             return self.isNameTruncated ? 750 : 500000;
+        }
+
+        /**
+         * Triggers the API layer group observable when a layer is clicked on the legend
+         *
+         * @function notifyApiClick
+         * @private
+         * @param {LegendBlock} block legend block that was clicked
+         */
+        function notifyApiClick(block) {
+            let layer;
+            if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {  // make sure the item clicked is a node, and not group or other
+                if (block.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layer = appInfo.mapi.layers.allLayers.find(l =>
+                        l.id === block.layerRecordId &&
+                        l.layerIndex === parseInt(block.itemIndex));
+                } else {
+                    layer = appInfo.mapi.layers.getLayersById(block.layerRecordId)[0];
+                }
+
+                if (layer) {
+                    appInfo.mapi.layers._click.next(layer);
+                }
+            }
         }
     }
 }
