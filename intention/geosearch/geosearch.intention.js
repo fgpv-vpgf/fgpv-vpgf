@@ -46,16 +46,9 @@ class GeoSearchUI {
      * @return {Object} the object of the found province object
      */
     findProvinceObj(province) {
-        if (this.provinceList.length > 0) { // is in cache
-            return this.provinceList.find(p => {
-                return p.name === province;
-            });
-        } else {
-            return this.fetchProvinces().find(p => {
-                return p.name === province;
-            });
-
-        }
+        return this.fetchProvinces().find(p => {
+            return p.name === province;
+        });
     }
 
     /**
@@ -65,72 +58,68 @@ class GeoSearchUI {
      * @return {Promise} the promise that resolves as a formated location objects
      */
     query(q) {
-        return new Promise((resolve) => {
-            this._geoSearhObj.query(q.toUpperCase()).onComplete.then(q => {
-                let featureResult = [];
-                let results = [];
-                if (q.featureResults) { // it is a feature query
-                    if (q.featureResults.fsa) { // FSA query
-                        const bboxRange = 0.02;
-                        featureResult = [{
-                            name: q.featureResults.fsa,
-                            bbox: [
-                                q.featureResults.LatLon.lon + bboxRange,
-                                q.featureResults.LatLon.lat - bboxRange,
-                                q.featureResults.LatLon.lon - bboxRange,
-                                q.featureResults.LatLon.lat + bboxRange
-                            ],
-                            type: {
-                                name: q.featureResults.desc
-                            },
-                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
-                            location: {
-                                latitude: q.featureResults.LatLon.lat,
-                                longitude: q.featureResults.LatLon.lon,
-                                province: this.findProvinceObj(q.featureResults.province)
-                            }
-                        }];
-                    } else if (q.featureResults.nts) {  // NTS query
-                        featureResult = [{
-                            name: q.featureResults.nts,
-                            bbox: q.featureResults.bbox,
-                            type: {
-                                name: q.featureResults.desc
-                            },
-                            position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
-                            location: {
-                                city: q.featureResults.location,
-                                latitude: q.featureResults.LatLon.lat,
-                                longitude: q.featureResults.LatLon.lon
-                            }
-                        }];
-                    }
+        return this._geoSearhObj.query(q.toUpperCase()).onComplete.then(q => {
+            let featureResult = [];
+            let results = [];
+            if (q.featureResults) { // it is a feature query
+                if (q.featureResults.fsa) { // FSA query
+                    const bboxRange = 0.02;
+                    featureResult = [{
+                        name: q.featureResults.fsa,
+                        bbox: [
+                            q.featureResults.LatLon.lon + bboxRange,
+                            q.featureResults.LatLon.lat - bboxRange,
+                            q.featureResults.LatLon.lon - bboxRange,
+                            q.featureResults.LatLon.lat + bboxRange
+                        ],
+                        type: {
+                            name: q.featureResults.desc
+                        },
+                        position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                        location: {
+                            latitude: q.featureResults.LatLon.lat,
+                            longitude: q.featureResults.LatLon.lon,
+                            province: this.findProvinceObj(q.featureResults.province)
+                        }
+                    }];
+                } else if (q.featureResults.nts) {  // NTS query
+                    featureResult = [{
+                        name: q.featureResults.nts,
+                        bbox: q.featureResults.bbox,
+                        type: {
+                            name: q.featureResults.desc
+                        },
+                        position: [q.featureResults.LatLon.lon, q.featureResults.LatLon.lat],
+                        location: {
+                            city: q.featureResults.location,
+                            latitude: q.featureResults.LatLon.lat,
+                            longitude: q.featureResults.LatLon.lon
+                        }
+                    }];
                 }
-                let queryResult = q.results.map(item => ({
-                    name: item.name,
-                    bbox: item.bbox,
-                    type: {
-                        name: item.type
-                    },
-                    position: [item.LatLon.lon, item.LatLon.lat],
-                    location: {
-                        city: item.location,
-                        latitude: item.LatLon.lat,
-                        longitude: item.LatLon.lon,
-                        province: this.findProvinceObj(item.province)
-                    }
-                }));
-                results = featureResult.concat(queryResult);
-                resolve(results);
-            });
+            }
+            let queryResult = q.results.map(item => ({
+                name: item.name,
+                bbox: item.bbox,
+                type: {
+                    name: item.type
+                },
+                position: [item.LatLon.lon, item.LatLon.lat],
+                location: {
+                    city: item.location,
+                    latitude: item.LatLon.lat,
+                    longitude: item.LatLon.lon,
+                    province: this.findProvinceObj(item.province)
+                }
+            }));
+            return (featureResult.concat(queryResult));
         });
     }
 
-
     /**
-     * Retrun a promise that resolves as a list of formated province objects
+     * Retrun a list of formated province objects
      *
-     * @return {Array} list of formated province objects
+     * @return {Array} a list of formated province objects
      */
     fetchProvinces() {
         if (this.provinceList.length > 0) return this.provinceList; // in cache
@@ -148,9 +137,9 @@ class GeoSearchUI {
     }
 
     /**
-     * Retrun a promise that resolves as a list of formated type objects
+     * Return a list of formated type objects
      *
-     * @return {Array} list of a formated type objects
+     * @return {Array} a list of a formated type objects
      */
     fetchTypes() {
         if (this.typeList.length > 0) return this.typeList; // in cache
