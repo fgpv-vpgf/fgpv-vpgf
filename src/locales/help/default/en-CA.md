@@ -146,7 +146,7 @@ Usage:
 
 # Export Image
 
-You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote*, and a timestamp.
+You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote<sup>*</sup>, and a timestamp<sup>†</sup>.
 
 Select the 'EXPORT' button from the main menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.
 
@@ -156,7 +156,8 @@ If you'd like to change the map canvas size you can do so from the dropdown in t
 
 Click on the download button in the header to get the final generated map image.
 
-*Please note that the footnote may not be available depending on the map.
+<sup>*</sup>Please note that the footnote may not be available depending on the map. <br/>
+<sup>†</sup>Please note timestamp is optional and may not be available depending on the map
 
 # Data Table Panel
 
