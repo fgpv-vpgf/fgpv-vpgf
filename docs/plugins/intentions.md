@@ -115,7 +115,7 @@ The fellowing are the valid config object properties:
 query(q)
 
 /**
- * Retrun a promise that resolves as a list of formated province objects
+ * Retrun a list of formated province objects
  *
  * Valid province object
  * {
@@ -124,13 +124,12 @@ query(q)
  *      name: string
  * }
  *
- *
- * @return {Promise} the promise that resolves as a formated province objects
+ * @return {Array} a list of formated province objects
  */
 fetchProvinces()
 
 /**
- * Retrun a promise that resolves as a list of formated type objects
+ * Retrun a list of formated type objects
  *
  * Valid type object
  * {
@@ -138,7 +137,7 @@ fetchProvinces()
  *      name: string
  * }
  *
- * @return {Promise} the promise that resolves as a formated type objects
+ * @return {Array} a list of a formated type objects
  */
 fetchTypes()
 ```
