@@ -3,7 +3,7 @@ import 'jquery';
 import 'angular';
 import 'angular-aria';
 import 'angular-animate';
-import 'angular-material';
+import '../material/angular-material.min.js';
 import 'angular-messages';
 import 'angular-sanitize';
 import 'angular-translate';

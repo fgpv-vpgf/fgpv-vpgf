@@ -17,6 +17,8 @@ tsd.json
 docs/developer/jsDocs
 docs/api/developer
 .vscode/
+.material-cache/
+angular_material/
 
 # VIM files
 *~
