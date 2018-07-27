@@ -275,10 +275,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     function getProvinces() {
         return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
-                GSservice.fetchProvinces().then(val => {
-                    let provinceList = val;
-                    resolve(provinceList);
-                });
+                resolve(GSservice.fetchProvinces());
             });
         }, () => {
             service.externalApiError = true;
@@ -298,10 +295,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     function getTypes() {
         return new Promise(resolve => {
             events.$on(events.rvApiReady, () => {
-                GSservice.fetchTypes().then(val => {
-                    let typeList = val;
-                    resolve(typeList);
-                });
+                resolve(GSservice.fetchTypes());
             });
         }, () => {
             service.externalApiError = true;
