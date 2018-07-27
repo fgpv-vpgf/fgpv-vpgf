@@ -51,11 +51,10 @@ class GeoSearchUI {
                 return p.name === province;
             });
         } else {
-            this.fetchProvinces().then(provinceList => {
-                return provinceList.find(p => {
-                    return p.name === province;
-                });
+            return this.fetchProvinces().find(p => {
+                return p.name === province;
             });
+
         }
     }
 
@@ -134,7 +133,7 @@ class GeoSearchUI {
      * @return {Array} list of formated province objects
      */
     fetchProvinces() {
-        if (this.provinceList.length > 0) resolve(this.provinceList); // in cache
+        if (this.provinceList.length > 0) return this.provinceList; // in cache
         let provinceList = [];
         let rawProvinces = this._geoSearhObj.config.provinces.list;
         for (let code in rawProvinces) {
@@ -154,7 +153,7 @@ class GeoSearchUI {
      * @return {Array} list of a formated type objects
      */
     fetchTypes() {
-        if (this.typeList.length > 0) resolve(this.typeList); // in cache
+        if (this.typeList.length > 0) return this.typeList; // in cache
         let typeList = [];
         let rawTypes = this._geoSearhObj.config.types.allTypes;
         for (let type in rawTypes) {
