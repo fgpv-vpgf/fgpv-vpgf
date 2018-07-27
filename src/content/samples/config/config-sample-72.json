@@ -332,7 +332,8 @@
                   },
                   {
                     "layerId": "powerplant100mw-naturalGas",
-                    "symbologyExpanded": true
+                    "symbologyExpanded": true,
+                    "description": "100mw Natural gas power plants"
                   },
                   {
                     "layerId": "powerplant100mw-liquids"
