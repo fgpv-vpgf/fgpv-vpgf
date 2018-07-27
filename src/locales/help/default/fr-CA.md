@@ -146,7 +146,7 @@ Utilisation:
 
 # Exporter l'image
 
-Vous pouvez exporter une image de la carte et de ses couches visibles avec: une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée et une estampille temporelle.
+Vous pouvez exporter une image de la carte et de ses couches visibles avec: une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée<sup>*</sup> et une estampille temporelle<sup>†</sup>.
 
 Sélectionnez le bouton « Exporter » dans le menu de gauche pour faire apparaître une boîte de dialogue contenant une image de la carte ainsi qu'une zone d'édition vous permettant de saisir un titre si vous le souhaitez.
 
@@ -156,6 +156,8 @@ Pour modifier la taille du canevas de la carte, vous pouvez le faire à partir d
 
 Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image de carte finale.
 
+<sup>*</sup>Veuillez noter que la note de bas de page peuvent ne pas être disponibles selon la carte. <br/>
+<sup>†</sup>Veuillez prendre note estampille temporelle est facultative et pourraient ne pas être disponibles selon la carte
 
 # Tableau de données
 
