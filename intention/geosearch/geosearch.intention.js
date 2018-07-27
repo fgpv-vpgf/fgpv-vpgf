@@ -67,7 +67,7 @@ class GeoSearchUI {
      */
     query(q) {
         return new Promise((resolve) => {
-            this._geoSearhObj.query(q).onComplete.then(q => {
+            this._geoSearhObj.query(q.toUpperCase()).onComplete.then(q => {
                 let featureResult = [];
                 let results = [];
                 if (q.featureResults) { // it is a feature query
@@ -131,44 +131,40 @@ class GeoSearchUI {
     /**
      * Retrun a promise that resolves as a list of formated province objects
      *
-     * @return {Promise} the promise that resolves as a formated province objects
+     * @return {Array} list of formated province objects
      */
     fetchProvinces() {
-        return new Promise((resolve) => {
-            if (this.provinceList.length > 0) resolve(this.provinceList); // in cache
-            let provinceList = [];
-            let rawProvinces = this._geoSearhObj.config.provinces.list;
-            for (let code in rawProvinces) {
-                provinceList.push({
-                    code: code,
-                    abbr: CODE_TO_ABBR[code],
-                    name: rawProvinces[code]
-                });
-            }
-            this.provinceList = provinceList;
-            resolve(provinceList);
-        });
+        if (this.provinceList.length > 0) resolve(this.provinceList); // in cache
+        let provinceList = [];
+        let rawProvinces = this._geoSearhObj.config.provinces.list;
+        for (let code in rawProvinces) {
+            provinceList.push({
+                code: code,
+                abbr: CODE_TO_ABBR[code],
+                name: rawProvinces[code]
+            });
+        }
+        this.provinceList = provinceList;
+        return this.provinceList;
     }
 
     /**
      * Retrun a promise that resolves as a list of formated type objects
      *
-     * @return {Promise} the promise that resolves as a formated type objects
+     * @return {Array} list of a formated type objects
      */
     fetchTypes() {
-        return new Promise((resolve) => {
-            if (this.typeList.length > 0) resolve(this.typeList); // in cache
-            let typeList = [];
-            let rawTypes = this._geoSearhObj.config.types.allTypes;
-            for (let type in rawTypes) {
-                typeList.push({
-                    code: type,
-                    name: rawTypes[type]
-                });
-            }
-            this.typeList = typeList;
-            resolve(typeList);
-        });
+        if (this.typeList.length > 0) resolve(this.typeList); // in cache
+        let typeList = [];
+        let rawTypes = this._geoSearhObj.config.types.allTypes;
+        for (let type in rawTypes) {
+            typeList.push({
+                code: type,
+                name: rawTypes[type]
+            });
+        }
+        this.typeList = typeList;
+        return this.typeList;
     }
 }
 
