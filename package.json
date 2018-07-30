@@ -1,35 +1,35 @@
 {
-  "name": "extensions",
-  "version": "0.0.1",
-  "description": "Sets the fundation for building/testing extensions in a consistent way.",
-  "scripts": {
-    "dev": "webpack --mode development",
-    "serve": "webpack-serve"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fgpv-vpgf/extensions.git"
-  },
-  "keywords": [
-    "extention",
-    "RAMP"
-  ],
-  "author": "Miles Petrov",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/fgpv-vpgf/extensions/issues"
-  },
-  "homepage": "https://github.com/fgpv-vpgf/extensions#readme",
-  "devDependencies": {
-    "css-loader": "0.28.11",
-    "mini-css-extract-plugin": "^0.4.0",
-    "node-sass": "^4.9.0",
-    "sass-loader": "7.0.3",
-    "style-loader": "0.21.0",
-    "ts-loader": "4.3.1",
-    "typescript": "^2.9.1",
-    "webpack": "4.11.0",
-    "webpack-cli": "3.0.2",
-    "webpack-serve": "1.0.2"
-  }
+    "name": "extensions",
+    "version": "0.0.1",
+    "description": "Sets the foundation for building/testing extensions in a consistent way.",
+    "scripts": {
+        "dev": "webpack --mode development",
+        "serve": "webpack-serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fgpv-vpgf/extensions.git"
+    },
+    "keywords": [
+        "extension",
+        "RAMP"
+    ],
+    "author": "Miles Petrov",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/fgpv-vpgf/extensions/issues"
+    },
+    "homepage": "https://github.com/fgpv-vpgf/extensions#readme",
+    "devDependencies": {
+        "css-loader": "1.0.0",
+        "mini-css-extract-plugin": "0.4.1",
+        "node-sass": "4.9.2",
+        "sass-loader": "7.0.3",
+        "style-loader": "0.21.0",
+        "ts-loader": "4.4.2",
+        "typescript": "2.9.2",
+        "webpack": "4.16.3",
+        "webpack-cli": "3.1.0",
+        "webpack-serve": "2.0.2"
+    }
 }

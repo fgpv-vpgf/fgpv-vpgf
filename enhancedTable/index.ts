@@ -1,40 +1,63 @@
-import { Grid, GridOptions } from "ag-grid/main";
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import { Grid, GridOptions, ColDef, ColGroupDef, GridApi } from 'ag-grid/main';
+import { PrintTable } from '../enhancedTable/print';
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 
-class SimpleGrid {
-    private gridOptions: GridOptions = <GridOptions>{};
-    constructor() {
-        this.gridOptions = {
-            columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData()
-        };
+export class EnhancedTable {
+    constructor(mApi: any, element: HTMLElement, columns: (ColDef | ColGroupDef)[], rows: any[]) {
+        this.mApi = mApi;
+        this.printTable = new PrintTable(this);
 
-        let eGridDiv:HTMLElement = <HTMLElement>document.querySelector('#myGrid');
-        new Grid(eGridDiv, this.gridOptions);
+        (<any>Object).assign(this.gridOptions, {
+            columnDefs: columns,
+            rowData: rows
+        });
+
+        new Grid(element, this.gridOptions);
+        this.gApi = this.gridOptions.api;
     }
 
-    // specify the columns
-    private createColumnDefs() {
-        return [
-            {headerName: "Make", field: "make"},
-            {headerName: "Model", field: "model"},
-            {headerName: "Price", field: "price"}
-        ];
+    init(mApi: any) {
+        this.mApi = mApi;
     }
 
-    // specify the data
-    private createRowData() {
-        return [
-            {make: "Toyota", model: "Celica", price: 35000},
-            {make: "Ford", model: "Mondeo", price: 32000},
-            {make: "Porsche", model: "Boxter", price: 72000}
-        ];
+    print() {
+        this.printTable.print();
+    }
+
+    updateRows(rows: any[]) {
+        this.gApi.setRowData(rows);
     }
 }
 
-(<any>window).enhancedTable = {
-    init: mApi => {
-        new SimpleGrid();
-    }
+export interface EnhancedTable {
+    gridOptions: GridOptions;
+    mApi: any;
+    gApi: GridApi;
+    printTable: PrintTable;
+}
+
+EnhancedTable.prototype.gridOptions = {
+    enableSorting: true,
+    floatingFilter: true
 };
+
+class TableBuilder {
+    private mApi: any;
+
+    init(mApi: any) {
+        this.mApi = mApi;
+    }
+
+    create(element: HTMLElement, columns: (ColDef | ColGroupDef)[], rows: any[]) {
+        return new EnhancedTable(this.mApi, element, columns, rows);
+    }
+}
+
+TableBuilder.prototype.id = 'fancyTable';
+
+interface TableBuilder {
+    id: string;
+}
+
+(<any>window).enhancedTable = TableBuilder;

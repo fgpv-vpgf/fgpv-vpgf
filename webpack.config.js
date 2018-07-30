@@ -11,6 +11,10 @@ module.exports = {
         filename: './[name]/[name].js'
     },
 
+    resolve: {
+        extensions: [".ts", ".js", ".css", ".scss"]
+    },
+
     module: {
         rules: [
             { test: /\.ts$/, use: 'ts-loader' },
