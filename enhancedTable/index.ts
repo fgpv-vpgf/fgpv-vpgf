@@ -1,63 +1,102 @@
 import { Grid, GridOptions, ColDef, ColGroupDef, GridApi } from 'ag-grid/main';
-import { PrintTable } from '../enhancedTable/print';
+import { take } from 'rxjs/operators';
+import 'jquery';
 import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-balham.css';
 
-export class EnhancedTable {
-    constructor(mApi: any, element: HTMLElement, columns: (ColDef | ColGroupDef)[], rows: any[]) {
-        this.mApi = mApi;
-        this.printTable = new PrintTable(this);
+class PanelManager {
+    constructor(mapApi: any) {
+        this.mapApi = mapApi;
+        this.panel = this.mapApi.createPanel(this.id);
+        this.tableContent = $(`<div rv-focus-exempt></div>`);
 
-        (<any>Object).assign(this.gridOptions, {
-            columnDefs: columns,
-            rowData: rows
+        this.panel.panelContents.css({
+            top: '0px',
+            left: '410px',
+            right: '0px',
+            bottom: '0px'
         });
 
-        new Grid(element, this.gridOptions);
-        this.gApi = this.gridOptions.api;
+        this.panel.panelBody.addClass('ag-theme-balham');
+
+        this.panel.controls = [new this.panel.button('X')];
+        this.panel.content = new this.panel.container(this.tableContent);
     }
 
-    init(mApi: any) {
-        this.mApi = mApi;
+    open(tableOptions: any) {
+        this.tableContent.empty();
+        new Grid(this.tableContent[0], tableOptions);
+        this.panel.open();
     }
 
-    print() {
-        this.printTable.print();
-    }
-
-    updateRows(rows: any[]) {
-        this.gApi.setRowData(rows);
+    get id(): string {
+        this._id = this._id ? this._id : 'fancyTablePanel-' + Math.floor(Math.random() * 1000000 + 1) + Date.now();
+        return this._id;
     }
 }
 
-export interface EnhancedTable {
-    gridOptions: GridOptions;
-    mApi: any;
-    gApi: GridApi;
-    printTable: PrintTable;
+interface PanelManager {
+    panel: any;
+    mapApi: any;
+    tableContent: JQuery<HTMLElement>;
+    _id: string;
 }
 
-EnhancedTable.prototype.gridOptions = {
+class TableBuilder {
+    init(mapApi: any) {
+        this.mapApi = mapApi;
+        this.panel = new PanelManager(mapApi);
+
+        this.mapApi.layers.click.subscribe(baseLayer => {
+            const attrs = baseLayer.getAttributes();
+
+            if (attrs.length === 0) {
+                this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
+                    this.createTable(attrs);
+                });
+            } else {
+                this.createTable({
+                    attributes: attrs,
+                    layer: baseLayer
+                });
+            }
+        });
+    }
+
+    createTable(attrBundle: AttrBundle) {
+        const cols = Object.keys(attrBundle.attributes[0]).map(columnName => ({
+            headerName: columnName,
+            field: columnName
+        }));
+
+        (<any>Object).assign(this.tableOptions, {
+            columnDefs: cols,
+            rowData: attrBundle.attributes
+        });
+
+        this.panel.open(this.tableOptions);
+        this.tableApi = this.tableOptions.api;
+    }
+}
+
+interface AttrBundle {
+    attributes: any[];
+    layer: any;
+}
+
+interface TableBuilder {
+    id: string;
+    mapApi: any;
+    tableOptions: GridOptions;
+    tableApi: GridApi;
+    panel: PanelManager;
+}
+
+TableBuilder.prototype.tableOptions = {
     enableSorting: true,
     floatingFilter: true
 };
 
-class TableBuilder {
-    private mApi: any;
-
-    init(mApi: any) {
-        this.mApi = mApi;
-    }
-
-    create(element: HTMLElement, columns: (ColDef | ColGroupDef)[], rows: any[]) {
-        return new EnhancedTable(this.mApi, element, columns, rows);
-    }
-}
-
 TableBuilder.prototype.id = 'fancyTable';
-
-interface TableBuilder {
-    id: string;
-}
 
 (<any>window).enhancedTable = TableBuilder;
