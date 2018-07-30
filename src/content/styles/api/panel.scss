@@ -10,7 +10,6 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 100%;
     overflow: hidden;
     margin: 10px;
 
@@ -31,11 +30,20 @@
 .separator{
     border-bottom: lightgrey solid 1px;
 }
-.panel-body{
+.panel-body {
     padding: 5px 18px;
-    overflow-y: auto;
-    height: 92.1%;
     border-top: lightgrey solid 1px;
+    height: calc(100% - 38px); // 100% minus the headers
+
+    &.ag-theme-balham {
+        border-top: initial;
+        margin: -1px;
+        padding: inherit;
+
+        > div:first-child {
+            height: 100%;
+        }
+    }
 }
 .btn{
     width: 36px;
@@ -90,7 +98,7 @@
     height: 20%;
 }
 .hidden{
-    display: none;
+    visibility: hidden;
 }
 .divider{
     border-left: 1px solid rgb(146, 167, 187);

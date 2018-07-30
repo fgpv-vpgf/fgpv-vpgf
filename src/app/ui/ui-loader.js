@@ -50,16 +50,6 @@ import './export/export-size.class.js';
 import './export/export-sizes.service.js';
 import './export/export.service.js';
 
-import './table/table-default-menu.directive.js';
-import './table/table-pane';
-//import './table/table-default.directive.js';
-//import './table/table-definition.directive.js';
-//import './table/table-number-only.directive.js';
-//import './table/table-search.directive.js';
-//import './table/table-setting-cluster.directive.js';
-//import './table/table-setting-panel.directive.js';
-//import './table/table.service.js';
-
 import './geosearch/geosearch-bar.directive.js';
 import './geosearch/geosearch-bottom-filters.directive.js';
 import './geosearch/geosearch-filters.service.js';
