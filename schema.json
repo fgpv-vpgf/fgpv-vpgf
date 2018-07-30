@@ -1066,6 +1066,11 @@
                     "description": "Intention for displaying data",
                     "type": "string",
                     "default": "none"
+                },
+                "table": {
+                    "description": "Intention for displaying data",
+                    "type": "string",
+                    "default": "none"
                 }
             },
             "additionalProperties": false

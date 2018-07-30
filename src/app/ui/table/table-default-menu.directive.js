@@ -40,8 +40,6 @@ function Controller($scope, stateManager, events, appInfo, $rootScope) {
 
     self.setMode = setMode;
     self.tableMode = stateManager.state.table.morph;
-    self.applyFilter = angular.noop; // use by filter by extent
-    self.filter = {};
     self.dataPrint = dataPrint;
     self.dataExportCSV = dataExportCSV;
     self.appID = appInfo.id;

@@ -1,26 +1,20 @@
 const templateUrl = require('./table-pane.html');
-
-angular
+ angular
     .module('app.ui')
     .directive('tablePane', tablePane);
-
-function tablePane(stateManager, $rootScope, appInfo) {
+ function tablePane(stateManager, $rootScope, appInfo) {
     const directive = {
         restrict: 'E',
         templateUrl,
         link: link
     };
-
-    return directive;
-
-    /*********/
-
-    function link(scope) {
+     return directive;
+     /*********/
+     function link(scope) {
         const self = scope.self;
         self.display = stateManager.display.table;
         let table;
-
-        // DataTable is either being created or destroyed
+         // DataTable is either being created or destroyed
         $rootScope.$watch(() => self.display.data, val => {
             if (val && val.rows) {
                 
@@ -30,7 +24,7 @@ function tablePane(stateManager, $rootScope, appInfo) {
                     headerName: c.title, field: c.data
                 }));
                 $('#testTable1').empty();
-                const tableI = appInfo.plugins.find(p => p.intention === 'table');
+                const tableI = appInfo.plugins.find(p => p.id === 'fancyTable');
                 table = tableI.create(document.querySelector('#testTable1'), cols, self.display.data.rows);
             }
         });

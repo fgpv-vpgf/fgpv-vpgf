@@ -64,7 +64,11 @@ export default class Loader {
      * If a promise is returned, adds it to the `preInitPromises` list.
      */
     preInit() {
-        this.pluginList.forEach(p => {
+        this.pluginList.forEach((p, i, a) => {
+            
+            a[i] = typeof p === 'function' ? new p() : p;
+            p = a[i];
+
             if (p.preInit) {
                 let returnedValue = p.preInit(this.config);
 
