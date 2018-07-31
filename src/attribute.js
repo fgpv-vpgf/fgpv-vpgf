@@ -284,9 +284,10 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
     * @param {String} mapServiceUrl   an arcgis map server service endpoint (no integer index)
     * @param {String} featureIdx      index of where the endpoint is.
     * @param {String} attribs         an optional comma separated list of attributes to download. default '*' will download all
+    * @param {Object} customRenderer  an optional renderer definition. if not supplied, the service renderer will be used
     * @return {Object} attributes in a packaged format for asynch access
     */
-    return (mapServiceUrl, featureIdx, attribs = '*') => {
+    return (mapServiceUrl, featureIdx, attribs = '*', customRenderer = {}) => {
 
         const layerUrl = mapServiceUrl + '/' + featureIdx;
         const layerPackage = newLayerPackage(featureIdx, esriBundle);
@@ -345,8 +346,8 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                         }
 
                         // add renderer and legend
-                        layerData.renderer = geoApi.symbology.cleanRenderer(serviceResult.drawingInfo.renderer,
-                            serviceResult.fields);
+                        const renderer = customRenderer.type ? customRenderer : serviceResult.drawingInfo.renderer;
+                        layerData.renderer = geoApi.symbology.cleanRenderer(renderer, serviceResult.fields);
 
                         layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx,
                             serviceResult.fields);

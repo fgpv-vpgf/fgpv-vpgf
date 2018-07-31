@@ -1140,6 +1140,9 @@ module.exports = (esriBundle, geoApi, window) => {
         enhanceRenderer,
         cleanRenderer,
         filterifyRenderer,
-        mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi)
+        mapServerToLocalLegend: buildMapServerToLocalLegend(esriBundle, geoApi),
+        SimpleRenderer: esriBundle.SimpleRenderer,
+        ClassBreaksRenderer: esriBundle.ClassBreaksRenderer,
+        UniqueValueRenderer: esriBundle.UniqueValueRenderer
     };
 };
