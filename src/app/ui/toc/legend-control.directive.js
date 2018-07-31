@@ -33,7 +33,7 @@ angular
     .module('app.ui')
     .directive('rvLegendControl', rvLegendControl);
 
-function rvLegendControl(LegendElementFactory) {
+function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
     const directive = {
         restrict: 'E',
         // returns a different templateUrl based on the value of the templateUrl attribute
@@ -61,11 +61,36 @@ function rvLegendControl(LegendElementFactory) {
         self.uiControl = LegendElementFactory.makeControl(self.block, self.name);
 
         self.Math = window.Math;
+        self.notifyApiClick = notifyApiClick;
 
         // if the control is undefined, selfdestruct
         if (!self.uiControl.isVisible && attr.persist !== 'true') {
             el.remove();
             scope.$destroy();
+        }
+
+        /**
+         * Triggers the API layer group observable when a layer is clicked on the legend
+         *
+         * @function notifyApiClick
+         * @private
+         * @param {LegendBlock} block legend block that was clicked
+         */
+        function notifyApiClick(block) {
+            let layer;
+            if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {  // make sure the item clicked is a node, and not group or other
+                if (block.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layer = appInfo.mapi.layers.allLayers.find(l =>
+                        l.id === block.layerRecordId &&
+                        l.layerIndex === parseInt(block.itemIndex));
+                } else {
+                    layer = appInfo.mapi.layers.getLayersById(block.layerRecordId)[0];
+                }
+
+                if (layer) {
+                    appInfo.mapi.layers._click.next(layer);
+                }
+            }
         }
     }
 }
