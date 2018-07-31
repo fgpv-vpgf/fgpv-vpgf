@@ -324,10 +324,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
     class LegendBlock {
         constructor (blockConfig) {
             this._blockConfig = blockConfig;
-
+            this._hidden = this.blockConfig.hidden === true;
         }
 
         _controlled = false;
+        _hidden = false;
 
         get isInteractive () {          return false; }
 
@@ -351,7 +352,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          */
         get controlled () {             return this._controlled; }
 
-        get hidden () {                 return this.blockConfig.hidden || false; }
+        get hidden () {                 return this._hidden; }
+        set hidden(value) {             this._hidden = value; }
 
         _parent = null;
         set parent (value) {            this._parent = value; }
@@ -393,7 +395,6 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get infoType () {               return this.blockConfig.infoType; }
         get content () {                return this.blockConfig.content; }
 
-        get layerName () {              return this.blockConfig.layerName; }
         get description () {            return this.blockConfig.description; }
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this.blockConfig.symbologyRenderStyle; }
@@ -849,6 +850,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         // collapsed value specifies if the group node will be hidden from UI
         // in such a case, its children will appear to be on the same level as the legend group would have been
         _collapsed = false;
+
         get collapsed () {       return this._collapsed; }
         set collapsed (value) {  this._collapsed = value; }
 
@@ -1107,7 +1109,6 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             super(blockConfig);
 
             this._entries = [];
-            this._entryWatchers = [];
             this._selectedEntry = null;
 
             this._walk = ref.walkFunction.bind(this);
@@ -1150,6 +1151,19 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 this._selectedEntry.visibility = false;
             }
 
+            // if this visiblity set is collapsed and has active entries,
+            // hide all other entries except the selection one (or the first of active entreis if the selection is null)
+            if (this.blockConfig.collapse && this._activeEntries.length > 0) {
+                const collapsedEntry = this._selectedEntry || this._activeEntries[0];
+                collapsedEntry.hidden = false;
+
+                this._activeEntries.forEach(entry => {
+                    if (entry !== collapsedEntry) {
+                        entry.hidden = true
+                    }
+                })
+            }
+
             return this._selectedEntry === null ? false : this._selectedEntry.visibility;
         }
         set visibility (value) {
@@ -1172,7 +1186,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 entry.blockType === TYPES.GROUP ||
                 entry.blockType === TYPES.NODE);
         }
-        get entries () { return this._entries; }
+
+        get entries () {
+            return this._entries;
+        }
+
         addEntry (entry, position = this._entries.length) {
             // since a set can have at most one visible child,
             // as soon as there is one visible chilld, turn all subsequent children off

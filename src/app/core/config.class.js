@@ -1250,11 +1250,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super();
             this._exclusiveVisibility = visibilitySetSource.exclusiveVisibility.map(childConfig =>
                 _makeChildObject(childConfig));
+            this._collapse = visibilitySetSource.collapse === true;
 
             this._walk = ref.walkFunction.bind(this);
         }
 
         get exclusiveVisibility () { return this._exclusiveVisibility; }
+        get collapse () { return this._collapse; }
 
         get entryType () { return TYPES.legend.SET; }
 
@@ -1266,6 +1268,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             return {
                 exclusiveVisibility: this.exclusiveVisibility.map(child =>
                     child.JSON),
+                collapse: this.collapse,
                 entryType: this.entryType
             };
         }
@@ -1360,6 +1363,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 [];
 
             this._expanded = entryGroupSource.expanded || false;
+            this._hidden = entryGroupSource.hidden === true;
 
             this._walk = ref.walkFunction.bind(this);
         }
@@ -1370,6 +1374,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get disabledControls () { return this._disabledControls; }
         get userDisabledControls () { return this._userDisabledControls; }
         get expanded () { return this._expanded; }
+
+        /**
+         * Specifies if the legend group should be hidden from the UI.
+         *
+         * @return {Boolean} if true, the legend group will not be rendered in legend UI
+         */
+        get hidden () { return this._hidden; }
 
         get entryType () { return TYPES.legend.GROUP; }
 
@@ -1385,6 +1396,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 expanded: this.expanded,
+                hidden: this.hidden,
                 entryType: this.entryType
             };
         }
@@ -1398,9 +1410,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (entrySource) {
             super();
             this._infoType = entrySource.infoType;
-            this._content = entrySource.content;
+            this._content = entrySource.content || entrySource.layerName || '';
 
-            this._layerName = entrySource.layerName || '';
             this._description = entrySource.description || '';
             this._coverIcon = entrySource.coverIcon;
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
@@ -1411,8 +1422,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get infoType () {               return this._infoType; }
         get content () {                return this._content; }
-
-        get layerName () {              return this._layerName; }
         get description () {            return this._description; }
         get coverIcon () {      return this._coverIcon; }
         get symbologyStack () {         return this._symbologyStack; }
@@ -1426,7 +1435,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 infoType: this.infoType,
                 content: this.content,
                 entryType: this.entryType,
-                layerName: this.layerName,
                 description: this.description,
                 coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
