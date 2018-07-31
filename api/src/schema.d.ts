@@ -867,6 +867,10 @@ export interface FeatureLayerNode {
    */
   nameField?: string;
   /**
+   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+   */
+  tooltipField?: string;
+  /**
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
   url: string;
@@ -1018,6 +1022,10 @@ export interface WfsLayerNode {
    * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
    */
   nameField?: string;
+  /**
+   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+   */
+  tooltipField?: string;
   /**
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
@@ -1271,6 +1279,10 @@ export interface DynamicLayerEntryNode {
    * A descriptive name for the layer, can override the name coming from the service.
    */
   name?: string;
+  /**
+   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+   */
+  nameField?: string;
   /**
    * A comma separated list of attribute names that should be requested on query.
    */

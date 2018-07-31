@@ -87,11 +87,6 @@ module.exports = function (env) {
                 filename: "rv-styles.css"
             }),
 
-            new webpack.ContextReplacementPlugin(
-                /moment[\/\\]locale$/,
-                /en|fr/
-            ),
-
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
                 from: '**/*.+(json|js|css|html)',

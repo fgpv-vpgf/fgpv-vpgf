@@ -703,6 +703,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super(source);
 
             this._nameField = source.nameField;
+            this._tooltipField = source.tooltipField;
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
         }
@@ -712,6 +713,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get nameField () { return this._nameField; }
         set nameField (value) { this._nameField = value; }
 
+        get tooltipField () { return this._tooltipField; }
+        set tooltipField (value) { this._tooltipField = value; }
+
         get tolerance () { return this._tolerance; }
         get table () { return this._table; }
 
@@ -720,6 +724,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
+                tooltipField: this.tooltipField,
                 tolerance: this.tolerance,
                 table: this.table.JSON
             });
@@ -847,6 +852,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (source) {
             super(source);
 
+            this._nameField = source.nameField;
             this._outfields = source.outfields || '*';
             this._stateOnly = source.stateOnly;
             this._extent = source.extent ?
@@ -857,6 +863,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._table = new TableNode(source.table);
         }
 
+        get nameField () { return this._nameField; }
+        set nameField (value) { this._nameField = value; }
+
         get outfields () { return this._outfields; }
         get stateOnly () { return this._stateOnly; }
         get extent () { return this._extent; }
@@ -865,6 +874,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get JSON() {
             return angular.merge(super.JSON, {
+                nameField: this.nameField,
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent,
