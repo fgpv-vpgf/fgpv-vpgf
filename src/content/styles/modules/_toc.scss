@@ -87,6 +87,14 @@ $layer-item-height-touch: rem(7.2);
         }
     }
 
+   ul.rv-legend-set.rv-legend-set-collapse > li {
+        @include legend-set-item {
+            &:before, &:after {
+                display: none;
+            }
+        }
+    }
+
     ul.rv-legend-set > li {
         @include legend-set-item {
             height: 100%;
