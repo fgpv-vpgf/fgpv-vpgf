@@ -90,6 +90,18 @@ class AttribRecord extends layerRecord.LayerRecord {
     }
 
     /**
+    * Extract the tooltip field from a feature as best we can.
+    *
+    * @function getTooltipName
+    * @param {String} objId      the object id of the attribute
+    * @param {Object} attribs    the dictionary of attributes for the feature.
+    * @returns {String}          the name of the feature
+    */
+   getTooltipName (objId, attribs) {
+    return this._featClasses[this._defaultFC].getTooltipName(objId, attribs);
+}
+
+    /**
      * Fetches a graphic for the given object id.
      * Will attempt local copy (unless overridden), will hit the server if not available.
      *

@@ -142,6 +142,30 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
+     * Extract the tooltip field from a feature as best we can.
+     *
+     * @function getTooltipName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
+    getTooltipName (objId, attribs) {
+        // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
+        // NOTE: we used to have fallback logic here that would use layer settings
+        //       if this.nameField had no value. Logic has changed to now push
+        //       layer settings to this.nameField during the load event of the
+        //       Record.
+
+        if (this.tooltipField && attribs) {
+            // extract name
+            return attribs[this.tooltipField];
+        } else {
+            // FIXME wire in "feature" to translation service
+            return 'Feature ' + objId;
+        }
+    }
+
+    /**
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */

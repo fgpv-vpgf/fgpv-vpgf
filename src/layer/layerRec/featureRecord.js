@@ -128,19 +128,36 @@ class FeatureRecord extends attribRecord.AttribRecord {
             aFC.geomType = ld.geometryType;
             aFC.oidField = ld.oidField;
             aFC.nameField = this.config.nameField || ld.nameField || '';
+            aFC.tooltipField = this.config.tooltipField || aFC.nameField;
 
             // trickery. file layer can have field names that are bad keys.
-            // our file loader will have corrected them, but config.nameField will have
+            // our file loader will have corrected them, but config.nameField and config.tooltipField will have
             // been supplied from the wizard (it pre-fetches fields to present a choice
-            // to the user). If the nameField was adjusted for bad characters, we need to
+            // to the user). If the nameField / tooltipField was adjusted for bad characters, we need to
             // re-synchronize it here.
-            if (this.dataSource() !== 'esri' && ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
-                const validField = ld.fields.find(f => f.alias === aFC.nameField);
-                if (validField) {
-                    aFC.nameField = validField.name;
-                } else {
-                    // give warning. impact is tooltips will have no text, details pane no header
-                    console.warn(`Cannot find name field in layer field list: ${aFC.nameField}`);
+            if (this.dataSource() !== 'esri') {
+                if (ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
+                    const validField = ld.fields.find(f => f.alias === aFC.nameField);
+                    if (validField) {
+                        aFC.nameField = validField.name;
+                        if (!this.config.tooltipField) {    // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
+                            afc.tooltipField = validField.name
+                        }
+                    } else {
+                        // give warning. impact is tooltips will have no text, details pane no header
+                        console.warn(`Cannot find name field in layer field list: ${aFC.nameField}`);
+                    }
+                }
+
+                // only check the tooltipField if it was provided from the config, otherwise it would have been corrected above already (if required)
+                if (this.config.tooltipField && ld.fields.findIndex(f => f.name === aFC.tooltipField) === -1) {
+                    const validField = ld.fields.find(f => f.alias === aFC.tooltipField);
+                    if (validField) {
+                        aFC.tooltipField = validField.name;
+                    } else {
+                        // give warning. impact is tooltips will have no text, details pane no header
+                        console.warn(`Cannot find name field in layer field list: ${aFC.tooltipField}`);
+                    }
                 }
             }
         });
@@ -245,7 +262,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 // duplicate the position so listener can verify this event is same as mouseOver event above
                 const loadBundle = {
                     type: 'tipLoaded',
-                    name: this.getFeatureName(oid, featAttribs),
+                    name: this.getTooltipName(oid, featAttribs),
                     attribs: featAttribs,
                     target: e.target,
                     svgcode
