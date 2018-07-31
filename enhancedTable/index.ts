@@ -1,46 +1,10 @@
-import { Grid, GridOptions, ColDef, ColGroupDef, GridApi } from 'ag-grid/main';
-import { take } from 'rxjs/operators';
+import { GridOptions, GridApi } from 'ag-grid/main';
+import { take } from 'rxjs/internal/operators/take';
 import 'jquery';
 import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-balham.css';
 
-class PanelManager {
-    constructor(mapApi: any) {
-        this.mapApi = mapApi;
-        this.panel = this.mapApi.createPanel(this.id);
-        this.tableContent = $(`<div rv-focus-exempt></div>`);
-
-        this.panel.panelContents.css({
-            top: '0px',
-            left: '410px',
-            right: '0px',
-            bottom: '0px'
-        });
-
-        this.panel.panelBody.addClass('ag-theme-balham');
-
-        this.panel.controls = [new this.panel.button('X')];
-        this.panel.content = new this.panel.container(this.tableContent);
-    }
-
-    open(tableOptions: any) {
-        this.tableContent.empty();
-        new Grid(this.tableContent[0], tableOptions);
-        this.panel.open();
-    }
-
-    get id(): string {
-        this._id = this._id ? this._id : 'fancyTablePanel-' + Math.floor(Math.random() * 1000000 + 1) + Date.now();
-        return this._id;
-    }
-}
-
-interface PanelManager {
-    panel: any;
-    mapApi: any;
-    tableContent: JQuery<HTMLElement>;
-    _id: string;
-}
+import { PanelManager } from './panel-manager';
 
 class TableBuilder {
     init(mapApi: any) {
@@ -74,7 +38,7 @@ class TableBuilder {
             rowData: attrBundle.attributes
         });
 
-        this.panel.open(this.tableOptions);
+        this.panel.open(this.tableOptions, attrBundle.layer);
         this.tableApi = this.tableOptions.api;
     }
 }
