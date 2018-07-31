@@ -776,6 +776,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._tooltipField = source.tooltipField;
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
+            this._customRenderer = source.customRenderer || {};
 
             // apply layer definition query on the layer node object
             if (this.table.applyMap || this.table.applied) {
@@ -796,12 +797,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get queryUrl () { return this._queryUrl; }
 
+        get customRenderer () { return this._customRenderer; }
+
         get JSON() {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
                 tooltipField: this.tooltipField,
                 tolerance: this.tolerance,
-                table: this.table.JSON
+                table: this.table.JSON,
+                customRenderer: this.customRenderer
             });
         }
     }
