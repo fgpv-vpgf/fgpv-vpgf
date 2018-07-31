@@ -19,7 +19,7 @@ angular
     .directive('rvInitMap', rvInitMap);
 
 function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames, $compile) {
+    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames, $compile, $controllerProvider) {
 
     // key codes that are currently active
     let keyMap = [];
@@ -92,9 +92,12 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
 
                 events.$broadcast(events.rvApiPrePlugin, apiMap);
                 // api panel elements need a reference to the internal angular compiler
-                PanelElem.prototype.angularCompiler = function(html, compilerScope = scope) {
+                PanelElem.prototype.angularCompiler = function(html, compilerScope = $rootScope) {
                     return $compile(html)(compilerScope);
                 }
+
+                // allows plugins to register components on the angular instance, usually to provide angular material support
+                apiMap.agControllerRegister = $controllerProvider.register;
 
                 loadExtensions(apiMap);
                 events.$broadcast(events.rvApiMapAdded, apiMap);

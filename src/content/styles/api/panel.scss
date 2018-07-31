@@ -14,7 +14,16 @@
     margin: 10px;
 
     .rv-button-24 {
-        height: inherit;
+        overflow: visible;
+        line-height: 24px;
+        min-height: 24px;
+        width: 24px;
+        min-width: 24px;
+
+        [md-icon] {
+            max-height: 24px;
+            max-width: 24px;
+        }
     }
 }
 .panel-controls {
@@ -25,6 +34,22 @@
     .md-icon-button {
         width: 24px;
         height: 32px;
+    }
+
+    md-input-container {
+        margin: inherit;
+
+        > md-icon {
+            top: auto;
+        }
+    }
+
+    h2 {
+        position: absolute;
+        top: -5px;
+        font-weight: normal;
+        display:inline;
+        vertical-align: middle;
     }
 }
 .separator{
@@ -83,16 +108,6 @@
     outline: none;
 }
 
-.svg-style{
-    width: 80%;
-    height: 80%;
-    top: 0px;
-    left: 0px;
-    fill: #778899;
-}
-.svg-style:hover{
-    fill: darkslategray;
-}
 .txt{
     width: 20%;
     height: 20%;
