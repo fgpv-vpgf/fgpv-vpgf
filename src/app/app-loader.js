@@ -9,13 +9,6 @@ import 'angular-sanitize';
 import 'angular-translate';
 import 'dotjem-angular-tree/src/directives/dxTree.js';
 import 'angular-translate-loader-static-files';
-import 'datatables.net';
-import 'datatables.net-buttons';
-import 'datatables.net-buttons/js/buttons.html5.js';
-import 'datatables.net-buttons/js/buttons.print.js';
-import 'datatables.net-colreorder';
-import 'datatables.net-scroller';
-import 'datatables.net-select';
 
 // APPLICATION MAIN IMPORTS
 import './api-loader';
