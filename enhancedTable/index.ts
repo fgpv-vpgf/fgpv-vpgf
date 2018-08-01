@@ -1,9 +1,5 @@
 import { GridOptions, GridApi } from 'ag-grid/main';
 import { take } from 'rxjs/internal/operators/take';
-import 'jquery';
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-balham.css';
-
 import { PanelManager } from './panel-manager';
 
 class TableBuilder {
