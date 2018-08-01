@@ -1372,7 +1372,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 DEFAULTS.legend[TYPES.legend.GROUP].controls) :
                 [];
 
-            this._expanded = entryGroupSource.expanded || false;
+            this._expanded = typeof entryGroupSource.expanded !== 'undefined' ? entryGroupSource.expanded : true;
             this._hidden = entryGroupSource.hidden === true;
 
             this._walk = ref.walkFunction.bind(this);
