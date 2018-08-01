@@ -54,7 +54,7 @@ describe('ESRI Map', () => {
     };
 
     const mapConfig = {
-        basemaps: [{ layers: ['random url'] }],
+        basemaps: [{ _layers: ['random url'] }],
         extent: jsonExtent,
         lods: []
     };
