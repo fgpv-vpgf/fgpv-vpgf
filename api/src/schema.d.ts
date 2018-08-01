@@ -61,7 +61,15 @@ export type InfoSection =
       /**
        * Name to display in legend
        */
+      content?: string;
+      /**
+       * [deprecated] Name to display in legend. Use `content` instead.
+       */
       layerName?: string;
+      /**
+       * An optional icon, if present it will be used to primarily represent the unbound layer
+       */
+      coverIcon?: string;
       /**
        * Optional description displayed above the symbology stack.
        */
@@ -75,10 +83,6 @@ export type InfoSection =
        * Indicates if symbology stack is expand by default
        */
       symbologyExpanded?: boolean;
-      /**
-       * An optional icon, if present it will be used to primarily represent the unbound layer
-       */
-      coverIcon?: string;
     }
   | {
       infoType?: "text";
@@ -1328,12 +1332,20 @@ export interface EntryGroup {
    * Title of the group
    */
   name: string;
+  /**
+   * Indicates that the legend group will be hidden from the UI and all its controls will be inaccessible to the user.
+   */
+  hidden?: boolean;
   expanded?: boolean;
   children: (EntryGroup | VisibilitySet | Entry | InfoSection)[];
   controls?: LegendGroupControls;
   disabledControls?: LegendGroupControls;
 }
 export interface VisibilitySet {
+  /**
+   * Renders a visiblity set as a single (currently selected) legend entry. The selection cannot be directly changed by the user, but can be modified through the API or other legend entries linked to the same layers.
+   */
+  collapse?: boolean;
   exclusiveVisibility: (EntryGroup | Entry)[];
 }
 export interface Entry {
