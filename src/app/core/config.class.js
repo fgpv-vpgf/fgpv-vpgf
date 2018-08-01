@@ -429,6 +429,76 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    /**
+     * Get the layer definition query
+     *
+     * @method _getFilterDefintion
+     * @private
+     * @param {Array} columns an array of columns of a layer
+     * @return {String} the Assembled query definition of the layer
+     */
+    function _getFilterDefintion(columns) {
+        let defs = [];
+
+        columns.forEach(column => {
+            if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
+                defs = _getColumnFilterDefintion(defs, column);
+            }
+        });
+
+        return defs.join(' AND ');
+    }
+
+    /**
+     * Set the layer definition query
+     *
+     * @method _getColumnFilterDefintion
+     * @private
+     * @param   {Array}   defs   array of definition queries
+     * @param   {Object}   column   column object
+     * @return {Array} defs definition queries array
+     */
+    function _getColumnFilterDefintion(defs, column) {
+        if (column.filter.type === 'string') {
+            // replace ' by '' to be able to perform the search in the datatable
+            // relpace * wildcard and construct the query (add wildcard at the end)
+            const val = column.filter.value.replace(/'/g, /''/);
+            if (val !== '') {
+                defs.push(`UPPER(${column.data}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
+            }
+        } else if (column.filter.type === 'selector') {
+            const val = column.filter.value.join(`' , '`);
+            if (val !== '') {
+                defs.push(`UPPER(${column.data}) IN (\'${val.toUpperCase()}\')`);
+            }
+        } else if (column.filter.type === 'number') {
+            const values = column.filter.value.split(',');
+            const min = values[0];
+            const max = values[1];
+
+            if (min !== '') {
+                defs.push(`${column.data} >= ${min}`);
+            }
+            if (max !== '') {
+                defs.push(`${column.data} <= ${max}`);
+            }
+        } else if (column.filter.type === 'date') {
+            const min = column.filter.value.min;
+            const max = column.filter.value.max;
+
+            if (min) {
+                const dateMin = `${min.getMonth() + 1}/${min.getDate()}/${min.getFullYear()}`;
+                defs.push(`${column.data} >= DATE \'${dateMin}\'`);
+            }
+            if (max) {
+                const dateMax = `${max.getMonth() + 1}/${max.getDate()}/${max.getFullYear()}`;
+                defs.push(`${column.data} <= DATE \'${dateMax}\'`);
+            }
+        }
+        return defs;
+    }
+
+
     class FilterNode {
         constructor(source = {}) {
             this._source = source;
@@ -591,7 +661,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._controls = defaultedSource.controls;
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
-            this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
+
             this._toggleSymbology = typeof source.toggleSymbology === 'boolean' ? source.toggleSymbology : true;
 
             this._details = source.details;
@@ -706,6 +776,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._tooltipField = source.tooltipField;
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
+
+            // apply layer definition query on the layer node object
+            if (this.table.applyMap || this.table.applied) {
+                this._initialFilteredQuery = _getFilterDefintion(this.table.columns);
+            }
         }
 
         _hovertipEnabled = true;
@@ -738,10 +813,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._index = source.index;
             this._name = source.name;
-
-            // the initial filters to be applied for the layer
-            // applied on source object so the property is not lost when applying layer node defaults
-            this._initialFilteredQuery = source.initialFilteredQuery;
 
             // state and controls defaults cannot be applied here;
             // need to wait until dynamic/wms layer is loaded before parent/child defaulting can be applied; this is done in the legend service;
@@ -861,6 +932,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
+
+            // apply layer definition query on the layer node object
+            if (this.table.applyMap || this.table.applied) {
+                this._initialFilteredQuery = _getFilterDefintion(this.table.columns);
+            }
         }
 
         get nameField () { return this._nameField; }
