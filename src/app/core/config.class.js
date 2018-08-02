@@ -1996,11 +1996,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             } else {
                 this.epsg = source.epsg || 'default';
                 this.geoSearch = source.geoSearch || 'default';
-<<<<<<< HEAD
                 //TODO fancyTable
                 //this.table = source.table || 'default';
-=======
->>>>>>> fix(intention): geosearch intention improvement
             }
         }
     }
