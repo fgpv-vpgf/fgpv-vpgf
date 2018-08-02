@@ -23,6 +23,13 @@ function getFeatureInfoBuilder(esriBundle) {
         const intX = parseInt(clickEvent.screenPoint.x);
         const intY = parseInt(clickEvent.screenPoint.y);
 
+        // result return type is text unless we have a fancy case
+        const customReturnType = {
+            "application/json": "json"
+        };
+
+        const returnType = customReturnType[mimeType] || "text";
+
         if (srList && srList.length > 1) {
             wkid = srList[0];
         } else if (esriMap.spatialReference.wkid) {
@@ -55,7 +62,7 @@ function getFeatureInfoBuilder(esriBundle) {
         return Promise.resolve(esriBundle.esriRequest({
             url: wmsLayer.url.split('?')[0],
             content: req,
-            handleAs: 'text'
+            handleAs: returnType
         }));
     };
 }
