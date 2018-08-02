@@ -82,13 +82,14 @@ Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'ic
 
 Il existe cinq types de couches qui peuvent être présentes dans la liste déroulante « Couches » :
 
-|Type de couches|Interactivité|Rendu du serveur|Support des tables|Notes|
+|Type de couches|Interactivité|Format de la couche|Support des tables|Notes|
 |----|----|----|----|----|
-| Élement | Oui | Non | Oui | Rapide et efficace - rendu local pour les ensembles de géométrie de petite à moyenne taille |
-| Dynamique | Oui | Oui | Oui | Bon choix pour les ensembles de géométrie importante et complexe qui seraient lentes à rendre localement |
-| Image | Non | Oui | Non | Support des fichiers Raster et Image |
-| Tuile | Non | Oui | Non | Rapide et efficace - le serveur contient une mosaïque au rendu pré travaillé des tuiles |
-| SCW (WMS) | Oui | Oui | Non | Cartes image géoréférencées que le serveur génère en utilisant des données d'une base de données SIG |
+| Élement | Oui | Vecteur | Oui | Rapide et efficace - rendu local pour les ensembles de géométrie de petite à moyenne taille |
+| Dynamique | Oui | Données matricielles | Oui | Bon choix pour les ensembles de géométrie importante et complexe qui seraient lentes à rendre localement |
+| Image | Non | Données matricielles | Non | Support des fichiers Raster et Image |
+| Tuile | Non | Données matricielles | Non | Rapide et efficace - le serveur contient une mosaïque au rendu pré travaillé des tuiles |
+| SCW (WMS) | Données matricielles | Oui | Non | Cartes image géoréférencées que le serveur génère en utilisant des données d'une base de données SIG |
+| WFS | Oui | Vecteur | Oui | Rapide et efficace - rendu local pour les ensembles de géométrie de petite à moyenne taille |
 
 Si une couche ne se charge pas correctement, elle sera identifiée par un avis d'erreur. Au lieu des actions de couche standard, vous pouvez choisir de soit recharger la couche, soit de la retirer.  Recharger la couche est particulièrement utile s’il y a un problème temporaire de connectivité réseau. Si une couche est retirée, elle sera également retirée de la liste déroulante des couches. Si elle est ajoutée de nouveau à l'aide du bouton « Annuler », elle perdra toutes les personnalisations prédéfinies.
 
@@ -138,13 +139,14 @@ Utilisation:
 - Selon le type d'ensemble de données chargé, différents paramètres peuvent être définis dans cette phase finale.
 - Un service d'éléments permet le choix d'un attribut principal, qui détermine l'attribut utilisé pour identifier un élément (enregistrement) dans le tableau de données et les étiquettes correspondantes sur la carte. Toutes les autres informations proviennent des métadonnées du service.
 - Un service WMS permet le choix du nom de la couche, qui détermine la couche dans le WMS à utiliser comme source pour le jeu de données. Toutes les autres informations sont dérivées des métadonnées du service.
+- Un service WFS permet le choix de ce qui suit: une couche nom, qui sera affiché dans le sélecteur de la couche; un champ principal, qui agit comme une caractéristique du service principal attribut; une couleur, qui détermine la couleur des points / activité / des polygones sur la carte. Tous les autres renseignements sont tirés du service des métadonnées.
 - Les jeux de données basés sur des fichiers permettent le choix des attributs suivants: un nom de jeu de données qui sera affiché dans le sélecteur de couche; Un attribut principal qui agit de la même façon que dans le service d'élément; Une couleur de symbole qui détermine la couleur des points /lignes/polygones sur la carte. Les fichiers CSV permettent également la spécification des colonnes qui contiennent les valeurs de positionnement (Latitude et Longitude) utilisées pour déterminer l'emplacement des éléments sur la carte.
 - Cliquez sur le bouton « Continuer » pour ajouter la couche à la carte et fermer le menu « Ajouter une couche ».
 
 
 # Exporter l'image
 
-Vous pouvez exporter une image de la carte et de ses couches visibles avec: une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée et une estampille temporelle.
+Vous pouvez exporter une image de la carte et de ses couches visibles avec: une légende, un titre, une flèche du nord avec une échelle graphique, une note de bas de page personnalisée<sup>*</sup> et une estampille temporelle<sup>†</sup>.
 
 Sélectionnez le bouton « Exporter » dans le menu de gauche pour faire apparaître une boîte de dialogue contenant une image de la carte ainsi qu'une zone d'édition vous permettant de saisir un titre si vous le souhaitez.
 
@@ -154,6 +156,8 @@ Pour modifier la taille du canevas de la carte, vous pouvez le faire à partir d
 
 Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image de carte finale.
 
+<sup>*</sup>Veuillez noter que la note de bas de page peuvent ne pas être disponibles selon la carte. <br/>
+<sup>†</sup>Veuillez prendre note estampille temporelle est facultative et pourraient ne pas être disponibles selon la carte
 
 # Tableau de données
 

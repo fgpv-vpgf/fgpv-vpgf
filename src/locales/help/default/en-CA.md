@@ -82,13 +82,14 @@ You can toggle the visibility of the layer at any time by selecting the checkbox
 
 There are five types of layers that can reside in the Legend dropdown:
 
-|Layer Type|Interactive|Server Renders|Datatable support|Notes|
+|Layer Type|Interactive|Layer Format|Datatable support|Notes|
 |----|----|----|----|----|
-| Feature | Yes | No | Yes | Fast, efficient - local rendering for small to medium size geometry sets |
-| Dynamic | Yes | Yes | Yes | Good choice for large, complex geometry that would be slow to render locally |
-| Image | No | Yes | No | Raster and image file support |
-| Tile | No | Yes | No | Fast, efficient - server contains pre-rendered map tiles |
-| WMS | Yes | Yes | No | Georeferenced map images which server generates using data from a GIS database |
+| Feature | Yes | Vector | Yes | Fast, efficient - local rendering for small to medium size geometry sets |
+| Dynamic | Yes | Raster | Yes | Good choice for large, complex geometry that would be slow to render locally |
+| Image | No | Raster | No | Raster and image file support |
+| Tile | No | Raster | No | Fast, efficient - server contains pre-rendered map tiles |
+| WMS | Yes | Raster | No | Georeferenced map images which server generates using data from a GIS database |
+| WFS | Yes | Vector | Yes | Fast, efficient - local rendering for small to medium size geometry sets |
 
 Note that if a layer fails to load correctly it will be identified by an error notice. Instead of the standard layer actions you can select to either reload the layer (this is particularly helpful if there is a temporary network connectivity issue) or remove the layer. If a layer is removed it will be taken out of the layer selector completely and if it is added back via "Undo" it will lose any previous customizations.
 
@@ -138,13 +139,14 @@ Usage:
 - Depending on the type of dataset being loaded, various parameters can be set in this final phase.
 - A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.
 - A WMS Service allows the choice of the Layer Name, which determines the layer in the WMS to be used as the source for the dataset. All other information is derived from the service's metadata.
+- A WFS Service allows the choice of the following: a Layer Name, which will be displayed in the Layer Selector; a Primary Field, which acts the same as a Feature Service's Primary Attribute; a Colour, which determines the colour of the points / lines / polygons on the map. All other information is derived from the service's metadata.
 - File based datasets allow the choice of the following: a Dataset Name, which will be displayed in the Layer Selector; a Primary Attribute, which acts the same as in the Feature Service; a Symbol Colour, which determines the colour of the points / lines / polygons on the map. CSV files also allow the specification of the columns that contain the Latitude and Longitude values, used to derive the point location on the map.
 - Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.
 
 
 # Export Image
 
-You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote*, and a timestamp.
+You can export an image of the map and its visible layers along with; a legend, title, north arrow with scalebar, custom footnote<sup>*</sup>, and a timestamp<sup>†</sup>.
 
 Select the 'EXPORT' button from the main menu to get started. A dialog will appear with an image of the map, and an option to enter a map title if desired.
 
@@ -154,7 +156,8 @@ If you'd like to change the map canvas size you can do so from the dropdown in t
 
 Click on the download button in the header to get the final generated map image.
 
-*Please note that the footnote may not be available depending on the map.
+<sup>*</sup>Please note that the footnote may not be available depending on the map. <br/>
+<sup>†</sup>Please note timestamp is optional and may not be available depending on the map
 
 # Data Table Panel
 
