@@ -383,10 +383,10 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
         if (panelToOpen.name === 'mainDetails') {
-            $rootElement.find('rv-panel[type="main"]').css('z-index', 4);
+            $rootElement.find('rv-panel[type="main"]').css('z-index', 14);
         // prevent main panel from overlapping details panel in small/medium layouts
         } else if (panelToOpen.name === 'table') {
-            $rootElement.find('rv-panel[type="main"]').css('z-index', 2);
+            $rootElement.find('rv-panel[type="main"]').css('z-index', 12);
         } else if (panelToOpen.name === 'sideMetadata') {
             $rootElement.find('rv-metadata-panel button.rv-close').rvFocus({ delay: 400 });
         } else if (panelToOpen.name === 'sideSettings') {
@@ -443,7 +443,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
         if (panelToClose.name === 'mainDetails') {
-            $rootElement.find('rv-panel[type="main"]').css('z-index', 1);
+            $rootElement.find('rv-panel[type="main"]').css('z-index', 11);
         }
 
         if (runCloseCallback(panelToClose.name)) {
