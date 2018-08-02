@@ -50,6 +50,7 @@ interface TableBuilder {
     tableOptions: GridOptions;
     tableApi: GridApi;
     panel: PanelManager;
+    translations: any;
 }
 
 TableBuilder.prototype.tableOptions = {
@@ -58,5 +59,36 @@ TableBuilder.prototype.tableOptions = {
 };
 
 TableBuilder.prototype.id = 'fancyTable';
+
+TableBuilder.prototype.translations = {
+    'en-CA': {
+        search: {
+            placeholder: 'Search table'
+        },
+        menu: {
+            split: 'Split View',
+            max: 'Maximize',
+            print: 'Print',
+            export: 'Export',
+            filter: {
+                extent: 'Filter by extent'
+            }
+        }
+    },
+    'fr-CA': {
+        search: {
+            placeholder: 'Texte à rechercher'
+        },
+        menu: {
+            split: 'Diviser la vue',
+            max: 'Agrandir',
+            print: 'Imprimer',
+            export: 'Exporter',
+            filter: {
+                extent: 'Filtrer par étendue'
+            }
+        }
+    }
+};
 
 (<any>window).enhancedTable = TableBuilder;

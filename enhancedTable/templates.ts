@@ -1,15 +1,12 @@
 export const SEARCH_TEMPLATE = `
-<md-input-container ng-controller="SearchCtrl as searchCtrl" md-no-float class="rv-table-search md-block">
+<md-input-container ng-controller="SearchCtrl as ctrl" md-no-float class="rv-table-search md-block">
     <input
-        aria-label="Search
-        ng-model="searchCtrl.searchText"
-        ng-keyup="searchCtrl.updatedSearchText()"
-        placeholder="Search Text">
-    <md-button ng-show="searchCtrl.searchText.length > 2" ng-click="">
-        <md-icon md-svg-src="navigation:close"></md-icon>
-    </md-button>
-    <md-icon md-svg-src="action:search">
-        <md-tooltip>Search</md-tooltip>
+        ng-model="ctrl.searchText"
+        ng-keyup="ctrl.updatedSearchText()"
+        placeholder="{{ 't.search.placeholder' | translate }}" />
+    <md-icon ng-if="ctrl.searchText.length > 2" ng-click="ctrl.clearSearch()" md-svg-src="navigation:close"></md-icon>
+    <md-icon ng-if="ctrl.searchText.length <= 2" md-svg-src="action:search">
+        <md-tooltip>{{ 't.search.placeholder' | translate }}</md-tooltip>
     </md-icon>
 </md-input-container>
 
@@ -30,21 +27,17 @@ export const MENU_TEMPLATE = `
         <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="5">
 
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
-                Split View
+                {{ 't.menu.split' | translate }}
             </md-menu-item>
 
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
-                Maximize
+                {{ 't.menu.max' | translate }}
             </md-menu-item>
 
             <md-menu-divider class="rv-lg"></md-menu-divider>
 
             <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
-                Filter by Extent
-            </md-menu-item>
-
-            <md-menu-item type="checkbox" ng-model="self.filter.isOpen" ng-click="self.showFilters()" rv-right-icon="community:filter">
-                Show Filters
+                {{ 't.menu.filter.extent' | translate }}
             </md-menu-item>
 
             <md-menu-divider></md-menu-divider>
@@ -52,14 +45,14 @@ export const MENU_TEMPLATE = `
             <md-menu-item>
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>
-                    Print
+                    {{ 't.menu.print' | translate }}
                 </md-button>
             </md-menu-item>
 
             <md-menu-item>
                 <md-button ng-click="ctrl.export()">
                     <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
-                    Export
+                    {{ 't.menu.export' | translate }}
                 </md-button>
             </md-menu-item>
 

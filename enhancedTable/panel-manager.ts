@@ -99,6 +99,10 @@ export class PanelManager {
             this.updatedSearchText = function() {
                 that.tableOptions.api.setQuickFilter(this.searchText);
             };
+            this.clearSearch = function() {
+                this.searchText = '';
+                this.updatedSearchText();
+            };
         });
 
         this.mapApi.agControllerRegister('MenuCtrl', function() {
