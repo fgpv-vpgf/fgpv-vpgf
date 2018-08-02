@@ -705,6 +705,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                         if (lData.supportsFeatures) {
                             const unAliasAtt = attribFC.AttribFC.unAliasAttribs(ele.feature.attributes, lData.fields);
+                            const objId = unAliasAtt[lData.oidField];
+                            const objIdStr = objId.toString();
 
                             // TODO traditionally, we did not pass fields into attributesToDetails as data was
                             //      already aliased from the server. now, since we are extracting field type as
@@ -712,7 +714,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             //      identify results. examine the impact of providing the fields parameter
                             //      to data that is already aliased.
                             identifyResult.data.push({
-                                name: ele.value,
+                                name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
                                 data: this.attributesToDetails(ele.feature.attributes, lData.fields),
                                 oid: unAliasAtt[lData.oidField],
                                 symbology: [{
