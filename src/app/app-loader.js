@@ -13,8 +13,6 @@ import 'angular-translate-loader-static-files';
 // APPLICATION MAIN IMPORTS
 import './api-loader';
 import './app-seed';
-import './bootstrap';
-import './global-registry.js';
 import './geo/geo.module.js';
 import './core/core.module.js';
 import './layout/layout.module.js';
@@ -25,8 +23,5 @@ import './geo/geo-loader.js';
 import './layout/layout-loader.js';
 import './app.module.js';
 import './focus-manager.js';
-import '../plugins/core/back-to-cart.js';
-import '../plugins/core/coord-info.js';
-import '../plugins/core/area-of-interest.js';
 import '../content/styles/main.scss';
 import './ui/fancyHover';

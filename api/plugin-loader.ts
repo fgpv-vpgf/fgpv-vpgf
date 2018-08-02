@@ -91,6 +91,14 @@ export default class Loader {
         });
     }
 
+    loadTranslations(translationService: any) {
+        this.pluginList.forEach(p => {
+            if (p.translations) {
+                translationService(p.translations);
+            }
+        });
+    }
+
     /**
      * Returns a promise which resolves to true when all plugin preInit promises have resolved.
      */
