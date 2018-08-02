@@ -68,21 +68,37 @@
                 </div-->
             </md-input-container>
 
-            <md-input-container class="md-block" ng-switch-when="featurelayer">
-                <label>{{ 'import.service.configure.primaryfield' | translate }}</label>
-                <md-select
-                    name="primaryField"
-                    ng-model="self.layerSource.config.nameField"
-                    required>
-                    <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
-                        {{ field.alias || field.name }}
-                    </md-option>
-                </md-select>
-                <!-- TODO: decide whether and how to display a hint or error messages -->
-                <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
-                        <div ng-message="required">Required</div>
-                    </div-->
-            </md-input-container>
+            <div ng-switch-when="featurelayer">
+                <md-input-container class="md-block" >
+                    <label>{{ 'import.service.configure.primaryfield' | translate }}</label>
+                    <md-select
+                        name="primaryField"
+                        ng-model="self.layerSource.config.nameField"
+                        required>
+                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            {{ field.alias || field.name }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>{{ 'import.service.configure.tooltipField' | translate }}</label>
+                    <md-select
+                        name="tooltipField"
+                        ng-model="self.layerSource.config.tooltipField">
+                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            {{ field.alias || field.name }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div class="errors" ng-messages="self.configure.form.primaryField.$error">
+                            <div ng-message="required">Required</div>
+                        </div-->
+                </md-input-container>
+            </div>
 
             <md-input-container class="md-block" ng-switch-when="dynamicservice">
                 <label>{{ 'import.service.configure.layers' | translate }}</label>
@@ -188,21 +204,37 @@
                 </div-->
             </md-input-container>
 
-            <md-input-container class="md-block" ng-switch-when="geojson">
-                <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
-                <md-select
-                    name="primaryField"
-                    ng-model="self.layerSource.config.nameField"
-                    required>
-                    <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
-                        {{ field.name }}
-                    </md-option>
-                </md-select>
-                <!-- TODO: decide whether and how to display a hint or error messages -->
-                <!--div  ng-messages="self.configure.form.primaryField.$error">
-                    <div ng-message="required">Required</div>
-                </div-->
-            </md-input-container>
+            <div ng-switch-when="geojson">
+                <md-input-container class="md-block">
+                    <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
+                    <md-select
+                        name="primaryField"
+                        ng-model="self.layerSource.config.nameField"
+                        required>
+                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            {{ field.name }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div  ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>{{ 'import.layer.configure.tooltipField' | translate }}</label>
+                    <md-select
+                        name="tooltipField"
+                        ng-model="self.layerSource.config.tooltipField">
+                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            {{ field.name }}
+                        </md-option>
+                    </md-select>
+                    <!-- TODO: decide whether and how to display a hint or error messages -->
+                    <!--div  ng-messages="self.configure.form.primaryField.$error">
+                        <div ng-message="required">Required</div>
+                    </div-->
+                </md-input-container>
+            </div>
 
             <div layout="row" ng-switch-when="geojson">
                 <md-input-container class="md-block" flex>

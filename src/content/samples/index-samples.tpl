@@ -167,6 +167,7 @@
                 <option value="config/config-sample-72.json">72. Symbology stack expand by default</option>
                 <option value="config/config-sample-73-corsEverywhere.json">73. CORS Everywhere</option>
                 <option value="config/config-sample-74.json">74. Collapsed visibility set + hidden layer group</option>
+                <option value="config/config-sample-75.json">75. Dynamic layers display field configuration</option>
             </select>
         </div>
 

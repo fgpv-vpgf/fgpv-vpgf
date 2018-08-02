@@ -289,6 +289,7 @@
             "properties": {
                 "index": { "type": "number", "description": "The index of the layer in the map service." },
                 "name": { "type": "string", "description": "A descriptive name for the layer, can override the name coming from the service." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." },
                 "extent": { "$ref": "#/definitions/extentWithReferenceNode", "description": "Allows for overriding the bounding box supplied by the service." },
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
@@ -578,6 +579,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "tooltipField": { "type": "string", "description": "The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided)." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "refreshInterval": { "type": "number", "default": 0, "description": "The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes." },
                 "expectedResponseTime": { "type": "number", "default": 4000, "description": "The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer." },
@@ -610,6 +612,7 @@
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
                 "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "tooltipField": { "type": "string", "description": "The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided)." },
                 "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
                 "colour": { "type": "string", "description": "The hex code representing the layer symbology colour." },
                 "layerType": { "type": "string", "enum": [ "ogcWfs" ] },
