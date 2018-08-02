@@ -1,4 +1,5 @@
 import RColor from 'rcolor';
+import angular from 'angular';
 
 /**
  * @module LayerSourceInfo
@@ -9,23 +10,27 @@ import RColor from 'rcolor';
  * The `LayerSourceInfo` service returns a collection of file option classes. These specify user selectable options when importing layer.
  *
  */
-angular
-    .module('app.geo')
-    .factory('LayerSourceInfo', LayerSourceInfoFactory);
+angular.module('app.geo').factory('LayerSourceInfo', LayerSourceInfoFactory);
 
-function LayerSourceInfoFactory(Geo, gapiService, $q) {
+LayerSourceInfoFactory.$inject = ['Geo', 'gapiService', '$q'];
 
+function LayerSourceInfoFactory(Geo: any, gapiService: any, $q: any) {
     class Info {
-        constructor(config) {
+        _config: any;
+        _originalConfig: any = null;
+
+        constructor(config: any) {
             this._config = config;
             this.snapshot();
 
             this.reset();
         }
 
-        get config() { return this._config; }
+        get config() {
+            return this._config;
+        }
 
-        snapshot (config) {
+        snapshot() {
             this._originalConfig = angular.copy(this._config);
         }
 
@@ -33,7 +38,9 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
             this._config = angular.copy(this._originalConfig);
         }
 
-        get type () { return Geo.Service.Types.Unknown; }
+        get type() {
+            return Geo.Service.Types.Unknown;
+        }
     }
 
     class ServiceInfo extends Info {
@@ -43,46 +50,63 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
     }
 
     class FeatureServiceInfo extends ServiceInfo {
-        constructor(config, fields) {
+        _fields: any[];
+
+        constructor(config: any, fields: any[] = []) {
             super(config);
 
             this.fields = fields;
         }
 
-        get fields () { return this._fields; }
-        set fields (value) {
+        get fields() {
+            return this._fields;
+        }
+        set fields(value) {
             // number all the fields, so even fields with equal names can be distinguished by the md selector
-            value.forEach((field, index) =>
-                (field.index = index));
+            value.forEach((field, index) => (field.index = index));
 
             this._fields = value;
         }
 
-        get type () { return Geo.Service.Types.FeatureLayer; }
+        get type() {
+            return Geo.Service.Types.FeatureLayer;
+        }
     }
 
     class DynamicServiceInfo extends ServiceInfo {
-        constructor(config, layers) {
+        _layers: any[];
+
+        constructor(config: any, layers: any[] = []) {
             super(config);
 
             this._layers = layers;
         }
 
-        get layers () { return this._layers; }
+        get layers() {
+            return this._layers;
+        }
 
-        get type () { return Geo.Service.Types.DynamicService; }
+        get type() {
+            return Geo.Service.Types.DynamicService;
+        }
     }
 
     class WMSServiceInfo extends ServiceInfo {
-        constructor(config, layers) {
+        _layers: any[];
+
+        constructor(config: any, layers: any[] = []) {
             super(config);
 
             this._layers = layers;
         }
 
-        get layers () { return this._layers; }
+        get layers() {
+            return this._layers;
+        }
 
-        get type () { return Geo.Service.Types.WMS; }
+        get type() {
+            return Geo.Service.Types.WMS;
+        }
     }
 
     /*class RasterServiceInfo extends ServiceInfo {
@@ -90,15 +114,26 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
         }*/
 
     class ImageServiceInfo extends ServiceInfo {
-        get type () { return Geo.Service.Types.ImageService; }
+        get type() {
+            return Geo.Service.Types.ImageService;
+        }
     }
 
     class TileServiceInfo extends ServiceInfo {
-        get type () { return Geo.Service.Types.TileService; }
+        get type() {
+            return Geo.Service.Types.TileService;
+        }
     }
 
     class FileInfo extends FeatureServiceInfo {
-        constructor(config, rawData, targetWkid) {
+        _rawData: any = null;
+        _formattedData: any = null;
+        _parsedData: any = null;
+
+        _targetWkid: string = '';
+        _colour: string = '#000000';
+
+        constructor(config: any, rawData: any, targetWkid: string) {
             super(config, []);
 
             this._rawData = rawData;
@@ -107,21 +142,36 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
             this._colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
         }
 
-        get targetWkid () { return this._targetWkid; }
+        get targetWkid() {
+            return this._targetWkid;
+        }
 
-        get rawData () { return this._rawData; }
-        get formattedData() { return this._formattedData; }
+        get rawData() {
+            return this._rawData;
+        }
+        get formattedData() {
+            return this._formattedData;
+        }
 
-        get layerId () { return this._config.id; }
+        get layerId() {
+            return this._config.id;
+        }
 
-        get colour () { return this._colour; }
-        set colour (hex) { this._colour = hex; }
+        get colour() {
+            return this._colour;
+        }
+        set colour(hex) {
+            this._colour = hex;
+        }
 
-        get type () { return Geo.Service.Types.TileService; }
+        get type() {
+            return Geo.Service.Types.TileService;
+        }
 
         validate() {
-            const validationPromise = gapiService.gapi.layer.validateFile(this.type, this.rawData)
-                .then(validationResult => {
+            const validationPromise = gapiService.gapi.layer
+                .validateFile(this.type, this.rawData)
+                .then((validationResult: any) => {
                     this.fields = validationResult.fields;
                     this._parsedData = validationResult.formattedData;
                     this._formattedData = validationResult.formattedData;
@@ -138,15 +188,31 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
     }
 
     class CSVFileInfo extends FileInfo {
-        get latfield () { return this._latfield; }
-        set latfield (value) { this._latfield = value; }
-        get lonfield () { return this._lonfield; }
-        set lonfield (value) { this._lonfield = value; }
+        _latfield: any = null;
+        _lonfield: any = null;
 
-        get type () { return Geo.Service.Types.CSV; }
+        latFields: any = null;
+        longFields: any = null;
 
-        validate () {
-            const validationPromise = super.validate().then(validationResult => {
+        get latfield() {
+            return this._latfield;
+        }
+        set latfield(value) {
+            this._latfield = value;
+        }
+        get lonfield() {
+            return this._lonfield;
+        }
+        set lonfield(value) {
+            this._lonfield = value;
+        }
+
+        get type() {
+            return Geo.Service.Types.CSV;
+        }
+
+        validate() {
+            const validationPromise = super.validate().then((validationResult: any) => {
                 // current showed fields
                 this.latfield = validationResult.smartDefaults.lat;
                 this.lonfield = validationResult.smartDefaults.long;
@@ -163,16 +229,24 @@ function LayerSourceInfoFactory(Geo, gapiService, $q) {
     }
 
     class GeoJSONFileInfo extends FileInfo {
-        get type () { return Geo.Service.Types.GeoJSON; }
+        get type() {
+            return Geo.Service.Types.GeoJSON;
+        }
     }
 
     class WFSServiceInfo extends FileInfo {
-        get type () { return Geo.Service.Types.WFSServiceInfo; }
+        get type() {
+            return Geo.Service.Types.WFSServiceInfo;
+        }
     }
 
     class ShapefileFileInfo extends FileInfo {
-        get type () { return Geo.Service.Types.Shapefile; }
-        get formattedData() { return this._rawData; }
+        get type() {
+            return Geo.Service.Types.Shapefile;
+        }
+        get formattedData() {
+            return this._rawData;
+        }
     }
 
     const service = {
