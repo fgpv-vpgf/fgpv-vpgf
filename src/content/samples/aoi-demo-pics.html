@@ -1,0 +1,30 @@
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <script src='./extensions/areaOfInterest.js'></script>
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue">Areas of Interest Demo</span>
+    </h1>
+    <p>
+        <a href="./aoi-demo-nopics.html">No Pictures Demo</a>
+    </p>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+</body>
+<script>
+    $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../rv-styles.css'));
+    $.getScript('../rv-main.js', function () {
+        $('body').append(`
+        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rz-extensions="areaOfInterest"></div>
+        `);
+        new RZ.Map(document.getElementById('fgpmap'), './config/config-sample-64.json');
+    });
+</script>
+
+</html>
