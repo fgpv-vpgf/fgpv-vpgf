@@ -70,7 +70,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             container: '=?'
         },
         link: link,
-        controller: () => {},
+        controller: () => { },
         controllerAs: 'self',
         bindToController: true
     };
@@ -252,27 +252,31 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @param {Boolean} value [optional = !self.isExpanded] true will expand the stack; false, collapse the stack;
          */
         function expandSymbology(value = !self.isExpanded) {
-            // if symbology is non-interative, don't do anything
+            // if symbology is non-interactive, don't do anything
             if (!self.symbology.isInteractive) {
                 return;
             }
 
+            //call to initializeTimelines() could make ref.isReady === true
             if (!ref.isReady) {
                 initializeTimelines();
             }
 
-            if (value) {
-                // expand symbology items and reverse wiggle
-                ref.expandTimeline.play();
-                ref.fanOutTimeline.reverse();
-            } else {
-                // collapse symbology items and forward play wiggle
-                ref.expandTimeline.reverse();
-                self.showSymbologyToggle = false;
-                ref.fanOutTimeline.play();
+            //only makes sense to expand or collapse symbology items if all references are ready
+            if (ref.isReady) {
+                if (value) {
+                    // expand symbology items and reverse wiggle
+                    ref.expandTimeline.play();
+                    ref.fanOutTimeline.reverse();
+                } else {
+                    // collapse symbology items and forward play wiggle
+                    ref.expandTimeline.reverse();
+                    self.showSymbologyToggle = false;
+                    ref.fanOutTimeline.play();
+                }
+                self.symbology.expanded = value;
             }
 
-            self.symbology.expanded = value;
         }
 
         /**
@@ -288,24 +292,28 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 return;
             }
 
+            //call to initializeTimelines() could make ref.isReady === true
             if (!ref.isReady) {
                 initializeTimelines();
             }
 
-            // on mouse over, wiggle only if symbology is not expanded or animating
-            if (value && !self.isExpanded && !ref.expandTimeline.isActive()) {
-                ref.fanOutTimeline.play();
-            } else {
-                // on mouse out, set wiggle timeline to 0 if symbology is expanded or animating
-                if (ref.expandTimeline.isActive() || self.isExpanded) {
-                    ref.fanOutTimeline.pause(0);
-                } else if (!self.isExpanded && !ref.expandTimeline.isActive()) {
-                    // ... reverse wiggle, if symbology is collapsed and not animating
-                    ref.fanOutTimeline.reverse();
+            if (ref.isReady) {
+                // on mouse over, wiggle only if symbology is not expanded or animating
+                if (value && !self.isExpanded && !ref.expandTimeline.isActive()) {
+                    ref.fanOutTimeline.play();
+                } else {
+                    // on mouse out, set wiggle timeline to 0 if symbology is expanded or animating
+                    if (ref.expandTimeline.isActive() || self.isExpanded) {
+                        ref.fanOutTimeline.pause(0);
+                    } else if (!self.isExpanded && !ref.expandTimeline.isActive()) {
+                        // ... reverse wiggle, if symbology is collapsed and not animating
+                        ref.fanOutTimeline.reverse();
+                    }
                 }
+
+                self.symbology.fannedOut = value;
             }
 
-            self.symbology.fannedOut = value;
         }
 
         // find and store references to relevant nodes
@@ -355,10 +363,16 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 ref.containerWidth
             );
 
-            ref.expandTimeline = makeExpandTimeline();
-            ref.fanOutTimeline = makeWiggleTimeline();
+            //permit ref to be ready only when all symbology images are properly loaded
+            let isReady = ref.symbolItems.every(symbolItem => symbolItem.image.find('svg')[0] !== undefined);
 
-            ref.isReady = ref.maxItemWidth > 0;
+            //only allow math for expanding/fanning out the stack when all images properly loaded
+            //else causes negative margins and disappearing legend entries
+            if (isReady) {
+                ref.expandTimeline = makeExpandTimeline();
+                ref.fanOutTimeline = makeWiggleTimeline();
+                ref.isReady = ref.maxItemWidth > 0;
+            }
         }
 
         function makeExpandTimeline() {
@@ -391,7 +405,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                 // briefly show the description node to grab it's height, and hide it again
                 ref.descriptionItem.show();
-                let width  = getTextWidth(canvas, ref.descriptionItem.text(), ref.descriptionItem.css('font'));
+                let width = getTextWidth(canvas, ref.descriptionItem.text(), ref.descriptionItem.css('font'));
                 let height = Math.ceil(width / ref.descriptionItem.width()) * parseInt(ref.descriptionItem.css('line-height').slice(0, -2));
                 const descriptionHeight = ref.descriptionItem.height() >= 0 ? ref.descriptionItem.height() : height;
                 ref.descriptionItem.hide();
@@ -535,11 +549,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @return {Number}                height of this symbology item plus its bottom margin is applicable
          */
         function imageLegendItem(timeline, symbolItem, totalHeight, isLast) {
+
             const symbologyListItemMargin = 16;
-
-            const imageWidth = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.width : 0;
-            const imageHeight = symbolItem.image.find('svg')[0] ? symbolItem.image.find('svg')[0].viewBox.baseVal.height : 0;
-
+            const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
+            const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
 
             // calculate symbology item's dimensions based on max width
             const itemWidth = Math.min(ref.maxItemWidth, imageWidth);
@@ -549,7 +562,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
             let labelHeight = 0;
             const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
-            if (textWidth > 0 ) {
+            if (textWidth > 0) {
                 const lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
                 const padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
                 const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
