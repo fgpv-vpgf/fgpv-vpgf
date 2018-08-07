@@ -93,10 +93,12 @@ rv-panel[type='table'] {
     @include include-size(rv-lg) {
         &.default {
             @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
+            z-index: 13;
         }
 
         &.full {
             @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: $viewport-gutter);
+            z-index: 13;
         }
 
         &.attached {
