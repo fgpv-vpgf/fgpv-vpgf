@@ -26,7 +26,6 @@ angular
 // TODO: this needs to be moved into a separate into ui/common folder
 function highlightFilter($sce) {
     return (text = '', searchTerm = undefined, className = 'rv-help-highlight') => {
-
         // no searchTerm provided, return all html
         if (!searchTerm) {
             return $sce.trustAsHtml(text);
@@ -48,11 +47,11 @@ function highlightFilter($sce) {
         htmlFragment.appendChild(searchElement);
 
         /**
-        * Given some node it searches the node and its children for textNodes, which are sent to doSearch for searching
-        *
-        * @function findTextNodes
-        * @param {Object} node    node to search for textNodes
-        */
+         * Given some node it searches the node and its children for textNodes, which are sent to doSearch for searching
+         *
+         * @function findTextNodes
+         * @param {Object} node    node to search for textNodes
+         */
         function findTextNodes(node) {
             let childNode;
             let nextNode;
@@ -64,22 +63,23 @@ function highlightFilter($sce) {
                     findTextNodes(childNode);
                     childNode = nextNode;
                 }
-            // found a text node - perform search on it
+                // found a text node - perform search on it
             } else if (node.nodeType === 3) {
                 doSearch(node);
             }
         }
 
         /**
-        * Given a textnode, wraps the searchTerm in a span element so that it is visible to the user
-        *
-        * @function doSearch
-        * @param {Object} preMatch    textNode to be searched
-        */
+         * Given a textnode, wraps the searchTerm in a span element so that it is visible to the user
+         *
+         * @function doSearch
+         * @param {Object} preMatch    textNode to be searched
+         */
         function doSearch(preMatch) {
             // try to find search term index in the preMatch
             const searchIndex = preMatch.nodeValue.toLowerCase().indexOf(searchTerm);
-            if (searchIndex !== -1) { // found a match, continuing
+            if (searchIndex !== -1) {
+                // found a match, continuing
                 let match; // contains only the matched text
                 let postMatch; // contains text after the match
                 // this next part can be confusing - but this is the general idea:
@@ -102,7 +102,7 @@ function highlightFilter($sce) {
     };
 }
 
-function helpService($mdDialog, $translate, translations, referenceService) {
+function helpService($mdDialog, events, configService, referenceService) {
     // all help sections (populated when elements tagged with rv-help are created)
     const registry = [];
 
@@ -119,6 +119,18 @@ function helpService($mdDialog, $translate, translations, referenceService) {
 
         open
     };
+
+    // wire in a hook to open help dialog.
+    // this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.help = () => {
+            if (!configService.getSync.ui.help) {
+                throw new Error(`Help folder is not defined.`);
+            }
+
+            service.open();
+        };
+    });
 
     return service;
 
@@ -141,21 +153,21 @@ function helpService($mdDialog, $translate, translations, referenceService) {
     }
 
     /**
-    * Adds an object to the service's registry.
-    *
-    * @function register
-    * @param {Object} object    the object to be added
-    */
+     * Adds an object to the service's registry.
+     *
+     * @function register
+     * @param {Object} object    the object to be added
+     */
     function register(object) {
         registry.push(object);
     }
 
     /**
-    * Removes an object from the service's registry.
-    *
-    * @function unregister
-    * @param {Object} object    the object to be removed
-    */
+     * Removes an object from the service's registry.
+     *
+     * @function unregister
+     * @param {Object} object    the object to be removed
+     */
     function unregister(object) {
         const index = registry.indexOf(object);
         if (index !== -1) {
@@ -164,20 +176,20 @@ function helpService($mdDialog, $translate, translations, referenceService) {
     }
 
     /**
-    * Adds an object to the service's cache of already drawn help sections.
-    *
-    * @function setDrawn
-    * @param {Object} object    the object to be added
-    */
+     * Adds an object to the service's cache of already drawn help sections.
+     *
+     * @function setDrawn
+     * @param {Object} object    the object to be added
+     */
     function setDrawn(object) {
         drawnCache.push(object);
     }
 
     /**
-    * Clears the service's cache of already drawn help sections.
-    *
-    * @function clearDrawn
-    */
+     * Clears the service's cache of already drawn help sections.
+     *
+     * @function clearDrawn
+     */
     function clearDrawn() {
         drawnCache.length = 0;
     }
@@ -209,35 +221,45 @@ function helpService($mdDialog, $translate, translations, referenceService) {
             };
 
             const mdLocation = `help/${foldername}/${configService.getSync.language}.md`;
-            $http.get(mdLocation).then(r => {
-                // matches help sections from markdown file where each section begins with one hashbang and a space
-                // followed by the section header, exactly 2 spaces, then up to but not including a double space
-                // note that the {2,} below is used as the double line deparator since each double new line is actually 6
-                // but we'll also accept more than a double space
-                const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
-                let mdStr = r.data; // markdown file contents
-                let section; // used for storing individual section groupings
-                self.sections = []; // used in template for rendering help sections
+            $http
+                .get(mdLocation)
+                .then(r => {
+                    // matches help sections from markdown file where each section begins with one hashbang and a space
+                    // followed by the section header, exactly 2 spaces, then up to but not including a double space
+                    // note that the {2,} below is used as the double line deparator since each double new line is actually 6
+                    // but we'll also accept more than a double space
+                    const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
+                    let mdStr = r.data; // markdown file contents
+                    let section; // used for storing individual section groupings
+                    self.sections = []; // used in template for rendering help sections
 
-                // remove new line character ASCII (13) so that above regex is compatible with all
-                // operating systems (markdown file varies by OS new line preference)
-                mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+                    // remove new line character ASCII (13) so that above regex is compatible with all
+                    // operating systems (markdown file varies by OS new line preference)
+                    mdStr = mdStr.replace(new RegExp(String.fromCharCode(13), 'g'), '');
 
-                // start breaking down markdown file into sections where h1 headers (#) denote a new section
-                // eslint-disable-next-line no-cond-assign
-                while (section = reg.exec(mdStr)) { // jshint ignore:line
-                    self.sections.push({
-                        header: section[1],
-                        // parse markdown on info section only. Note that the split/splice/join removes the header
-                        // and is a workaround for not being able to put info section into its own regex grouping like the header
-                        info: marked(section[0].split('\n').splice(2).join('\n'), { renderer }),
-                        isExpanded: false
-                    });
-                }
-            }).catch(error => {
-                self.hasNoHelp = true;
-                console.warn(error);
-            });
+                    // start breaking down markdown file into sections where h1 headers (#) denote a new section
+                    // eslint-disable-next-line no-cond-assign
+                    while ((section = reg.exec(mdStr))) {
+                        // jshint ignore:line
+                        self.sections.push({
+                            header: section[1],
+                            // parse markdown on info section only. Note that the split/splice/join removes the header
+                            // and is a workaround for not being able to put info section into its own regex grouping like the header
+                            info: marked(
+                                section[0]
+                                    .split('\n')
+                                    .splice(2)
+                                    .join('\n'),
+                                { renderer }
+                            ),
+                            isExpanded: false
+                        });
+                    }
+                })
+                .catch(error => {
+                    self.hasNoHelp = true;
+                    console.warn(error);
+                });
         }
 
         self.searchTerm = '';
@@ -260,8 +282,7 @@ function helpService($mdDialog, $translate, translations, referenceService) {
          * @param {String} value search string
          */
         function onSearchTermChange(value) {
-            self.sections.forEach(section =>
-                (section.isExpanded = value ? true : false));
+            self.sections.forEach(section => (section.isExpanded = value ? true : false));
         }
     }
 }
