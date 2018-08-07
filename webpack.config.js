@@ -3,7 +3,8 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        'enhancedTable': './enhancedTable/index.ts'
+        'enhancedTable': './enhancedTable/index.ts',
+        'areaOfInterest': './areaOfInterest/areas-of-interest.ts'
     },
 
     output: {
@@ -21,7 +22,7 @@ module.exports = {
 
             {
                 test: /\.s?[ac]ss$/,
-                use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' ]
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
             }
         ]
     },

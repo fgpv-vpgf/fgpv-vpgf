@@ -1,0 +1,16 @@
+{
+    "name": "areaofinterest",
+    "version": "1.0.0",
+    "description": "An extension for displaying config-defined areas of interest.",
+    "main": "areas-of-interest.ts",
+    "scripts": {},
+    "keywords": [
+        "areas",
+        "feature",
+        "ramp",
+        "extension"
+    ],
+    "author": "Shruti Vellanki",
+    "license": "ISC",
+    "dependencies": {}
+}
