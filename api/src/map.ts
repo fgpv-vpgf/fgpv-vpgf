@@ -150,6 +150,11 @@ export default class Map {
         this.mapI.export();
     }
 
+    /** Triggers the map help screen. */
+    help(): void {
+        this.mapI.help();
+    }
+
     /** Returns the boundary of the map, similar to extent. */
     get bounds(): geo.XYBounds {
         return this._bounds;
