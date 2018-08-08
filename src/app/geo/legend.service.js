@@ -285,9 +285,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                         // add back entry
                         if (state === 'rv-loaded' || state === 'rv-error') {
                             layerRecord.removeStateListener(_onLayerRecordLoad);
-
                             _boundingBoxRemoval(legendBlock);
-
                             legendBlockParent.addEntry(reloadedLegendBlock, index);
                         }
 
@@ -298,6 +296,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                         }
                     }
                 });
+            } else {
+                _boundingBoxRemoval(legendBlock);
+                legendBlockParent.addEntry(reloadedLegendBlock, index);
             }
         });
 
