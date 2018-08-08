@@ -32,7 +32,7 @@
       },
       "map": {},
       "mapElements": {},
-      "legend":{},
+      "legend": {},
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
       }
@@ -75,6 +75,77 @@
         "enabled": true
       }
     },
+    "legend": {
+      "type": "structured",
+      "root": {
+        "name": "root",
+        "children": [
+          {
+            "name": "Supergroup",
+            "expanded": true,
+            "controls": [
+              "visibility",
+              "settings"
+            ],
+            "children": [
+              {
+                "layerId": "0"
+              },
+              {
+                "layerId": "1"
+              },
+              {
+                "name": "Cat GIFs",
+                "controls": [],
+                "children": [
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/tenor.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/internet.gif"
+                  },
+                  {
+                    "infoType": "image",
+                    "content": "http://fgpv.cloudapp.net/demo/__assets__/cookies.gif"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "layers": [
+      {
+        "id": "0",
+        "name": "Oilsands basemap tile layer",
+        "layerType": "esriTile",
+        "state": {
+          "opacity": 0.2
+        },
+        "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
+      },
+      {
+        "id": "1",
+        "name": "Dynamic layer",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 18
+          },
+          {
+            "index": 24
+          }
+        ]
+      }
+    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -305,77 +376,6 @@
             "level": 20,
             "resolution": 0.01866138385297604,
             "scale": 70.5310735
-          }
-        ]
-      }
-    ],
-    "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "Supergroup",
-            "expanded": true,
-            "controls": [
-              "visibility",
-              "settings"
-            ],
-            "children": [
-              {
-                "layerId": "0"
-              },
-              {
-                "layerId": "1"
-              },
-              {
-                "name": "Cat GIFs",
-                "controls": [],
-                "children": [
-                  {
-                    "infoType": "image",
-                    "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
-                  },
-                  {
-                    "infoType": "image",
-                    "content": "http://fgpv.cloudapp.net/demo/__assets__/tenor.gif"
-                  },
-                  {
-                    "infoType": "image",
-                    "content": "http://fgpv.cloudapp.net/demo/__assets__/internet.gif"
-                  },
-                  {
-                    "infoType": "image",
-                    "content": "http://fgpv.cloudapp.net/demo/__assets__/cookies.gif"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    "layers": [
-      {
-        "id": "0",
-        "name": "Oilsands basemap tile layer",
-        "layerType": "esriTile",
-        "state": {
-          "opacity": 0.2
-        },
-        "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
-      },
-      {
-        "id": "1",
-        "name": "Dynamic layer",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 18
-          },
-          {
-            "index": 24
           }
         ]
       }
