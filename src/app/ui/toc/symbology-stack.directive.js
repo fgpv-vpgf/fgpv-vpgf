@@ -209,7 +209,9 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     $q.all(drawPromises).then(() => {
                         // create a ToggleSymbol instance for each symbol
                         self.symbology.stack.forEach(s => {
-                            self.toggleList[s.name] = new ToggleSymbol(s);
+                            if (s.definitionClause) { // If the symbol doesn't have a query it shouldn't be a toggle symbol
+                                self.toggleList[s.name] = new ToggleSymbol(s);
+                            }
                         });
 
                         // Manually correct symbology boxes so they align with all other layer visibility boxes
