@@ -84,6 +84,18 @@
         "enabled": true
       }
     },
+    "legend": {
+      "type": "autopopulate"
+    },
+    "layers": [
+      {
+        "id": "MEANTEMP",
+        "name": "mean (nasty) temps",
+        "layerType": "ogcWfs",
+        "nameField": "station_id",
+        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/ahccd-trends/items?measurement_type=temp_mean"
+      }
+    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -318,18 +330,6 @@
         ]
       }
     ],
-    "legend": {
-      "type": "autopopulate"
-    },
-    "layers": [
-      {
-        "id": "MEANTEMP",
-		"name": "mean (nasty) temps",
-        "layerType": "ogcWfs",
-        "nameField": "station_id",
-        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/ahccd-trends/items?measurement_type=temp_mean"
-      }
-    ],
     "tileSchemas": [
       {
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
@@ -337,9 +337,9 @@
         "extentSetId": "EXT_NRCAN_Lambert_3978",
         "lodSetId": "LOD_NRCAN_Lambert_3978",
         "overviewUrl": {
-            "id": "CBMT_Overview",
-            "layerType": "esriTile",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+          "id": "CBMT_Overview",
+          "layerType": "esriTile",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
         }
       },
       {
