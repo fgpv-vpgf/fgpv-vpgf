@@ -480,6 +480,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return this._featClasses[childIdx].queryable;
     }
 
+    /**
+     * Does nothing, but we provide it to supress errors from overzealous bindings.
+     *
+     * @function setQueryable
+     * @param {Boolean} value the pointless new queryability setting
+     */
+    setQueryable (value) {
+        return null;
+    }
+
     // TODO if we need this back, may need to implement as getChildGeomType.
     //      appears this ovverrides the LayerRecord.getGeomType function, which returns
     //      undefined, and that is what we want on the DynamicRecord level (as dynamic layer)

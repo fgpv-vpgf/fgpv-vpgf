@@ -127,8 +127,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
             const splitUrl = shared.parseUrlIndex(this._layer.url);
             featIdx = splitUrl.index;
             this.rootUrl = splitUrl.rootUrl;
+
+            // methods in the attrib loader will update our copy of the renderer. if we pass in the config reference, it gets
+            // updated and some weird stuff happens. Make a copy.
+            const custClone = JSON.parse(JSON.stringify(this.config.customRenderer));
             attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields,
-                this.config.customRenderer);
+                custClone);
         }
 
         // feature has only one layer
