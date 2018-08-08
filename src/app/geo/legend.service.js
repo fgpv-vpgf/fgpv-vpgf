@@ -276,29 +276,27 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
             const layerRecord = layerRegistry.getLayerRecord(legendBlockConfig.layerId);
 
-            if (!promise) { // ensure only one promise is created
-                // need time to reload children for Dynamic layers
-                promise = common.$q((resolve, reject) => {
-                    layerRecord.addStateListener(_onLayerRecordLoad);
+            // need time to reload children for Dynamic layers
+            promise = common.$q((resolve, reject) => {
+                layerRecord.addStateListener(_onLayerRecordLoad);
 
-                    function _onLayerRecordLoad(state) {
-                        // add back entry
-                        if (state === 'rv-loaded' || state === 'rv-error') {
-                            layerRecord.removeStateListener(_onLayerRecordLoad);
+                function _onLayerRecordLoad(state) {
+                    // add back entry
+                    if (state === 'rv-loaded' || state === 'rv-error') {
+                        layerRecord.removeStateListener(_onLayerRecordLoad);
 
-                            _boundingBoxRemoval(legendBlock);
+                        _boundingBoxRemoval(legendBlock);
 
-                            legendBlockParent.addEntry(reloadedLegendBlock, index);
-                        }
-
-                        if (state === 'rv-loaded') {
-                            resolve(legendBlockParent);
-                        } else if (state === 'rv-error') {
-                            reject(layerRecord.name);
-                        }
+                        legendBlockParent.addEntry(reloadedLegendBlock, index);
                     }
-                });
-            }
+
+                    if (state === 'rv-loaded') {
+                        resolve(legendBlockParent);
+                    } else if (state === 'rv-error') {
+                        reject(layerRecord.name);
+                    }
+                }
+            });
         });
 
         return promise;
