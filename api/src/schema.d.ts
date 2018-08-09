@@ -409,30 +409,6 @@ export interface FgpvConfigSchema {
       basemap?: {
         [k: string]: any;
       };
-      areaOfInterest?: {
-        title: string;
-        /**
-         * The xmin coord value (lower left corner) in lat/long
-         */
-        xmin: number;
-        /**
-         * The ymin coord value (lower left corner) in lat/long
-         */
-        ymin: number;
-        /**
-         * The xmax coord value (upper right corner) in lat/long
-         */
-        xmax: number;
-        /**
-         * The ymax coord value (upper right corner) in lat/long
-         */
-        ymax: number;
-        /**
-         * Path to image file to display in the area of interest selector.
-         */
-        thumbnailUrl: string;
-        [k: string]: any;
-      }[];
     };
     /**
      * Initial basemap to load. If not supplied viewer will select any basemap.
