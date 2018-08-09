@@ -625,7 +625,7 @@ function LegendElementFactory(
         }
         get label() {
             return this._labels[
-                this.block.mainProxyWrapper.layerConfig.layerType ||
+                this.block.proxyWrapper.layerConfig.layerType ||
                     this.block.parentLayerType ||
                     TypeFlag.unresolvedType
             ];
