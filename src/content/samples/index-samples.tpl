@@ -150,27 +150,27 @@
                 <option value="config/config-sample-53.json">53. Layer Refresh Interval</option>
                 <option value="config/config-sample-54.json">54. True Dynamic Layers with different image format</option>
                 <option value="config/config-sample-55.json">55. Custom made north arrow icon</option>
-                <option value="config/config-sample-58.json">58. Initial basemap loaded is broken</option>
-                <option value="config/config-sample-59.json">59. Layer Re-ordering enabled</option>
-                <option value="config/config-sample-61.json">61. Layer with fields not searchable and default values for filters</option>
-                <option value="config/config-sample-62.json">62. Custom attribution (text, image and link)</option>
-                <option value="config/config-sample-63.json">63. Tile layer</option>
-                <option value="config/config-sample-64.json">64. a) Side menu Area of interest plugin (Pictures Enabled)</option>
-                <option value="config/config-sample-73.json">64. b) Side menu Area of interest plugin (No Pictures)</option>
-                <option value="config/config-sample-65.json">65. Basemap with opacity set on layers</option>
-                <option value="config/config-sample-66.json">66. Map with navigation restricted</option>
-                <option value="">67. Map with no config provided</option>
-                <option value="config/config-sample-68.json">68. WFS layer defined in config</option>
-                <option value="config/config-sample-69.json">69. Big images in layer info/symbology</option>
-                <option value="config/config-sample-70.json">70. Details panel templating</option>
-                <option value="config/config-sample-71.json">71. Custom ESRI API location</option>
-                <option value="config/config-sample-72.json">72. Symbology stack expand by default</option>
-                <option value="config/config-sample-73-corsEverywhere.json">73. CORS Everywhere</option>
-                <option value="config/config-sample-74.json">74. Collapsed visibility set + hidden layer group</option>
-                <option value="config/config-sample-75.json">75. Dynamic layers display field configuration</option>
-                <option value="config/config-sample-76.json">76. Custom layer renderer on client</option>
-                <option value="config/config-sample-80.json">80. All layer types</option>
-                <option value="config/config-sample-81.json">81. WFS with system co-ords in attributes</option>
+                <option value="config/config-sample-58.json">56. Initial basemap loaded is broken</option>
+                <option value="config/config-sample-59.json">57. Layer Re-ordering enabled</option>
+                <option value="config/config-sample-61.json">58. Layer with fields not searchable and default values for filters</option>
+                <option value="config/config-sample-62.json">59. Custom attribution (text, image and link)</option>
+                <option value="config/config-sample-63.json">60. Tile layer</option>
+                <option value="config/config-sample-64.json">61. a) Side menu Area of interest plugin (Pictures Enabled)</option>
+                <option value="config/config-sample-73.json">62. b) Side menu Area of interest plugin (No Pictures)</option>
+                <option value="config/config-sample-65.json">63. Basemap with opacity set on layers</option>
+                <option value="config/config-sample-66.json">64. Map with navigation restricted</option>
+                <option value="">65. Map with no config provided</option>
+                <option value="config/config-sample-68.json">66. WFS layer defined in config</option>
+                <option value="config/config-sample-69.json">67. Big images in layer info/symbology</option>
+                <option value="config/config-sample-70.json">68. Details panel templating</option>
+                <option value="config/config-sample-71.json">69. Custom ESRI API location</option>
+                <option value="config/config-sample-72.json">70. Symbology stack expand by default</option>
+                <option value="config/config-sample-73-corsEverywhere.json">71. CORS Everywhere</option>
+                <option value="config/config-sample-74.json">72. Collapsed visibility set + hidden layer group</option>
+                <option value="config/config-sample-75.json">73. Dynamic layers display field configuration</option>
+                <option value="config/config-sample-76.json">74. Custom layer renderer on client</option>
+                <option value="config/config-sample-80.json">75. All layer types</option>
+                <option value="config/config-sample-81.json">76. WFS with system co-ords in attributes</option>
             </select>
         </div>
 
@@ -224,10 +224,13 @@
     <% } %>
 
     <script>
+        var SAMPLE_KEY = 'sample';
+        var URL = new URL(window.location.href);
         document.getElementById('selectConfig').addEventListener("change", changeConfig);
         document.getElementById('loadButton').addEventListener("click", loadBookmark);
         document.getElementById('clearButton').addEventListener("click", clearBookmark);
         document.getElementById('hideShow').addEventListener("click", hide);
+        loadSample();
 
         // https://css-tricks.com/snippets/javascript/get-url-variables/
         function getQueryVariable(variable)
@@ -273,21 +276,11 @@
             RV.getMap('sample-map').restoreSession(keysArr);
         } else {
             const bookmark = queryStr.rv;
-
-            // update the config values if needed
-            var previouslySelectedConfig = sessionStorage.getItem('sampleConfig');
-            if (previouslySelectedConfig !== null) {
-                document.getElementById('sample-map').setAttribute('rv-config', previouslySelectedConfig);
-                document.getElementById('selectConfig').value = previouslySelectedConfig;
-            } else {
-                const currentConfig = document.getElementById('sample-map').getAttribute('rv-config');
-                sessionStorage.setItem('sampleConfig', currentConfig);
-            }
         }
 
         // load bookmark
         function loadBookmark() {
-            let bookmarkURL = document.getElementById('bookmarkURL').value;
+            var bookmarkURL = document.getElementById('bookmarkURL').value;
             RV.getMap('sample-map').useBookmark(bookmarkURL);
         }
 
@@ -311,12 +304,39 @@
             }
         }
 
+        // Find and load the sample specified in the key `sample`.  If `sample` is not provided, defaults to first sample.
+        function loadSample() {
+            var params = new URLSearchParams(URL.search);
+            if (params.has(SAMPLE_KEY) && params.get(SAMPLE_KEY) >= 0) {
+                var sampleIndex =  params.get(SAMPLE_KEY) - 1;
+                var previousSample = sessionStorage.getItem('sample');
+                if (previousSample !== undefined) { // first time loading
+                    document.getElementById('sample-map').setAttribute('rv-config', previousSample);
+                    document.getElementById('selectConfig').value = previousSample;
+                    var newSample = document.getElementById('selectConfig').item(sampleIndex).value;
+                    if (previousSample !== newSample) { // reload if not the same as the previous sample
+                        document.getElementById('sample-map').setAttribute('rv-config', newSample);
+                        sessionStorage.setItem('sample', newSample);
+                        location.reload();
+                    }
+                } else { // the key `sample` is provided
+                    var sampleIndex = 0;
+                    params.set('sample', sampleIndex + 1);
+                    sessionStorage.setItem('sample', newSample);
+                    var newUrl = URL.origin + URL.pathname + '?' + params.toString();
+                    window.location.href = newUrl;
+                }
+            }
+        }
+
         // change and load the new config
         function changeConfig() {
-            var selectedConfig = document.getElementById('selectConfig').value; // load existing config
-            document.getElementById('sample-map').setAttribute('rv-config', selectedConfig);
-            sessionStorage.setItem('sampleConfig', selectedConfig); // store new config
-            location.reload();
+            var currentSample = document.getElementById('selectConfig').value; // load existing config
+            sessionStorage.setItem('sample', currentSample); // store new config
+            var params = new URLSearchParams(URL.search);
+            params.set('sample', document.getElementById('selectConfig').selectedIndex + 1);
+            var newUrl = URL.origin + URL.pathname + '?' + params.toString();
+            window.location.href = newUrl;
         }
     </script>
 </body>
