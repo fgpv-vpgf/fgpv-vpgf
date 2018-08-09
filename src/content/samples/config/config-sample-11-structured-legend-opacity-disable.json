@@ -80,15 +80,27 @@
         "name": "root",
         "children": [
           {
-            "layerId": "somepowerplants"
+            "layerId": "Opacity 0"
+          },
+          {
+            "layerId": "Opacity 1"
+          },
+          {
+            "layerId": "Opacity 2"
+          },
+          {
+            "layerId": "Opacity 3"
+          },
+          {
+            "layerId": "Opacity 4"
           }
         ]
       }
     },
     "layers": [
       {
-        "id": "somepowerplants",
-        "name": "Power Plants with opacity disabled initially",
+        "id": "Opacity 0",
+        "name": "Opacity disabled initially",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
@@ -103,6 +115,86 @@
         ],
         "state": {
           "opacity": 0
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "Opacity 1",
+        "name": "Opacity 0.12 initially",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+            {
+            "index": 21
+            },
+            {
+            "index": 17
+            },
+            {
+            "index": 19
+            }
+        ],
+        "state": {
+            "opacity": 0.12
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "Opacity 2",
+        "name": "Opacity 0.5 initially",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+            {
+            "index": 21
+            },
+            {
+            "index": 17
+            },
+            {
+            "index": 19
+            }
+        ],
+        "state": {
+            "opacity": 0.5
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "Opacity 3",
+        "name": "Opacity 0.705 initially",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+            {
+            "index": 21
+            },
+            {
+            "index": 17
+            },
+            {
+            "index": 19
+            }
+        ],
+        "state": {
+            "opacity": 0.705
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "Opacity 4",
+        "name": "Opacity full initially",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+            {
+            "index": 21
+            },
+            {
+            "index": 17
+            },
+            {
+            "index": 19
+            }
+        ],
+        "state": {
+            "opacity": 1
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
       }

@@ -105,7 +105,7 @@
                 <option value="config/config-sample-08-structured-legend-one-layer-muti-legends.json">08. Layer with single entry collapsed set </option>
                 <option value="config/config-sample-09-structured-legend-opacity-visibility-disable-locked.json">09. Multiple layers with opacity, visibility both disabled and locked</option>
                 <option value="config/config-sample-10-structured-legend-opacity-disable-locked.json">10. Multiple layers with opacity disabled and locked</option>
-                <option value="config/config-sample-11-structured-legend-opacity-disable.json">11. Multiple layers with opacity disabled initially</option>
+                <option value="config/config-sample-11-structured-legend-opacity-disable.json">11. Dynamic layers with many different inital opacities</option>
                 <option value="config/config-sample-12-structured-legend-opacity-locked.json">12. Multiple layers with opacity locked</option>
                 <option value="config/config-sample-13-structured-legend-visibility-disable-locked.json">13. Multiple layers with visibility disabled and locked</option>
                 <option value="config/config-sample-14-structured-legend-visibility-disable.json">14. Multiple layers with visibility disabled initially</option>
