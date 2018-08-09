@@ -61,10 +61,18 @@
         "enabled": true
       }
     },
-    "legend": {
-      "type": "autopopulate"
-    },
-    "layers": [],
+    "layers": [
+      {
+        "id": "powerplant100mw-electric",
+        "name": "Electric Transmission Line",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": false,
+          "boundingBox": false
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      }
+    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
