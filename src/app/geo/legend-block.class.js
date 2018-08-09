@@ -843,6 +843,13 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
+
+            if (this._rootProxyWrapper) {
+                // Set LegendGroup's opacity to 1 to ensure opacity of children
+                // is calculated relative to fully opaque.
+                // The expected opacity is still applied to children values
+                this._rootProxyWrapper.opacity = 1;
+            }
         }
 
         get blockType () {      return TYPES.GROUP; }
@@ -1045,8 +1052,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 return;
             }
 
-            this._activeEntries.forEach(entry =>
-                (entry.opacity = value));
+            this._activeEntries.forEach(entry => (entry.opacity = value));
 
             return this;
         }
