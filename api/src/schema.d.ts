@@ -947,6 +947,12 @@ export interface FeatureLayerNode {
      */
     columns?: ColumnNode[];
   };
+  /**
+   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
+   */
+  customRenderer?: {
+    [k: string]: any;
+  };
   details?: {
     /**
      * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
@@ -1086,6 +1092,12 @@ export interface WfsLayerNode {
      * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
      */
     columns?: ColumnNode[];
+  };
+  /**
+   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
+   */
+  customRenderer?: {
+    [k: string]: any;
   };
   details?: {
     /**
