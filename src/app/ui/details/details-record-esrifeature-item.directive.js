@@ -99,7 +99,7 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         }
 
         // wrap raw symbology item into a symbology stack object
-        self.item.symbologyStack = new SymbologyStack({}, self.item.symbology);
+        self.item.symbologyStack = new SymbologyStack(null, self.item.symbology);
 
         // highlight the feature as soon as it renders
         self.initHighlight(self.item.oid);

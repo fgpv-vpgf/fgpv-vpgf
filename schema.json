@@ -349,7 +349,7 @@
                 "hidden": { "type": "boolean", "default": false, "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user." },
                 "controlledIds": {
                     "type": "array",
-                    "items": { "type": "string", "description": "Additional layer ids which are controlled by this layer" },
+                    "items": { "type": "string", "description": "Additional layer ids which are controlled by this layer. Controlled layers cannot have enabled `boundingBox` and `query` states." },
                     "default": [ ]
                 },
                 "entryIndex": { "type": "integer", "description": "Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true ." },

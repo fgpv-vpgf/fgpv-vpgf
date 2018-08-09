@@ -1,5 +1,5 @@
 <form name="refreshForm">
-    <md-input-container ng-switch="self.block.mainProxyWrapper || '_undefined_'">
+    <md-input-container ng-switch="self.block.proxyWrapper || '_undefined_'">
         <label>{{ self.uiControl.label | translate }}</label>
 
         <input ng-switch-when="_undefined_" class="interval-value" type="number" name="interval" min="0" max="100"

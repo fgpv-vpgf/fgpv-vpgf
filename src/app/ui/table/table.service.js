@@ -200,7 +200,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             }
         });
 
-        const layerConfig = filters.requester.legendEntry.mainProxyWrapper.layerConfig;
+        const layerConfig = filters.requester.legendEntry.proxyWrapper.layerConfig;
 
         // store the reset filter values
         layerConfig.table.columns.forEach(column => {
@@ -275,7 +275,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // set layer defintion query
         setDefinitionExpression(filters.requester.legendEntry, defs);
 
-        const layerConfig = filters.requester.legendEntry.mainProxyWrapper.layerConfig;
+        const layerConfig = filters.requester.legendEntry.proxyWrapper.layerConfig;
 
         if (defs.length === 0) {
             // store the reset filter values
@@ -423,7 +423,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // keep filter state to know when to show apply map button
         setFiltersState(column, value);
 
-        const configTable = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.table;
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value to reapply when table reopens
         configTable.columns.find(filter => column === filter.data).filter.value = value;
@@ -444,7 +444,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         const value = (values.length > 0) ? values.join('|').replace(/"/g, '') : '';
         onFilterStringChange(column, value);
 
-        const configTable = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.table;
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
         configTable.columns.find(filter => column === filter.data).filter.value = values;
@@ -472,7 +472,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // use timeout for redraw so processing can show
         $timeout(() => { service.getTable().draw(); }, 100);
 
-        const configTable = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.table;
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
         configTable.columns.find(filter => column === filter.data).filter.value = `${min},${max}`;
@@ -500,7 +500,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // use timeout for redraw so processing can show
         $timeout(() => { service.getTable().draw(); }, 100);
 
-        const configTable = stateManager.display.table.requester.legendEntry.mainProxyWrapper.layerConfig.table;
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
         configTable.columns.find(filter => column === filter.data).filter.value = {
@@ -685,7 +685,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.dataSource() !== 'esri') {
             queryOpts.featureLayer = layerRecId._layer;         // file based layer
         } else {
-            queryOpts.url = legEntry.mainProxy.queryUrl;        // server based layer
+            queryOpts.url = legEntry.proxyWrapper.queryUrl;        // server based layer
         }
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
