@@ -243,7 +243,6 @@
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
         RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
         RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.AreaOfInterest, 'areaOfInterest');
 
         function bookmark(){
             return new Promise(function (resolve) {
