@@ -103,6 +103,20 @@ class FeatureRecord extends attribRecord.AttribRecord {
     onLoad () {
         const loadPromises = super.onLoad();
 
+        // attempt to set custom renderer here. if fails, we can attempt on client but prefer it here
+        // as this doesnt care where the layer came from
+        if (this.config.customRenderer.type) {
+            // all renderers have a type field. if it's missing, no renderer was provided, or its garbage
+            const classMapper = {
+                simple: this._apiRef.symbology.SimpleRenderer,
+                classBreaks: this._apiRef.symbology.ClassBreaksRenderer,
+                uniqueValue: this._apiRef.symbology.UniqueValueRenderer
+            }
+
+            const custRend = classMapper[this.config.customRenderer.type](this.config.customRenderer);
+            this._layer.setRenderer(custRend);
+        }
+
         // get attribute package
         let attribPackage;
         let featIdx;
@@ -113,7 +127,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
             const splitUrl = shared.parseUrlIndex(this._layer.url);
             featIdx = splitUrl.index;
             this.rootUrl = splitUrl.rootUrl;
-            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields);
+
+            // methods in the attrib loader will update our copy of the renderer. if we pass in the config reference, it gets
+            // updated and some weird stuff happens. Make a copy.
+            const custClone = JSON.parse(JSON.stringify(this.config.customRenderer));
+            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields,
+                custClone);
         }
 
         // feature has only one layer
