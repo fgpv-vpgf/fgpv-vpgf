@@ -11,8 +11,8 @@ angular
     .module('app.geo')
     .factory('legendService', legendServiceFactory);
 
-function legendServiceFactory(Geo, ConfigObject, configService, stateManager, LegendBlock, LayerBlueprint,
-    layerRegistry, common, events, $rootScope) {
+function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stateManager, LegendBlock, LayerBlueprint,
+    layerRegistry, common, events) {
 
     const service = {
         constructLegend,
@@ -397,9 +397,9 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
      */
     function _boundingBoxRemoval(legendBlock) {
         if (legendBlock.blockType === LegendBlock.TYPES.NODE) {
-            layerRegistry.removeBoundingBoxRecord(`${legendBlock.id}_bbox`);
+            layerRegistry.removeBoundingBoxRecord(legendBlock.bboxId);
         } else if (legendBlock.blockType === LegendBlock.TYPES.GROUP) {
-            legendBlock.entries.forEach(entry => layerRegistry.removeBoundingBoxRecord(`${entry.id}_bbox`));
+            legendBlock.entries.forEach(entry => layerRegistry.removeBoundingBoxRecord(entry.bboxId));
         }
     }
 
@@ -507,8 +507,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                         const legendBlock = new LegendBlock.Node(proxyWrapper, entryConfig);
                         legendBlock.controlled = true;
                         legendBlock.layerRecordId = layerConfig.id;
-                        legendBlock.applyInitialStateSettings();
-
+                        
                         legendBlockGroup.addEntry(legendBlock);
                     })
 
@@ -577,7 +576,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
                     // show filter flag if there is a filter query being applied
                     legendBlock.filter = item.proxyWrapper.layerConfig.initialFilteredQuery && item.proxyWrapper.layerConfig.initialFilteredQuery !== "";
-                    legendBlock.applyInitialStateSettings();
                 }
 
                 parentLegendGroup.addEntry(legendBlock);
@@ -624,6 +622,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
                 let derivedLayerEntryConfig = _getLayerEntryConfig();
 
+                // process as a group
                 if (treeChild.childs) {
 
                     const originalSource = angular.merge({}, derivedLayerEntryConfig.source);
@@ -661,7 +660,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
 
 
                 } else {
-                    const mainProxy = layerRecord.getChildProxy(treeChild.entryIndex);
+                    const mainProxy = common.$q.resolve(layerRecord.getChildProxy(treeChild.entryIndex));
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
                     treeChild.proxyWrapper = proxyWrapper;
@@ -788,7 +787,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
 
             const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
-
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);
 
             // map this legend block to the layerRecord
@@ -803,7 +801,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             });
 
             const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
-            layerRecord.addStateListener(_onLayerRecordLoad);
 
             // handling controlled layers by getting their proxies and adding them as controlled proxies to the legend node
             blueprints.controlled.forEach(blueprint =>
@@ -817,27 +814,6 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                 ));
 
             return node;
-
-            /**
-             * A helper function to handle layerRecord state change. On loaded, it applies states setting to the legend node.
-             *
-             * @function _onLayerRecordLoad
-             * @private
-             * @param {String} state the current state of the layerRecord
-             * @return {undefined}
-             */
-            function _onLayerRecordLoad(state) {
-                if (state === 'rv-loaded') {
-                    layerRecord.removeStateListener(_onLayerRecordLoad);
-
-                    // this is the first chance to properly create bounding box for this legend node
-                    // since it's created on demand and cannot be created by geoapi when creating layerRecord
-                    // need to read the layer config state here and initialize the bounding box manually when the layer loads
-                    // Not all state is applied to the layer record inside geoApi;
-                    // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
-                    node.applyInitialStateSettings();
-                }
-            }
         }
 
         /**
@@ -885,6 +861,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
          */
         function _getControlledLegendBlockProxy(blueprint) {
 
+            // TODO: make async
             const layerRecord = layerRegistry.makeLayerRecord(blueprint);
             const layerConfig = blueprint.config;
             layerRegistry.loadLayerRecord(layerRecord.config.id);
@@ -908,10 +885,10 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
             // controlled layers are not supposed to have hovertips
             layerConfig.hovertipEnabled = false;
 
-            let proxyPromise;
+            let proxyWrapperPromise;
 
             if (blueprint.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                proxyPromise = common.$q(resolve => {
+                proxyWrapperPromise = common.$q(resolve => {
                     layerRecord.addStateListener(_onLayerRecordLoad);
 
                     function _onLayerRecordLoad(state) {
@@ -930,13 +907,13 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                 });
 
             } else {
-                const proxy = layerRecord.getProxy();
+                const proxy = common.$q.resolve(layerRecord.getProxy());
                 const proxyWrapper = new LegendBlock.ProxyWrapper(proxy, layerConfig);
 
-                proxyPromise = common.$q.resolve([proxyWrapper]);
+                proxyWrapperPromise = common.$q.resolve([proxyWrapper]);
             }
 
-            return proxyPromise;
+            return proxyWrapperPromise;
 
             function _flattenTree(tree) {
                 const result = [].concat.apply([], tree.map(item => {
@@ -959,7 +936,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
          * @function _getLegendBlockProxy
          * @private
          * @param {LayerBlueprint} blueprint legend entry config object
-         * @return {Proxy} a layers proxy object
+         * @return {Promise<Proxy>} a promise of a layer proxy object
          */
         function _getLegendBlockProxy(blueprint) {
             // hidden legend blocks can't have hover tooltips or query enabled on the layers
@@ -967,6 +944,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                 blueprint.config.state.query = false;
             }
 
+            // TODO: change `makeLayerRecord` to async function
             const layerRecord = layerRegistry.makeLayerRecord(blueprint);
             layerRegistry.loadLayerRecord(layerRecord.config.id);
 
@@ -978,7 +956,7 @@ function legendServiceFactory(Geo, ConfigObject, configService, stateManager, Le
                 proxy = layerRecord.getProxy();
             }
 
-            return proxy;
+            return common.$q.resolve(proxy);
         }
 
         /**

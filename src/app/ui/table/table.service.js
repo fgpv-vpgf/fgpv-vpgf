@@ -685,7 +685,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.dataSource() !== 'esri') {
             queryOpts.featureLayer = layerRecId._layer;         // file based layer
         } else {
-            queryOpts.url = legEntry.mainProxy.queryUrl;        // server based layer
+            queryOpts.url = legEntry.mainProxyWrapper.queryUrl;        // server based layer
         }
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception

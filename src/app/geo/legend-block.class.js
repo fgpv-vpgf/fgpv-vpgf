@@ -12,7 +12,7 @@ angular
     .module('app.geo')
     .factory('LegendBlock', LegendBlockFactory);
 
-function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo) {
+function LegendBlockFactory($rootScope, common, Geo, layerRegistry, gapiService, configService, SymbologyStack, appInfo) {
 
     let legendBlockCounter = 0;
 
@@ -43,14 +43,17 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
      * @class ProxyWrapper
      */
     class ProxyWrapper {
+        _proxy = null;
+        _proxyPromise = null;
+        
         /**
          * Creates a new `ProxyWrapper` from a layer proxy object and layer config.
          *
-         * @param {LayerProxy} proxy a layer proxy object which will be coupled with a corresponding layer config object
+         * @param {Promise<LayerProxy>} proxyPromise a promise of a layer proxy object which will be coupled with a corresponding layer config object
          * @param {LayerNode} layerConfig layer config defintion object from the config file; it may provide overrides and initial settings for the layer proxy object
          */
-        constructor(proxy, layerConfig) {
-            this._proxy = proxy;
+        constructor(proxyPromise, layerConfig) {
+            this._proxyPromise = proxyPromise;
             this._layerConfig = layerConfig;
 
             this.isControlVisible = ref.isControlVisible.bind(this);
@@ -58,61 +61,87 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
             this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
 
-            this._initialStateSettingsApplied = false;
+            // wait for the proxy to be resolved; 
+            // for WFS layers proxy resolves when the layer record is made and "loaded"
+            // for other layer types proxy resolves when the layer record is made (layer is not necessarily loaded at this point)
+            this._proxyPromise.then(proxy => {
+                this._proxy = proxy;
+
+                // This will apply initial state values from the layer config object to the layer proxy object.
+                // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
+                this.opacity = this._layerConfig.state.opacity;
+                this.visibility = this._layerConfig.state.visibility;
+                this.query = this._layerConfig.state.query;
+                
+                this._updateApiLayerVisibility(this);
+                this._updateApiLayerOpacity(this);
+                this._updateApiLayerQueryable(this);
+            });
+        }
+
+
+        /**
+         * Checks if a proxy object is resolved or not and throws error if not and no callback is provided.
+         *
+         * @param {*} [callback=null] a function to run later when the proxy is resolved
+         * @returns {Boolean} returns `true` if the proxy is resolved; `false` otherwise and a callback is provided;
+         * @memberof ProxyWrapper
+         */
+        _proxyCheck(callback = null) {
+            if (this._proxy) {
+                return true;
+            } else if (callback) {
+                this._proxyPromise.then(callback);
+                return false;
+            } else {
+                throw new Error('Layer proxy is not yet resolved.');
+            }
+        }
+
+        get proxyPromise() {
+            return this._proxyPromise;
         }
 
         /**
          * @return {Proxy} original gapi proxy object
          */
-        get proxy () { return this._proxy; }
+        get proxy () { 
+            this._proxyCheck();
+
+            return this._proxy; 
+        }
+        
         /**
          * @return {LayerNode} original typed layer config object
          */
         get layerConfig () { return this._layerConfig; }
 
-        /**
-         * This will apply initial state values from the layer config object to the layer proxy object.
-         * This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
-         *
-         * @function applyInitialStateSettings
-         */
-        applyInitialStateSettings() {
-            if (this._initialStateSettingsApplied) {
-                return;
-            }
+        get state () {              return this._proxy ? this._proxy.state : 'rv-loading'; }
+        get name () {               return this._proxy ? this._proxy.name : this._layerConfig.name; }
+        get opacity () {            return this._proxy ? this._proxy.opacity : this._layerConfig.state.opacity; }
+        get visibility () {         return this._proxy ? this._proxy.visibility : this._layerConfig.state.visibility; }
+        get layerType () {          return this._proxy ? this._proxy.layerType : this._layerConfig.layerType; }
+        
+        get parentLayerType () {    this._proxyCheck(); return this._proxy.parentLayerType; }
+        get featureCount () {       this._proxyCheck(); return this._proxy.featureCount; }
+        get loadedFeatureCount () { this._proxyCheck(); return this._proxy.loadedFeatureCount; }
+        get geometryType () {       this._proxyCheck(); return this._proxy.geometryType; }
+        get extent () {             this._proxyCheck(); return this._proxy.extent; }
+        get symbology() {           this._proxyCheck(); return this._proxy.symbology; }
+        get formattedAttributes() { this._proxyCheck(); return this._proxy.formattedAttributes; }
+        get itemIndex () {          this._proxyCheck(); return this._proxy.itemIndex; }
+        get queryUrl () {           this._proxyCheck(); return this._proxy.queryUrl; }
+        get query () {              this._proxyCheck(); return this._proxy.query; }
 
-            this._proxy.setOpacity(this._layerConfig.state.opacity);
-            this._proxy.setVisibility(this._layerConfig.state.visibility);
-            this._proxy.setQuery(this._layerConfig.state.query);
-
-            this._updateApiLayerVisibility(this);
-            this._updateApiLayerOpacity(this);
-            this._updateApiLayerQueryable(this);
-
-            this._initialStateSettingsApplied = true;
-        }
-
-        get initialStateSettingsApplied () { return this._initialStateSettingsApplied }
-
-        get state () {              return this._proxy.state; }
-        get name () {               return (this._proxy || this._layerConfig).name; }
-        get layerType () {          return this._proxy.layerType; }
-        get parentLayerType () {    return this._proxy.parentLayerType; }
-        get featureCount () {       return this._proxy.featureCount; }
-        get loadedFeatureCount () { return this._proxy.loadedFeatureCount; }
-        get geometryType () {       return this._proxy.geometryType; }
-        get extent () {             return this._proxy.extent; }
-        get symbology() {           return this._proxy.symbology; }
-        get formattedAttributes() { return this._proxy.formattedAttributes; }
-        get itemIndex () {          return this._proxy.itemIndex; }
-
-        get opacity () {            return this._proxy.opacity; }
-        get visibility () {         return this._proxy.visibility; }
-        get query () {              return this._proxy.query; }
         get snapshot () {           return this._layerConfig.state.snapshot; }
         get boundingBox () {        return this._layerConfig.state.boundingBox; }
 
         set opacity (value) {
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => (this.opacity = value))) {
+                return;
+            }
+
             if (this.isControlSystemDisabled('opacity')) {
                 return;
             }
@@ -125,6 +154,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._updateApiLayerOpacity(this);
         }
         set visibility (value) {
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => (this.visibility = value))) {
+                return;
+            }
+
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
@@ -137,6 +171,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._updateApiLayerVisibility(this);
         }
         set query (value) {
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => (this.query = value))) {
+                return;
+            }
+
             if (this.isControlSystemDisabled('query')) {
                 return;
             }
@@ -151,6 +190,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
 
             this._updateApiLayerQueryable(this);
         }
+
         set boundingBox (value) {
             if (this.isControlSystemDisabled('boundingBox')) {
                 return;
@@ -164,7 +204,14 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          *
          * @param {String} value the definition query to set
          */
-        set definitionQuery (value) {   this._proxy.setDefinitionQuery(value); }
+        set definitionQuery (value) {   
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => (this.setDefinitionQuery = value))) {
+                return;
+            }
+            
+            this._proxy.setDefinitionQuery(value); 
+        }
 
         /**
          * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
@@ -179,11 +226,24 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          *
          * @return {Object} of the form {offScale: <Boolean>, zoomIn: <Boolean> }
          */
-        isOffScale () {                 return this._proxy.isOffScale(ref.map.instance.getScale()); }
-        zoomToBoundary() {              return this._proxy.zoomToBoundary(ref.map.instance); }
+        isOffScale () {                this._proxyCheck(); return this._proxy.isOffScale(ref.map.instance.getScale()); }
+        
+        zoomToBoundary() {              
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(this.zoomToBoundary)) {
+                return;
+            }
+            
+            return this._proxy.zoomToBoundary(ref.map.instance); 
+        }
+        
         zoomToScale() {
-            return this._proxy.zoomToScale(
-                ref.map.instance, ref.map.selectedBasemap.lods, this.isOffScale().zoomIn);
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(this.zoomToScale)) {
+                return;
+            }
+            
+            return this._proxy.zoomToScale(ref.map.instance, ref.map.selectedBasemap.lods, this.isOffScale().zoomIn);
         }
 
         /**
@@ -194,6 +254,11 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * @return {Promise} a promise resolving when the extent change is comlete
          */
         zoomToGraphic(oid, offsetFraction) {
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => this.zoomToGraphic(oid, offsetFraction))) {
+                return;
+            }
+            
             return this._proxy.zoomToGraphic(oid, ref.map.instance, offsetFraction);
         }
 
@@ -204,9 +269,21 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
          * @param {Object} opts options object for the graphic
          * @return {Promise} a promise resolving with a graphic object
          */
-        fetchGraphic(oid, opts) {         return this._proxy.fetchGraphic(oid, opts); }
+        fetchGraphic(oid, opts) {         
+            // the proxy has not resolved yet; retry when resolved;
+            if (!this._proxyCheck(() => this.fetchGraphic(oid, opts))) {
+                return;
+            }
+            
+            return this._proxy.fetchGraphic(oid, opts); 
+        }
 
-        abortAttribLoad() {         this._proxy.abortAttribLoad(); }
+        abortAttribLoad() {         
+            // the proxy has not resolved yet
+            this._proxyCheck();            
+
+            this._proxy.abortAttribLoad(); 
+        }
 
         /**
          * Returns the value of the `userAdded` state flag.
@@ -223,22 +300,23 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get filter () {                return this._layerConfig.filter; }
         set filter (value) {           this._layerConfig.filter = value; }
 
+        // if the projection is not valid, the layer cannot be displayed on the map
         _validProjection = true;
         get validProjection () { return this._validProjection; }
+
         /**
          * Checks if the spatial reference of the layer matches the spatial reference of the current basemap.
          * If it doesn't, the layer cannot be displayed on the map.
          *
          * @function validateProjection
-         * @param {SpatialReference} value spatial reference of the current basemap
          */
-        validateProjection (value) {
+        validateProjection () {
             // validate projection only for tile layers; although Aly said that wms, dynamic and image layers are potentially affected as well;
             if (this.proxy.parentLayerType !== Geo.Layer.Types.ESRI_TILE) {
                 return;
             }
 
-            this._validProjection = this.proxy.validateProjection(value) !== false;
+            this._validProjection = this.proxy.validateProjection(ref.map.selectedBasemap.spatialReference) !== false;
         }
 
         get metadataUrl () {            return this._layerConfig.metadataUrl; }
@@ -290,6 +368,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                     layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
 
+                // push update into the observable
                 if (layer && layer.visibility !== this._proxy.visibility) {
                     layer._visibilityChanged.next(this._proxy.visibility);
                 }
@@ -384,8 +463,13 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             super(blockConfig);
 
             this._symbologyStack =
-                new SymbologyStack({}, blockConfig.symbologyStack, blockConfig.coverIcon, this.symbologyRenderStyle,
-                    this.symbologyExpanded, true);
+                new SymbologyStack(
+                    null, 
+                    blockConfig.symbologyStack, 
+                    blockConfig.coverIcon, 
+                    this.symbologyRenderStyle,
+                    this.symbologyExpanded, 
+                    true);
 
             this._canEnlarge = false;
         }
@@ -464,30 +548,36 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
             this._controlledProxyWrappers = [];
 
             this._aggregateStates = ref.aggregateStates;
+            
             this._symbologyStack = new SymbologyStack(
-                this.mainProxy, blockConfig.symbologyStack, blockConfig.coverIcon, blockConfig.symbologyRenderStyle,
+                this.mainProxyWrapper.proxyPromise, 
+                blockConfig.symbologyStack, 
+                blockConfig.coverIcon, 
+                blockConfig.symbologyRenderStyle,
                 blockConfig.symbologyExpanded, true);
+
+            // wait for the layer to load before trying to make a bounding box or validate the projection
+            const deregisterWatch = $rootScope.$watch(() => this.mainProxyWrapper.state, state => {
+                if (state !== 'rv-loaded') {
+                    return;
+                }
+                
+                // this is the first chance to properly create bounding box for this legend node
+                // since it's created on demand and cannot be created by geoapi when creating layerRecord
+                // need to read the layer config state here and initialize the bounding box manually when the layer loads
+                // Not all state is applied to the layer record inside geoApi;
+                // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
+                this.boundingBox = this.mainProxyWrapper.boundingBox;
+                this.mainProxyWrapper.validateProjection();
+
+                deregisterWatch();
+            })
         }
 
         get mainProxyWrapper () { return this._mainProxyWrapper; }
 
-        /**
-         * @return {Proxy} the main proxy connected to the legend block
-         */
-        get mainProxy () { return this.mainProxyWrapper.proxy; }
-
         addControlledProxyWrapper(proxyWrapper) {
             this._controlledProxyWrappers.push(proxyWrapper);
-        }
-
-        applyInitialStateSettings() {
-            if (!this.mainProxyWrapper.initialStateSettingsApplied) {
-                this.mainProxyWrapper.applyInitialStateSettings();
-                this.mainProxyWrapper.validateProjection(configService.getSync.map.selectedBasemap.spatialReference);
-
-                // bounding box is not linked to a proxy, so we need to apply it separately
-                this.boundingBox = this.mainProxyWrapper.boundingBox;
-            }
         }
 
         /**
@@ -566,8 +656,10 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         get geometryType () {       return this._mainProxyWrapper.geometryType; }
+
         // on change, update the corresponding css rule to make bboxes click-through
-        get bboxID () {             return this.layerRecordId + '_' + this.itemIndex + '_bbox'; }
+        get bboxId () {             return `${this.id}_bbox`; }
+
         get itemIndex () {          return this.mainProxyWrapper.itemIndex; }
 
         get visibility () {         return this.mainProxyWrapper.visibility; }
@@ -616,23 +708,25 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         set snapshot (value) {      this.mainProxyWrapper.snapshot = value; }
 
         /**
-         * Creates and stores (if missing) a boundign box based on the full extent exposed by the proxy object.
+         * Creates and stores (if missing) a bounding box based on the full extent exposed by the proxy object.
          *
          * @function _makeBbox
          * @private
          */
         _makeBbox () {
-            if (!this._bboxProxy) {
-                const currentWkid = configService.getSync.map.selectedBasemap.spatialReference.wkid;
-                this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxID);
-
-                if (!this._bboxProxy) { // no cached bounding box found
-                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this.mainProxyWrapper.extent);
-                } else if (this._bboxProxy.spatialReference.wkid !== currentWkid) { // cached bbox projection not compatible
-                    this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxID);
-                    this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxID, this.mainProxyWrapper.extent);
-                }
+            if (this._bboxProxy) {
+                return;
             }
+
+            const currentWkid = ref.map.selectedBasemap.spatialReference.wkid;
+            this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxId);
+
+            if (!this._bboxProxy) { // no cached bounding box found
+                this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxId, this.mainProxyWrapper.extent);
+            } else if (this._bboxProxy.spatialReference.wkid !== currentWkid) { // cached bbox projection not compatible
+                this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxId);
+                this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxId, this.mainProxyWrapper.extent);
+            }            
         }
 
         get boundingBox () {
@@ -640,7 +734,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
                 return false;
             }
 
-            const bbox = layerRegistry.getBoundingBoxRecord(this.bboxID);
+            const bbox = layerRegistry.getBoundingBoxRecord(this.bboxId);
 
             if (!this._bboxProxy && bbox) {
                 this._bboxProxy = bbox;
@@ -650,7 +744,8 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         }
 
         set boundingBox (value) {
-            const currentWkid = configService.getSync.map.selectedBasemap.spatialReference.wkid;
+            const currentWkid = ref.map.selectedBasemap.spatialReference.wkid;
+
             if (!value && !this._bboxProxy) {
                 return;
             } else if (!this._bboxProxy || this._bboxProxy.spatialReference.wkid !== currentWkid) {
@@ -854,6 +949,7 @@ function LegendBlockFactory(common, Geo, layerRegistry, gapiService, configServi
         get collapsed () {       return this._collapsed; }
         set collapsed (value) {  this._collapsed = value; }
 
+        // TODO: this doesn't seem to be called from anywhere
         applyInitialStateSettings() {
             // this will ensure all the controlled layers settings in this group match settings of the observable entries
             this.visibility = this.visibility;

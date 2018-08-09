@@ -736,27 +736,32 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
     }
 }
 
-function symbologyStack(ConfigObject, gapiService) {
+function symbologyStack($q, ConfigObject, gapiService) {
     class SymbologyStack {
         /**
          * Creates a new symbology stack. All parameters are options and if none is supplied, an empty stack will be created.
          *
-         * @param {LayerProxy} proxy [optional = {}] layer proxy object which can supply symbology stack; custom symbols will be used first; if they are not availalbe, symbology stack from the proxy object is used;
+         * @param {LayerProxy|Promise<LayerProxy>} proxy [optional = {}] layer proxy object or a promise returning a proxy object which can supply symbology stack; custom symbols will be used first; if they are not availalbe, symbology stack from the proxy object is used;
          * @param {Array} symbols [optional = null] array of alternative symbology svg graphic elements; can be either [ { name: <String>, svgcode: <String> }, ... ] or [ { text: <String>, image: <String> }, ... ]; the latter example (usually coming from a config file) will be transformed into the format by wrapping images in svg containers;
-         * @param {String} coverIcon [optional <String> ] a graphic to be displayed as a cover icon for the symbology stack but which stays put and does not move
+         * @param {String} coverIcon [optional = String] a graphic to be displayed as a cover icon for the symbology stack but which stays put and does not move
          * @param {String} renderStyle [optional = ConfigObject.legend.Entry.ICONS] rendering style for symbology stack animation
          * @param {String} expanded [optional = false] specifies if symbolbogy stack is expanded
          * @param {Boolean} isInteractive [optional = false] specifies if the user can interact with the symbology stack
          */
+        // eslint-disable-next-line complexity
         constructor(
-            proxy = {},
+            proxy = null,
             symbols = null,
             coverIcon = null,
             renderStyle = ConfigObject.legend.Entry.ICONS,
             expanded = false,
             isInteractive = false
         ) {
-            this._proxy = proxy;
+            // resolve proxy promise and store the proxy object itself
+            if (proxy) {
+                $q.resolve(proxy).then(proxy => (this._proxy = proxy));
+            }
+
             this._renderStyle = renderStyle;
 
             this._fannedOut = false;
@@ -783,25 +788,28 @@ function symbologyStack(ConfigObject, gapiService) {
                 ])[0];
             }
 
-            // the stack can only be interactive if there is at least one symbol
-            this._isInteractive = this.stack && this.stack.length === 0 ? false : isInteractive;
+            this._isInteractive = isInteractive;
         }
-
+        
+        _proxy = null;
         _coverIcon = null;
-
+        
         /**
          * @return {Boolean} true if the symbology stack can be expanded by the user; false if not;
          */
         get isInteractive() {
-            return this._isInteractive;
+            // the stack can only be interactive if there is at least one symbol
+            return this.stack && this.stack.length === 0 ? false : this._isInteractive;
         }
 
         get stack() {
-            return this._symbols || this._proxy.symbology;
+            return this._symbols || (this._proxy ? this._proxy.symbology : []) || [];
         }
+
         get renderStyle() {
             return this._renderStyle;
         }
+
         get coverIcon() {
             return this._coverIcon;
         }
@@ -809,6 +817,7 @@ function symbologyStack(ConfigObject, gapiService) {
         get fannedOut() {
             return this._fannedOut;
         }
+
         set fannedOut(value) {
             this._fannedOut = value;
         }
@@ -816,6 +825,7 @@ function symbologyStack(ConfigObject, gapiService) {
         get expanded() {
             return this._expanded;
         }
+
         set expanded(value) {
             this._expanded = value;
         }
