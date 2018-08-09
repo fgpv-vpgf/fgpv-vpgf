@@ -790,10 +790,10 @@ function symbologyStack($q, ConfigObject, gapiService) {
 
             this._isInteractive = isInteractive;
         }
-        
+
         _proxy = null;
         _coverIcon = null;
-        
+
         /**
          * @return {Boolean} true if the symbology stack can be expanded by the user; false if not;
          */
