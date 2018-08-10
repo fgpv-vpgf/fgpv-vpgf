@@ -57,9 +57,9 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
 
             const apiLayers = mApi.layers.allLayers
-                                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
-                                .filter(l => l._viewerLayer.config)
-                                .map(l => l._viewerLayer.config.source);
+                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
+                .filter(l => l._viewerLayer.config)
+                .map(l => l._viewerLayer.config.source);
             const viewerLayers = configService.getSync.map.layers;
             const layers = apiLayers.concat(
                 viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
@@ -231,7 +231,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
      *
      * @function reloadBoundLegendBlocks
      * @param {String} layerRecordId the layer record id
-     * @return {Promise} resolving to legend block parent of block reloaded
+     * @return {Promise<LegendBlock>} resolving to legend block parent of block reloaded
      */
     function reloadBoundLegendBlocks(layerRecordId) {
         // reset mapping for this layer blueprint
@@ -271,14 +271,24 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                 reloadBoundLegendBlocks(controlledId));
 
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
-
             const index = legendBlockParent.removeEntry(legendBlock);
+            const layerRecordPromise = layerRegistry.getLayerRecordPromise(legendBlockConfig.layerId);
 
-            const layerRecord = layerRegistry.getLayerRecord(legendBlockConfig.layerId);
+            if (promise) { // ensure only one promise is created
+                return;
+            }
 
-            if (!promise) { // ensure only one promise is created
+            promise = layerRecordPromise.then(_handleLayerStateChange);
+
+            /**
+             * A helper function to watch the layer record loading state.
+             *
+             * @param {*} layerRecord
+             * @returns {Promise<LegendBlock>}
+             */
+            function _handleLayerStateChange(layerRecord) {
                 // need time to reload children for Dynamic layers
-                promise = common.$q((resolve, reject) => {
+                const p = common.$q((resolve, reject) => {
                     layerRecord.addStateListener(_onLayerRecordLoad);
 
                     function _onLayerRecordLoad(state) {
@@ -298,6 +308,8 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                         }
                     }
                 });
+
+                return p;
             }
         });
 
@@ -468,8 +480,8 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             // variable names ending in `config` are typed objects
 
             // this will load the layer record onto the map, but only need the root proxy of a dynamic layer to catch if it errors on initial loading
-            const rootProxy = _getLegendBlockProxy(blueprints.main);
-            const rootProxyWrapper = new LegendBlock.ProxyWrapper(rootProxy, layerConfig);
+            const rootProxyPromise = _getLegendBlockProxy(blueprints.main);
+            const rootProxyWrapper = new LegendBlock.ProxyWrapper(rootProxyPromise, layerConfig);
             // to create a group for a dynamic layer, create a entryGroup config object by using properties
             // from dynamic layer definition config object
             const derivedEntryGroupSource = {
@@ -491,10 +503,16 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             });
 
             // wait for the dynamic layer record to load to get its children
-            const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
+            const layerRecordPromise = layerRegistry.getLayerRecordPromise(blockConfig.layerId);
+            layerRecordPromise.then(_waitOnLayerLoad).then(layerRecord => {
+                // on loaded, create child LegendBlocks for the dynamic layer and
+                // add them to the created LegendBlock.GROUP to be displayed in the UI (following any hierarchy provided)
+                const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                tree.forEach(item =>
+                    _addChildBlock(item, legendBlockGroup));
 
-            // TODO: there is a potential for race condition if a listener is set too late
-            layerRecord.addStateListener(_onLayerRecordLoad);
+                legendBlockGroup.synchronizeControlledEntries();
+            });
 
             // to handle controlled layers, first, get their proxies, it will load the layers,
             // then convert the list of return proxyWrappers into a list of LegendBlocks, marked them as controlled (makes them hidden in the layer selector),
@@ -507,7 +525,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                         const legendBlock = new LegendBlock.Node(proxyWrapper, entryConfig);
                         legendBlock.controlled = true;
                         legendBlock.layerRecordId = layerConfig.id;
-                        
+
                         legendBlockGroup.addEntry(legendBlock);
                     })
 
@@ -528,27 +546,6 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             }
 
             return legendBlockGroup;
-
-            /**
-             * A helper function to handle layerRecord state change. On loaded, it create child LegendBlocks for the dynamic layer and
-             * adds them to the created LegendBlock.GROUP to be displayed in the UI (following any hierarchy provided). Removes listener after that.
-             *
-             * @function _onLayerRecordLoad
-             * @private
-             * @param {String} state the current state of the layerRecord
-             * @return {undefined}
-             */
-            function _onLayerRecordLoad(state) {
-                if (state === 'rv-loaded') {
-                    layerRecord.removeStateListener(_onLayerRecordLoad);
-
-                    const tree = _createDynamicChildTree(layerRecord, layerConfig);
-                    tree.forEach(item =>
-                        _addChildBlock(item, legendBlockGroup));
-
-                    legendBlockGroup.synchronizeControlledEntries();
-                }
-            }
 
             /**
              * Traverses dynamic child tree and converts them to a hierarchy of LegendBlocks.
@@ -660,6 +657,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
 
                 } else {
+                    // layerRecord is generated by this point, it's not a promise
                     const mainProxy = common.$q.resolve(layerRecord.getChildProxy(treeChild.entryIndex));
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
@@ -775,7 +773,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          */
         function _makeNodeBlock(blockConfig, blueprints) {
             const layerConfig = blueprints.main.config;
-            const mainProxy = _getLegendBlockProxy(blueprints.main, blockConfig);
+            const mainProxyPromise = _getLegendBlockProxy(blueprints.main, blockConfig);
 
             // all wms layer default to image-style symbology, regardless of what the config says
             if (layerConfig.layerType === Geo.Layer.Types.OGC_WMS) {
@@ -786,7 +784,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
             layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
 
-            const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
+            const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxyPromise, layerConfig);
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);
 
             // map this legend block to the layerRecord
@@ -799,8 +797,6 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                 legendBlockId: node.id,
                 legendBlockConfigId: blockConfig.id
             });
-
-            const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
 
             // handling controlled layers by getting their proxies and adding them as controlled proxies to the legend node
             blueprints.controlled.forEach(blueprint =>
@@ -860,11 +856,9 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          * @return {Promise} a promise resolving with an array of proxyWrappers
          */
         function _getControlledLegendBlockProxy(blueprint) {
-
-            // TODO: make async
-            const layerRecord = layerRegistry.makeLayerRecord(blueprint);
+            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
             const layerConfig = blueprint.config;
-            layerRegistry.loadLayerRecord(layerRecord.config.id);
+            layerRegistry.loadLayerRecord(blueprint.config.id);
 
             const disabledOptions = {
                 controls: ['query', 'boundingBox'],
@@ -888,33 +882,32 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             let proxyWrapperPromise;
 
             if (blueprint.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                proxyWrapperPromise = common.$q(resolve => {
-                    layerRecord.addStateListener(_onLayerRecordLoad);
+                // wait for the layer record to finishi generating, then set listener to wait until the record is fully loaded
+                proxyWrapperPromise = layerRecordPromise.then(_waitOnLayerLoad).then(layerRecord => {
+                    // tree consists of objects with entryIndex and its proxy wrapper,
+                    // for controlledLayers only proxyWrappers are needed
+                    const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                    const flatTree = _flattenTree(tree).map(item =>
+                        item.proxyWrapper);
 
-                    function _onLayerRecordLoad(state) {
-                        if (state === 'rv-loaded') {
-
-                            layerRecord.removeStateListener(_onLayerRecordLoad);
-                            // tree consists of objects with entryIndex and its proxy wrapper,
-                            // for controlledLayers only proxyWrappers are needed
-                            const tree = _createDynamicChildTree(layerRecord, layerConfig);
-                            const flatTree = _flattenTree(tree).map(item =>
-                                item.proxyWrapper);
-
-                            resolve(flatTree);
-                        }
-                    }
+                    return flatTree;
                 });
 
             } else {
-                const proxy = common.$q.resolve(layerRecord.getProxy());
-                const proxyWrapper = new LegendBlock.ProxyWrapper(proxy, layerConfig);
+                const proxyPromise = layerRecordPromise.then(layerRecord => layerRecord.getProxy());
+                const proxyWrapper = new LegendBlock.ProxyWrapper(proxyPromise, layerConfig);
 
                 proxyWrapperPromise = common.$q.resolve([proxyWrapper]);
             }
 
             return proxyWrapperPromise;
 
+            /**
+             * Flatten the tree of dynamic children and groups discarding all the group objects.
+             *
+             * @param {*} tree
+             * @returns
+             */
             function _flattenTree(tree) {
                 const result = [].concat.apply([], tree.map(item => {
                     if (item.childs) {
@@ -944,19 +937,22 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                 blueprint.config.state.query = false;
             }
 
-            // TODO: change `makeLayerRecord` to async function
-            const layerRecord = layerRegistry.makeLayerRecord(blueprint);
-            layerRegistry.loadLayerRecord(layerRecord.config.id);
+            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
+            layerRegistry.loadLayerRecord(blueprint.config.id);
 
-            let proxy;
+            const proxyPromise = layerRecordPromise.then(layerRecord => {
+                let proxy;
 
-            if (blockConfig.entryIndex) {
-                proxy = layerRecord.getChildProxy(blockConfig.entryIndex);
-            } else {
-                proxy = layerRecord.getProxy();
-            }
+                if (blockConfig.entryIndex) {
+                    proxy = layerRecord.getChildProxy(blockConfig.entryIndex);
+                } else {
+                    proxy = layerRecord.getProxy();
+                }
 
-            return common.$q.resolve(proxy);
+                return proxy;
+            });
+
+            return proxyPromise;
         }
 
         /**
@@ -973,6 +969,30 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
             // TODO: this should return something meaningful for info sections and maybe sets?
             return blueprint;
+        }
+
+        /**
+         * A helper function to wait on the layer load.
+         *
+         * @param {*} layerRecord
+         * @returns {Promise<LayerRecord>} a promise of a layer record which resolve when the record is fully loaded
+         */
+        function _waitOnLayerLoad(layerRecord) {
+            const promise = common.$q(resolve => {
+                // TODO: there is a potential for race condition if a listener is set too late
+                layerRecord.addStateListener(_onLayerRecordLoad);
+
+                function _onLayerRecordLoad(state) {
+                    if (state !== 'rv-loaded') {
+                        return;
+                    }
+
+                    layerRecord.removeStateListener(_onLayerRecordLoad);
+                    resolve(layerRecord);
+                }
+            })
+
+            return promise;
         }
     }
 }
