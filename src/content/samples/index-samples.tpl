@@ -307,15 +307,19 @@
         // Find and load the sample specified in the key `sample`.  If `sample` is not provided, defaults to first sample.
         function loadSample() {
             var params = new URLSearchParams(URL.search);
-            if (params.has(SAMPLE_KEY) && params.get(SAMPLE_KEY) >= 0) {
-                var sampleIndex =  params.get(SAMPLE_KEY) - 1;
+            var sampleIndex =  params.get(SAMPLE_KEY) - 1;
+            var selectElem = document.getElementById('selectConfig');
+            var sameplMapElem = document.getElementById('sample-map');
+            if (params.has(SAMPLE_KEY) && sampleIndex >= 0 && selectElem.item(sampleIndex)) {
                 var previousSample = sessionStorage.getItem('sample');
                 if (previousSample !== undefined) { // first time loading
-                    document.getElementById('sample-map').setAttribute('rv-config', previousSample);
-                    document.getElementById('selectConfig').value = previousSample;
-                    var newSample = document.getElementById('selectConfig').item(sampleIndex).value;
-                    if (previousSample !== newSample) { // reload if not the same as the previous sample
-                        document.getElementById('sample-map').setAttribute('rv-config', newSample);
+                    sameplMapElem.setAttribute('rv-config', previousSample);
+                    selectElem.value = previousSample;
+                    var newElem = selectElem.item(sampleIndex);
+                    var newSample = newElem.value;
+                    if (newElem && previousSample !== newSample) { // reload if not the same as the previous sample
+                        var newSample = newElem.value;
+                        sameplMapElem.setAttribute('rv-config', newSample);
                         sessionStorage.setItem('sample', newSample);
                         location.reload();
                     }
