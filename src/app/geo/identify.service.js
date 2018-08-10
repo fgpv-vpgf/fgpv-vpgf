@@ -50,6 +50,8 @@ function identifyService($q, configService, gapiService, referenceService, state
             mapExtent: mapInstance.extent
         };
 
+        // TODO: the order of layerRecords might not match the order of the legend block; best to use the order of the layers from the config file
+        // see `synchronizeLayerOrder` function in the `layer-registry` for more details on sorting
         const identifyInstances = configService.getSync.map.layerRecords
             // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
             .filter(layerRecord => typeof layerRecord.identify !== 'undefined')

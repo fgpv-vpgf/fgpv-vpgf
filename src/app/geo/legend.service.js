@@ -7,13 +7,20 @@
  * This service also scrapes layer symbology.
  *
  */
-angular
-    .module('app.geo')
-    .factory('legendService', legendServiceFactory);
+angular.module('app.geo').factory('legendService', legendServiceFactory);
 
-function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stateManager, LegendBlock, LayerBlueprint,
-    layerRegistry, common, events) {
-
+function legendServiceFactory(
+    $rootScope,
+    Geo,
+    ConfigObject,
+    configService,
+    stateManager,
+    LegendBlock,
+    LayerBlueprint,
+    layerRegistry,
+    common,
+    events
+) {
     const service = {
         constructLegend,
         importLayerBlueprint,
@@ -32,8 +39,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
         configService.getSync.map.instance.addConfigLayer = layerJSON => {
             const layerRecords = configService.getSync.map.layerRecords;
 
-            const index = layerRecords.find(layerRecord =>
-                layerRecord.layerId === layerJSON.id);
+            const index = layerRecords.find(layerRecord => layerRecord.layerId === layerJSON.id);
 
             if (!index) {
                 let addToLegend = false;
@@ -54,16 +60,14 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
         };
 
         configService.getSync.map.instance.setLegendConfig = legendStructure => {
-            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+            stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
 
             const apiLayers = mApi.layers.allLayers
-                                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
-                                .filter(l => l._viewerLayer.config)
-                                .map(l => l._viewerLayer.config.source);
+                // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
+                .filter(l => l._viewerLayer.config)
+                .map(l => l._viewerLayer.config.source);
             const viewerLayers = configService.getSync.map.layers;
-            const layers = apiLayers.concat(
-                viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0)
-            );
+            const layers = apiLayers.concat(viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0));
             const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
             service.constructLegend(layers, newLegend);
             configService.getSync.map._legend = newLegend;
@@ -92,12 +96,14 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
         const newDefinitions = [];
 
         layerDefinitions.forEach(ld => {
-            let index = layerBlueprintsCollection.findIndex(blueprint =>
-                blueprint.config.id === ld.id);
+            let index = layerBlueprintsCollection.findIndex(blueprint => blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(entry =>
-                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1) ?
-                    entry : null)
+                .walk(
+                    entry =>
+                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
+                            ? entry
+                            : null
+                )
                 .filter(a => a)[0];
 
             // if the layer is being readded to the legend, regenerate the layer record to have up-to-date settings
@@ -125,8 +131,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
         // wait for all promises to resolve then show info
         Promise.all(blueprintPromises).then(() => {
             // create mapping for all layer blueprints
-            mapConfig.layerBlueprints.forEach(lb =>
-                (legendMappings[lb.config.id] = []));
+            mapConfig.layerBlueprints.forEach(lb => (legendMappings[lb.config.id] = []));
 
             const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
             mapConfig.legendBlocks = legendBlocks;
@@ -188,9 +193,10 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
         // TODO: this can potentially move to blueprint code
         const entryConfigObject = {
             layerId: layerBlueprint.config.id,
-            symbologyRenderStyle: layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS ?
-                ConfigObject.legend.Entry.IMAGES :
-                ConfigObject.legend.Entry.ICONS
+            symbologyRenderStyle:
+                layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS
+                    ? ConfigObject.legend.Entry.IMAGES
+                    : ConfigObject.legend.Entry.ICONS
         };
 
         const sortGroups = Geo.Layer.SORT_GROUPS_;
@@ -204,13 +210,15 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
         let position = 0;
         // find an appropriate spot in a auto legend;
-        if (pos) {   // If the order from bookmark exists
+        if (pos) {
+            // If the order from bookmark exists
             position = pos;
         } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             const layerType = importedLegendBlock.layerType;
-            const sortGroup = layerType ? sortGroups[layerType] : 1;    // layerType doesn't exist, legend block is a group
-            position = legendBlocks.entries.findIndex(block =>
-                !block.layerType || sortGroups[block.layerType] >= sortGroup);
+            const sortGroup = layerType ? sortGroups[layerType] : 1; // layerType doesn't exist, legend block is a group
+            position = legendBlocks.entries.findIndex(
+                block => !block.layerType || sortGroups[block.layerType] >= sortGroup
+            );
 
             // if the sort group for this layer doesn't exist, insert at the bottom of the legend
             position = position === -1 ? legendBlocks.entries.length : position;
@@ -231,7 +239,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
      *
      * @function reloadBoundLegendBlocks
      * @param {String} layerRecordId the layer record id
-     * @return {Promise} resolving to legend block parent of block reloaded
+     * @return {Promise<LegendBlock>} resolving to legend block parent of block reloaded
      */
     function reloadBoundLegendBlocks(layerRecordId) {
         // reset mapping for this layer blueprint
@@ -250,45 +258,57 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             // need to find the actual legend block mapped to the legendBlock being reloaded and its parent container legendGroup
             const legendBlocks = configService.getSync.map.legendBlocks;
             const { legendBlock, legendBlockParent } = legendBlocks
-                .walk((entry, index, parentEntry) =>
-                    entry.id === legendBlockId ? {
-                        legendBlock: entry,
-                        legendBlockParent: parentEntry
-                    } : null)
+                .walk(
+                    (entry, index, parentEntry) =>
+                        entry.id === legendBlockId
+                            ? {
+                                  legendBlock: entry,
+                                  legendBlockParent: parentEntry
+                              }
+                            : null
+                )
                 .filter(a => a !== null)[0];
 
             // need to find the block config the legend block was made from and create a new one
             const legend = configService.getSync.map.legend;
             const legendBlockConfig = legend.root
-                .walk(child =>
-                    child.id === legendBlockConfigId ? child : null)
+                .walk(child => (child.id === legendBlockConfigId ? child : null))
                 .filter(a => a !== null)[0];
 
             // all controlled layer records __must__ be reloaded before the legend block is made
             // if this were to be done after, the state settings of the controlling legend block will not be applied correctly
             // (`regenerateLayerRecord` will remove the layer from the map, but it's the logic inside `_makeLegendBlock` that adds the layer back to the map)
-            legendBlockConfig.controlledIds.forEach(controlledId =>
-                reloadBoundLegendBlocks(controlledId));
+            legendBlockConfig.controlledIds.forEach(controlledId => reloadBoundLegendBlocks(controlledId));
 
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
-
             const index = legendBlockParent.removeEntry(legendBlock);
+            const layerRecordPromise = layerRegistry.getLayerRecordPromise(legendBlockConfig.layerId);
 
-            const layerRecord = layerRegistry.getLayerRecord(legendBlockConfig.layerId);
+            if (promise) {
+                // ensure only one promise is created
+                return;
+            }
 
-            if (!promise) { // ensure only one promise is created
+            _boundingBoxRemoval(legendBlock);
+            legendBlockParent.addEntry(reloadedLegendBlock, index);
+
+            promise = layerRecordPromise.then(_handleLayerStateChange);
+
+            /**
+             * A helper function to watch the layer record loading state.
+             *
+             * @param {LayerRecord} layerRecord a layerRecord to watch for state
+             * @returns {Promise<LegendBlock|string>} returns a promise resolving with a legendBlock if layer loads successfully or layer name if the layer fails to load
+             */
+            function _handleLayerStateChange(layerRecord) {
                 // need time to reload children for Dynamic layers
-                promise = common.$q((resolve, reject) => {
+                const p = common.$q((resolve, reject) => {
                     layerRecord.addStateListener(_onLayerRecordLoad);
 
                     function _onLayerRecordLoad(state) {
                         // add back entry
                         if (state === 'rv-loaded' || state === 'rv-error') {
                             layerRecord.removeStateListener(_onLayerRecordLoad);
-
-                            _boundingBoxRemoval(legendBlock);
-
-                            legendBlockParent.addEntry(reloadedLegendBlock, index);
                         }
 
                         if (state === 'rv-loaded') {
@@ -298,6 +318,8 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                         }
                     }
                 });
+
+                return p;
             }
         });
 
@@ -325,8 +347,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
         const legendBlocks = configService.getSync.map.legendBlocks;
         const legendBlockParent = legendBlocks
-            .walk((entry, index, parentEntry) =>
-                entry === legendBlock ? parentEntry : null)
+            .walk((entry, index, parentEntry) => (entry === legendBlock ? parentEntry : null))
             .filter(a => a !== null)[0];
 
         // TODO: instead of removing the legend block form the selector, just hide it with some css
@@ -350,15 +371,15 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             // legendBlock.layerRecordId can be undefined if we recursively call 'removeLayer()' in tocService because we are
             // removing a groups parent. in that case we need to find the correct layerRecordId of the initial layer that was being removed
             if (layerRecordId === null) {
-                layerRecordId = legendBlock.walk(l => l.layerRecordId !== null ? l.layerRecordId : null).filter(a => a)[0];
+                layerRecordId = legendBlock
+                    .walk(l => (l.layerRecordId !== null ? l.layerRecordId : null))
+                    .filter(a => a)[0];
             }
 
             // check if any other blocks reference this layer record
             // if none found, it's safe to remove the layer record
-            const isSafeToRemove = legendBlocks
-                .walk(entry => entry.layerRecordId === layerRecordId)
-                .filter(a => a)
-                .length === 0;
+            const isSafeToRemove =
+                legendBlocks.walk(entry => entry.layerRecordId === layerRecordId).filter(a => a).length === 0;
 
             if (isSafeToRemove) {
                 layerRegistry.removeLayerRecord(layerRecordId);
@@ -422,8 +443,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                 // real blueprints are only available on Legend.NODEs
                 const nodeBlueprints = {
                     main: _getLayerBlueprint(blockConfig.layerId),
-                    controlled: blockConfig.controlledIds.map(id =>
-                        _getLayerBlueprint(id))
+                    controlled: blockConfig.controlledIds.map(id => _getLayerBlueprint(id))
                 };
 
                 // dynamic layers render as LegendGroup blocks; all other layers are rendered as LegendNode blocks;
@@ -468,8 +488,8 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             // variable names ending in `config` are typed objects
 
             // this will load the layer record onto the map, but only need the root proxy of a dynamic layer to catch if it errors on initial loading
-            const rootProxy = _getLegendBlockProxy(blueprints.main);
-            const rootProxyWrapper = new LegendBlock.ProxyWrapper(rootProxy, layerConfig);
+            const rootProxyPromise = _getLegendBlockProxy(blueprints.main);
+            const rootProxyWrapper = new LegendBlock.ProxyWrapper(rootProxyPromise, layerConfig);
             // to create a group for a dynamic layer, create a entryGroup config object by using properties
             // from dynamic layer definition config object
             const derivedEntryGroupSource = {
@@ -491,34 +511,38 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             });
 
             // wait for the dynamic layer record to load to get its children
-            const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
+            const layerRecordPromise = layerRegistry.getLayerRecordPromise(blockConfig.layerId);
+            _waitOnLayerLoad(layerRecordPromise).then(layerRecord => {
+                // on loaded, create child LegendBlocks for the dynamic layer and
+                // add them to the created LegendBlock.GROUP to be displayed in the UI (following any hierarchy provided)
+                const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                tree.forEach(item => _addChildBlock(item, legendBlockGroup));
 
-            // TODO: there is a potential for race condition if a listener is set too late
-            layerRecord.addStateListener(_onLayerRecordLoad);
+                legendBlockGroup.synchronizeControlledEntries();
+            });
 
             // to handle controlled layers, first, get their proxies, it will load the layers,
             // then convert the list of return proxyWrappers into a list of LegendBlocks, marked them as controlled (makes them hidden in the layer selector),
             // and add to the main dynamic group
             blueprints.controlled.forEach(blueprint =>
                 _getControlledLegendBlockProxy(blueprint).then(proxyWrappers => {
-
                     proxyWrappers.forEach(proxyWrapper => {
                         const entryConfig = new ConfigObject.legend.Entry({});
                         const legendBlock = new LegendBlock.Node(proxyWrapper, entryConfig);
                         legendBlock.controlled = true;
                         legendBlock.layerRecordId = layerConfig.id;
-                        
+
                         legendBlockGroup.addEntry(legendBlock);
-                    })
+                    });
 
                     // apply group settings to the newly added controlled entries so any settings modified by the user
                     // while the controlled layers were loading would apply on top as well
                     legendBlockGroup.synchronizeControlledEntries();
-                }));
+                })
+            );
 
-            const meetsCollapseCondition = layerConfig.layerEntries
-                .filter(layerEntry => !layerEntry.stateOnly)
-                .length === 1;
+            const meetsCollapseCondition =
+                layerConfig.layerEntries.filter(layerEntry => !layerEntry.stateOnly).length === 1;
 
             if (layerConfig.singleEntryCollapse && meetsCollapseCondition) {
                 legendBlockGroup.collapsed = true;
@@ -528,27 +552,6 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             }
 
             return legendBlockGroup;
-
-            /**
-             * A helper function to handle layerRecord state change. On loaded, it create child LegendBlocks for the dynamic layer and
-             * adds them to the created LegendBlock.GROUP to be displayed in the UI (following any hierarchy provided). Removes listener after that.
-             *
-             * @function _onLayerRecordLoad
-             * @private
-             * @param {String} state the current state of the layerRecord
-             * @return {undefined}
-             */
-            function _onLayerRecordLoad(state) {
-                if (state === 'rv-loaded') {
-                    layerRecord.removeStateListener(_onLayerRecordLoad);
-
-                    const tree = _createDynamicChildTree(layerRecord, layerConfig);
-                    tree.forEach(item =>
-                        _addChildBlock(item, legendBlockGroup));
-
-                    legendBlockGroup.synchronizeControlledEntries();
-                }
-            }
 
             /**
              * Traverses dynamic child tree and converts them to a hierarchy of LegendBlocks.
@@ -566,16 +569,16 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                     legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
-                    item.childs.forEach(child =>
-                        _addChildBlock(child, legendBlock));
-
+                    item.childs.forEach(child => _addChildBlock(child, legendBlock));
                 } else {
                     const entryConfig = new ConfigObject.legend.Entry(item);
                     legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
                     // show filter flag if there is a filter query being applied
-                    legendBlock.filter = item.proxyWrapper.layerConfig.initialFilteredQuery && item.proxyWrapper.layerConfig.initialFilteredQuery !== "";
+                    legendBlock.filter =
+                        item.proxyWrapper.layerConfig.initialFilteredQuery &&
+                        item.proxyWrapper.layerConfig.initialFilteredQuery !== '';
                 }
 
                 parentLegendGroup.addEntry(legendBlock);
@@ -594,14 +597,14 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          */
         function _createDynamicChildTree(layerRecord, layerConfig) {
             const dynamicLayerChildDefaults = angular.copy(
-                ConfigObject.DEFAULTS.layer[Geo.Layer.Types.ESRI_DYNAMIC].child);
+                ConfigObject.DEFAULTS.layer[Geo.Layer.Types.ESRI_DYNAMIC].child
+            );
 
             const groupDefaults = ConfigObject.DEFAULTS.legend[ConfigObject.TYPES.legend.GROUP];
 
             layerRecord.derivedChildConfigs = [];
             const tree = layerRecord.getChildTree();
-            tree.forEach(treeChild =>
-                _createDynamicChildLegendBlock(treeChild, layerConfig.source));
+            tree.forEach(treeChild => _createDynamicChildLegendBlock(treeChild, layerConfig.source));
 
             layerConfig.isResolved = true;
 
@@ -624,42 +627,36 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
 
                 // process as a group
                 if (treeChild.childs) {
-
                     const originalSource = angular.merge({}, derivedLayerEntryConfig.source);
 
                     if (!layerConfig.isResolved) {
                         // converting a child source config into a group source config;
                         // for that we need to filter out `controls` array, add `name` and empty `children` array
-                        const derivedChildGroupSource = angular.extend({},
-                            originalSource,
-                            {
-                                children: [],
-                                controls: common.intersect(
-                                    originalSource.controls,
-                                    groupDefaults.controls
-                                ),
-                                disabledControls: common.intersect(
-                                    originalSource.disabledControls,
-                                    groupDefaults.controls),
-                                userDisabledControls: common.intersect(
-                                    originalSource.userDisabledControls,
-                                    groupDefaults.controls
-                                ),
-                                name: treeChild.name
-                            });
+                        const derivedChildGroupSource = angular.extend({}, originalSource, {
+                            children: [],
+                            controls: common.intersect(originalSource.controls, groupDefaults.controls),
+                            disabledControls: common.intersect(originalSource.disabledControls, groupDefaults.controls),
+                            userDisabledControls: common.intersect(
+                                originalSource.userDisabledControls,
+                                groupDefaults.controls
+                            ),
+                            name: treeChild.name
+                        });
 
                         // convert and store at this point; pass derivedGroupSource as source for LegendGroup
                         derivedLayerEntryConfig = new ConfigObject.layers.DynamicLayerEntryNode(
-                            derivedChildGroupSource, true);
+                            derivedChildGroupSource,
+                            true
+                        );
                     }
 
                     treeChild.groupSource = derivedLayerEntryConfig.source;
 
                     treeChild.childs.forEach(subTreeChild =>
-                        _createDynamicChildLegendBlock(subTreeChild, originalSource));
-
-
+                        _createDynamicChildLegendBlock(subTreeChild, originalSource)
+                    );
                 } else {
+                    // layerRecord is generated by this point, it's not a promise
                     const mainProxy = common.$q.resolve(layerRecord.getChildProxy(treeChild.entryIndex));
                     const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, derivedLayerEntryConfig);
 
@@ -681,8 +678,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                  * @param {DynamicLayerEntryNode} layerEntryConfig fully defaulted dynamic child layer entry config
                  */
                 function _saveLayerEntryConfig(layerEntryConfig) {
-                    let index = layerConfig.layerEntries.findIndex(entry =>
-                        entry.index === layerEntryConfig.index);
+                    let index = layerConfig.layerEntries.findIndex(entry => entry.index === layerEntryConfig.index);
 
                     index = index === -1 ? layerConfig.layerEntries.length : index;
 
@@ -708,8 +704,9 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                         }
                     };
 
-                    const layerEntryConfig = layerConfig.layerEntries.find(entry =>
-                        entry.index === treeChild.entryIndex) || defaultLayerEntryConfig;
+                    const layerEntryConfig =
+                        layerConfig.layerEntries.find(entry => entry.index === treeChild.entryIndex) ||
+                        defaultLayerEntryConfig;
 
                     if (layerConfig.isResolved) {
                         return layerEntryConfig;
@@ -720,21 +717,27 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                     const derivedChildLayerConfigSource = ConfigObject.applyLayerNodeDefaults(
                         layerEntryConfig.source,
                         dynamicLayerChildDefaults,
-                        parentLayerConfigSource);
+                        parentLayerConfigSource
+                    );
 
                     // dynamic children might not support opacity if the layer is not a true dynamic layer
                     // in such cases the opacity control is user disabled for all children and opacity of the whole layer should be changed at the root
                     // in single entry collapse cases, the root is hidden, and opacity control is left user enabled at the top single entry; all subsequent children are user disabled as usual
-                    if (!layerRecord.isTrueDynamic &&
-                        !(layerConfig.singleEntryCollapse &&
-                        derivedChildLayerConfigSource.index === layerConfig.layerEntries[0].index)) {
-
+                    if (
+                        !layerRecord.isTrueDynamic &&
+                        !(
+                            layerConfig.singleEntryCollapse &&
+                            derivedChildLayerConfigSource.index === layerConfig.layerEntries[0].index
+                        )
+                    ) {
                         derivedChildLayerConfigSource.userDisabledControls.push('opacity');
                         derivedChildLayerConfigSource.userDisabledControls.push('interval');
                     }
 
                     const derviedChildLayerConfig = new ConfigObject.layers.DynamicLayerEntryNode(
-                        derivedChildLayerConfigSource, true);
+                        derivedChildLayerConfigSource,
+                        true
+                    );
 
                     return derviedChildLayerConfig;
                 }
@@ -775,32 +778,30 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          */
         function _makeNodeBlock(blockConfig, blueprints) {
             const layerConfig = blueprints.main.config;
-            const mainProxy = _getLegendBlockProxy(blueprints.main, blockConfig);
+            const mainProxyPromise = _getLegendBlockProxy(blueprints.main, blockConfig);
 
             // all wms layer default to image-style symbology, regardless of what the config says
             if (layerConfig.layerType === Geo.Layer.Types.OGC_WMS) {
                 blockConfig.symbologyRenderStyle = ConfigObject.legend.Entry.IMAGES;
 
-                layerConfig.layerEntries.forEach(entry => (entry.cachedStyle = entry.currentStyle))
+                layerConfig.layerEntries.forEach(entry => (entry.cachedStyle = entry.currentStyle));
             }
 
             layerConfig.cachedRefreshInterval = layerConfig.refreshInterval;
 
-            const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxy, layerConfig);
+            const proxyWrapper = new LegendBlock.ProxyWrapper(mainProxyPromise, layerConfig);
             const node = new LegendBlock.Node(proxyWrapper, blockConfig);
 
             // map this legend block to the layerRecord
             node.layerRecordId = layerConfig.id;
 
             // show filter flag if there is a filter query being applied
-            node.filter = layerConfig.initialFilteredQuery && layerConfig.initialFilteredQuery !== "";
+            node.filter = layerConfig.initialFilteredQuery && layerConfig.initialFilteredQuery !== '';
 
             legendMappings[layerConfig.id].push({
                 legendBlockId: node.id,
                 legendBlockConfigId: blockConfig.id
             });
-
-            const layerRecord = layerRegistry.getLayerRecord(blockConfig.layerId);
 
             // handling controlled layers by getting their proxies and adding them as controlled proxies to the legend node
             blueprints.controlled.forEach(blueprint =>
@@ -811,7 +812,8 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                         // reapply state setting to the node so any settings changed by the user will apply to the newly added controlled proxy (this is possible if the controlled is a dynamic layer and there is a lag when fetching its child proxies)
                         node.synchronizeControlledProxyWrappers();
                     })
-                ));
+                )
+            );
 
             return node;
         }
@@ -860,11 +862,9 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          * @return {Promise} a promise resolving with an array of proxyWrappers
          */
         function _getControlledLegendBlockProxy(blueprint) {
-
-            // TODO: make async
-            const layerRecord = layerRegistry.makeLayerRecord(blueprint);
+            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
             const layerConfig = blueprint.config;
-            layerRegistry.loadLayerRecord(layerRecord.config.id);
+            layerRegistry.loadLayerRecord(blueprint.config.id);
 
             const disabledOptions = {
                 controls: ['query', 'boundingBox'],
@@ -879,8 +879,7 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             });
 
             // controlled layers can't have enabled bounding boxes or query states (even if specified in the config file)
-            disabledOptions.state.forEach(stateName =>
-                (layerConfig.state[stateName] = false));
+            disabledOptions.state.forEach(stateName => (layerConfig.state[stateName] = false));
 
             // controlled layers are not supposed to have hovertips
             layerConfig.hovertipEnabled = false;
@@ -888,42 +887,42 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
             let proxyWrapperPromise;
 
             if (blueprint.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                proxyWrapperPromise = common.$q(resolve => {
-                    layerRecord.addStateListener(_onLayerRecordLoad);
+                // wait for the layer record to finish generating, then set listener to wait until the record is fully loaded
+                proxyWrapperPromise = _waitOnLayerLoad(layerRecordPromise).then(layerRecord => {
+                    // tree consists of objects with entryIndex and its proxy wrapper,
+                    // for controlledLayers only proxyWrappers are needed
+                    const tree = _createDynamicChildTree(layerRecord, layerConfig);
+                    const flatTree = _flattenTree(tree).map(item => item.proxyWrapper);
 
-                    function _onLayerRecordLoad(state) {
-                        if (state === 'rv-loaded') {
-
-                            layerRecord.removeStateListener(_onLayerRecordLoad);
-                            // tree consists of objects with entryIndex and its proxy wrapper,
-                            // for controlledLayers only proxyWrappers are needed
-                            const tree = _createDynamicChildTree(layerRecord, layerConfig);
-                            const flatTree = _flattenTree(tree).map(item =>
-                                item.proxyWrapper);
-
-                            resolve(flatTree);
-                        }
-                    }
+                    return flatTree;
                 });
-
             } else {
-                const proxy = common.$q.resolve(layerRecord.getProxy());
-                const proxyWrapper = new LegendBlock.ProxyWrapper(proxy, layerConfig);
+                const proxyPromise = layerRecordPromise.then(layerRecord => layerRecord.getProxy());
+                const proxyWrapper = new LegendBlock.ProxyWrapper(proxyPromise, layerConfig);
 
                 proxyWrapperPromise = common.$q.resolve([proxyWrapper]);
             }
 
             return proxyWrapperPromise;
 
+            /**
+             * Flatten the tree of dynamic children and groups discarding all the group objects.
+             *
+             * @param {*} tree
+             * @returns
+             */
             function _flattenTree(tree) {
-                const result = [].concat.apply([], tree.map(item => {
-                    if (item.childs) {
-                        // when flattening the tree, the groups are discarded as they will not be used
-                        return _flattenTree(item.childs);
-                    } else {
-                        return item;
-                    }
-                }));
+                const result = [].concat.apply(
+                    [],
+                    tree.map(item => {
+                        if (item.childs) {
+                            // when flattening the tree, the groups are discarded as they will not be used
+                            return _flattenTree(item.childs);
+                        } else {
+                            return item;
+                        }
+                    })
+                );
 
                 return result;
             }
@@ -944,19 +943,22 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
                 blueprint.config.state.query = false;
             }
 
-            // TODO: change `makeLayerRecord` to async function
-            const layerRecord = layerRegistry.makeLayerRecord(blueprint);
-            layerRegistry.loadLayerRecord(layerRecord.config.id);
+            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
+            layerRegistry.loadLayerRecord(blueprint.config.id);
 
-            let proxy;
+            const proxyPromise = layerRecordPromise.then(layerRecord => {
+                let proxy;
 
-            if (blockConfig.entryIndex) {
-                proxy = layerRecord.getChildProxy(blockConfig.entryIndex);
-            } else {
-                proxy = layerRecord.getProxy();
-            }
+                if (blockConfig.entryIndex) {
+                    proxy = layerRecord.getChildProxy(blockConfig.entryIndex);
+                } else {
+                    proxy = layerRecord.getProxy();
+                }
 
-            return common.$q.resolve(proxy);
+                return proxy;
+            });
+
+            return proxyPromise;
         }
 
         /**
@@ -968,11 +970,36 @@ function legendServiceFactory($rootScope, Geo, ConfigObject, configService, stat
          * @return {LayerBlueprint|undefined} retuns a LayerBlueprint with a corresponding id or undefined if not found
          */
         function _getLayerBlueprint(id) {
-            const blueprint = layerBlueprints.find(blueprint =>
-                blueprint.config.id === id);
+            const blueprint = layerBlueprints.find(blueprint => blueprint.config.id === id);
 
             // TODO: this should return something meaningful for info sections and maybe sets?
             return blueprint;
+        }
+
+        /**
+         * A helper function to wait on the layer load.
+         *
+         * @param {Promise<LayerRecord>} layerRecordPromise a layer record promise from the layer registry
+         * @returns {Promise<LayerRecord>} a promise of a layer record which resolve when the record is fully loaded
+         */
+        function _waitOnLayerLoad(layerRecordPromise) {
+            const promise = common.$q(resolve =>
+                layerRecordPromise.then(layerRecord => {
+                    // TODO: there is a potential for race condition if a listener is set too late
+                    layerRecord.addStateListener(_onLayerRecordLoad);
+
+                    function _onLayerRecordLoad(state) {
+                        if (state !== 'rv-loaded') {
+                            return;
+                        }
+
+                        layerRecord.removeStateListener(_onLayerRecordLoad);
+                        resolve(layerRecord);
+                    }
+                })
+            );
+
+            return promise;
         }
     }
 }
