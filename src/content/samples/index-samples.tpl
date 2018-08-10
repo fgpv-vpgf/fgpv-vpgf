@@ -168,6 +168,8 @@
                 <option value="config/config-sample-73-corsEverywhere.json">71. CORS Everywhere</option>
                 <option value="config/config-sample-74.json">72. Collapsed visibility set + hidden layer group</option>
                 <option value="config/config-sample-75.json">73. Dynamic layers display field configuration</option>
+                <option value="config/config-sample-76.json">74. Custom layer renderer on client</option>
+                <option value="config/config-sample-80.json">75. All layer types</option>
             </select>
         </div>
 
