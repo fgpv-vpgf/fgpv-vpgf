@@ -510,6 +510,7 @@ function LegendBlockFactory(
         set controlled(value) {
             this._controlled = value;
         }
+
         /**
          * @returns {Boolean} returns true if the LegendBlock is directly controlled by a parent LegendBlock and has no visible UI
          */
