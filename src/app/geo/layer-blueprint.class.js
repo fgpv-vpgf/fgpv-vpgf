@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('LayerBlueprint', LayerBlueprintFactory);
 
-function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService, bookmarkService, appInfo,
+function LayerBlueprintFactory(common, gapiService, Geo, ConfigObject, configService, bookmarkService, appInfo,
     layerSource, LayerSourceInfo) {
 
     let idCounter = 0; // layer counter for generating layer ids
@@ -35,7 +35,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
         // no validation required for services. mock a vlidation process for consistency.
         // only instances of LayerFileBlueprint required validation; that class overrides this function
         validateLayerSource() {
-            return $q.resolve();
+            return common.$q.resolve();
         }
 
         set config(value) {
@@ -147,8 +147,8 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
          */
         generateLayer() {
             const epsg = appInfo.plugins.find(x => x.intention === 'epsg');
-            return LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
-                this.config, undefined, epsg.lookup);
+            return common.$q.resolve(LayerBlueprint.LAYER_TYPE_TO_LAYER_RECORD[this.config.layerType](
+                this.config, undefined, epsg.lookup));
         }
     }
 
@@ -262,7 +262,7 @@ function LayerBlueprintFactory($q, gapiService, Geo, ConfigObject, configService
                 this._configSourceDelayedServer.then(() => layerRecord.updateWfsSource(this.__layer__));
             }
 
-            return layerRecord;
+            return common.$q.resolve(layerRecord);
         }
     }
 

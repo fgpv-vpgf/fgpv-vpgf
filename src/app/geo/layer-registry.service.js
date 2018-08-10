@@ -26,6 +26,7 @@ angular
 function layerRegistryFactory($rootScope, $filter, $translate, shellService, errorService, events, gapiService, Geo, configService, tooltipService, common, ConfigObject) {
     const service = {
         getLayerRecord,
+        getLayerRecordPromise,
         makeLayerRecord,
         loadLayerRecord,
         regenerateLayerRecord,
@@ -41,6 +42,9 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
 
     const ref = {
         mapLoadingWaitHandle: null,
+
+        // temp storage for layer records in the process of being generated (their corresponding data might be loading - think WFS)
+        generatingQueue: {},
 
         loadingQueue: [],
         loadingCount: 0,
@@ -108,7 +112,7 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
      * Finds and returns the layer record using the id specified.
      *
      * @function getLayerRecord
-     * @param {Number} id the id of the layer record to be returned
+     * @param {String} id the id of the layer record to be returned
      * @return {LayerRecord} layer record with the id specified; undefined if not found
      */
     function getLayerRecord(id) {
@@ -119,29 +123,35 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
     }
 
     /**
+     * Finds and returns a promise of layer record either already generated or in the process of being generated.
+     * If no layer record with such an id found, returns `udnefined`.
+     *
+     * @param {String} id the id of the layer record to be returned
+     * @return {Promise<LayerRecord>} promise of layer record with the id specified; undefined if not found
+     */
+    function getLayerRecordPromise(id) {
+        let layerRecordPromise = getLayerRecord(id);
+
+        return layerRecordPromise ? common.$q.resolve(layerRecordPromise) : ref.generatingQueue[id];
+    }
+
+    /**
      * Creates the layer record from the provided layerBlueprint, stores it in the shared config and returns the results.
      *
      * @function makeLayerRecord
      * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
-     * @return {LayerRecord} created layerRecord
+     * @return {Promise<LayerRecord>} a promise with the created layerRecord
      */
     function makeLayerRecord(layerBlueprint) {
-        const layerRecords = configService.getSync.map.layerRecords;
+        // check if the record is already created (generated or being generated)
+        let layerRecordPromise = getLayerRecordPromise(layerBlueprint.config.id)
 
-        let layerRecord = getLayerRecord(layerBlueprint.config.id);
-
-        if (!layerRecord) {
-            // register a loading process for this layer record
-            _setLoadingFlagHelper(layerBlueprint.config);
-
-            layerRecord = layerBlueprint.generateLayer();
-            layerRecords.push(layerRecord);
-
-            // start tracking layer record events to update/clear its loading process
-            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
+        if (!layerRecordPromise) {
+            layerRecordPromise = _startGeneratingLayerRecord(layerBlueprint);
         }
 
-        ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord);
+        layerRecordPromise.then(layerRecord =>
+            (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord)));
 
         /**
          * @function _attribsInvalidation
@@ -179,12 +189,13 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
             return updateAttributes;
         }
 
-        return layerRecord;
+        return layerRecordPromise;
     }
 
     /**
-     * Generates a new layer record from the provided layer blueprint and replaces the previously generated layer record (keeping original position).
+     * Generates a new layer record from the provided layer blueprint and replaces the previously generated layer record (the original position is not kept).
      * This will also remove the corresponding layer from the map, but will not trigger the loading of the new layer.
+     * If the corresponding layer record is still being generated, does nothing.
      *
      * @function regenerateLayerRecord
      * @param {LayerBlueprint} layerBlueprint the original layerBlueprint of the layer record to be regenerated
@@ -193,21 +204,20 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
         const map = configService.getSync.map.instance;
         const layerRecords = configService.getSync.map.layerRecords;
 
-        let layerRecord = getLayerRecord(layerBlueprint.config.id);
-        const index = layerRecords.indexOf(layerRecord);
+        const layerRecord = getLayerRecord(layerBlueprint.config.id);
 
-        if (index !== -1) {
-            // register a loading process for this layer record
-            _setLoadingFlagHelper(layerBlueprint.config);
-
-            common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
-            map.removeLayer(layerRecord._layer);
-            layerRecord = layerBlueprint.generateLayer();
-            layerRecords[index] = layerRecord;
-
-            // start tracking layer record events to update/clear its loading process
-            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
+        // if the record is not there, do nothing
+        if (!layerRecord) {
+            return;
         }
+
+        common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
+        map.removeLayer(layerRecord._layer);
+        const index = layerRecords.indexOf(layerRecord);
+        // remove from the layerRecords
+        layerRecords.splice(index, 1);
+
+        _startGeneratingLayerRecord(layerBlueprint);
     }
 
     /**
@@ -224,32 +234,39 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
         let layerRecord = getLayerRecord(id);
         const index = layerRecords.indexOf(layerRecord);
 
-        if (index !== -1) {
-            common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
-            layerRecords.splice(index, 1);
-            map.removeLayer(layerRecord._layer);
-
-            if (layerRecord.state === Geo.Layer.States.LOADED) {
-                layerRecord.removeAttribListener(_onLayerAttribDownload);
-            }
-            _removeLayerFromApiMap(layerRecord);
+        if (index === -1) {
+            return index;
         }
+
+        common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
+        layerRecords.splice(index, 1);
+        map.removeLayer(layerRecord._layer);
+
+        if (layerRecord.state === Geo.Layer.States.LOADED) {
+            layerRecord.removeAttribListener(_onLayerAttribDownload);
+        }
+        _removeLayerFromApiMap(layerRecord);
 
         return index;
     }
 
     /**
-     * Finds a layer record with the specified id and adds it to the map.
+     * Finds a layer record (either already generated or being generated) with the specified id and adds it to the map.
      * If the layer is alredy loaded or is in the loading queue, it will not be added the second time.
+     * In a case where a layer record is still being generated, waits until this process is complete before adding it to the map.
      *
      * @param {Number} id layer record id to load on the map
-     * @return {Boolean} true if the layer record existed and was added to the map; false otherwise
      */
     function loadLayerRecord(id) {
-        const layerRecord = getLayerRecord(id);
+        // check if the record is already created (generated or being generated)
+        const layerRecordPromise = getLayerRecordPromise(id);
         const map = configService.getSync.map.instance;
 
-        if (layerRecord) {
+        if (!layerRecordPromise) {
+            return;
+        }
+
+        layerRecordPromise.then(layerRecord => {
             const alreadyLoading = ref.loadingQueue.some(lr =>
                 lr === layerRecord);
             const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds)
@@ -261,11 +278,43 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
 
             ref.loadingQueue.push(layerRecord);
             _loadNextLayerRecord();
+        });
+    }
 
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * A helper function to kick of the generation of the layer record.
+     * - set the loading flag with the corresponding id
+     * - trigger the layerRecord generation using a its blueprint and store the promise
+     * - wait for the promise to resolve and store the actual layer record
+     * - hook up state event listeners
+     *
+     * @param {*} layerBlueprint
+     * @returns
+     */
+    function _startGeneratingLayerRecord(layerBlueprint) {
+        const layerRecords = configService.getSync.map.layerRecords;
+
+        // register a loading process for this layer record
+        _setLoadingFlagHelper(layerBlueprint.config);
+
+        // start generating a layer record
+        let layerRecordPromise = layerBlueprint.generateLayer();
+        ref.generatingQueue[layerBlueprint.config.id] = layerRecordPromise;
+
+        layerRecordPromise = layerRecordPromise.then(layerRecord => {
+            // remove from the generatig queue
+            delete ref.generatingQueue[layerBlueprint.config.id];
+
+            // store the actual generated record
+            layerRecords.push(layerRecord);
+
+            // start tracking layer record events to update/clear its loading process
+            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
+
+            return layerRecord;
+        });
+
+        return layerRecordPromise
     }
 
     /**
@@ -274,6 +323,7 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
      * @function _loadNextLayerRecord
      * @private
      */
+    // eslint-disable-next-line complexity
     function _loadNextLayerRecord() {
         const mapConfig = configService.getSync.map;
         if (!mapConfig.isLoaded) {
@@ -390,7 +440,7 @@ function layerRegistryFactory($rootScope, $filter, $translate, shellService, err
 
     /**
      * Tracks layer record lifecycle events to update corresponding loading processes.
-     * 
+     *
      * @param {object} layerRecord layer record
      * @param {string} state current state of the layer record
      */
