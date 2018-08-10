@@ -171,6 +171,28 @@ export class Map {
         }
     }
 
+    /**
+    * Sets the extent of the map
+    * @param {number} xmin - The xmin coord value (lower left corner)
+    * @param {number} xmax - The xmax coord value (upper right corner)
+    * @param {number} ymin - The ymin coord value (lower left corner)
+    * @param {number} ymax - The ymax coord value (upper right corner)
+    * @param {number} wkID - well known ID of a spatial reference
+    */
+    setExtent(xmin: number, xmax: number, ymin: number, ymax: number, wkID: number) {
+
+        const zone = {
+            xmin,
+            xmax,
+            ymin,
+            ymax,
+            type: "extent",
+            spatialReference: { wkid: wkID }
+        };
+
+        this.mapI.setExtent((<any>window).RZ.GAPI.Map.getExtentFromJson(zone));
+    }
+
     set boundsChanged(observable: Observable<geo.XYBounds>) {
         this.boundsChangedObj = observable;
         this.boundsChangedObj.subscribe(xyBounds => {
