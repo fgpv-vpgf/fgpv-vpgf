@@ -284,13 +284,13 @@ function legendServiceFactory(
             const index = legendBlockParent.removeEntry(legendBlock);
             const layerRecordPromise = layerRegistry.getLayerRecordPromise(legendBlockConfig.layerId);
 
+            _boundingBoxRemoval(legendBlock);
+            legendBlockParent.addEntry(reloadedLegendBlock, index);
+
             if (promise) {
                 // ensure only one promise is created
                 return;
             }
-
-            _boundingBoxRemoval(legendBlock);
-            legendBlockParent.addEntry(reloadedLegendBlock, index);
 
             promise = layerRecordPromise.then(_handleLayerStateChange);
 
