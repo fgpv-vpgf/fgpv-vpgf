@@ -91,9 +91,9 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
 
                 events.$broadcast(events.rvApiPrePlugin, apiMap);
                 // api panel elements need a reference to the internal angular compiler
-                PanelElem.prototype.angularCompiler = function(html, compilerScope = $rootScope) {
-                    return $compile(html)(compilerScope);
-                }
+                apiMap.$ = function(html) {
+                    return $compile(html)($rootScope);
+                };
 
                 // allows plugins to register components on the angular instance, usually to provide angular material support
                 apiMap.agControllerRegister = $controllerProvider.register;
