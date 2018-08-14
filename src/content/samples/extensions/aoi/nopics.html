@@ -1,0 +1,70 @@
+<html class="no-js" lang="en" dir="ltr">
+ <head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <script src='./areaOfInterest.js'></script>
+    <script>
+            var aioConfig = {
+                areas: [
+                    {
+                        'title-en-CA': "Reservoir Manicougan, Quebec, Canada",
+                        'title-fr-CA': "Réservoir Manicougan, Québec, Canada",
+                        xmin: 1750000,
+                        xmax: 1840000,
+                        ymax: 682193,
+                        ymin: 583440,
+                        wkid: 3978
+                    },
+                    {
+                        'title-en-CA': "Gulf of St Lawrence",
+                        'title-fr-CA': "Golfe du Saint-Laurent",
+                        xmin: 2050000,
+                        xmax: 2240000,
+                        ymax: 682193,
+                        ymin: 583440,
+                        wkid: 3978
+                    },
+                    {
+                        'title-en-CA': "Lake Grandmesnil and surrounding lakes",
+                        'title-fr-CA': "Lac Grandmesnil et les lacs environnants",
+                        xmin: 1800000,
+                        xmax: 1840000,
+                        ymax: 682193,
+                        ymin: 583440,
+                        wkid: 3978
+                    },
+                    {
+                        'title-en-CA': "Lake Piraube and surrounding lakes",
+                        'title-fr-CA': "Lac Piraube et lacs environnants",
+                        xmin: 1550000,
+                        xmax: 1740000,
+                        ymax: 632193,
+                        ymin: 333440,
+                        wkid: 3978
+                    }
+                ],
+                noPicture: true
+            }
+        </script>
+</head>
+ <body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue">Areas of Interest Demo</span>
+    </h1>
+    <p>
+        <a href="./pics.html">Pictures Demo</a>
+    </p>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+</body>
+<script>
+    $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css'));
+    $.getScript('../../../rv-main.js', function () {
+        $('body').append(`
+        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rz-extensions="areaOfInterest"></div>
+        `);
+        new RZ.Map(document.getElementById('fgpmap'), '../../config/config-sample-73.json');
+    });
+</script>
+ </html>

@@ -192,7 +192,7 @@ export class PanelElem {
     */
     setElement(element: string | HTMLElement | JQuery<HTMLElement>): void {
 
-        this.elementAttr = this.angularCompiler($(element)[0]);
+        this.elementAttr = this.panel.map.$($(element)[0]);
 
         //If element already has id attribute, set id to that id, otherwise set to randomly generated id
         if (this.elementAttr !== undefined && this.elementAttr.attr('id') !== undefined) {
@@ -262,7 +262,7 @@ class Btn extends PanelElem {
         contents = $(contents);
         this.elementAttr.html('');
 
-        let compiledContents = this.angularCompiler(contents[0]);
+        let compiledContents = this.panel.map.$(contents[0]);
         this.elementAttr.append(compiledContents);
     }
 
@@ -322,5 +322,4 @@ export interface PanelElem {
     idAttr: string;
     documentFragment: DocumentFragment;
     elementAttr: JQuery<HTMLElement>;
-    angularCompiler: (html: Element) => JQuery<HTMLElement>
 }
