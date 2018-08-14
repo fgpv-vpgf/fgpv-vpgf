@@ -178,6 +178,10 @@ export class Map {
         });
     }
 
+    set extent(extent: any) {
+        this.mapI.setExtent((<any>window).RZ.GAPI.Map.getExtentFromJson(extent));
+    }
+
     /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
     fullscreen(enabled: boolean): void {
         this.mapI.fullscreen(enabled);
@@ -318,6 +322,7 @@ export interface Map {
     simpleLayerObj: SimpleLayer;
     legendStructure: LegendStructure;
     panelRegistryAttr: Panel[];
+    $: any;
 }
 
 export default Map;
