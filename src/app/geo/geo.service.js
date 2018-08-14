@@ -24,6 +24,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
 
         constructor () {
             this._isMapReady = false;
+            this._pluginLoader = false;
         }
 
         get isMapReady() { return this._isMapReady; }
@@ -56,20 +57,27 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                     config.applyBookmark(bookmarkService.storedBookmark);
                 }
 
-                const pluginLoader = new PluginLoader(config, $rootElement);
-
-                pluginLoader.isReady.then(() => {
-                    pluginLoader.loadTranslations(translationService);
+                if (this._pluginLoader) {
+                    // TODO v3: Make optional plugin destroyer functionality
                     mapService.makeMap();
-                    appInfo.plugins = pluginLoader.pluginList;
                     legendService.constructLegend(config.map.layers, config.map.legend);
                     this._isMapReady = true;
                     $rootScope.$broadcast(events.rvApiReady);
-                });
-
-                events.$on(events.rvApiMapAdded, (_, mapi) => {
-                    pluginLoader.init(mapi);
-                });
+                } else {
+                    this._pluginLoader = new PluginLoader(config, $rootElement);
+                    this._pluginLoader.isReady.then(() => {
+                        this._pluginLoader.loadTranslations(translationService);
+                        mapService.makeMap();
+                        appInfo.plugins = this._pluginLoader.pluginList;
+                        legendService.constructLegend(config.map.layers, config.map.legend);
+                        this._isMapReady = true;
+                        $rootScope.$broadcast(events.rvApiReady);
+                    });
+    
+                    events.$on(events.rvApiMapAdded, (_, mapi) => {
+                        this._pluginLoader.init(mapi);
+                    });
+                }
 
                 events.$on(events.rvCfgUpdated, (evt, layers) => {
                     let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();
