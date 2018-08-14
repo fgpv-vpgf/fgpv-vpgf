@@ -1,24 +1,44 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+
+const SOURCE_PATH = path.join(__dirname, '.');
+const ENHANCED_TABLE_PATH = path.join(SOURCE_PATH, './enhancedTable');
+const AREA_OF_INTEREST_PATH = path.join(SOURCE_PATH, './areaOfInterest');
 
 module.exports = {
     entry: {
-        'enhancedTable': './enhancedTable/index.ts',
-        'areaOfInterest': './areaOfInterest/areas-of-interest.ts'
+        enhancedTable: path.join(ENHANCED_TABLE_PATH, './index.ts'),
+        areaOfInterest: path.join(AREA_OF_INTEREST_PATH, './index.ts')
     },
 
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.join(SOURCE_PATH, './dist'),
         filename: './[name]/[name].js'
     },
 
     resolve: {
-        extensions: [".ts", ".js", ".css", ".scss"]
+        extensions: ['.ts', '.js', '.css', '.scss']
     },
 
     module: {
         rules: [
-            { test: /\.ts$/, use: 'ts-loader' },
+            {
+                test: /\.ts$/,
+                include: [ENHANCED_TABLE_PATH],
+                loader: 'ts-loader',
+                options: {
+                    configFile: path.join(ENHANCED_TABLE_PATH, './tsconfig.json')
+                }
+            },
+
+            {
+                test: /\.ts$/,
+                include: [AREA_OF_INTEREST_PATH],
+                loader: 'ts-loader',
+                options: {
+                    configFile: path.join(AREA_OF_INTEREST_PATH, './tsconfig.json')
+                }
+            },
 
             {
                 test: /\.s?[ac]ss$/,
@@ -29,7 +49,7 @@ module.exports = {
 
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "./[name]/[name].css"
+            filename: './[name]/[name].css'
         })
     ]
 };

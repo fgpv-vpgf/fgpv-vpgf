@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "target": "ES6",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["*", "node_modules/*"]
+        }
+    }
+}

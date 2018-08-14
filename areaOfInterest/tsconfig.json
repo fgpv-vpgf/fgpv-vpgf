@@ -3,6 +3,10 @@
         "experimentalDecorators": true,
         "allowJs": true,
         "sourceMap": true,
-        "target": "ES5"
+        "target": "ES6",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["*", "node_modules/*"]
+        }
     }
 }
