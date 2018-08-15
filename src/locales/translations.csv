@@ -82,26 +82,26 @@ Details pane label for searching,details.label.searching,Searching ...,1,Recherc
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
-,table.splash.loadingdata,Loading Data...,1,Chargement des données...,0
-,table.splash.buildingtable,Building Table ...,1,Préparation du tableau...,0
+,table.splash.loadingdata,Loading data...,1,Chargement des données...,0
+,table.splash.buildingtable,Building table ...,1,Préparation du tableau...,0
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
-Filter pane menu label for Split View,filter.menu.splitView,Split View,1,Diviser la vue,1
+Filter pane menu label for Split View,filter.menu.splitView,Split view,1,Diviser la vue,1
 Filter pane menu label for Maximize,filter.menu.maximize,Maximize,1,Agrandir,1
-Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable Search,1,Activer la recherche,1
-Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable Filters,1,Activer les filtres,1
+Filter pane menu label for Enable Search,filter.menu.enableSearch,Enable search,1,Activer la recherche,1
+Filter pane menu label for Enable Filters,filter.menu.enableFilters,Enable filters,1,Activer les filtres,1
 Filter pane menu label for Print,filter.menu.print,Print,1,Imprimer,1
 Filter pane menu label for Export,filter.menu.export,Export,1,Exporter,1
-Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by Extent,1,Filtrer par étendue,1
-Filter pane menu label for show Filters,filter.menu.showfilters,Show Filters,1,Afficher les filtres,1
-Geosearch text place holder,geosearch.text.placeholder,Search Text,1,Texte à rechercher,1
+Filter pane menu label for Filter by Extent,filter.menu.extent,Filter by extent,1,Filtrer par étendue,1
+Filter pane menu label for show Filters,filter.menu.showfilters,Show filters,1,Afficher les filtres,1
+Geosearch text place holder,geosearch.text.placeholder,Search text,1,Texte à rechercher,1
 Geosearch province filter label,geosearch.label.province,Province,1,Province,1
 Geosearch type filter label,geosearch.label.type,Type,1,Type,1
 Geosearch extent filter label,geosearch.aria.extent,Visible on map,1,Visible sur la carte,1
 Geosearch extent filter label,geosearch.label.extent,Visible on map,1,Visible sur la carte,1
 Geosearch scale type,geosearch.type.scale,Scale,1,Échelle,1
 Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Longitude,1
-Geosearch FSA type,geosearch.type.fsa,Postal Code,1,Code postal,1
+Geosearch FSA type,geosearch.type.fsa,Postal code,1,Code postal,1
 Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
 ,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
 ,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
@@ -122,30 +122,30 @@ Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
 Map Navigation slider text,nav.slider,slider,1,Curseur,1
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out label,nav.label.zoomOut,Zoom out,1,Zoom arrière,1
-Map Navigation geolocation label,nav.label.geoLocation,Your Location,1,Votre position,1
+Map Navigation geolocation label,nav.label.geoLocation,Your location,1,Votre position,1
 Map Navigation search label,nav.label.search,Search,1,Recherche,1
 Map Navigation home label,nav.label.home,Canada,1,Canada,1
 Map Navigation history label,nav.label.history,History,1,Historique,1
 Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
-Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your Location,1,Votre position,1
+Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your location,1,Votre position,1
 ,geoLocation.error,Your location could not be found.,1,Votre emplacement n’a pu être trouvé.,0
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
 Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
-Metadata pane expand,metadata.expand.tooltip,Expand Metadata,1,Agrandir les métadonnées,1
+Metadata pane expand,metadata.expand.tooltip,Expand metadata,1,Agrandir les métadonnées,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
 ,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at,1,Changement {{settingName}} à,0
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
-Settings bounding box visibility label,settings.label.boundingBox,Bounding Box,1,Zone de délimitation,1
-Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding Box,1,Zone de délimitation,1
+Settings bounding box visibility label,settings.label.boundingBox,Bounding box,1,Zone de délimitation,1
+Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
 Settings data header label,settings.label.data,Data,1,Données,1
-Settings refresh header label,settings.label.interval,Refresh Interval,1,Intervalle d'actualisation,0
+Settings refresh header label,settings.label.interval,Refresh interval,1,Intervalle d'actualisation,0
 Settings refresh hint,settings.label.refreshHint,Refresh interval in minutes,1,Intervalle d'actualisation en minutes,0
 Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank or 0 to turn off automatic refresh,1,Actualisation requise. Laissez vide ou 0 pour désactiver l'actualisation automatique,0
 Settings refresh error message,settings.label.refreshError,Interval must be between 0 and 100,1,L'intervalle doit être compris entre 0 et 100,0
@@ -159,19 +159,19 @@ Settings query mode label,settings.label.query,Allow query,1,Permettre les requ�
 Settings query mode aria,settings.aria.query,Allow query,1,Permettre les requêtes,1
 ,settings.reload.description,When a layer fails to load properly or becomes unresponsive,1, reloading the layer can solve the problem.,1
 Side Navigation main title,sidenav.title,FGP R2 Viewer,1,Visualiseur PGF R2,1
-Side Navigation about map,sidenav.label.about,About Map,1,À propos de la carte,1
-Side Navigation full screen,sidenav.label.fullscreen,Full Screen,1,Plein Écran,1
+Side Navigation about map,sidenav.label.about,About map,1,À propos de la carte,1
+Side Navigation full screen,sidenav.label.fullscreen,Full screen,1,Plein Écran,1
 Side Navigation share,sidenav.label.share,Share,1,Partager,1
 Side Navigation export,sidenav.label.export,Export,1,Exporter,1
-Bookmark share link,sidenav.label.sharelink,Link to Share,1,Lien de partage,1
-Bookmark short link,sidenav.label.shortlink,Short Link,1,Lien court,1
+Bookmark share link,sidenav.label.sharelink,Link to share,1,Lien de partage,1
+Bookmark short link,sidenav.label.shortlink,Short link,1,Lien court,1
 Bookmark link copied feedback,sidenav.label.copysuccess,Link copied to clipboard,1,Lien copié dans le presse-papiers,1
 Bookmark link click to copy hint,sidenav.label.clicktocopy,Click to copy,1,Cliquez pour copier,1
 Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,1,Appuyez sur « Ctrl+C » pour copier,1
 Side Navigation help,sidenav.label.help,Help,1,Aide,1
-Side Navigation touch mode,sidenav.label.touch,Touch Mode,1,Mode Tactile,1
+Side Navigation touch mode,sidenav.label.touch,Touch mode,1,Mode Tactile,1
 Side Navigation language,sidenav.label.language,Language,1,Langue,1
-Table of Content Unnamed service,toc.layer.unnamed,Unnamed Service #{{count}},1,Service sans nom #{{count}},1
+Table of Content Unnamed service,toc.layer.unnamed,Unnamed service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
 Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
@@ -335,8 +335,9 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
 ,import.service.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 ,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
+,import.service.type.wfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
 ,import.service.type.rasterlayer,Raster Layer,1,Couche Raster,1
-,import.service.type.geojson,OGC Web Feature Service GeoJSON,1,Service d'entités Web OGC GeoJSON,0
+,import.service.type.geojson,GeoJSON,1,GeoJSON,0
 ,import.service.configure.title,Configure layer,1,Configurer la couche,1
 ,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1
