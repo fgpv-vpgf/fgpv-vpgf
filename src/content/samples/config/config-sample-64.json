@@ -10,11 +10,34 @@
       ]
     },
     "sideMenu": {
-      "items":[["layers","basemap"],["fullscreen","export","share","touch","help","about"],["language"],["plugins"]],
+      "items": [
+        [
+          "layers",
+          "basemap"
+        ],
+        [
+          "fullscreen",
+          "export",
+          "share",
+          "touch",
+          "help",
+          "about"
+        ],
+        [
+          "language"
+        ],
+        [
+          "plugins"
+        ]
+      ],
       "logo": true
     },
-    "about":{ "content":"-- placeholder --" },
-    "help": { "folderName": "default" },
+    "about": {
+      "content": "-- placeholder --"
+    },
+    "help": {
+      "folderName": "default"
+    },
     "legend": {
       "isOpen": {
         "large": false,
@@ -34,7 +57,7 @@
       },
       "map": {},
       "mapElements": {},
-      "legend":{},
+      "legend": {},
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
       }
@@ -75,45 +98,60 @@
       },
       "scaleBar": {
         "enabled": true
+      },
+      "areaOfInterest": {
+        "areas": [
+          {
+            "title": "Reservoir Manicougan, Quebec, Canada",
+            "xmin": -69,
+            "xmax": -68,
+            "ymin": 51,
+            "ymax": 53,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
+          },
+          {
+            "title": "New Jersey, USA",
+            "xmin": -76,
+            "xmax": -72,
+            "ymin": 41,
+            "ymax": 41,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
+          },
+          {
+            "title": "Washington, DC, USA",
+            "xmin": -77,
+            "xmax": -77,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
+          },
+          {
+            "title": "Delaware, USA",
+            "xmin": -75,
+            "xmax": -75,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
+          }
+        ],
+        "noPicture": false
+      }
     },
-    "areaOfInterest": {
-      "areas": [
-        {
-          "title": "Reservoir Manicougan, Quebec, Canada",
-          "xmin": -69,
-          "xmax": -68,
-          "ymin": 51,
-          "ymax": 53,
-          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
-        },
-        {
-          "title": "New Jersey, USA",
-          "xmin": -76,
-          "xmax": -72,
-          "ymin": 41,
-          "ymax": 41,
-          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
-        },
-        {
-          "title": "Washington, DC, USA",
-          "xmin": -77,
-          "xmax": -77,
-          "ymin": 38,
-          "ymax": 40,
-          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
-        },
-        {
-          "title": "Delaware, USA",
-          "xmin": -75,
-          "xmax": -75,
-          "ymin": 38,
-          "ymax": 40,
-          "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
-        }
-      ],
-      "noPicture": false
-    }
+    "legend": {
+      "type": "autopopulate"
     },
+    "layers": [
+      {
+        "id": "powerplant100mw-electric",
+        "name": "Electric Transmission Line",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": false,
+          "boundingBox": false
+        },
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      }
+    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -348,28 +386,13 @@
         ]
       }
     ],
-    "legend": {
-      "type": "autopopulate"
-    },
-    "layers": [
-        {
-          "id": "powerplant100mw-electric",
-          "name": "Electric Transmission Line",
-          "layerType": "esriFeature",
-          "state": {
-            "visibility": false,
-            "boundingBox": false
-          },
-          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-        }
-    ],
     "tileSchemas": [
       {
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
         "lodSetId": "LOD_NRCAN_Lambert_3978",
-       "hasNorthPole": true
+        "hasNorthPole": true
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
