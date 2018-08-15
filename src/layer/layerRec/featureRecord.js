@@ -192,7 +192,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
         loadPromises.push(pLD, pFC, pLS);
         Promise.all(loadPromises).then(() => {
-            this.canAddToMap = true;
             this._stateChange(shared.states.LOADED);
         });
     }

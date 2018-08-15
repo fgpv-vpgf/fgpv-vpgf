@@ -542,11 +542,12 @@ function validateGeoJson(geoJson) {
 * @method validateCSV
 * @private
 * @param {Object} data csv data as string
+* @param {Boolean} dataIsEncoded the format of the data parameter. Defaults to true (encoded as arraybuffer). False indicates string or object form.
 * @returns {Promise} promise resolving with information on the csv data
 */
-function validateCSV(data) {
+function validateCSV(data, dataIsEncoded = true) {
 
-    const formattedData = arrayBufferToString(data); // convert from arraybuffer to string to parsed csv. store string format for later
+    const formattedData = dataIsEncoded ? arrayBufferToString(data) : data; // convert from arraybuffer to string to parsed csv. store string format for later
     const rows = csvPeek(formattedData, ','); // FIXME: this assumes delimiter is a `,`; need validation
     let errorMessage; // error message if any to return
 
@@ -621,23 +622,36 @@ function validateCSV(data) {
 *
 * @method validateFile
 * @param {String} type the format of file. aligns to serviceType enum (CSV, Shapefile, GeoJSON)
-* @param {Arraybuffer} data the file content in binary
+* @param {Object} data the file content. Can be in binary (arraybuffer), object, or string form.
+* @param {Boolean} dataIsEncoded the format of the data parameter. Defaults to true (encoded as arraybuffer). False indicates string or object form.
 * @returns {Promise} a promise resolving with an infomation object
 */
-function validateFile(type, data) {
+function validateFile(type, data, dataIsEncoded = true) {
 
     const fileHandler = { // maps handlers for different file types
-        [serviceType.CSV]: data => validateCSV(data),
+        [serviceType.CSV]: data => validateCSV(data, dataIsEncoded),
 
         [serviceType.GeoJSON]: data => {
-            const geoJson = JSON.parse(arrayBufferToString(data));
+            let geoJson;
+            if (dataIsEncoded) {
+                geoJson = JSON.parse(arrayBufferToString(data));
+            } else if (typeof data === 'string') {
+                geoJson = JSON.parse(data);
+            } else {
+                geoJson = data;
+            }
+
             return validateGeoJson(geoJson);
         },
 
         // convert from arraybuffer (containing zipped shapefile) to json (using shp library)
-        [serviceType.Shapefile]: data =>
-            shp(data).then(geoJson =>
-                validateGeoJson(geoJson))
+        [serviceType.Shapefile]: data => {
+            if (!dataIsEncoded) {
+                throw new error('shapefile data must be encoded in an array buffer');
+            }
+            return shp(data).then(geoJson => validateGeoJson(geoJson));
+        }
+
     };
 
     // trigger off the appropriate handler, return promise
