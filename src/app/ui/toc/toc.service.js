@@ -57,8 +57,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     watchPanelState('sideSettings', 'settings');
     watchPanelState('tableFulldata', 'table');
 
-    // wire in a hook to any map for removing a layer. this makes it available on the API
+
     events.$on(events.rvMapLoaded, () => {
+        // wire in a hook to any map for removing a layer. this makes it available on the API
         configService.getSync.map.instance.removeApiLayer = (id, index, showToast = false) => {
             const legendBlocks = configService.getSync.map.legendBlocks;
             let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
@@ -80,6 +81,31 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 // layer is not in legend (or does not exist), try simply removing layer record
                 layerRegistry.removeLayerRecord(id);
             }
+        }
+
+        //wire in a hook to any map for removing a layer using the given LegendBlock
+        configService.getSync.map.instance.removeAPILegendBlock = (legendBlock) => {
+            service.removeLayer(legendBlock, false);
+        };
+
+        //wire in a hook to any map for reloading a layer using the given LegendBlock
+        configService.getSync.map.instance.reloadAPILegendBlock = (legendBlock) => {
+            service.reloadLayer(legendBlock);
+        };
+
+        //wire in a hook to any map for toggling Metadata for any given legendBlock
+        configService.getSync.map.instance.toggleMetadata = (legendBlock) => {
+            service.toggleMetadata(legendBlock);
+        }
+
+        //wire in a hook to any map for toggling settings for any given legendBlock
+        configService.getSync.map.instance.toggleSettings = (legendBlock) => {
+            service.toggleSettings(legendBlock);
+        }
+
+        // wire in a hook to any map for toggling settings for any given legendBlock
+        configService.getSync.map.instance.toggleDataTable = (legendBlock) => {
+            service.toggleLayerTablePanel(legendBlock);
         }
     });
 

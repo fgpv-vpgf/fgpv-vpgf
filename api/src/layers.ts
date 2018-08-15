@@ -930,9 +930,9 @@ export class LayerGroup {
     }
 
     /**
-     * Emits whenever a layer is clicked on the legend.
-     * @event click
-     */
+   * Emits whenever a layer is clicked on the legend.
+   * @event click
+   */
     get click(): Observable<BaseLayer> {
         return this._click.asObservable();
     }

@@ -29,7 +29,7 @@ function rvTocExpandMenu() {
     return directive;
 }
 
-function Controller(LegendBlock, geoService, appInfo, configService) {
+function Controller(LegendBlock, geoService, appInfo, configService, events) {
     'ngInject';
     const self = this;
 
@@ -39,6 +39,13 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
         toggleLegendGroupEntries();
     self.collapseAllLegendEntries = () =>
         toggleLegendGroupEntries(false);
+
+    events.$on(events.rvMapLoaded, () => {
+        //wire in a hook to any map to toggleLegendEntries
+        configService.getSync.map.instance.toggleLegendGroupEntries = (value = true) => {
+            toggleLegendGroupEntries(value);
+        }
+    });
 
     self.isAllLegendEntriesExpanded = () =>
         getLegendGroupEntriesExpandState();
