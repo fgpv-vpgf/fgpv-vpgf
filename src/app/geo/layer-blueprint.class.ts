@@ -4,6 +4,7 @@ import angular from 'angular';
 
 type Constructor<T> = new (...args: any[]) => T;
 
+// TODO: move mixin constructors into the util file
 function mixins<A>(CtorA: Constructor<A>): Constructor<A>;
 function mixins<A, B>(CtorA: Constructor<A>, CtorB: Constructor<B>): Constructor<A & B>;
 function mixins<A, B, C>(CtorA: Constructor<A>, CtorB: Constructor<B>, CtorC: Constructor<C>): Constructor<A & B & C>;
@@ -36,7 +37,7 @@ type LayerRecordFactory = (config: any, esriLayer: any, epsgLookup: any) => Prom
 type LayerFactory = (data: any, options: any) => Promise<any>;
 
 type WFSResponse = {
-    data: { numberReturned: number; numberMatched: number; features: any[] };
+    data: { numberMatched: number; features: any[] };
 };
 type WFSData = { type: string; features: any[] };
 
@@ -55,22 +56,15 @@ type QueryMap = { [name: string]: string };
  * @requires dependencies
  * @description
  *
- *
+ * LayerBlueprint is a construct which can load data (for WFS right now; need to implement file loading through the config), valide it, and create LayerRecords.
+ * It also support additional options (through mixins) like layer and field options need for the layer wizard (when the user can select the primary field).
  *
  */
 angular.module('app.geo').factory('LayerBlueprint', LayerBlueprint);
 
-LayerBlueprint.$inject = ['$q', '$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
+LayerBlueprint.$inject = ['$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
 
-function LayerBlueprint(
-    common: any,
-    $http: any,
-    Geo: any,
-    gapiService: any,
-    ConfigObject: any,
-    appInfo: any,
-    configService: any
-) {
+function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: any, appInfo: any, configService: any) {
     /**
      * The base class for the mixins. This just declares what base properties are available across mixins.
      *
@@ -95,6 +89,7 @@ function LayerBlueprint(
         _validationResult: any;
         _isDataValid: any;
 
+        // function to create an ESRI layer object
         layerFactory: LayerFactory;
 
         /**
@@ -193,10 +188,23 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * The base mixin of all LayerBlueprints. Because JS doesn't allow multiple inheritance, mixins are used. The base mixin provides/defines common functions across all blueprints like `makeLayerRecord`.
+     *
+     * @class BlueprintBase
+     * @extends {LayerBlueprintMixin}
+     */
     class BlueprintBase extends LayerBlueprintMixin {
         _originalConfig: any;
         _layerRecord: any;
 
+        /**
+         * Takes in the raw JSON layer config definition, types it and stores it.
+         *
+         * @param {*} rawConfig
+         * @param {new (config: any) => void} ConfigClass
+         * @memberof BlueprintBase
+         */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
             this.config = new ConfigClass(rawConfig);
             this.backup();
@@ -204,7 +212,7 @@ function LayerBlueprint(
         }
 
         /**
-         * Backup the original config to it can be restored. Used in the layer wizard to reset user-made changes to the layer configuration.
+         * Backups the original config to it can be restored. Used in the layer wizard to reset user-made changes to the layer configuration.
          *
          * @memberof ServiceSourceBase
          */
@@ -222,6 +230,13 @@ function LayerBlueprint(
             this.config = angular.copy(this._originalConfig);
         }
 
+        /**
+         * Creates and returns a promise resolving with a LayerRecord instance.
+         *
+         * @param {*} [esriLayer=null]
+         * @returns {Promise<any>}
+         * @memberof BlueprintBase
+         */
         async makeLayerRecord(esriLayer: any = null): Promise<any> {
             // if the LayerRecord was generated (during wizard's last validation step for example), just return that
             if (this._layerRecord) {
@@ -237,7 +252,7 @@ function LayerBlueprint(
     }
 
     /**
-     * Provides support for lat/long fields on the layer config.
+     * Provides support for lat/long field option on the layer config. Used in the layer wizard.
      *
      * @class LatLongOption
      * @extends {LayerBlueprintMixin}
@@ -255,6 +270,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * Provides support for fields options on the layer config. Used in the layer wizard.
+     *
+     * @class FieldsOption
+     * @extends {LayerBlueprintMixin}
+     */
     class FieldsOption extends LayerBlueprintMixin {
         fields: any[];
 
@@ -269,6 +290,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * Provides support for layers options on the layer config. Used in the layer wizard.
+     *
+     * @class LayersOption
+     * @extends {LayerBlueprintMixin}
+     */
     class LayersOption extends LayerBlueprintMixin {
         layers: any[];
 
@@ -279,6 +306,12 @@ function LayerBlueprint(
 
     // #region [True Services]
 
+    /**
+     * Feature layer blueprint.
+     *
+     * @class FeatureServiceSource
+     * @extends {mixins(BlueprintBase, ServerSideData, FieldsOption)}
+     */
     class FeatureServiceSource extends mixins(BlueprintBase, ServerSideData, FieldsOption) {
         /**
          * Creates an instance of FeatureServiceSource.
@@ -307,6 +340,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * Dynamic layer blueprint.
+     *
+     * @class DynamicServiceSource
+     * @extends {mixins(BlueprintBase, ServerSideData, LayersOption)}
+     */
     class DynamicServiceSource extends mixins(BlueprintBase, ServerSideData, LayersOption) {
         constructor(rawConfig: any) {
             super();
@@ -323,6 +362,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * WMS layer blueprint.
+     *
+     * @class WMSServiceSource
+     * @extends {mixins(BlueprintBase, ServerSideData, LayersOption)}
+     */
     class WMSServiceSource extends mixins(BlueprintBase, ServerSideData, LayersOption) {
         constructor(rawConfig: any) {
             super();
@@ -339,6 +384,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * Image layer blueprint.
+     *
+     * @class ImageServiceSource
+     * @extends {mixins(BlueprintBase, ServerSideData)}
+     */
     class ImageServiceSource extends mixins(BlueprintBase, ServerSideData) {
         constructor(rawConfig: any) {
             super();
@@ -355,6 +406,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * Tile layer blueprint.
+     *
+     * @class TileServiceSource
+     * @extends {mixins(BlueprintBase, ServerSideData)}
+     */
     class TileServiceSource extends mixins(BlueprintBase, ServerSideData) {
         constructor(rawConfig: any) {
             super();
@@ -371,6 +428,12 @@ function LayerBlueprint(
         }
     }
 
+    /**
+     * WFS layer blueprint.
+     *
+     * @class WFSServiceSource
+     * @extends {mixins(BlueprintBase, ClientSideData)}
+     */
     class WFSServiceSource extends mixins(BlueprintBase, ClientSideData) {
         _urlWrapper: UrlWrapper;
 
@@ -380,11 +443,23 @@ function LayerBlueprint(
             this._setConfig(rawConfig, ConfigObject.layers.WFSLayerNode);
         }
 
+        /**
+         * Creates an ESRI layer first (since WFS is based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
+         *
+         * @returns {Promise<any>}
+         * @memberof WFSServiceSource
+         */
         async makeLayerRecord(): Promise<any> {
             const layer = await super._makeLayer();
             return super.makeLayerRecord(layer);
         }
 
+        /**
+         * Loads WFS data.
+         *
+         * @returns {Promise<any>}
+         * @memberof WFSServiceSource
+         */
         async loadData(): Promise<any> {
             this._urlWrapper = new UrlWrapper(this.config.url);
 
@@ -392,9 +467,16 @@ function LayerBlueprint(
             const { startindex, limit } = this._urlWrapper.queryMap;
             const data = await this._getWFSData(-1, parseInt(startindex), parseInt(limit));
 
+            // TODO: switch to passing json value instead of encoded one; geoApi now supports it
             return new TextEncoder().encode(JSON.stringify(data));
         }
 
+        /**
+         * Validates WFS layer as GeoJSON. Default validation uses the service type, and there is no explicit validation function for WFS.
+         *
+         * @returns {Promise<any>}
+         * @memberof WFSServiceSource
+         */
         validate(): Promise<any> {
             return super.validate(Geo.Service.Types.GeoJSON);
         }
@@ -481,6 +563,12 @@ function LayerBlueprint(
 
     // #region [True Files]
 
+    /**
+     * CSV layer blueprint.
+     *
+     * @class CSVSource
+     * @extends {mixins(BlueprintBase, ClientSideData, LatLongOption, FieldsOption)}
+     */
     class CSVSource extends mixins(BlueprintBase, ClientSideData, LatLongOption, FieldsOption) {
         constructor(rawConfig: any) {
             super();
@@ -488,11 +576,23 @@ function LayerBlueprint(
             this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
         }
 
+        /**
+         * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
+         *
+         * @returns {Promise<any>}
+         * @memberof CSVSource
+         */
         async makeLayerRecord(): Promise<any> {
             const layer = await super._makeLayer();
             return super.makeLayerRecord(layer);
         }
 
+        /**
+         * Valides the file data and set up available options.
+         *
+         * @returns {Promise<any>}
+         * @memberof CSVSource
+         */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
             this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
@@ -524,11 +624,23 @@ function LayerBlueprint(
             this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
         }
 
+        /**
+         * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
+         *
+         * @returns {Promise<any>}
+         * @memberof GeoJSONSource
+         */
         async makeLayerRecord(): Promise<any> {
             const layer = await super._makeLayer();
             return super.makeLayerRecord(layer);
         }
 
+        /**
+         * Valides the file data and set up available options.
+         *
+         * @returns {Promise<any>}
+         * @memberof GeoJSONSource
+         */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
             this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
@@ -559,11 +671,23 @@ function LayerBlueprint(
             this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
         }
 
+        /**
+         * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
+         *
+         * @returns {Promise<any>}
+         * @memberof ShapefileSource
+         */
         async makeLayerRecord(): Promise<any> {
             const layer = await super._makeLayer();
             return super.makeLayerRecord(layer);
         }
 
+        /**
+         * Valides the file data and set up available options.
+         *
+         * @returns {Promise<any>}
+         * @memberof ShapefileSource
+         */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
             this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers

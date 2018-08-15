@@ -29,16 +29,16 @@
         <!-- Selecting layer type -->
 
         <rv-stepper-item step="self.select.step" form="self.select.form"
-            summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerSource.type : '' }}">
+            summary-value="{{ self.select.step.isCompleted ? 'import.service.type.' + self.layerBlueprint.type : '' }}">
             <md-input-container class="md-block">
                 <label>{{ 'import.service.select.servicetype' | translate }}</label>
                 <md-select
                     name="serviceType"
-                    ng-disabled="self.layerSourceOptions.length === 1"
-                    ng-model="self.layerSource"
+                    ng-disabled="self.layerBlueprintOptions.length === 1"
+                    ng-model="self.layerBlueprint"
                     md-on-open="self.select.serviceTypeResetValidation()" required>
                     <md-option
-                        ng-repeat="sourceOption in self.layerSourceOptions"
+                        ng-repeat="sourceOption in self.layerBlueprintOptions"
                         ng-value="sourceOption">
                         {{ 'import.service.type.' + sourceOption.type | translate }}
                     </md-option>
@@ -54,13 +54,13 @@
         <rv-stepper-item
             step="self.configure.step"
             form="self.configure.form"
-            ng-switch on="self.layerSource.type">
+            ng-switch on="self.layerBlueprint.type">
 
             <md-input-container class="md-block"
                 ng-switch-when="featurelayer|wms"
                 ng-switch-when-separator="|">
                 <label>{{ 'import.service.configure.layername' | translate }}</label>
-                <input name="layerServiceName" ng-model="self.layerSource.config.name" required>
+                <input name="layerServiceName" ng-model="self.layerBlueprint.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
                     <div ng-message="required">This is required!</div>
@@ -73,9 +73,9 @@
                     <label>{{ 'import.service.configure.primaryfield' | translate }}</label>
                     <md-select
                         name="primaryField"
-                        ng-model="self.layerSource.config.nameField"
+                        ng-model="self.layerBlueprint.config.nameField"
                         required>
-                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                             {{ field.alias || field.name }}
                         </md-option>
                     </md-select>
@@ -88,8 +88,8 @@
                     <label>{{ 'import.service.configure.tooltipField' | translate }}</label>
                     <md-select
                         name="tooltipField"
-                        ng-model="self.layerSource.config.tooltipField">
-                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                        ng-model="self.layerBlueprint.config.tooltipField">
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                             {{ field.alias || field.name }}
                         </md-option>
                     </md-select>
@@ -104,7 +104,7 @@
                 <label>{{ 'import.service.configure.layers' | translate }}</label>
                 <md-select
                     name="dynamicLayers"
-                    ng-model="self.layerSource.config.layerEntries"
+                    ng-model="self.layerBlueprint.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
                     ng-change="self.common.onDynamicLayerSection()"
                     required multiple>
@@ -121,7 +121,7 @@
                         </md-input-container>
                     </md-select-header>
                     <md-option
-                        ng-repeat="layer in self.layerSource.layers"
+                        ng-repeat="layer in self.layerBlueprint.layers"
                         ng-value="layer">
                         {{ layer.indent + ' ' + layer.name }}
                     </md-option>
@@ -137,22 +137,22 @@
             <md-input-container class="md-block"
                 ng-switch-when="dynamicservice">
                 <md-checkbox
-                    ng-model="self.layerSource.config.singleEntryCollapse"
-                    md-indeterminate="self.layerSource.config.layerEntries.length === 0"
+                    ng-model="self.layerBlueprint.config.singleEntryCollapse"
+                    md-indeterminate="self.layerBlueprint.config.layerEntries.length === 0"
                     ng-true-value="false"
                     ng-false-value="true"
-                    ng-disabled="self.layerSource.config.layerEntries.length !== 1"
+                    ng-disabled="self.layerBlueprint.config.layerEntries.length !== 1"
                     class="md-primary">
                     {{ 'import.service.configure.singleentrycollapse' | translate }}
                 </md-checkbox>
             </md-input-container>
 
             <md-input-container class="md-block"
-                ng-if="!self.layerSource.config.singleEntryCollapse"
+                ng-if="!self.layerBlueprint.config.singleEntryCollapse"
                 ng-switch-when="dynamicservice">
                 <label>{{ 'import.service.configure.groupname' | translate }}</label>
                 <input name="layerServiceName"
-                    ng-model="self.layerSource.config.name" required>
+                    ng-model="self.layerBlueprint.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
                     <div ng-message="required">This is required!</div>
@@ -164,7 +164,7 @@
                 <label>{{ 'import.service.configure.layers' | translate }}</label>
                 <md-select
                     name="wmsLayers"
-                    ng-model="self.layerSource.config.layerEntries"
+                    ng-model="self.layerBlueprint.config.layerEntries"
                     ng-model-options="{ trackBy: '$value.index' }"
                     required multiple>
                     <md-input-container class="md-block">
@@ -181,7 +181,7 @@
                             </md-input-container>
                         </md-select-header>
                     </md-input-container>
-                    <md-option ng-repeat="layer in self.layerSource.layers"
+                    <md-option ng-repeat="layer in self.layerBlueprint.layers"
                         ng-value="layer">
                         {{ layer.indent + ' ' + layer.desc }}
                     </md-option>
@@ -196,7 +196,7 @@
             <md-input-container class="md-block" ng-switch-when="geojson">
                 <label>{{ 'import.layer.configure.layername' | translate }}</label>
                 <input name="layerName"
-                    ng-model="self.layerSource.config.name" required>
+                    ng-model="self.layerBlueprint.config.name" required>
                 <!-- TODO: decide whether and how to display a hint or error messages -->
                 <!--div ng-messages="self.configure.form.layerName.$error">
                     <div ng-message="required">This is required!</div>
@@ -209,9 +209,9 @@
                     <label>{{ 'import.layer.configure.primaryfield ' | translate }}</label>
                     <md-select
                         name="primaryField"
-                        ng-model="self.layerSource.config.nameField"
+                        ng-model="self.layerBlueprint.config.nameField"
                         required>
-                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                             {{ field.name }}
                         </md-option>
                     </md-select>
@@ -224,8 +224,8 @@
                     <label>{{ 'import.layer.configure.tooltipField' | translate }}</label>
                     <md-select
                         name="tooltipField"
-                        ng-model="self.layerSource.config.tooltipField">
-                        <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                        ng-model="self.layerBlueprint.config.tooltipField">
+                        <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                             {{ field.name }}
                         </md-option>
                     </md-select>
@@ -242,7 +242,7 @@
                     <input rv-minicolors options="self.configure.colourPickerSettings"
                         name="layerName"
                         ng-change="self.configure.configureResetValidation()"
-                        ng-model="self.layerSource.colour" required>
+                        ng-model="self.layerBlueprint.colour" required>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -266,7 +266,7 @@
                     </div>
                 </md-button>
 
-                <md-input-container ng-show="section.isExpanded" class="wms-styles" ng-repeat="entry in self.layerSource.config.layerEntries" ng-if="::(entry.allStyles.length > 1)">
+                <md-input-container ng-show="section.isExpanded" class="wms-styles" ng-repeat="entry in self.layerBlueprint.config.layerEntries" ng-if="::(entry.allStyles.length > 1)">
                     <label>{{ entry.desc }}</label>
                     <md-select ng-model="entry.currentStyle">
                         <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>

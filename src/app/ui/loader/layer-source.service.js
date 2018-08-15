@@ -84,7 +84,15 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
 
                 // TODO: might need to workaround if `predictLayerUrl` start failing on trying to get WFS responses
-                return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(_parseAsSomethingElse);
+                return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(serviceInfo => {
+                    // if the service is identified as WFS, parse as WFS
+                    // if not, run the prediction on the original url again because adding extra WFS parameters to the url messes up predictions
+                    if (serviceInfo.serviceType === Geo.Service.Types.WFS) {
+                        return _parseAsSomethingElse(serviceInfo);
+                    }
+
+                    return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
+                });
             })
             .then(options => ({
                 options,
@@ -397,20 +405,20 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
-            const fileInfoOptions = [
+            const blueprintOptions = [
                 new LayerBlueprint.CSVSource(layerRawConfig, arrayBuffer),
                 new LayerBlueprint.GeoJSONSource(layerRawConfig, arrayBuffer),
                 new LayerBlueprint.ShapefileSource(layerRawConfig, arrayBuffer)
             ];
 
-            fileInfoOptions.forEach(layerSource => layerSource.setRawData(arrayBuffer));
+            blueprintOptions.forEach(blueprintOption => blueprintOption.setRawData(arrayBuffer));
 
             const preselectedIndex = fileInfo.serviceType
-                ? fileInfoOptions.findIndex(option => option.type === fileInfo.serviceType)
+                ? blueprintOptions.findIndex(option => option.type === fileInfo.serviceType)
                 : 0;
 
             return {
-                options: fileInfoOptions,
+                options: blueprintOptions,
                 preselectedIndex
             };
         });

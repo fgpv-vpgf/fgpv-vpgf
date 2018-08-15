@@ -299,7 +299,7 @@ function layerRegistryFactory(
      * - wait for the promise to resolve and store the actual layer record
      * - hook up state event listeners
      *
-     * @param {LayerSource} layerBlueprint LayerBlueprint object
+     * @param {layerBlueprint} layerBlueprint LayerBlueprint object
      * @returns {Promise<LayerRecord>} a promise resolving with a generated LayerRecord
      */
     function _startGeneratingLayerRecord(layerBlueprint) {

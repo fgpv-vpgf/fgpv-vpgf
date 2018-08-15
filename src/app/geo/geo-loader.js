@@ -4,7 +4,7 @@ import './geo.constant.service.js';
 import './geo.service.js';
 import './identify.service.js';
 import './init-map.directive.js';
-// import './layer-blueprint.class.js';
+import './layer-blueprint.class.ts';
 import './layer-registry.service.js';
 import './legend-block.class.js'
 import './legend.service.js';
