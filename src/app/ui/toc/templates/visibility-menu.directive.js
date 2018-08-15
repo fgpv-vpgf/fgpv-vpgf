@@ -29,7 +29,7 @@ function rvTocVisibilityMenu() {
     return directive;
 }
 
-function Controller(LegendBlock, geoService, appInfo, configService) {
+function Controller(LegendBlock, geoService, appInfo, configService, events) {
     'ngInject';
     const self = this;
 
@@ -39,6 +39,13 @@ function Controller(LegendBlock, geoService, appInfo, configService) {
         toggleLegendEntries();
     self.hideAllLegendEntries = () =>
         toggleLegendEntries(false);
+
+    events.$on(events.rvMapLoaded, () => {
+        //wire in a hook to any map to toggleLegendEntries
+        configService.getSync.map.instance.toggleLegendEntries = (value = true) => {
+            toggleLegendEntries(value);
+        }
+    });
 
     self.isAllLegendEntriesVisible = () =>
         getLegendEntriesVisibility();
