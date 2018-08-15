@@ -78,7 +78,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
     return directive;
 
     /*********/
-
+// eslint-disable-next-line max-statements
     function link(scope, element) {
         const self = scope.self;
 
@@ -144,6 +144,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // trigger event which table uses to update
             events.$broadcast(events.rvLayerDefinitionClauseChanged);
         };
+
+        //wire in a hook to the SymbologyStack item!
+        self.symbology.toggleList = self.toggleList;
+        self.symbology.onToggleClick = self.onToggleClick;
 
         const ref = {
             isReady: false,

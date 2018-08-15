@@ -1,3 +1,5 @@
+import { LegendItem } from 'api/legend';
+
 /**
  * @module legendService
  * @memberof app.geo
@@ -135,6 +137,13 @@ function legendServiceFactory(
 
             const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
             mapConfig.legendBlocks = legendBlocks;
+
+            legendBlocks.entries.forEach(entry => {
+                if (entry.blockConfig.entryType === 'legendNode' || entry.blockConfig.entryType === 'legendInfo') {
+                    let legendItem = new LegendItem(entry, configService.getSync.map);
+                    console.log(legendItem);
+                }
+            });
         });
     }
 
@@ -227,6 +236,12 @@ function legendServiceFactory(
         // add the new legend block to the legend block (always to the root group)
         legendBlocks.addEntry(importedLegendBlock, position);
 
+        if (importedLegendBlock.blockConfig.entryType === 'legendNode' || importedLegendBlock.blockConfig.entryType === 'legendInfo') {
+            let legendItem = new LegendItem(importedLegendBlock, configService.getSync.map);
+            console.log(legendItem);
+            //_addElementToApiLegend(legendGroup)
+        }
+
         // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
         configService.getSync.map.legend.addChild(importedBlockConfig, position);
 
@@ -262,9 +277,9 @@ function legendServiceFactory(
                     (entry, index, parentEntry) =>
                         entry.id === legendBlockId
                             ? {
-                                  legendBlock: entry,
-                                  legendBlockParent: parentEntry
-                              }
+                                legendBlock: entry,
+                                legendBlockParent: parentEntry
+                            }
                             : null
                 )
                 .filter(a => a !== null)[0];
