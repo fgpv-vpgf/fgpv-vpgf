@@ -145,6 +145,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             events.$broadcast(events.rvLayerDefinitionClauseChanged);
         };
 
+        //wire in a hook to the SymbologyStack item!
+        self.symbology.toggleList = self.toggleList;
+        self.symbology.onToggleClick = self.onToggleClick;
+
         const ref = {
             isReady: false,
 
