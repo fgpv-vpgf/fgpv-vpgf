@@ -18,6 +18,7 @@
 import { Observable, Subject } from 'rxjs';
 import { PanelEvent } from 'api/events';
 import Map from 'api/map';
+import { ConfigLegend, SimpleLegend } from 'api/legend'
 
 /**
  * Creates the default panel streams for opening, opened, closing, and closed stream events
@@ -533,10 +534,12 @@ export class UI {
     _panels: PanelRegistry;
     _tooltip: ToolTip = new ToolTip();
     _basemaps: BasemapGroup;
+    _configLegend: ConfigLegend; // Initialize below once constructor is done!
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
         this._panels = new PanelRegistry();
+
     }
 
     get panels(): PanelRegistry {
@@ -555,6 +558,10 @@ export class UI {
 
     get basemaps(): BasemapGroup {
         return this._basemaps;
+    }
+
+    get configLegend(): ConfigLegend {
+        return this._configLegend;
     }
 }
 
