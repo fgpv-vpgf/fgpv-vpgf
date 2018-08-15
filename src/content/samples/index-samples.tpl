@@ -179,6 +179,7 @@
                 <option value="config/config-sample-82.json">82. Mystery config 1</option>
                 <option value="config/config-sample-83.json">83. Mystery config 2</option>
                 <option value="config/config-sample-84.json">84. Local Export + Tainted Images + cleanCanvas option</option>
+                <option value="config/config-sample-86.json">86. API 2 blocks for a single layer</option>
             </select>
         </div>
 
@@ -238,8 +239,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        // RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        // RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {

@@ -2,6 +2,7 @@ import Map from 'api/map';
 import { PanelElem } from 'api/panel';
 import { BasemapGroup } from 'api/ui';
 import gtm from '../tag-manager';
+import { ConfigLegend } from 'api/legend';
 
 /**
  * @restrict A
@@ -76,33 +77,35 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
 
-                // API related initialization ------------------
-                api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
-                api.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
-                const apiMap = new Map($rootElement);
-                apiMap.fgpMap = mapInstance;
-                apiMap._legendStructure = configService.getSync.map.legend;
-                appInfo.mapi = apiMap;
+            // API related initialization ------------------
+            api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
+            api.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
+            const apiMap = new Map($rootElement);
+            apiMap.fgpMap = mapInstance;
+            apiMap._legendStructure = configService.getSync.map.legend;
+            const mapConfig = configService.getSync.map;
+            apiMap.ui.configLegend = new ConfigLegend(mapConfig, mapConfig.legend);
+            appInfo.mapi = apiMap;
 
             apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
-                // Required for FM to function properly
-                api.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
-                $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
+            // Required for FM to function properly
+            api.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+            $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
-                events.$broadcast(events.rvApiPrePlugin, apiMap);
-                // api panel elements need a reference to the internal angular compiler
-                apiMap.$ = function(html) {
-                    return $compile(html)($rootScope);
-                };
+            events.$broadcast(events.rvApiPrePlugin, apiMap);
+            // api panel elements need a reference to the internal angular compiler
+            apiMap.$ = function (html) {
+                return $compile(html)($rootScope);
+            };
 
-                // allows plugins to register components on the angular instance, usually to provide angular material support
-                apiMap.agControllerRegister = $controllerProvider.register;
+            // allows plugins to register components on the angular instance, usually to provide angular material support
+            apiMap.agControllerRegister = $controllerProvider.register;
 
-                loadExtensions(apiMap);
-                events.$broadcast(events.rvApiMapAdded, apiMap);
-                gtm(apiMap);
-                api.mapAdded.next(apiMap);
+            loadExtensions(apiMap);
+            events.$broadcast(events.rvApiMapAdded, apiMap);
+            gtm(apiMap);
+            api.mapAdded.next(apiMap);
         });
 
         /**

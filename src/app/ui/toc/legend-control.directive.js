@@ -46,7 +46,7 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
         link: {
             pre: link
         },
-        controller: () => {},
+        controller: () => { },
         controllerAs: 'self',
         bindToController: true
     };
@@ -77,6 +77,14 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
          * @param {LegendBlock} block legend block that was clicked
          */
         function notifyApiClick(block) {
+            let legendItem;
+            if (appInfo.mapi) {  // make sure the item clicked is a node, and not group or other
+                legendItem = appInfo.mapi.ui.configLegend.getById(block.id);
+                if (legendItem) {
+                    appInfo.mapi.ui.configLegend._click.next(legendItem);
+                }
+            }
+
             let layer;
             if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {  // make sure the item clicked is a node, and not group or other
                 if (block.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC) {
@@ -86,7 +94,6 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
                 } else {
                     layer = appInfo.mapi.layers.getLayersById(block.layerRecordId)[0];
                 }
-
                 if (layer) {
                     appInfo.mapi.layers._click.next(layer);
                 }
