@@ -1830,7 +1830,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   color: rgba(0, 0, 0, 0.87);
   font: 400 13px "Roboto", sans-serif; }
   .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected {
-    border-bottom: 2px solid #607D8B; }
+    border-bottom: 2px solid #607d8b; }
   .ag-theme-material .ag-ltr .ag-toolpanel-indent-1 {
     padding-left: 26px; }
   .ag-theme-material .ag-rtl .ag-toolpanel-indent-1 {
@@ -2337,10 +2337,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     opacity: 0.5;
     z-index: 10000; }
   .ag-theme-material .ag-ltr .ag-cell-focus {
-    border: 1px solid #607D8B;
+    border: 1px solid #607d8b;
     outline: initial; }
   .ag-theme-material .ag-rtl .ag-cell-focus {
-    border: 1px solid #607D8B;
+    border: 1px solid #607d8b;
     outline: initial; }
   .ag-theme-material .ag-header-cell-resize {
     width: 16px; }
@@ -2877,7 +2877,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     padding-left: 8px; }
     .ag-theme-material .ag-filter input[type="text"]:focus,
     .ag-theme-material .ag-filter input[type="date"]:focus {
-      border-bottom: 2px solid #607D8B;
+      border-bottom: 2px solid #607d8b;
       outline: none;
       padding-bottom: 7px; }
     .ag-theme-material .ag-filter input[type="text"]::placeholder,
@@ -2911,7 +2911,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       appearance: none;
       background-color: transparent;
       border: 0;
-      color: #607D8B;
+      color: #607d8b;
       font-family: inherit;
       font-size: inherit;
       margin: 0;
@@ -3202,7 +3202,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       .ag-theme-material .ag-cell-inline-editing input[type="tel"]:focus,
       .ag-theme-material .ag-cell-inline-editing input[type="date"]:focus,
       .ag-theme-material .ag-cell-inline-editing input[type="datetime-local"]:focus {
-        border-bottom: 2px solid #607D8B;
+        border-bottom: 2px solid #607d8b;
         outline: none;
         padding-bottom: 7px; }
       .ag-theme-material .ag-cell-inline-editing input[type="text"]::placeholder,
@@ -3233,7 +3233,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       height: auto;
       padding: 24px; }
       .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:focus {
-        border-bottom: 2px solid #607D8B;
+        border-bottom: 2px solid #607d8b;
         outline: none;
         padding-bottom: 7px; }
       .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::placeholder {
@@ -3277,7 +3277,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       border-width: 0;
       border-bottom: 1px solid #e0e0e0; }
       .ag-theme-material .ag-floating-filter-body input:focus {
-        border-bottom: 2px solid #607D8B;
+        border-bottom: 2px solid #607d8b;
         outline: none;
         padding-bottom: 7px; }
       .ag-theme-material .ag-floating-filter-body input::placeholder {
@@ -3294,7 +3294,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     border-width: 0;
     border-bottom: 1px solid #e0e0e0; }
     .ag-theme-material .ag-floating-filter-full-body input:focus {
-      border-bottom: 2px solid #607D8B;
+      border-bottom: 2px solid #607d8b;
       outline: none;
       padding-bottom: 7px; }
     .ag-theme-material .ag-floating-filter-full-body input::placeholder {
@@ -3648,7 +3648,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     box-sizing: border-box;
     width: 100%; }
     .ag-theme-material .ag-primary-cols-filter:focus {
-      border-bottom: 2px solid #607D8B;
+      border-bottom: 2px solid #607d8b;
       outline: none;
       padding-bottom: 7px; }
     .ag-theme-material .ag-primary-cols-filter::placeholder {
@@ -3690,7 +3690,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       background-color: transparent;
       border-width: 0; }
     .ag-theme-material .ag-side-bar .ag-side-buttons .ag-selected button {
-      border-left: 2px solid #607D8B;
+      border-left: 2px solid #607d8b;
       background-color: #fafafa;
       margin-left: -2px;
       padding-left: 1px; }
@@ -3700,7 +3700,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     border-left: 0;
     margin-left: 0;
     padding-left: 0;
-    border-right: 2px solid #607D8B;
+    border-right: 2px solid #607d8b;
     margin-right: -2px;
     padding-right: 1px; }
 

@@ -214,6 +214,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             }
         };
 
+        //wire in a hook to the SymbologyStack item!
+        self.symbology.toggleList = self.toggleList;
+        self.symbology.onToggleClick = self.onToggleClick;
+
         const ref = {
             isReady: false,
 
@@ -834,7 +838,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
     }
 }
 
-function symbologyStack($q, ConfigObject, gapiService) {
+function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
     class SymbologyStack {
         /**
          * Creates a new symbology stack. All parameters are options and if none is supplied, an empty stack will be created.
@@ -928,6 +932,7 @@ function symbologyStack($q, ConfigObject, gapiService) {
 
         set expanded(value) {
             this._expanded = value;
+            $rootScope.$applyAsync();
         }
     }
 
