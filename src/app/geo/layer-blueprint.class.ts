@@ -465,7 +465,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
             // get start index and limit set on the url
             const { startindex, limit } = this._urlWrapper.queryMap;
-            const data = await this._getWFSData(-1, parseInt(startindex), parseInt(limit));
+            const data = await this._getWFSData(-1, parseInt(startindex) || 0, parseInt(limit) || 1000);
 
             // TODO: switch to passing json value instead of encoded one; geoApi now supports it
             return new TextEncoder().encode(JSON.stringify(data));
