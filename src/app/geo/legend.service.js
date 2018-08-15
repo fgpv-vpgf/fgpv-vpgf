@@ -18,6 +18,7 @@ function legendServiceFactory(
     LegendBlock,
     LayerBlueprint,
     layerRegistry,
+    LayerSource,
     common,
     events
 ) {
@@ -162,7 +163,10 @@ function legendServiceFactory(
      * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
-        const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition);
+        // TODO: remove
+        // const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition); 
+        // TODO: blueprint creating should not be async
+        const blueprintPromise = common.$q.resolve(LayerSource.makeLayerBlueprint(layerDefinition));
 
         return blueprintPromise.then(blueprint => {
             configService.getSync.map.layerBlueprints.push(blueprint);

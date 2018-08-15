@@ -286,10 +286,10 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
+        const layerRecordPromise = self.layerSource.makeLayerRecord();
 
-        blueprintPromise.then(layerBlueprint => {
-            legendService.importLayerBlueprint(layerBlueprint);
+        layerRecordPromise.then(() => {
+            legendService.importLayerBlueprint(self.layerSource);
             closeLoaderService();
         }).catch(error => {
             console.warn('loaderServiceDirective', 'service is invalid ', error);
@@ -387,6 +387,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      */
     function closeLoaderService() {
         // reset the loader after closing the panel
+        self.layerSource = null;
         stepper.reset().start();
         stateManager.setActive('mainToc');
 

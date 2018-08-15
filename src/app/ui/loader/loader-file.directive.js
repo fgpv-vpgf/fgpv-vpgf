@@ -490,10 +490,12 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
+        // generate a LayerRecord from the blueprint before closing the wizard
+        // generation might fail because file data is invalid
+        const layerRecordPromise = self.layerSource.makeLayerRecord();
 
-        blueprintPromise.then(layerBlueprint => {
-            legendService.importLayerBlueprint(layerBlueprint);
+        layerRecordPromise.then(() => {
+            legendService.importLayerBlueprint(self.layerSource);
             closeLoaderFile();
         }).catch(error => {
             console.warn('loaderFileDirective', 'file is invalid ', error);
@@ -507,6 +509,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      */
     function closeLoaderFile() {
         // reset the loader after closing the panel
+        self.layerSource = null;
         stepper.reset().start();
         stateManager.setActive('mainToc');
 

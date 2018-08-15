@@ -11,7 +11,7 @@ angular
     .module('app.ui')
     .factory('layerSource', layerSource);
 
-function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject, configService) {
+function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configService) {
     const ref = {
         idCounter: 0, // layer counter for generating layer ids
         serviceType: Geo.Service.Types
@@ -74,75 +74,28 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 } else {
                     return defaultSet;
                 }
-
             }
         };
+
+        const urlWrapper = new LayerSource.UrlWrapper(serviceUrl);
 
         // check if it's a WMS first
         const fetchPromise = gapiService.gapi.layer.ogc.parseCapabilities(serviceUrl)
             .then(data => {
                 if (data.layers.length > 0) { // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
-                } else {
-                    const wfsResponse = {
-                        type: 'FeatureCollection',
-                        features: []
-                    };
-
-                    const urlSplit = serviceUrl.split('?');
-                    let url = urlSplit[0];   // url without any query parameters
-                    const queryVariables = urlSplit[1]; // url query parameters
-
-                    let startIndex, limit;
-                    if (queryVariables) {
-                        startIndex = getQueryVariable(queryVariables, 'startindex') || 0;
-                        limit = getQueryVariable(queryVariables, 'limit') || 10; // certain services with low items counts error if the limit is too much
-
-                        // need to remove the start & limit params, but add back any other params
-                        const qNuggets = queryVariables.split('&');
-                        const newQ = qNuggets
-                            .filter(qn => (!(qn.startsWith('startindex=') || qn.startsWith('limit='))))
-                            .join('&');
-
-                        if (newQ.length > 0) {
-                            url += '?' + newQ;
-                        }
-                    }
-
-                    if (layerType === Geo.Layer.Types.OGC_WFS) {
-                        // initially make the request with startIndex if provided else uses 0 (default), and limit if provided else uses 10 (default)
-                        return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {
-                            const updatedServiceInfo = {
-                                serviceType: 'wfs',
-                                index: '-1',
-                                tileSupport: false,
-                                rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
-                            }
-                            return _parseAsSomethingElse(updatedServiceInfo);
-                        });
-                    } else {
-                        return gapiService.gapi.layer.predictLayerUrl(serviceUrl)   // remove duplication after
-                            .then(serviceInfo => {
-                                if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                                    return _getWFSData(url, startIndex, limit, wfsResponse).then(data => {   // if the esriRequest fails, use angular to make web request
-                                        // for the time being, assuming it is a WFS layer. currently will not work for other file layers defined in config
-                                        // TODO: need to move away from reusing loader wizard code and seperate logic since all information is defined in config
-                                        const updatedServiceInfo = {
-                                            serviceType: 'wfs',
-                                            index: '-1',
-                                            tileSupport: false,
-                                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(data))
-                                        }
-                                        return _parseAsSomethingElse(updatedServiceInfo);
-                                    });
-                                } else {
-                                    return _parseAsSomethingElse(serviceInfo)
-                                }
-                            });
-                    }
                 }
-            })
-            .then(options => ({
+                    // test if it's a WFS
+                    // make a quick request for a single feature and see what the prediction function says
+                    const requestUrl = urlWrapper.updateQuery({startindex: 0, limit: 1});
+
+                    // TODO: might need to workaround if `predictLayerUrl` start failing on trying to get WFS responses
+                    return gapiService.gapi.layer.predictLayerUrl(requestUrl)
+                        .then(_parseAsSomethingElse);
+
+
+
+            }).then(options => ({
                 options,
                 preselectedIndex: 0
             }))
@@ -151,48 +104,7 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
 
         return fetchPromise;
 
-        /**
-         * @function _getWFSData
-         * @private
-         * @param {String} serviceUrl url of the WFS layer we are trying to parse
-         * @param {Number} startIndex the index to start the querying from. default 0
-         * @param {Number} limit the limit of how many results we want returned. default 10
-         * @param {Object} wfsResponse the resulting GeoJSON being populated as we receive layer information
-         * @return {Promise} a promsie resolving with the layer GeoJSON
-         */
-        function _getWFSData(serviceUrl, startIndex = 0, limit = 1000, wfsResponse) { // TODO: look into removing startIndex and always going from 0 to the end
 
-            const paramToken = serviceUrl.indexOf('?') < 0 ? '?' : '&';
-
-            // use angular to make web request, instead of esriRequest. this is because we can't rely on services having jsonp
-            return $http.get(serviceUrl.concat(`${paramToken}startindex=${startIndex}&limit=${limit}`))
-                .then(response => {
-                    const data = response.data;
-                    wfsResponse.features = [...wfsResponse.features, ...data.features]; // update the received features array
-
-                    const numReturned = data.numberReturned;
-                    const totalNumberReceived = startIndex + numReturned;
-                    const numMatched = data.numberMatched;
-                    if (typeof numReturned !== 'undefined' && typeof numMatched !== 'undefined' && totalNumberReceived < numMatched) {
-                        const limit = Math.min(1000, numMatched - totalNumberReceived);    // the limit is either 1k or the number of remaining features
-                        return _getWFSData(serviceUrl, totalNumberReceived, limit, wfsResponse);
-                    } else {
-                        return wfsResponse
-                    }
-                });
-        }
-
-        // modified from: https://css-tricks.com/snippets/javascript/get-url-variables/
-        function getQueryVariable(queryVariables, variable) {
-            const vars = queryVariables.split("&");
-            for (let i = 0; i < vars.length; i++) {
-                const pair = vars[i].split("=");
-                if (pair[0] === variable) {
-                    return parseInt(pair[1]);
-                }
-            }
-            return(false);
-        }
 
         /**
          * @function _parseAsSomethingElse
@@ -236,15 +148,15 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 .find(format =>
                     format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
 
-            const wmsLayerList = _flattenWmsLayerList(data.layers)
+            const typedWmsLayerList = _flattenWmsLayerList(data.layers)
                 // filter out all sublayers with no id/name (they can't be targeted and probably have no legend)
                 .filter(layerEntry => layerEntry.id)
-                .map((layerEntry, index) => {
-                    layerEntry.index = index;
-                    return new ConfigObject.layers.WMSLayerEntryNode(layerEntry);
-                });
+                .map((layerEntry, index) =>
+                    { layerEntry.index = index; return new ConfigObject.layers.WMSLayerEntryNode(layerEntry); }
+                )
 
-            const layerConfig = new ConfigObject.layers.WMSLayerNode({
+
+            const layerConfig = {
                 id: `${Geo.Layer.Types.OGC_WMS}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.OGC_WMS,
@@ -254,9 +166,10 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
-            const layerInfo = new LayerSourceInfo.WMSServiceInfo(layerConfig, wmsLayerList);
+            const layerInfo = new LayerSource.WMSServiceSource(layerConfig);
+            layerInfo.setLayersOptions(typedWmsLayerList)
 
             return [layerInfo];
         }
@@ -271,7 +184,9 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @return {Promise} a promsie resolving with a LayerSourceInfo.FeatureServiceInfo object
          */
         function _parseAsFeature(url, data) {
-            const layerConfig = new ConfigObject.layers.FeatureLayerNode({
+
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_FEATURE}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.ESRI_FEATURE,
@@ -279,9 +194,11 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
-            const layerInfo = new LayerSourceInfo.FeatureServiceInfo(layerConfig, data.fields);
+
+            const layerInfo = new LayerSource.FeatureServiceSource(layerRawConfig);
+            layerInfo.setFieldsOptions(data);
 
             return layerInfo;
         }
@@ -299,18 +216,21 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
             const splitUrl = url.split('/');
             const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
 
-            const layerConfig = new ConfigObject.layers.WFSLayerNode({
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`,
-                url: url,
+                url,
                 layerType: Geo.Layer.Types.OGC_WFS,
                 name: splitUrl[indexOfItems - 1],   // may not be the best way to find the name
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
-            const layerInfo = new LayerSourceInfo.GeoJSONFileInfo(layerConfig, data.rawData, targetWkid);
+            const layerInfo = new LayerSource.WFSServiceSource(layerRawConfig);
+            // TODO: add wkid to setRawdata
+            // layerInfo.setRawData(data.rawData);
 
             return layerInfo;
         }
@@ -325,11 +245,10 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @return {Promise} a promsie resolving with a LayerSourceInfo.DynamicServiceInfo object
          */
         function _parseAsDynamic(url, data) {
-            const dynamicLayerList = _flattenDynamicLayerList(data.layers)
-                .map(layerEntry =>
-                    (new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)));
+            const dynamicLayerList = _flattenDynamicLayerList(data.layers);
 
-            const layerConfig = new ConfigObject.layers.DynamicLayerNode({
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_DYNAMIC}#${++ref.idCounter}`,
                 url: data.index !== -1 ? data.rootUrl : url,
                 layerType: Geo.Layer.Types.ESRI_DYNAMIC,
@@ -338,15 +257,19 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
             if (data.index !== -1) {
-                layerConfig.layerEntries = [dynamicLayerList.find(layerEntry =>
+                layerRawConfig.layerEntries = [dynamicLayerList.find(layerEntry =>
                     layerEntry.index === data.index)];
-                layerConfig.singleEntryCollapse = true;
+                layerRawConfig.singleEntryCollapse = true;
             }
 
-            const layerInfo = new LayerSourceInfo.DynamicServiceInfo(layerConfig, dynamicLayerList);
+            const layerInfo = new LayerSource.DynamicServiceSource(layerRawConfig);
+
+            const typedDynamicLayerList = dynamicLayerList.map(layerEntry =>
+                (new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)));
+            layerInfo.setLayersOptions(typedDynamicLayerList)
 
             return layerInfo;
         }
@@ -361,7 +284,10 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @return {Promise} a promsie resolving with a LayerSourceInfo.TileServiceInfo object
          */
         function _parseAsTile(url, data) {
-            const layerConfig = new ConfigObject.layers.BasicLayerNode({
+
+
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_TILE}#${++ref.idCounter}`,
                 url: data.rootUrl, // tile will display all the sublayers, even if the url was pointing to a child
                 layerType: Geo.Layer.Types.ESRI_TILE,
@@ -369,9 +295,9 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
-            const layerInfo = new LayerSourceInfo.TileServiceInfo(layerConfig);
+            const layerInfo = new LayerSource.TileServiceSource(layerRawConfig);
 
             return layerInfo;
         }
@@ -386,7 +312,9 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
          * @return {Promise} a promsie resolving with a LayerSourceInfo.ImageServiceInfo object
          */
         function _parseAsImage(url, data) {
-            const layerConfig = new ConfigObject.layers.BasicLayerNode({
+
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_IMAGE}#${++ref.idCounter}`,
                 url: url,
                 layerType: Geo.Layer.Types.ESRI_IMAGE,
@@ -394,9 +322,9 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
-            const layerInfo = new LayerSourceInfo.ImageServiceInfo(layerConfig);
+            const layerInfo = new LayerSource.ImageServiceSource(layerRawConfig);
 
             return layerInfo;
         }
@@ -469,7 +397,9 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 throw new Error('Cannot retrieve file data');
             }
 
-            const layerConfig = new ConfigObject.layers.FeatureLayerNode({
+
+
+            const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_FEATURE}-file#${++ref.idCounter}`,
                 url: path,
                 layerType: Geo.Layer.Types.ESRI_FEATURE,
@@ -477,16 +407,19 @@ function layerSource($q, $http, gapiService, Geo, LayerSourceInfo, ConfigObject,
                 state: {
                     userAdded: true
                 }
-            });
+            };
 
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const fileInfoOptions = [
-                new LayerSourceInfo.CSVFileInfo(layerConfig, arrayBuffer, targetWkid),
-                new LayerSourceInfo.GeoJSONFileInfo(layerConfig, arrayBuffer, targetWkid),
-                new LayerSourceInfo.ShapefileFileInfo(layerConfig, arrayBuffer, targetWkid)
+                new LayerSource.CSVSource(layerRawConfig, arrayBuffer),
+                new LayerSource.GeoJSONSource(layerRawConfig, arrayBuffer),
+                new LayerSource.ShapefileSource(layerRawConfig, arrayBuffer)
             ];
+
+            fileInfoOptions.forEach(layerSource => layerSource.setRawData(arrayBuffer));
+
 
             const preselectedIndex = fileInfo.serviceType ?
                 fileInfoOptions.findIndex(option =>
