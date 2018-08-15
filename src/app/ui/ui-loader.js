@@ -72,8 +72,8 @@ import './help/help.service.js';
 
 import './lightbox/lightbox.directive.js';
 
-import './loader/layer-source-info.class.ts';
-import './loader/layer-source.class.ts';
+// import './loader/layer-source-info.class.ts';
+import './loader/layer-blueprint.class.ts';
 import './loader/layer-source.service.js';
 import './loader/loader-file.directive.js';
 import './loader/loader-menu.directive.js';

@@ -887,11 +887,11 @@ function LegendBlockFactory(
 
             if (!this._bboxProxy) {
                 // no cached bounding box found
-                this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
+                this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
             } else if (this._bboxProxy.spatialReference.wkid !== currentWkid) {
                 // cached bbox projection not compatible
                 this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxId);
-                this._bboxProxy = layerRegistry.makeBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
+                this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
             }
         }
 

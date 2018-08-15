@@ -96,6 +96,9 @@
                         "layerId": "t_layer"
                     },
                     {
+                        "layerId": "i_layer"
+                    },
+                    {
                         "name": "Group",
                         "children": [
                             {
@@ -105,6 +108,9 @@
                                 "layerId": "f_layer_3"
                             }
                         ]
+                    },
+                    {
+                        "layerId": "fs_layer_2"
                     }
                 ]
             }
@@ -193,6 +199,24 @@
                 "nameField": "STATION_NAME",
                 "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=6000",
                 "colour": "#FF0000"
+            },
+            {
+                "id": "fs_layer_2",
+                "name": "German homes [WFS]",
+                "layerType": "ogcWfs",
+                "nameField": "STATION_NAME",
+                "url": "https://www.ldproxy.nrw.de/rest/services/kataster/collections/flurstueck/items?flag=red&startindex=9305456",
+                "colour": "#FFFF00"
+            },
+            {
+                "id": "i_layer",
+                "name": "Temperature [Image]",
+                "layerType": "esriImage",
+                "url": "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/World/Temperature/ImageServer",
+                "state": {
+                    "visibility": false,
+                    "opacity": 0.5
+                }
             }
         ],
         "extentSets": [

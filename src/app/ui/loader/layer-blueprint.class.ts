@@ -50,19 +50,19 @@ type ValidationResult = {
 type QueryMap = { [name: string]: string };
 
 /**
- * @module LayerSourceInfo
+ * @module LayerBlueprint
  * @memberof app.geo
  * @requires dependencies
  * @description
  *
- * The `LayerSourceInfo` service returns a collection of file option classes. These specify user selectable options when importing layer.
+ *
  *
  */
-angular.module('app.geo').factory('LayerSource', LayerSource);
+angular.module('app.geo').factory('LayerBlueprint', LayerBlueprint);
 
-LayerSource.$inject = ['$q', '$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
+LayerBlueprint.$inject = ['$q', '$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
 
-function LayerSource(
+function LayerBlueprint(
     common: any,
     $http: any,
     Geo: any,
@@ -74,9 +74,9 @@ function LayerSource(
     /**
      * The base class for the mixins. This just declares what base properties are available across mixins.
      *
-     * @class LayerSourceMixin
+     * @class LayerBlueprintMixin
      */
-    class LayerSourceMixin {
+    class LayerBlueprintMixin {
         config: any;
         type: string;
         layerRecordFactory: LayerRecordFactory;
@@ -86,9 +86,9 @@ function LayerSource(
      * The mixin handling layers with client side-data (file-based layers and WFS).
      *
      * @class ClientSideData
-     * @extends {LayerSourceMixin}
+     * @extends {LayerBlueprintMixin}
      */
-    class ClientSideData extends LayerSourceMixin {
+    class ClientSideData extends LayerBlueprintMixin {
         _rawData: any;
         _formattedData: any;
 
@@ -178,9 +178,9 @@ function LayerSource(
      * The mixin handling layers with server-side data.
      *
      * @class ServerSideData
-     * @extends {LayerSourceMixin}
+     * @extends {LayerBlueprintMixin}
      */
-    class ServerSideData extends LayerSourceMixin {
+    class ServerSideData extends LayerBlueprintMixin {
         /**
          * All service-based layers with server-data do not need any validation.
          * WFS layers are local-data layers since it needs to be downloaded and punched into the map as a GeoJSON layer.
@@ -193,7 +193,7 @@ function LayerSource(
         }
     }
 
-    class BlueprintBase extends LayerSourceMixin {
+    class BlueprintBase extends LayerBlueprintMixin {
         _originalConfig: any;
         _layerRecord: any;
 
@@ -240,9 +240,9 @@ function LayerSource(
      * Provides support for lat/long fields on the layer config.
      *
      * @class LatLongOption
-     * @extends {LayerSourceMixin}
+     * @extends {LayerBlueprintMixin}
      */
-    class LatLongOption extends LayerSourceMixin {
+    class LatLongOption extends LayerBlueprintMixin {
         latFields: any[];
         longFields: any[];
 
@@ -255,7 +255,7 @@ function LayerSource(
         }
     }
 
-    class FieldsOption extends LayerSourceMixin {
+    class FieldsOption extends LayerBlueprintMixin {
         fields: any[];
 
         setFieldsOptions(validationResult: ValidationResult): void {
@@ -269,7 +269,7 @@ function LayerSource(
         }
     }
 
-    class LayersOption extends LayerSourceMixin {
+    class LayersOption extends LayerBlueprintMixin {
         layers: any[];
 
         setLayersOptions(layers: any[]): void {
@@ -453,9 +453,7 @@ function LayerSource(
 
             if (!response) {
                 console.error(error);
-
-                // TODO: handle errors
-                throw new Error('something happend');
+                throw new Error('WFS data failed to load');
             }
 
             const data = response.data;
@@ -659,7 +657,7 @@ function LayerSource(
 
     // #endregion
 
-    function makeLayerBlueprint(rawConfig: any): BlueprintBase {
+    function makeBlueprint(rawConfig: any): BlueprintBase {
         const constructors = {
             [Geo.Layer.Types.ESRI_DYNAMIC]: DynamicServiceSource,
             [Geo.Layer.Types.ESRI_IMAGE]: ImageServiceSource,
@@ -685,7 +683,7 @@ function LayerSource(
         GeoJSONSource,
         ShapefileSource,
 
-        makeLayerBlueprint,
+        makeBlueprint,
 
         UrlWrapper
     };

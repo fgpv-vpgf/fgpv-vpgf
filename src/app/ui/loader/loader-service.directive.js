@@ -28,8 +28,8 @@ function rvLoaderService() {
     return directive;
 }
 
-function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames,
-    ConfigObject, layerSource, legendService) {
+function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyNames,
+    layerSource, legendService) {
     'ngInject';
     const self = this;
 

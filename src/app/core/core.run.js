@@ -138,7 +138,7 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
  * `apiBlock` sets up language and RCS calls for the global API
  */
 function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-    LayerBlueprint, bookmarkService, gapiService, reloadService, appInfo, $rootElement,
+    bookmarkService, gapiService, reloadService, appInfo, $rootElement,
     $mdDialog, pluginService, mapToolService, $mdSidenav) {
 
     const service = {

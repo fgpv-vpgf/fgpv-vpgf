@@ -38,13 +38,13 @@ function layerRegistryFactory(
     const service = {
         getLayerRecord,
         getLayerRecordPromise,
-        makeLayerRecord,
+        registerLayerRecord,
         loadLayerRecord,
         regenerateLayerRecord,
         removeLayerRecord,
 
         getBoundingBoxRecord,
-        makeBoundingBoxRecord,
+        registerBoundingBoxRecord,
         removeBoundingBoxRecord,
 
         synchronizeLayerOrder,
@@ -148,11 +148,11 @@ function layerRegistryFactory(
     /**
      * Creates the layer record from the provided layerBlueprint, stores it in the shared config and returns the results.
      *
-     * @function makeLayerRecord
+     * @function registerLayerRecord
      * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
      * @return {Promise<LayerRecord>} a promise with the created layerRecord
      */
-    function makeLayerRecord(layerBlueprint) {
+    function registerLayerRecord(layerBlueprint) {
         // check if the record is already created (generated or being generated)
         let layerRecordPromise = getLayerRecordPromise(layerBlueprint.config.id);
 
@@ -606,12 +606,12 @@ function layerRegistryFactory(
     /**
      * Creates and returns a feature layer to represent a boundign box with the id and extent specified.
      *
-     * @function makeBoundingBoxRecord
+     * @function registerBoundingBoxRecord
      * @param {Number} id id of the bounding box record to be assigned to the created bounding box layer record
      * @param {Extent} bbExtent ESRI extent object with the bounding box extent
      * @return {Featurelayer} the bounding box record
      */
-    function makeBoundingBoxRecord(id, bbExtent) {
+    function registerBoundingBoxRecord(id, bbExtent) {
         const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
         const mapBody = configService.getSync.map.instance;
 

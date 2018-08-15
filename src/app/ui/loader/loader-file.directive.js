@@ -30,7 +30,7 @@ function rvLoaderFile() {
     return directive;
 }
 
-function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlueprint, $rootElement,
+function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootElement,
     keyNames, layerSource, legendService) {
     'ngInject';
     const self = this;

@@ -7,15 +7,13 @@
  * The `layerSource` service returns a collection of file option classes. These specify user selectable options when importing layer.
  *
  */
-angular
-    .module('app.ui')
-    .factory('layerSource', layerSource);
+angular.module('app.ui').factory('layerSource', layerSource);
 
-function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configService) {
+function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configService) {
     const ref = {
         idCounter: 0, // layer counter for generating layer ids
         serviceType: Geo.Service.Types
-    }
+    };
 
     const service = {
         fetchServiceInfo,
@@ -33,28 +31,22 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
      * @function fetchServiceInfo
      * @param {String} serviceUrl a service url to load
      * @param {String} layerType string representing the layer type. used to know which type of request to make (angular web request for WFS)
-     * @return {Promise} a promise resolving with an array of at least one LayerSourceInfo objects; will reject if there is an error accessing the service or parsing its response;
+     * @return {Promise} a promise resolving with an array of at least one LayerBlueprint objects; will reject if there is an error accessing the service or parsing its response;
      */
     function fetchServiceInfo(serviceUrl, layerType) {
-
         // fetchServiceInfo can precede layer creation so CORS checking has to be done here as well
         // if ESRI JSAPI fixes it's CORS bug this can be removed
         configService.getSync.map.instance.checkCorsException(serviceUrl);
 
         const matrix = {
-            [geoServiceTypes.FeatureService]: () =>
-                [_parseAsFeature],
+            [geoServiceTypes.FeatureService]: () => [_parseAsFeature],
 
-            [geoServiceTypes.WFS]: () =>
-                [_parseAsWfs],
+            [geoServiceTypes.WFS]: () => [_parseAsWfs],
 
-            [geoServiceTypes.ImageService]: () =>
-                [_parseAsImage],
+            [geoServiceTypes.ImageService]: () => [_parseAsImage],
 
             [geoServiceTypes.DynamicService](serviceInfo) {
-                const defaultSet = [
-                    _parseAsDynamic
-                ];
+                const defaultSet = [_parseAsDynamic];
 
                 const subMatrix = {
                     get [geoServiceTypes.FeatureLayer]() {
@@ -77,40 +69,36 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
             }
         };
 
-        const urlWrapper = new LayerSource.UrlWrapper(serviceUrl);
+        const urlWrapper = new LayerBlueprint.UrlWrapper(serviceUrl);
 
         // check if it's a WMS first
-        const fetchPromise = gapiService.gapi.layer.ogc.parseCapabilities(serviceUrl)
+        const fetchPromise = gapiService.gapi.layer.ogc
+            .parseCapabilities(serviceUrl)
             .then(data => {
-                if (data.layers.length > 0) { // if there are layers, it's a wms layer
+                if (data.layers.length > 0) {
+                    // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
                 }
-                    // test if it's a WFS
-                    // make a quick request for a single feature and see what the prediction function says
-                    const requestUrl = urlWrapper.updateQuery({startindex: 0, limit: 1});
+                // test if it's a WFS
+                // make a quick request for a single feature and see what the prediction function says
+                const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
 
-                    // TODO: might need to workaround if `predictLayerUrl` start failing on trying to get WFS responses
-                    return gapiService.gapi.layer.predictLayerUrl(requestUrl)
-                        .then(_parseAsSomethingElse);
-
-
-
-            }).then(options => ({
+                // TODO: might need to workaround if `predictLayerUrl` start failing on trying to get WFS responses
+                return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(_parseAsSomethingElse);
+            })
+            .then(options => ({
                 options,
                 preselectedIndex: 0
             }))
-            .catch(error =>
-                $q.reject(error));
+            .catch(error => $q.reject(error));
 
         return fetchPromise;
-
-
 
         /**
          * @function _parseAsSomethingElse
          * @private
          * @param {Object} serviceInfo info object from geoApi prediction function
-         * @return {Promise} a promsie resolving with an array of at least one LayerSourceInfo objects
+         * @return {Promise} a promsie resolving with an array of at least one LayerBlueprint objects
          */
         function _parseAsSomethingElse(serviceInfo) {
             if (serviceInfo.serviceType === geoServiceTypes.Error) {
@@ -123,7 +111,8 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
             }
 
             const parsingPromise = matrix[serviceInfo.serviceType](serviceInfo).map(layerInfoBuilder =>
-                layerInfoBuilder(serviceUrl, serviceInfo));
+                layerInfoBuilder(serviceUrl, serviceInfo)
+            );
 
             return parsingPromise;
         }
@@ -135,7 +124,7 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data parsed WMS capabilities data from the geoApi call
-         * @return {Promise} a promsie resolving with an array of a singe LayerSourceInfo.WMSServiceInfo object
+         * @return {Promise} a promsie resolving with an array of a singe LayerBlueprint.WMSServiceInfo object
          */
         function _parseAsWMS(url, data) {
             console.log('layerBlueprint', `the url ${url} is a WMS`);
@@ -143,18 +132,16 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
             // it is mandatory to set featureInfoMimeType attribute to get fct identifyOgcWmsLayer to work.
             // get the first supported format available in the GetFeatureInfo section of the Capabilities XML.
             const formatType = Object.values(data.queryTypes)
-                .filter(format =>
-                    typeof format === 'string')
-                .find(format =>
-                    format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
+                .filter(format => typeof format === 'string')
+                .find(format => format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
 
             const typedWmsLayerList = _flattenWmsLayerList(data.layers)
                 // filter out all sublayers with no id/name (they can't be targeted and probably have no legend)
                 .filter(layerEntry => layerEntry.id)
-                .map((layerEntry, index) =>
-                    { layerEntry.index = index; return new ConfigObject.layers.WMSLayerEntryNode(layerEntry); }
-                )
-
+                .map((layerEntry, index) => {
+                    layerEntry.index = index;
+                    return new ConfigObject.layers.WMSLayerEntryNode(layerEntry);
+                });
 
             const layerConfig = {
                 id: `${Geo.Layer.Types.OGC_WMS}#${++ref.idCounter}`,
@@ -168,8 +155,8 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
                 }
             };
 
-            const layerInfo = new LayerSource.WMSServiceSource(layerConfig);
-            layerInfo.setLayersOptions(typedWmsLayerList)
+            const layerInfo = new LayerBlueprint.WMSServiceSource(layerConfig);
+            layerInfo.setLayersOptions(typedWmsLayerList);
 
             return [layerInfo];
         }
@@ -181,11 +168,9 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data service info data from the geoApi predition call
-         * @return {Promise} a promsie resolving with a LayerSourceInfo.FeatureServiceInfo object
+         * @return {Promise} a promsie resolving with a LayerBlueprint.FeatureServiceInfo object
          */
         function _parseAsFeature(url, data) {
-
-
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_FEATURE}#${++ref.idCounter}`,
                 url: url,
@@ -196,8 +181,7 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
                 }
             };
 
-
-            const layerInfo = new LayerSource.FeatureServiceSource(layerRawConfig);
+            const layerInfo = new LayerBlueprint.FeatureServiceSource(layerRawConfig);
             layerInfo.setFieldsOptions(data);
 
             return layerInfo;
@@ -210,25 +194,24 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data service info data from the geoApi predition call
-         * @return {Promise} a promsie resolving with a LayerSourceInfo.WFSServiceInfo object
+         * @return {Promise} a promsie resolving with a LayerBlueprint.WFSServiceInfo object
          */
         function _parseAsWfs(url, data) {
             const splitUrl = url.split('/');
             const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
 
-
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`,
                 url,
                 layerType: Geo.Layer.Types.OGC_WFS,
-                name: splitUrl[indexOfItems - 1],   // may not be the best way to find the name
+                name: splitUrl[indexOfItems - 1], // may not be the best way to find the name
                 state: {
                     userAdded: true
                 }
             };
 
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
-            const layerInfo = new LayerSource.WFSServiceSource(layerRawConfig);
+            const layerInfo = new LayerBlueprint.WFSServiceSource(layerRawConfig);
             // TODO: add wkid to setRawdata
             // layerInfo.setRawData(data.rawData);
 
@@ -242,11 +225,10 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data service info data from the geoApi predition call
-         * @return {Promise} a promsie resolving with a LayerSourceInfo.DynamicServiceInfo object
+         * @return {Promise} a promsie resolving with a LayerBlueprint.DynamicServiceInfo object
          */
         function _parseAsDynamic(url, data) {
             const dynamicLayerList = _flattenDynamicLayerList(data.layers);
-
 
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_DYNAMIC}#${++ref.idCounter}`,
@@ -260,16 +242,16 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
             };
 
             if (data.index !== -1) {
-                layerRawConfig.layerEntries = [dynamicLayerList.find(layerEntry =>
-                    layerEntry.index === data.index)];
+                layerRawConfig.layerEntries = [dynamicLayerList.find(layerEntry => layerEntry.index === data.index)];
                 layerRawConfig.singleEntryCollapse = true;
             }
 
-            const layerInfo = new LayerSource.DynamicServiceSource(layerRawConfig);
+            const layerInfo = new LayerBlueprint.DynamicServiceSource(layerRawConfig);
 
-            const typedDynamicLayerList = dynamicLayerList.map(layerEntry =>
-                (new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)));
-            layerInfo.setLayersOptions(typedDynamicLayerList)
+            const typedDynamicLayerList = dynamicLayerList.map(
+                layerEntry => new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)
+            );
+            layerInfo.setLayersOptions(typedDynamicLayerList);
 
             return layerInfo;
         }
@@ -281,12 +263,9 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data service info data from the geoApi predition call
-         * @return {Promise} a promsie resolving with a LayerSourceInfo.TileServiceInfo object
+         * @return {Promise} a promsie resolving with a LayerBlueprint.TileServiceInfo object
          */
         function _parseAsTile(url, data) {
-
-
-
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_TILE}#${++ref.idCounter}`,
                 url: data.rootUrl, // tile will display all the sublayers, even if the url was pointing to a child
@@ -297,7 +276,7 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
                 }
             };
 
-            const layerInfo = new LayerSource.TileServiceSource(layerRawConfig);
+            const layerInfo = new LayerBlueprint.TileServiceSource(layerRawConfig);
 
             return layerInfo;
         }
@@ -309,11 +288,9 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @private
          * @param {String} url a service url to be used
          * @param {Object} data service info data from the geoApi predition call
-         * @return {Promise} a promsie resolving with a LayerSourceInfo.ImageServiceInfo object
+         * @return {Promise} a promsie resolving with a LayerBlueprint.ImageServiceInfo object
          */
         function _parseAsImage(url, data) {
-
-
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_IMAGE}#${++ref.idCounter}`,
                 url: url,
@@ -324,7 +301,7 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
                 }
             };
 
-            const layerInfo = new LayerSource.ImageServiceSource(layerRawConfig);
+            const layerInfo = new LayerBlueprint.ImageServiceSource(layerRawConfig);
 
             return layerInfo;
         }
@@ -336,17 +313,22 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
          * @return {Array}        layer list
          */
         function _flattenWmsLayerList(layers, level = 0) {
-            return [].concat.apply([], layers.map(layer => {
-                layer.level = level;
-                layer.indent = Array.from(Array(level)).fill('-').join('');
-                layer.id = layer.name
+            return [].concat.apply(
+                [],
+                layers.map(layer => {
+                    layer.level = level;
+                    layer.indent = Array.from(Array(level))
+                        .fill('-')
+                        .join('');
+                    layer.id = layer.name;
 
-                if (layer.layers.length > 0) {
-                    return [].concat(layer, _flattenWmsLayerList(layer.layers, level + 1));
-                } else {
-                    return layer;
-                }
-            }));
+                    if (layer.layers.length > 0) {
+                        return [].concat(layer, _flattenWmsLayerList(layer.layers, level + 1));
+                    } else {
+                        return layer;
+                    }
+                })
+            );
         }
 
         /**
@@ -359,7 +341,9 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
                 const level = calculateLevel(layer, layers);
 
                 layer.level = level;
-                layer.indent = Array.from(Array(level)).fill('-').join('');
+                layer.indent = Array.from(Array(level))
+                    .fill('-')
+                    .join('');
                 layer.index = layer.id;
 
                 return layer;
@@ -380,11 +364,14 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
      * @function fetchFileInfo
      * @param {String} path a file path, either from the local filesystem or an absolute url
      * @param {ArrayBuffer} arrayBuffer raw file data
-     * @return {Promise} a promise resolving with an array of three LayerSourceInfo objects; one for each supported file types: CSV, GeoJSON, ShapeFile; will reject if there is an error accessing the service or parsing its response;
+     * @return {Promise} a promise resolving with an array of three LayerBlueprint objects; one for each supported file types: CSV, GeoJSON, ShapeFile; will reject if there is an error accessing the service or parsing its response;
      */
     function fetchFileInfo(path, arrayBuffer) {
         // convert forward slashes to backward slashes and poop the file name
-        const fileName = path.replace(/\\/g, '/').split('/').pop();
+        const fileName = path
+            .replace(/\\/g, '/')
+            .split('/')
+            .pop();
 
         const fetchPromise = gapiService.gapi.layer.predictFileUrl(fileName).then(fileInfo => {
             // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
@@ -396,8 +383,6 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
             if (this.fileType === Geo.Service.Types.Error) {
                 throw new Error('Cannot retrieve file data');
             }
-
-
 
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.ESRI_FEATURE}-file#${++ref.idCounter}`,
@@ -413,18 +398,16 @@ function layerSource($q, gapiService, Geo, LayerSource, ConfigObject, configServ
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const fileInfoOptions = [
-                new LayerSource.CSVSource(layerRawConfig, arrayBuffer),
-                new LayerSource.GeoJSONSource(layerRawConfig, arrayBuffer),
-                new LayerSource.ShapefileSource(layerRawConfig, arrayBuffer)
+                new LayerBlueprint.CSVSource(layerRawConfig, arrayBuffer),
+                new LayerBlueprint.GeoJSONSource(layerRawConfig, arrayBuffer),
+                new LayerBlueprint.ShapefileSource(layerRawConfig, arrayBuffer)
             ];
 
             fileInfoOptions.forEach(layerSource => layerSource.setRawData(arrayBuffer));
 
-
-            const preselectedIndex = fileInfo.serviceType ?
-                fileInfoOptions.findIndex(option =>
-                    option.type === fileInfo.serviceType) :
-                0;
+            const preselectedIndex = fileInfo.serviceType
+                ? fileInfoOptions.findIndex(option => option.type === fileInfo.serviceType)
+                : 0;
 
             return {
                 options: fileInfoOptions,
