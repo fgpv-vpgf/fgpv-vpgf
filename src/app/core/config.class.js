@@ -921,6 +921,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     class WFSLayerNode extends FeatureLayerNode {
+        constructor (source) {
+            super(source); // when a regular source isn't enough, call for super-source
+            this._xyInAttribs = source.xyInAttribs;
+            this._colour = source.colour;
+        }
+
+        get xyInAttribs () { return this._xyInAttribs; }
+
+        get colour () { return this._colour; }
+
+        get JSON() {
+            return angular.merge(super.JSON, {
+                xyInAttribs: this.xyInAttribs,
+                colour: this.colour
+            });
+        }
     }
 
     class DynamicLayerEntryNode extends LayerEntryNode {

@@ -1094,6 +1094,10 @@ export interface WfsLayerNode {
     columns?: ColumnNode[];
   };
   /**
+   * Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons.
+   */
+  xyInAttribs?: boolean;
+  /**
    * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
    */
   customRenderer?: {

@@ -170,6 +170,7 @@
                 <option value="config/config-sample-75.json">75. Dynamic layers display field configuration</option>
                 <option value="config/config-sample-76.json">76. Custom layer renderer on client</option>
                 <option value="config/config-sample-80.json">80. All layer types</option>
+                <option value="config/config-sample-81.json">81. WFS with system co-ords in attributes</option>
             </select>
         </div>
 
