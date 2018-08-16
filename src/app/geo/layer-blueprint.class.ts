@@ -616,7 +616,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            
 
             const validationResult = await super.validate();
             this.setLatLongOptions(validationResult);
@@ -665,7 +666,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
 
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
@@ -713,7 +714,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
 
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
