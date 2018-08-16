@@ -162,7 +162,10 @@ function legendServiceFactory(
      * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
-        const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition);
+        // TODO: remove
+        // const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition);
+        // TODO: blueprint creating should not be async
+        const blueprintPromise = common.$q.resolve(LayerBlueprint.makeBlueprint(layerDefinition));
 
         return blueprintPromise.then(blueprint => {
             configService.getSync.map.layerBlueprints.push(blueprint);
@@ -862,7 +865,7 @@ function legendServiceFactory(
          * @return {Promise} a promise resolving with an array of proxyWrappers
          */
         function _getControlledLegendBlockProxy(blueprint) {
-            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
+            const layerRecordPromise = layerRegistry.registerLayerRecord(blueprint);
             const layerConfig = blueprint.config;
             layerRegistry.loadLayerRecord(blueprint.config.id);
 
@@ -943,7 +946,7 @@ function legendServiceFactory(
                 blueprint.config.state.query = false;
             }
 
-            const layerRecordPromise = layerRegistry.makeLayerRecord(blueprint);
+            const layerRecordPromise = layerRegistry.registerLayerRecord(blueprint);
             layerRegistry.loadLayerRecord(blueprint.config.id);
 
             const proxyPromise = layerRecordPromise.then(layerRecord => {

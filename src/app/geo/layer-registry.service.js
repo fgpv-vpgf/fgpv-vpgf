@@ -38,13 +38,13 @@ function layerRegistryFactory(
     const service = {
         getLayerRecord,
         getLayerRecordPromise,
-        makeLayerRecord,
+        registerLayerRecord,
         loadLayerRecord,
         regenerateLayerRecord,
         removeLayerRecord,
 
         getBoundingBoxRecord,
-        makeBoundingBoxRecord,
+        registerBoundingBoxRecord,
         removeBoundingBoxRecord,
 
         synchronizeLayerOrder,
@@ -148,11 +148,11 @@ function layerRegistryFactory(
     /**
      * Creates the layer record from the provided layerBlueprint, stores it in the shared config and returns the results.
      *
-     * @function makeLayerRecord
+     * @function registerLayerRecord
      * @param {LayerBlueprint} layerBlueprint layerBlueprint used for creating the layer record
      * @return {Promise<LayerRecord>} a promise with the created layerRecord
      */
-    function makeLayerRecord(layerBlueprint) {
+    function registerLayerRecord(layerBlueprint) {
         // check if the record is already created (generated or being generated)
         let layerRecordPromise = getLayerRecordPromise(layerBlueprint.config.id);
 
@@ -230,7 +230,7 @@ function layerRegistryFactory(
         // remove from the layerRecords
         layerRecords.splice(index, 1);
 
-        _startGeneratingLayerRecord(layerBlueprint);
+        _startGeneratingLayerRecord(layerBlueprint, true);
     }
 
     /**
@@ -299,17 +299,18 @@ function layerRegistryFactory(
      * - wait for the promise to resolve and store the actual layer record
      * - hook up state event listeners
      *
-     * @param {*} layerBlueprint
-     * @returns
+     * @param {layerBlueprint} layerBlueprint LayerBlueprint object
+     * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
+     * @returns {Promise<LayerRecord>} a promise resolving with a generated LayerRecord
      */
-    function _startGeneratingLayerRecord(layerBlueprint) {
+    function _startGeneratingLayerRecord(layerBlueprint, force = false) {
         const layerRecords = configService.getSync.map.layerRecords;
 
         // register a loading process for this layer record
         _setLoadingFlagHelper(layerBlueprint.config);
 
         // start generating a layer record
-        let layerRecordPromise = layerBlueprint.generateLayer();
+        let layerRecordPromise = layerBlueprint.makeLayerRecord(force);
         ref.generatingQueue[layerBlueprint.config.id] = layerRecordPromise;
 
         layerRecordPromise = layerRecordPromise.then(layerRecord => {
@@ -350,34 +351,30 @@ function layerRegistryFactory(
         const layerRecord = ref.loadingQueue.shift();
         let isRefreshed = false;
 
-        if (layerRecord.canAddToMap) {
-            // normal situation
-            layerRecord.addStateListener(_onLayerRecordInitialLoad);
-            layerRecord.addAttribListener(_onLayerAttribDownload);
-            mapBody.addLayer(layerRecord._layer);
-            ref.loadingCount++;
+        // normal situation
+        layerRecord.addStateListener(_onLayerRecordInitialLoad);
+        layerRecord.addAttribListener(_onLayerAttribDownload);
+        mapBody.addLayer(layerRecord._layer);
+        ref.loadingCount++;
 
-            // TODO need better solution for local wms layers that don't "load" when invisible.
-            const localWms = layerRecord.dataSource() === 'wms' && layerRecord.config.suppressGetCapabilities;
-            if (localWms) {
-                layerRecord.onLoad();
-            }
+        // TODO need better solution for local wms layers that don't "load" when invisible.
+        const localWms = layerRecord.dataSource() === 'wms' && layerRecord.config.suppressGetCapabilities;
+        if (localWms) {
+            layerRecord.onLoad();
+        }
 
-            // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-            //       extending the hack to wms layers who are supressing a server handshake.
-            if (
-                layerRecord.state === Geo.Layer.States.LOADED ||
-                (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded) ||
-                localWms
-            ) {
-                isRefreshed = true;
-                _onLayerRecordInitialLoad('rv-loaded');
-            }
-        } else {
-            // WFS HACK
-            // our layer is still secretly being created in another promise.
-            // put on the back of the queue. this will repeat until it's done, then will hit the above block
-            ref.loadingQueue.push(layerRecord);
+        // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
+        //       extending the hack to wms layers who are supressing a server handshake.
+        if (
+            layerRecord.state === Geo.Layer.States.LOADED ||
+            (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded) ||
+            localWms
+        ) {
+            isRefreshed = true;
+            _onLayerRecordInitialLoad('rv-loaded');
+
+            // turn off the loading indicator for such file-based layers
+            shellService.clearLoadingFlag(layerRecord.config.id, 300);
         }
 
         // when a layer takes too long to load, it could be a slow service or a failed service
@@ -517,12 +514,15 @@ function layerRegistryFactory(
         // if structured legend, take the layer order from the config as the authoritative source
         // TODO:? user-added layers are not added to `configService.getSync.map.layers`; they will be always added at the top of the stack for structured legend, so this is not an immediate concern;
         // if auto legend, take the legend block order from the legend panel
+        // TODO: what is adding layer into the `configService.getSync.map.layers` ???
         const orderedLayerRecords = (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
             ? layerRecordIDsInLegend
             : configService.getSync.map.layers
                   .map(layer => layer.id)
                   .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
-        ).map(getLayerRecord); // get appropriate layer records
+        )
+            .map(getLayerRecord)
+            .filter(lr => lr); // get appropriate layer records
 
         const mapLayerStacks = {
             0: mapBody.graphicsLayerIds,
@@ -607,12 +607,12 @@ function layerRegistryFactory(
     /**
      * Creates and returns a feature layer to represent a boundign box with the id and extent specified.
      *
-     * @function makeBoundingBoxRecord
+     * @function registerBoundingBoxRecord
      * @param {Number} id id of the bounding box record to be assigned to the created bounding box layer record
      * @param {Extent} bbExtent ESRI extent object with the bounding box extent
      * @return {Featurelayer} the bounding box record
      */
-    function makeBoundingBoxRecord(id, bbExtent) {
+    function registerBoundingBoxRecord(id, bbExtent) {
         const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
         const mapBody = configService.getSync.map.instance;
 

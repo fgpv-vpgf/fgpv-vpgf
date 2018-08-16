@@ -86,17 +86,17 @@
             <rv-stepper-item
                 form="self.select.form"
                 step="self.select.step"
-                summary-value="{{ self.layerSource.type && self.select.step.isCompleted ? 'import.file.type.' + self.layerSource.type : '' }}">
+                summary-value="{{ self.layerBlueprint.type && self.select.step.isCompleted ? 'import.file.type.' + self.layerBlueprint.type : '' }}">
 
                 <md-input-container class="md-block">
                     <label>{{ 'import.file.select.fileformat' | translate }}</label>
                     <md-select
                         name="dataType"
-                        ng-disabled="self.layerSourceOptions.length === 1"
-                        ng-model="self.layerSource"
+                        ng-disabled="self.layerBlueprintOptions.length === 1"
+                        ng-model="self.layerBlueprint"
                         md-on-open="self.select.selectResetValidation()" required>
                         <md-option
-                            ng-repeat="sourceOption in self.layerSourceOptions"
+                            ng-repeat="sourceOption in self.layerBlueprintOptions"
                             ng-value="sourceOption">
                             {{ 'import.file.type.' + sourceOption.type | translate }}
                         </md-option>
@@ -116,13 +116,13 @@
                 </md-input-container>
             </rv-stepper-item>
 
-            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerSource.type">
+            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.type">
 
                 <md-input-container class="md-block">
                     <label>{{ 'import.layer.configure.layername' | translate }}</label>
                     <input name="layerName"
                         ng-change="self.configure.configureResetValidation()"
-                        ng-model="self.layerSource.config.name" required>
+                        ng-model="self.layerBlueprint.config.name" required>
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -136,9 +136,9 @@
                         <md-select
                             name="primaryField"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.config.nameField"
+                            ng-model="self.layerBlueprint.config.nameField"
                             required>
-                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
@@ -152,8 +152,8 @@
                         <md-select
                             name="tooltipField"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.config.tooltipField">
-                            <md-option ng-repeat="field in self.layerSource.fields" value="{{ field.name }}">
+                            ng-model="self.layerBlueprint.config.tooltipField">
+                            <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
@@ -170,9 +170,9 @@
                         <md-select
                             name="latitude"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.latfield"
+                            ng-model="self.layerBlueprint.config.latfield"
                             required>
-                            <md-option ng-repeat="field in self.layerSource.latFields" value="{{ field.name }}">
+                            <md-option ng-repeat="field in self.layerBlueprint.latFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
@@ -186,9 +186,9 @@
                         <md-select
                             name="longitude"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.lonfield"
+                            ng-model="self.layerBlueprint.config.lonfield"
                             required>
-                            <md-option ng-repeat="field in self.layerSource.longFields" value="{{ field.name }}">
+                            <md-option ng-repeat="field in self.layerBlueprint.longFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
                         </md-select>
@@ -206,7 +206,7 @@
                         <input rv-minicolors options="self.configure.colourPickerSettings"
                             name="layerName"
                             ng-change="self.configure.configureResetValidation()"
-                            ng-model="self.layerSource.colour" required>
+                            ng-model="self.layerBlueprint.config.colour" required>
                         <!-- TODO: decide whether and how to display a hint or error messages -->
                         <!--div ng-messages="self.configure.form.layerName.$error">
                             <div ng-message="required">This is required!</div>

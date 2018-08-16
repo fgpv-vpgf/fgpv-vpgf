@@ -17,6 +17,7 @@ const babelPresets = {
     cacheDirectory: true
 }
 
+// eslint-disable-next-line complexity
 module.exports = function (env) {
 
     const geoPath = env.geoLocal ?

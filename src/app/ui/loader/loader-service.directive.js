@@ -11,9 +11,7 @@ const templateUrl = require('./loader-service.html');
  * The `rv-loader-service` directive creates a stepper interface for importing map services and online-based geo files and turning them into layers.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLoaderService', rvLoaderService);
+angular.module('app.ui').directive('rvLoaderService', rvLoaderService);
 
 function rvLoaderService() {
     const directive = {
@@ -28,8 +26,7 @@ function rvLoaderService() {
     return directive;
 }
 
-function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerBlueprint, $rootElement, keyNames,
-    ConfigObject, layerSource, legendService) {
+function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyNames, layerSource, legendService) {
     'ngInject';
     const self = this;
 
@@ -69,9 +66,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
                 const connect = self.connect;
                 // prevent enter presses from triggering service handshake if the input value is not validated
                 if (event.keyCode === keyNames.ENTER) {
-                    if (connect.form.$valid &&
-                        connect.step.isContinueEnabled &&
-                        !connect.step.isThinking) {
+                    if (connect.form.$valid && connect.step.isContinueEnabled && !connect.step.isThinking) {
                         // check if enter key have been pressed and call the next step if so
                         connectOnContinue();
                     }
@@ -95,8 +90,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             isActive: false,
             isCompleted: false,
             onContinue: selectOnContinue,
-            onCancel: () =>
-                onCancel(self.select.step),
+            onCancel: () => onCancel(self.select.step),
             reset: selectReset
         },
         serviceTypeResetValidation,
@@ -111,8 +105,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
             isActive: false,
             isCompleted: false,
             onContinue: configureOnContinue,
-            onCancel: () =>
-                onCancel(self.configure.step),
+            onCancel: () => onCancel(self.configure.step),
             reset: configureReset
         },
         form: null,
@@ -175,18 +168,18 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
     function connectOnContinue() {
         const connect = self.connect;
 
-        const layerSourcePromise = layerSource.fetchServiceInfo(connect.serviceUrl)
-            .then(({ options: layerSourceOptions, preselectedIndex }) => {
-                self.layerSourceOptions = layerSourceOptions;
-                self.layerSource = layerSourceOptions[preselectedIndex];
+        const layerBlueprintPromise = layerSource
+            .fetchServiceInfo(connect.serviceUrl)
+            .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
+                self.layerBlueprintOptions = layerBlueprintOptions;
+                self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
             })
             .catch(error => {
                 toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
                 return $q.reject(error);
             });
 
-
-        stepper.nextStep(layerSourcePromise);
+        stepper.nextStep(layerBlueprintPromise);
 
         /*
 
@@ -241,7 +234,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         let validationPromise;
 
         try {
-            validationPromise = self.layerSource.validate();
+            validationPromise = self.layerBlueprint.validate();
         } catch (e) {
             console.error('loaderServiceDirective', 'service type is wrong', e);
             toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
@@ -286,15 +279,17 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
+        const layerRecordPromise = self.layerBlueprint.makeLayerRecord();
 
-        blueprintPromise.then(layerBlueprint => {
-            legendService.importLayerBlueprint(layerBlueprint);
-            closeLoaderService();
-        }).catch(error => {
-            console.warn('loaderServiceDirective', 'service is invalid ', error);
-            self.configure.form.$setValidity('invalid', false);
-        });
+        layerRecordPromise
+            .then(() => {
+                legendService.importLayerBlueprint(self.layerBlueprint);
+                closeLoaderService();
+            })
+            .catch(error => {
+                console.warn('loaderServiceDirective', 'service is invalid ', error);
+                self.configure.form.$setValidity('invalid', false);
+            });
     }
 
     /**
@@ -308,8 +303,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
         configure.form.$setUntouched();
 
         // if reset called before the first step is complete, layerBlueprint will not exist yet
-        if (self.layerSource) {
-            self.layerSource.reset();
+        if (self.layerBlueprint) {
+            self.layerBlueprint.reset();
         }
     }
 
@@ -319,7 +314,7 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function onDynamicLayerSection
      */
     function onDynamicLayerSection() {
-        const config = self.layerSource.config;
+        const config = self.layerBlueprint.config;
 
         config.singleEntryCollapse = config.layerEntries.length === 1;
     }
@@ -331,8 +326,8 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @return {Boolean} true if all sub-layer options are selected
      */
     function isAllLayersSelected() {
-        const selectedLayers = self.layerSource.config.layerEntries;
-        const availableLayers = self.layerSource.layers;
+        const selectedLayers = self.layerBlueprint.config.layerEntries;
+        const availableLayers = self.layerBlueprint.layers;
 
         return selectedLayers.length === availableLayers.length;
     }
@@ -344,11 +339,10 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @return {Boolean} true if at least one, but not all sub-layer options are selected
      */
     function isSomeLayersSelected() {
-        const selectedLayers = self.layerSource.config.layerEntries;
-        const availableLayers = self.layerSource.layers;
+        const selectedLayers = self.layerBlueprint.config.layerEntries;
+        const availableLayers = self.layerBlueprint.layers;
 
-        return (selectedLayers.length !== 0 &&
-            selectedLayers.length !== availableLayers.length);
+        return selectedLayers.length !== 0 && selectedLayers.length !== availableLayers.length;
     }
 
     /**
@@ -360,13 +354,13 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @function toggleLayers
      */
     function toggleLayers() {
-        const selectedLayers = self.layerSource.config.layerEntries;
-        const availableLayers = self.layerSource.layers;
+        const selectedLayers = self.layerBlueprint.config.layerEntries;
+        const availableLayers = self.layerBlueprint.layers;
 
         if (selectedLayers.length === availableLayers.length) {
-            self.layerSource.config.layerEntries = [];
+            self.layerBlueprint.config.layerEntries = [];
         } else if (selectedLayers.length >= 0) {
-            self.layerSource.config.layerEntries = self.layerSource.layers.slice(0);
+            self.layerBlueprint.config.layerEntries = self.layerBlueprint.layers.slice(0);
         }
     }
 
@@ -377,8 +371,11 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      * @return {Boolean} true if at least one with multiple styles
      */
     function isWMSLayerWithMultipleStyles() {
-        return self.layerSource && self.layerSource.config.layerType === Geo.Layer.Types.OGC_WMS &&
-            self.layerSource.config.layerEntries.some((entry) => entry.allStyles.length > 1);
+        return (
+            self.layerBlueprint &&
+            self.layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS &&
+            self.layerBlueprint.config.layerEntries.some(entry => entry.allStyles.length > 1)
+        );
     }
 
     /**
@@ -387,12 +384,16 @@ function Controller($q, $timeout, stateManager, geoService, Geo, Stepper, LayerB
      */
     function closeLoaderService() {
         // reset the loader after closing the panel
+        self.layerBlueprint = null;
         stepper.reset().start();
         stateManager.setActive('mainToc');
 
         // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
         $timeout(() => {
-            $rootElement.find('.rv-loader-add').first().rvFocus();
+            $rootElement
+                .find('.rv-loader-add')
+                .first()
+                .rvFocus();
         }, 0);
     }
 }

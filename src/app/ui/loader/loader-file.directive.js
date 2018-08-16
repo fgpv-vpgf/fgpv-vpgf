@@ -30,7 +30,7 @@ function rvLoaderFile() {
     return directive;
 }
 
-function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlueprint, $rootElement,
+function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootElement,
     keyNames, layerSource, legendService) {
     'ngInject';
     const self = this;
@@ -335,13 +335,13 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      */
     function onLayerBlueprintReady(name, arrayBuffer) {
 
-        const layerSourcePromise = layerSource.fetchFileInfo(name, arrayBuffer)
-            .then(({ options: layerSourceOptions, preselectedIndex }) => {
-                self.layerSourceOptions = layerSourceOptions;
-                self.layerSource = layerSourceOptions[preselectedIndex];
+        const layerBlueprintPromise = layerSource.fetchFileInfo(name, arrayBuffer)
+            .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
+                self.layerBlueprintOptions = layerBlueprintOptions;
+                self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
             });
 
-        return layerSourcePromise;
+        return layerBlueprintPromise;
     }
 
     /**
@@ -414,7 +414,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
 
         // incorrectly picking GeoJSON results in syntax error, must be caught here
         try {
-            validationPromise = self.layerSource.validate();
+            validationPromise = self.layerBlueprint.validate();
         } catch (e) {
             console.error('loaderFileDirective', 'file type is wrong', e);
             toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
@@ -466,9 +466,9 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
         configure.form.$setUntouched();
 
         // this will reset all the user-editable options to their defaults
-        // if reset is called before initial file upload, layerSource is undefined
-        if (self.layerSource) {
-            self.layerSource.reset();
+        // if reset is called before initial file upload, layerBlueprint is undefined
+        if (self.layerBlueprint) {
+            self.layerBlueprint.reset();
         }
 
         // TODO: generalize resetting custom form validation
@@ -490,10 +490,12 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      * @function configureOnContinue
      */
     function configureOnContinue() {
-        const blueprintPromise = LayerBlueprint.buildLayer(self.layerSource);
+        // generate a LayerRecord from the blueprint before closing the wizard
+        // generation might fail because file data is invalid
+        const layerRecordPromise = self.layerBlueprint.makeLayerRecord();
 
-        blueprintPromise.then(layerBlueprint => {
-            legendService.importLayerBlueprint(layerBlueprint);
+        layerRecordPromise.then(() => {
+            legendService.importLayerBlueprint(self.layerBlueprint);
             closeLoaderFile();
         }).catch(error => {
             console.warn('loaderFileDirective', 'file is invalid ', error);
@@ -507,6 +509,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, LayerBlu
      */
     function closeLoaderFile() {
         // reset the loader after closing the panel
+        self.layerBlueprint = null;
         stepper.reset().start();
         stateManager.setActive('mainToc');
 
