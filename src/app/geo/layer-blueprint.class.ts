@@ -247,7 +247,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
         /**
          * Creates and returns a promise resolving with a LayerRecord instance.
-         * When a layer is added through the wizard, the its LayerRecord object is made as the last step during the import process. This is done to catch any possible errors before actually adding the layer to the map. 
+         * When a layer is added through the wizard, the its LayerRecord object is made as the last step during the import process. This is done to catch any possible errors before actually adding the layer to the map.
          * After this, the LayerBlueprint is passed to the layer registry which will call the `makeLayerRecord` function again as it normally does when loading layers from the config. In such cases, the already created LayerRecord is returned.
          * When a layer is reloaded, the LayerRecord needs to be made anew.
          *
@@ -616,7 +616,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
 
             const validationResult = await super.validate();
             this.setLatLongOptions(validationResult);
@@ -665,7 +665,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
 
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
@@ -713,7 +713,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         async validate(): Promise<any> {
             // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
+            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
 
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
