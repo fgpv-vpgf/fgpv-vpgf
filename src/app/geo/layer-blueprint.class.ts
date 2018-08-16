@@ -2,9 +2,16 @@ import RColor from 'rcolor';
 import to from 'await-to-js';
 import angular from 'angular';
 
+// TODO: move mixin constructors into the util file
+
 type Constructor<T> = new (...args: any[]) => T;
 
-// TODO: move mixin constructors into the util file
+// this a function for creating complex classes using mixins and avoiding the direct inheritance
+// given a number of classes, a new class is created and all the properties from the supplied classes are copied into it (in cases of name collision, the last mixin with the same property wins)
+// unfortunatelly, this method does not allow for `getters/setters` on the mixin classes (they will be copied as simple named properties, not functions)
+// he original mixin approach (https://www.typescriptlang.org/docs/handbook/mixins.html) is more verboase and has more overhead
+// the Deep Dive's mixin approach (https://basarat.gitbooks.io/typescript/docs/types/mixins.html) applies mixins outside of the class declaration making it hard to use hard to use mixins function/properties inside the decorated class
+// adopted from: https://stackoverflow.com/questions/48372465/type-safe-mixin-decorator-in-typescript
 function mixins<A>(CtorA: Constructor<A>): Constructor<A>;
 function mixins<A, B>(CtorA: Constructor<A>, CtorB: Constructor<B>): Constructor<A & B>;
 function mixins<A, B, C>(CtorA: Constructor<A>, CtorB: Constructor<B>, CtorC: Constructor<C>): Constructor<A & B & C>;
