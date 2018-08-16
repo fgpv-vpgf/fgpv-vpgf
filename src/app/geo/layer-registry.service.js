@@ -230,7 +230,7 @@ function layerRegistryFactory(
         // remove from the layerRecords
         layerRecords.splice(index, 1);
 
-        _startGeneratingLayerRecord(layerBlueprint);
+        _startGeneratingLayerRecord(layerBlueprint, true);
     }
 
     /**
@@ -300,16 +300,17 @@ function layerRegistryFactory(
      * - hook up state event listeners
      *
      * @param {layerBlueprint} layerBlueprint LayerBlueprint object
+     * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
      * @returns {Promise<LayerRecord>} a promise resolving with a generated LayerRecord
      */
-    function _startGeneratingLayerRecord(layerBlueprint) {
+    function _startGeneratingLayerRecord(layerBlueprint, force = false) {
         const layerRecords = configService.getSync.map.layerRecords;
 
         // register a loading process for this layer record
         _setLoadingFlagHelper(layerBlueprint.config);
 
         // start generating a layer record
-        let layerRecordPromise = layerBlueprint.makeLayerRecord();
+        let layerRecordPromise = layerBlueprint.makeLayerRecord(force);
         ref.generatingQueue[layerBlueprint.config.id] = layerRecordPromise;
 
         layerRecordPromise = layerRecordPromise.then(layerRecord => {

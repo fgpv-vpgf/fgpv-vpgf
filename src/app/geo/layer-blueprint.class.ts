@@ -10,7 +10,7 @@ type Constructor<T> = new (...args: any[]) => T;
 // given a number of classes, a new class is created and all the properties from the supplied classes are copied into it (in cases of name collision, the last mixin with the same property wins)
 // unfortunatelly, this method does not allow for `getters/setters` on the mixin classes (they will be copied as simple named properties, not functions)
 // he original mixin approach (https://www.typescriptlang.org/docs/handbook/mixins.html) is more verboase and has more overhead
-// the Deep Dive's mixin approach (https://basarat.gitbooks.io/typescript/docs/types/mixins.html) applies mixins outside of the class declaration making it hard to use hard to use mixins function/properties inside the decorated class
+// the Deep Dive's mixin approach (https://basarat.gitbooks.io/typescript/docs/types/mixins.html) applies mixins outside of the class declaration making it hard to use mixins function/properties inside the decorated class
 // adopted from: https://stackoverflow.com/questions/48372465/type-safe-mixin-decorator-in-typescript
 function mixins<A>(CtorA: Constructor<A>): Constructor<A>;
 function mixins<A, B>(CtorA: Constructor<A>, CtorB: Constructor<B>): Constructor<A & B>;
@@ -90,6 +90,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
      * @extends {LayerBlueprintMixin}
      */
     class ClientSideData extends LayerBlueprintMixin {
+        _layer: any;
+
         _rawData: any;
         _formattedData: any;
 
@@ -152,12 +154,16 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * Creates an ESRI layer object from the config and formatted data.
          *
          * @param {LayerFactory} layerFactory a GeoAPI function to create an ESRI layer of a certain type (CSV, GeoJSON, Shapefile, etc)
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @param {*} config a layer definition config object
          * @returns {Promise<any>}
          * @memberof ClientSideData
          */
-        async _makeLayer(): Promise<any> {
-            console.log('mixin makelayer');
+        async _makeLayer(force: boolean = false): Promise<any> {
+            if (this._layer && !force) {
+                return Promise.resolve(this._layer);
+            }
+
             await this.validate();
 
             // TODO: targetWkid property should be added to the WFS layer config node
@@ -172,7 +178,9 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 throw new Error('ESRI Layer creating failed');
             }
 
-            return layer;
+            this._layer = layer;
+
+            return this._layer;
         }
     }
 
@@ -239,14 +247,18 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
         /**
          * Creates and returns a promise resolving with a LayerRecord instance.
+         * When a layer is added through the wizard, the its LayerRecord object is made as the last step during the import process. This is done to catch any possible errors before actually adding the layer to the map. 
+         * After this, the LayerBlueprint is passed to the layer registry which will call the `makeLayerRecord` function again as it normally does when loading layers from the config. In such cases, the already created LayerRecord is returned.
+         * When a layer is reloaded, the LayerRecord needs to be made anew.
          *
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @param {*} [esriLayer=null]
          * @returns {Promise<any>}
          * @memberof BlueprintBase
          */
-        async makeLayerRecord(esriLayer: any = null): Promise<any> {
+        async makeLayerRecord(force: boolean = false, esriLayer: any = null): Promise<any> {
             // if the LayerRecord was generated (during wizard's last validation step for example), just return that
-            if (this._layerRecord) {
+            if (this._layerRecord && !force) {
                 return Promise.resolve(this._layerRecord);
             }
 
@@ -453,12 +465,13 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         /**
          * Creates an ESRI layer first (since WFS is based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
          *
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @returns {Promise<any>}
          * @memberof WFSServiceSource
          */
-        async makeLayerRecord(): Promise<any> {
-            const layer = await super._makeLayer();
-            return super.makeLayerRecord(layer);
+        async makeLayerRecord(force: boolean = false): Promise<any> {
+            const layer = await super._makeLayer(force);
+            return super.makeLayerRecord(force, layer);
         }
 
         /**
@@ -586,12 +599,13 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         /**
          * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
          *
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @returns {Promise<any>}
          * @memberof CSVSource
          */
-        async makeLayerRecord(): Promise<any> {
-            const layer = await super._makeLayer();
-            return super.makeLayerRecord(layer);
+        async makeLayerRecord(force: boolean = false): Promise<any> {
+            const layer = await super._makeLayer(force);
+            return super.makeLayerRecord(force, layer);
         }
 
         /**
@@ -634,12 +648,13 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         /**
          * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
          *
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @returns {Promise<any>}
          * @memberof GeoJSONSource
          */
-        async makeLayerRecord(): Promise<any> {
-            const layer = await super._makeLayer();
-            return super.makeLayerRecord(layer);
+        async makeLayerRecord(force: boolean = false): Promise<any> {
+            const layer = await super._makeLayer(force);
+            return super.makeLayerRecord(force, layer);
         }
 
         /**
@@ -681,12 +696,13 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         /**
          * Creates an ESRI layer first (since file-based layer are based on the local data) and passes it to the base mixin's `makeLayerRecord` function.
          *
+         * @param {boolean} [force=false] if `true`, the layer will be made even if it was already made earlier
          * @returns {Promise<any>}
          * @memberof ShapefileSource
          */
-        async makeLayerRecord(): Promise<any> {
-            const layer = await super._makeLayer();
-            return super.makeLayerRecord(layer);
+        async makeLayerRecord(force: boolean = false): Promise<any> {
+            const layer = await super._makeLayer(force);
+            return super.makeLayerRecord(force, layer);
         }
 
         /**
