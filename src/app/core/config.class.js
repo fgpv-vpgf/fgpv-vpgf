@@ -1,6 +1,7 @@
 import screenfull from 'screenfull';
 import { Observable } from 'rxjs';
 import { XY, XYBounds } from 'api/geometry';
+import RColor from 'rcolor';
 
 /**
  * @module ConfigObject
@@ -924,7 +925,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (source) {
             super(source); // when a regular source isn't enough, call for super-source
             this._xyInAttribs = source.xyInAttribs;
-            this._colour = source.colour;
+            this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
         }
 
         get xyInAttribs () { return this._xyInAttribs; }
