@@ -59,7 +59,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
     // wire in a hook to any map for removing a layer. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
-        configService.getSync.map.instance.removeApiLayer = (id, index) => {
+        configService.getSync.map.instance.removeApiLayer = (id, index, showToast = false) => {
             const legendBlocks = configService.getSync.map.legendBlocks;
             let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
 
@@ -74,7 +74,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 }
 
                 if (layerToRemove) {
-                    service.removeLayer(layerToRemove, false);
+                    service.removeLayer(layerToRemove, showToast);
                 }
             } else {
                 // layer is not in legend (or does not exist), try simply removing layer record
@@ -171,12 +171,12 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @function removeLayer
      * @param  {LegendBlock} legendBlock legend block to be remove from the layer selector
      */
-    function removeLayer(legendBlock, displayToast = true) {
+    function removeLayer(legendBlock, showToast = true) {
         let resolve, reject, openPanelName;
 
         // legendBlock is the only child in the group, remove parent instead of just child
         if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
-            removeLayer(legendBlock.parent, displayToast);
+            removeLayer(legendBlock.parent, showToast);
             return;
             // legendBlock has no parent, so we are at the top most level
             // this block has one entry which is the only one currently in the legend, remove that entry
@@ -204,7 +204,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             .parent(referenceService.panes.toc)
             .position('bottom rv-flex');
 
-        if (displayToast) {
+        if (showToast) {
             // promise resolves with 'ok' when user clicks 'undo'
             $mdToast.show(undoToast)
             .then(response =>
