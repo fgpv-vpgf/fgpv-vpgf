@@ -331,6 +331,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 .reduce(
                     ([symbols, coverSymbol], domNode) => {
                         domNode = angular.element(domNode);
+                        
+                        //if labels are too long, symbology checkboxes get misaligned so shorten labels
+                        let label = domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS);
+                        let labelInnerText = label[0].innerHTML;
+
+                        //add ellipses so that user knows that this label is shortened
+                        if (labelInnerText.length > 20){
+                            label[0].innerHTML = labelInnerText.substr(0, 20) + "...";
+                        }
 
                         const symbol = {
                             container: domNode,
