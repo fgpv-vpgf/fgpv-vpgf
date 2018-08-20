@@ -573,7 +573,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
                 padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
                 const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
-                labelHeight = Math.max(Math.ceil(textWidth / (itemWidth - sidePadding)) * lineHeight + padding, lineHeight + padding);
+                labelHeight = Math.floor(textWidth / (ref.maxItemWidth - sidePadding) + 1) * lineHeight + padding;
             }
 
             // animate symbology container's size
@@ -609,7 +609,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 RV_DURATION / 3 * 2,
                 {
                     width: itemWidth,
-                    height: itemHeight + labelHeight - lineHeight - padding,
+                    height: itemHeight,
                     padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
                     ease: RV_SWIFT_IN_OUT_EASE
                 },
