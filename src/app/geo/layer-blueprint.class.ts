@@ -574,6 +574,21 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 const limit = Math.min(1000, totalCount - startindex - data.features.length);
                 return this._getWFSData(totalCount, data.features.length + startindex, limit, wfsData);
             } else {
+                if (this.config.xyInAttribs &&
+                    wfsData.features.length > 0 &&
+                    wfsData.features[0].geometry.type === "Point") {
+
+                    // attempt copy of points to attributes.
+                    // if we extend this logic to all feature based layers (not just wfs),
+                    // suggest porting this block to geoApi.
+                    // for now, easier to modify as early as possible in the transformation
+
+                    wfsData.features.forEach(f => {
+                        const p = f.geometry.coordinates;
+                        f.properties.rvInternalCoordX = p[0];
+                        f.properties.rvInternalCoordY = p[1];
+                    });
+                }
                 return wfsData;
             }
         }

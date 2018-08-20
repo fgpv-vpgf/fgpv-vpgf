@@ -623,6 +623,7 @@
                 "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "xyInAttribs": { "type": "boolean", "default": false, "description": "Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons." },
                 "customRenderer": { "type": "object", "additionalProperties": true, "description": "Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention"},
                 "details" : {
                     "type": "object",

@@ -1,6 +1,7 @@
 import screenfull from 'screenfull';
 import { Observable } from 'rxjs';
 import { XY, XYBounds } from 'api/geometry';
+import RColor from 'rcolor';
 
 /**
  * @module ConfigObject
@@ -921,6 +922,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     class WFSLayerNode extends FeatureLayerNode {
+        constructor (source) {
+            super(source); // when a regular source isn't enough, call for super-source
+            this._xyInAttribs = source.xyInAttribs;
+            this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
+        }
+
+        get xyInAttribs () { return this._xyInAttribs; }
+
+        get colour () { return this._colour; }
+
+        get JSON() {
+            return angular.merge(super.JSON, {
+                xyInAttribs: this.xyInAttribs,
+                colour: this.colour
+            });
+        }
     }
 
     class DynamicLayerEntryNode extends LayerEntryNode {
