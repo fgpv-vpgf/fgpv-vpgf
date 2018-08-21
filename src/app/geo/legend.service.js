@@ -1,4 +1,4 @@
-import { LegendItem } from 'api/legend';
+import { LegendItem, LegendGroup } from 'api/legend';
 
 /**
  * @module legendService
@@ -139,9 +139,16 @@ function legendServiceFactory(
             mapConfig.legendBlocks = legendBlocks;
 
             legendBlocks.entries.forEach(entry => {
-                if (entry.blockConfig.entryType === 'legendNode' || entry.blockConfig.entryType === 'legendInfo') {
-                    let legendItem = new LegendItem(entry, configService.getSync.map);
+                // after ConfigLegend created, check to see if a LegendGroup/Item already exists
+                // if so, update it (_initSettings) instead of creating a new instance
+                if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
+                    let legendGroup = new LegendGroup(configService.getSync.map, entry);
+                    console.log(legendGroup)
+                    _addElementToApiLegend(legendGroup);
+                } else { // it's a collapsed dynamic layer or a node/infoSection
+                    let legendItem = new LegendItem(configService.getSync.map, entry);
                     console.log(legendItem);
+                    _addElementToApiLegend(legendItem);
                 }
             });
         });
@@ -239,10 +246,16 @@ function legendServiceFactory(
         // add the new legend block to the legend block (always to the root group)
         legendBlocks.addEntry(importedLegendBlock, position);
 
-        if (importedLegendBlock.blockConfig.entryType === 'legendNode' || importedLegendBlock.blockConfig.entryType === 'legendInfo') {
-            let legendItem = new LegendItem(importedLegendBlock, configService.getSync.map);
+        // after ConfigLegend created, check to see if a LegendGroup/Item already exists
+        // if so, update it (_initSettings) instead of creating a new instance
+        if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
+            let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
+            console.log(legendGroup)
+            _addElementToApiLegend(legendGroup);
+        } else { // it's a collapsed dynamic layer or a node/infoSection
+            let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
             console.log(legendItem);
-            //_addElementToApiLegend(legendGroup)
+            _addElementToApiLegend(legendItem)
         }
 
         // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
@@ -858,8 +871,20 @@ function legendServiceFactory(
          */
         function _makeSetBlock(blockConfig) {
             const set = new LegendBlock.Set(blockConfig);
+            let isSomethingTrue = false;
 
             blockConfig.exclusiveVisibility.forEach(childConfig => {
+                // check to see if there is more than one child of the set that has visibility set to true
+                // if so, turn all the others (except the first) to false to avoid problems with `proxyPromise` not yet resolved when updating set visibilities
+                const blueprint = layerBlueprints.find(blueprint => blueprint.config.id === childConfig.layerId);
+                if (blueprint && blueprint.config.state.visibility) {
+                    if (isSomethingTrue) {
+                        blueprint.config.state.visibility = false;
+                    } else {
+                        isSomethingTrue = true;
+                    }
+                }
+
                 const childBlock = _makeLegendBlock(childConfig, layerBlueprints);
 
                 set.addEntry(childBlock);
@@ -1019,5 +1044,17 @@ function legendServiceFactory(
 
             return promise;
         }
+    }
+
+    /**
+     * Push a new element to the list of elements for the map legend
+     *
+     * @function _addElementToApiLegend
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be added to map legend
+     */
+    function _addElementToApiLegend(legendElement) {
+        // mapApi.ui.configLegend.elements.push(legendElement);
+        // mapApi.ui.configLegend._itemAdded.next(legendElement);
     }
 }
