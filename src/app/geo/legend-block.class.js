@@ -81,6 +81,7 @@ function LegendBlockFactory(
                 this.visibility = this._layerConfig.state.visibility;
                 this.query = this._layerConfig.state.query;
 
+                // need to update legend visibility and opacity as well
                 this._updateApiLayerVisibility(this);
                 this._updateApiLayerOpacity(this);
                 this._updateApiLayerQueryable(this);
@@ -204,6 +205,7 @@ function LegendBlockFactory(
             // store opacity value in the layer config; will be used by full state restore
             this._layerConfig.state.opacity = value;
 
+            // need to update legend visibility and opacity as well
             this._updateApiLayerOpacity(this);
         }
         set visibility(value) {
@@ -221,6 +223,7 @@ function LegendBlockFactory(
             // store visibility value in the layer config; will be used by full state restore
             this._layerConfig.state.visibility = value;
 
+            // need to update legend visibility and opacity as well
             this._updateApiLayerVisibility(this);
         }
         set query(value) {
@@ -1355,6 +1358,7 @@ function LegendBlockFactory(
         }
         set expanded(value = !this.expanded) {
             this._expanded = value;
+            $rootScope.$applyAsync();
         }
 
         get entries() {
