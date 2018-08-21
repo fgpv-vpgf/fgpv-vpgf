@@ -311,6 +311,10 @@ export interface FgpvConfigSchema {
          * Indicates whether symbology from controlled layers should be included in export legend
          */
         showControlledSymbology?: boolean;
+        /**
+         * Value in pixels to be used as the column width for the export legend.
+         */
+        columnWidth?: number;
       };
       /**
        * Foot notice to add to exported map

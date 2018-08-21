@@ -181,6 +181,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Indicates whether symbology from controlled layers should be included in export legend"
+                },
+                "columnWidth": {
+                    "type": "integer",
+                    "default": false,
+                    "description": "Value in pixels to be used as the column width for the export legend."
                 }
             },
             "description": "This is the initial configuration for a legend export component.",

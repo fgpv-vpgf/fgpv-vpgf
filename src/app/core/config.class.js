@@ -1886,6 +1886,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._showInfoSymbology = source.showInfoSymbology || false;
             this._showControlledSymbology = source.showControlledSymbology || false;
+            this._columnWidth = source.columnWidth || null;
         }
 
         get showInfoSymbology () {      return this._showInfoSymbology; }
@@ -1894,10 +1895,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get showControlledSymbology () {      return this._showControlledSymbology; }
         set showControlledSymbology (value) { this._showControlledSymbology = value; }
 
+        get columnWidth () { return this._columnWidth }
+
         get JSON() {
             return angular.merge(super.JSON, {
                 showInfoSymbology: this.showInfoSymbology,
-                showControlledSymbology: this.showControlledSymbology
+                showControlledSymbology: this.showControlledSymbology,
+                columnWidth: this.columnWidth
             });
         }
     }
