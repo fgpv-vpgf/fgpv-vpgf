@@ -222,6 +222,13 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
             this.config = new ConfigClass(rawConfig);
+
+            // TODO needs riabtanalysis if this is proper. hack fix for broken cors support
+            if (this.config.url) {
+                // if ESRI JSAPI fixes it's CORS bug this can be removed
+                configService.getSync.map.instance.checkCorsException(this.config.url);
+            }
+
             this.backup();
             this.reset();
         }
