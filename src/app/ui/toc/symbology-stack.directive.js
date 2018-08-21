@@ -573,7 +573,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
                 padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
                 const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
-                labelHeight = Math.floor(textWidth / (ref.maxItemWidth - sidePadding) + 1) * lineHeight + padding;
+                labelHeight = Math.floor(textWidth / (0.9 * (ref.maxItemWidth - sidePadding)) + 1) * lineHeight + padding;  // divide by 0.9 due to display rounding
             }
 
             // animate symbology container's size
