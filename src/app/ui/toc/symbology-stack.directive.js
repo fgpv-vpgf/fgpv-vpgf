@@ -78,7 +78,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
     return directive;
 
     /*********/
-// eslint-disable-next-line max-statements
+    // eslint-disable-next-line max-statements
     function link(scope, element) {
         const self = scope.self;
 
