@@ -138,7 +138,7 @@ function legendServiceFactory(
             const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
             mapConfig.legendBlocks = legendBlocks;
 
-            legendBlocks.entries.forEach(entry => {
+            legendBlocks.entries.filter(entry => !entry.hidden).forEach(entry => {
                 // after ConfigLegend created, check to see if a LegendGroup/Item already exists
                 // if so, update it (_initSettings) instead of creating a new instance
                 if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
@@ -245,14 +245,16 @@ function legendServiceFactory(
 
         // after ConfigLegend created, check to see if a LegendGroup/Item already exists
         // if so, update it (_initSettings) instead of creating a new instance
-        if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
-            let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
-            console.log(legendGroup)
-            _addElementToApiLegend(legendGroup);
-        } else { // it's a collapsed dynamic layer or a node/infoSection
-            let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
-            console.log(legendItem);
-            _addElementToApiLegend(legendItem)
+        if (!importedLegendBlock.hidden) {
+            if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
+                let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
+                console.log(legendGroup)
+                _addElementToApiLegend(legendGroup);
+            } else { // it's a collapsed dynamic layer or a node/infoSection
+                let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
+                console.log(legendItem);
+                _addElementToApiLegend(legendItem)
+            }
         }
 
         // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
