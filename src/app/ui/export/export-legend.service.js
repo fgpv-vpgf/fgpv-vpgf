@@ -26,9 +26,7 @@ const SYMBOL_SIZE = 32;
  * The `exportLegendService` service generates svg image of the legend breaking into into columns.
  *
  */
-angular
-    .module('app.ui')
-    .service('exportLegendService', exportLegendService);
+angular.module('app.ui').service('exportLegendService', exportLegendService);
 
 function exportLegendService($q, $rootElement, geoService, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
@@ -48,7 +46,6 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
     function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
-
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
@@ -89,10 +86,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
             // optimize; get back the number of sections used
             // if only one column available, ignore optimization
-            sectionsUsed = sectionInfo.count === 1 ?
-                1 :
-                gapiService.gapi.legend.makeLegend(legendDataCopy, sectionInfo.count, availableHeight)
-                    .sectionsUsed;
+            sectionsUsed =
+                sectionInfo.count === 1
+                    ? 1
+                    : gapiService.gapi.legend.makeLegend(legendDataCopy, sectionInfo.count, availableHeight)
+                          .sectionsUsed;
         }
 
         wraplegend(svgLegend, sectionInfo);
@@ -100,9 +98,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         const totalLegendHeight = sectionInfo.height + LEGEND_MARGIN.t + LEGEND_MARGIN.b;
 
         // set the height of the legend based on the height of its sections
-        legend
-            .height(totalLegendHeight)
-            .viewbox(0, 0, availableWidth, totalLegendHeight);
+        legend.height(totalLegendHeight).viewbox(0, 0, availableWidth, totalLegendHeight);
 
         hiddenNode.remove();
 
@@ -111,8 +107,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             canvg(localCanvas, legend.node.outerHTML, {
                 ignoreAnimation: true,
                 ignoreMouse: true,
-                renderCallback: () =>
-                    resolve(localCanvas)
+                renderCallback: () => resolve(localCanvas)
             });
         });
 
@@ -125,9 +120,10 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @return {Number} returns the section width
          */
         function getSectionWidth() {
-            return (availableWidth -
-                (LEGEND_MARGIN.l + LEGEND_MARGIN.r + (sectionInfo.count - 1) * SECTION_SPACING)) /
-            sectionInfo.count;
+            return (
+                (availableWidth - (LEGEND_MARGIN.l + LEGEND_MARGIN.r + (sectionInfo.count - 1) * SECTION_SPACING)) /
+                sectionInfo.count
+            );
         }
     }
 
@@ -142,7 +138,6 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      *                 {Number} sectionCount number of sections to break the legend into
      */
     function wraplegend(svgLegend, sectionInfo) {
-
         // create wrap legend sections
         const sections = Array.from(Array(sectionInfo.count)).map(() => svgLegend.container.set());
 
@@ -153,13 +148,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         const lineStoreSet = svgLegend.lines; // use a group line set from svgLegend
 
         // moves legend items from an array to a set
-        svgLegend.items.forEach(svg =>
-            itemStoreSet.add(svg));
+        svgLegend.items.forEach(svg => itemStoreSet.add(svg));
 
         svgLegend.items.forEach(svg => {
             // wrap the legend at elements previously marked
             if (svg.remember('self').splitBefore) {
-
                 const svgY = svg.y();
 
                 // cut the group lines at the wrapping point
@@ -176,15 +169,14 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     // if the line starts above and ends below the wrapping element
                     if (lineY + lineHeight > svgY) {
                         // split the line in two parts: above and below the wrap
-                        const up = svgLegend.container.line(lineX, lineY, lineX, Math.min(svgY, sectionInfo.height))
+                        const up = svgLegend.container
+                            .line(lineX, lineY, lineX, Math.min(svgY, sectionInfo.height))
                             .stroke('black');
-                        const down = svgLegend.container.line(lineX, svgY, lineX, lineY + lineHeight)
-                            .stroke('black');
+                        const down = svgLegend.container.line(lineX, svgY, lineX, lineY + lineHeight).stroke('black');
 
                         line.remove(); // remove original line
                         currentSection.add(up); // store the above part in the  current section
                         lineStoreSet.add(down); // add the below part to the list store for future wrapping (a single line can wrap and be cut multiple time)
-
                     } else {
                         currentSection.add(line); // if the line fits in the current section, add it there
                     }
@@ -332,27 +324,26 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                 anchor: 'start'
             };
 
-            const imageItem = legendItem.group().svg(svgcode).first();
+            const imageItem = legendItem
+                .group()
+                .svg(svgcode)
+                .first();
             const imageItemViewbox = imageItem.viewbox();
 
             /// Use the narrower width as the bound for the image
-            if (imageItemViewbox.width > sectionWidth){
+            if (imageItemViewbox.width > sectionWidth) {
                 const imgLookFactor = 0.9; // So it'd have space on left and right for the visual look
-                imageItemViewbox.height *= ((sectionWidth / imageItemViewbox.width) * imgLookFactor);
+                imageItemViewbox.height *= (sectionWidth / imageItemViewbox.width) * imgLookFactor;
                 imageItemViewbox.width = sectionWidth * imgLookFactor;
             }
 
             if (imageItemViewbox.height > SYMBOL_SIZE || imageItemViewbox.width > SYMBOL_SIZE) {
-
                 flow = legendItem
                     .textflow(name, sectionWidth - runningIndent * indentD)
                     .attr(flowAttributes)
                     .dy(-4);
 
-                imageItem
-                    .size(imageItemViewbox.width, imageItemViewbox.height)
-                    .dy(flow.bbox().height + IMAGE_GUTTER);
-
+                imageItem.size(imageItemViewbox.width, imageItemViewbox.height).dy(flow.bbox().height + IMAGE_GUTTER);
             } else {
                 flow = legendItem
                     .textflow(name, sectionWidth - SYMBOL_SIZE - IMAGE_GUTTER - runningIndent * indentD)
@@ -366,7 +357,8 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             }
 
             legendItem.move(runningIndent * indentD, runningHeight);
-            const heightToAppend = (legendItem.rbox().height > imageItemViewbox.height) ? legendItem.rbox().height : imageItemViewbox.height;
+            const heightToAppend =
+                legendItem.rbox().height > imageItemViewbox.height ? legendItem.rbox().height : imageItemViewbox.height;
             runningHeight += heightToAppend + ITEM_GUTTER;
 
             item.height = legendItem.rbox().height;
@@ -417,18 +409,15 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Array} a flat array of layers and their symbology items
      */
     function extractLegendTree(legendBlock) {
-
         const TYPE_TO_SYMBOLOGY = {
-            [LegendBlock.TYPES.NODE]: entry =>
-                ({
-                    name: entry.name,
-                    items: entry.symbologyStack.stack
-                }),
-            [LegendBlock.TYPES.GROUP]: entry =>
-                ({
-                    name: entry.name,
-                    items: extractLegendTree(entry)
-                }),
+            [LegendBlock.TYPES.NODE]: entry => ({
+                name: entry.name,
+                items: entry.symbologyStack.stack
+            }),
+            [LegendBlock.TYPES.GROUP]: entry => ({
+                name: entry.name,
+                items: extractLegendTree(entry)
+            }),
             [LegendBlock.TYPES.SET]: () => null,
             [LegendBlock.TYPES.INFO]: entry => {
                 if (entry.infoType === 'image') {
@@ -436,8 +425,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     return {
                         name: '',
                         items: [{ name: '', svgcode: svgCode }],
-                        blockType: LegendBlock.TYPES.INFO
-                    }
+                        blockType: LegendBlock.TYPES.INFO,
+                        infoType: entry.infoType
+                    };
                 } else {
                     const content = entry.layerName || entry.content;
 
@@ -446,8 +436,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         return {
                             name: removeMd(content),
                             items: entry.symbologyStack.stack || [],
-                            blockType: LegendBlock.TYPES.INFO
-                        }
+                            blockType: LegendBlock.TYPES.INFO,
+                            infoType: entry.infoType
+                        };
                     }
 
                     const contentToHtml = marked(content);
@@ -457,8 +448,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         return {
                             name: entry.layerName || entry.content,
                             items: entry.symbologyStack.stack || [],
-                            blockType: LegendBlock.TYPES.INFO
-                        }
+                            blockType: LegendBlock.TYPES.INFO,
+                            infoType: entry.infoType
+                        };
                     }
 
                     const canvas = service.canvas || (service.canvas = document.createElement('canvas'));
@@ -482,34 +474,61 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
                     const DOMURL = window.URL || window.webkitURL || window;
                     const img = new Image();
-                    const svg = new Blob([data], {type: 'image/svg+xml'});
+                    const svg = new Blob([data], { type: 'image/svg+xml' });
                     const url = DOMURL.createObjectURL(svg);
 
                     img.onload = function() {
-                      ctx.drawImage(this, 0, 0);
-                      DOMURL.revokeObjectURL(url);
-                    }
+                        ctx.drawImage(this, 0, 0);
+                        DOMURL.revokeObjectURL(url);
+                    };
 
                     img.src = url;
 
                     // we now have a local image and URL that we can wrap in a legend generator supported svg element
                     return {
                         name: '',
-                        items: [{ name: '', svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${url}"></image></svg>` }].concat(entry.symbologyStack.stack || []),
-                        blockType: LegendBlock.TYPES.INFO
-                    }
+                        items: [
+                            {
+                                name: '',
+                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${url}"></image></svg>`
+                            }
+                        ].concat(entry.symbologyStack.stack || []),
+                        blockType: LegendBlock.TYPES.INFO,
+                        infoType: entry.infoType
+                    };
                 }
             }
-        }
+        };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        const legendTreeData = legendBlock
-            .walk(entry => _showBlock(entry) ?
-                    TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null,
-                entry => entry.blockType === LegendBlock.TYPES.GROUP ? false : true)      // don't walk entry's children if it's a group
-            .filter(a =>
-                a !== null);
-        return legendTreeData.filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0);
+        let legendTreeData = legendBlock
+            .walk(
+                entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
+                entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
+            ) // don't walk entry's children if it's a group
+            .filter(a => a !== null);
+
+        let titleBefore = false;
+        legendTreeData = legendTreeData
+            // filter out non-info blocks with no symbology
+            .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
+            // clear out titles where everything below it (or in between another title) has been removed
+            // The two reverses let us filter backwards, making detection of bad titles easier.
+            .reverse()
+            .filter((entry, index) => {
+                if (entry.infoType && entry.infoType === 'title') {
+                    if (index === 0 || titleBefore) {
+                        titleBefore = true;
+                        return false;
+                    }
+                    titleBefore = true;
+                } else {
+                    titleBefore = false;
+                }
+                return true;
+            })
+            .reverse();
+        return legendTreeData;
     }
 
     /**
@@ -551,7 +570,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         let svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
         svgimg.setAttribute('height', img.naturalHeight);
         svgimg.setAttribute('width', img.naturalWidth);
-        svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', link);
+        svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', link);
 
         svg.appendChild(svgimg);
 

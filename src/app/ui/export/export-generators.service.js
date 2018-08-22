@@ -217,7 +217,12 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
      */
     function legendGenerator(exportSize) {
         // update `exportLegendService.generate` function to take ExportSize object as the first parameter
-        const legendPromise = exportLegendService.generate(exportSize.height, exportSize.width, 350);
+        let columnWidth;
+        if (configService.getSync.services.export && configService.getSync.services.export.legend) {
+            columnWidth = configService.getSync.services.export.legend.columnWidth;
+        }
+
+        const legendPromise = exportLegendService.generate(exportSize.height, exportSize.width, columnWidth || 350);
 
         return wrapOutput(legendPromise);
     }
