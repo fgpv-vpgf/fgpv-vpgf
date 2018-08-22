@@ -472,17 +472,20 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         </svg>
                     `;
 
-                    const DOMURL = window.URL || window.webkitURL || window;
                     const img = new Image();
-                    const svg = new Blob([data], { type: 'image/svg+xml' });
-                    const url = DOMURL.createObjectURL(svg);
+                    const svg = new Blob([data], {type: 'image/svg+xml'});
+
+                    // workaround for known chrome issue https://bugs.chromium.org/p/chromium/issues/detail?id=294129
+                    const reader = new FileReader();
+                    reader.readAsDataURL(svg);
+
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                    }
 
                     img.onload = function() {
-                        ctx.drawImage(this, 0, 0);
-                        DOMURL.revokeObjectURL(url);
-                    };
-
-                    img.src = url;
+                      ctx.drawImage(this, 0, 0);
+                    }
 
                     // we now have a local image and URL that we can wrap in a legend generator supported svg element
                     return {
@@ -490,7 +493,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         items: [
                             {
                                 name: '',
-                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${url}"></image></svg>`
+                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${img.src}"></image></svg>`
                             }
                         ].concat(entry.symbologyStack.stack || []),
                         blockType: LegendBlock.TYPES.INFO,
