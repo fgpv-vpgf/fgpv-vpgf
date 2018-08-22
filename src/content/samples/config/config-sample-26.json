@@ -79,13 +79,13 @@
     },
     "layers": [
       {
-        "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
+        "id": "Hydro energy resource potential – reservoir hydro",
+        "name": "Hydro energy resource potential – reservoir hydro***99015304",
         "layerType": "esriFeature",
         "disabledControls": [
           "remove"
         ],
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/20"
       }
     ],
     "extentSets": [

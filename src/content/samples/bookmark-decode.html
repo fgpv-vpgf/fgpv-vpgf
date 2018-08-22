@@ -20,7 +20,7 @@
     <div class="row"><div class="form-group col-md-12">
     </div></div>
 
-    <!-- Outputs -->    
+    <!-- Outputs -->
     <div class="row">
         <div class="form-group col-md-4">
             <label>Version</label>
@@ -280,7 +280,7 @@
 
             // Generate text for all layers
             layers.forEach(function (layer, i) {
-                layer = decode64(layer);
+                layer = decodeURIComponent(decode64(layer));
 
                 // strip out hex char that defines the layer type
                 var layerCode = parseInt(layer.substr(0, 1));
@@ -339,7 +339,7 @@
                     nextAnd = bookmark.length;
                 }
                 bookmark = bookmark.substring(keyStart + 3, nextAnd);
-            } 
+            }
 
             var version = bookmark.match(/^([^,]+)/)[0];
 
@@ -368,7 +368,7 @@
                     nextAnd = bookmark.length;
                 }
                 bookmark = bookmark.substring(keyStart + 3, nextAnd);
-            } 
+            }
 
             var rawOut = bookmark.split(',').map(function(nugget, idx) {
                 if (idx === 0) {
