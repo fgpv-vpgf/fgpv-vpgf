@@ -81,14 +81,14 @@ export class LegendItem {
     }
 
     /** Sets visibility of LegendItems that are of type legendNode
-     * @param {boolean} visibility - true if visible, false if invisible.
+     * @param {boolean} visibility - true if visible, false if invisible. undefined has no effect.
      */
     set visibility(visibility: boolean | undefined) {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Visibility)) {
-            if (this._legendBlock.visibility !== !!visibility) {
-                this._visibility = !!visibility;
-                this._legendBlock.visibility = !!visibility;
-                this._visibilityChanged.next(!!visibility);
+        if (typeof visibility !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Visibility)) {
+            if (this._legendBlock.visibility !== visibility) {
+                this._visibility = visibility;
+                this._legendBlock.visibility = visibility;
+                this._visibilityChanged.next(visibility);
             }
         }
     }
@@ -102,7 +102,7 @@ export class LegendItem {
     }
 
     /** Returns the opacity of LegendItems of type legendNode
-     * @return {number} - ranges from 0 (hidden) to 1 (fully visible)
+     * @return {number} - ranges from 0 (hidden) to 1 (fully visible). undefined has no effect.
      */
     get opacity(): number | undefined {
         if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
@@ -114,11 +114,11 @@ export class LegendItem {
      * @param {number} opacity- ranges from 0 (hidden) to 1 (fully visible)
      */
     set opacity(opacity: number | undefined) {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
-            if (this._legendBlock.opacity !== (opacity || 0)) {
-                this._opacity = opacity || 0;
-                this._legendBlock.opacity = opacity || 0;
-                this._opacityChanged.next(opacity || 0);
+        if (typeof opacity !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
+            if (this._legendBlock.opacity !== opacity) {
+                this._opacity = opacity;
+                this._legendBlock.opacity = opacity;
+                this._opacityChanged.next(opacity);
             }
         }
     }
@@ -238,8 +238,6 @@ export class LegendGroup {
     _availableControls: Array<AvailableControls>;
     /** @ignore */
     _name: string;
-    /** @ignore */
-    _expanded: boolean | undefined;
 
     /** @ignore */
     _opacity: number;
@@ -267,6 +265,11 @@ export class LegendGroup {
         return this._id;
     }
 
+    /** Returns the group name. */
+    get name(): string {
+        return this._name;
+    }
+
     /** Returns the group type. Can be either legendGroup or legendSet. */
     get type(): string {
         return this._type;
@@ -285,12 +288,9 @@ export class LegendGroup {
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
         if (this._availableControls.includes(AvailableControls.Visibility)) {
-            const oldVisibility: boolean = this._groupBlock.visibility;
-
-            this._visibility = visibility;
-            this._groupBlock.visibility = visibility;
-
-            if (oldVisibility !== visibility) {
+            if (this._groupBlock.visibility !== visibility) {
+                this._visibility = visibility;
+                this._groupBlock.visibility = visibility;
                 this._visibilityChanged.next(visibility);
             }
         }
@@ -312,12 +312,9 @@ export class LegendGroup {
     /** Sets the opacity value for the group. */
     set opacity(opacity: number) {
         if (this._availableControls.includes(AvailableControls.Opacity)) {
-            const oldOpacity: number = this._groupBlock.opacity;
-
-            this._opacity = opacity;
-            this._groupBlock.opacity = opacity;
-
-            if (oldOpacity !== opacity) {
+            if (this._groupBlock.opacity !== opacity) {
+                this._opacity = opacity;
+                this._groupBlock.opacity = opacity;
                 this._opacityChanged.next(opacity);
             }
         }
@@ -331,16 +328,12 @@ export class LegendGroup {
         return this._opacityChanged.asObservable();
     }
 
-    /** Returns if the group on the map is expanded (if false, it is collapsed or not applicable). */
-    get expanded(): boolean | undefined{
-        return this._expanded;
-    }
-
-    /** Toggles group to reveal/hide children (if applicable). */
-    set expanded(expanded: boolean | undefined) {
-        if (typeof this._expanded !== 'undefined') {
-            this._expanded = !!expanded;
-            this._groupBlock.expanded = !!expanded;
+    /**
+     * Toggles group to reveal/hide children (if applicable).
+     */
+    toggleExpanded(): void {
+        if (typeof this._groupBlock.expanded !== 'undefined') {
+            this._groupBlock.expanded = !this._groupBlock.expanded;
         }
     }
 
@@ -373,7 +366,7 @@ export class LegendGroup {
 
     /** Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded. */
     _initSettings(groupBlock: any): void {
-        groupBlock.entries.forEach((entry: any) => {
+        groupBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
             if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
                 this._children.push(new LegendGroup(this._mapInstance, entry));
             } else {    // it's a collapsed dynamic layer or a node/infoSection
@@ -387,7 +380,6 @@ export class LegendGroup {
 
         this._id = groupBlock.id;
 
-        this._expanded = this._groupBlock.expanded;
         this._name = groupBlock.name;
         this._visibility = groupBlock.visibility;
         this._opacity = groupBlock.opacity;
