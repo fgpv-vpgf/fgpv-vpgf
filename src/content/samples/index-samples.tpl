@@ -226,7 +226,7 @@
 
     <script>
         var SAMPLE_KEY = 'sample';
-        var URL = new URL(window.location.href);
+        var currentUrl = new URL(window.location.href);
         document.getElementById('selectConfig').addEventListener("change", changeConfig);
         document.getElementById('loadButton').addEventListener("click", loadBookmark);
         document.getElementById('clearButton').addEventListener("click", clearBookmark);
@@ -307,7 +307,7 @@
 
         // Find and load the sample specified in the key `sample`.  If `sample` is not provided, defaults to first sample.
         function loadSample() {
-            var params = new URLSearchParams(URL.search);
+            var params = new URLSearchParams(currentUrl.search);
             var sampleIndex =  params.get(SAMPLE_KEY) - 1;
             var selectElem = document.getElementById('selectConfig');
             var sameplMapElem = document.getElementById('sample-map');
@@ -328,7 +328,7 @@
                     var sampleIndex = 0;
                     params.set('sample', sampleIndex + 1);
                     sessionStorage.setItem('sample', newSample);
-                    var newUrl = URL.origin + URL.pathname + '?' + params.toString();
+                    var newUrl = currentUrl.origin + currentUrl.pathname + '?' + params.toString();
                     window.location.href = newUrl;
                 }
             }
@@ -338,9 +338,9 @@
         function changeConfig() {
             var currentSample = document.getElementById('selectConfig').value; // load existing config
             sessionStorage.setItem('sample', currentSample); // store new config
-            var params = new URLSearchParams(URL.search);
+            var params = new URLSearchParams(currentUrl.search);
             params.set('sample', document.getElementById('selectConfig').selectedIndex + 1);
-            var newUrl = URL.origin + URL.pathname + '?' + params.toString();
+            var newUrl = currentUrl.origin + currentUrl.pathname + '?' + params.toString();
             window.location.href = newUrl;
         }
     </script>
