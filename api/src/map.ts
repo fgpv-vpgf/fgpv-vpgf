@@ -124,28 +124,6 @@ export class Map {
         initObservables.apply(this);
     }
 
-    /** Returns the current structured legend JSON. If auto legend, returns undefined */
-    get legendConfig(): Array<JSON> | undefined {
-        if (this.legendStructure.type === 'structured') {  // use constant
-            return this.legendStructure.JSON.root.children;
-        }
-    }
-
-    /**
-     * Sets a new structured legend JSON snippet that updates the legend.
-     *
-     * TODO: If the legend was previously auto, replace it with a structured legend.
-     */
-    set legendConfig(value: Array<JSON> | undefined) {
-        if (value) {
-            const structure = this.legendStructure.JSON;
-            if (this.legendStructure.type === 'structured') {    // use constant
-                structure.root.children = value;
-                this.mapI.setLegendConfig(structure);
-            }
-        }
-    }
-
     get simpleLayer(): SimpleLayer {
         return this.simpleLayerObj;
     }
