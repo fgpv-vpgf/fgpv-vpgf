@@ -32,9 +32,13 @@ function legendServiceFactory(
     };
 
     let mApi = null;
+    let elementsForApi = [];
     const apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
     const apiBlueprintsIds = [];
-    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        mApi = api;
+        elementsForApi.forEach(element => _addElementToApiLegend(element));
+    });
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
@@ -73,7 +77,7 @@ function legendServiceFactory(
             const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
             service.constructLegend(layers, newLegend);
             configService.getSync.map._legend = newLegend;
-            mApi._legendStructure = newLegend;
+            mApi.legendStructure = newLegend;
             $rootScope.$applyAsync();
         };
     });
@@ -143,11 +147,9 @@ function legendServiceFactory(
                 // if so, update it (_initSettings) instead of creating a new instance
                 if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
                     let legendGroup = new LegendGroup(configService.getSync.map, entry);
-                    console.log(legendGroup)
                     _addElementToApiLegend(legendGroup);
                 } else { // it's a collapsed dynamic layer or a node/infoSection
                     let legendItem = new LegendItem(configService.getSync.map, entry);
-                    console.log(legendItem);
                     _addElementToApiLegend(legendItem);
                 }
             });
@@ -419,7 +421,8 @@ function legendServiceFactory(
             _boundingBoxRemoval(legendBlock);
 
             // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
-            mApi._legendStructure = configService.getSync.map.legend;
+            mApi.legendStructure = configService.getSync.map.legend;
+            mApi.ui.configLegend._configSnippets = mApi.legendStructure.root.children;
         }
 
         /**
@@ -1053,7 +1056,12 @@ function legendServiceFactory(
      * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be added to map legend
      */
     function _addElementToApiLegend(legendElement) {
-        // mapApi.ui.configLegend.elements.push(legendElement);
-        // mapApi.ui.configLegend._itemAdded.next(legendElement);
+        if (mApi) {
+            mApi.ui.configLegend.elements.push(legendElement);
+            // mapApi.ui.configLegend._itemAdded.next(legendElement);
+        } else {
+            elementsForApi.push(legendElement);
+        }
+
     }
 }

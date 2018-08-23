@@ -1542,6 +1542,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     class Legend {
         constructor (legendSource, layersSource) {
             this._type = legendSource.type;
+            this._reorderable = false;
 
             let rootChildren;
 
@@ -1597,7 +1598,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
             if (mApi) {
-                mApi._legendStructure = this;
+                mApi.legendStructure = this;
+                mApi.ui.configLegend._configSnippets = this._root.children;
             }
         }
 
@@ -2085,7 +2087,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get layerBlueprints () {        return this._layerBlueprints; }
         get boundingBoxRecords () {     return this._boundingBoxRecords; }
         get legendBlocks () {           return this._legendBlocks; }
-        set legendBlocks (lb) {         this._legendBlocks = lb; }
+        set legendBlocks (lb) {         this._legendBlocks = lb; $rootScope.$applyAsync(); }
         get legendMappings () {         return this._legendMappings; }
 
         get highlightLayer () {         return this._highlightLayer; }
@@ -2551,6 +2553,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
+                this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
+            this.map.legend._reorderable =
                 this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
 
             // set geoSearch.enable to false if it was false initialy or does not have all services

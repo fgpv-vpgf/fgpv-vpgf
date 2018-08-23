@@ -819,8 +819,6 @@ export class LayerGroup {
     _attributesChanged: Subject<LayerAndChangedAttribs>;
     _attributesRemoved: Subject<LayerAndAttribs>;
 
-    _click: Subject<BaseLayer>;
-
     /** @ignore */
     _identify: Subject<any>;
 
@@ -835,7 +833,6 @@ export class LayerGroup {
         this._attributesChanged = new Subject();
         this._attributesRemoved = new Subject();
 
-        this._click = new Subject();
         this._identify = new Subject<any>();
     }
 
@@ -882,14 +879,6 @@ export class LayerGroup {
      */
     get attributesRemoved(): Observable<LayerAndAttribs> {
         return this._attributesRemoved.asObservable();
-    }
-
-    /**
-     * Emits whenever a layer is clicked on the legend.
-     * @event click
-     */
-    get click(): Observable<BaseLayer> {
-        return this._click.asObservable();
     }
 
     /**
