@@ -563,6 +563,12 @@ export class UI {
     get configLegend(): ConfigLegend {
         return this._configLegend;
     }
+
+    set configLegend(legend: ConfigLegend) {
+        if (!this._configLegend) {
+            this._configLegend = legend;
+        }
+    }
 }
 
 function isBasemapObject(basemapOrId: Basemap | string | number): basemapOrId is Basemap {

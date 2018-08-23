@@ -2,6 +2,7 @@ import Map from 'api/map';
 import { PanelElem } from 'api/panel';
 import { BasemapGroup } from 'api/ui';
 import gtm from '../tag-manager';
+import { ConfigLegend } from 'api/legend';
 
 /**
  * @restrict A
@@ -80,7 +81,9 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 api.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
-                apiMap._legendStructure = configService.getSync.map.legend;
+                const mapConfig = configService.getSync.map;
+                apiMap.legendStructure = mapConfig.legend;
+                apiMap.ui.configLegend = new ConfigLegend(mapConfig, mapConfig.legend);
                 appInfo.mapi = apiMap;
 
                 apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);

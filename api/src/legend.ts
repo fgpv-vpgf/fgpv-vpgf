@@ -14,19 +14,201 @@
  * THIS API IS NOT SUPPORTED.
  */
 
-
 import { Observable, Subject } from 'rxjs';
+import { BaseLayer } from 'api/layers';
 
+/**
+ * Provides the core API fucntionality for all legends (simple and config)
+ */
 class BaseLegend {
+    /** @ignore */
+    _elements: Array<LegendItem | LegendGroup>;
+    // Element added/removed observables
+    /** @ignore */
+    _configSnippets: Array<JSON>;
+
+    /** @ignore */
+    _mapInstance: any;
+    /** @ignore */
+    _click: Subject<LegendItem | LegendGroup>;
+
+    /**
+     * Create a new legend instance. Most likely will not be used directly.
+     * Should be instantiated as either ConfigLegend or SimpleLegend
+     * @param mapInstance
+     * @param configSnippets
+     */
+    constructor(mapInstance: any, configSnippets: Array<JSON>) {
+        this._mapInstance = mapInstance;
+        this._configSnippets = configSnippets;
+        this._elements = [];
+        this._click = new Subject();
+    }
+
+    /**
+     * Return list of LegendItems and LegendGroups for the legend
+     */
+    get elements(): Array<LegendItem | LegendGroup> {
+        return this._elements;
+    }
+
+    /**
+     * Return list of LegendItems and LegendGroups for the legend
+     */
+    get configSnippets(): Array<JSON> {
+        return this._configSnippets;
+    }
+
+    /**
+     * Return list of LegendItems and LegendGroups for the legend
+     */
+    set configSnippets(snippets: Array<JSON>) {
+        this._configSnippets = snippets;
+    }
+
+    /**
+     * Get a LegendItem or LegendGroup by id
+     * @function getById
+     * @param layerId
+     */
+    getById(layerId: string): LegendItem | LegendGroup | undefined {
+        return this._elements.find(item => item.id === layerId);
+    }
+
+    /**
+     * Expand all LegendGroups in legend
+     * @function expandGroups
+     */
+    expandGroups() {
+        this._mapInstance.instance.toggleLegendGroupEntries();
+    }
+
+    /**
+     * Collapse all LegendGroups in legend
+     * @function collapseGroups
+     */
+    collapseGroups() {
+        this._mapInstance.instance.toggleLegendGroupEntries(false);
+    }
+
+    /**
+     * Show all LegendItems and LegendGroups in legend
+     * @function showAll
+     */
+    showAll() {
+        this._mapInstance.instance.toggleLegendEntries();
+    }
+
+    /**
+     * Hide all LegendItesm and LegendGroups in legend
+     * @function hideAll
+     */
+    hideAll() {
+        this._mapInstance.instance.toggleLegendEntries(false);
+    }
+
+    /**
+     * Add item to legend
+     * @function addItem
+     * @param item Item to add to the legend
+     */
+    addItem(item: JSON | BaseLayer) {
+        // TODO
+    }
+
+    /**
+     * Emits whenever a layer is clicked on the legend.
+     * @event click
+     */
+    get click(): Observable<LegendItem | LegendGroup> {
+        return this._click.asObservable();
+    }
 
 }
 
-export class ConfigLegend {
+/**
+ * Legend for a map instance
+ * Can be auto or structured legends
+ * Only one per map
+ */
+export class ConfigLegend extends BaseLegend {
+    _type: string;
+    _reorderable: boolean;
+    _legendStructure: LegendStructure;
 
+    constructor(mapInstance: any, legendStructure: LegendStructure) {
+        super(mapInstance, legendStructure.JSON.root.children);
+
+        this._type = legendStructure.type;
+        this._reorderable = mapInstance.legend._reorderable;
+        this._legendStructure = legendStructure;
+    }
+
+    /**
+     * Return list of LegendItems and LegendGroups for the legend
+     */
+    get configSnippets(): Array<JSON> {
+        return this._configSnippets;
+    }
+
+    /**
+     * Return list of LegendItems and LegendGroups for the legend
+     * @override
+     */
+    set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix elements array
+        if (snippets) {
+            const structure = this._legendStructure.JSON;
+            if (this._type === 'structured') {    // use constant
+                this._configSnippets = snippets;
+                structure.root.children = snippets;
+                this._mapInstance.instance.setLegendConfig(structure);
+            }
+        }
+    }
+
+        /**
+     * Get a LegendItem or LegendGroup by id
+     * @override
+     * @function getById
+     * @param id
+     */
+    getById(id: string): LegendItem | LegendGroup | undefined {
+        for (let item of this.elements) {
+            if (item.id === id) {
+                return item;
+            } else {
+                if (item instanceof LegendGroup) {
+                    let match = item.getById(id);
+                    if (match) {
+                        return match;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates a group's or item's position in the legend
+     * @function updateLayerPosition
+     * @param item  LegendItem or LegendGroup to change position
+     * @param index  New index to put the item
+     */
+    updateLayerPosition(item: LegendItem | LegendGroup, index: number): void {
+        if (!this._reorderable) { // Use a constant
+        // Needs to be done this way to invoke the legendBlocks setter to apply the changes instantly
+            let tempLegendBlocks = this._mapInstance.legendBlocks;
+            let entries = tempLegendBlocks.entries;
+            const itemIndex = entries.findIndex((entry: any) => entry.blockConfig.layerId === item);
+            if (index >= 0 && index < entries.length && itemIndex >= 0) {
+                entries.splice(index, 0, entries.splice(itemIndex, 1)[0]);
+                this._mapInstance.legendBlocks = tempLegendBlocks;
+            }
+        }
+    }
 }
 
-export class SimpleLegend {
-
+export class SimpleLegend extends BaseLegend {
+    // TODO
 }
 
 export class LegendItem {
@@ -328,6 +510,28 @@ export class LegendGroup {
         return this._opacityChanged.asObservable();
     }
 
+            /**
+     * Get a LegendItem or LegendGroup by id
+     * @override
+     * @function getById
+     * @param id
+     */
+    getById(id: string): LegendItem | LegendGroup | undefined {
+        for (let item of this.children) {
+            if (item.id === id) {
+                return item;
+            } else {
+                if (item instanceof LegendGroup) {
+                    let match = item.getById(id);
+                    if (match) {
+                        return match;
+                    }
+                }
+            }
+        }
+        return undefined;
+    }
+
     /**
      * Toggles group to reveal/hide children (if applicable).
      */
@@ -407,4 +611,22 @@ enum AvailableControls {
     Settings = 'settings',
     Data = 'data',
     Symbology = 'symbology'
+}
+
+interface LegendStructure {
+    type: string;
+    JSON: LegendJSON;
+}
+
+interface LegendJSON {
+    type: string;
+    root: EntryGroupJSON;
+}
+
+interface EntryGroupJSON {
+    name: string;
+    expanded?: boolean;
+    children: Array<JSON>;
+    controls?: Array<string>;
+    disabledControls?: Array<string>;
 }
