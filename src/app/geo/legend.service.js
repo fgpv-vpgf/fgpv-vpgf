@@ -252,11 +252,9 @@ function legendServiceFactory(
         if (!importedLegendBlock.hidden) {
             if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
                 let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
-                console.log(legendGroup)
                 _addElementToApiLegend(legendGroup);
             } else { // it's a collapsed dynamic layer or a node/infoSection
                 let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
-                console.log(legendItem);
                 _addElementToApiLegend(legendItem)
             }
         }
@@ -594,13 +592,24 @@ function legendServiceFactory(
              * @param {Object} item a tree item in the form of { layerEntry: <Number>, childs: [<Object>], proxyWrapper: { proxy: <Proxy>, layerConfig: <LayerNode> } }, `childs` and `proxyWrapper` are mutually exclusive
              * @param {LegendBlock.GROUP} parentLegendGroup parent LegendGroup block when the newly created child will be added
              */
+            // eslint-disable-next-line max-statements
             function _addChildBlock(item, parentLegendGroup) {
-                let legendBlock;
+                let legendBlock, apiLegendElement;
 
                 if (item.childs) {
                     const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
                     legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
+
+                    if (!legendBlock.hidden) {
+                        if (!legendBlock.collapsed) {
+                            apiLegendElement = new LegendGroup(configService.getSync.map, legendBlock);
+                        } else {
+                            apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
+                        }
+
+                        _addChildItemToAPI(apiLegendElement);
+                    }
 
                     item.childs.forEach(child => _addChildBlock(child, legendBlock));
                 } else {
@@ -612,9 +621,46 @@ function legendServiceFactory(
                     legendBlock.filter =
                         item.proxyWrapper.layerConfig.initialFilteredQuery &&
                         item.proxyWrapper.layerConfig.initialFilteredQuery !== '';
+
+                    if (!legendBlock.hidden) {
+                        apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
+                        _addChildItemToAPI(apiLegendElement);
+                    }
                 }
 
                 parentLegendGroup.addEntry(legendBlock);
+
+                function _addChildItemToAPI(apiLegendElement) {
+                    let parentElement  = mApi.ui.configLegend.getById(parentLegendGroup.id);
+                    if (parentElement) {
+                        if (parentElement.children) {
+                            apiLegendElement.visibilityChanged.subscribe(() => {
+                                const oldVisibility = parentElement.visibility;
+                                if (oldVisibility !== parentElement._legendBlock.visibility) {
+                                    parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
+                                }
+                            });
+                            apiLegendElement.opacityChanged.subscribe(() => {
+                                const oldOpacity = parentElement.opacity;
+                                if (oldOpacity !== parentElement._legendBlock.opacity) {
+                                    parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
+                                }
+                            });
+                            apiLegendElement.queryableChanged.subscribe(() => {
+                                const oldQueryable = parentElement.queryable;
+                                if (oldQueryable !== parentElement._legendBlock.query) {
+                                    parentElement._queryableChanged.next(parentElement._legendBlock.query);
+                                }
+                            });
+
+                            _updateLegendElementSettings(apiLegendElement);
+                            parentElement._children.push(apiLegendElement);
+                        } else if (parentLegendGroup.collapsed) {
+                            _removeElementFromApiLegend(parentElement);
+                            _addElementToApiLegend(apiLegendElement);
+                        }
+                    }
+                }
             }
         }
 
@@ -1057,12 +1103,53 @@ function legendServiceFactory(
      */
     function _addElementToApiLegend(legendElement) {
         if (mApi) {
+            _updateLegendElementSettings(legendElement);
             mApi.ui.configLegend.elements.push(legendElement);
             mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
             // mapApi.ui.configLegend._itemAdded.next(legendElement);
         } else {
             elementsForApi.push(legendElement);
         }
+    }
 
+    /**
+     * Update the API elements opacity and visibility after the proxy promise has resolved
+     *
+     * @function _updateLegendElementSettings
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be have its settings updated
+     */
+    function _updateLegendElementSettings(legendElement) {
+        let wrapper;
+        if (legendElement._legendBlock.proxyWrapper) {
+            wrapper = legendElement._legendBlock.proxyWrapper;
+        } else if (legendElement._legendBlock._rootProxyWrapper) {
+            wrapper = legendElement._legendBlock._rootProxyWrapper;
+        }
+
+        if (wrapper) {
+            const initialSettings = wrapper.layerConfig.state;
+            wrapper.proxyPromise.then(() => {
+                legendElement.visibility = initialSettings.visibility;
+                legendElement.opacity = initialSettings.opacity;
+                legendElement.queryable = initialSettings.query;
+            });
+        }
+    }
+
+    /**
+     * Remove an existing element from the list of elements for the map legend
+     *
+     * @function _removeElementFromApiLegend
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be removed from map legend
+     */
+    function _removeElementFromApiLegend(legendElement) {
+        // this will only remove if the element is at the root of ConfigLegend, not children of groups. need to fix that.
+        let index = mApi.ui.configLegend.elements.indexOf(legendElement);
+        if (index !== -1) {
+            mApi.ui.configLegend.elements.splice(index);
+            // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+        }
     }
 }

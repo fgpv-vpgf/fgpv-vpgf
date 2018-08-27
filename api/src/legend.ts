@@ -168,7 +168,7 @@ export class ConfigLegend extends BaseLegend {
         }
     }
 
-        /**
+    /**
      * Get a LegendItem or LegendGroup by id
      * @override
      * @function getById
@@ -245,6 +245,10 @@ export class LegendItem {
     _visibility: boolean;
     _visibilityChanged: Subject<boolean>;
 
+    /** @ignore */
+    _queryable: boolean;
+    _queryableChanged: Subject<boolean>;
+
     /**@ignore*/
     _type: string;
 
@@ -258,10 +262,15 @@ export class LegendItem {
      */
     constructor(mapInstance: any, itemBlock: any) {
         this._mapInstance = mapInstance;
+
         this._visibilityChanged = new Subject();
         this._opacityChanged = new Subject();
+        this._queryableChanged = new Subject();
+
         this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
         this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
+        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
+
         this._initSettings(itemBlock);
     }
 
@@ -279,7 +288,7 @@ export class LegendItem {
      */
     set visibility(visibility: boolean | undefined) {
         if (typeof visibility !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Visibility)) {
-            if (this._legendBlock.visibility !== visibility) {
+            if (this._visibility !== visibility) {
                 this._visibility = visibility;
                 this._legendBlock.visibility = visibility;
                 this._visibilityChanged.next(visibility);
@@ -309,7 +318,7 @@ export class LegendItem {
      */
     set opacity(opacity: number | undefined) {
         if (typeof opacity !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
-            if (this._legendBlock.opacity !== opacity) {
+            if (this._opacity !== opacity) {
                 this._opacity = opacity;
                 this._legendBlock.opacity = opacity;
                 this._opacityChanged.next(opacity);
@@ -323,6 +332,36 @@ export class LegendItem {
      */
     get opacityChanged(): Observable<number> {
         return this._opacityChanged.asObservable();
+    }
+
+    /** Gets queryable value of LegendItems that are of type legendNode.
+     * @return {boolean} - true if the item is queryable, false otherwise
+    */
+    get queryable(): boolean | undefined {
+        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Query)) {
+            return this._queryable;
+        }
+    }
+
+    /** Sets query value of LegendItems that are of type legendNode
+     * @param {boolean} queryable - true if item can be queried, false otherwise. undefined has no effect.
+     */
+    set queryable(queryable: boolean | undefined) {
+        if (typeof queryable !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Query)) {
+            if (this._queryable !== queryable) {
+                this._queryable = queryable;
+                this._legendBlock.query = queryable;
+                this._queryableChanged.next(queryable);
+            }
+        }
+    }
+
+    /**
+     * Emits whenever the item queryable value is changed.
+     * @event queryableChanged
+     */
+    get queryableChanged(): Observable<boolean> {
+        return this._queryableChanged.asObservable();
     }
 
     /** Expand/collapses symbology stack. */
@@ -410,6 +449,7 @@ export class LegendItem {
         if (itemBlock.blockConfig.entryType === LegendTypes.Node) {
             this._visibility = itemBlock.visibility;
             this._opacity = itemBlock.opacity;
+            this._queryable = itemBlock.query;
             this._availableControls = itemBlock.availableControls;
         }
     }
@@ -438,20 +478,48 @@ export class LegendGroup {
     _opacityChanged: Subject<number>;
 
     /** @ignore */
+    _queryable: boolean;
+    _queryableChanged: Subject<boolean>;
+
+    /** @ignore */
     _visibility: boolean;
     _visibilityChanged: Subject<boolean>;
 
     /** Sets the legend groups viewer map instance and legend block instance. */
-    constructor(mapInstance: any, groupBlock: any) {
+    constructor(mapInstance: any, legendBlock: any) {
         this._mapInstance = mapInstance;
 
         this._visibilityChanged = new Subject();
         this._opacityChanged = new Subject();
+        this._queryableChanged = new Subject();
 
         this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
         this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
+        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
 
-        this._initSettings(groupBlock);
+        this._initSettings(legendBlock);
+
+        this.children.forEach(child => {
+            child.visibilityChanged.subscribe(() => {
+                const oldVisibility: boolean = this.visibility;
+                if (oldVisibility !== this._legendBlock.visibility) {
+                    this._visibilityChanged.next(this._legendBlock.visibility);
+                }
+            });
+            child.opacityChanged.subscribe(() => {
+                const oldOpacity: number = this.opacity;
+                if (oldOpacity !== this._legendBlock.opacity) {
+                    this._opacityChanged.next(this._legendBlock.opacity);
+                }
+            });
+            child.queryableChanged.subscribe(() => {
+                const oldQueryable: boolean = this.queryable;
+                if (oldQueryable !== this._legendBlock.query) {
+                    this._queryableChanged.next(this._legendBlock.query);
+                }
+            });
+        });
+
     }
 
     /** Returns the group ID. */
@@ -482,7 +550,7 @@ export class LegendGroup {
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
         if (this._availableControls.includes(AvailableControls.Visibility)) {
-            if (this._legendBlock.visibility !== visibility) {
+            if (this._visibility !== visibility) {
                 this._visibility = visibility;
                 this._legendBlock.visibility = visibility;
                 this._visibilityChanged.next(visibility);
@@ -498,7 +566,11 @@ export class LegendGroup {
         return this._visibilityChanged.asObservable();
     }
 
-    /** Returns the opacity of the group on the map from 0 (hidden) to 100 (fully visible). */
+    /**
+     * Returns the opacity of the group on the map from 0 (hidden) to 100 (fully visible).
+     * NOTE: If the opacity is 0.5, it may represent different opacity values for the children inside the group.
+     * It does not necessarily mean that all the elements in the group have opacity set to 0.5.
+    */
     get opacity(): number {
         return this._opacity;
     }
@@ -506,7 +578,7 @@ export class LegendGroup {
     /** Sets the opacity value for the group. */
     set opacity(opacity: number) {
         if (this._availableControls.includes(AvailableControls.Opacity)) {
-            if (this._legendBlock.opacity !== opacity) {
+            if (this._opacity !== opacity) {
                 this._opacity = opacity;
                 this._legendBlock.opacity = opacity;
                 this._opacityChanged.next(opacity);
@@ -522,7 +594,31 @@ export class LegendGroup {
         return this._opacityChanged.asObservable();
     }
 
-            /**
+    /** Returns true if the group is queryable, false otherwise. */
+    get queryable(): boolean {
+        return this._queryable;
+    }
+
+    /** Sets the query value for the group */
+    set queryable(queryable: boolean) {
+        if (this._availableControls.includes(AvailableControls.Query)) {
+            if (this._queryable !== queryable) {
+                this._queryable = queryable;
+                this._legendBlock.query = queryable;
+                this._queryableChanged.next(queryable);
+            }
+        }
+    }
+
+    /**
+     * Emits whenever the group queryable value is changed.
+     * @event queryableChanged
+     */
+    get queryableChanged(): Observable<boolean> {
+        return this._queryableChanged.asObservable();
+    }
+
+    /**
      * Get a LegendItem or LegendGroup by id
      * @override
      * @function getById
@@ -581,8 +677,8 @@ export class LegendGroup {
     }
 
     /** Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded. */
-    _initSettings(groupBlock: any): void {
-        groupBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
+    _initSettings(legendBlock: any): void {
+        legendBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
             if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
                 this._children.push(new LegendGroup(this._mapInstance, entry));
             } else {    // it's a collapsed dynamic layer or a node/infoSection
@@ -590,15 +686,16 @@ export class LegendGroup {
             }
         });
 
-        this._legendBlock = groupBlock;
-        this._type = groupBlock.blockConfig.entryType;
-        this._availableControls = groupBlock.availableControls
+        this._legendBlock = legendBlock;
+        this._type = legendBlock.blockConfig.entryType;
+        this._availableControls = legendBlock.availableControls
 
-        this._id = groupBlock.id;
+        this._id = legendBlock.id;
 
-        this._name = groupBlock.name;
-        this._visibility = groupBlock.visibility;
-        this._opacity = groupBlock.opacity;
+        this._name = legendBlock.name;
+        this._visibility = legendBlock.visibility;
+        this._opacity = legendBlock.opacity;
+        this._queryable = legendBlock.query;
     }
 }
 
