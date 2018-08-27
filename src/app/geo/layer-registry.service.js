@@ -119,6 +119,10 @@ function layerRegistryFactory(
             configService.getSync.map.instance.removeLayer(layerRecord._layer);
             _removeLayerFromApiMap(layerRecord);
         };
+
+        configService.getSync.map.instance.synchronizeLayerOrder = () => {
+            synchronizeLayerOrder();
+        }
     });
 
     /**

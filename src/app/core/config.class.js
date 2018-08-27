@@ -1621,7 +1621,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
             if (mApi) {
-                mApi.legendStructure = this;
                 mApi.ui.configLegend._configSnippets = this._root.children;
             }
         }

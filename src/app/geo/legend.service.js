@@ -77,7 +77,6 @@ function legendServiceFactory(
             const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
             service.constructLegend(layers, newLegend);
             configService.getSync.map._legend = newLegend;
-            mApi.legendStructure = newLegend;
             $rootScope.$applyAsync();
         };
     });
@@ -424,8 +423,6 @@ function legendServiceFactory(
             _boundingBoxRemoval(legendBlock);
 
             // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
-            mApi.legendStructure = configService.getSync.map.legend;
-            mApi.ui.configLegend._configSnippets = mApi.legendStructure.root.children;
         }
 
         /**
@@ -1061,6 +1058,7 @@ function legendServiceFactory(
     function _addElementToApiLegend(legendElement) {
         if (mApi) {
             mApi.ui.configLegend.elements.push(legendElement);
+            mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
             // mapApi.ui.configLegend._itemAdded.next(legendElement);
         } else {
             elementsForApi.push(legendElement);

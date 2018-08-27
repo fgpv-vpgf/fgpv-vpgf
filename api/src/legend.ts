@@ -135,6 +135,7 @@ export class ConfigLegend extends BaseLegend {
     _type: string;
     _reorderable: boolean;
     _legendStructure: LegendStructure;
+    _sortGroup: Array<Array<LegendItem | LegendGroup>>;
 
     constructor(mapInstance: any, legendStructure: LegendStructure) {
         super(mapInstance, legendStructure.JSON.root.children);
@@ -142,6 +143,7 @@ export class ConfigLegend extends BaseLegend {
         this._type = legendStructure.type;
         this._reorderable = mapInstance.legend._reorderable;
         this._legendStructure = legendStructure;
+        this._sortGroup = [[], []];
     }
 
     /**
@@ -194,14 +196,24 @@ export class ConfigLegend extends BaseLegend {
      * @param index  New index to put the item
      */
     updateLayerPosition(item: LegendItem | LegendGroup, index: number): void {
-        if (!this._reorderable) { // Use a constant
-        // Needs to be done this way to invoke the legendBlocks setter to apply the changes instantly
+        if (this._reorderable) {
+            // Needs to be done this way to invoke the legendBlocks setter to apply the changes instantly
+            let groupBorder = this._sortGroup[0].length;
             let tempLegendBlocks = this._mapInstance.legendBlocks;
             let entries = tempLegendBlocks.entries;
-            const itemIndex = entries.findIndex((entry: any) => entry.blockConfig.layerId === item);
-            if (index >= 0 && index < entries.length && itemIndex >= 0) {
-                entries.splice(index, 0, entries.splice(itemIndex, 1)[0]);
+            let entriesIndex = index;
+            if (item._legendBlock.sortGroup === 0 && index >= groupBorder) {
+                entriesIndex = entries.length + 1;
+            } else if (item._legendBlock.sortGroup === 1) {
+                entriesIndex = groupBorder + index
+            }
+            const itemIndex = entries.findIndex((entry: any) => entry.id === item.id);
+            if (entriesIndex >= 0 && entriesIndex < entries.length && itemIndex >= 0) {
+                entries.splice(entriesIndex, 0, entries.splice(itemIndex, 1)[0]);
+                let group = this._sortGroup[item._legendBlock.sortGroup];
+                group.splice(index, 0, group.splice(index, 1)[0]);
                 this._mapInstance.legendBlocks = tempLegendBlocks;
+                this._mapInstance.instance.synchronizeLayerOrder();
             }
         }
     }
@@ -407,7 +419,7 @@ export class LegendGroup {
     /** @ignore */
     _mapInstance: any;
     /** @ignore */
-    _groupBlock: any;
+    _legendBlock: any;
 
     /** @ignore */
     _children: Array<LegendGroup|LegendItem> = [];
@@ -470,9 +482,9 @@ export class LegendGroup {
     /** Sets the visibility to visible/invisible. */
     set visibility(visibility: boolean) {
         if (this._availableControls.includes(AvailableControls.Visibility)) {
-            if (this._groupBlock.visibility !== visibility) {
+            if (this._legendBlock.visibility !== visibility) {
                 this._visibility = visibility;
-                this._groupBlock.visibility = visibility;
+                this._legendBlock.visibility = visibility;
                 this._visibilityChanged.next(visibility);
             }
         }
@@ -494,9 +506,9 @@ export class LegendGroup {
     /** Sets the opacity value for the group. */
     set opacity(opacity: number) {
         if (this._availableControls.includes(AvailableControls.Opacity)) {
-            if (this._groupBlock.opacity !== opacity) {
+            if (this._legendBlock.opacity !== opacity) {
                 this._opacity = opacity;
-                this._groupBlock.opacity = opacity;
+                this._legendBlock.opacity = opacity;
                 this._opacityChanged.next(opacity);
             }
         }
@@ -536,8 +548,8 @@ export class LegendGroup {
      * Toggles group to reveal/hide children (if applicable).
      */
     toggleExpanded(): void {
-        if (typeof this._groupBlock.expanded !== 'undefined') {
-            this._groupBlock.expanded = !this._groupBlock.expanded;
+        if (typeof this._legendBlock.expanded !== 'undefined') {
+            this._legendBlock.expanded = !this._legendBlock.expanded;
         }
     }
 
@@ -546,7 +558,7 @@ export class LegendGroup {
      */
     toggleMetadata(): void {
         if (this._availableControls.includes(AvailableControls.Metadata)) {
-            this._mapInstance.instance.toggleMetadata(this._groupBlock);
+            this._mapInstance.instance.toggleMetadata(this._legendBlock);
         }
     }
 
@@ -555,7 +567,7 @@ export class LegendGroup {
      */
     toggleSettings(): void {
         if (this._availableControls.includes(AvailableControls.Settings)) {
-            this._mapInstance.instance.toggleSettings(this._groupBlock);
+            this._mapInstance.instance.toggleSettings(this._legendBlock);
         }
     }
 
@@ -564,7 +576,7 @@ export class LegendGroup {
      */
     toggleDataTable(): void {
         if (this._availableControls.includes(AvailableControls.Data)) {
-            this._mapInstance.instance.toggleDataTable(this._groupBlock);
+            this._mapInstance.instance.toggleDataTable(this._legendBlock);
         }
     }
 
@@ -578,7 +590,7 @@ export class LegendGroup {
             }
         });
 
-        this._groupBlock = groupBlock;
+        this._legendBlock = groupBlock;
         this._type = groupBlock.blockConfig.entryType;
         this._availableControls = groupBlock.availableControls
 
