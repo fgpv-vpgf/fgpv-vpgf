@@ -82,7 +82,6 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 const apiMap = new Map($rootElement);
                 apiMap.fgpMap = mapInstance;
                 const mapConfig = configService.getSync.map;
-                apiMap.legendStructure = mapConfig.legend;
                 apiMap.ui.configLegend = new ConfigLegend(mapConfig, mapConfig.legend);
                 appInfo.mapi = apiMap;
 
