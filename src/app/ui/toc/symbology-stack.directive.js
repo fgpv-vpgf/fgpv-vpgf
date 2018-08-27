@@ -355,9 +355,11 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 Math.max(
                     ...ref.symbolItems.map(symbolItem => {
                         const svgImage = symbolItem.image.find('svg')[0];
+                        const texLRPadding = (parseInt(symbolItem.label.css('padding-left').slice(0, -2))
+                                                + parseInt(symbolItem.label.css('padding-right').slice(0, -2)));
                         return Math.max(
                             svgImage ? svgImage.viewBox.baseVal.width : 0,
-                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto')
+                            getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto') + texLRPadding
                         );
                     }
 
@@ -564,12 +566,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // extremely convoluted math to calculate an aproximation of the label's height
             // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
             let labelHeight = 0;
+            let lineHeight = 0;
+            let padding = 0;
             const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
             if (textWidth > 0) {
-                const lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
-                const padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
+                lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
+                padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
                 const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
-                labelHeight = Math.ceil(textWidth / (itemWidth - sidePadding)) * lineHeight + padding;
+                labelHeight = Math.floor(textWidth / (0.9 * (ref.maxItemWidth - sidePadding)) + 1) * lineHeight + padding;  // divide by 0.9 due to display rounding
             }
 
             // animate symbology container's size
