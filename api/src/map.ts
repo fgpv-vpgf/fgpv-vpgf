@@ -298,7 +298,6 @@ export interface Map {
     uiObj: UI;
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
-    legendStructure: LegendStructure;
     panelRegistryAttr: Panel[];
     $: any;
 }
@@ -322,20 +321,3 @@ function initObservables(this: Map) {
     this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
 }
 
-interface LegendStructure {
-    type: string;
-    JSON: LegendJSON;
-}
-
-interface LegendJSON {
-    type: string;
-    root: EntryGroupJSON;
-}
-
-interface EntryGroupJSON {
-    name: string;
-    expanded?: boolean;
-    children: Array<JSON>;
-    controls?: Array<string>;
-    disabledControls?: Array<string>;
-}
