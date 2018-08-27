@@ -81,7 +81,6 @@ function LegendBlockFactory(
                 this.visibility = this._layerConfig.state.visibility;
                 this.query = this._layerConfig.state.query;
 
-                // need to update legend visibility and opacity as well
                 this._updateApiLayerVisibility(this);
                 this._updateApiLayerOpacity(this);
                 this._updateApiLayerQueryable(this);
@@ -179,8 +178,7 @@ function LegendBlockFactory(
             return this._proxy.queryUrl;
         }
         get query() {
-            this._proxyCheck();
-            return this._proxy.query;
+            return this._proxy ? this._proxy.query : this._layerConfig.state.query;
         }
 
         get snapshot() {
@@ -829,6 +827,8 @@ function LegendBlockFactory(
 
             this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.visibility = value));
 
+            updateLegendElementVisibility(this);
+
             // hide bounding box when the layer goes invisible
             if (!value) {
                 this.boundingBox = false;
@@ -844,6 +844,8 @@ function LegendBlockFactory(
             }
 
             this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.opacity = value));
+
+            updateLegendElementOpacity(this);
         }
 
         // since query is applied only on the main proxy wrapper, we don't need to do an extra check if this control is available; it will be checked in the proxy wrapper
@@ -852,6 +854,8 @@ function LegendBlockFactory(
         }
         set query(value) {
             this.proxyWrapper.query = value;
+
+            updateLegendElementQueryable(this);
         }
 
         /**
@@ -1294,6 +1298,8 @@ function LegendBlockFactory(
 
             this._activeEntries.forEach(entry => (entry.visibility = value));
 
+            updateLegendElementVisibility(this);
+
             return this;
         }
 
@@ -1313,6 +1319,8 @@ function LegendBlockFactory(
             }
 
             this._activeEntries.forEach(entry => (entry.query = value));
+
+            updateLegendElementQueryable(this);
 
             return this;
         }
@@ -1356,6 +1364,8 @@ function LegendBlockFactory(
             }
 
             this._activeEntries.forEach(entry => (entry.opacity = value));
+
+            updateLegendElementOpacity(this);
 
             return this;
         }
@@ -1502,6 +1512,8 @@ function LegendBlockFactory(
                 (this._selectedEntry || this._activeEntries[0]).visibility = true;
             }
 
+            updateLegendElementVisibility(this);
+
             return this;
         }
 
@@ -1573,6 +1585,54 @@ function LegendBlockFactory(
     };
 
     return service;
+
+    /**
+     * @function updateLegendElementVisibility
+     * @private
+     * @param {LegendBlock} block legend block where visibility is being updated
+     */
+    function updateLegendElementVisibility(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.visibility !== block.visibility) {
+                legendElement._visibilityChanged.next(block.visibility);
+            }
+        }
+    }
+
+    /**
+     * @function updateLegendElementOpacity
+     * @private
+     * @param {LegendBlock} block legend block where opacity is being updated
+     */
+    function updateLegendElementOpacity(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.opacity !== block.opacity) {
+                legendElement._opacityChanged.next(block.opacity);
+            }
+        }
+    }
+
+    /**
+     * @function updateLegendElementQueryable
+     * @private
+     * @param {LegendBlock} block legend block where queryable value is being updated
+     */
+    function updateLegendElementQueryable(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.queryable !== block.query) {
+                legendElement._queryableChanged.next(block.query);
+            }
+        }
+    }
 
     /**
      * Checks if the specified controls is visible in the UI.
