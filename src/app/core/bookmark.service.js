@@ -602,7 +602,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {String}        The encoded string
      */
     function encode64(string) {
-        return btoa(string).replace(/\=/g, '').replace(/\//g, '_').replace(/\+/g, '-');
+        return btoa(encodeURIComponent(string)).replace(/\=/g, '').replace(/\//g, '_').replace(/\+/g, '-');
     }
 
     /**
@@ -614,6 +614,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {String}        The decoded string
      */
     function decode64(string) {
-        return atob(string.replace(/_/g, '/').replace(/-/g, '+'));
+        return decodeURIComponent(atob(string.replace(/_/g, '/').replace(/-/g, '+')));
     }
 }
