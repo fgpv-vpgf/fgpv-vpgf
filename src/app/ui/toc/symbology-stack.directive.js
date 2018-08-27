@@ -347,6 +347,24 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     [[], null]
                 );
 
+            let symbologies = element.find(RV_SYMBOLOGY_ITEM_CLASS).toArray();
+            //if there are more than one symbologies in a stack without a cover icon, fan out the first and last images
+            if (symbologies.length > 1 && !(symbologies[0].classList.contains('rv-cover-icon'))) {
+                symbologies[0].style.top = "-1px";
+                symbologies[0].style.left = "-1px";
+                symbologies.slice(-1)[0].style.top = "3px";
+                symbologies.slice(-1)[0].style.left = "3px";
+                //if there are more than two symbologies, fan out the second last image and make the rest invisible
+                if (symbologies.length > 2) {
+                    symbologies.slice(-2)[0].style.top = "1px";
+                    symbologies.slice(-2)[0].style.left = "1px";
+                    symbologies.slice(1, -2).forEach(symbology => {
+                        symbology.style.opacity = "0";
+                    });
+
+                }
+            }
+
             ref.trigger = element.find(RV_SYMBOLOGY_ITEM_TRIGGER);
 
             // calculate maximum width of a symbology item based on image, label size and the main panel width
@@ -356,7 +374,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     ...ref.symbolItems.map(symbolItem => {
                         const svgImage = symbolItem.image.find('svg')[0];
                         const texLRPadding = (parseInt(symbolItem.label.css('padding-left').slice(0, -2))
-                                                + parseInt(symbolItem.label.css('padding-right').slice(0, -2)));
+                            + parseInt(symbolItem.label.css('padding-right').slice(0, -2)));
                         return Math.max(
                             svgImage ? svgImage.viewBox.baseVal.width : 0,
                             getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto') + texLRPadding
