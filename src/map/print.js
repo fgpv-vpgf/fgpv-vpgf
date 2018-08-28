@@ -12,28 +12,28 @@ const XML_ATTRIBUTES = {
 };
 
 /**
-  * The `mapPrint` module provides map print and export image related functions.
-  *
-  * This module exports an object with the following functions
-  * - `printMap`
-  *
-  * NOTE: unit tests might be difficult to implement as DOM is required...
-  */
+ * The `mapPrint` module provides map print and export image related functions.
+ *
+ * This module exports an object with the following functions
+ * - `printMap`
+ *
+ * NOTE: unit tests might be difficult to implement as DOM is required...
+ */
 
 /**
-* Generate the image from the esri print task
-*
-* @param {Object} esriBundle bundle of API classes
-* @param {Object} map esri map object
-* @param {Object} options options for the print task
-*                           url - for the esri geometry server
-*                           format - output format
-*                           width - target image height if different from default
-*                           height - target image width if different from default
-* @return {Promise} resolving when the print task created the image
-*                           resolve with a "response: { url: value }" where url is the path
-*                           for the print task export image
-*/
+ * Generate the image from the esri print task
+ *
+ * @param {Object} esriBundle bundle of API classes
+ * @param {Object} map esri map object
+ * @param {Object} options options for the print task
+ *                           url - for the esri geometry server
+ *                           format - output format
+ *                           width - target image height if different from default
+ *                           height - target image width if different from default
+ * @return {Promise} resolving when the print task created the image
+ *                           resolve with a "response: { url: value }" where url is the path
+ *                           for the print task export image
+ */
 function generateServerImage(esriBundle, map, options) {
     // create esri print object with url to print server
     const printTask = esriBundle.PrintTask(options.url, { async: true });
@@ -79,11 +79,10 @@ function generateServerImage(esriBundle, map, options) {
 
         // TODO: catch esriJobFailed. it does not trigger the complete or the error event. Need a way to catch it!
         // execute the print task
-        printTask.execute(printParams,
-            response =>
-                resolve(shared.convertImageToCanvas(response.url)),
-            error =>
-                reject(error)
+        printTask.execute(
+            printParams,
+            response => resolve(shared.convertImageToCanvas(response.url)),
+            error => reject(error)
         );
     });
 
@@ -94,11 +93,11 @@ function generateServerImage(esriBundle, map, options) {
 }
 
 /**
-* Set svg-based layer visibility to false to avoid CORS error
-*
-* @param {Object} map esri map object
-* @return {Array} layer array of layers where visibility is true
-*/
+ * Set svg-based layer visibility to false to avoid CORS error
+ *
+ * @param {Object} map esri map object
+ * @return {Array} layer array of layers where visibility is true
+ */
 function hideLayers(map) {
     return map.graphicsLayerIds
         .map(layerId => map.getLayer(layerId))
@@ -110,41 +109,43 @@ function hideLayers(map) {
 }
 
 /**
-* Set user added layer visibility to true for those whoe where visible
-*
-* @param {Array} layers array of graphic layers to set visibility to true
-*/
+ * Set user added layer visibility to true for those whoe where visible
+ *
+ * @param {Array} layers array of graphic layers to set visibility to true
+ */
 function showLayers(layers) {
-    layers.forEach((layer) => layer.setVisibility(true));
+    layers.forEach(layer => layer.setVisibility(true));
 }
 
 /**
-* Create a canvas from the user added layers (svg tag)
-*
-* @param {Object} map esri map object
-* @param {Object} options [optional = null] { width, height } values; needed to get canvas of a size different from default
-*                           width {Number}
-*                           height {Number}
-* @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
-* @return {Promise} resolving when the canvas have been created
-*                           resolve with a canvas element with user added layer on it
-*/
+ * Create a canvas from the user added layers (svg tag)
+ *
+ * @param {Object} map esri map object
+ * @param {Object} options [optional = null] { width, height } values; needed to get canvas of a size different from default
+ *                           width {Number}
+ *                           height {Number}
+ * @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
+ * @return {Promise} resolving when the canvas have been created
+ *                           resolve with a canvas element with user added layer on it
+ */
 function generateLocalCanvas(map, options = null, canvas = null) {
-    canvas = canvas || window.document.createElement('canvas');  // create canvas element
+    canvas = canvas || window.document.createElement('canvas'); // create canvas element
 
     // find esri map's svg node
     // check if xmlns prefixes are set - they aren't; add them
     // without correct prefixes, Firefox and IE refuse to render svg onto the canvas; Chrome works;
     // related issues: fgpv-vpgf/fgpv-vpgf#1324, fgpv-vpgf/fgpv-vpgf#1307, fgpv-vpgf/fgpv-vpgf#1306
     const svgNode = document.getElementById(`esri\.Map_${map.id.split('_')[1]}_gc`);
-    if (!svgNode.getAttribute('xmlns')) {
-        Object.entries(XML_ATTRIBUTES).forEach(([key, value]) =>
-            svgNode.setAttribute(key, value));
+    // Clone the svg node (and all its children)
+    // this allows us to mess with the width, height, viewBox, etc. without changing the visible layer on the map
+    const svgNodeClone = svgNode.cloneNode(true);
+    if (!svgNodeClone.getAttribute('xmlns')) {
+        Object.entries(XML_ATTRIBUTES).forEach(([key, value]) => svgNodeClone.setAttribute(key, value));
     }
 
     let originalOptions;
     if (options) {
-        originalOptions = resizeSVGElement(svgNode, options);
+        originalOptions = resizeSVGElement(svgNodeClone, options);
     }
 
     const generationPromise = new Promise((resolve, reject) => {
@@ -154,13 +155,13 @@ function generateLocalCanvas(map, options = null, canvas = null) {
         // wrapping in try/catch since canvg has NO error handling; not sure what errors this can catch though
         try {
             // convert svg to text (use map id to select the svg container), then render svgxml back to canvas
-            canvg(canvas, svgNode.outerHTML, {
+            canvg(canvas, svgNodeClone.outerHTML, {
                 useCORS: true,
                 ignoreAnimation: true,
                 ignoreMouse: true,
                 renderCallback: () => {
                     if (options) {
-                        resizeSVGElement(svgNode, originalOptions.originalSize, originalOptions.originalViewbox);
+                        resizeSVGElement(svgNodeClone, originalOptions.originalSize, originalOptions.originalViewbox);
                     }
 
                     resolve(canvas);
@@ -197,7 +198,6 @@ function generateLocalCanvas(map, options = null, canvas = null) {
      *                              height {Number}
      */
     function resizeSVGElement(element, targetSize, targetViewbox = null) {
-
         const originalSize = {
             width: element.width.baseVal.value,
             height: element.height.baseVal.value
@@ -207,8 +207,9 @@ function generateLocalCanvas(map, options = null, canvas = null) {
         // if the viewbox is not defined, the viewbox is assumed to have the same dimensions as the svg element
         // getAttribute('viewBox') returns a string in the form '{minx} {miny} {width} {height}'
         // setAttribute('viewBox') accepts a string in the same form
-        const [ovMinX, ovMinY, ovWidth, ovHeight] =
-            (element.getAttribute('viewBox') || `0 0 ${originalSize.width} ${originalSize.height}`).split(' ');
+        const [ovMinX, ovMinY, ovWidth, ovHeight] = (
+            element.getAttribute('viewBox') || `0 0 ${originalSize.width} ${originalSize.height}`
+        ).split(' ');
 
         const originalViewbox = {
             minX: ovMinX,
@@ -222,12 +223,15 @@ function generateLocalCanvas(map, options = null, canvas = null) {
         element.setAttribute('height', targetSize.height);
 
         // set the viewbox width/height of the svg element to the target values; or the values of the original viewbox (if the viewbox wasn't defined before, it is now)
-        element.setAttribute('viewBox', [
-            (targetViewbox || originalViewbox).minX,
-            (targetViewbox || originalViewbox).minY,
-            (targetViewbox || originalViewbox).width,
-            (targetViewbox || originalViewbox).height
-        ].join(' '));
+        element.setAttribute(
+            'viewBox',
+            [
+                (targetViewbox || originalViewbox).minX,
+                (targetViewbox || originalViewbox).minY,
+                (targetViewbox || originalViewbox).width,
+                (targetViewbox || originalViewbox).height
+            ].join(' ')
+        );
 
         return {
             originalSize,
@@ -237,7 +241,7 @@ function generateLocalCanvas(map, options = null, canvas = null) {
 }
 
 // Print map related modules
-module.exports = (esriBundle) => {
+module.exports = esriBundle => {
     return {
         printLocal: (map, options) => generateLocalCanvas(map, options),
         printServer: (map, options) => generateServerImage(esriBundle, map, options)
