@@ -65,7 +65,7 @@ function legendServiceFactory(
             }
         };
 
-        configService.getSync.map.instance.setLegendConfig = legendStructure => {
+        configService.getSync.map.instance.setLegendConfig = (legendStructure) => {
             stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
 
             const apiLayers = mApi.layers.allLayers
@@ -76,6 +76,7 @@ function legendServiceFactory(
             const layers = apiLayers.concat(viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0));
             const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
             service.constructLegend(layers, newLegend);
+
             configService.getSync.map._legend = newLegend;
             $rootScope.$applyAsync();
         };
@@ -141,13 +142,18 @@ function legendServiceFactory(
             const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
             mapConfig.legendBlocks = legendBlocks;
 
+            if (mApi) {
+                mApi.ui.configLegend._children = [];
+                mApi.ui.configLegend._sortGroup = [[], []];
+            }
+
             legendBlocks.entries.filter(entry => !entry.hidden).forEach(entry => {
                 // after ConfigLegend created, check to see if a LegendGroup/Item already exists
                 // if so, update it (_initSettings) instead of creating a new instance
                 if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
                     let legendGroup = new LegendGroup(configService.getSync.map, entry);
                     _addElementToApiLegend(legendGroup);
-                } else { // it's a collapsed dynamic layer or a node/infoSection
+                } else {
                     let legendItem = new LegendItem(configService.getSync.map, entry);
                     _addElementToApiLegend(legendItem);
                 }
@@ -253,7 +259,7 @@ function legendServiceFactory(
             if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
                 let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
                 _addElementToApiLegend(legendGroup);
-            } else { // it's a collapsed dynamic layer or a node/infoSection
+            } else {
                 let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
                 _addElementToApiLegend(legendItem)
             }
@@ -313,6 +319,12 @@ function legendServiceFactory(
             legendBlockConfig.controlledIds.forEach(controlledId => reloadBoundLegendBlocks(controlledId));
 
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
+
+            //update the corresponding LegendItem in the Legend API
+            if (!(reloadedLegendBlock instanceof LegendGroup)) {
+                updateApiReloadedBlock(reloadedLegendBlock);
+            }
+
             const index = legendBlockParent.removeEntry(legendBlock);
             const layerRecordPromise = layerRegistry.getLayerRecordPromise(legendBlockConfig.layerId);
 
@@ -496,7 +508,6 @@ function legendServiceFactory(
         };
 
         const legendBlock = TYPE_TO_BLOCK[blockConfig.entryType](blockConfig);
-
         return legendBlock;
 
         /**
@@ -552,6 +563,7 @@ function legendServiceFactory(
                 const tree = _createDynamicChildTree(layerRecord, layerConfig);
                 tree.forEach(item => _addChildBlock(item, legendBlockGroup));
 
+                updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
                 legendBlockGroup.synchronizeControlledEntries();
             });
 
@@ -634,34 +646,31 @@ function legendServiceFactory(
                 parentLegendGroup.addEntry(legendBlock);
 
                 function _addChildItemToAPI(apiLegendElement) {
-                    let parentElement  = mApi.ui.configLegend.getById(parentLegendGroup.id);
-                    if (parentElement) {
-                        if (parentElement.children) {
-                            apiLegendElement.visibilityChanged.subscribe(() => {
-                                const oldVisibility = parentElement.visibility;
-                                if (oldVisibility !== parentElement._legendBlock.visibility) {
-                                    parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
-                                }
-                            });
-                            apiLegendElement.opacityChanged.subscribe(() => {
-                                const oldOpacity = parentElement.opacity;
-                                if (oldOpacity !== parentElement._legendBlock.opacity) {
-                                    parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
-                                }
-                            });
-                            apiLegendElement.queryableChanged.subscribe(() => {
-                                const oldQueryable = parentElement.queryable;
-                                if (oldQueryable !== parentElement._legendBlock.query) {
-                                    parentElement._queryableChanged.next(parentElement._legendBlock.query);
-                                }
-                            });
+                    let parentElement = _getParentById(apiLegendElement.id);
+                    if (parentElement && parentElement.children) {
+                        apiLegendElement.visibilityChanged.subscribe(() => {
+                            const oldVisibility = parentElement.visibility;
+                            if (oldVisibility !== parentElement._legendBlock.visibility) {
+                                parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
+                            }
+                        });
+                        apiLegendElement.opacityChanged.subscribe(() => {
+                            const oldOpacity = parentElement.opacity;
+                            if (oldOpacity !== parentElement._legendBlock.opacity) {
+                                parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
+                            }
+                        });
+                        apiLegendElement.queryableChanged.subscribe(() => {
+                            const oldQueryable = parentElement.queryable;
+                            if (oldQueryable !== parentElement._legendBlock.query) {
+                                parentElement._queryableChanged.next(parentElement._legendBlock.query);
+                            }
+                        });
 
-                            _updateLegendElementSettings(apiLegendElement);
-                            parentElement._children.push(apiLegendElement);
-                        } else if (parentLegendGroup.collapsed) {
-                            _removeElementFromApiLegend(parentElement);
-                            _addElementToApiLegend(apiLegendElement);
-                        }
+                        _updateLegendElementSettings(apiLegendElement);
+                        parentElement._children.push(apiLegendElement);
+                    } else if (parentLegendGroup.collapsed) {
+                        _addElementToApiLegend(apiLegendElement);
                     }
                 }
             }
@@ -1131,8 +1140,10 @@ function legendServiceFactory(
     function _addElementToApiLegend(legendElement) {
         if (mApi) {
             _updateLegendElementSettings(legendElement);
+
+            //push new element into children and sortgroup arrays
             mApi.ui.configLegend.children.push(legendElement);
-            if (typeof legendElement._legendBlock.sortGroup !== 'undefined') {
+            if (mApi.ui.configLegend._sortGroup) {
                 mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
             }
             // mapApi.ui.configLegend._itemAdded.next(legendElement);
@@ -1197,6 +1208,50 @@ function legendServiceFactory(
                 parent.children.splice(index, 1);
                 // mapApi.ui.configLegend._itemRemoved.next(legendElement);
             }
+        }
+    }
+
+    /**
+     * Looks through the Legend API legend to find the proper LegendItem/LegendGroup to reload and reloads it
+     *
+     * @function updateApiReloadedBlock
+     * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
+     * @param {[LegendItem | LegendGroup]} list -the list of existing elements in the LegendAPI
+     */
+    function updateApiReloadedBlock(reloadedBlock, list = mApi.ui.configLegend.children) {
+        if (reloadedBlock.collapsed) {
+            reloadedBlock = reloadedBlock.entries[0];
+        }
+
+        //for first pass, populates all blocks correctly
+        for (let element of list) {
+            //if the element corresponds to the reloadedBlock, init settings with the reloadedBlock
+            if ((element._legendBlock._rootProxyWrapper === reloadedBlock._rootProxyWrapper || element._legendBlock._proxyWrapper === reloadedBlock._rootProxyWrapper) && element._legendBlock.layerRecordId === reloadedBlock.layerRecordId && element._legendBlock.name === reloadedBlock.name) {
+                element._initSettings(reloadedBlock);
+                return;
+            } else if (element.children) {
+                updateApiReloadedBlock(reloadedBlock, element.children);
+            }
+        }
+
+        //for subsequent passes reloads
+        let matchingElements = []
+        for (let element of list) {
+            //if the element corresponds to the reloadedBlock, init settings with the reloadedBlock
+            if (element._legendBlock.layerRecordId === reloadedBlock.layerRecordId && element._legendBlock.name === reloadedBlock.name) {
+                matchingElements.push(element);
+            } else if (element.children) {
+                updateApiReloadedBlock(reloadedBlock, element.children);
+            }
+        }
+
+        //if there are multiple matching elements, pick the one whose index is matching and reload that
+        if (reloadedBlock.parent && matchingElements.length > reloadedBlock.parent.entries.indexOf(reloadedBlock)) {
+            matchingElements[reloadedBlock.parent.entries.indexOf(reloadedBlock)]._initSettings(reloadedBlock);
+        }
+        //otherwise reload the single match found
+        else if (matchingElements.length === 1){
+            matchingElements[0]._initSettings(reloadedBlock);
         }
     }
 }
