@@ -143,9 +143,8 @@ function generateLocalCanvas(map, options = null, canvas = null) {
         Object.entries(XML_ATTRIBUTES).forEach(([key, value]) => svgNodeClone.setAttribute(key, value));
     }
 
-    let originalOptions;
     if (options) {
-        originalOptions = resizeSVGElement(svgNodeClone, options);
+        resizeSVGElement(svgNodeClone, options);
     }
 
     const generationPromise = new Promise((resolve, reject) => {
@@ -160,10 +159,6 @@ function generateLocalCanvas(map, options = null, canvas = null) {
                 ignoreAnimation: true,
                 ignoreMouse: true,
                 renderCallback: () => {
-                    if (options) {
-                        resizeSVGElement(svgNodeClone, originalOptions.originalSize, originalOptions.originalViewbox);
-                    }
-
                     resolve(canvas);
                 }
             });
