@@ -41,6 +41,7 @@ function graphicsService($q) {
             const options = angular.extend(
                 defaultOptions,
                 optionOverrides,
+                {useCORS: false},
                 { renderCallback: () => resolve(canvas) }
             );
 
