@@ -466,7 +466,7 @@ export class LegendGroup {
     _legendBlock: any;
 
     /** @ignore */
-    _children: Array<LegendGroup|LegendItem> = [];
+    _children: Array<LegendGroup | LegendItem> = [];
 
     /** @ignore */
     _id: string;
@@ -492,6 +492,7 @@ export class LegendGroup {
     /** Sets the legend groups viewer map instance and legend block instance. */
     constructor(mapInstance: any, legendBlock: any) {
         this._mapInstance = mapInstance;
+        this._children = [];
 
         this._visibilityChanged = new Subject();
         this._opacityChanged = new Subject();
@@ -502,28 +503,6 @@ export class LegendGroup {
         this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
 
         this._initSettings(legendBlock);
-
-        this.children.forEach(child => {
-            child.visibilityChanged.subscribe(() => {
-                const oldVisibility: boolean = this.visibility;
-                if (oldVisibility !== this._legendBlock.visibility) {
-                    this._visibilityChanged.next(this._legendBlock.visibility);
-                }
-            });
-            child.opacityChanged.subscribe(() => {
-                const oldOpacity: number = this.opacity;
-                if (oldOpacity !== this._legendBlock.opacity) {
-                    this._opacityChanged.next(this._legendBlock.opacity);
-                }
-            });
-            child.queryableChanged.subscribe(() => {
-                const oldQueryable: boolean = this.queryable;
-                if (oldQueryable !== this._legendBlock.query) {
-                    this._queryableChanged.next(this._legendBlock.query);
-                }
-            });
-        });
-
     }
 
     /** Returns the group ID. */
@@ -542,7 +521,7 @@ export class LegendGroup {
     }
 
     /** Returns the children for the group (if any). Children can be either LegendGroups (if nested groups) or LegendItems. */
-    get children(): Array<LegendGroup|LegendItem> {
+    get children(): Array<LegendGroup | LegendItem> {
         return this._children;
     }
 
@@ -697,10 +676,25 @@ export class LegendGroup {
     /** Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded. */
     _initSettings(legendBlock: any): void {
         legendBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
-            if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
-                this._children.push(new LegendGroup(this._mapInstance, entry));
-            } else {    // it's a collapsed dynamic layer or a node/infoSection
-                this._children.push(new LegendItem(this._mapInstance, entry));
+
+            // if a corresponding child already exists, reinit settings
+            let childExists = false;
+            this._children.forEach(child => {
+                if (child._legendBlock._layerRecordId === entry._layerRecordId && child._legendBlock._blockConfig._entryIndex === entry._blockConfig._entryIndex) {
+                    if (entry.parent.entries.indexOf(entry) === this._children.indexOf(child)) {
+                        child._initSettings(entry);
+                        childExists = true;
+                    }
+                }
+            });
+
+            //otherwise create new LegendGroup/LegendItem and push to child array
+            if (!childExists) {
+                if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
+                    this._children.push(new LegendGroup(this._mapInstance, entry));
+                } else { // it's a collapsed dynamic layer or a node/infoSection
+                    this._children.push(new LegendItem(this._mapInstance, entry));
+                }
             }
         });
 
@@ -714,6 +708,27 @@ export class LegendGroup {
         this._visibility = legendBlock.visibility;
         this._opacity = legendBlock.opacity;
         this._queryable = legendBlock.query;
+
+        this.children.forEach(child => {
+            child.visibilityChanged.subscribe(() => {
+                const oldVisibility: boolean = this.visibility;
+                if (oldVisibility !== this._legendBlock.visibility) {
+                    this._visibilityChanged.next(this._legendBlock.visibility);
+                }
+            });
+            child.opacityChanged.subscribe(() => {
+                const oldOpacity: number = this.opacity;
+                if (oldOpacity !== this._legendBlock.opacity) {
+                    this._opacityChanged.next(this._legendBlock.opacity);
+                }
+            });
+            child.queryableChanged.subscribe(() => {
+                const oldQueryable: boolean = this.queryable;
+                if (oldQueryable !== this._legendBlock.query) {
+                    this._queryableChanged.next(this._legendBlock.query);
+                }
+            });
+        });
     }
 }
 
