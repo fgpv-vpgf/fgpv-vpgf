@@ -473,19 +473,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     `;
 
                     const img = new Image();
-                    const svg = new Blob([data], {type: 'image/svg+xml'});
 
-                    // workaround for known chrome issue https://bugs.chromium.org/p/chromium/issues/detail?id=294129
-                    const reader = new FileReader();
-                    reader.readAsDataURL(svg);
-
-                    reader.onload = function(e) {
-                        img.src = e.target.result;
-                    }
-
-                    img.onload = function() {
-                      ctx.drawImage(this, 0, 0);
-                    }
+                    // https://bugs.chromium.org/p/chromium/issues/detail?id=294129#c26
+                    img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(data);
 
                     // we now have a local image and URL that we can wrap in a legend generator supported svg element
                     return {
