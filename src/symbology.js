@@ -12,6 +12,7 @@ const shared = require('./shared.js')();
 const SIMPLE = 'simple';
 const UNIQUE_VALUE = 'uniqueValue';
 const CLASS_BREAKS = 'classBreaks';
+const NONE = 'none';
 
 const CONTAINER_SIZE = 32; // size of the symbology item container
 const CONTENT_SIZE = 24; // size of the symbology graphic
@@ -980,6 +981,9 @@ function buildRendererToLegend(window) {
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
                 break;
 
+            case NONE:
+                break;
+
             default:
 
                 // FIXME make a basic blank entry (error msg as label?) to prevent things from breaking
@@ -1043,21 +1047,30 @@ function mapServerLegendToRenderer(serverLegend, layerIndex) {
         return l.layerId === layerIndex;
     });
 
+    // when no layer has been found it can be a layer whitout a legend like annotation layer
+    // in this case, do not apply a renderer
+    let renderer;
+    if (typeof layerLegend !== 'undefined') {
+        // make the mock renderer
+        renderer = {
+            type: 'uniqueValue',
+            bypassDefinitionClause: true,
+            uniqueValueInfos: layerLegend.legend.map(ll => {
+                return {
+                    label: ll.label,
+                    symbol: {
+                        type: 'esriPMS',
+                        imageData: ll.imageData,
+                        contentType: ll.contentType
+                    }
+                };
+            })
+        };
+    } else {
+        renderer = { type: NONE };
+    }
     // make the mock renderer
-    return {
-        type: 'uniqueValue',
-        bypassDefinitionClause: true,
-        uniqueValueInfos: layerLegend.legend.map(ll => {
-            return {
-                label: ll.label,
-                symbol: {
-                    type: 'esriPMS',
-                    imageData: ll.imageData,
-                    contentType: ll.contentType
-                }
-            };
-        })
-    };
+    return renderer;
 }
 
 /**
