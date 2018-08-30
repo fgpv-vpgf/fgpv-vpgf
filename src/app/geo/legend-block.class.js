@@ -125,8 +125,27 @@ function LegendBlockFactory(
             return this._layerConfig;
         }
 
+        _stateTimeout = null;
+        _lastState = 'rv-loading'; // last valid state
+
         get state() {
-            return this._proxy ? this._proxy.state : 'rv-loading';
+            // if no proxy object is available, this is a config-added file-like layer with remote-data (aka WFS or a file-layer)
+            if (!this._proxy) {
+                return 'rv-loading';
+            }
+
+            // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
+            // delay the state update to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed
+            // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2971
+            common.$timeout.cancel(this._stateTimeout);
+
+            if (this._proxy.state === 'rv-error') {
+                this._stateTimeout = common.$timeout(() => (this._lastState = this._proxy.state), 100);
+            } else {
+                this._lastState = this._proxy.state;
+            }
+
+            return this._lastState;
         }
         get name() {
             return this._proxy ? this._proxy.name : this._layerConfig.name;

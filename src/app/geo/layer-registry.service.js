@@ -60,7 +60,9 @@ function layerRegistryFactory(
         loadingQueue: [],
         loadingCount: 0,
 
-        refreshAttributes: {}
+        refreshAttributes: {},
+
+        errorTimeout: {}
     };
 
     let mApiObjects = null;
@@ -459,18 +461,31 @@ function layerRegistryFactory(
                 break;
 
             case 'rv-loaded':
+                console.log('rv-loaded', layerRecord, state);
+                // clear up the error timeout delay if any
+                common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
+
                 shellService.clearLoadingFlag(layerRecord.config.id, 300);
                 break;
 
             case 'rv-error':
-                shellService.clearLoadingFlag(layerRecord.config.id);
-                errorService.display({
-                    textContent: $translate.instant('toc.layer.longload.failed', {
-                        name: `"${layerRecord.config.name}"`
-                    })
-                    // TODO: add reload action
-                    // action: 'reload'
-                }); // .then(response => response === 'ok' ? dostuff() : {});
+                console.log('rv-error', layerRecord, state);
+
+                // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
+                // delay the rendering of the error toast to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed
+                // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2971
+                common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
+                ref.errorTimeout[layerRecord.config.id] = common.$timeout(() => {
+                    shellService.clearLoadingFlag(layerRecord.config.id);
+                    errorService.display({
+                        textContent: $translate.instant('toc.layer.longload.failed', {
+                            name: `"${layerRecord.config.name}"`
+                        })
+                        // TODO: add reload action
+                        // action: 'reload'
+                    }); // .then(response => response === 'ok' ? dostuff() : {});
+                }, 100);
+
                 break;
         }
     }
