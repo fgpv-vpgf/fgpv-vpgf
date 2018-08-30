@@ -980,7 +980,7 @@ function buildRendererToLegend(window) {
                 });
                 legend.layers[0].legend = scrapeListRenderer(renderer, renderer.classBreakInfos, window);
                 break;
-            
+
             case NONE:
                 break;
 
@@ -1067,7 +1067,7 @@ function mapServerLegendToRenderer(serverLegend, layerIndex) {
             })
         };
     } else {
-        renderer = { type: 'none' };
+        renderer = { type: NONE };
     }
     // make the mock renderer
     return renderer;
