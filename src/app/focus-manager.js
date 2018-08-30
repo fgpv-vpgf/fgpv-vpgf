@@ -406,11 +406,13 @@ function onMouseDown(event) {
         return;
     }
 
-    // disable scroll just once to prevent the page scrolling the viewer into the full view which is quite annoying
-    // fgpv-vpgf/fgpv-vpgf#2665
-    const oldScroll = jQwindow.scrollTop();
-    jQwindow.one('scroll', () =>
-        jQwindow.scrollTop(oldScroll));
+    // disable scroll just once every time when a viewer is activated to prevent the page scrolling the viewer into the full view which is quite annoying
+    // fgpv-vpgf/fgpv-vpgf#2665; fgpv-vpgf/fgpv-vpgf#2969
+    if (viewer.status !== statuses.ACTIVE) {
+        const oldScroll = jQwindow.scrollTop();
+        jQwindow.one('scroll', () =>
+            jQwindow.scrollTop(oldScroll));
+    }
 
     ignoreFocusLoss = true;
     viewer.setStatus(statuses.ACTIVE);
