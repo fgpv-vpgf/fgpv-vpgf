@@ -6,6 +6,21 @@ const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 
 const nIdList: Array<string> = RV._nodeIdList = [];
 const nodeList: Array<Node> = [];
 
+// Adds support for document.createTouch (deprecated and dropped on chrome 68+) where the browser supports window.Touch. 
+// ESRI has a createTouch dependency which has caused pan & zoom to stop working on touch and pen events.
+if (!document.createTouch && (<any>window).Touch) {
+    document.createTouch = function(view, target, identifier, pageX, pageY, screenX, screenY) {
+            return new Touch({
+                target: target,
+                identifier: identifier,
+                pageX: pageX,
+                pageY: pageY,
+                screenX: screenX,
+                screenY: screenY
+            });
+        };
+}
+
 // Google tag manager loading
 (<any>window).dataLayer = (<any>window).dataLayer ? (<any>window).dataLayer : [];
 const gtmScript = document.createElement("script");
