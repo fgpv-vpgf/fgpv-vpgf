@@ -15,14 +15,13 @@
  */
 
 import { Observable, Subject } from 'rxjs';
-import { BaseLayer } from 'api/layers';
 
 /**
  * Provides the core API fucntionality for all legends (simple and config)
  */
 class BaseLegend {
     /** @ignore */
-    _elements: Array<LegendItem | LegendGroup>;
+    _children: Array<LegendItem | LegendGroup>;
     // Element added/removed observables
     /** @ignore */
     _configSnippets: Array<JSON>;
@@ -41,15 +40,15 @@ class BaseLegend {
     constructor(mapInstance: any, configSnippets: Array<JSON>) {
         this._mapInstance = mapInstance;
         this._configSnippets = configSnippets;
-        this._elements = [];
+        this._children = [];
         this._click = new Subject();
     }
 
     /**
      * Return list of LegendItems and LegendGroups for the legend
      */
-    get elements(): Array<LegendItem | LegendGroup> {
-        return this._elements;
+    get children(): Array<LegendItem | LegendGroup> {
+        return this._children;
     }
 
     /**
@@ -72,7 +71,7 @@ class BaseLegend {
      * @param layerId
      */
     getById(layerId: string): LegendItem | LegendGroup | undefined {
-        return this._elements.find(item => item.id === layerId);
+        return this._children.find(item => item.id === layerId);
     }
 
     /**
@@ -105,15 +104,6 @@ class BaseLegend {
      */
     hideAll() {
         this._mapInstance.instance.toggleLegendEntries(false);
-    }
-
-    /**
-     * Add item to legend
-     * @function addItem
-     * @param item Item to add to the legend
-     */
-    addItem(item: JSON | BaseLayer) {
-        // TODO
     }
 
     /**
@@ -157,7 +147,7 @@ export class ConfigLegend extends BaseLegend {
      * Return list of LegendItems and LegendGroups for the legend
      * @override
      */
-    set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix elements array
+    set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix children array
         if (snippets) {
             const structure = this._legendStructure.JSON;
             if (this._type === 'structured') {    // use constant
@@ -175,7 +165,7 @@ export class ConfigLegend extends BaseLegend {
      * @param id
      */
     getById(id: string): LegendItem | LegendGroup | undefined {
-        for (let item of this.elements) {
+        for (let item of this.children) {
             if (item.id === id) {
                 return item;
             } else {
@@ -362,6 +352,20 @@ export class LegendItem {
      */
     get queryableChanged(): Observable<boolean> {
         return this._queryableChanged.asObservable();
+    }
+
+    /** Removes element from legend and hides layer*/
+    remove() {
+        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Remove)) {
+            this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
+        }
+    }
+
+    /** Reloads element in legend */
+    reload() {
+        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Reload)) {
+            this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
+        }
     }
 
     /** Expand/collapses symbology stack. */
@@ -569,7 +573,7 @@ export class LegendGroup {
     /**
      * Returns the opacity of the group on the map from 0 (hidden) to 100 (fully visible).
      * NOTE: If the opacity is 0.5, it may represent different opacity values for the children inside the group.
-     * It does not necessarily mean that all the elements in the group have opacity set to 0.5.
+     * It does not necessarily mean that all the children in the group have opacity set to 0.5.
     */
     get opacity(): number {
         return this._opacity;
@@ -638,6 +642,20 @@ export class LegendGroup {
             }
         }
         return undefined;
+    }
+
+    /** Removes element from legend and hides layer*/
+    remove() {
+        if (this._availableControls.includes(AvailableControls.Remove)) {
+            this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
+        }
+    }
+
+    /** Reloads element in legend */
+    reload() {
+        if (this._availableControls.includes(AvailableControls.Reload)) {
+            this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
+        }
     }
 
     /**

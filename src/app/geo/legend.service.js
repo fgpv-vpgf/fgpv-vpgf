@@ -382,8 +382,11 @@ function legendServiceFactory(
             .walk((entry, index, parentEntry) => (entry === legendBlock ? parentEntry : null))
             .filter(a => a !== null)[0];
 
-        // TODO: instead of removing the legend block form the selector, just hide it with some css
+        // TODO: instead of removing the legend block from the selector, just hide it with some css
         const index = legendBlockParent.removeEntry(legendBlock);
+        _removeElementFromApiLegend(legendBlock);
+
+        $rootScope.$applyAsync();
 
         return [_resolve, _reject];
 
@@ -1095,6 +1098,30 @@ function legendServiceFactory(
     }
 
     /**
+     * Remove an existing element from the list of elements for the map legend
+     *
+     * @function _getParentById
+     * @private
+     * @param {string} id the id for a LegendItem or LegendGroup to find the parent of
+     * @param {Array<LegendItem|LegendGroup>} elementList list of elements to look through
+     * @param {String|LegendGroup} parent parent item, passed in during recursion; defaults to 'root"'
+     */
+    function _getParentById(id, elementList = mApi.ui.configLegend.children, parent = 'root') {
+        for (let item of elementList) {
+            if (item.id === id) {
+                return parent;
+            } else {
+                if (item instanceof LegendGroup) {
+                    let match = _getParentById(id, item.children, item);
+                    if (match) {
+                        return match instanceof LegendGroup ? match : item;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Push a new element to the list of elements for the map legend
      *
      * @function _addElementToApiLegend
@@ -1104,8 +1131,10 @@ function legendServiceFactory(
     function _addElementToApiLegend(legendElement) {
         if (mApi) {
             _updateLegendElementSettings(legendElement);
-            mApi.ui.configLegend.elements.push(legendElement);
-            mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
+            mApi.ui.configLegend.children.push(legendElement);
+            if (typeof legendElement._legendBlock.sortGroup !== 'undefined') {
+                mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
+            }
             // mapApi.ui.configLegend._itemAdded.next(legendElement);
         } else {
             elementsForApi.push(legendElement);
@@ -1144,12 +1173,30 @@ function legendServiceFactory(
      * @private
      * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be removed from map legend
      */
-    function _removeElementFromApiLegend(legendElement) {
-        // this will only remove if the element is at the root of ConfigLegend, not children of groups. need to fix that.
-        let index = mApi.ui.configLegend.elements.indexOf(legendElement);
-        if (index !== -1) {
-            mApi.ui.configLegend.elements.splice(index);
-            // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+    function _removeElementFromApiLegend(legendBlock) {
+        const apiLegendBlock = legendBlock.collapsed ? legendBlock.entries[0] : legendBlock;
+        const legendElement = mApi.ui.configLegend.getById(apiLegendBlock.id);
+        const parent = _getParentById(apiLegendBlock.id);
+
+        if (parent === 'root') {
+            let index = mApi.ui.configLegend.children.indexOf(legendElement);
+            if (index > -1) {
+                mApi.ui.configLegend.children.splice(index, 1);
+                // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+            }
+            const sortGroup = legendBlock.collapsed ? 1 : legendElement._legendBlock.sortGroup;
+            if (typeof sortGroup !== 'undefined') {
+                let sortIndex = mApi.ui.configLegend._sortGroup[sortGroup].indexOf(legendElement);
+                if (sortIndex > -1) {
+                    mApi.ui.configLegend._sortGroup[sortGroup].splice(sortIndex, 1);
+                }
+            }
+        } else if (parent) {
+            let index = parent.children.indexOf(legendElement);
+            if (index > -1) {
+                parent.children.splice(index, 1);
+                // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+            }
         }
     }
 }
