@@ -90,12 +90,14 @@ function esriMap(esriBundle, geoApi) {
                     // how to go about it. we could just use raw objects in a switch statement here,
                     // or attempt to wire in the layer records.
                     this.checkCorsException(opts.tileSchema.overviewUrl.url);
+                    this.defaultOverview = false;
                     const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
                     customOverview.on('load', () => {
                         this.initOverviewMap(overviewExpand, customOverview);
                     });
                 } else {
                     // we use the active basemap, and reset the overview whenever it changes
+                    this.defaultOverview = true;
                     this.initOverviewMap(overviewExpand);
                 }
             }
@@ -122,7 +124,9 @@ function esriMap(esriBundle, geoApi) {
         initGallery() {
             this.basemapGallery = basemap.initBasemaps(esriBundle, basemaps, this._map);
             if (overviewExpand !== null) {
-                this.basemapGallery.on('selection-change', () => this.resetOverviewMap(overviewExpand));
+                this.basemapGallery.on('selection-change', () => {
+                    if (this.defaultOverview) this.resetOverviewMap(overviewExpand)
+                });
                 this.basemapGallery.on('error', () => {
                     this.overviewMap.destroy();
                     basemapErrored = true;
