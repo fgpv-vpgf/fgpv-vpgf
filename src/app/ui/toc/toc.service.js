@@ -82,6 +82,16 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             }
         }
 
+        //wire in a hook to any map for removing a layer using the given LegendBlock
+        configService.getSync.map.instance.removeAPILegendBlock = (legendBlock) => {
+            service.removeLayer(legendBlock, false);
+        };
+
+            //wire in a hook to any map for reloading a layer using the given LegendBlock
+        configService.getSync.map.instance.reloadAPILegendBlock = (legendBlock) => {
+            service.reloadLayer(legendBlock);
+        };
+
         //wire in a hook to any map for toggling Metadata for any given legendBlock
         configService.getSync.map.instance.toggleMetadata = (legendBlock) => {
             service.toggleMetadata(legendBlock);
