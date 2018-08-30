@@ -10,7 +10,7 @@ const nodeList: Array<Node> = [];
 // ESRI has a createTouch dependency which has caused pan & zoom to stop working on touch and pen events.
 if (!document.createTouch && (<any>window).Touch) {
     document.createTouch = function(view, target, identifier, pageX, pageY, screenX, screenY) {
-            return new Touch({
+            return new (<any>window).Touch({
                 target: target,
                 identifier: identifier,
                 pageX: pageX,
