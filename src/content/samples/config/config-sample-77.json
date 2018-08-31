@@ -322,14 +322,16 @@
             },
             {
               "infoType": "title",
-              "content": "Will stay"
+              "content": "Title 1 - will stay in export legend"
             },
             {
-              "layerId": "3"
+              "layerId": "3",
+              "description":"This is a description. These are some more words to make the description take up multiple lines. Words are fun.",
+              "symbologyRenderStyle": "icons"
             },
             {
               "infoType": "title",
-              "content": "Will stay"
+              "content": "Title 2 - will stay in export legend"
             },
             {
               "layerId": "4"
@@ -339,11 +341,11 @@
             },
             {
               "infoType": "title",
-              "content": "will disappear"
+              "content": "Title 3 - will disappear from export legend"
             },
             {
               "infoType": "title",
-              "content": "will disappear"
+              "content": "Title 4 - will disappear from export legend"
             }
           ]
         }
