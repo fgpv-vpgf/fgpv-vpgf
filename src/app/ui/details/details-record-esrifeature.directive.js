@@ -1,4 +1,5 @@
 const templateUrl = require('./details-record-esrifeature.html');
+import { IdentifyMode } from 'api/layers';
 
 /**
  * @module rvDetailsRecordEsrifeature
@@ -9,9 +10,7 @@ const templateUrl = require('./details-record-esrifeature.html');
  * The `rvDetailsRecordEsrifeature` directive renders the data content of details.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
+angular.module('app.ui').directive('rvDetailsRecordEsrifeature', rvDetailsRecordEsrifeature);
 
 /**
  * `rvDetailsRecordEsrifeature` directive body.
@@ -35,7 +34,7 @@ function rvDetailsRecordEsrifeature() {
     return directive;
 }
 
-function Controller($scope, events, mapService, geoService, configService) {
+function Controller($scope, appInfo, events, mapService, configService) {
     'ngInject';
     const self = this;
 
@@ -85,12 +84,12 @@ function Controller($scope, events, mapService, geoService, configService) {
      * @param {String} oid feature oid
      */
     function initHighlight(oid) {
-        if (oidsAll.length === 0) {
-            mapService.clearHighlight();
-        }
-
         oidsAll.push(oid);
-        _drawFeatureHighlight(oid)
+
+        if (appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Highlight)) {
+            mapService.clearHighlight();
+            _drawFeatureHighlight(oid);
+        }
     }
 
     /**
@@ -101,7 +100,6 @@ function Controller($scope, events, mapService, geoService, configService) {
      * @param {Boolean} value `true` if the oid should be highlighted; `false` if the oid should be dehighlighted
      */
     function toggleHighlight(oid, value) {
-
         const index = oidsToHighlight.indexOf(oid);
         if (value && index === -1) {
             oidsToHighlight.push(oid);
@@ -124,12 +122,12 @@ function Controller($scope, events, mapService, geoService, configService) {
     function _redrawHighlight() {
         const oids = oidsToHighlight.length > 0 ? oidsToHighlight : oidsAll;
 
-        mapService.clearHighlight();
-
-        if (oids.length > 0) {
+        if (oids.length > 0 && appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Highlight)) {
+            mapService.clearHighlight();
             oids.forEach(oid => _drawFeatureHighlight(oid));
-        } else if (self.mapPoint) {
-            mapService.addMarkerHighlight(self.mapPoint, true);
+        } else if (self.mapPoint && appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Marker)) {
+            mapService.clearHighlight();
+            mapService.addMarkerHighlight(self.mapPoint, appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Haze));
         }
     }
 
@@ -143,6 +141,9 @@ function Controller($scope, events, mapService, geoService, configService) {
     function _drawFeatureHighlight(oid) {
         const map = configService.getSync.map.instance;
         const graphiBundlePromise = self.item.requester.proxy.fetchGraphic(oid, { map, geom: true, attribs: true });
-        mapService.addGraphicHighlight(graphiBundlePromise, true);
+        mapService.addGraphicHighlight(
+            graphiBundlePromise,
+            appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Haze)
+        );
     }
 }

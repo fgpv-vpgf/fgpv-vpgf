@@ -14,7 +14,6 @@
  * THIS API IS NOT SUPPORTED.
  */
 
-
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 import { BaseGeometry } from 'api/geometry';
@@ -212,7 +211,7 @@ export class BaseLayer {
      *
      * NOTE: To use the default buffer size, set as undefined.
      * NOTE: For dynamics, the buffer size must be the same for all of the children. If one buffer value are updated, all children updated automatically.
-    */
+     */
     set identifyBuffer(tolerance: number | undefined) {
         const oldBuffer: number | undefined = this._identifyBuffer;
 
@@ -699,7 +698,7 @@ export class SimpleLayer extends BaseLayer {
                 this._geometryArray.push(geometry);
                 geometriesAdded.push(geometry);
             } else {
-                console.error('Attempting to add geometry with an id that has already been added.')
+                console.error('Attempting to add geometry with an id that has already been added.');
             }
         });
 
@@ -774,7 +773,7 @@ export class SimpleLayer extends BaseLayer {
     /** Returns the extent of an array of graphics. */
     getGraphicsBoundingBox(graphics: Array<Object>) {
         return this._viewerLayer.getGraphicsBoundingBox(graphics);
-    };
+    }
 }
 
 /**
@@ -810,7 +809,13 @@ export class LayerGroup {
     /** @ignore */
     _layersArray: Array<BaseLayer> = [];
     /** @ignore */
-    _identifyMode: IdentifyMode = IdentifyMode.Details;
+    _identifyMode: IdentifyMode[] = [
+        IdentifyMode.Query,
+        IdentifyMode.Marker,
+        IdentifyMode.Highlight,
+        IdentifyMode.Haze,
+        IdentifyMode.Details
+    ];
 
     _layerAdded: Subject<BaseLayer>;
     _layerRemoved: Subject<BaseLayer>;
@@ -908,11 +913,11 @@ export class LayerGroup {
     /**
      * Specifies if the identify panel should be shown after the identify query completes.
      */
-    set identifyMode(value: IdentifyMode) {
+    set identifyMode(value: IdentifyMode[]) {
         this._identifyMode = value;
     }
 
-    get identifyMode(): IdentifyMode {
+    get identifyMode(): IdentifyMode[] {
         return this._identifyMode;
     }
 
@@ -1023,7 +1028,7 @@ export class LayerGroup {
 
     /** Sets the buffer size of all layers to be used when identifying. */
     setAllBuffers(tolerance: number | undefined): void {
-        this._layersArray.forEach(layer => layer.identifyBuffer = tolerance);
+        this._layersArray.forEach(layer => (layer.identifyBuffer = tolerance));
     }
 
     // /** Exports the layers in the group to a GeoJSON object.
@@ -1102,24 +1107,38 @@ export interface IdentifySession {
     requests: IdentifyRequest[];
 }
 
+/**
+ * Identify mode can be set to none, one, or more options. If no options are provided, no part of the identify workflow is executed
+ *
+ * @export
+ * @enum {string}
+ */
 export enum IdentifyMode {
     /**
-     * Display the identify results in the details panel and highlight them on the map.
+     * Runs the identify query and pipes the available results through the `identify` API endpoint.
      */
-    Details = 'details',
+    Query = 'query',
 
     /**
-     * Only highlight the identify results on the map.
+     * Adds a graphic marker at the point of a mouse click. The marker will be set on the map even if the `Query` option is not set.
+     */
+    Marker = 'marker',
+
+    /**
+     * Highlight the identify results on the map. If the `Marker` mode is set, highlighted features will replace the marker.
+     * Only works when `Query` is set.
      */
     Highlight = 'highlight',
 
     /**
-     * The identify query will be run and results will be available through the `identify` API endpoint, but they will not be highlighted on the map or dispalayed in the details panel.
+     * Dehighlights all other layers and features except the identify results (if `Highlight` is set) or the marker (if `Marker` is set`).
+     * The haze will not be applied if neither `Marker` nor `Highlight` is set.
      */
-    Silent = 'silent',
+    Haze = 'haze',
 
     /**
-     * The identify query will not be run.
+     * Display the identify results in the details panel.
+     * This option only works in conjunction with the `Query` option. Without `Query`, there will be no results to display in the details panel.
      */
-    None = 'none'
+    Details = 'details'
 }

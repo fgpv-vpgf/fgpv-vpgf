@@ -56,7 +56,7 @@ function identifyService($q, configService, gapiService, referenceService, state
             // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
             .filter(layerRecord => typeof layerRecord.identify !== 'undefined')
             .map(layerRecord => {
-                const apiLayer =  mApi.layers.getLayersById(layerRecord.layerId)[0];
+                const apiLayer = mApi.layers.getLayersById(layerRecord.layerId)[0];
                 const layerTolerance = apiLayer ? apiLayer.identifyBuffer : undefined;
                 opts.tolerance = layerTolerance;
                 return layerRecord.identify(opts);
@@ -122,11 +122,13 @@ function identifyService($q, configService, gapiService, referenceService, state
         // the subscribers can modify/add/remove the items returned by the results
         // if the items are removed from the `identifyResults[].data` array,
         // they will not be highlighted or shown in the details panel
-        mApi.layers._identify.next({
-            event: identifyMouseEvent,
-            sessionId,
-            requests: identifyRequests
-        });
+        if (mApi.layers.identifyMode.includes(IdentifyMode.Query)) {
+            mApi.layers._identify.next({
+                event: identifyMouseEvent,
+                sessionId,
+                requests: identifyRequests
+            });
+        }
 
         const details = {
             data: allIdentifyResults,
@@ -139,14 +141,16 @@ function identifyService($q, configService, gapiService, referenceService, state
         };
 
         // show details panel only when there is data and the identifyMode is set to `Details`
-        if (mApi.layers.identifyMode === IdentifyMode.Details) {
+        if (mApi.layers.identifyMode.includes(IdentifyMode.Details)) {
             stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
-        } else if (mApi.layers.identifyMode === IdentifyMode.Highlight) {
+        }
+
+        if (mApi.layers.identifyMode.includes(IdentifyMode.Highlight)) {
             // highlight if the identifyMode is set fo 'Highlight'
             highlightIdentifyResults({ details, requester });
-        } else {
-            return { details, requester };
         }
+
+        return { details, requester };
 
         /**
          * Modifies identify promises to always resolve, never reject.
@@ -194,7 +198,8 @@ function identifyService($q, configService, gapiService, referenceService, state
                         geom: true,
                         attribs: true
                     });
-                    addGraphicHighlight(graphiBundlePromise, true);
+
+                    addGraphicHighlight(graphiBundlePromise, mApi.layers.identifyMode.includes(IdentifyMode.Haze));
                 })
             );
         });

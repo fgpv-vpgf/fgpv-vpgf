@@ -1,4 +1,5 @@
 const templateUrl = require('./details-record-text.html');
+import { IdentifyMode } from 'api/layers';
 
 /**
  * @module rvDetailsRecordText
@@ -85,9 +86,11 @@ function rvDetailsRecordText($translate, $compile, $timeout, events, detailServi
                 function compileTemplate() {
                     // Causes the template compilation to wait for next digest cycle
                     // this ensures we have the data and don't display and "{{ VARIABLE }}"s
-                    $timeout(() =>{
+                    $timeout(() => {
                         // compile the template with the scope and append it to the mount
-                        el.find('.template-mount').empty().append($compile(template)(scope));
+                        el.find('.template-mount')
+                            .empty()
+                            .append($compile(template)(scope));
                     });
                 }
             });
@@ -95,7 +98,7 @@ function rvDetailsRecordText($translate, $compile, $timeout, events, detailServi
     }
 }
 
-function Controller($scope, events, mapService) {
+function Controller($scope, appInfo, events, mapService) {
     'ngInject';
     const self = this;
 
@@ -122,6 +125,10 @@ function Controller($scope, events, mapService) {
      */
     function _redrawHighlight() {
         // adding marker highlight the click point because the layer doesn't support feature highlihght (not discernible geometry)
-        mapService.addMarkerHighlight(self.mapPoint, true);
+        if (!appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Marker)) {
+            return;
+        }
+
+        mapService.addMarkerHighlight(self.mapPoint, appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Haze));
     }
 }
