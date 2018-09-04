@@ -193,6 +193,11 @@ function identifyService($q, configService, gapiService, referenceService, state
                         clearHighlight();
                     }
 
+                    // only actual features can be highlighted; identify results from WMS and other raster layers cannot
+                    if (!dataItem.oid) {
+                        return;
+                    }
+
                     const graphiBundlePromise = identifyResult.requester.proxy.fetchGraphic(dataItem.oid, {
                         map: mapConfig.instance,
                         geom: true,

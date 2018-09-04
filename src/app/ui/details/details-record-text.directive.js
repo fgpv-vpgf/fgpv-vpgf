@@ -70,7 +70,11 @@ function rvDetailsRecordText($translate, $compile, $timeout, events, detailServi
                         parse();
                     } else {
                         // data not here yet, wait for it
-                        const itemDataWatcher = scope.$watchCollection('self.item.data', () => {
+                        const itemDataWatcher = scope.$watch('self.item.data[0]', newValue => {
+                            if (!newValue) {
+                                return;
+                            }
+
                             itemDataWatcher();
                             parse();
                         });
