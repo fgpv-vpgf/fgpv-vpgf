@@ -408,12 +408,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             if (self.description !== '') {
                 totalHeight -= symbologyListMargin / 2;
 
-                // briefly show the description node to grab it's height, and hide it again
-                ref.descriptionItem.show();
-                let width = getTextWidth(canvas, ref.descriptionItem.text(), ref.descriptionItem.css('font'));
-                let height = Math.ceil(width / ref.descriptionItem.width()) * parseInt(ref.descriptionItem.css('line-height').slice(0, -2));
-                const descriptionHeight = ref.descriptionItem.height() >= 0 ? ref.descriptionItem.height() : height;
-                ref.descriptionItem.hide();
+                const descriptionHeight = ref.descriptionItem.height();
 
                 // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
                 timeline.set(ref.descriptionItem, {
