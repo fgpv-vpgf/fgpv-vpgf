@@ -484,7 +484,7 @@ function layerRegistryFactory(
                         // TODO: add reload action
                         // action: 'reload'
                     }); // .then(response => response === 'ok' ? dostuff() : {});
-                }, 100);
+                }, 250);
 
                 break;
         }

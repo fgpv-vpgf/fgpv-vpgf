@@ -59,8 +59,10 @@ function mapServiceFactory(
             'url(data:image/png;base64,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)';
 
         // always remove custom text attribution when switch baseMaps
-        if (listNode.childElementCount > 0 &&
-                listNode.children[0].classList.toString().search(/esriAttribution*/) === -1) {
+        if (
+            listNode.childElementCount > 0 &&
+            listNode.children[0].classList.toString().search(/esriAttribution*/) === -1
+        ) {
             listNode.removeChild(listNode.children[0]);
         }
 
@@ -79,9 +81,9 @@ function mapServiceFactory(
             if (cfgAtt.logo.enabled) {
                 // if values are supplied in the config file, use them. otherwise use default esri
                 if (cfgAtt.logo.value) {
-                    setCustomAttribLogo(mapInstance,logoNode, cfgAtt.logo);
+                    setCustomAttribLogo(mapInstance, logoNode, cfgAtt.logo);
                 } else {
-                    setEsriAttribLogo(mapInstance,logoNode, esriLogo);
+                    setEsriAttribLogo(mapInstance, logoNode, esriLogo);
                 }
                 logoNode.show();
                 logoNode.css('visibility', 'visible');
@@ -91,7 +93,7 @@ function mapServiceFactory(
         } else {
             // if not define in config, use service value for attribution and the ESRI default value for logo
             attNode.show();
-            setEsriAttribLogo(mapInstance,logoNode, esriLogo);
+            setEsriAttribLogo(mapInstance, logoNode, esriLogo);
             logoNode.show();
             logoNode.css('visibility', 'visible');
         }
@@ -108,7 +110,7 @@ function mapServiceFactory(
      */
     function setCustomAttribLogo(mapInstance, logoNode, config) {
         logoNode.css('background-image', `url(${config.value})`);
-        logoNode[0].title = (config.altText) ? config.altText : 'Image';
+        logoNode[0].title = config.altText ? config.altText : 'Image';
         if (config.link) {
             logoNode[0].classList.remove('rv-nopointer');
             mapInstance.mapDefault('logoLink', config.link);
@@ -200,7 +202,9 @@ function mapServiceFactory(
         };
 
         // avoid private variable
-        const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, { targetWkid: mapInstance._map.extent.spatialReference.wkid });
+        const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, {
+            targetWkid: mapInstance._map.extent.spatialReference.wkid
+        });
         res.then(esriLayer => {
             firstBasemapFlag = true;
             fakeFileLayer = esriLayer;
@@ -243,8 +247,8 @@ function mapServiceFactory(
 
         // using resolution of our target level of detail, and the size of the map in pixels,
         // calculate a rough extent of where our map should initialize.
-        const xOffset = mapNode.outerHeight(true) * zoomLod.resolution / 2;
-        const yOffset = mapNode.outerHeight(true) * zoomLod.resolution / 2;
+        const xOffset = (mapNode.outerHeight(true) * zoomLod.resolution) / 2;
+        const yOffset = (mapNode.outerHeight(true) * zoomLod.resolution) / 2;
 
         return {
             xmin: mapConfig.startPoint.x - xOffset,
@@ -307,7 +311,8 @@ function mapServiceFactory(
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
 
-            if (mApi.layers.identifyMode !== IdentifyMode.None) {
+            // change mouse cursor to pointer if identify `Query` option is set
+            if (mApi.layers.identifyMode.includes(IdentifyMode.Query)) {
                 mapConfig.instance.setMapCursor(value ? 'pointer' : '');
             }
         });
@@ -335,7 +340,8 @@ function mapServiceFactory(
                     mapConfig.instance.removeLayer(fakeFileLayer);
                 }
 
-                if (res.layer._basemapGalleryLayerType === 'basemap') { // avoid private variable
+                if (res.layer._basemapGalleryLayerType === 'basemap') {
+                    // avoid private variable
 
                     // only broadcast the event the first time a basemap is loaded
                     if (firstBasemapFlag) {
@@ -361,15 +367,15 @@ function mapServiceFactory(
                     // poke the server to see if basemap load errored. if so, initalize the map anyway to ensure all the layers still get added
                     // this will handle only failure cases, the basemap success case is handled when the `layer-add` event is triggered
                     // for the basemap layer (only the first time a basemap layer is added)
-                    $http.get(mapConfig.selectedBasemap.url + '?f=json')
+                    $http
+                        .get(mapConfig.selectedBasemap.url + '?f=json')
                         .then(response => {
-
                             // response returned but its an error response since invalid URL, so initalize map
                             if (!response || typeof response.data.error !== 'undefined') {
                                 _initMap();
                             }
                         })
-                        .catch(() => _initMap());   // promise rejected due to server issues, so initialize map
+                        .catch(() => _initMap()); // promise rejected due to server issues, so initialize map
                 }
             },
             'extent-change': data => {
@@ -412,19 +418,13 @@ function mapServiceFactory(
                     return;
                 }
 
-                // do not run identify query at all in `None` mode
-                if (mApi.layers.identifyMode === IdentifyMode.None) {
-                    return;
+                // add a graphic marker, if the identify `Marker` option is set
+                if (mApi.layers.identifyMode.includes(IdentifyMode.Marker)) {
+                    addMarkerHighlight(clickEvent.mapPoint, mApi.layers.identifyMode.includes(IdentifyMode.Haze));
                 }
 
-                // if not hovering, and not in `Silent` mode, add a graphic marker
-                if (mApi.layers.identifyMode !== IdentifyMode.Silent && !isFeatureMousedOver) {
-                    addMarkerHighlight(clickEvent.mapPoint);
-                }
-
-                // run identify query
-                // handles highlights and details
-                const identifyResponse = identifyService.identify(clickEvent);
+                // if the identify mode doesn't have `query`, results will not be piped to the API
+                identifyService.identify(clickEvent);
             }
         });
 
