@@ -457,6 +457,11 @@
                         "description": "Specifies the default filter to apply to a table (for global search)."
                     }
                 },
+                "lazyFilter": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search"
+                },
                 "applyMap": {
                     "type": "boolean",
                     "default": false,

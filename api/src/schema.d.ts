@@ -943,6 +943,10 @@ export interface FeatureLayerNode {
       [k: string]: any;
     };
     /**
+     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     */
+    lazyFilter?: boolean;
+    /**
      * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
      */
     applyMap?: boolean;
@@ -1088,6 +1092,10 @@ export interface WfsLayerNode {
     search?: {
       [k: string]: any;
     };
+    /**
+     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     */
+    lazyFilter?: boolean;
     /**
      * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
      */
@@ -1342,6 +1350,10 @@ export interface DynamicLayerEntryNode {
     search?: {
       [k: string]: any;
     };
+    /**
+     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     */
+    lazyFilter?: boolean;
     /**
      * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
      */

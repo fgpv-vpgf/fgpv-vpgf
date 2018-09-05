@@ -476,12 +476,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     stateManager.setMorph('table', 'default');
                 }
 
-                // set global search and defaut value
-                tableService.isGlobalSearch = true; // enable by default
-                if (config.search) {
-                    tableService.isGlobalSearch = config.search.enabled;
-                    displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
-                }
+                // set global search defaut value
+                displayData.filter.globalSearch = config.search.enabled ? config.search.value || '' : '';
 
                 const filters = stateManager.display.table;
                 const query = filters.requester.legendEntry.proxyWrapper.layerConfig.initialFilteredQuery;
@@ -927,7 +923,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 const details = {
                     data: [detailsObj]
                 };
-                
+
                 if (useDialog) {
                     stateManager.display.details.selectedItem = detailsObj;
                     detailService.expandPanel(false);
