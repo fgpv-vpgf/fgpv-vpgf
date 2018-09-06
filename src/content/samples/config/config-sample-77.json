@@ -331,7 +331,8 @@
             },
             {
               "infoType": "title",
-              "content": "Title 2 - will stay in export legend"
+              "content": "Title 2 - will be removed from export legend due to config option",
+              "export": false
             },
             {
               "layerId": "4"

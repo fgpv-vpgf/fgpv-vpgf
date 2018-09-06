@@ -461,7 +461,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     // reduce width to 300 if actual width exceeds this - this avoids one long line being scaled down to ant man sized text
                     let correctedWidth = Math.min(300, actualWidth);
                     // estimate the rendered height
-                    let approxHeight = Math.ceil(actualWidth / correctedWidth) * 25 + 25;
+                    let approxHeight = Math.ceil(actualWidth / correctedWidth) * 25 + 28;
 
                     // draw an image to the canvas using this XML SVG wrapper
                     const data = `
@@ -534,10 +534,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      */
     function _showBlock(entry) {
         const exportLegend = configService.getSync.services.export.legend;
+        console.log(entry);
 
-        if (entry.blockType === LegendBlock.TYPES.INFO) {
-            return exportLegend.showInfoSymbology;
-        } else if (entry.controlled) {
+        if (entry.controlled && entry.blockType !== LegendBlock.TYPES.INFO) {
             return exportLegend.showControlledSymbology && entry.isVisibleOnExport;
         }
 
