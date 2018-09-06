@@ -51,10 +51,18 @@ export type InfoSection =
   | {
       infoType?: "title";
       content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
     }
   | {
       infoType?: "image";
       content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
     }
   | {
       infoType?: "unboundLayer";
@@ -83,10 +91,18 @@ export type InfoSection =
        * Indicates if symbology stack is expand by default
        */
       symbologyExpanded?: boolean;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
     }
   | {
       infoType?: "text";
       content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
     };
 /**
  * A list of all controls to be enabled on the specified group
