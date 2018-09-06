@@ -569,7 +569,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._title = source.title || '';
             this._description = source.description;
             this._maximize = source.maximize || false;
-            this._search = source.search;
+            this._search = source.search || { enabled: true, value: null };
+            this._lazyFilter = source.lazyFilter || false;
             this._applyMap = source.applyMap || false;
             this._applied = source.applyMap || false;
             this._columns = source.columns ?
@@ -585,6 +586,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         set maximize (value) { this._maximize = value; }
 
         get search () { return this._search; }
+
+        get lazyFilter () { return this._lazyFilter; }
 
         get applyMap () { return this._applyMap; }
         set applyMap (value) { this._applyMap = value; }

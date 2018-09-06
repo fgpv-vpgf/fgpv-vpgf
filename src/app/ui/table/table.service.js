@@ -50,7 +50,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         isFeatureLayer: false,
         isDynamicLayer: false,
         isSettingOpen: false,
-        isGlobalSearch: true
+        isGlobalSearch: false
     };
 
     // active table for global search to link to
@@ -122,6 +122,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function setTable(table) {
         activeTable = table;
+
+        // determine if to show global search
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
+        service.isGlobalSearch = configTable.search.enabled;
 
         // reset all filters state to false (they will be populated by the loading table)
         filtersObject = table.columns().dataSrc();
@@ -328,7 +332,12 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         if (column.type === 'string') {
             // replace ' by '' to be able to perform the search in the datatable
             // relpace * wildcard and construct the query (add wildcard at the end)
-            const val = column.filter.value.replace(/'/g, /''/);
+            const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
+            let val = column.filter.value.replace(/'/g, /''/);
+            if (configTable.lazyFilter) {
+                const filterVal = `*${val}`;
+                val = filterVal.split(" ").join("*");
+            }
             if (val !== '') {
                 defs.push(`UPPER(${column.name}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
             }
@@ -415,15 +424,19 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // show processing
         $rootElement.find('.dataTables_processing').css('display', 'block');
 
-        // generate regex then filter (use timeout for redraw so processing can show)
-        const val = `^${value.replace(/\*/g, '.*')}.*$`;
+        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
+
+        // generate regex then filter (use timeout for redraw so processing can show) or use lazy filter if set in config
+        let val = `^${value.replace(/\*/g, '.*')}.*$`;
+        if (configTable.lazyFilter) {
+            const filterVal = `[\\w,\\s]*${value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}`;
+            val = filterVal.split(" ").join("[\\w,\\s]*");
+        }
         const table = service.getTable();
         $timeout(() => { table.column(`${column}:name`).search(val, true, false).draw(); }, 100);
 
         // keep filter state to know when to show apply map button
         setFiltersState(column, value);
-
-        const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value to reapply when table reopens
         configTable.columns.find(filter => column === filter.data).filter.value = value;
@@ -613,6 +626,9 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         filterTimeStamps.onDeleted = Date.now();
         filterTimeStamps.onCreated = null;
         filterTimeStamps.onChanged = null;
+
+        // reset global search to hidden
+        service.isGlobalSearch = false;
     }
 
     /**
