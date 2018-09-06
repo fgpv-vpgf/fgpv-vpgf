@@ -2,5 +2,5 @@
     <md-icon ng-if="!self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
     <img ng-if="self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
 
-    <p class="md-subhead">{{ self.failureMessage || 'toc.error.resource.loadfailed' | translate }}</p>
+    <p class="md-subhead">{{ self.failureMessage | translate }}</p>
 <div class="rv-fail-after"></div>

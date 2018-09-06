@@ -174,6 +174,7 @@
                 <option value="config/config-sample-77.json">77. Legend with titles that are removed in export and custom legend width</option>
                 <option value="config/config-sample-78.json">78. Tile layer with some tiles missing</option>
                 <option value="config/config-sample-79.json">79. Use https for Get Coord Info plugin</option>
+                <option value="config/config-sample-83.json">83. Failing about and help</option>
             </select>
         </div>
 

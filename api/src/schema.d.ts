@@ -959,7 +959,7 @@ export interface FeatureLayerNode {
       [k: string]: any;
     };
     /**
-     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
      */
     lazyFilter?: boolean;
     /**
@@ -1109,7 +1109,7 @@ export interface WfsLayerNode {
       [k: string]: any;
     };
     /**
-     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
      */
     lazyFilter?: boolean;
     /**
@@ -1367,7 +1367,7 @@ export interface DynamicLayerEntryNode {
       [k: string]: any;
     };
     /**
-     * Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
      */
     lazyFilter?: boolean;
     /**
