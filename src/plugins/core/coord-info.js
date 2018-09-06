@@ -49,9 +49,9 @@
 
     // urls for services to get information about
     const urls = {
-        nts: 'http://geogratis.gc.ca/services/delimitation/en/nts?',
-        utm: 'http://geogratis.gc.ca/services/delimitation/en/utmzone?',
-        alti: 'http://geogratis.gc.ca/services/elevation/cdem/altitude?',
+        nts: 'https://geogratis.gc.ca/services/delimitation/en/nts?',
+        utm: 'https://geogratis.gc.ca/services/delimitation/en/utmzone?',
+        alti: 'https://geogratis.gc.ca/services/elevation/cdem/altitude?',
         decli: 'http://geomag.nrcan.gc.ca/service/tools/magnetic/calculator/?'
     };
 
@@ -150,15 +150,18 @@
                 });
             }));
 
-            promises.push(new Promise(resolve => {
-                $.ajax({
-                    url: urls.decli,
-                    cache: true,
-                    data: { latitude: pt.y, longitude: pt.x, date: date, format: 'json' },
-                    dataType: 'jsonp',
-                    success: data => resolve(parseDecli(data, lang))
-                });
-            }));
+            // Magnetic declination service is only available in http
+            if (window.location.protocol === 'http:') {
+                promises.push(new Promise(resolve => {
+                    $.ajax({
+                        url: urls.decli,
+                        cache: true,
+                        data: { latitude: pt.y, longitude: pt.x, date: date, format: 'json' },
+                        dataType: 'jsonp',
+                        success: data => resolve(parseDecli(data, lang))
+                    });
+                }));
+            }
 
             // wait for all promises to resolve then show info
             Promise.all(promises).then(values => {
@@ -222,7 +225,10 @@
                             <div class="rv-subsection">${val[2]} m</div>
                     </li>`;
 
-        const mag = `<li>
+        // magnetic declination service is only available in http
+        let mag = ''
+        if (window.location.protocol === 'http:') {
+            mag = `<li>
                             <div><strong>${trans.magSection}</strong>
                             <div class="rv-subsection">
                                 <div>${trans.magDate}${date}</div>
@@ -231,6 +237,7 @@
                                 <div>${val[3].compass}</div>
                             </div>
                     </li>`;
+        }
 
         // set controller template
         const template = `<md-dialog class="side-nav-plugin">
@@ -307,6 +314,7 @@
      *
      * @function  parseDecli
      * @param  {Object}  decli the answer from the service
+     * @param  {String}  lang the current language
      * @return {Object}   the declination information (magnetic {String} magnetic declination, annChange {Number} Annual change, compass {String} Compass information)
      */
     function parseDecli(decli, lang) {
