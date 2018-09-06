@@ -374,7 +374,8 @@
                     "type": "object",
                     "properties": {
                         "infoType": { "type": "string", "enum": [ "title" ] },
-                        "content": { "type": "string" }
+                        "content": { "type": "string" },
+                        "export": {"type": "boolean", "default": true, "description": "Indicates if the legend item should show up in the export legend." }
                     },
                     "additionalProperties": false
                 },
@@ -382,7 +383,8 @@
                     "type": "object",
                     "properties": {
                         "infoType": { "type": "string", "enum": [ "image" ] },
-                        "content": { "type": "string" }
+                        "content": { "type": "string" },
+                        "export": {"type": "boolean", "default": true, "description": "Indicates if the legend item should show up in the export legend." }
                     },
                     "additionalProperties": false
                 },
@@ -396,7 +398,8 @@
                         "description": { "type": "string", "default": "", "description": "Optional description displayed above the symbology stack." },
                         "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
                         "symbologyRenderStyle": { "type": "string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered" },
-                        "symbologyExpanded": { "type": "boolean", "default": false, "description": "Indicates if symbology stack is expand by default" }
+                        "symbologyExpanded": { "type": "boolean", "default": false, "description": "Indicates if symbology stack is expand by default" },
+                        "export": {"type": "boolean", "default": true, "description": "Indicates if the legend item should show up in the export legend." }
                     },
                     "additionalProperties": false
                 },
@@ -404,7 +407,8 @@
                     "type": "object",
                     "properties": {
                         "infoType": { "type": "string", "enum": [ "text" ] },
-                        "content": { "type": "string" }
+                        "content": { "type": "string" },
+                        "export": {"type": "boolean", "default": true, "description": "Indicates if the legend item should show up in the export legend." }
                     },
                     "additionalProperties": false
                 }

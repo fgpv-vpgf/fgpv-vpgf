@@ -1527,6 +1527,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._symbologyExpanded = entrySource.symbologyExpanded;
+            this._export =  typeof entrySource.export !== 'undefined' ? entrySource.export : true;
 
         }
 
@@ -1537,6 +1538,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get symbologyStack () {         return this._symbologyStack; }
         get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
         get symbologyExpanded() {       return this._symbologyExpanded; }
+        get export () {                 return this._export; }
 
         get entryType () { return TYPES.legend.INFO; }
 
@@ -1549,7 +1551,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 coverIcon: this.coverIcon,
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle,
-                symbologyExpanded: this.symbologyExpanded
+                symbologyExpanded: this.symbologyExpanded,
+                export: this.export
             };
         }
     }
