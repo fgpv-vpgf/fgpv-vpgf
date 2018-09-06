@@ -77,7 +77,20 @@ function generateServerImage(esriBundle, map, options) {
         // const mapJSON = printTask._getPrintDefinition(map, printParams);
         // console.log(JSON.stringify(mapJSON));
 
-        // TODO: catch esriJobFailed. it does not trigger the complete or the error event. Need a way to catch it!
+        // monkey-patch printTaks handler to detect 'esriJobFailed' errors which are otherwise not acted upon
+        // `esriJobFailed` does not trigger the complete or the error event. Need a way to catch it!
+        const originalHandler = printTask._handler;
+        printTask._handler = function(a, e, f, b, c) {
+            if (a.jobStatus === 'esriJobFailed') {
+                // if the job has failed, call errorHandler right away
+                printTask._errorHandler.apply(printTask, [a, b, c]);
+                return;
+            }
+
+            // if not, pass on to the original handler function
+            originalHandler.apply(printTask, arguments);
+        };
+
         // execute the print task
         printTask.execute(
             printParams,
