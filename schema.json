@@ -460,7 +460,7 @@
                 "lazyFilter": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Speciifes whether or not to use regex for column filters. True uses a lazy filter like the global search"
+                    "description": "Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds"
                 },
                 "applyMap": {
                     "type": "boolean",

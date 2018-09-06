@@ -332,7 +332,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         if (column.type === 'string') {
             // replace ' by '' to be able to perform the search in the datatable
             // relpace * wildcard and construct the query (add wildcard at the end)
-            const val = column.filter.value.replace(/'/g, /''/);
+            const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
+            let val = column.filter.value.replace(/'/g, /''/);
+            if (configTable.lazyFilter) {
+                const filterVal = `*${val}`;
+                val = filterVal.split(" ").join("*");
+            }
+            console.log(val);
             if (val !== '') {
                 defs.push(`UPPER(${column.name}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
             }
