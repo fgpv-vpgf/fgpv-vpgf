@@ -173,6 +173,7 @@
                 <option value="config/config-sample-81.json">76. WFS with system co-ords in attributes</option>
                 <option value="config/config-sample-77.json">77. Legend with titles that are removed in export and custom legend width</option>
                 <option value="config/config-sample-78.json">78. Tile layer with some tiles missing</option>
+                <option value="config/config-sample-79.json">79. Use https for Get Coord Info plugin</option>
             </select>
         </div>
 
