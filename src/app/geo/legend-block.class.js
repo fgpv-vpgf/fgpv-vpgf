@@ -620,7 +620,7 @@ function LegendBlockFactory(
         }
 
         get isVisibleOnExport() {
-            return configService.getSync.services.export.legend.showInfoSymbology;
+            return configService.getSync.services.export.legend.showInfoSymbology && this.blockConfig.export;
         }
     }
 
