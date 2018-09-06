@@ -118,7 +118,7 @@ function ExportComponentFactory($q, graphicsService) {
                 this._graphics = [];
 
                 // iterate over generators
-                this._config.generators.forEach((generator, generatorIndex) =>
+                return $q.all(this._config.generators.map((generator, generatorIndex) =>
 
                     // run each one in parallel
                     $q.resolve(generator(exportSize, showToast, this._config.value))
@@ -139,8 +139,10 @@ function ExportComponentFactory($q, graphicsService) {
                                 }
                             }
                         })
-                );
+                ));
             }
+
+            return Promise.resolve();
         }
     }
 

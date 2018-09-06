@@ -16,9 +16,7 @@ const EXPORT_CLASS = '.rv-export';
  *  - open: opens the export dialog and start a new print task
  *  - close: closes the export dialog
  */
-angular
-    .module('app.ui')
-    .service('exportService', exportService);
+angular.module('app.ui').service('exportService', exportService);
 
 function exportService($mdDialog, $mdToast, referenceService, configService, events) {
     const service = {
@@ -28,7 +26,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
 
     // wire in a hook to any map for exporting.  this makes it available on the API
     events.$on(events.rvMapLoaded, (_, i) => {
-        configService.getSync.map.instance.export = (fileType) => {
+        configService.getSync.map.instance.export = fileType => {
             if (fileType && fileType !== 'png' && fileType !== 'jpg')
                 throw new Error(`Invalid or unsupported file type ${fileType}.`);
             service.open(null, fileType);
@@ -63,8 +61,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
             clickOutsideToClose: true,
             fullscreen: true,
             onRemoving: $mdToast.hide,
-            onShowing: (scope, element) =>
-                (scope.element = element.find(EXPORT_CLASS)) // store dialog DOM node for reference
+            onShowing: (scope, element) => (scope.element = element.find(EXPORT_CLASS)) // store dialog DOM node for reference
         });
     }
 
@@ -76,12 +73,21 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
         $mdDialog.hide();
     }
 
-    function ExportController($translate, $mdToast, $q, $filter, appInfo, exportSizesService,
-        exportComponentsService, graphicsService) {
+    function ExportController(
+        $translate,
+        $mdToast,
+        $q,
+        $filter,
+        appInfo,
+        exportSizesService,
+        exportComponentsService,
+        graphicsService
+    ) {
         'ngInject';
         const self = this;
 
         self.isError = false;
+        self.isGenerateError = false;
         self.isTainted = false; // indicates the canvas is tainted and cannot be directly saved
 
         self.exportSizes = exportSizesService.update();
@@ -96,10 +102,11 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
         self.updateTitleComponent = updateTitleComponent;
         self.updateComponents = updateComponents;
         self.scrollCustomSettings = scrollCustomSettings;
+        self.exportComponents = exportComponentsService;
 
         // updating export components will initialize them if this is called for the first time;
         exportComponentsService.init().then(() => {
-            self.exportComponents = exportComponentsService.update();
+            exportComponentsService.update(showToast).catch(() => (self.isGenerateError = true));
 
             // title component is special since the user can modify its value; we expose it to bind the value to the input field
             self.titleComponent = self.exportComponents.get('title');
@@ -148,8 +155,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 return true;
             }
 
-            return self.exportComponents.items.some(item =>
-                item.isGenerating);
+            return self.exportComponents.items.some(item => item.isGenerating);
         }
 
         /**
@@ -165,11 +171,13 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          * @return {Boolean} true if something is blocking the image download
          */
         function isDownloadBlocked() {
-            return self.isGenerating() ||
+            return (
+                self.isGenerating() ||
                 self.isError ||
                 self.isSafari ||
                 (self.exportSizes.isCustomOptionSelected() && !self.exportSizes.isCustomOptionUpdated()) ||
-                self.lastUsedSizeOption !== self.exportSizes.selectedOption;
+                self.lastUsedSizeOption !== self.exportSizes.selectedOption
+            );
         }
 
         /**
@@ -183,8 +191,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 return undefined;
             }
 
-            return self.exportComponents.items.some(item =>
-                item.isSelectable);
+            return self.exportComponents.items.some(item => item.isSelectable);
         }
 
         /**
@@ -229,36 +236,36 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          * @private
          */
         function saveImage() {
-
             // get generated graphics from the export components
             const exportGraphics = self.exportComponents.items
-                .filter(component =>
-                    component.isSelected && component.graphic.height > 0)
-                .map(component =>
-                    component.graphic);
+                .filter(component => component.isSelected && component.graphic.height > 0)
+                .map(component => component.graphic);
 
             // extract graphic heights
-            const graphicHeights = exportGraphics.map(graphic =>
-                graphic.height);
+            const graphicHeights = exportGraphics.map(graphic => graphic.height);
 
             // find the total height of the legend image including the gutters between component graphics
-            const totalHeight = graphicHeights.reduce((runningHeihgt, currentHeight) =>
-                (runningHeihgt + currentHeight + EXPORT_IMAGE_GUTTER), EXPORT_IMAGE_GUTTER);
+            const totalHeight = graphicHeights.reduce(
+                (runningHeihgt, currentHeight) => runningHeihgt + currentHeight + EXPORT_IMAGE_GUTTER,
+                EXPORT_IMAGE_GUTTER
+            );
 
             // figure out offsets for individual graphics assuming they are arranged vertically one after another
             let runningHeight = EXPORT_IMAGE_GUTTER;
-            const graphicOffsets = graphicHeights
-                .map(h => {
-                    runningHeight += h + EXPORT_IMAGE_GUTTER;
-                    return [EXPORT_IMAGE_GUTTER, runningHeight];
-                });
+            const graphicOffsets = graphicHeights.map(h => {
+                runningHeight += h + EXPORT_IMAGE_GUTTER;
+                return [EXPORT_IMAGE_GUTTER, runningHeight];
+            });
 
             // add initial offset
             graphicOffsets.unshift([EXPORT_IMAGE_GUTTER, EXPORT_IMAGE_GUTTER]);
 
             // create the final canvas of the end size
             const canvas = graphicsService.createCanvas(
-                self.exportSizes.selectedOption.width + EXPORT_IMAGE_GUTTER * 2, totalHeight, '#fff');
+                self.exportSizes.selectedOption.width + EXPORT_IMAGE_GUTTER * 2,
+                totalHeight,
+                '#fff'
+            );
 
             // SMASH!!!
             graphicsService.mergeCanvases([canvas, ...exportGraphics], graphicOffsets);

@@ -1,7 +1,9 @@
-<md-dialog class="rv-export">
+<md-dialog class="rv-export" ng-class="{ 'rv-error': self.isError, 'rv-generate-error': self.isGenerateError }">
     <form name="exportForm">
         <md-dialog-content>
-            <div class="md-dialog-content" ng-class="{ 'rv-error': self.isError }">
+            <div class="md-dialog-content">
+
+                <rv-failure-image ng-if="self.isGenerateError" message="export.error.cantgenerate"></rv-failure-image>
 
                 <md-content class="rv-export-custom-size rv-invert rv-toggle-slide"
                     ng-if="self.exportSizes.isCustomOptionSelected()">
@@ -73,7 +75,7 @@
                     <div class="rv-export-title"
                         ng-class="{ 'rv-float' : self.mapComponent.isSelected }"
                         ng-hide="self.isTainted"
-                        ng-if="self.titleComponent.isSelected">
+                        ng-if="self.titleComponent.isSelected && !self.isGenerateError">
                         <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
                             <input ng-model="self.titleComponent.value"
                                 ng-change="self.updateTitleComponent()"
@@ -84,7 +86,7 @@
 
                     <div class="rv-export-section"
                         ng-hide="self.isTainted"
-                        ng-if="section.isSelected && section.isVisible"
+                        ng-if="section.isSelected && section.isVisible && !self.isGenerateError"
                         ng-repeat="section in self.exportComponents.items">
 
                         <rv-svg class="rv-export-graphic"
@@ -102,10 +104,11 @@
         <md-dialog-actions layout="row">
              <md-progress-linear
                     class="rv-progress-bottom"
-                    ng-hide="!self.isGenerating() || self.isError"
+                    ng-hide="!self.isGenerating() || self.isError || self.isGenerateError"
                     md-mode="indeterminate"></md-progress-linear>
 
             <md-select aria-label="{{ 'export.size.selector' | translate }}" translate
+                ng-if="!self.isGenerateError"
                 ng-model="self.exportSizes.selectedOption"
                 md-container-class="rv-export-select">
 
@@ -119,11 +122,11 @@
             </md-select>
 
             <!-- don't display a settings button if none of the settings can be edited -->
-            <span class="rv-button-divider-24" ng-if="::self.isSettingsEditable()"></span>
+            <span class="rv-button-divider-24" ng-if="self.isSettingsEditable() && !self.isGenerateError"></span>
 
             <md-button
                 class="md-icon-button"
-                ng-if="::self.isSettingsEditable()"
+                ng-if="self.isSettingsEditable() && !self.isGenerateError"
                 ng-class="{ selected: self.isExportSettingsOpen }"
                 ng-click="self.isExportSettingsOpen = !self.isExportSettingsOpen">
                 <md-icon md-svg-src="action:settings"></md-icon>

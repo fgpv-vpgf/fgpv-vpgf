@@ -7,13 +7,17 @@
  * The `exportComponentsService` service handles available map export componets.
  *
  */
-angular
-    .module('app.ui')
-    .factory('exportComponentsService', exportComponentsService);
+angular.module('app.ui').factory('exportComponentsService', exportComponentsService);
 
-function exportComponentsService($q, ExportComponent, configService, exportSizesService,
-    exportLegendService, graphicsService, exportGenerators) {
-
+function exportComponentsService(
+    $q,
+    ExportComponent,
+    configService,
+    exportSizesService,
+    exportLegendService,
+    graphicsService,
+    exportGenerators
+) {
     // these are initial configs for the default map export components; all default values are being filled by the ExportComponent constructor class
     const initialExportConfig = {
         title: {
@@ -24,7 +28,8 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
             generators: [
                 exportGenerators.mapDummyGenerator,
                 exportGenerators.mapLocalGenerator,
-                exportGenerators.mapServerGenerator],
+                exportGenerators.mapServerGenerator
+            ],
             graphicOrder: [0, 2, 1]
         },
         mapElements: {
@@ -62,13 +67,11 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
      * @return {Object} the service itself
      */
     function update(showToast = angular.noop) {
+        const promise = init().then(() =>
+            $q.all(service.items.map(item => item.generate(exportSizesService.selectedOption, showToast, true)))
+        );
 
-        init().then(() => {
-            service.items.forEach(item =>
-                item.generate(exportSizesService.selectedOption, showToast, true));
-        });
-
-        return service;
+        return promise;
     }
 
     /**
@@ -86,7 +89,6 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
             service.items = [];
 
             initPromise = configService.getAsync.then(config => {
-
                 componentOrder.forEach(id => {
                     const exportComponent = config.services.export[id];
 
@@ -112,7 +114,6 @@ function exportComponentsService($q, ExportComponent, configService, exportSizes
      * @return {ExportComponent} component with the specified id
      */
     function get(id) {
-        return service.items.find(c =>
-            c.id === id);
+        return service.items.find(c => c.id === id);
     }
 }
