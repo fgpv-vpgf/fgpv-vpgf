@@ -3,7 +3,7 @@
         <md-dialog-content>
             <div class="md-dialog-content">
 
-                <rv-failure-image ng-if="self.isGenerateError" message="export.error.cantgenerate"></rv-failure-image>
+                <rv-failure-image ng-if="self.isGenerateError" message="self.errorMessage"></rv-failure-image>
 
                 <md-content class="rv-export-custom-size rv-invert rv-toggle-slide"
                     ng-if="self.exportSizes.isCustomOptionSelected()">

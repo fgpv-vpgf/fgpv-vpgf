@@ -16,17 +16,24 @@ const RETRY_LIMIT = 3;
  *                          exportSize {ExportSize} - the currently selected map size
  *                          showToast {Function} - a function display a toast notifcation for the user
  *                          value {Object} [optional] - any value stored in the component
+ *                          timeout {Number} [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
  *                      generator function may optionally return a value object which will override the component's stored value object (this can be useful if generator updates the value and it needs to persist)
  *
  * Generator should handle errors and display error notifications using the `showToast` function.
  */
-angular
-    .module('app.ui')
-    .factory('exportGenerators', exportGenerators);
+angular.module('app.ui').factory('exportGenerators', exportGenerators);
 
-function exportGenerators($q, $filter, $translate, configService, graphicsService,
-    exportLegendService, geoService, mapToolService) {
-
+function exportGenerators(
+    common,
+    $q,
+    $filter,
+    $translate,
+    configService,
+    graphicsService,
+    exportLegendService,
+    geoService,
+    mapToolService
+) {
     const service = {
         titleGenerator,
 
@@ -54,8 +61,7 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
      * @param {Object} value [optional] value passed to the generator and modified by it to be stored in the export component
      */
     function wrapOutput(graphicPromise, value) {
-        return graphicPromise.then(graphic =>
-            ({ graphic, value }));
+        return graphicPromise.then(graphic => ({ graphic, value }));
     }
 
     // GENERATORS START
@@ -83,7 +89,8 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
         // create an svg node to draw a timestamp on
         const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
 
-        const titleSvg = containerSvg.text(titleText || '')
+        const titleSvg = containerSvg
+            .text(titleText || '')
             .attr({
                 'font-family': 'Roboto',
                 'font-weight': 'normal',
@@ -149,16 +156,47 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
      * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notifcation for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
+     * @param {Number} timeout [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapServerGenerator(exportSize, showToast) {
-        const { map: { instance: mapInstance }, services: { exportMapUrl } } = configService.getSync;
+    function mapServerGenerator(exportSize, showToast, value, timeout = 0) {
+        const {
+            map: { instance: mapInstance },
+            services: { exportMapUrl }
+        } = configService.getSync;
 
-        const serverGeneratorPromise = serverPrint(exportMapUrl);
+        let isCanceled = false;
+        let timeoutHandle;
+
+        const serverGeneratorPromise = serverGenerate();
 
         return wrapOutput(serverGeneratorPromise);
+
+        function serverGenerate() {
+            // create a promise and start generating the export map image
+            const serverPrintPromise = $q((resolve, reject) => {
+                serverPrint(exportMapUrl)
+                    .then(data => resolve(data))
+                    .catch(reject);
+
+                // set up the timeout and cancel the export generation when it expires
+                if (!timeout) {
+                    return;
+                }
+
+                // console.log('generation timeout started', timeout);
+                common.$timeout.cancel(timeoutHandle);
+                timeoutHandle = common.$timeout(() => {
+                    isCanceled = true;
+                    // console.log('generation timed out');
+                    reject({ timeout: true });
+                }, timeout);
+            });
+
+            return serverPrintPromise;
+        }
 
         function serverPrint(exportMapUrl, attempt = 0) {
             const serverPromise = mapInstance.printServer({
@@ -170,31 +208,42 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
 
             const wrapperPromise = $q((resolve, reject) => {
                 $q.resolve(serverPromise)
-                    .then(data => resolve(data))
+                    .then(data => {
+                        // timeout expiring should not have any effect after this point, but cancel anyway
+                        common.$timeout.cancel(timeoutHandle);
+                        resolve(data);
+                    })
                     .catch(error => {
+                        // stop; the promise has been rejected already
+                        if (isCanceled) {
+                            return;
+                        }
+
                         attempt++;
-                        console.error('exportGeneratorsService', `print task failed on try ${attempt} with error`, error);
+                        console.error(
+                            'exportGeneratorsService',
+                            `print task failed on try ${attempt} with error`,
+                            error
+                        );
+
                         // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
                         // submitting it a second time usually works; if not, submit a third time
                         if (attempt <= RETRY_LIMIT) {
                             console.log('exportGeneratorsService', `trying print task again`);
                             resolve(serverPrint(exportMapUrl, attempt));
                         } else {
-                            // show error; likely service timeout
-                            // self.isError = true;
-
-                            showToast('error.timeout', { action: 'retry', hideDelay: 5000 })
-                                .then(response => {
-                                    if (response === 'ok') { // promise resolves with 'ok' when user clicks 'retry'
-                                        attempt = 0;
-
-                                        // self.isError = false;
-                                        console.log('exportGeneratorsService', `trying print task again`);
-                                        resolve(serverPrint(exportMapUrl, attempt));
-                                    } else {
-                                        reject(error);
-                                    }
-                                });
+                            // stop the timeout and ask the user if she wants to retry
+                            common.$timeout.cancel(timeoutHandle);
+                            showToast('error.timeout', { action: 'retry', hideDelay: 5000 }).then(response => {
+                                if (response === 'ok') {
+                                    // promise resolves with 'ok' when user clicks 'retry'
+                                    console.log('exportGeneratorsService', `trying print task again`);
+                                    // run the cycle again, starting the timeout anew
+                                    resolve(serverGenerate());
+                                } else {
+                                    reject(error);
+                                }
+                            });
                         }
                     });
             });
@@ -266,7 +315,7 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
         scalebarGroup.line(0, 22, metric.width, 22).stroke('black');
 
         // set label and pixel length for imperial
-        const imperial = getScaleInfo((scale.ratio / 1.6), scale.units[1]);
+        const imperial = getScaleInfo(scale.ratio / 1.6, scale.units[1]);
         attr.y = 30;
         scalebarGroup.line(0, 29, imperial.width, 29).stroke('black');
         scalebarGroup.text(imperial.label).attr(attr);
@@ -290,19 +339,18 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
          */
         function getScaleInfo(ratio, unit) {
             // find the first round distance that makes the scale bar less than 120 pixels
-            const scaleRatio = (120 * ratio);
+            const scaleRatio = 120 * ratio;
 
             // find modulo value to use
-            const modulo = Math.pow(10, (Math.floor(Math.log(scaleRatio) / Math.LN10) + 1) - 1);
+            const modulo = Math.pow(10, Math.floor(Math.log(scaleRatio) / Math.LN10) + 1 - 1);
 
             // get bar length
-            const bar = (scaleRatio) - (scaleRatio % modulo);
+            const bar = scaleRatio - (scaleRatio % modulo);
 
             // return label and pixel bar length
             // add approx to warn user about using scale bar as a ruler (scalebar is always approximative)
             return {
-                label: `${parseFloat(bar.toFixed(1))
-                    .toString()}${unit} ${$translate.instant('export.label.approx')}`,
+                label: `${parseFloat(bar.toFixed(1)).toString()}${unit} ${$translate.instant('export.label.approx')}`,
                 width: `${Math.floor((bar * 120) / scaleRatio)}`
             };
         }
@@ -333,7 +381,10 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
         // create an svg node to draw a timestamp on
         const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
 
-        const arrowSvg = containerSvg.group().svg(arrowSCG).first();
+        const arrowSvg = containerSvg
+            .group()
+            .svg(arrowSCG)
+            .first();
         const arrowViewBox = arrowSvg.viewbox();
         const arrowSizeRatio = arrowViewBox.width / arrowViewBox.height;
 

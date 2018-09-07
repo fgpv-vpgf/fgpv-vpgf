@@ -63,12 +63,15 @@ function exportComponentsService(
     /**
      * Generates (or regenerates) the graphics from all export components after they initialized.
      * @function update
+     * @param {Number} timeout a delay before after which the generation is considered to have failed
      * @param {Function} showToast [optional = angular.noop] a function to show notification toasts in the export dialog
      * @return {Object} the service itself
      */
-    function update(showToast = angular.noop) {
+    function update(timeout, showToast = angular.noop) {
         const promise = init().then(() =>
-            $q.all(service.items.map(item => item.generate(exportSizesService.selectedOption, showToast, true)))
+            $q.all(
+                service.items.map(item => item.generate(exportSizesService.selectedOption, timeout, showToast, true))
+            )
         );
 
         return promise;
