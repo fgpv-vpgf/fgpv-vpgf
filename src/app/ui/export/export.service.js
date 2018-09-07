@@ -86,8 +86,13 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
         'ngInject';
         const self = this;
 
+        const ref = {
+            timeout: configService.getSync.services.export.timeout
+        };
+
         self.isError = false;
         self.isGenerateError = false;
+        self.errorMessage = '';
         self.isTainted = false; // indicates the canvas is tainted and cannot be directly saved
 
         self.exportSizes = exportSizesService.update();
@@ -106,7 +111,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
 
         // updating export components will initialize them if this is called for the first time;
         exportComponentsService.init().then(() => {
-            exportComponentsService.update(showToast).catch(() => (self.isGenerateError = true));
+            updateComponents();
 
             // title component is special since the user can modify its value; we expose it to bind the value to the input field
             self.titleComponent = self.exportComponents.get('title');
@@ -130,7 +135,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          */
         function updateTitleComponent() {
             if (self.titleComponent) {
-                self.titleComponent.generate(self.exportSizes.selectedOption, showToast, true);
+                self.titleComponent.generate(self.exportSizes.selectedOption, ref.timeout, showToast, true);
             }
         }
 
@@ -141,7 +146,10 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          */
         function updateComponents() {
             self.lastUsedSizeOption = self.exportSizes.selectedOption;
-            exportComponentsService.update(showToast);
+            exportComponentsService.update(ref.timeout, showToast).catch(error => {
+                self.errorMessage = error.timeout ? 'export.error.timeout' : 'export.error.cantgenerate';
+                self.isGenerateError = true;
+            });
         }
 
         /**

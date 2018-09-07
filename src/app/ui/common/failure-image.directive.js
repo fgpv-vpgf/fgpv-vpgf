@@ -12,7 +12,7 @@ function rvFailureImage(configService) {
     const directive = {
         restrict: 'E',
         scope: {
-            message: '@'
+            message: '='
         },
         link,
         templateUrl,

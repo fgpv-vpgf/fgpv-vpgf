@@ -1925,6 +1925,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._legend = new LegendExportComponent(source.legend);
             this._footnote = new ExportComponent(source.footnote);
             this._timestamp = new ExportComponent(source.timestamp);
+            this._timeout = typeof source.timeout === 'undefined' ? 120000 : source.timeout;
         }
 
         get title () { return this._title; }
@@ -1933,6 +1934,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get legend () { return this._legend; }
         get footnote () { return this._footnote; }
         get timestamp () { return this._timestamp; }
+        get timeout () { return this._timeout; }
 
         get JSON() {
             return {
@@ -1941,7 +1943,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 mapElements: this.mapElements.JSON,
                 legend: this.legend.JSON,
                 footnote: this.footnote.JSON,
-                timestamp: this.timestamp.JSON
+                timestamp: this.timestamp.JSON,
+                timeout: this.timeout
             };
         }
     }
