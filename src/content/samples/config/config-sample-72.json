@@ -85,7 +85,46 @@
         "name": "root",
         "children": [
           {
-            "name": "A Group with a Visibility Set",
+            "name": "Group without legs",
+            "expanded": true,
+            "hidden": true,
+            "children": [
+              {
+                "infoType": "unboundLayer",
+                "coverIcon": "http://icons.iconarchive.com/icons/iconka/meow-2/256/cat-hungry-icon.png",
+                "content": "How to catch Santa (//www.pusheen.com/)",
+                "symbologyStack": [
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step1.gif",
+                    "text": "1. Set your bait"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step2.gif",
+                    "text": "2. Hide"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step3.gif",
+                    "text": "3. Don't eat the bait"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step4.gif",
+                    "text": "4. Don't do it"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step5.gif",
+                    "text": "5. Stop!!"
+                  },
+                  {
+                    "image": "http://fgpv.cloudapp.net/demo/__assets__/step6.gif",
+                    "text": "6. You ruinted it!"
+                  }
+                ],
+                "symbologyRenderStyle": "images"
+              }
+            ]
+          },
+          {
+            "name": "Vanilla Visibility Set",
             "expanded": true,
             "controls": [
               "visibility"
@@ -97,9 +136,30 @@
                     "layerId": "powerplant100mw-electric"
                   },
                   {
-                    "layerId": "powerplant100mw-naturalGas",
-                    "symbologyExpanded": true,
-                    "description": "100mw Natural gas power plants"
+                    "layerId": "powerplant100mw-naturalGas"
+                  },
+                  {
+                    "layerId": "powerplant100mw-liquids"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Collapsed Visibility Set",
+            "expanded": true,
+            "controls": [
+              "visibility"
+            ],
+            "children": [
+              {
+                "collapse": true,
+                "exclusiveVisibility": [
+                  {
+                    "layerId": "powerplant100mw-electric"
+                  },
+                  {
+                    "layerId": "powerplant100mw-naturalGas"
                   },
                   {
                     "layerId": "powerplant100mw-liquids"
@@ -117,7 +177,8 @@
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
         "controls": [
-          "remove"
+          "remove",
+          "visibility"
         ],
         "state": {
           "visibility": false,
@@ -137,6 +198,20 @@
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
       },
       {
+        "id": "crops",
+        "name": "crops",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 0
+          }
+        ],
+        "state": {
+          "visibility": false
+        },
+        "url": "http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer"
+      },
+      {
         "id": "powerplant100mw-liquids",
         "name": "Liquids Pipeline",
         "expectedResponseTime": 100,
@@ -145,6 +220,28 @@
           "visibility": true
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+      },
+      {
+        "id": "wms",
+        "name": "WMS Layer",
+        "layerType": "ogcWms",
+        "disabledControls": [
+          "styles"
+        ],
+        "layerEntries": [
+          {
+            "id": "GDPS.ETA_UU",
+            "allStyles": [
+              "WINDARROW",
+              "WINDARROWKMH"
+            ],
+            "currentStyle": "WINDARROWKMH"
+          }
+        ],
+        "state": {
+          "visibility": false
+        },
+        "url": "http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
       }
     ],
     "extentSets": [

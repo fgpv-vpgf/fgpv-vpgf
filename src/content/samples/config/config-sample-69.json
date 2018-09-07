@@ -1,5 +1,6 @@
 {
   "ui": {
+    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -12,11 +13,8 @@
     "sideMenu": {
       "logo": true
     },
-    "tableIsOpen": {
-      "id": "DateLayer",
-      "large": true,
-      "medium": true,
-      "small": false
+    "help": {
+      "folderName": "default"
     },
     "legend": {
       "isOpen": {
@@ -30,6 +28,7 @@
   "language": "en",
   "services": {
     "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+    "esriLibUrl": "//js.arcgis.com/3.20/init.js",
     "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
       "title": {
@@ -74,59 +73,17 @@
       },
       "overviewMap": {
         "enabled": true,
-        "layerType": "imagery"
+        "layerType": "imagery",
+        "initiallyExpanded": false
       },
       "scaleBar": {
         "enabled": true
       }
     },
     "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "Esri Tile",
-            "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "layerId": "canadaElevation",
-                "symbologyStack": [
-                  {
-                    "image": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png",
-                    "text": "I am big!"
-                  }
-                ],
-                "symbologyRenderStyle": "images"
-              }
-            ]
-          },
-          {
-            "infoType": "image",
-            "content": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png"
-          },
-          {
-            "infoType": "image",
-            "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
-          }
-        ]
-      }
+      "type": "autopopulate"
     },
-    "layers": [
-      {
-        "id": "canadaElevation",
-        "name": "Canada Elevation",
-        "layerType": "esriTile",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer",
-        "state": {
-          "opacity": 0.5,
-          "visibility": false
-        }
-      }
-    ],
+    "layers": [],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -388,7 +345,16 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "attribution": {
+          "text": {
+            "enabled": true,
+            "value": "Custom Attribution"
+          },
+          "logo": {
+            "enabled": true
+          }
+        }
       },
       {
         "id": "baseSimple",

@@ -10,21 +10,40 @@
       ]
     },
     "sideMenu": {
+      "items": [
+        [
+          "layers",
+          "basemap"
+        ],
+        [
+          "fullscreen",
+          "export",
+          "share",
+          "touch",
+          "help",
+          "about"
+        ],
+        [
+          "language"
+        ],
+        [
+          "plugins"
+        ]
+      ],
       "logo": true
     },
-    "tableIsOpen": {
-      "id": "0",
-      "large": true,
-      "medium": true,
-      "small": false
+    "about": {
+      "content": "-- placeholder --"
+    },
+    "help": {
+      "folderName": "default"
     },
     "legend": {
       "isOpen": {
-        "large": true,
-        "medium": true,
+        "large": false,
+        "medium": false,
         "small": false
-      },
-      "reorderable": false
+      }
     }
   },
   "version": "2.0",
@@ -58,13 +77,13 @@
     "components": {
       "geoSearch": {
         "enabled": true,
-        "showGraphic": true,
-        "showInfo": true
+        "showGraphic": false,
+        "showInfo": false
       },
       "mouseInfo": {
         "enabled": true,
         "spatialReference": {
-          "wkid": 102100
+          "wkid": 4326
         }
       },
       "northArrow": {
@@ -79,6 +98,43 @@
       },
       "scaleBar": {
         "enabled": true
+      },
+      "areaOfInterest": {
+        "areas": [
+          {
+            "title": "Reservoir Manicougan, Quebec, Canada",
+            "xmin": -69,
+            "xmax": -68,
+            "ymin": 51,
+            "ymax": 53,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
+          },
+          {
+            "title": "New Jersey, USA",
+            "xmin": -76,
+            "xmax": -72,
+            "ymin": 41,
+            "ymax": 41,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
+          },
+          {
+            "title": "Washington, DC, USA",
+            "xmin": -77,
+            "xmax": -77,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
+          },
+          {
+            "title": "Delaware, USA",
+            "xmin": -75,
+            "xmax": -75,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
+          }
+        ],
+        "noPicture": false
       }
     },
     "legend": {
@@ -86,83 +142,14 @@
     },
     "layers": [
       {
-        "id": "0",
+        "id": "powerplant100mw-electric",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "table": {
-          "columns": [
-            {
-              "data": "OBJECTID",
-              "title": "OBJECTID",
-              "visible": true,
-              "searchable": true,
-              "filter": {
-                "type": "number",
-                "value": "0,80"
-              }
-            },
-            {
-              "data": "Country",
-              "title": "Country",
-              "visible": true,
-              "searchable": true,
-              "filter": {
-                "type": "selector",
-                "value": "[\"Canada\", \"Mexico\"]"
-              },
-              "sort": "asc"
-            },
-            {
-              "data": "LineName",
-              "title": "Line name",
-              "visible": true,
-              "searchable": true,
-              "filter": {
-                "type": "string",
-                "value": "c*"
-              }
-            },
-            {
-              "data": "NumLines",
-              "title": "Line number",
-              "visible": true,
-              "searchable": false,
-              "filter": {
-                "type": "number"
-              }
-            }
-          ]
+        "state": {
+          "visibility": false,
+          "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-      },
-      {
-        "id": "GeoChrone***33c61115",
-        "name": "Time filtering",
-        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/GSCC/Geochronology/MapServer",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 0,
-            "table": {
-              "title": "",
-              "maximize": false,
-              "columns": [
-                {
-                  "data": "OBJECTID",
-                  "title": "OBJECTID"
-                },
-                {
-                  "data": "LAST_UPDATED",
-                  "title": "LAST_UPDATED",
-                  "filter": {
-                    "type": "date",
-                    "value": "2005-02-22,2005-04-30"
-                  }
-                }
-              ]
-            }
-          }
-        ]
       }
     ],
     "extentSets": [

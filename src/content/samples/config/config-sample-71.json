@@ -1,6 +1,6 @@
 {
   "ui": {
-    "title": "Custom Title",
+    "fullscreen": true,
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -10,11 +10,17 @@
         "help"
       ]
     },
+    "about": {
+      "folderName": "indexOne"
+    },
     "sideMenu": {
       "logo": true
     },
-    "help": {
-      "folderName": "default"
+    "tableIsOpen": {
+      "id": "DateLayer",
+      "large": true,
+      "medium": true,
+      "small": false
     },
     "legend": {
       "isOpen": {
@@ -24,19 +30,17 @@
       }
     }
   },
-  "version": "2.0",
+  "version": "2.3",
   "language": "en",
   "services": {
-    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-    "esriLibUrl": "//js.arcgis.com/3.20/init.js",
+    "proxyUrl": "",
+    "corsEverywhere": true,
     "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
-      "title": {
-        "value": "Title"
+      "legend": {
+        "showInfoSymbology": true,
+        "showControlledSymbology": true
       },
-      "map": {},
-      "mapElements": {},
-      "legend": {},
       "footnote": {
         "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
       }
@@ -52,7 +56,7 @@
     }
   },
   "map": {
-    "initialBasemapId": "baseNrCan",
+    "initialBasemapId": "baseSimple",
     "components": {
       "geoSearch": {
         "enabled": true,
@@ -62,7 +66,7 @@
       "mouseInfo": {
         "enabled": true,
         "spatialReference": {
-          "wkid": 102100
+          "wkid": 4326
         }
       },
       "northArrow": {
@@ -73,8 +77,8 @@
       },
       "overviewMap": {
         "enabled": true,
-        "layerType": "imagery",
-        "initiallyExpanded": false
+        "expandFactor": 3,
+        "layerType": "imagery"
       },
       "scaleBar": {
         "enabled": true
@@ -83,7 +87,15 @@
     "legend": {
       "type": "autopopulate"
     },
-    "layers": [],
+    "layers": [
+      {
+        "id": "MEANTEMP",
+        "name": "mean (nasty) temps",
+        "layerType": "ogcWfs",
+        "nameField": "station_id",
+        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/ahccd-trends/items?measurement_type=temp_mean"
+      }
+    ],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
@@ -323,7 +335,12 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978"
+        "lodSetId": "LOD_NRCAN_Lambert_3978",
+        "overviewUrl": {
+          "id": "CBMT_Overview",
+          "layerType": "esriTile",
+          "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+        }
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
@@ -345,16 +362,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "Custom Attribution"
-          },
-          "logo": {
-            "enabled": true
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseSimple",
@@ -394,6 +402,20 @@
             "id": "CBMT_CBCT_GEOM_3978",
             "layerType": "esriFeature",
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+          }
+        ],
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+      },
+      {
+        "id": "baseCBCT_TXT_3978",
+        "name": "Canada Base Map - Fancy Labels",
+        "description": " The Canada Base Map - Fancy Labels provides the fanciest of labels.",
+        "altText": "altText - Canada Base Map - Fancy Labels",
+        "layers": [
+          {
+            "id": "CBCT_TXT_3978",
+            "layerType": "esriFeature",
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT_TXT_3978/MapServer"
           }
         ],
         "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
