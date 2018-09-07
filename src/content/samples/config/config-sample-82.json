@@ -1,5 +1,9 @@
 {
+  "intentions": {
+    "epsg": "customEPSG"
+  },
   "ui": {
+    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -10,38 +14,15 @@
       ]
     },
     "sideMenu": {
-      "items": [
-        [
-          "layers",
-          "basemap"
-        ],
-        [
-          "fullscreen",
-          "export",
-          "share",
-          "touch",
-          "help",
-          "about"
-        ],
-        [
-          "language"
-        ],
-        [
-          "plugins"
-        ]
-      ],
       "logo": true
-    },
-    "about": {
-      "content": "-- placeholder --"
     },
     "help": {
       "folderName": "default"
     },
     "legend": {
       "isOpen": {
-        "large": false,
-        "medium": false,
+        "large": true,
+        "medium": true,
         "small": false
       }
     }
@@ -77,13 +58,13 @@
     "components": {
       "geoSearch": {
         "enabled": true,
-        "showGraphic": false,
-        "showInfo": false
+        "showGraphic": true,
+        "showInfo": true
       },
       "mouseInfo": {
         "enabled": true,
         "spatialReference": {
-          "wkid": 4326
+          "wkid": 102100
         }
       },
       "northArrow": {
@@ -93,48 +74,10 @@
         "enabled": true
       },
       "overviewMap": {
-        "enabled": true,
-        "layerType": "imagery"
+        "enabled": false
       },
       "scaleBar": {
         "enabled": true
-      },
-      "areaOfInterest": {
-        "areas": [
-          {
-            "title": "Reservoir Manicougan, Quebec, Canada",
-            "xmin": -69,
-            "xmax": -68,
-            "ymin": 51,
-            "ymax": 53,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
-          },
-          {
-            "title": "New Jersey, USA",
-            "xmin": -76,
-            "xmax": -72,
-            "ymin": 41,
-            "ymax": 41,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
-          },
-          {
-            "title": "Washington, DC, USA",
-            "xmin": -77,
-            "xmax": -77,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
-          },
-          {
-            "title": "Delaware, USA",
-            "xmin": -75,
-            "xmax": -75,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
-          }
-        ],
-        "noPicture": false
       }
     },
     "legend": {
@@ -142,14 +85,18 @@
     },
     "layers": [
       {
-        "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
-        "layerType": "esriFeature",
-        "state": {
-          "visibility": false,
-          "boundingBox": false
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+        "id": "default",
+        "name": "Default",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 2
+          },
+          {
+            "index": 3
+          }
+        ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
       }
     ],
     "extentSets": [
@@ -414,7 +361,16 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "attribution": {
+          "text": {
+            "enabled": true,
+            "value": "Custom Attribution"
+          },
+          "logo": {
+            "enabled": true
+          }
+        }
       },
       {
         "id": "baseSimple",

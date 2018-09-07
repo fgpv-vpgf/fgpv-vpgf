@@ -10,38 +10,12 @@
       ]
     },
     "sideMenu": {
-      "items": [
-        [
-          "layers",
-          "basemap"
-        ],
-        [
-          "fullscreen",
-          "export",
-          "share",
-          "touch",
-          "help",
-          "about"
-        ],
-        [
-          "language"
-        ],
-        [
-          "plugins"
-        ]
-      ],
       "logo": true
-    },
-    "about": {
-      "content": "-- placeholder --"
-    },
-    "help": {
-      "folderName": "default"
     },
     "legend": {
       "isOpen": {
-        "large": false,
-        "medium": false,
+        "large": true,
+        "medium": true,
         "small": false
       }
     }
@@ -77,13 +51,13 @@
     "components": {
       "geoSearch": {
         "enabled": true,
-        "showGraphic": false,
-        "showInfo": false
+        "showGraphic": true,
+        "showInfo": true
       },
       "mouseInfo": {
         "enabled": true,
         "spatialReference": {
-          "wkid": 4326
+          "wkid": 102100
         }
       },
       "northArrow": {
@@ -98,58 +72,76 @@
       },
       "scaleBar": {
         "enabled": true
-      },
-      "areaOfInterest": {
-        "areas": [
-          {
-            "title": "Reservoir Manicougan, Quebec, Canada",
-            "xmin": -69,
-            "xmax": -68,
-            "ymin": 51,
-            "ymax": 53,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
-          },
-          {
-            "title": "New Jersey, USA",
-            "xmin": -76,
-            "xmax": -72,
-            "ymin": 41,
-            "ymax": 41,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
-          },
-          {
-            "title": "Washington, DC, USA",
-            "xmin": -77,
-            "xmax": -77,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
-          },
-          {
-            "title": "Delaware, USA",
-            "xmin": -75,
-            "xmax": -75,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
-          }
-        ],
-        "noPicture": true
       }
     },
     "legend": {
-      "type": "autopopulate"
+      "type": "structured",
+      "root": {
+        "name": "root",
+        "children": [
+          {
+            "layerId": "somepowerplants"
+          },
+          {
+            "name": "feature group",
+            "children": [
+              {
+                "layerId": "powerplant100mw-electric"
+              },
+              {
+                "layerId": "powerplant100mw-naturalGas"
+              },
+              {
+                "layerId": "powerplant100mw-liquids"
+              }
+            ]
+          }
+        ]
+      }
     },
     "layers": [
       {
+        "id": "somepowerplants",
+        "name": "Power Plants Proper Subset",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 17,
+            "nameField": "OBJECTID",
+            "name": "Custom name field (OBJECTID)"
+          },
+          {
+            "index": 19,
+            "nameField": "Address",
+            "name": "Custom name field (Address)"
+          },
+          {
+            "index": 21,
+            "name": "Default name field (Facility)"
+          }
+        ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
         "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
+        "name": "Tooltip field (City) different from name field (OBJECTID)",
+        "nameField": "OBJECTID",
+        "tooltipField": "City",
         "layerType": "esriFeature",
-        "state": {
-          "visibility": false,
-          "boundingBox": false
-        },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "powerplant100mw-naturalGas",
+        "name": "Tooltip field same as name field (Period)",
+        "nameField": "Period",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+      },
+      {
+        "id": "powerplant100mw-liquids",
+        "name": "Default tooltip and name field (Country)",
+        "layerType": "esriFeature",
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
       }
     ],
     "extentSets": [

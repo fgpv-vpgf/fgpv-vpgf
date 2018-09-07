@@ -173,8 +173,7 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
                     .then(data => resolve(data))
                     .catch(error => {
                         attempt++;
-                        console.error('exportGeneratorsService', `print task failed ` +
-                            `on try ${attempt} with error`, error);
+                        console.error('exportGeneratorsService', `print task failed on try ${attempt} with error`, error);
                         // print task with many layers will likely fail due to esri's proxy/cors issue https://github.com/fgpv-vpgf/fgpv-vpgf/issues/702
                         // submitting it a second time usually works; if not, submit a third time
                         if (attempt <= RETRY_LIMIT) {
@@ -184,7 +183,7 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
                             // show error; likely service timeout
                             // self.isError = true;
 
-                            showToast('error.timeout', { action: 'retry' })
+                            showToast('error.timeout', { action: 'retry', hideDelay: 5000 })
                                 .then(response => {
                                     if (response === 'ok') { // promise resolves with 'ok' when user clicks 'retry'
                                         attempt = 0;
@@ -193,7 +192,7 @@ function exportGenerators($q, $filter, $translate, configService, graphicsServic
                                         console.log('exportGeneratorsService', `trying print task again`);
                                         resolve(serverPrint(exportMapUrl, attempt));
                                     } else {
-                                        reject();
+                                        reject(error);
                                     }
                                 });
                         }

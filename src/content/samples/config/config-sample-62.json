@@ -1,6 +1,5 @@
 {
   "ui": {
-    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -11,15 +10,38 @@
       ]
     },
     "sideMenu": {
+      "items": [
+        [
+          "layers",
+          "basemap"
+        ],
+        [
+          "fullscreen",
+          "export",
+          "share",
+          "touch",
+          "help",
+          "about"
+        ],
+        [
+          "language"
+        ],
+        [
+          "plugins"
+        ]
+      ],
       "logo": true
+    },
+    "about": {
+      "content": "-- placeholder --"
     },
     "help": {
       "folderName": "default"
     },
     "legend": {
       "isOpen": {
-        "large": true,
-        "medium": true,
+        "large": false,
+        "medium": false,
         "small": false
       }
     }
@@ -55,13 +77,13 @@
     "components": {
       "geoSearch": {
         "enabled": true,
-        "showGraphic": true,
-        "showInfo": true
+        "showGraphic": false,
+        "showInfo": false
       },
       "mouseInfo": {
         "enabled": true,
         "spatialReference": {
-          "wkid": 102100
+          "wkid": 4326
         }
       },
       "northArrow": {
@@ -76,71 +98,58 @@
       },
       "scaleBar": {
         "enabled": true
+      },
+      "areaOfInterest": {
+        "areas": [
+          {
+            "title": "Reservoir Manicougan, Quebec, Canada",
+            "xmin": -69,
+            "xmax": -68,
+            "ymin": 51,
+            "ymax": 53,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
+          },
+          {
+            "title": "New Jersey, USA",
+            "xmin": -76,
+            "xmax": -72,
+            "ymin": 41,
+            "ymax": 41,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
+          },
+          {
+            "title": "Washington, DC, USA",
+            "xmin": -77,
+            "xmax": -77,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
+          },
+          {
+            "title": "Delaware, USA",
+            "xmin": -75,
+            "xmax": -75,
+            "ymin": 38,
+            "ymax": 40,
+            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
+          }
+        ],
+        "noPicture": true
       }
     },
     "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "A Group with a Visibility Set",
-            "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "exclusiveVisibility": [
-                  {
-                    "layerId": "powerplant100mw-electric"
-                  },
-                  {
-                    "layerId": "powerplant100mw-naturalGas"
-                  },
-                  {
-                    "layerId": "powerplant100mw-liquids"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+      "type": "autopopulate"
     },
     "layers": [
       {
         "id": "powerplant100mw-electric",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "controls": [
-          "remove"
-        ],
         "state": {
           "visibility": false,
           "boundingBox": false
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-      },
-      {
-        "id": "powerplant100mw-naturalGas",
-        "name": "Natural Gas Pipeline",
-        "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-        "state": {
-          "visibility": false,
-          "boundingBox": false
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
-      },
-      {
-        "id": "powerplant100mw-liquids",
-        "name": "Liquids Pipeline",
-        "layerType": "esriFeature",
-        "state": {
-          "visibility": true
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
       }
     ],
     "extentSets": [
@@ -405,19 +414,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "My custom attribution"
-          },
-          "logo": {
-            "enabled": true,
-            "altText": "My custom logo",
-            "value": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADsklEQVRYR63XdwincxwH8NeZGWXGnRWZiSJ/kGRlJMqI0+FynSI7skpmnGzJzChd54pkZkUJ2WVE6cqR7BHK3r2v76Pnfvc83+e5zqd+f/z6fcb795nv7xTjZXUciL2xAzbHGvgHP+ADvIln8QR+GuN6ygilzXAOZuIPPIc38CG+L/ZrYgvshD2xHO7BVfi4FqMGYGWcj3PxMm7A4/h9AHTsDsKZBdAcXFHAL2HaB2ATPIB1cHJJ6YhkLaYS3wFyEz7D4fh00kkXgG3wDF7HrFLfLrv0wMblh/fwVQ/CtTAX22NfLGjrTQLIP38JT+IE/DXhNPqn4qxW8Kj8jWtxIX7tALIC7ir9sWs7E20Aqd2L+KSkazJ4/N6Mkyq1+BkX4+oeEA9hbezR9EQbwKU4Bjv2pD0dnu4fIweULE7qJvhbuB2X58cGQEbtfRxSabh08nljouNeHN2jmxjzsWWy3QC4FduW1PTFuL+UZgyG17Bzj2Jips/S5KflSzbcFyX9qVGfPFgyNAbAq9ilojgdd2BqAByJ27D+wJK5E8eNiY78kUMruquUsZ0ZAGmI9QYM4uvsslrHYLikTENNN1t1YQAkXY80XVmx2A9PjYmO/fH0gG6mbq8A+CbNUDq3ZrM0JUhJTxwAcGxuRADkwh1cDk3NJqU6fmQGsv+zMWuSmPMDINcts5ma1CSLKCXIgarJ19gH7wzoJea8AIjB6SNKEH/Ry1muSa7nLSMylUM3JwBeKf8+TTEkOVYLsXyP4p/YtOvsduhfht0DIFtwg9IHQwDy+3U4o0fx+kJExvjJxV0QACEKOZXZBb+NsEwPZHK6JMusjxe09VctpZ8RAKuVVZyahAUNSS7atz1KU/HlkAPMKH0yrTlGGZuc4d0Ky635SI1DSLtk60nG06GUmDlWL6RcDYA0V6jSEXi0Ej3MJmz3qB6d+8pRy27pk5Q8PsKiP28TktCpHJtw/u8mrBM4cxudcLuavIvcglzPSVa1Lt7GjbgyTtoAVsTzpb4JlpHKdISCzca0EbVtq4QB311qnXMf/48hlzCPm/hfDEC+b1jIQuoTo1MQrrgsEpKa5ZXeCUkJKY3vRdJFy7cqr590+7IGb+JkvDO6IaN5wv0nfQ+TZOJhbPc/gPilENHD2v+8loHmt9QsJPSCMporLWUdfix1v6i8GRbVfFLGPE43KkDSiAEVm9otSIzUPZzvmvIs68U+BkBjnO4N08knhDNNlS0ayYPko/KwCRPKp+uFtASQfwFMNb0ytvWaBAAAAABJRU5ErkJggg==",
-            "link": "https://github.com/fgpv-vpgf/fgpv-vpgf/"
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseSimple",
@@ -431,16 +428,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "No logo"
-          },
-          "logo": {
-            "enabled": false
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseCBME_CBCE_HS_RO_3978",
@@ -454,16 +442,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "Default logo"
-          },
-          "logo": {
-            "enabled": true
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseCBMT_CBCT_GEOM_3978",
@@ -477,17 +456,7 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "My custom attribution, no link, no alt text"
-          },
-          "logo": {
-            "enabled": true,
-            "value": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADsklEQVRYR63XdwincxwH8NeZGWXGnRWZiSJ/kGRlJMqI0+FynSI7skpmnGzJzChd54pkZkUJ2WVE6cqR7BHK3r2v76Pnfvc83+e5zqd+f/z6fcb795nv7xTjZXUciL2xAzbHGvgHP+ADvIln8QR+GuN6ygilzXAOZuIPPIc38CG+L/ZrYgvshD2xHO7BVfi4FqMGYGWcj3PxMm7A4/h9AHTsDsKZBdAcXFHAL2HaB2ATPIB1cHJJ6YhkLaYS3wFyEz7D4fh00kkXgG3wDF7HrFLfLrv0wMblh/fwVQ/CtTAX22NfLGjrTQLIP38JT+IE/DXhNPqn4qxW8Kj8jWtxIX7tALIC7ir9sWs7E20Aqd2L+KSkazJ4/N6Mkyq1+BkX4+oeEA9hbezR9EQbwKU4Bjv2pD0dnu4fIweULE7qJvhbuB2X58cGQEbtfRxSabh08nljouNeHN2jmxjzsWWy3QC4FduW1PTFuL+UZgyG17Bzj2Jips/S5KflSzbcFyX9qVGfPFgyNAbAq9ilojgdd2BqAByJ27D+wJK5E8eNiY78kUMruquUsZ0ZAGmI9QYM4uvsslrHYLikTENNN1t1YQAkXY80XVmx2A9PjYmO/fH0gG6mbq8A+CbNUDq3ZrM0JUhJTxwAcGxuRADkwh1cDk3NJqU6fmQGsv+zMWuSmPMDINcts5ma1CSLKCXIgarJ19gH7wzoJea8AIjB6SNKEH/Ry1muSa7nLSMylUM3JwBeKf8+TTEkOVYLsXyP4p/YtOvsduhfht0DIFtwg9IHQwDy+3U4o0fx+kJExvjJxV0QACEKOZXZBb+NsEwPZHK6JMusjxe09VctpZ8RAKuVVZyahAUNSS7atz1KU/HlkAPMKH0yrTlGGZuc4d0Ky635SI1DSLtk60nG06GUmDlWL6RcDYA0V6jSEXi0Ej3MJmz3qB6d+8pRy27pk5Q8PsKiP28TktCpHJtw/u8mrBM4cxudcLuavIvcglzPSVa1Lt7GjbgyTtoAVsTzpb4JlpHKdISCzca0EbVtq4QB311qnXMf/48hlzCPm/hfDEC+b1jIQuoTo1MQrrgsEpKa5ZXeCUkJKY3vRdJFy7cqr590+7IGb+JkvDO6IaN5wv0nfQ+TZOJhbPc/gPilENHD2v+8loHmt9QsJPSCMporLWUdfix1v6i8GRbVfFLGPE43KkDSiAEVm9otSIzUPZzvmvIs68U+BkBjnO4N08knhDNNlS0ayYPko/KwCRPKp+uFtASQfwFMNb0ytvWaBAAAAABJRU5ErkJggg=="
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseEsriWorld",

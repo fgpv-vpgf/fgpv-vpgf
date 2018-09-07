@@ -1,6 +1,5 @@
 {
   "ui": {
-    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -13,15 +12,19 @@
     "sideMenu": {
       "logo": true
     },
-    "help": {
-      "folderName": "default"
+    "tableIsOpen": {
+      "id": "0",
+      "large": true,
+      "medium": true,
+      "small": false
     },
     "legend": {
       "isOpen": {
         "large": true,
         "medium": true,
         "small": false
-      }
+      },
+      "reorderable": false
     }
   },
   "version": "2.0",
@@ -51,7 +54,7 @@
     }
   },
   "map": {
-    "initialBasemapId": "brokenBasemap",
+    "initialBasemapId": "baseNrCan",
     "components": {
       "geoSearch": {
         "enabled": true,
@@ -79,68 +82,87 @@
       }
     },
     "legend": {
-      "type": "structured",
-      "root": {
-        "name": "root",
-        "children": [
-          {
-            "name": "A Group with a Visibility Set",
-            "expanded": true,
-            "controls": [
-              "visibility"
-            ],
-            "children": [
-              {
-                "exclusiveVisibility": [
-                  {
-                    "layerId": "powerplant100mw-electric"
-                  },
-                  {
-                    "layerId": "powerplant100mw-naturalGas"
-                  },
-                  {
-                    "layerId": "powerplant100mw-liquids"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+      "type": "autopopulate"
     },
     "layers": [
       {
-        "id": "powerplant100mw-electric",
+        "id": "0",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "controls": [
-          "remove"
-        ],
-        "state": {
-          "visibility": false,
-          "boundingBox": false
+        "table": {
+          "columns": [
+            {
+              "data": "OBJECTID",
+              "title": "OBJECTID",
+              "visible": true,
+              "searchable": true,
+              "filter": {
+                "type": "number",
+                "value": "0,80"
+              }
+            },
+            {
+              "data": "Country",
+              "title": "Country",
+              "visible": true,
+              "searchable": true,
+              "filter": {
+                "type": "selector",
+                "value": "[\"Canada\", \"Mexico\"]"
+              },
+              "sort": "asc"
+            },
+            {
+              "data": "LineName",
+              "title": "Line name",
+              "visible": true,
+              "searchable": true,
+              "filter": {
+                "type": "string",
+                "value": "c*"
+              }
+            },
+            {
+              "data": "NumLines",
+              "title": "Line number",
+              "visible": true,
+              "searchable": false,
+              "filter": {
+                "type": "number"
+              }
+            }
+          ]
         },
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
       },
       {
-        "id": "powerplant100mw-naturalGas",
-        "name": "Natural Gas Pipeline",
-        "layerType": "esriFeature",
-        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-        "state": {
-          "visibility": false,
-          "boundingBox": false
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
-      },
-      {
-        "id": "powerplant100mw-liquids",
-        "name": "Liquids Pipeline",
-        "layerType": "esriFeature",
-        "state": {
-          "visibility": true
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+        "id": "GeoChrone***33c61115",
+        "name": "Time filtering",
+        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/GSCC/Geochronology/MapServer",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 0,
+            "table": {
+              "title": "",
+              "maximize": false,
+              "columns": [
+                {
+                  "data": "OBJECTID",
+                  "title": "OBJECTID"
+                },
+                {
+                  "data": "LAST_UPDATED",
+                  "title": "LAST_UPDATED",
+                  "filter": {
+                    "type": "date",
+                    "value": "2005-02-22,2005-04-30"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       }
     ],
     "extentSets": [
@@ -394,27 +416,18 @@
     ],
     "baseMaps": [
       {
-        "id": "brokenBasemap",
-        "name": "Broken basemap",
-        "description": "This is broken.",
-        "altText": "altText - This is broken.",
+        "id": "baseNrCan",
+        "name": "Canada Base Map - Transportation (CBMT)",
+        "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
+        "altText": "altText - The Canada Base Map - Transportation (CBMT)",
         "layers": [
           {
             "id": "CBMT",
             "layerType": "esriFeature",
-            "url": "http://cipgis.canadaeast.cloudapp.azure.com/arcgis/rest/services/TAS_ENS_20/MapServer"
+            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-        "attribution": {
-          "text": {
-            "enabled": true,
-            "value": "Custom Attribution"
-          },
-          "logo": {
-            "enabled": true
-          }
-        }
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "baseSimple",

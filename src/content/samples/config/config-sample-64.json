@@ -10,57 +10,18 @@
       ]
     },
     "sideMenu": {
-      "items": [
-        [
-          "layers",
-          "basemap"
-        ],
-        [
-          "fullscreen",
-          "export",
-          "share",
-          "touch",
-          "help",
-          "about"
-        ],
-        [
-          "language"
-        ],
-        [
-          "plugins"
-        ]
-      ],
       "logo": true
     },
-    "about": {
-      "content": "-- placeholder --"
-    },
+    "restrictNavigation": true,
     "help": {
       "folderName": "default"
-    },
-    "legend": {
-      "isOpen": {
-        "large": false,
-        "medium": false,
-        "small": false
-      }
     }
   },
   "version": "2.0",
   "language": "en",
   "services": {
-    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-    "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
-      "title": {
-        "value": "Title"
-      },
-      "map": {},
-      "mapElements": {},
-      "legend": {},
-      "footnote": {
-        "value": "This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec."
-      }
+      "legend": {}
     },
     "search": {
       "serviceUrls": {
@@ -77,13 +38,13 @@
     "components": {
       "geoSearch": {
         "enabled": true,
-        "showGraphic": false,
-        "showInfo": false
+        "showGraphic": true,
+        "showInfo": true
       },
       "mouseInfo": {
-        "enabled": true,
+        "enabled": false,
         "spatialReference": {
-          "wkid": 4326
+          "wkid": 102100
         }
       },
       "northArrow": {
@@ -98,64 +59,22 @@
       },
       "scaleBar": {
         "enabled": true
-      },
-      "areaOfInterest": {
-        "areas": [
-          {
-            "title": "Reservoir Manicougan, Quebec, Canada",
-            "xmin": -69,
-            "xmax": -68,
-            "ymin": 51,
-            "ymax": 53,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
-          },
-          {
-            "title": "New Jersey, USA",
-            "xmin": -76,
-            "xmax": -72,
-            "ymin": 41,
-            "ymax": 41,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/295/269"
-          },
-          {
-            "title": "Washington, DC, USA",
-            "xmin": -77,
-            "xmax": -77,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/267"
-          },
-          {
-            "title": "Delaware, USA",
-            "xmin": -75,
-            "xmax": -75,
-            "ymin": 38,
-            "ymax": 40,
-            "thumbnailUrl": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/296/268"
-          }
-        ],
-        "noPicture": false
       }
     },
     "legend": {
       "type": "autopopulate"
     },
-    "layers": [
-      {
-        "id": "powerplant100mw-electric",
-        "name": "Electric Transmission Line",
-        "layerType": "esriFeature",
-        "state": {
-          "visibility": false,
-          "boundingBox": false
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
-      }
-    ],
+    "layers": [],
     "extentSets": [
       {
         "id": "EXT_NRCAN_Lambert_3978",
         "default": {
+          "xmax": 3549492,
+          "xmin": -2681457,
+          "ymax": 3482193,
+          "ymin": -883440
+        },
+        "maximum": {
           "xmax": 3549492,
           "xmin": -2681457,
           "ymax": 3482193,
@@ -168,6 +87,12 @@
       {
         "id": "EXT_ESRI_World_AuxMerc_3857",
         "default": {
+          "xmax": -5007771.626060756,
+          "xmin": -16632697.354854,
+          "ymax": 10015875.184845109,
+          "ymin": 5022907.964742964
+        },
+        "maximum": {
           "xmax": -5007771.626060756,
           "xmin": -16632697.354854,
           "ymax": 10015875.184845109,
@@ -417,48 +342,6 @@
         "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
       },
       {
-        "id": "baseSimple",
-        "name": "Canada Base Map - Simple",
-        "description": "Canada Base Map - Simple",
-        "altText": "altText - Canada base map - Simple",
-        "layers": [
-          {
-            "id": "SMR",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
-      },
-      {
-        "id": "baseCBME_CBCE_HS_RO_3978",
-        "name": "Canada Base Map - Elevation (CBME)",
-        "description": "The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
-        "altText": "altText - Canada Base Map - Elevation (CBME)",
-        "layers": [
-          {
-            "id": "CBME_CBCE_HS_RO_3978",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
-      },
-      {
-        "id": "baseCBMT_CBCT_GEOM_3978",
-        "name": "Canada Base Map - Transportation (CBMT)",
-        "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
-        "altText": "altText - Canada Base Map - Transportation (CBMT)",
-        "layers": [
-          {
-            "id": "CBMT_CBCT_GEOM_3978",
-            "layerType": "esriFeature",
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
-      },
-      {
         "id": "baseEsriWorld",
         "name": "World Imagery",
         "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
@@ -468,76 +351,6 @@
             "id": "World_Imagery",
             "layerType": "esriFeature",
             "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-      },
-      {
-        "id": "baseEsriPhysical",
-        "name": "World Physical Map",
-        "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
-        "altText": "altText - World Physical Map",
-        "layers": [
-          {
-            "id": "World_Physical_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-      },
-      {
-        "id": "baseEsriRelief",
-        "name": "World Shaded Relief",
-        "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
-        "altText": "altText - World Shaded Relief",
-        "layers": [
-          {
-            "id": "World_Shaded_Relief",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-      },
-      {
-        "id": "baseEsriStreet",
-        "name": "World Street Map",
-        "description": "This worldwide street map presents highway-level data for the world.",
-        "altText": "altText - ESWorld Street Map",
-        "layers": [
-          {
-            "id": "World_Street_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-      },
-      {
-        "id": "baseEsriTerrain",
-        "name": "World Terrain Base",
-        "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
-        "altText": "altText - World Terrain Base",
-        "layers": [
-          {
-            "id": "World_Terrain_Base",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
-          }
-        ],
-        "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-      },
-      {
-        "id": "baseEsriTopo",
-        "name": "World Topographic Map",
-        "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
-        "altText": "altText - World Topographic Map",
-        "layers": [
-          {
-            "id": "World_Topo_Map",
-            "layerType": "esriFeature",
-            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
           }
         ],
         "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
