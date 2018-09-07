@@ -108,11 +108,12 @@ function ExportComponentFactory($q, graphicsService) {
          * Generates component graphics if they are null (or if forced) using the generator functions and merging their outputs in the correct order (graphicOrder)
          * @function generate
          * @param {ExportSize} exportSize the currently selected map size
+         * @param {Number} timeout a delay before after which the generation is considered to have failed
          * @param {Function} showToast function to show notification toasts inside the export dialog
          * @param {Boolean} refresh [optional = false] is true, forces generation of the graphics
          * @param {Number} generateId [optional = auto] used to track the most recent generation job to prevent stale graphic from being used
          */
-        generate(exportSize, showToast, refresh = false, generateId = ++this._generateId) {
+        generate(exportSize, timeout, showToast, refresh = false, generateId = ++this._generateId) {
             if (this._graphic === null || refresh) {
 
                 this._graphics = [];
@@ -121,7 +122,7 @@ function ExportComponentFactory($q, graphicsService) {
                 return $q.all(this._config.generators.map((generator, generatorIndex) =>
 
                     // run each one in parallel
-                    $q.resolve(generator(exportSize, showToast, this._config.value))
+                    $q.resolve(generator(exportSize, showToast, this._config.value, timeout))
                         .then(({ graphic, value = null }) => {
                             // get the results; check if generator job is stale
                             if (this._generateId === generateId) {
