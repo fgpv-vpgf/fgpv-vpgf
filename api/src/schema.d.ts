@@ -366,6 +366,10 @@ export interface FgpvConfigSchema {
          */
         value?: string;
       };
+      /**
+       * A timeout delay in seconds after which the export image generation is considered to have failed.
+       */
+      timeout?: number;
     };
   };
   /**
