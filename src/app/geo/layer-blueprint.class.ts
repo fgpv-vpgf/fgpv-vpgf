@@ -98,16 +98,26 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         _validationResult: any;
         _isDataValid: any;
 
+        /**
+         * Specifies if layer data can be reloaded. If the user imported a file from his local filesystem, there is no mechanism to automatically reload such a file.
+         * In such cases, when `_makeLayer` is called with `force`, raw layer data will not be reset.
+         *
+         * @type {boolean}
+         * @memberof ClientSideData
+         */
+        _isDataPreloaded: boolean;
+
         // function to create an ESRI layer object
         layerFactory: LayerFactory;
 
         /**
-         * Sets raw layer's raw data.
+         * Sets raw layer's raw data. Using this function assumes there is no mechanism to reload the raw layer data.
          *
          * @memberof ClientSideData
          */
         setRawData(value: any = null) {
             this._rawData = value;
+            this._isDataPreloaded = true;
         }
 
         async loadData(): Promise<any> {
@@ -122,26 +132,35 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * Loads (if necessary) and validates the layer's data.
          *
          * @param {string} [type=this.type]
+         * @param {boolean} [isEncoded=true] if `true`, the layer data is encoded and passed as a byte array
          * @returns {Promise<any>} a promise of the validation result
          * @memberof ClientSideData
          */
-        async validate(type: string = this.type): Promise<any> {
+        async validate(type: string = this.type, isEncoded: boolean = true): Promise<any> {
             // is already validation, return the stored validation result
             if (this._isDataValid) {
                 return Promise.resolve(this._validationResult);
             }
+            let error;
 
             // load data only once
             if (!this._rawData) {
-                this._rawData = await this.loadData();
+                [error, this._rawData] = await to(this.loadData());
+
+                if (error) {
+                    console.error(`Layer data failed to load for "${this.config.id}"`, error);
+                    return Promise.reject(error);
+                }
             }
 
             // validate the file data and store it
-            let error;
-            [error, this._validationResult] = await to(gapiService.gapi.layer.validateFile(type, this._rawData));
+            [error, this._validationResult] = await to(
+                gapiService.gapi.layer.validateFile(type, this._rawData, isEncoded)
+            );
+
             if (!this._validationResult) {
-                console.error(error);
-                throw new Error('Layer data is not valid');
+                console.error(`Layer data is not valid for "${this.config.id}"`, error);
+                return Promise.reject(error);
             }
 
             this._formattedData = this._validationResult.formattedData;
@@ -164,6 +183,12 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 return Promise.resolve(this._layer);
             }
 
+            // reset valid data flag and the raw data when force-reloading
+            // during the validation step, raw data will be re-downloaded
+            if (force && !this._isDataPreloaded) {
+                [this._isDataValid, this._rawData] = [false, null];
+            }
+
             await this.validate();
 
             // TODO: targetWkid property should be added to the WFS layer config node
@@ -174,8 +199,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             const [error, layer] = await to(this.layerFactory(clonedFormattedData, this.config));
 
             if (!layer) {
-                console.error(error);
-                throw new Error('ESRI Layer creating failed');
+                console.error(`ESRI Layer creation failed for "${this.config.id}"`, error);
+                return Promise.reject(error);
             }
 
             this._layer = layer;
@@ -223,7 +248,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
             this.config = new ConfigClass(rawConfig);
 
-            // TODO needs riabtanalysis if this is proper. hack fix for broken cors support
+            // hack fix for broken cors support
             if (this.config.url) {
                 // if ESRI JSAPI fixes it's CORS bug this can be removed
                 configService.getSync.map.instance.checkCorsException(this.config.url);
@@ -263,7 +288,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @returns {Promise<any>}
          * @memberof BlueprintBase
          */
-        async makeLayerRecord(force: boolean = false, esriLayer: any = null): Promise<any> {
+        makeLayerRecord(force: boolean = false, esriLayer: any = null): Promise<any> {
             // if the LayerRecord was generated (during wizard's last validation step for example), just return that
             if (this._layerRecord && !force) {
                 return Promise.resolve(this._layerRecord);
@@ -492,10 +517,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
             // get start index and limit set on the url
             const { startindex, limit } = this._urlWrapper.queryMap;
-            const data = await this._getWFSData(-1, parseInt(startindex) || 0, parseInt(limit) || 1000);
 
-            // TODO: switch to passing json value instead of encoded one; geoApi now supports it
-            return new TextEncoder().encode(JSON.stringify(data));
+            return this._getWFSData(-1, parseInt(startindex) || 0, parseInt(limit) || 1000);
         }
 
         /**
@@ -505,7 +528,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof WFSServiceSource
          */
         validate(): Promise<any> {
-            return super.validate(Geo.Service.Types.GeoJSON);
+            // WFS layer data is not encoded as a byte array, it's pure JSON
+            return super.validate(Geo.Service.Types.GeoJSON, false);
         }
 
         get layerFactory(): LayerFactory {
@@ -545,7 +569,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             let newQueryMap: QueryMap = { startindex: startindex.toString(), limit: limit.toString() };
 
             // it seems that some WFS services do not return the number of matched records with every request
-            // so, we need to get the explicitly first
+            // so, we need to get that explicitly first
             if (totalCount === -1) {
                 // get the total number of records
                 newQueryMap = {
@@ -561,8 +585,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             const [error, response] = await to<WFSResponse>($http.get(requestUrl));
 
             if (!response) {
-                console.error(error);
-                throw new Error('WFS data failed to load');
+                console.error(`WFS data failed to load for "${this.config.id}"`, error);
+                return Promise.reject(error);
             }
 
             const data = response.data;
@@ -581,10 +605,11 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 const limit = Math.min(1000, totalCount - startindex - data.features.length);
                 return this._getWFSData(totalCount, data.features.length + startindex, limit, wfsData);
             } else {
-                if (this.config.xyInAttribs &&
+                if (
+                    this.config.xyInAttribs &&
                     wfsData.features.length > 0 &&
-                    wfsData.features[0].geometry.type === "Point") {
-
+                    wfsData.features[0].geometry.type === 'Point'
+                ) {
                     // attempt copy of points to attributes.
                     // if we extend this logic to all feature based layers (not just wfs),
                     // suggest porting this block to geoApi.

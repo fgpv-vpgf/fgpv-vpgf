@@ -220,8 +220,6 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
 
             const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
             const layerInfo = new LayerBlueprint.WFSServiceSource(layerRawConfig);
-            // TODO: add wkid to setRawdata
-            // layerInfo.setRawData(data.rawData);
 
             return layerInfo;
         }
