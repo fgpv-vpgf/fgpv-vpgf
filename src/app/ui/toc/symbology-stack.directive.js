@@ -70,7 +70,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             container: '=?'
         },
         link: link,
-        controller: () => { },
+        controller: () => {},
         controllerAs: 'self',
         bindToController: true
     };
@@ -209,7 +209,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     $q.all(drawPromises).then(() => {
                         // create a ToggleSymbol instance for each symbol
                         self.symbology.stack.forEach(s => {
-                            if (s.definitionClause) { // If the symbol doesn't have a query it shouldn't be a toggle symbol
+                            if (s.definitionClause) {
+                                // If the symbol doesn't have a query it shouldn't be a toggle symbol
                                 self.toggleList[s.name] = new ToggleSymbol(s);
                             }
                         });
@@ -279,7 +280,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 }
                 self.symbology.expanded = value;
             }
-
         }
 
         /**
@@ -316,7 +316,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
                 self.symbology.fannedOut = value;
             }
-
         }
 
         // find and store references to relevant nodes
@@ -355,15 +354,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 Math.max(
                     ...ref.symbolItems.map(symbolItem => {
                         const svgImage = symbolItem.image.find('svg')[0];
-                        const texLRPadding = (parseInt(symbolItem.label.css('padding-left').slice(0, -2))
-                                                + parseInt(symbolItem.label.css('padding-right').slice(0, -2)));
+                        const texLRPadding =
+                            parseInt(symbolItem.label.css('padding-left').slice(0, -2)) +
+                            parseInt(symbolItem.label.css('padding-right').slice(0, -2));
                         return Math.max(
                             svgImage ? svgImage.viewBox.baseVal.width : 0,
                             getTextWidth(canvas, symbolItem.label.text(), 'normal 14px Roboto') + texLRPadding
                         );
-                    }
-
-                    )
+                    })
                 ),
                 ref.containerWidth
             );
@@ -424,7 +422,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 // show and animate description node
                 timeline.to(
                     ref.descriptionItem,
-                    RV_DURATION / 3 * 2,
+                    (RV_DURATION / 3) * 2,
                     {
                         opacity: 1,
                         top: totalHeight,
@@ -554,14 +552,13 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @return {Number}                height of this symbology item plus its bottom margin is applicable
          */
         function imageLegendItem(timeline, symbolItem, totalHeight, isLast) {
-
             const symbologyListItemMargin = 16;
             const imageWidth = symbolItem.image.find('svg')[0].viewBox.baseVal.width;
             const imageHeight = symbolItem.image.find('svg')[0].viewBox.baseVal.height;
 
             // calculate symbology item's dimensions based on max width
             const itemWidth = Math.min(ref.maxItemWidth, imageWidth);
-            const itemHeight = imageWidth !== 0 ? itemWidth / imageWidth * imageHeight : 0; // in cases when image urls are broken its size is 0
+            const itemHeight = imageWidth !== 0 ? (itemWidth / imageWidth) * imageHeight : 0; // in cases when image urls are broken its size is 0
 
             // extremely convoluted math to calculate an aproximation of the label's height
             // can't just get outerHeight() since it returns strange values when the symbology stack isn't expanded
@@ -571,9 +568,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             const textWidth = getTextWidth(canvas, symbolItem.label[0].innerText, symbolItem.label.css('font'));
             if (textWidth > 0) {
                 lineHeight = parseInt(symbolItem.label.css('line-height').slice(0, -2));
-                padding = parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) + parseInt(symbolItem.label.css('padding-top').slice(0, -2));
-                const sidePadding = parseInt(symbolItem.label.css('padding-left').slice(0, -2)) + parseInt(symbolItem.label.css('padding-right').slice(0, -2));
-                labelHeight = Math.floor(textWidth / (0.9 * (ref.maxItemWidth - sidePadding)) + 1) * lineHeight + padding;  // divide by 0.9 due to display rounding
+                padding =
+                    parseInt(symbolItem.label.css('padding-bottom').slice(0, -2)) +
+                    parseInt(symbolItem.label.css('padding-top').slice(0, -2));
+                const sidePadding =
+                    parseInt(symbolItem.label.css('padding-left').slice(0, -2)) +
+                    parseInt(symbolItem.label.css('padding-right').slice(0, -2));
+                labelHeight =
+                    Math.floor(textWidth / (0.9 * (ref.maxItemWidth - sidePadding)) + 1) * lineHeight + padding; // divide by 0.9 due to display rounding
             }
 
             // animate symbology container's size
@@ -581,7 +583,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // so they don't overlay legend entry
             timeline.to(
                 symbolItem.container,
-                RV_DURATION / 3 * 2,
+                (RV_DURATION / 3) * 2,
                 {
                     width: ref.maxItemWidth,
                     height: itemHeight + labelHeight,
@@ -606,7 +608,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // animate image width to the calculated width
             timeline.to(
                 symbolItem.image,
-                RV_DURATION / 3 * 2,
+                (RV_DURATION / 3) * 2,
                 {
                     width: itemWidth,
                     height: itemHeight,
@@ -634,7 +636,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     opacity: 1,
                     ease: RV_SWIFT_IN_OUT_EASE
                 },
-                RV_DURATION / 3 * 2
+                (RV_DURATION / 3) * 2
             );
 
             return itemHeight + labelHeight + (isLast ? 0 : symbologyListItemMargin);
@@ -657,7 +659,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // expand symbology container width and align it to the left (first and last items are fanned out)
             timeline.to(
                 symbolItem.container,
-                RV_DURATION / 3 * 2,
+                (RV_DURATION / 3) * 2,
                 {
                     width: ref.containerWidth,
                     left: 0,
@@ -692,7 +694,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // animate image width to the calculated width
             timeline.to(
                 symbolItem.image,
-                RV_DURATION / 3 * 2,
+                (RV_DURATION / 3) * 2,
                 {
                     width: itemSize,
                     height: itemSize,
@@ -713,7 +715,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // animate symbology label into view
             timeline.to(
                 symbolItem.label,
-                RV_DURATION / 3 * 2,
+                (RV_DURATION / 3) * 2,
                 {
                     opacity: 1,
                     ease: RV_SWIFT_IN_OUT_EASE
@@ -766,7 +768,9 @@ function symbologyStack($q, ConfigObject, gapiService) {
         ) {
             // resolve proxy promise and store the proxy object itself
             if (proxy) {
-                $q.resolve(proxy).then(proxy => (this._proxy = proxy));
+                $q.resolve(proxy)
+                    .then(proxy => (this._proxy = proxy))
+                    .catch(() => {}); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
             }
 
             this._renderStyle = renderStyle;
