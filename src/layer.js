@@ -504,8 +504,12 @@ function validateGeoJson(geoJson) {
         MultiPolygon: 'esriGeometryPolygon'
     };
 
-    if (! geoJson.features) {
+    if (!geoJson.features) {
         return Promise.reject(new Error('File is missing the attribute "features"'));
+    }
+
+    if (geoJson.features.length === 0) {
+        return Promise.reject(new Error('File has no features'));
     }
 
     const fields = extractFields(geoJson);
