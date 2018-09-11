@@ -104,6 +104,7 @@ Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Lon
 Geosearch FSA type,geosearch.type.fsa,Postal code,1,Code postal,1
 Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
 ,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
+Geosearch FSA type,geosearch.serviceerror.label,A service error is preventing results from being shown.,1,Une erreur de service empêche l'affichage des résultats.,0
 ,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
 Basemap refresh required,basemap.refresh.req,Map refresh required,1,Actualiser la carte,1
 Basemap blank title,basemap.blank.title,Blank map,1,Carte vide,1
