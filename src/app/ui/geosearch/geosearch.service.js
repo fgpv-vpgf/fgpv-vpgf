@@ -16,6 +16,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
         isLoading: false, // waiting for results
         isResultsVisible: false, // showing results when we get some
         noResultsSearchValue: '', // the (previous) search term which returned no results
+        serviceError: false,
 
         searchValue: '', // current search term
         searchValuePerm: '', // searchValue is cleared on esc, keep a reference
@@ -129,6 +130,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
             // hide loading indicator
             service.isLoading = false;
             service.isResultsVisible = true;
+            service.serviceError = false;
 
             // discard any old results
             if (requestCount === ref.runningRequestCount) {
@@ -139,6 +141,11 @@ function geosearchService($q, $rootScope, stateManager, referenceService, geoSea
 
             // return data for optional processing further down the promise chain
             return data;
+        }, _ => {
+            service.searchResults = [];
+            service.isLoading = false;
+            service.isResultsVisible = true;
+            service.serviceError = true;
         });
     }
 
