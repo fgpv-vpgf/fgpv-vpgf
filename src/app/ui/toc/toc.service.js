@@ -96,8 +96,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      */
     function reloadLayer(legendBlock) {
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
-        const tableConfig = configService.getSync.map.layerRecords.find(item =>
-            item.config.id === legendBlock.layerRecordId).initialConfig.table;
+        const layerRecord = configService.getSync.map.layerRecords.find(item =>
+            item.config.id === legendBlock.layerRecordId);
+
+        const tableConfig = layerRecord ? layerRecord.initialConfig.tableConfig : null;
 
         // update filter flag
         if (tableConfig) {

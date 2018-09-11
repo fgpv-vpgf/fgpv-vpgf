@@ -1,4 +1,5 @@
 import { ConfigLayer, SimpleLayer } from 'api/layers';
+import to from 'await-to-js';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
@@ -162,9 +163,9 @@ function layerRegistryFactory(
             layerRecordPromise = _startGeneratingLayerRecord(layerBlueprint);
         }
 
-        layerRecordPromise.then(
-            layerRecord => (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord))
-        );
+        layerRecordPromise
+            .then(layerRecord => (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord)))
+            .catch(() => {}); // if layer record creation fails, the error will be handled elsewhere
 
         /**
          * @function _attribsInvalidation
@@ -210,6 +211,7 @@ function layerRegistryFactory(
     /**
      * Generates a new layer record from the provided layer blueprint and replaces the previously generated layer record (the original position is not kept).
      * This will also remove the corresponding layer from the map, but will not trigger the loading of the new layer.
+     * If the layer record was never generated (because it failed for example), start making a new one.
      * If the corresponding layer record is still being generated, does nothing.
      *
      * @function regenerateLayerRecord
@@ -219,20 +221,27 @@ function layerRegistryFactory(
         const map = configService.getSync.map.instance;
         const layerRecords = configService.getSync.map.layerRecords;
 
-        const layerRecord = getLayerRecord(layerBlueprint.config.id);
-
-        // if the record is not there, do nothing
-        if (!layerRecord) {
+        // if layer record is already in the generating queue, do nothing
+        // TODO: add a way to interrupt layer record generation in case it trully needs to be reloaded (like when the generation process is stuck for some reason)
+        if (ref.generatingQueue[layerBlueprint.config.id]) {
             return;
         }
 
-        common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
-        map.removeLayer(layerRecord._layer);
-        const index = layerRecords.indexOf(layerRecord);
-        // remove from the layerRecords
-        layerRecords.splice(index, 1);
+        const layerRecord = getLayerRecord(layerBlueprint.config.id);
 
-        _startGeneratingLayerRecord(layerBlueprint, true);
+        // if the record is there, remove from the map
+        if (layerRecord) {
+            common.$interval.cancel(ref.refreshAttributes[layerRecord.layerId]);
+            map.removeLayer(layerRecord._layer);
+            const index = layerRecords.indexOf(layerRecord);
+
+            // remove from the layerRecords
+            layerRecords.splice(index, 1);
+        }
+
+        // generate the layer record again
+        // if layer record creation fails, the error will be handled elsewhere;
+        _startGeneratingLayerRecord(layerBlueprint, true).catch(() => {});
     }
 
     /**
@@ -272,7 +281,7 @@ function layerRegistryFactory(
      *
      * @param {Number} id layer record id to load on the map
      */
-    function loadLayerRecord(id) {
+    async function loadLayerRecord(id) {
         // check if the record is already created (generated or being generated)
         const layerRecordPromise = getLayerRecordPromise(id);
         const map = configService.getSync.map.instance;
@@ -281,17 +290,22 @@ function layerRegistryFactory(
             return;
         }
 
-        layerRecordPromise.then(layerRecord => {
-            const alreadyLoading = ref.loadingQueue.some(lr => lr === layerRecord);
-            const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds).indexOf(layerRecord.config.id) !== -1;
+        // if layer record creation fails, the error will be handled elsewhere
+        const [error, layerRecord] = await to(layerRecordPromise);
+        if (error) {
+            return;
+        }
 
-            if (alreadyLoading || alreadyLoaded) {
-                return false;
-            }
+        const alreadyLoading = ref.loadingQueue.some(lr => lr === layerRecord);
+        const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds).indexOf(layerRecord.config.id) !== -1;
 
-            ref.loadingQueue.push(layerRecord);
-            _loadNextLayerRecord();
-        });
+        // do nothing if the corresponding layer record is aleardy loading or has already loaded
+        if (alreadyLoading || alreadyLoaded) {
+            return;
+        }
+
+        ref.loadingQueue.push(layerRecord);
+        _loadNextLayerRecord();
     }
 
     /**
@@ -315,18 +329,23 @@ function layerRegistryFactory(
         let layerRecordPromise = layerBlueprint.makeLayerRecord(force);
         ref.generatingQueue[layerBlueprint.config.id] = layerRecordPromise;
 
-        layerRecordPromise = layerRecordPromise.then(layerRecord => {
-            // remove from the generatig queue
-            delete ref.generatingQueue[layerBlueprint.config.id];
+        layerRecordPromise = layerRecordPromise
+            .then(layerRecord => {
+                // store the actual generated record
+                layerRecords.push(layerRecord);
 
-            // store the actual generated record
-            layerRecords.push(layerRecord);
+                // start tracking layer record events to update/clear its loading process
+                layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
 
-            // start tracking layer record events to update/clear its loading process
-            layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
-
-            return layerRecord;
-        });
+                return layerRecord;
+            })
+            // clear the loading flag for this layer record if it fails to resolve
+            .catch(error => {
+                shellService.clearLoadingFlag(layerBlueprint.config.id);
+                return Promise.reject(error);
+            })
+            // remove from the generatig queue if succeeds or fails
+            .finally(() => delete ref.generatingQueue[layerBlueprint.config.id]);
 
         return layerRecordPromise;
     }

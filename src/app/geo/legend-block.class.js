@@ -1,3 +1,5 @@
+import to from 'await-to-js';
+
 /**
  *
  * @module LegendBlock
@@ -61,34 +63,45 @@ function LegendBlockFactory(
          * @param {LayerNode} layerConfig layer config defintion object from the config file; it may provide overrides and initial settings for the layer proxy object
          */
         constructor(proxyPromise, layerConfig) {
-            this._proxyPromise = proxyPromise;
+            this._initProxyPromise(proxyPromise);
             this._layerConfig = layerConfig;
 
             this.isControlVisible = ref.isControlVisible.bind(this);
             this.isControlDisabled = ref.isControlDisabled.bind(this);
             this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
             this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
+        }
+
+        async _initProxyPromise(proxyPromise) {
+            this._proxyPromise = proxyPromise;
 
             // wait for the proxy to be resolved;
             // for WFS layers proxy resolves when the layer record is made and "loaded"
             // for other layer types proxy resolves when the layer record is made (layer is not necessarily loaded at this point)
-            this._proxyPromise.then(proxy => {
-                this._proxy = proxy;
+            let error;
+            [error, this._proxy] = await to(this._proxyPromise);
 
-                // This will apply initial state values from the layer config object to the layer proxy object.
-                // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
-                this.opacity = this._layerConfig.state.opacity;
-                this.visibility = this._layerConfig.state.visibility;
-                this.query = this._layerConfig.state.query;
+            if (error) {
+                console.error(`Layer proxy failed to resolve for "${this.layerConfig.id}"`, error);
 
-                this._updateApiLayerVisibility(this);
-                this._updateApiLayerOpacity(this);
-                this._updateApiLayerQueryable(this);
-            });
+                // if the proxy fails to resolve (layer data failed to load, etc.), set status to `rv-error`
+                this._lastState = 'rv-error';
+                return;
+            }
+
+            // This will apply initial state values from the layer config object to the layer proxy object.
+            // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
+            this.opacity = this._layerConfig.state.opacity;
+            this.visibility = this._layerConfig.state.visibility;
+            this.query = this._layerConfig.state.query;
+
+            this._updateApiLayerVisibility(this);
+            this._updateApiLayerOpacity(this);
+            this._updateApiLayerQueryable(this);
         }
 
         /**
-         * Checks if a proxy object is resolved or not and throws error if not and no callback is provided.
+         * Checks if a proxy object is resolved or not, and throws error if not and no callback is provided.
          *
          * @param {*} [callback=null] a function to run later when the proxy is resolved
          * @returns {Boolean} returns `true` if the proxy is resolved; `false` otherwise and a callback is provided;
@@ -98,7 +111,7 @@ function LegendBlockFactory(
             if (this._proxy) {
                 return true;
             } else if (callback) {
-                this._proxyPromise.then(callback);
+                this.proxyPromise.then(callback);
                 return false;
             } else {
                 throw new Error('Layer proxy is not yet resolved.');
@@ -131,7 +144,7 @@ function LegendBlockFactory(
         get state() {
             // if no proxy object is available, this is a config-added file-like layer with remote-data (aka WFS or a file-layer)
             if (!this._proxy) {
-                return 'rv-loading';
+                return this._lastState;
             }
 
             // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
