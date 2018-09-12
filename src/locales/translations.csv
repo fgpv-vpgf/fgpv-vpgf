@@ -82,8 +82,8 @@ Details pane label for searching,details.label.searching,Searching ...,1,Recherc
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
 Content pane tooltip for close button,contentPane.tooltip.close,Close,1,Fermer,1
 Filter pane title prefix,filter.title,Features: ,1,Éléments : ,1
-,table.splash.loadingdata,Loading data...,1,Chargement des données...,0
-,table.splash.buildingtable,Building table ...,1,Préparation du tableau...,0
+,table.splash.loadingdata,Loading data...,1,Chargement des données...,1
+,table.splash.buildingtable,Building table...,1,Création du tableau...,1
 Filter pane aria label for menu icon,filter.aria.menu,Open data panel menu,1,Ouvrir le menu du panneau de données,1
 Filter pane menu label for Minimize,filter.menu.minimize,Minimize,1,Réduire,1
 Filter pane menu label for Split View,filter.menu.splitView,Split view,1,Diviser la vue,1
@@ -112,12 +112,12 @@ Basemap projection title,basemap.projection.title,{{name}} Maps,1,Cartes {{name}
 ,basemap.select,Select basemap,1,Sélectionner la carte de base,1
 ,basemap.showdescription,Show basemap description,1,Montrer la description de la carte de base,1
 ,basemap.hidedescription,Hide basemap description,1,Masquer la description de la carte de base,1
-Basemap broken,basemap.broken,Basemap load failed,1,Le chargement du fond de carte a échoué,0
-Basemap broken close toast,basemap.close,Close,1,Fermer,0
+Basemap broken,basemap.broken,Basemap load failed,1,Échec du chargement de la carte de base,1
+Basemap broken close toast,basemap.close,Close,1,Fermer,1
 WKIDs to name 3978 -> lambert,wkids.3978,Lambert,1,Lambert,1
 WKIDs to name 102100 -> Mercator,wkids.102100,Mercator,1,Mercator,1
 WKIDs to name other,wkids.other,Other,1,Autre,1
-,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"Utilisez <strong>les flèches</strong>, les touches <strong>+</strong> et <strong>-</strong> pour naviguer dans la carte et <strong>Entrée</strong> pour sélectionner.",0
+,nav.crosshairs.description,"Use <strong>arrows</strong>, <strong>+</strong> and <strong>-</strong> keys to navigation the map, and <strong>Enter</strong> to select.",1,"Utilisez les touches <strong>fléchées</strong>, <strong>+</strong> et <strong>-</strong> pour naviguer sur la carte et <strong>Entrée</strong> pour sélectionner.",1
 Map Navigation slider only text,nav.sliderOnly,slider only,1,Curseur seulement,1
 Map Navigation slider text,nav.slider,slider,1,Curseur,1
 Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
@@ -130,7 +130,7 @@ Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your location,1,Votre position,1
-,geoLocation.error,Your location could not be found.,1,Votre emplacement n’a pu être trouvé.,0
+,geoLocation.error,Your location could not be found.,1,Votre emplacement n'a pu être trouvé.,1
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
 Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
@@ -145,13 +145,13 @@ Settings bounding box visibility label,settings.label.boundingBox,Bounding box,1
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
 Settings data header label,settings.label.data,Data,1,Données,1
-Settings refresh header label,settings.label.interval,Refresh interval,1,Intervalle d'actualisation,0
-Settings refresh hint,settings.label.refreshHint,Refresh interval in minutes,1,Intervalle d'actualisation en minutes,0
-Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank or 0 to turn off automatic refresh,1,Actualisation requise. Laissez vide ou 0 pour désactiver l'actualisation automatique,0
-Settings refresh error message,settings.label.refreshError,Interval must be between 0 and 100,1,L'intervalle doit être compris entre 0 et 100,0
+Settings refresh header label,settings.label.interval,Refresh interval,1,Intervalle d'actualisation,1
+Settings refresh hint,settings.label.refreshHint,Refresh interval in minutes,1,Intervalle d'actualisation en minutes,1
+Settings refresh hint,settings.label.refreshOff,Reload required. Leave blank or 0 to turn off automatic refresh,1,Rechargement requis. Laisser le champ vide ou y inscrire 0 pour désactiver l'actualisation automatique,1
+Settings refresh error message,settings.label.refreshError,Interval must be between 0 and 100,1,L'intervalle doit se situer entre 0 et 100,1
 ,settings.label.refreshInterval.close,Clear and reload,1,Effacer et recharger,1
-Settings styles header for WMS,settings.label.styles,Styles,1,Styles,0
-Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger la couche pour changer le style,0
+Settings styles header for WMS,settings.label.styles,Styles,1,Styles,1
+Settings style hint for WMS,settings.label.stylereload,You must reload the layer to switch styles,1,Vous devez recharger la couche pour changer le style,1
 Settings snapshot mode label,settings.label.snapshot,Snapshot mode,1,Mode copie instantanée,1
 Settings snapshot mode enable label,settings.label.enable,Enable,1,Activer,1
 Settings snapshot mode enable label,settings.label.enabled,Enabled,1,Activée,1
@@ -197,9 +197,9 @@ Table of Content visibilty zoom in label,toc.label.visibility.zoomIn,Zoom in to 
 Table of Content visibilty zoom in tootlip,toc.tooltip.visibility.zoomIn,Zoom in to details,1,Zoom avant,1
 Table of Content visibilty zoom out label,toc.label.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
 Table of Content visibilty zoom out tootlip,toc.tooltip.visibility.zoomOut,Zoom out to details,1,Zoom arrière,1
-Table of Content full-size image,toc.tooltip.viewFullsizeImage,View full-size image,1,Agrandir image,0
+Table of Content full-size image,toc.tooltip.viewFullsizeImage,View full-size image,1,Afficher l'image en pleine grandeur,1
 Table of Content close full-size image,toc.fullsizeImage.close,Close,1,Fermer,1
-Table of Content full-size image,toc.tooltip.fullsizeImage,Full-size image,1,L’image pleine grandeur,0
+Table of Content full-size image,toc.tooltip.fullsizeImage,Full-size image,1,Image en pleine grandeur,1
 Table of Content reload label,toc.label.reload,Reload,1,Recharger,1
 Table of Content reload tootlip,toc.tooltip.reload,Reload,1,Recharger,1
 Table of Content remove label,toc.label.remove,Remove,1,Retirer,1
@@ -217,8 +217,8 @@ Table of Content dynamic layer flag label,toc.label.flag.dynamic,ESRI Dynamic La
 Table of Content dynamic layer flag tootlip,toc.tooltip.flag.dynamic,ESRI Dynamic Layer {{content}},1,Couche dynamique d'ESRI {{content}},1
 Table of Content wms layer flag label,toc.label.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
 Table of Content wms layer flag tootlip,toc.tooltip.flag.wms,OGC WMS Layer,1,Couche WMS de l'OGC,1
-Table of Content wfs layer flag label,toc.label.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},0
-Table of Content wfs layer flag tootlip,toc.tooltip.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},0
+Table of Content wfs layer flag label,toc.label.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},1
+Table of Content wfs layer flag tootlip,toc.tooltip.flag.wfs,OGC WFS Layer {{content}},1,Couche WFS de l'OGC {{content}},1
 Table of Content tile layer flag label,toc.label.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 Table of Content tile layer flag tootlip,toc.tooltip.flag.tile,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 Table of Content image layer flag label,toc.label.flag.image,ESRI Image Layer,1,Couche d'images d'ESRI,1
@@ -232,13 +232,11 @@ Table of Content data filter flag tootlip,toc.tooltip.flag.data.filter,Layer dat
 Table of Content query flag label,toc.label.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content query flag tootlip,toc.tooltip.flag.query,Layer will be excluded from map click results,1,La couche sera exclue de la carte - cliquer sur les résultats,1
 Table of Content user flag label,toc.label.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
-Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
+Table of Content filter by extent flag label,toc.label.flag.filter,Some features are hidden by table filters,1,Certains éléments sont cachés par des filtres de tableau,1
 Table of Content user flag tootlip,toc.tooltip.flag.user,Layer added by user,1,Couche ajoutée par l'utilisateur,1
 Table of Content filter by extent flag label,toc.label.flag.wrongprojection,Layer cannot be displayed in your current projection,1,La couche ne peut pas être affichée dans la projection active,1
 Table of Content user flag tootlip,toc.tooltip.flag.wrongprojection,Current projection not supported,1,Projection active non prise en charge,1
-Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,
-Certaines fonctionnalités sont masquées par des filtres du tableau de données,0
+Table of Content filter by extent flag tootlip,toc.tooltip.flag.filter,Some features are hidden by table filters,1,Certains éléments sont cachés par des filtres de tableau,1
 Table of Content error state label,toc.label.state.error,Error,1,Erreur,1
 Table of Content error state tootlip,toc.tooltip.state.error,Error,1,Erreur,1
 Table of Content loading state label,toc.label.state.loading,Updating,1,Mise à jour,1
@@ -248,11 +246,11 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
-,toc.layer.longload.message,{{name}} is taking longer than expected,1,{{name}} prend plus de temps que prévu,0
+,toc.layer.longload.message,{{name}} is taking longer than expected,1,{{name}} prend plus longtemps que prévu,1
 ,toc.layer.longload.hide,Hide,1,Masquer,1
-,toc.layer.longload.failed,{{name}} failed to load,1,{{name}} omis de charge,0
-,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,La boîte recherches trop loin?,0
-,toc.boundaryZoom.undo,fix,1,régler?,0
+,toc.layer.longload.failed,{{name}} failed to load,1,Échec du chargement de {{name}},1
+,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,Le zoom est-il allé trop loin?,1
+,toc.boundaryZoom.undo,fix,1,régler,1
 Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganiser,1
 ,toc.menu.visibility.title,Toggle Visibility,1,Basculer la visibilité,1
 ,toc.menu.visibility.allon,Show All,1,Montrer tout,1
@@ -262,8 +260,8 @@ Table of Content keyboard reoder tooltip,toc.label.reorder,Reorder,1,Réorganise
 ,toc.menu.expand.alloff,Collapse Groups,1,Réduire les groupes,1
 ,toc.menu.reorder.title,Reorder Layers,1,Réorganiser les couches,1
 ,toc.menu.reorder.close,Stop Reordering,1,Arrêter de réorganiser,1
-ToC slider applies to nested elements,toc.slider.nested,Applies to nested items,1,S’applique aux articles imbriquées,0
-ToC slider mixed values,toc.slider.mixed,Mixed values,1,Les valeurs mixtes,0
+ToC slider applies to nested elements,toc.slider.nested,Applies to nested items,1,S'applique aux éléments imbriqués,1
+ToC slider mixed values,toc.slider.mixed,Mixed values,1,Valeurs mixtes,1
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
@@ -344,14 +342,14 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1
 ,import.service.configure.primaryfield,Primary Field,1,Champ clé,1
-,import.service.configure.tooltipField,Tooltip Field,1,Champ de l'info-bulle,0
+,import.service.configure.tooltipField,Tooltip Field,1,Champ infobulle,1
 ,import.service.configure.layers,Layers,1,Couches,1
 ,import.service.configure.multipleselection,You can select several layers,1,Vous pouvez sélectionner plusieurs couches,1
 ,import.service.configure.selectall,Select All,1,Tout Sélectionner,1
 ,import.service.configure.singleentrycollapse,Display as a group,1,Affichage en groupe,1
 ,import.layer.configure.layername,Layer Name,1,Nom de la couche,1
 ,import.layer.configure.primaryfield,Primary Field,1,Champ clé,1
-,import.layer.configure.tooltipField,Tooltip Field,1,Champ de l'info-bulle,0
+,import.layer.configure.tooltipField,Tooltip Field,1,Champ infobulle,1
 ,import.layer.configure.colourfield,Colour,1,Couleur,1
 ,stepper.continue,Continue,1,Continuer,1
 ,stepper.unresponsive,The application may feel unresponsive for a short time upon clicking the Continue button. This is normal while data is being processed.,1,L'application peut ne pas répondre pendant un court laps de temps après avoir cliqué sur le bouton Continuer. Cette situation est normale pendant le traitement des données.,1
