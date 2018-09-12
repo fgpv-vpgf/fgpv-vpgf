@@ -3,6 +3,7 @@ import to from 'await-to-js';
 import angular from 'angular';
 
 // TODO: move mixin constructors into the util file
+// NOTE: do not user async/await with Angular $q promises - they don't work always correctly and debugging such errors is a huge pain
 
 type Constructor<T> = new (...args: any[]) => T;
 
