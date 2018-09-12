@@ -1,0 +1,14 @@
+@mixin about {
+    .rv-about-dialog {
+        height: 60%;
+        width: 80%;
+        border-radius: 0;
+
+        .rv-content {
+            padding: rem(2.4);
+        }
+
+        .rv-about-desc {
+        }
+    }
+}
