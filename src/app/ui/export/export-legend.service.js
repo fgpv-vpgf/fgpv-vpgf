@@ -12,9 +12,12 @@ const SECTION_SPACING = 10; // horizontal spacing between legend sections
 
 const LAYER_GUTTER = 24;
 const GROUP_GUTTER = 16;
+const INFO_GUTTER = 24;
 const ITEM_GUTTER = 8;
 const IMAGE_GUTTER = 8;
 const SYMBOL_SIZE = 32;
+
+const INFO_FONT_SIZE = 14;
 
 /**
  *
@@ -49,7 +52,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
-        const legendData = extractLegendTree(configService.getSync.map.legendBlocks);
+        const legendData = extractLegendTree(
+            configService.getSync.map.legendBlocks,
+            preferredSectionWidth,
+            availableWidth
+        );
 
         // resolve with an empty 0 x 0 canvas if there is not layers in the legend
         if (legendData.length === 0) {
@@ -75,9 +82,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
         // keep optimizing while the number of used sections differs from the number of available sections
         while (sectionsUsed !== sectionInfo.count) {
-            legendDataCopy = angular.copy(legendData);
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
+            legendDataCopy = extractLegendTree(
+                configService.getSync.map.legendBlocks,
+                sectionInfo.width,
+                availableWidth
+            );
 
             legendSection.clear();
 
@@ -235,7 +246,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         const itemStore = [];
         const lineSet = container.set();
 
-        items.forEach(item => makeLayer(item));
+        items.forEach(item => makeLegendElement(item));
 
         return {
             container,
@@ -251,10 +262,19 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @param {Object} item legend tree item to use
          */
         function makeLegendElement(item) {
-            if (item.hasOwnProperty('items')) {
-                makeGroup(item);
+            if (item.blockType && item.blockType === LegendBlock.TYPES.INFO) {
+                // IE uses item.name to store its info sections, make a header and add the gutter
+                if (item.name !== '') {
+                    makeHeader(item, INFO_FONT_SIZE);
+                    runningHeight += INFO_GUTTER;
+                }
+                item.items.forEach(item => {
+                    makeInfoItem(item);
+                });
+            } else if (item.hasOwnProperty('items')) {
+                makeLayer(item);
             } else {
-                makeItem(item);
+                makeSymbolItem(item);
             }
         }
 
@@ -269,8 +289,15 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             makeHeader(layer, 18);
 
             layer.items.forEach(item => {
-                makeLegendElement(item);
+                if (item.hasOwnProperty('items')) {
+                    makeGroup(item);
+                } else {
+                    makeSymbolItem(item);
+                }
             });
+
+            // take away the last symbol item's gutter, adds unneeded whitespace
+            runningHeight -= ITEM_GUTTER;
 
             layer.height = runningHeight - startHeight;
 
@@ -348,7 +375,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                 flow = legendItem
                     .textflow(name, sectionWidth - SYMBOL_SIZE - IMAGE_GUTTER - runningIndent * indentD)
                     .attr(flowAttributes)
-                    .dmove(SYMBOL_SIZE + IMAGE_GUTTER, -4); // what is -4?
+                    .dmove(SYMBOL_SIZE + IMAGE_GUTTER, -4); // (x, y)
 
                 // center line if only one
                 if (flow.bbox().height < SYMBOL_SIZE) {
@@ -357,16 +384,23 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             }
 
             legendItem.move(runningIndent * indentD, runningHeight);
-            const heightToAppend =
-                legendItem.rbox().height > imageItemViewbox.height ? legendItem.rbox().height : imageItemViewbox.height;
-            runningHeight += heightToAppend + ITEM_GUTTER;
-
-            item.height = legendItem.rbox().height;
-            item.y = legendItem.y();
+            runningHeight += imageItemViewbox.height;
 
             itemStore.push(legendItem);
 
             return legendItem;
+        }
+
+        function makeInfoItem(item) {
+            // info sections have a lot of room at the top, take away the gutter space to make them display better
+            runningHeight -= INFO_GUTTER;
+            makeItem(item);
+            runningHeight += INFO_GUTTER;
+        }
+
+        function makeSymbolItem(item) {
+            makeItem(item);
+            runningHeight += ITEM_GUTTER;
         }
 
         /**
@@ -408,7 +442,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @param {LegendBlock} legendBlock the root legend block from which to extract the flat symbology tree.
      * @return {Array} a flat array of layers and their symbology items
      */
-    function extractLegendTree(legendBlock) {
+    function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
         const TYPE_TO_SYMBOLOGY = {
             [LegendBlock.TYPES.NODE]: entry => ({
                 name: entry.name,
@@ -441,7 +475,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         };
                     }
 
-                    const contentToHtml = marked(content);
+                    const contentToHtml = `${marked(content)}`;
 
                     // if no markdown was parsed, return as text
                     if (content === contentToHtml) {
@@ -453,21 +487,25 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         };
                     }
 
-                    const canvas = service.canvas || (service.canvas = document.createElement('canvas'));
-                    const ctx = canvas.getContext('2d');
+                    // restrict width to full legend size
+                    const correctedWidth = Math.min(sectionWidth, availableWidth - LEGEND_MARGIN.l - LEGEND_MARGIN.r);
 
-                    // compute the actual width of content HTML if it were a single line
-                    let actualWidth = ctx.measureText(contentToHtml).width;
-                    // reduce width to 300 if actual width exceeds this - this avoids one long line being scaled down to ant man sized text
-                    let correctedWidth = Math.min(300, actualWidth);
-                    // estimate the rendered height
-                    let approxHeight = Math.ceil(actualWidth / correctedWidth) * 25 + 28;
+                    const container = document.createElement('div');
+                    container.innerHTML = contentToHtml;
+                    // restrict width and make invisible
+                    container.style.width = `${correctedWidth}px`;
+                    container.style.display = 'none';
+                    // put in dom to be able to get height
+                    document.body.appendChild(container);
+                    const height = $(container).height();
+                    // This is ECCC, we don't litter here.
+                    container.remove();
 
                     // draw an image to the canvas using this XML SVG wrapper
                     const data = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="${correctedWidth}" height="${approxHeight}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="${correctedWidth}" height="${height}">
                             <foreignObject width="100%" height="100%">
-                                <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Roboto, 'Helvetica Neue', sans-serif;font-size: 14px;font-weight: 400;letter-spacing: 0.010em;line-height: 20px;">${contentToHtml}</div>
+                                <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Roboto, 'Helvetica Neue', sans-serif;font-size: ${INFO_FONT_SIZE}px;font-weight: 400;letter-spacing: 0.010em;line-height: 20px;">${contentToHtml}</div>
                             </foreignObject>
                         </svg>
                     `;
@@ -483,7 +521,10 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         items: [
                             {
                                 name: '',
-                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${approxHeight}" width="${correctedWidth}"><image height="${approxHeight}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${img.src}"></image></svg>`
+                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${height}" width="${correctedWidth}"><image height="${height}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${
+                                    img.src
+                                }"></image></svg>`,
+                                stuff: content
                             }
                         ].concat(entry.symbologyStack.stack || []),
                         blockType: LegendBlock.TYPES.INFO,
