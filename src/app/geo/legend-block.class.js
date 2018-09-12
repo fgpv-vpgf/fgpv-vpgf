@@ -1,5 +1,3 @@
-import to from 'await-to-js';
-
 /**
  *
  * @module LegendBlock
@@ -72,32 +70,31 @@ function LegendBlockFactory(
             this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
         }
 
-        async _initProxyPromise(proxyPromise) {
+        _initProxyPromise(proxyPromise) {
             this._proxyPromise = proxyPromise;
 
             // wait for the proxy to be resolved;
             // for WFS layers proxy resolves when the layer record is made and "loaded"
             // for other layer types proxy resolves when the layer record is made (layer is not necessarily loaded at this point)
-            let error;
-            [error, this._proxy] = await to(this._proxyPromise);
+            this._proxyPromise
+                .then(proxy => {
+                    this._proxy = proxy;
 
-            if (error) {
-                console.error(`Layer proxy failed to resolve for "${this.layerConfig.id}"`, error);
+                    // This will apply initial state values from the layer config object to the layer proxy object.
+                    // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
+                    this.opacity = this._layerConfig.state.opacity;
+                    this.visibility = this._layerConfig.state.visibility;
+                    this.query = this._layerConfig.state.query;
 
-                // if the proxy fails to resolve (layer data failed to load, etc.), set status to `rv-error`
-                this._lastState = 'rv-error';
-                return;
-            }
-
-            // This will apply initial state values from the layer config object to the layer proxy object.
-            // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
-            this.opacity = this._layerConfig.state.opacity;
-            this.visibility = this._layerConfig.state.visibility;
-            this.query = this._layerConfig.state.query;
-
-            this._updateApiLayerVisibility(this);
-            this._updateApiLayerOpacity(this);
-            this._updateApiLayerQueryable(this);
+                    this._updateApiLayerVisibility(this);
+                    this._updateApiLayerOpacity(this);
+                    this._updateApiLayerQueryable(this);
+                })
+                .catch(error => {
+                    console.error(`Layer proxy failed to resolve for "${this.layerConfig.id}"`, error);
+                    // if the proxy fails to resolve (layer data failed to load, etc.), set status to `rv-error`
+                    this._lastState = 'rv-error';
+                });
         }
 
         /**
@@ -141,25 +138,40 @@ function LegendBlockFactory(
         _stateTimeout = null;
         _lastState = 'rv-loading'; // last valid state
 
+        /**
+         * A helper function to update state and cancel the state timeout.
+         *
+         * @memberof ProxyWrapper
+         */
+        _updateState() {
+            common.$timeout.cancel(this._stateTimeout);
+            this._stateTimeout = null;
+
+            this._lastState = this._proxy.state;
+        }
+
         get state() {
             // if no proxy object is available, this is a config-added file-like layer with remote-data (aka WFS or a file-layer)
             if (!this._proxy) {
                 return this._lastState;
             }
 
+            if (this._proxy.state === this._lastState) {
+                return this._lastState;
+            }
+
             // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
             // delay the state update to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed
             // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2971
-            common.$timeout.cancel(this._stateTimeout);
-
-            if (this._proxy.state === 'rv-error') {
-                this._stateTimeout = common.$timeout(() => (this._lastState = this._proxy.state), 100);
-            } else {
-                this._lastState = this._proxy.state;
+            if (this._proxy.state !== 'rv-error') {
+                this._updateState();
+            } else if (this._lastState !== 'rv-error' && !this._stateTimeout) {
+                this._stateTimeout = common.$timeout(() => this._updateState.apply(this), 2500);
             }
 
             return this._lastState;
         }
+
         get name() {
             return this._proxy ? this._proxy.name : this._layerConfig.name;
         }
@@ -713,18 +725,19 @@ function LegendBlockFactory(
             const deregisterWatch = $rootScope.$watch(
                 () => this.proxyWrapper.state,
                 state => {
-                    if (state !== 'rv-loaded') {
+                    if (state === 'rv-loaded') {
+                        // this is the first chance to properly create bounding box for this legend node
+                        // since it's created on demand and cannot be created by geoapi when creating layerRecord
+                        // need to read the layer config state here and initialize the bounding box manually when the layer loads
+                        // Not all state is applied to the layer record inside geoApi;
+                        // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
+                        this.boundingBox = this.proxyWrapper.boundingBox;
+                        this.proxyWrapper.validateProjection();
+                    } else if (state !== 'rv-error') {
                         return;
                     }
 
-                    // this is the first chance to properly create bounding box for this legend node
-                    // since it's created on demand and cannot be created by geoapi when creating layerRecord
-                    // need to read the layer config state here and initialize the bounding box manually when the layer loads
-                    // Not all state is applied to the layer record inside geoApi;
-                    // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
-                    this.boundingBox = this.proxyWrapper.boundingBox;
-                    this.proxyWrapper.validateProjection();
-
+                    // this will be called on `rv-error` and on `rv-loaded`
                     deregisterWatch();
                 }
             );
