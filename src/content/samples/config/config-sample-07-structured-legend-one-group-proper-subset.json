@@ -80,7 +80,12 @@
         "name": "root",
         "children": [
           {
-            "layerId": "somepowerplants"
+            "layerId": "somepowerplants",
+            "symbologyExpanded": true
+          },
+          {
+            "layerId": "onepowerplant",
+            "symbologyExpanded": true
           }
         ]
       }
@@ -101,6 +106,18 @@
             "index": 21
           }
         ],
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+        "id": "onepowerplant",
+        "name": "Power Plant",
+        "layerType": "esriDynamic",
+        "layerEntries": [
+          {
+            "index": 20
+          }
+        ],
+        "singleEntryCollapse": true,
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
       }
     ],

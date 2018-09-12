@@ -519,7 +519,10 @@ function legendServiceFactory(
                 // on loaded, create child LegendBlocks for the dynamic layer and
                 // add them to the created LegendBlock.GROUP to be displayed in the UI (following any hierarchy provided)
                 const tree = _createDynamicChildTree(layerRecord, layerConfig);
-                tree.forEach(item => _addChildBlock(item, legendBlockGroup));
+                tree.forEach(item => {
+                    item.symbologyExpanded = blockConfig.symbologyExpanded;
+                    _addChildBlock(item, legendBlockGroup);
+                });
 
                 legendBlockGroup.synchronizeControlledEntries();
             });

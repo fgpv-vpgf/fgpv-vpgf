@@ -80,7 +80,8 @@
         "name": "root",
         "children": [
           {
-            "layerId": "somepowerplants"
+            "layerId": "somepowerplants",
+            "symbologyExpanded": true
           },
           {
             "layerId": "somepowerplants"
