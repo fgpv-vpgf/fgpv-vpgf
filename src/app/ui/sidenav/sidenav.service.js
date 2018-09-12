@@ -275,19 +275,21 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         const self = this;
 
         self.close = $mdDialog.hide;
+        self.loading = true;
 
         // get about map description from markdown or config file
         configService.onEveryConfigLoad(config => {
             if (config.ui.about.content) {
                 self.about = config.ui.about.content;
+                self.loading = false;
             } else if (config.ui.about.folderName) {
                 useMarkdown(config.ui.about.folderName).then(html => {
                     self.about = html;
                 }).catch(error => {
                     console.warn(error);
-                });
+                }).finally(() => (self.loading = false));
             }
-        });
+       });
 
         /**
          * Takes a folder path, fetches markdown files and parses them.
