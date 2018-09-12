@@ -19,6 +19,7 @@
 @import "_symbology.scss";
 @import "_details.scss";
 @import "_table.scss";
+@import "_about.scss";
 @import "_help.scss";
 @import "_stepper.scss";
 @import "_file-drop.scss";
@@ -55,6 +56,7 @@
 @include details;
 @include table;
 @include help;
+@include about;
 @include stepper;
 @include file-drop;
 @include loader;
