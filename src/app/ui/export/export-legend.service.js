@@ -544,7 +544,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                                 name: '',
                                 svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${height}" width="${correctedWidth}"><image height="${height}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${
                                     img.src
-                                }"></image></svg>`,
+                                }"></image></svg>`
                             }
                         ].concat(entry.symbologyStack.stack || []),
                         blockType: LegendBlock.TYPES.INFO,
