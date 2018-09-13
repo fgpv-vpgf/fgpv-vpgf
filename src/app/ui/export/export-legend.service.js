@@ -84,11 +84,11 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         while (sectionsUsed !== sectionInfo.count) {
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
-            legendDataCopy = extractLegendTree(
+            legendDataCopy = angular.copy(extractLegendTree(
                 configService.getSync.map.legendBlocks,
                 sectionInfo.width,
                 availableWidth
-            );
+            ));
 
             legendSection.clear();
 
@@ -385,7 +385,10 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             }
 
             legendItem.move(runningIndent * indentD, runningHeight);
-            runningHeight += imageItemViewbox.height;
+            runningHeight += Math.max(legendItem.rbox().height, imageItemViewbox.height);
+
+            item.height = legendItem.rbox().height;
+            item.y = legendItem.y()
 
             itemStore.push(legendItem);
 
@@ -493,7 +496,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                         };
                     }
 
-                    const contentToHtml = `${marked(content)}`;
+                    const contentToHtml = marked(content);
 
                     // if no markdown was parsed, return as text
                     if (content === contentToHtml) {
@@ -542,7 +545,6 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                                 svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${height}" width="${correctedWidth}"><image height="${height}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${
                                     img.src
                                 }"></image></svg>`,
-                                stuff: content
                             }
                         ].concat(entry.symbologyStack.stack || []),
                         blockType: LegendBlock.TYPES.INFO,
