@@ -1,5 +1,4 @@
 import { ConfigLayer, SimpleLayer } from 'api/layers';
-import to from 'await-to-js';
 
 const THROTTLE_COUNT = 2;
 const THROTTLE_TIMEOUT = 3000;
@@ -291,21 +290,20 @@ function layerRegistryFactory(
         }
 
         // if layer record creation fails, the error will be handled elsewhere
-        const [error, layerRecord] = await to(layerRecordPromise);
-        if (error) {
-            return;
-        }
+        layerRecordPromise
+            .then(layerRecord => {
+                const alreadyLoading = ref.loadingQueue.some(lr => lr === layerRecord);
+                const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds).indexOf(layerRecord.config.id) !== -1;
 
-        const alreadyLoading = ref.loadingQueue.some(lr => lr === layerRecord);
-        const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds).indexOf(layerRecord.config.id) !== -1;
+                // do nothing if the corresponding layer record is aleardy loading or has already loaded
+                if (alreadyLoading || alreadyLoaded) {
+                    return;
+                }
 
-        // do nothing if the corresponding layer record is aleardy loading or has already loaded
-        if (alreadyLoading || alreadyLoaded) {
-            return;
-        }
-
-        ref.loadingQueue.push(layerRecord);
-        _loadNextLayerRecord();
+                ref.loadingQueue.push(layerRecord);
+                _loadNextLayerRecord();
+            })
+            .catch(error => {});
     }
 
     /**
