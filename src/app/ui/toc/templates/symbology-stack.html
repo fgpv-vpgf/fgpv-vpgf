@@ -20,6 +20,7 @@
 
         <md-button
             class="md-icon-button rv-icon-20"
+            ng-style="{'right': self.buttonOffset, 'position': 'absolute'}"
             ng-click="self.onToggleClick(symbol.name)"
             ng-if="self.toggleList[symbol.name]"
             aria-pressed = "{{ self.toggleList[symbol.name].isSelected }}"
