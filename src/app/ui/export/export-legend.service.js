@@ -338,6 +338,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @function makeItem
          * @private
          * @param {Object} item item symbology from the legend tree
+         * @returns {Object} the item being added
          */
         function makeItem(item) {
             const { name, svgcode } = item;
@@ -391,6 +392,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             return legendItem;
         }
 
+        /**
+         * Calls makeItem with item and adds the proper gutter for info sections
+         *
+         * @function makeInfoItem
+         * @private
+         * @param {Object} item item symbology from the legend tree
+         */
         function makeInfoItem(item) {
             // info sections have a lot of room at the top, take away the gutter space to make them display better
             runningHeight -= INFO_GUTTER;
@@ -398,6 +406,13 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             runningHeight += INFO_GUTTER;
         }
 
+        /**
+         * Calls makeItem with item and adds the proper gutter for symbology
+         *
+         * @function makeInfoItem
+         * @private
+         * @param {Object} item item symbology from the legend tree
+         */
         function makeSymbolItem(item) {
             makeItem(item);
             runningHeight += ITEM_GUTTER;
@@ -409,6 +424,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
          * @private
          * @param {Object} item header item from the legend tree
          * @param {Number} size size of the header
+         * @returns {Object} the header being added
          */
         function makeHeader(item, size) {
             const name = item.name || '';
@@ -440,6 +456,8 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @function extractLegendTree
      * @private
      * @param {LegendBlock} legendBlock the root legend block from which to extract the flat symbology tree.
+     * @param {Number} sectionWidth the width of the current section
+     * @param {Number} availableWidth the max width of the legend
      * @return {Array} a flat array of layers and their symbology items
      */
     function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
