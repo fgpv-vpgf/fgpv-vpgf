@@ -111,6 +111,10 @@
           {
             "infoType": "image",
             "content": "http://fgpv.cloudapp.net/demo/__assets__/solazy.gif"
+          },
+          {
+            "infoType": "image",
+            "content": "http://broken.link.gif"
           }
         ]
       }

@@ -25,8 +25,9 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache) {
         const self = scope.self;
 
         const shellNode = referenceService.panels.shell;
-        let width;
-        let height;
+        let width = 0;
+        let height = 0;
+        self.canEnlarge = false;
 
         // get the url of the image from the tag's ngSrc or src
         // if the tag has a special format for src (eg. <rv-svg>) then specify an additional attribute
@@ -35,15 +36,13 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache) {
 
         // set canEnlarge true if natural width of the image is larger than the width of the toc panel
         // also get the natural width and height of the image
-        self.canEnlarge = () => {
-            const img = new Image();
-            img.onload = function() {
-                width = Math.min(this.width + 50, shellNode.width() * 0.8);
-                height = Math.min(this.height, shellNode.height() * 0.8);
-            }
-            img.src = imageUrl;
-            return width > element.parents(".rv-toc").width();
-        };
+        const img = new Image();
+        img.onload = function() {
+            width = Math.min(this.width + 50, shellNode.width() * 0.8);
+            height = Math.min(this.height, shellNode.height() * 0.8);
+            self.canEnlarge = width > element.parents(".rv-toc").width();
+        }
+        img.src = imageUrl;
 
         const template = $templateCache.get(buttonTemplateUrl);
         element.after($compile(template)(scope));
