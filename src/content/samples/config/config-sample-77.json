@@ -320,9 +320,13 @@
             {
               "layerId": "1"
             },
-            {
+            { 
               "infoType": "title",
               "content": "Title 1 - will stay in export legend"
+            },
+            {
+              "infoType": "text",
+              "content": "Climate normals and averages are used to summarize or describe the average climatic conditions of a particular location.\n\n At the completion of each decade, Environment and Climate Change Canada updates its climate normals for as many locations and as many climatic characteristics as possible. The climate normals, averages and extremes offered here are based on Canadian climate stations with at least 15 years of data between 1981 to 2010."
             },
             {
               "layerId": "3",
