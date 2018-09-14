@@ -211,6 +211,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             $mdToast.show(undoToast)
             .then(response =>
                 response === 'ok' ? _restoreLegendBlock() : resolve());
+        } else {
+            resolve();
         }
 
         console.log(stateManager.display);
