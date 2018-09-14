@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+
+<body style="padding:20px;">
+    <h1> LegendItem, LegendGroup and InfoSection Tests -
+        <span style="color:blue"> Visibility, Opacity, Queryable Toggles </span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="overflow-y:scroll; width:30%; height:700px; padding:10px; background-color:lightgrey; border:solid;" class="column">
+            <h5>Note: </h5>
+            <ul>
+                <li>
+                    Don't worry about buttons that don't toggle unless they turn
+                    <font color='red'>
+                        <b>red</b>
+                    </font>.</li>
+                    <li>It just means that the control (eg: Toggle Visibility) is not available so there is nothing to toggle.</li>
+            </ul>
+            <br>
+            <h3>LegendItem Tests: </h3>
+            <p>
+                <b>Note: </b>The following tests are for the
+                <b>Biomass</b> LegendItem</p>
+            <br>
+            <button id="ItemToggleVis">Toggle Visibility</button>
+            <button id="ItemToggleOpacity">Toggle Opacity to 0.3</button>
+            <button id="ItemToggleQuery">Toggle Queryable</button>
+            <br>
+            <br>
+
+            <h3>LegendGroup Tests: </h3>
+            <p>
+                <b>Note: </b>The following tests are for the
+                <b>Power Plants Proper Subset</b> LegendGroup</p>
+            <br>
+            <button id="GroupToggleVis">Toggle Visibility</button>
+            <button id="GroupToggleOpacity">Toggle Opacity to 0.3</button>
+            <button id="GroupToggleQuery">Toggle Queryable</button>
+            <br>
+            <br>
+
+            <h3>InfoSection Tests: </h3>
+            <p>
+                <b>Note: </b>The following tests are for the
+                <b>so lazy can't move</b> Cat Gif &#128049; InfoSection</p>
+            <br>
+            <button id="InfoToggleVis">Toggle Visibility</button>
+            <button id="InfoToggleOpacity">Toggle Opacity</button>
+            <button id="InfoToggleQuery">Toggle Queryable</button>
+            <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+            <script src="toggle-tests-3.js"></script>
+        </div>
+</body>
