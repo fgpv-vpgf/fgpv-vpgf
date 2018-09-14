@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+
+<body style="padding:20px;">
+    <h1> ConfigLegend Tests -
+        <span style="color:blue"> Config Snippet Tests </span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:3
+        20%; height:700px; padding:10px; overflow-y:scroll; background-color:lightgrey; border:solid;" class="column">
+            <div style="padding:10px">
+                <p>
+                    <b>Test 1:</b> Output should correspond to the <i>Group with a Visibility Set</i> and <i>Cat GIF</i> in the legend</p>
+                <button id="GetSnippet">Get ConfigSnippets</button>
+                <textarea id="GetSnippetOut" rows="20" cols="40"></textarea>
+                <br>
+            </div>
+
+            <div style="padding:10px">
+                <p>
+                    <b>Test 2:</b> Legend Should only have
+                    <i>Cat GIF</i> after setting ConfigSnippet to:
+                </p>
+                <textarea id="setsnippet" rows="10" cols="40"></textarea>
+                <button id="SetSnippet">Set ConfigSnippets</button>
+                <br>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+            <script src="config-snippet-position.js"></script>
+        </div>
+    </div>
+</body>
