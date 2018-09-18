@@ -12,15 +12,15 @@ const attribFC = require('./attribFC.js')();
  */
 class DynamicRecord extends attribRecord.AttribRecord {
     // TODO are we still using passthrough stuff?
-    get _layerPassthroughBindings () {
+    get _layerPassthroughBindings() {
         return ['setOpacity', 'setVisibility', 'setVisibleLayers', 'setLayerDrawingOptions'];
     }
-    get _layerPassthroughProperties () {
+    get _layerPassthroughProperties() {
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
 
-    get layerType () { return shared.clientLayerType.ESRI_DYNAMIC; }
-    get isTrueDynamic () { return this._isTrueDynamic; }
+    get layerType() { return shared.clientLayerType.ESRI_DYNAMIC; }
+    get isTrueDynamic() { return this._isTrueDynamic; }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.
@@ -41,7 +41,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Function} epsgLookup       an optional lookup function for EPSG codes (see geoService for signature)
      * @param {Boolean} configIsComplete  an optional flag to indicate if the config is fully flushed out (i.e. things defined for all children). Defaults to false.
      */
-    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup, configIsComplete = false) {
+    constructor(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup, configIsComplete = false) {
         // TODO might need some nonsense here. if not configIsComplete, and layer is set to visible in config,
         //      we may need to hack the process so that the esri layer object is initialized as invisible,
         //      but the config is still marked as visible so the UI knows to do the proper defaulting.
@@ -81,7 +81,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @function makeLayerConfig
      * @returns {Object} an object with api options
      */
-    makeLayerConfig () {
+    makeLayerConfig() {
         const cfg = super.makeLayerConfig();
         cfg.imageParameters = new this._apiRef.layer.ImageParameters();
         cfg.imageParameters.format = this.config.imageFormat || 'png32';
@@ -95,7 +95,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Integer} featureIdx    index of child entry (leaf or group)
      * @return {Object}               proxy interface for given child
      */
-    getChildProxy (featureIdx) {
+    getChildProxy(featureIdx) {
         // TODO verify we have integer coming in and not a string
         // NOTE we no longer have group proxies. Since it is possible for a proxy to
         //      be requested prior to a dynamic layer being loaded (and thus have no
@@ -128,7 +128,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String} featureIdx     index of the child
      * @return {Promise}              resolves with an integer indicating the feature count.
      */
-    getFeatureCount (featureIdx) {
+    getFeatureCount(featureIdx) {
         // point url to sub-index we want
         // TODO might change how we manage index and url
         return super.getFeatureCount(this._layer.url + '/' + featureIdx);
@@ -141,7 +141,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @function synchOpacity
      * @param {Numeric} opacity     an opacity value (decimal between 0 and 1)
      */
-    synchOpacity (opacity) {
+    synchOpacity(opacity) {
         // in the case where a dynamic layer does not support child opacity, if a user
         // changes the opacity of a child, it actually just adjusts the opacity of the layer.
         // this means that all other children of the layer need to have their opacity set
@@ -166,7 +166,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      *
      * @function onLoad
      */
-    onLoad () {
+    onLoad() {
         const loadPromises = super.onLoad();
         this._isTrueDynamic = this._layer.supportsDynamicLayers;
 
@@ -240,7 +240,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // subfunction to return a subconfig object.
         // if it does not exist or is not defaulted, will do that first
         // id param is an integer in string format
-        const fetchSubConfig = (id, serverName = '')  => {
+        const fetchSubConfig = (id, serverName = '') => {
 
             if (subConfigs[id]) {
                 const subC = subConfigs[id];
@@ -408,7 +408,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
             // use _featClasses as it contains keys that exist on the server and are
             // potentially visible in the client.
             const initVis = Object.keys(this._featClasses)
-                .filter(fcId => {return fetchSubConfig(fcId).config.state.visibility; })
+                .filter(fcId => { return fetchSubConfig(fcId).config.state.visibility; })
                 .map(fcId => { return parseInt(fcId); });
 
             if (initVis.length === 0) {
@@ -450,7 +450,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
      * @returns {Promise}                    promise that resolves after map finishes moving about
      */
-    zoomToScale (childIdx, map, lods, zoomIn, positionOverLayer = true) {
+    zoomToScale(childIdx, map, lods, zoomIn, positionOverLayer = true) {
         // get scale set from child, then execute zoom
         const scaleSet = this._featClasses[childIdx].getScaleSet();
         return this._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
@@ -465,7 +465,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Integer}  mapScale the scale to test against
      * @returns {Object} has boolean properties `offScale` and `zoomIn`
      */
-    isOffScale (childIdx, mapScale) {
+    isOffScale(childIdx, mapScale) {
         return this._featClasses[childIdx].isOffScale(mapScale);
     }
 
@@ -476,7 +476,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex    index of the child layer to target
      * @returns {Boolean} the queryability of the layer
      */
-    isQueryable (childIdx) {
+    isQueryable(childIdx) {
         return this._featClasses[childIdx].queryable;
     }
 
@@ -486,7 +486,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @function setQueryable
      * @param {Boolean} value the pointless new queryability setting
      */
-    setQueryable (value) {
+    setQueryable(value) {
         return null;
     }
 
@@ -509,7 +509,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @function getChildTree
      * @return {Object} structured representation of child layers
      */
-    getChildTree () {
+    getChildTree() {
         // TODO document somehow the format of the return object
         if (this._childTree) {
             return this._childTree;
@@ -526,7 +526,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex    index of the child layer whos attributes we are looking at
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
-    aliasedFieldName (attribName, childIndex) {
+    aliasedFieldName(attribName, childIndex) {
         return this._featClasses[childIndex].aliasedFieldName(attribName);
     }
 
@@ -537,7 +537,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex  index of the child layer to get attributes for
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getFormattedAttributes (childIndex) {
+    getFormattedAttributes(childIndex) {
         return this._featClasses[childIndex].getFormattedAttributes();
     }
 
@@ -554,7 +554,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      *                 - attribs       boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (childIndex, objId, opts) {
+    fetchGraphic(childIndex, objId, opts) {
         return this._featClasses[childIndex].fetchGraphic(objId, opts);
     }
 
@@ -568,7 +568,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
      * @return {Promise}                resolves after the map is done moving
      */
-    zoomToGraphic (childIndex, objId, map, offsetFraction) {
+    zoomToGraphic(childIndex, objId, map, offsetFraction) {
         return this._featClasses[childIndex].zoomToGraphic(objId, map, offsetFraction);
     }
 
@@ -580,7 +580,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex    index of the child layer whos attributes we are looking at
      * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
      */
-    checkDateType (attribName, childIndex) {
+    checkDateType(attribName, childIndex) {
         return this._featClasses[childIndex].checkDateType(attribName);
     }
 
@@ -591,7 +591,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String} childIndex  the index of the child layer
      * @returns {Promise}          resolves with a layer attribute data object
      */
-    getAttribs (childIndex) {
+    getAttribs(childIndex) {
         return this._featClasses[childIndex].getAttribs();
     }
 
@@ -602,7 +602,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String} childIndex  the index of the child layer
      * @returns {Promise}          resolves with a layer data object
      */
-    getLayerData (childIndex) {
+    getLayerData(childIndex) {
         return this._featClasses[childIndex].getLayerData();
     }
 
@@ -615,7 +615,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Object} attribs    the dictionary of attributes for the feature.
      * @returns {String}          the name of the feature
      */
-    getFeatureName (childIndex, objId, attribs) {
+    getFeatureName(childIndex, objId, attribs) {
         return this._featClasses[childIndex].getFeatureName(objId, attribs);
     }
 
@@ -626,7 +626,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String} childIndex  the index of the child layer
      * @returns {Object}           the symbology object
      */
-    getSymbology (childIndex) {
+    getSymbology(childIndex) {
         return this._featClasses[childIndex].symbology;
     }
 
@@ -645,7 +645,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {Object} opts additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    identify (opts) {
+    identify(opts) {
         // bundles results from all leaf layers
         const identifyResults = [];
 
@@ -677,8 +677,20 @@ class DynamicRecord extends attribRecord.AttribRecord {
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
 
+        let validSymbologies = [];
+
         opts.layerIds.forEach(leafIndex => {
-            const identifyResult = new shared.IdentifyResult(this.getChildProxy(leafIndex));
+            let childProxy = this.getChildProxy(leafIndex);
+
+            // track a list of valid symbologies so that identify doesn't return all symbologies in stack
+            if (this.definitionClause) {
+                childProxy.symbology.forEach(symbol => {
+                    if (this.definitionClause.includes(symbol.definitionClause)) {
+                        validSymbologies.push(symbol.svgcode);
+                    }
+                });
+            }
+            const identifyResult = new shared.IdentifyResult(childProxy);
             identifyResults[leafIndex] = identifyResult;
         });
 
@@ -723,14 +735,20 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             //      well, this means things like date formatting might not be applied to
                             //      identify results. examine the impact of providing the fields parameter
                             //      to data that is already aliased.
-                            identifyResult.data.push({
-                                name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
-                                data: this.attributesToDetails(ele.feature.attributes, lData.fields),
-                                oid: unAliasAtt[lData.oidField],
-                                symbology: [{
-                                    svgcode: this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer)
-                                }]
-                            });
+                            let svg = this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer);
+
+                            //if the current svg is a valid symbology to be identified, push its data into identifyResult
+                            if (validSymbologies.indexOf(svg) !== -1) {
+                                identifyResult.data.push({
+                                    name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
+                                    data: this.attributesToDetails(ele.feature.attributes, lData.fields),
+                                    oid: unAliasAtt[lData.oidField],
+                                    symbology: [{
+                                        svgcode: svg
+                                    }]
+                                });
+                            }
+
                         }
                         identifyResult.isLoading = false;
                     });
@@ -758,7 +776,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex  index of the child layer to get attributes for
      * @return {String}             server name of the child layer
      */
-    getChildName (childIndex) {
+    getChildName(childIndex) {
         // TODO revisit logic. is this the best way to do this? what are the needs of the consuming code?
         // TODO restructure so WMS can use this too?
         // TODO what about config overrides of names?
