@@ -38,9 +38,9 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache) {
         // also get the natural width and height of the image
         const img = new Image();
         img.onload = function() {
+            self.canEnlarge = this.width + 50 > referenceService.panels.main.width();
             width = Math.min(this.width + 50, shellNode.width() * 0.8);
             height = Math.min(this.height, shellNode.height() * 0.8);
-            self.canEnlarge = width > element.parents(".rv-toc").width();
         }
         img.src = imageUrl;
 
