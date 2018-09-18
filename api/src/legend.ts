@@ -52,14 +52,14 @@ class BaseLegend {
     }
 
     /**
-     * Return list of LegendItems and LegendGroups for the legend
+     * Return list of config snipppets for the legend
      */
     get configSnippets(): Array<JSON> {
         return this._configSnippets;
     }
 
     /**
-     * Return list of LegendItems and LegendGroups for the legend
+     * Set list of config snipppets for the legend
      */
     set configSnippets(snippets: Array<JSON>) {
         this._configSnippets = snippets;
@@ -67,8 +67,6 @@ class BaseLegend {
 
     /**
      * Get a LegendItem or LegendGroup by id
-     * @function getById
-     * @param layerId
      */
     getById(layerId: string): LegendItem | LegendGroup | undefined {
         return this._children.find(item => item.id === layerId);
@@ -76,7 +74,6 @@ class BaseLegend {
 
     /**
      * Expand all LegendGroups in legend
-     * @function expandGroups
      */
     expandGroups() {
         this._mapInstance.instance.toggleLegendGroupEntries();
@@ -84,7 +81,6 @@ class BaseLegend {
 
     /**
      * Collapse all LegendGroups in legend
-     * @function collapseGroups
      */
     collapseGroups() {
         this._mapInstance.instance.toggleLegendGroupEntries(false);
@@ -92,15 +88,13 @@ class BaseLegend {
 
     /**
      * Show all LegendItems and LegendGroups in legend
-     * @function showAll
      */
     showAll() {
         this._mapInstance.instance.toggleLegendEntries();
     }
 
     /**
-     * Hide all LegendItesm and LegendGroups in legend
-     * @function hideAll
+     * Hide all LegendItems and LegendGroups in legend
      */
     hideAll() {
         this._mapInstance.instance.toggleLegendEntries(false);
@@ -117,9 +111,8 @@ class BaseLegend {
 }
 
 /**
- * Legend for a map instance
- * Can be auto or structured legends
- * Only one per map
+ * A single `ConfigLegend` instance is created for each map instance and can be
+ * either structured or auto.
  */
 export class ConfigLegend extends BaseLegend {
     _type: string;
@@ -137,15 +130,14 @@ export class ConfigLegend extends BaseLegend {
     }
 
     /**
-     * Return list of LegendItems and LegendGroups for the legend
+     * Return list of config snipppets for the legend
      */
     get configSnippets(): Array<JSON> {
         return this._configSnippets;
     }
 
     /**
-     * Return list of LegendItems and LegendGroups for the legend
-     * @override
+     * Set list of config snipppets for the legend
      */
     set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix children array
         if (snippets) {
@@ -159,10 +151,7 @@ export class ConfigLegend extends BaseLegend {
     }
 
     /**
-     * Get a LegendItem or LegendGroup by id
-     * @override
-     * @function getById
-     * @param id
+     * Get a LegendItem or LegendGroup by id. Returns undefined if a matching `id` is not found
      */
     getById(id: string): LegendItem | LegendGroup | undefined {
         for (let item of this.children) {
@@ -170,6 +159,7 @@ export class ConfigLegend extends BaseLegend {
                 return item;
             } else {
                 if (item instanceof LegendGroup) {
+                    // If the item is a LegendGroup, search through its children
                     let match = item.getById(id);
                     if (match) {
                         return match;
@@ -180,28 +170,42 @@ export class ConfigLegend extends BaseLegend {
     }
 
     /**
-     * Updates a group's or item's position in the legend
-     * @function updateLayerPosition
-     * @param item  LegendItem or LegendGroup to change position
-     * @param index  New index to put the item
+     * Updates a group's or item's position in the legend.
+     * Keeps vectors and rasters seperate as the ui does.
+     * @param item LegendItem or LegendGroup to change position
+     * @param index New index to put the item
+     *
+     * @example Move vector layer to the front/top of its group
+     * ```js
+     * mapInstance.ui.configLegend.updateLayerPosition(vectorItem, 0);
+     * ```
+     *
+     * @example Move a raster layer to the front/top of its group
+     * ```js
+     * mapInstance.ui.configLegend.updateLayerPosition(rasterItem, 0);
+     * ```
      */
     updateLayerPosition(item: LegendItem | LegendGroup, index: number): void {
         if (this._reorderable) {
-            // Needs to be done this way to invoke the legendBlocks setter to apply the changes instantly
-            let groupBorder = this._sortGroup[0].length;
+            const groupBorder = this._sortGroup[0].length;
             let tempLegendBlocks = this._mapInstance.legendBlocks;
             let entries = tempLegendBlocks.entries;
             let entriesIndex = index;
-            if (item._legendBlock.sortGroup === 0 && index >= groupBorder) {
-                entriesIndex = entries.length + 1;
-            } else if (item._legendBlock.sortGroup === 1) {
-                entriesIndex = groupBorder + index
-            }
             const itemIndex = entries.findIndex((entry: any) => entry.id === item.id);
+            if (item._legendBlock.sortGroup === 0 && index >= groupBorder) {
+                // exit early if the index exceeds the size of the sort group
+                return;
+            } else if (item._legendBlock.sortGroup === 1) {
+                // if it's in the second sortGroup, set the index to start from the group border
+                entriesIndex += groupBorder;
+            }
             if (entriesIndex >= 0 && entriesIndex < entries.length && itemIndex >= 0) {
+                // reorder in the elements array
                 entries.splice(entriesIndex, 0, entries.splice(itemIndex, 1)[0]);
+                // reorder in the sort group array as well
                 let group = this._sortGroup[item._legendBlock.sortGroup];
                 group.splice(index, 0, group.splice(index, 1)[0]);
+                // need to set the entire legend block to trigger change on the map
                 this._mapInstance.legendBlocks = tempLegendBlocks;
                 this._mapInstance.instance.synchronizeLayerOrder();
             }
@@ -210,47 +214,44 @@ export class ConfigLegend extends BaseLegend {
 }
 
 export class SimpleLegend extends BaseLegend {
-    // TODO
+    // TODO: implement SimpleLegen as menitioned in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2815
 }
 
-export class LegendItem {
-
+/**
+ * Provides the core API fucntionality for `LegendItems` and `LegendGroups`
+ */
+class BaseItem {
     /** @ignore */
     _mapInstance: any;
-
     /** @ignore */
     _legendBlock: any;
 
     /** @ignore */
     _id: string;
-
     /** @ignore */
     _name: string;
+    /** @ignore */
+    _type: string;
+    /** @ignore */
+    _availableControls: Array<AvailableControls>;
 
     /** @ignore */
     _opacity: number;
     _opacityChanged: Subject<number>;
 
     /** @ignore */
-    _visibility: boolean;
-    _visibilityChanged: Subject<boolean>;
-
-    /** @ignore */
     _queryable: boolean;
     _queryableChanged: Subject<boolean>;
 
-    /**@ignore*/
-    _type: string;
-
     /** @ignore */
-    _availableControls: Array<AvailableControls>;
+    _visibility: boolean;
+    _visibilityChanged: Subject<boolean>;
 
-    /**
-     * Creates a new LegendItem, initializes attributes.
-     * @param {Map.mapI} mapInstance - the mapInstance that this LegendItem is for
-     * @param {LegendNode} itemBlock - The LegendNode that this LegendItem represents
+        /**
+     * Create a new BaseItem, initialize the observables
+     * @param mapInstance the mapInstance that this BaseItem is for
      */
-    constructor(mapInstance: any, itemBlock: any) {
+    constructor(mapInstance: any) {
         this._mapInstance = mapInstance;
 
         this._visibilityChanged = new Subject();
@@ -260,24 +261,37 @@ export class LegendItem {
         this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
         this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
         this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
-
-        this._initSettings(itemBlock);
     }
 
-    /** Gets visibility of LegendItems that are of type legendNode
-     * @return {boolean} - true if the item is currently visible, false otherwise
+    /** Returns the item's id */
+    get id(): string {
+        return this._id;
+    }
+
+    /** Returns the item's name */
+    get name(): string {
+        return this._name;
+    }
+
+    /** Returns the item's type */
+    get type(): string {
+        return this._type;
+    }
+
+    /**
+     * Gets visibility of the BaseItem;
+     * True if the item is currently visible, false otherwise
      */
     get visibility(): boolean | undefined {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Visibility)) {
-            return this._visibility;
-        }
+        return this._visibility;
     }
 
-    /** Sets visibility of LegendItems that are of type legendNode
-     * @param {boolean} visibility - true if visible, false if invisible. undefined has no effect.
+    /**
+     * Sets visibility of the BaseItem
+     * @param visibility true if visible, false if invisible. undefined has no effect.
      */
     set visibility(visibility: boolean | undefined) {
-        if (typeof visibility !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Visibility)) {
+        if (typeof visibility !== 'undefined' && this._availableControls.includes(AvailableControls.Visibility)) {
             if (this._visibility !== visibility) {
                 this._visibility = visibility;
                 this._legendBlock.visibility = visibility;
@@ -294,20 +308,20 @@ export class LegendItem {
         return this._visibilityChanged.asObservable();
     }
 
-    /** Returns the opacity of LegendItems of type legendNode
-     * @return {number} - ranges from 0 (hidden) to 1 (fully visible). undefined has no effect.
+    /**
+     * Returns the opacity of the BaseItem;
+     * Ranges from 0 (hidden) to 1 (fully visible)
      */
     get opacity(): number | undefined {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
-            return this._opacity;
-        }
+        return this._opacity;
     }
 
-    /** Sets the opacity value for LegendItems of type legendNode
-     * @param {number} opacity- ranges from 0 (hidden) to 1 (fully visible)
+    /**
+     * Sets the opacity value for the BaseItem
+     * @param opacity ranges from 0 (hidden) to 1 (fully visible); undefined has no effect
      */
     set opacity(opacity: number | undefined) {
-        if (typeof opacity !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Opacity)) {
+        if (typeof opacity !== 'undefined' && this._availableControls.includes(AvailableControls.Opacity)) {
             if (this._opacity !== opacity) {
                 this._opacity = opacity;
                 this._legendBlock.opacity = opacity;
@@ -324,20 +338,19 @@ export class LegendItem {
         return this._opacityChanged.asObservable();
     }
 
-    /** Gets queryable value of LegendItems that are of type legendNode.
-     * @return {boolean} - true if the item is queryable, false otherwise
+    /**
+     * Gets queryable value of the BaseItem;
+     * True if the item is queryable, false otherwise
     */
     get queryable(): boolean | undefined {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Query)) {
-            return this._queryable;
-        }
+        return this._queryable;
     }
 
-    /** Sets query value of LegendItems that are of type legendNode
-     * @param {boolean} queryable - true if item can be queried, false otherwise. undefined has no effect.
+    /** Sets query value of the BaseItem
+     * @param queryable true if item can be queried, false otherwise. undefined has no effect.
      */
     set queryable(queryable: boolean | undefined) {
-        if (typeof queryable !== 'undefined' && this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Query)) {
+        if (typeof queryable !== 'undefined' && this._availableControls.includes(AvailableControls.Query)) {
             if (this._queryable !== queryable) {
                 this._queryable = queryable;
                 this._legendBlock.query = queryable;
@@ -354,18 +367,58 @@ export class LegendItem {
         return this._queryableChanged.asObservable();
     }
 
-    /** Removes element from legend and hides layer*/
+    /** Removes element from legend and removes layer if it's the last reference to it*/
     remove() {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Remove)) {
+        if (this._availableControls.includes(AvailableControls.Remove)) {
             this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
         }
     }
 
     /** Reloads element in legend */
     reload() {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Reload)) {
+        if (this._availableControls.includes(AvailableControls.Reload)) {
             this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
         }
+    }
+
+    /**
+     * Toggles metadata panel to open/close for the BaseItem
+     */
+    toggleMetadata(): void {
+        if (this._availableControls.includes(AvailableControls.Metadata)) {
+            this._mapInstance.instance.toggleMetadata(this._legendBlock);
+        }
+    }
+
+    /**
+     * Toggles settings panel to open/close type for the BaseItem
+     */
+    toggleSettings(): void {
+        if (this._availableControls.includes(AvailableControls.Settings)) {
+            this._mapInstance.instance.toggleSettings(this._legendBlock);
+        }
+    }
+
+    /**
+     * Toggles data table panel to open/close for the BaseItem
+     */
+    toggleDataTable(): void {
+        if (this._availableControls.includes(AvailableControls.Data)) {
+            this._mapInstance.instance.toggleDataTable(this._legendBlock);
+        }
+    }
+}
+
+export class LegendItem extends BaseItem {
+    /**
+     * Creates a new LegendItem, initializes attributes.
+     * @param mapInstance The mapInstance that this LegendItem is for
+     * @param itemBlock The LegendBlock that this LegendItem represents
+     */
+    constructor(mapInstance: any, itemBlock: any) {
+        super(mapInstance);
+
+        this._initSettings(itemBlock);
     }
 
     /** Expand/collapses symbology stack. */
@@ -376,11 +429,11 @@ export class LegendItem {
     }
 
     /**
-     * Toggles the Symbologies for LegendItems of type legendNode with toggle-able symbology items (in a symbology stack)
-     * @param {[string]} names - list of strings matching the name of the symbologies to toggle
+     * Toggles the Symbologies for LegendItems of type legendNode with toggle-able symbology items (in a symbology stack).
+     * @param names List of strings matching the name of the symbologies to toggle
      */
-    toggleSymbologies(names: [string]): void {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Symbology)) {
+    toggleSymbologies(names: Array<string>): void {
+        if (this._availableControls.includes(AvailableControls.Symbology)) {
             names.forEach(name => {
                 // toggle only if the symbology item has toggle button
                 if (this._legendBlock.symbologyStack.toggleList[name]) {
@@ -391,64 +444,17 @@ export class LegendItem {
     }
 
     /**
-     * Toggles metadata panel to open/close for LegendItems of type legendNode with existing metadata URLs.
-     */
-    toggleMetadata(): void {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Metadata)) {
-            this._mapInstance.instance.toggleMetadata(this._legendBlock);
-        }
-    }
-
-    /**
-     * Toggles settings panel to open/close type for LegendItems of type legendNode
-     */
-    toggleSettings(): void {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Settings)) {
-            this._mapInstance.instance.toggleSettings(this._legendBlock);
-        }
-    }
-
-    /**
-     * Toggles data table panel to open/close for all LegendItems of type legendNode
-     */
-    toggleDataTable(): void {
-        if (this.type === LegendTypes.Node && this._availableControls.includes(AvailableControls.Data)) {
-            this._mapInstance.instance.toggleDataTable(this._legendBlock);
-        }
-    }
-
-    /**
-     * Returns what type this LegendItem is.
-     * @param string - either type legendNode or legendInfo
-     */
-    get type(): string {
-        return this._type;
-    }
-
-    /**
-     * Returns the id of this LegendItem
-     * @return {string} - the id of this LegendItem
-     */
-    get id(): string {
-        return this._id;
-    }
-
-    /**
-     * Returns the name of this LegendItem
-     * @return {string} - the name of this LegendItem
-     */
-    get name(): string {
-        return this._name;
-    }
-
-    /** Set the appropriate item properties such as id, visibility and opacity.
+     * Set the appropriate item properties such as id, visibility and opacity.
      * Called whenever the legend block is created or reloaded.
+     * @param itemBlock The LegendBlock that this LegendItem represents
      */
     _initSettings(itemBlock: any): void {
         this._legendBlock = itemBlock;
         this._id = itemBlock.id;
         this._name = itemBlock.name;
         this._type = itemBlock.blockConfig.entryType;
+
+        this._availableControls = [];
 
         if (itemBlock.blockConfig.entryType === LegendTypes.Node) {
             this._visibility = itemBlock.visibility;
@@ -459,65 +465,20 @@ export class LegendItem {
     }
 }
 
-export class LegendGroup {
-    /** @ignore */
-    _mapInstance: any;
-    /** @ignore */
-    _legendBlock: any;
+export class LegendGroup extends BaseItem {
 
     /** @ignore */
     _children: Array<LegendGroup | LegendItem> = [];
 
-    /** @ignore */
-    _id: string;
-    /** @ignore */
-    _type: string;
-    /** @ignore */
-    _availableControls: Array<AvailableControls>;
-    /** @ignore */
-    _name: string;
-
-    /** @ignore */
-    _opacity: number;
-    _opacityChanged: Subject<number>;
-
-    /** @ignore */
-    _queryable: boolean;
-    _queryableChanged: Subject<boolean>;
-
-    /** @ignore */
-    _visibility: boolean;
-    _visibilityChanged: Subject<boolean>;
-
-    /** Sets the legend groups viewer map instance and legend block instance. */
+    /**
+     * Sets the legend groups viewer map instance and legend block instance.
+     * @param mapInstance The mapInstance that this LegendGroup is for
+     * @param itemBlock The LegendBlock that this LegendGroup represents
+    */
     constructor(mapInstance: any, legendBlock: any) {
-        this._mapInstance = mapInstance;
-        this._children = [];
-
-        this._visibilityChanged = new Subject();
-        this._opacityChanged = new Subject();
-        this._queryableChanged = new Subject();
-
-        this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
-        this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
-        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
+        super(mapInstance);
 
         this._initSettings(legendBlock);
-    }
-
-    /** Returns the group ID. */
-    get id(): string {
-        return this._id;
-    }
-
-    /** Returns the group name. */
-    get name(): string {
-        return this._name;
-    }
-
-    /** Returns the group type. Can be either legendGroup or legendSet. */
-    get type(): string {
-        return this._type;
     }
 
     /** Returns the children for the group (if any). Children can be either LegendGroups (if nested groups) or LegendItems. */
@@ -525,88 +486,7 @@ export class LegendGroup {
         return this._children;
     }
 
-    /** Returns true if the group is currently visible, false otherwise. */
-    get visibility(): boolean {
-        return this._visibility;
-    }
-
-    /** Sets the visibility to visible/invisible. */
-    set visibility(visibility: boolean) {
-        if (this._availableControls.includes(AvailableControls.Visibility)) {
-            if (this._visibility !== visibility) {
-                this._visibility = visibility;
-                this._legendBlock.visibility = visibility;
-                this._visibilityChanged.next(visibility);
-            }
-        }
-    }
-
-    /**
-     * Emits whenever the group visibility is changed.
-     * @event visibilityChanged
-     */
-    get visibilityChanged(): Observable<boolean> {
-        return this._visibilityChanged.asObservable();
-    }
-
-    /**
-     * Returns the opacity of the group on the map from 0 (hidden) to 100 (fully visible).
-     * NOTE: If the opacity is 0.5, it may represent different opacity values for the children inside the group.
-     * It does not necessarily mean that all the children in the group have opacity set to 0.5.
-    */
-    get opacity(): number {
-        return this._opacity;
-    }
-
-    /** Sets the opacity value for the group. */
-    set opacity(opacity: number) {
-        if (this._availableControls.includes(AvailableControls.Opacity)) {
-            if (this._opacity !== opacity) {
-                this._opacity = opacity;
-                this._legendBlock.opacity = opacity;
-                this._opacityChanged.next(opacity);
-            }
-        }
-    }
-
-    /**
-     * Emits whenever the group opacity is changed.
-     * @event opacityChanged
-     */
-    get opacityChanged(): Observable<number> {
-        return this._opacityChanged.asObservable();
-    }
-
-    /** Returns true if the group is queryable, false otherwise. */
-    get queryable(): boolean {
-        return this._queryable;
-    }
-
-    /** Sets the query value for the group */
-    set queryable(queryable: boolean) {
-        if (this._availableControls.includes(AvailableControls.Query)) {
-            if (this._queryable !== queryable) {
-                this._queryable = queryable;
-                this._legendBlock.query = queryable;
-                this._queryableChanged.next(queryable);
-            }
-        }
-    }
-
-    /**
-     * Emits whenever the group queryable value is changed.
-     * @event queryableChanged
-     */
-    get queryableChanged(): Observable<boolean> {
-        return this._queryableChanged.asObservable();
-    }
-
-    /**
-     * Get a LegendItem or LegendGroup by id
-     * @override
-     * @function getById
-     * @param id
-     */
+    /** Get a child LegendItem or LegendGroup by id. Returns undefined if a matching `id` is not found */
     getById(id: string): LegendItem | LegendGroup | undefined {
         for (let item of this.children) {
             if (item.id === id) {
@@ -623,23 +503,7 @@ export class LegendGroup {
         return undefined;
     }
 
-    /** Removes element from legend and hides layer*/
-    remove() {
-        if (this._availableControls.includes(AvailableControls.Remove)) {
-            this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
-        }
-    }
-
-    /** Reloads element in legend */
-    reload() {
-        if (this._availableControls.includes(AvailableControls.Reload)) {
-            this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
-        }
-    }
-
-    /**
-     * Toggles group to reveal/hide children (if applicable).
-     */
+    /** Toggles group to reveal/hide children (if applicable).*/
     toggleExpanded(): void {
         if (typeof this._legendBlock.expanded !== 'undefined') {
             this._legendBlock.expanded = !this._legendBlock.expanded;
@@ -647,33 +511,9 @@ export class LegendGroup {
     }
 
     /**
-     * Toggles metadata panel to open/close for LegendItems of type legendNode with existing metadata URLs.
-     */
-    toggleMetadata(): void {
-        if (this._availableControls.includes(AvailableControls.Metadata)) {
-            this._mapInstance.instance.toggleMetadata(this._legendBlock);
-        }
-    }
-
-    /**
-     * Toggles settings panel to open/close type for LegendItems of type legendNode
-     */
-    toggleSettings(): void {
-        if (this._availableControls.includes(AvailableControls.Settings)) {
-            this._mapInstance.instance.toggleSettings(this._legendBlock);
-        }
-    }
-
-    /**
-     * Toggles data table panel to open/close for all LegendItems of type legendNode
-     */
-    toggleDataTable(): void {
-        if (this._availableControls.includes(AvailableControls.Data)) {
-            this._mapInstance.instance.toggleDataTable(this._legendBlock);
-        }
-    }
-
-    /** Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded. */
+     * Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded.
+     * @param {LegendBlock} legendBlock LegendBlock that this LegendGroup represents
+    */
     _initSettings(legendBlock: any): void {
         legendBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
 
@@ -688,7 +528,7 @@ export class LegendGroup {
                 }
             });
 
-            //otherwise create new LegendGroup/LegendItem and push to child array
+            // otherwise create new LegendGroup/LegendItem and push to child array
             if (!childExists) {
                 if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
                     this._children.push(new LegendGroup(this._mapInstance, entry));
@@ -711,20 +551,17 @@ export class LegendGroup {
 
         this.children.forEach(child => {
             child.visibilityChanged.subscribe(() => {
-                const oldVisibility: boolean = this.visibility;
-                if (oldVisibility !== this._legendBlock.visibility) {
+                if (this.visibility !== this._legendBlock.visibility) {
                     this._visibilityChanged.next(this._legendBlock.visibility);
                 }
             });
             child.opacityChanged.subscribe(() => {
-                const oldOpacity: number = this.opacity;
-                if (oldOpacity !== this._legendBlock.opacity) {
+                if (this.opacity !== this._legendBlock.opacity) {
                     this._opacityChanged.next(this._legendBlock.opacity);
                 }
             });
             child.queryableChanged.subscribe(() => {
-                const oldQueryable: boolean = this.queryable;
-                if (oldQueryable !== this._legendBlock.query) {
+               if (this.queryable !== this._legendBlock.query) {
                     this._queryableChanged.next(this._legendBlock.query);
                 }
             });
