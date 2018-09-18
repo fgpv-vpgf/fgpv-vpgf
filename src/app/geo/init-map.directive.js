@@ -63,16 +63,15 @@ function rvInitMap(
             // GTM application load time
             if (window.performance) {
                 const timeSincePageLoad = Math.round(performance.now());
-                if (!api.gtmDL) {
-                    return;
+                if (api.gtmDL) {
+                    api.gtmDL.push({
+                        event: 'fieldTiming',
+                        timingCategory: 'performance',
+                        timingVariable: 'load',
+                        timingLabel: 'mapLoaded',
+                        timingValue: timeSincePageLoad
+                    });
                 }
-                api.gtmDL.push({
-                    event: 'fieldTiming',
-                    timingCategory: 'performance',
-                    timingVariable: 'load',
-                    timingLabel: 'mapLoaded',
-                    timingValue: timeSincePageLoad
-                });
             }
 
             // reduce map animation time which in turn makes panning less jittery
