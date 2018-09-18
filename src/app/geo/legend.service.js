@@ -1038,7 +1038,6 @@ function legendServiceFactory(
              * Flatten the tree of dynamic children and groups discarding all the group objects.
              *
              * @param {*} tree
-             * @returns
              */
             function _flattenTree(tree) {
                 const result = [].concat.apply(
@@ -1145,13 +1144,12 @@ function legendServiceFactory(
         for (let item of elementList) {
             if (item.id === id) {
                 return parent;
-            } else {
-                if (item instanceof LegendGroup) {
-                    let match = _getParentById(id, item.children, item);
-                    if (match) {
-                        return match instanceof LegendGroup ? match : item;
-                    }
+            } else if (item instanceof LegendGroup) {
+                let match = _getParentById(id, item.children, item);
+                if (match) {
+                    return match instanceof LegendGroup ? match : item;
                 }
+
             }
         }
     }
@@ -1242,7 +1240,7 @@ function legendServiceFactory(
      *
      * @function updateApiReloadedBlock
      * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
-     * @param {[LegendItem | LegendGroup]} list -the list of existing elements in the LegendAPI
+     * @param {Array<LegendItem | LegendGroup>} list -the list of existing elements in the LegendAPI
      */
     function updateApiReloadedBlock(reloadedBlock, list = mApi.ui.configLegend.children) {
 
