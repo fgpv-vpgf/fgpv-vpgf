@@ -97,6 +97,17 @@ $result-item-height-touch: rem(4.8);
                 .rv-no-results {
                     display: block;
                     text-align: center;
+
+                    md-icon {
+                        margin: 0 8px;
+                        width: unset;
+                        vertical-align: super;
+                    }
+
+                    div {
+                        max-width: 80%;
+                        display: inline-block;
+                    }
                 }
 
                 .rv-results-list {
