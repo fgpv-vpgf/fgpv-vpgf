@@ -13,13 +13,24 @@ import gtm from '../tag-manager';
  *
  * This directive also contains the keyboard navigation logic.
  */
-angular
-    .module('app.geo')
-    .directive('rvInitMap', rvInitMap);
+angular.module('app.geo').directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, ConfigObject, configService, geoService, events, referenceService, $rootElement, $interval,
-    globalRegistry, identifyService, appInfo, gapiService, $mdDialog, keyNames) {
-
+function rvInitMap(
+    $rootScope,
+    ConfigObject,
+    configService,
+    geoService,
+    events,
+    referenceService,
+    $rootElement,
+    $interval,
+    globalRegistry,
+    identifyService,
+    appInfo,
+    gapiService,
+    $mdDialog,
+    keyNames
+) {
     // key codes that are currently active
     let keyMap = [];
     // interval which runs animation logic
@@ -52,21 +63,23 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
             // GTM application load time
             if (window.performance) {
                 const timeSincePageLoad = Math.round(performance.now());
+                if (!api.gtmDL) {
+                    return;
+                }
                 api.gtmDL.push({
-                    'event' : 'fieldTiming',
-                    'timingCategory' : 'performance',
-                    'timingVariable' : 'load',
-                    'timingLabel' : 'mapLoaded',
-                    'timingValue' : timeSincePageLoad
+                    event: 'fieldTiming',
+                    timingCategory: 'performance',
+                    timingVariable: 'load',
+                    timingLabel: 'mapLoaded',
+                    timingValue: timeSincePageLoad
                 });
-              }
+            }
 
             // reduce map animation time which in turn makes panning less jittery
             mapInstance.mapDefault('panDuration', 0);
             mapInstance.mapDefault('panRate', 0);
 
-            el
-                .off('keydown', keyDownHandler)
+            el.off('keydown', keyDownHandler)
                 .off('keyup', keyUpHandler)
                 .off('mousedown', mouseDownHandler)
                 .off('mouseup', mouseUpHandler)
@@ -76,24 +89,24 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
                 .on('mousedown', mouseDownHandler)
                 .on('mouseup', mouseUpHandler);
 
-                // API related initialization ------------------
-                api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
-                const apiMap = new Map($rootElement);
-                apiMap.fgpMap = mapInstance;
-                apiMap._legendStructure = configService.getSync.map.legend;
-                appInfo.mapi = apiMap;
+            // API related initialization ------------------
+            api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
+            const apiMap = new Map($rootElement);
+            apiMap.fgpMap = mapInstance;
+            apiMap._legendStructure = configService.getSync.map.legend;
+            appInfo.mapi = apiMap;
 
-                apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
+            apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
-                // Required for FM to function properly
-                globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
-                $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
+            // Required for FM to function properly
+            globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+            $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
-                events.$broadcast(events.rvApiPrePlugin, apiMap);
-                loadExtensions(apiMap);
-                events.$broadcast(events.rvApiMapAdded, apiMap);
-                gtm(apiMap);
-                api.mapAdded.next(apiMap);
+            events.$broadcast(events.rvApiPrePlugin, apiMap);
+            loadExtensions(apiMap);
+            events.$broadcast(events.rvApiMapAdded, apiMap);
+            gtm(apiMap);
+            api.mapAdded.next(apiMap);
         });
 
         /**
@@ -106,8 +119,9 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
             const extensionList = rvextensions ? rvextensions.split(',') : [];
 
             extensionList.forEach(url => {
-                $.ajax({method: 'GET', dataType: 'text', url})
-                    .then(data => eval(`(function(mapInstance) { ${data} })(apiMap);`));
+                $.ajax({ method: 'GET', dataType: 'text', url }).then(data =>
+                    eval(`(function(mapInstance) { ${data} })(apiMap);`)
+                );
             });
         }
 
@@ -120,9 +134,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
          */
         function mouseDownHandler(event) {
             mouseMoveHanlder = mouseMoveHandlerBuilder(event);
-            el
-                .off('mousemove')
-                .on('mousemove', mouseMoveHanlder);
+            el.off('mousemove').on('mousemove', mouseMoveHanlder);
         }
 
         /**
@@ -184,10 +196,10 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
             event.preventDefault(true);
         }
 
-        if (event.which === 9) { // tab key should clear all active keys
+        if (event.which === 9) {
+            // tab key should clear all active keys
             keyMap = [];
             stopAnimate();
-
         } else if (keyMap.indexOf(event.which) === -1) {
             // enable keyboard support only when map is focused
             if (referenceService.mapNode.is($(document.activeElement))) {
@@ -242,7 +254,7 @@ function rvInitMap($rootScope, ConfigObject, configService, geoService, events, 
         let hasShiftMultiplier = 1;
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
-            // enter key is pressed - trigger identify
+                // enter key is pressed - trigger identify
                 case keyNames.ENTER:
                     // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                     // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
