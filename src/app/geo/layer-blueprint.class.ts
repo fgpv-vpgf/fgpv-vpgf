@@ -197,6 +197,11 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
             // clone data because the makeSomethingLayer functions mangle the config data
             const clonedFormattedData = angular.copy(this._formattedData);
+
+            //set epsg lookup function
+            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
+            this.config.epsgLookup = epsg.lookup;
+
             const [error, layer] = await to(this.layerFactory(clonedFormattedData, this.config));
 
             if (!layer) {
