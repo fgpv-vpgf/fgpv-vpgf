@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "intention/package.json",
+        "package.json"
+      ]
+    }
+  }
+}
