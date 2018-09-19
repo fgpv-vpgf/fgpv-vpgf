@@ -326,8 +326,8 @@ function legendServiceFactory(
             }
 
             //update the corresponding LegendItem in the Legend API
-            if (!(reloadedLegendBlock instanceof LegendGroup)) {
-                updateApiReloadedBlock(reloadedLegendBlock);
+            if (reloadedLegendBlock instanceof LegendBlock.Node) {
+                _updateApiReloadedBlock(reloadedLegendBlock);
             }
 
             const index = legendBlockParent.removeEntry(legendBlock);
@@ -570,10 +570,10 @@ function legendServiceFactory(
                 tree.forEach(item => _addChildBlock(item, legendBlockGroup));
 
                 if (legendBlockGroup.collapsed) {
-                    updateApiReloadedBlock(legendBlockGroup.entries[0]);
+                    _updateApiReloadedBlock(legendBlockGroup.entries[0]);
                 }
                 else {
-                    updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
+                    _updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
                 }
                 legendBlockGroup.synchronizeControlledEntries();
             });
@@ -1132,7 +1132,7 @@ function legendServiceFactory(
     }
 
     /**
-     * Remove an existing element from the list of elements for the map legend
+     * Get the parent of an item by id
      *
      * @function _getParentById
      * @private
@@ -1236,47 +1236,38 @@ function legendServiceFactory(
     }
 
     /**
-     * Looks through the Legend API legend to find the proper LegendItem/LegendGroup to reload and reloads it
+     * Updates the LegendItem/LegendGroup that has been reloaded
      *
-     * @function updateApiReloadedBlock
+     * @function _updateApiReloadedBlock
      * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
      * @param {Array<LegendItem | LegendGroup>} list -the list of existing elements in the LegendAPI
      */
-    function updateApiReloadedBlock(reloadedBlock, list = mApi.ui.configLegend.children) {
+    function _updateApiReloadedBlock(reloadedBlock) {
+        // Only run when the parent is ready on the reloadedBlock
+        const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
+            const index = parent.entries.indexOf(reloadedBlock);
+            const parentElement = parent.name === "I'm root" ? // not sure if there's a better way to check for root
+                { children: mApi.ui.configLegend.children } :
+                _findParentElement(parent);
 
-        let matchingElements = []
-
-        //go through all of the elements in the current legend and find list of potential matching elements to reloadedBlock
-        for (let element of list) {
-            //if the element corresponds to the reloadedBlock, init settings with the reloadedBlock
-            if (element._legendBlock.layerRecordId === reloadedBlock.layerRecordId && element._legendBlock.name === reloadedBlock.name) {
-                matchingElements.push(element);
+            if (index > -1) {
+                parentElement.children[index]._initSettings(reloadedBlock);
             }
-            else if (element.children) {
-                updateApiReloadedBlock(reloadedBlock, element.children);
+
+            watchParent();
+        });
+
+        /** Find and return the element with given parentBlock in the Legend API */
+        function _findParentElement(parentBlock, list = mApi.ui.configLegend.children) {
+            for (let element of list) {
+                if (element._legendBlock === parentBlock) {
+                    return element;
+                }
+                else if (element.children) {
+                    return _findParentElement(parentBlock, element.children);
+                }
             }
-        }
 
-
-        //if there are matching elements, pick the one whose index is matching that of reloadedBlock.parent and reload
-        if (matchingElements.length > 1) {
-            if (reloadedBlock.parent) {
-                let potentialMatches = [];
-
-                // go through each entry in reloadedBlock.parent and store them in an array
-                reloadedBlock.parent.entries.forEach(entry => {
-                    if (entry.layerRecordId === matchingElements[0]._legendBlock.layerRecordId) {
-                        potentialMatches.push(entry);
-                    }
-                });
-
-                //get the indexOf reloadedBlock in the list of potential matches, this is going to be the same index as the correct match from matchingElements
-                let index = potentialMatches.indexOf(reloadedBlock);
-                matchingElements[index]._initSettings(reloadedBlock);
-            }
-        }
-        else if (matchingElements.length === 1) {
-            matchingElements[0]._initSettings(reloadedBlock);
         }
     }
 }
