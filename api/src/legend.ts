@@ -512,7 +512,7 @@ export class LegendGroup extends BaseItem {
 
     /**
      * Set the appropriate group properties such as id, visibility and opacity. Called whenever group is created or reloaded.
-     * @param {LegendBlock} legendBlock LegendBlock that this LegendGroup represents
+     * @param legendBlock LegendBlock that this LegendGroup represents
     */
     _initSettings(legendBlock: any): void {
         legendBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
