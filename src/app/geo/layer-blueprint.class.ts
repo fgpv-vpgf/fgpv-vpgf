@@ -30,7 +30,7 @@ function mixins<A, B, C, D, E>(
     CtorE: Constructor<E>
 ): Constructor<A & B & C & D & E>;
 function mixins<T>(...Ctors: Constructor<T>[]): Constructor<T> {
-    class Class {}
+    class Class { }
 
     Ctors.forEach(Ctor => {
         Object.getOwnPropertyNames(Ctor.prototype).forEach(name => {
@@ -73,6 +73,7 @@ angular.module('app.geo').factory('LayerBlueprint', LayerBlueprint);
 LayerBlueprint.$inject = ['$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
 
 function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: any, appInfo: any, configService: any) {
+
     /**
      * The base class for the mixins. This just declares what base properties are available across mixins.
      *
@@ -197,6 +198,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
             // clone data because the makeSomethingLayer functions mangle the config data
             const clonedFormattedData = angular.copy(this._formattedData);
+
             const [error, layer] = await to(this.layerFactory(clonedFormattedData, this.config));
 
             if (!layer) {
@@ -247,7 +249,10 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof BlueprintBase
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
+
+            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
             this.config = new ConfigClass(rawConfig);
+            this.config.epsgLookup = epsg.lookup;
 
             // hack fix for broken cors support
             if (this.config.url) {
@@ -295,9 +300,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 return Promise.resolve(this._layerRecord);
             }
 
-            // TODO: move epsg lookup
-            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
-            this._layerRecord = this.layerRecordFactory(this.config, esriLayer, epsg.lookup);
+            this._layerRecord = this.layerRecordFactory(this.config, esriLayer, this.config.epsgLookup);
 
             return Promise.resolve(this._layerRecord);
         }
