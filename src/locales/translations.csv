@@ -106,7 +106,7 @@ Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
 ,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
 ,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
 Basemap refresh required,basemap.refresh.req,Map refresh required,1,Actualiser la carte,1
-Basemap blank title,basemap.blank.title,blank map,1,Carte vide,1
+Basemap blank title,basemap.blank.title,Blank map,1,Carte vide,1
 Basemap blank description,basemap.blank.desc,Remove base map,1,Retirer la carte de base,1
 Basemap projection title,basemap.projection.title,{{name}} Maps,1,Cartes {{name}},1
 ,basemap.select,Select basemap,1,Sélectionner la carte de base,1
