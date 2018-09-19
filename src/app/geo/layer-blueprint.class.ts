@@ -197,6 +197,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
 
             // clone data because the makeSomethingLayer functions mangle the config data
             const clonedFormattedData = angular.copy(this._formattedData);
+
             const [error, layer] = await to(this.layerFactory(clonedFormattedData, this.config));
 
             if (!layer) {
@@ -248,6 +249,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
             this.config = new ConfigClass(rawConfig);
+            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
+            this.config.epsgLookup =epsg.lookup;
 
             // hack fix for broken cors support
             if (this.config.url) {
@@ -295,9 +298,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
                 return Promise.resolve(this._layerRecord);
             }
 
-            // TODO: move epsg lookup
-            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
-            this._layerRecord = this.layerRecordFactory(this.config, esriLayer, epsg.lookup);
+            this._layerRecord = this.layerRecordFactory(this.config, esriLayer, this.config.epsgLookup);
 
             return Promise.resolve(this._layerRecord);
         }
