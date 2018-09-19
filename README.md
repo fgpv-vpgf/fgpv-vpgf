@@ -6,7 +6,7 @@
 [![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 
 [![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)
-[![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
+[![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies) [![Greenkeeper badge](https://badges.greenkeeper.io/fgpv-vpgf/fgpv-vpgf.svg)](https://greenkeeper.io/)
 
 Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
 
