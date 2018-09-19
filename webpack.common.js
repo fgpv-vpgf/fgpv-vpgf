@@ -39,6 +39,18 @@ module.exports = function (env) {
         module: {
             rules: [
                 {
+                    test: /\.(woff(2)?)(\?v=\d+\.\d+\.\d+)?$/,
+                    use: [{
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            mimetype: 'application/font-woff',
+                            publicPath: 'fonts/',
+                            outputPath: 'fonts/'
+                        }
+                    }]
+                },
+                {
                     test: /\.js$/,
                     include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath],
                     use: [{
@@ -64,8 +76,12 @@ module.exports = function (env) {
                     test: /\.s?[ac]ss$/,
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
-                        {loader: 'css-loader', options: {minimize: env.prod}},
-                        'sass-loader'
+                        {loader: 'css-loader', options: {
+                            minimize: env.prod}},
+                            {
+                                loader: 'resolve-url-loader'
+                              },
+                            'sass-loader'
                     ]
                 },
                 {
@@ -92,7 +108,7 @@ module.exports = function (env) {
                 context: 'src/content/samples',
                 from: '**/*.+(json|js|css|html)',
                 to: 'samples'
-            },{
+            }, {
                 from: 'src/locales/about',
                 to: 'samples/about'
             },{

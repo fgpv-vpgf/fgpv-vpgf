@@ -10,12 +10,12 @@ md-icon {
 }
 
 // import all vendor override files
-@import "_datatable.scss";
-@import "_esri.scss";
-@import "_dragula.scss";
-@import "_wet.scss";
-@import "_minicolors.scss";
-@import "_angularmaterial.scss";
+@import '_datatable.scss';
+@import '_esri.scss';
+@import '_dragula.scss';
+@import '_wet.scss';
+@import '_minicolors.scss';
+@import '_angularmaterial.scss';
 
 @include datatable;
 @include esri;

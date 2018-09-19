@@ -37,12 +37,6 @@ const scripts = d.getElementsByTagName('script'); // get scripts
 const seedUrl = scripts[scripts.length - 1].src; // get the last loaded script, which is this
 const headNode = d.getElementsByTagName('head')[0];
 
-// inject fonts
-const fontsLink = d.createElement('link');
-fontsLink.href = '//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic';
-fontsLink.rel = 'stylesheet';
-headNode.appendChild(fontsLink);
-
 // registry of map proxies
 const mapRegistry = [];
 let readyQueue = []; // array of callbacks waiting on script loading to complete
