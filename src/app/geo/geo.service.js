@@ -96,7 +96,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
         setFullExtent() {
             // TODO: check if this is true:
             // basemap extent should have the same projection as the map, so there is no need to reproject it and pass through `enhanceConfigExtent`
-            this.map.setExtent(this.map.enhanceConfigExtent(configService.getSync.map.selectedBasemap.full));
+            this.setExtent(this.map.enhanceConfigExtent(configService.getSync.map.selectedBasemap.full));
         }
 
         /**

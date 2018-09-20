@@ -261,7 +261,7 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
      * @param {Array}  extent                   The extent to set
      */
     function setExtent(extent) {
-        configService.getSync.map.instance.setExtent(configService.getSync.map.instance.enhanceConfigExtent(extent));
+        configService.getSync.map.instance.setExtent(configService.getSync.map.instance.enhanceConfigExtent(extent), true);
     }
 
     /**
