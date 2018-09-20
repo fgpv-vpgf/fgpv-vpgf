@@ -13,7 +13,7 @@ angular
     .module('app.ui')
     .directive('rvExpandImage', rvExpandImage);
 
-function rvExpandImage($mdDialog, referenceService, $compile, $templateCache) {
+function rvExpandImage($mdDialog, referenceService, $compile, $templateCache, layoutService) {
     const directive = {
         restrict: 'A',
         link
@@ -28,6 +28,10 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache) {
         let width = 0;
         let height = 0;
         self.canEnlarge = false;
+
+        if (layoutService.currentLayout() === 'small') {
+            return;
+        }
 
         // get the url of the image from the tag's ngSrc or src
         // if the tag has a special format for src (eg. <rv-svg>) then specify an additional attribute
