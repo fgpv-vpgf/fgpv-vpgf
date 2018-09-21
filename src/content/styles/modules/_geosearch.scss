@@ -95,8 +95,22 @@ $result-item-height-touch: rem(4.8);
                 padding: rem(1.0) 0;
 
                 .rv-no-results {
-                    display: block;
-                    text-align: center;
+                    display: flex;
+                    margin: 0 10px;
+                    align-items: center;
+
+                    md-icon {
+                       margin: 0 8px;
+                           flex-shrink: 0;
+                    }
+
+                    span {
+                        text-align: left;
+                            white-space: nowrap;
+                            margin-left: 2px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                    }
                 }
 
                 .rv-results-list {
