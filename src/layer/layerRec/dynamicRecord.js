@@ -681,15 +681,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
         opts.layerIds.forEach(leafIndex => {
             let childProxy = this.getChildProxy(leafIndex);
-
-            // track a list of valid symbologies so that identify doesn't return all symbologies in stack
-            if (this.definitionClause) {
-                childProxy.symbology.forEach(symbol => {
-                    if (this.definitionClause.includes(symbol.definitionClause)) {
-                        validSymbologies.push(symbol.svgcode);
-                    }
-                });
-            }
+            childProxy.symbology.forEach(symbol => {
+                //if there is a definition clause, filter out by definition clause
+                if (this.definitionClause && this.definitionClause.includes(symbol.definitionClause)) {
+                    validSymbologies.push(symbol.svgcode);
+                }
+                //otherwise all symbols are valid symbols
+                else if (this.definitionClause === undefined) {
+                    validSymbologies.push(symbol.svgcode);
+                }
+            });
             const identifyResult = new shared.IdentifyResult(childProxy);
             identifyResults[leafIndex] = identifyResult;
         });
