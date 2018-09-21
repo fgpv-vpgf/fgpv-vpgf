@@ -9,7 +9,7 @@
         <rv-svg class="rv-symbol-graphic" src="self.symbology.coverIcon.svgcode"></rv-svg>
     </div>
 
-    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index }">
+    <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index, 'width': self.symbologyWidth}">
         <rv-svg ng-if="symbol.image" rv-expand-image class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
         <rv-svg ng-if="!symbol.image" class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
 
@@ -19,8 +19,7 @@
         </div>
 
         <md-button
-            class="md-icon-button rv-icon-20"
-            ng-style="{'right': self.buttonOffset, 'position': 'absolute'}"
+            class="md-icon-button rv-icon-20 toggle-button"
             ng-click="self.onToggleClick(symbol.name)"
             ng-if="self.toggleList[symbol.name]"
             aria-pressed = "{{ self.toggleList[symbol.name].isSelected }}"
