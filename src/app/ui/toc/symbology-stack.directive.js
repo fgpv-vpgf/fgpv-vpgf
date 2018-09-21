@@ -224,7 +224,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                                 self.toggleList[s.name] = new ToggleSymbol(s);
                             }
                         });
-                        updateContainerWidth(ref.containerWidth);
                     });
                 }
             }
@@ -271,7 +270,6 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     ref.fanOutTimeline.reverse();
                 } else {
                     // collapse symbology items and forward play wiggle
-                    self.symbologyWidth = 32;
                     ref.expandTimeline.reverse();
                     self.showSymbologyToggle = false;
                     ref.fanOutTimeline.play();
@@ -385,10 +383,12 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 },
                 onComplete: () => {
                     self.showSymbologyToggle = true;
+                    updateContainerWidth(ref.containerWidth);
                     scope.$digest();
                 },
                 onReverseComplete: () => {
                     self.isExpanded = false;
+                    self.symbologyWidth = 32;
                     scope.$digest();
                 }
             });
@@ -747,8 +747,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
          * @param {number} value
          */
         function updateContainerWidth(value) {
-            if ((self.isExpanded && Object.keys(self.toggleList).length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) ||
-                (!self.isExpanded && ref.expandTimeline && ref.expandTimeline.isActive())) {
+            if (self.isExpanded && Object.keys(self.toggleList).length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) {
                 self.symbologyWidth = value;
                 scope.$applyAsync();
             }
