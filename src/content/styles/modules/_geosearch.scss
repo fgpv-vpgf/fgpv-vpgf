@@ -95,18 +95,21 @@ $result-item-height-touch: rem(4.8);
                 padding: rem(1.0) 0;
 
                 .rv-no-results {
-                    display: block;
-                    text-align: center;
+                    display: flex;
+                    margin: 0 10px;
+                    align-items: center;
 
                     md-icon {
-                        margin: 0 8px;
-                        width: unset;
-                        vertical-align: super;
+                       margin: 0 8px;
+                           flex-shrink: 0;
                     }
 
-                    div {
-                        max-width: 80%;
-                        display: inline-block;
+                    span {
+                        text-align: left;
+                            white-space: nowrap;
+                            margin-left: 2px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                     }
                 }
 
