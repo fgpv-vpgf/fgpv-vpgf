@@ -43,6 +43,10 @@
                 &.show {
                     opacity: 1;
                 }
+
+                &.toggle-button {
+                    margin-right: 6px;
+                }
             }
 
             .rv-symbol-graphic {

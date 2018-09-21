@@ -78,7 +78,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
     return directive;
 
     /*********/
-
+    // eslint-disable-next-line max-statements
     function link(scope, element) {
         const self = scope.self;
 
@@ -89,6 +89,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
+
+        self.symbologyWidth = 32;
 
         const canvas = document.createElement('canvas');
 
@@ -163,9 +165,17 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             trigger: null, // expand self.trigger node
 
             // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
-            containerWidth: 343,
+            containerWidth: 350,
             maxItemWidth: 350
         };
+
+        scope.$watch(() => (element.parent().width()), value => {
+            if (value) {
+                ref.containerWidth = value;
+                updateContainerWidth(value);
+            }
+            scope.$applyAsync();
+        });
 
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
@@ -214,8 +224,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                                 self.toggleList[s.name] = new ToggleSymbol(s);
                             }
                         });
-
-                        self.buttonOffset = `${parseInt(element.closest('rv-legend-block').css('padding-left')) - 35.4}px`;
+                        updateContainerWidth(ref.containerWidth);
                     });
                 }
             }
@@ -262,6 +271,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     ref.fanOutTimeline.reverse();
                 } else {
                     // collapse symbology items and forward play wiggle
+                    self.symbologyWidth = 32;
                     ref.expandTimeline.reverse();
                     self.showSymbologyToggle = false;
                     ref.fanOutTimeline.play();
@@ -729,6 +739,19 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // measure text width on the canvas: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
             const metrics = context.measureText(text);
             return metrics.width;
+        }
+
+        /**
+         * Updates container width to allign the symbology checkboxes
+         * @function updateContainerWidth
+         * @param {number} value
+         */
+        function updateContainerWidth(value) {
+            if ((self.isExpanded && Object.keys(self.toggleList).length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) ||
+                (!self.isExpanded && ref.expandTimeline && ref.expandTimeline.isActive())) {
+                self.symbologyWidth = value;
+                scope.$applyAsync();
+            }
         }
     }
 }
