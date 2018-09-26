@@ -137,8 +137,18 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     .join(' OR ');
             }
 
+            // add symbology query to block for table access
+            self.block.symbDefinitionQuery = defClause;
+
+            // determine query definition based on symbology and table queries
+            let fullDef = self.block.tableDefinitionQuery
+                        ? defClause
+                            ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
+                            : self.block.tableDefinitionQuery
+                        : defClause;
+
             // apply to block so changes reflect on map
-            self.block.definitionQuery = defClause;
+            self.block.definitionQuery = fullDef;
 
             // save `definitionClause` on layer
             layerRecord.definitionClause = defClause;
