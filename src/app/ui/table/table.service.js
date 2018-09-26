@@ -318,7 +318,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
     }
 
     /**
-     * Set the layer definition query
+     * Get the layer definition query
      *
      * @function getFilterDefintion
      * @private
@@ -386,9 +386,20 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
     function setDefinitionExpression(legendEntry, defs) {
         // stringnify the array
         const definition = defs.join(' AND ');
+        const legendBlock = stateManager.display.table.requester.legendEntry
 
-        // set definition query
-        stateManager.display.table.requester.legendEntry.definitionQuery = definition;
+        // add table query to block for symbology access
+        legendBlock.tableDefinitionQuery = definition;
+
+        // determine query definition based on symbology and table queries
+        let fullDef = legendBlock.symbDefinitionQuery
+                    ? definition
+                        ? `(${definition}) AND (${legendBlock.symbDefinitionQuery})`
+                        : legendBlock.symbDefinitionQuery
+                    : definition;
+
+        // apply to block so changes reflect on map
+        legendBlock.definitionQuery = fullDef;
     }
 
     /**
