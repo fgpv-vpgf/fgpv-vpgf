@@ -1245,13 +1245,15 @@ function legendServiceFactory(
     function _updateApiReloadedBlock(reloadedBlock) {
         // Only run when the parent is ready on the reloadedBlock
         const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
-            const index = parent.entries.indexOf(reloadedBlock);
+            const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
             const parentElement = parent.name === "I'm root" ? // not sure if there's a better way to check for root
                 { children: mApi.ui.configLegend.children } :
                 _findParentElement(parent);
 
             if (index > -1) {
-                parentElement.children[index]._initSettings(reloadedBlock);
+                Promise.resolve(parentElement).then( pElement => {
+                    pElement.children[index]._initSettings(reloadedBlock);
+                });
             }
 
             watchParent();
@@ -1259,15 +1261,19 @@ function legendServiceFactory(
 
         /** Find and return the element with given parentBlock in the Legend API */
         function _findParentElement(parentBlock, list = mApi.ui.configLegend.children) {
-            for (let element of list) {
-                if (element._legendBlock === parentBlock) {
-                    return element;
-                }
-                else if (element.children) {
-                    return _findParentElement(parentBlock, element.children);
-                }
-            }
-
+            return new Promise((resolve, reject) => {
+                const recurseChildren = (pBlock, eList) => {
+                    for (let element of eList) {
+                        if (element._legendBlock === pBlock) {
+                            resolve(element);
+                        }
+                        else if (element.children) {
+                            recurseChildren(pBlock, element.children);
+                        }
+                    }
+                };
+                recurseChildren(parentBlock, list);
+            });
         }
     }
 }
