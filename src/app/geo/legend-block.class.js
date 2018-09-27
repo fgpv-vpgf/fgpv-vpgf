@@ -1,3 +1,5 @@
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+
 /**
  *
  * @module LegendBlock
@@ -701,6 +703,17 @@ function LegendBlockFactory(
 
             return this.visualParent.blockType === LegendBlock.SET;
         }
+
+        set visibility(value) {
+            // if visibility is invisible then table shows no results
+            if (!value) {
+                this.symbDefinitionQuery = '1=2';
+            }
+            // if visibile, then change definition query to undefined so all results will show
+            else if (this.symbDefinitionQuery === '1=2') {
+                this.symbDefinitionQuery = undefined;
+            }
+        }
     }
 
     class LegendNode extends LegendEntry {
@@ -711,6 +724,7 @@ function LegendBlockFactory(
             this._controlledProxyWrappers = [];
 
             this._aggregateStates = ref.aggregateStates;
+            this._visibilityChanged = new Subject();
 
             this._symbologyStack = new SymbologyStack(
                 this.proxyWrapper.proxyPromise,
@@ -741,6 +755,9 @@ function LegendBlockFactory(
                     deregisterWatch();
                 }
             );
+
+            // applies visibility settings to grid
+            super.visibility = this.visibility;
         }
 
         get proxyWrapper() {
@@ -865,6 +882,7 @@ function LegendBlockFactory(
             return this.proxyWrapper.visibility;
         }
         set visibility(value) {
+            super.visibility = value;
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
@@ -875,6 +893,12 @@ function LegendBlockFactory(
             if (!value) {
                 this.boundingBox = false;
             }
+
+            this._visibilityChanged.next(value);
+        }
+
+        get visibilityChanged() {
+            return this._visibilityChanged.asObservable();
         }
 
         get opacity() {
@@ -1179,6 +1203,9 @@ function LegendBlockFactory(
                 // The expected opacity is still applied to children values
                 this._rootProxyWrapper.opacity = 1;
             }
+
+             // applies visibility settings to grid
+             super.visibility = this.visibility;
         }
 
         get blockType() {
@@ -1330,6 +1357,7 @@ function LegendBlockFactory(
             return this._observableEntries.some(entry => entry.visibility);
         }
         set visibility(value) {
+            super.visibility = value;
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
@@ -1470,6 +1498,9 @@ function LegendBlockFactory(
             this._selectedEntry = null;
 
             this._walk = ref.walkFunction.bind(this);
+
+             // applies visibility settings to grid
+             super.visibility = this.visibility;
         }
 
         // `_selectedEntry` starts as `null`, but can never go back to null after being set unless that entry is removed from the visibility group;
@@ -1532,7 +1563,9 @@ function LegendBlockFactory(
 
             return this._selectedEntry === null ? false : this._selectedEntry.visibility;
         }
+
         set visibility(value) {
+            super.visibility = value;
             if (!value) {
                 this._activeEntries.forEach(entry => (entry.visibility = value));
             } else if (!this.visibility && this._activeEntries.length > 0) {

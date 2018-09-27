@@ -70,7 +70,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             container: '=?'
         },
         link: link,
-        controller: () => {},
+        controller: () => { },
         controllerAs: 'self',
         bindToController: true
     };
@@ -91,6 +91,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         self.fanOutSymbology = fanOutSymbology;
 
         self.symbologyWidth = 32;
+
+        self.stackToggled = false;
 
         const canvas = document.createElement('canvas');
 
@@ -118,6 +120,16 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // do nothing
         }
 
+        // change all symbology stack to toggled/untoggled if top layer is visible/invisible
+        self.block.visibilityChanged.subscribe(val => {
+            //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
+            if (!self.stackToggled) {
+                let keys = Object.keys(self.toggleList);
+                keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key); } });
+            }
+            self.stackToggled = false;
+        });
+
         self.onToggleClick = name => {
             self.toggleList[name].click();
 
@@ -142,16 +154,16 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // determine query definition based on symbology and table queries
             let fullDef = self.block.tableDefinitionQuery
-                        ? defClause
-                            ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
-                            : self.block.tableDefinitionQuery
-                        : defClause;
+                ? defClause
+                    ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
+                    : self.block.tableDefinitionQuery
+                : defClause;
 
             // apply to block so changes reflect on map
             self.block.definitionQuery = fullDef;
 
-            // save `definitionClause` on layer
-            layerRecord.definitionClause = defClause;
+            self.stackToggled = true;
+            self.block.visibility = noSymbolsVisible() ? false : true;
 
             // trigger event which table uses to update
             events.$broadcast(events.rvLayerDefinitionClauseChanged);
@@ -790,7 +802,7 @@ function symbologyStack($q, ConfigObject, gapiService) {
             if (proxy) {
                 $q.resolve(proxy)
                     .then(proxy => (this._proxy = proxy))
-                    .catch(() => {}); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
+                    .catch(() => { }); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
             }
 
             this._renderStyle = renderStyle;
