@@ -328,6 +328,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
 ,import.service.connect.invalidurl,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
 ,import.service.connect.broken,Service does not respond,1,Le service ne répond pas,1
+,import.service.connect.https,"Service url must start with https://",1,"L'URL de service doit commencer par https://",0
 ,import.service.select.title,Select Service type,1,Sélectionner le type de service,1
 ,import.service.select.servicetype,Service Type,1,Type de service,1
 ,import.service.select.wrong,Service can not be imported using this type,1,Le service ne peut être importé en utilisant ce type,1

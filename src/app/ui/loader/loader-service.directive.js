@@ -168,6 +168,12 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
     function connectOnContinue() {
         const connect = self.connect;
 
+        // maps served over https can only accept https enabled services to avoid mixed content issues.
+        if (location.protocol === 'https:' && connect.serviceUrl.match(/http:/)) {
+            toggleErrorMessage(connect.form, 'serviceUrl', 'https', false);
+            return;
+        }
+
         const layerBlueprintPromise = layerSource
             .fetchServiceInfo(connect.serviceUrl)
             .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
@@ -221,6 +227,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
     function serviceUrlResetValidation() {
         // reset broken endpoint error message when user modifies service url
         toggleErrorMessage(self.connect.form, 'serviceUrl', 'broken', true);
+        toggleErrorMessage(self.connect.form, 'serviceUrl', 'https', true);
     }
 
     /**
