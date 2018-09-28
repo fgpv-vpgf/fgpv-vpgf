@@ -22,8 +22,9 @@
                 <div ng-messages="self.connect.form.serviceUrl.$error">
                     <div ng-message="url">{{ 'import.service.connect.invalidurl' | translate }}</div>
                     <div ng-message="broken">{{ 'import.service.connect.broken' | translate }}</div>
-                    <div ng-message="https">{{ 'import.service.connect.https' | translate }}</div>
                 </div>
+
+                <div class="rv-hint" ng-if="self.isHTTPS">{{ 'import.service.connect.httpshint' | translate }}</div>
             </md-input-container>
         </rv-stepper-item>
 

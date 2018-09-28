@@ -323,12 +323,12 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.file.type.csv,CSV,1,CSV,1
 ,import.file.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
 ,import.file.type.geojson,GeoJSON,1,GeoJSON,1
+,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les demandes seront faites en utilisant HTTPS,0
 ,import.service.title,Import Service,1,Importer un service,1
 ,import.service.connect.title,Connect service,1,Connecter au service,1
 ,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
 ,import.service.connect.invalidurl,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
 ,import.service.connect.broken,Service does not respond,1,Le service ne répond pas,1
-,import.service.connect.https,"Service url must start with https://",1,"L'URL de service doit commencer par https://",0
 ,import.service.select.title,Select Service type,1,Sélectionner le type de service,1
 ,import.service.select.servicetype,Service Type,1,Type de service,1
 ,import.service.select.wrong,Service can not be imported using this type,1,Le service ne peut être importé en utilisant ce type,1

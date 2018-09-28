@@ -32,6 +32,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
 
     self.closeLoaderService = closeLoaderService;
     self.isWMSLayerWithMultipleStyles = isWMSLayerWithMultipleStyles;
+    self.isHTTPS = location.protocol === 'https:';
 
     self.serviceTypes = [
         Geo.Service.Types.FeatureLayer,
@@ -168,14 +169,9 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
     function connectOnContinue() {
         const connect = self.connect;
 
-        // maps served over https can only accept https enabled services to avoid mixed content issues.
-        if (location.protocol === 'https:' && connect.serviceUrl.match(/http:/)) {
-            toggleErrorMessage(connect.form, 'serviceUrl', 'https', false);
-            return;
-        }
-
         const layerBlueprintPromise = layerSource
-            .fetchServiceInfo(connect.serviceUrl)
+            // maps served over https can only accept https enabled services to avoid mixed content issues.
+            .fetchServiceInfo(self.isHTTPS ? connect.serviceUrl.replace('http:', 'https:') : connect.serviceUrl)
             .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
                 self.layerBlueprintOptions = layerBlueprintOptions;
                 self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
@@ -227,7 +223,6 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
     function serviceUrlResetValidation() {
         // reset broken endpoint error message when user modifies service url
         toggleErrorMessage(self.connect.form, 'serviceUrl', 'broken', true);
-        toggleErrorMessage(self.connect.form, 'serviceUrl', 'https', true);
     }
 
     /**
