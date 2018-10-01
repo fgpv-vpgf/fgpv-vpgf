@@ -1,3 +1,5 @@
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+
 /**
  *
  * @module LegendBlock
@@ -658,6 +660,7 @@ function LegendBlockFactory(
             this.isControlDisabled = ref.isControlDisabled.bind(this);
             this.isControlSystemDisabled = ref.isControlSystemDisabled.bind(this);
             this.isControlUserDisabled = ref.isControlUserDisabled.bind(this);
+            this._selectedChanged = new Subject();
         }
 
         get isInteractive() {
@@ -673,6 +676,11 @@ function LegendBlockFactory(
         }
         set isSelected(value) {
             this._isSelected = value;
+            this._selectedChanged.next(value);
+        }
+
+        get selectedChanged(){
+            return this._selectedChanged.asObservable();
         }
 
         /**
@@ -711,6 +719,7 @@ function LegendBlockFactory(
             this._controlledProxyWrappers = [];
 
             this._aggregateStates = ref.aggregateStates;
+            this._visibilityChanged = new Subject();
 
             this._symbologyStack = new SymbologyStack(
                 this.proxyWrapper.proxyPromise,
@@ -741,6 +750,11 @@ function LegendBlockFactory(
                     deregisterWatch();
                 }
             );
+
+            // applies visibility settings to grid
+            if (!this.visibility) {
+                this.symbDefinitionQuery = '1=2';
+            }
         }
 
         get proxyWrapper() {
@@ -865,6 +879,10 @@ function LegendBlockFactory(
             return this.proxyWrapper.visibility;
         }
         set visibility(value) {
+            if (value === this.visibility) {
+                return;
+            }
+
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
@@ -875,6 +893,12 @@ function LegendBlockFactory(
             if (!value) {
                 this.boundingBox = false;
             }
+
+            this._visibilityChanged.next(value);
+        }
+
+        get visibilityChanged() {
+            return this._visibilityChanged.asObservable();
         }
 
         get opacity() {
@@ -1532,6 +1556,7 @@ function LegendBlockFactory(
 
             return this._selectedEntry === null ? false : this._selectedEntry.visibility;
         }
+
         set visibility(value) {
             if (!value) {
                 this._activeEntries.forEach(entry => (entry.visibility = value));
