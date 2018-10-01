@@ -78,7 +78,7 @@ function events($rootScope) {
         rvProjectiontChanged: 'rvProjectiontChanged',
         rvLanguageChanged: 'rvLanguageChanged',
 
-        rvLayerDefinitionClauseChanged: 'rvLayerDefinitionClauseChanged',
+        rvSymbDefinitionQueryChanged: 'rvSymbDefinitionQueryChanged',
 
         // fired when mApi is ready but before plugins are executed
         rvApiPrePlugin: 'rvApiPrePlugin',
