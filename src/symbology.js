@@ -100,7 +100,11 @@ function filterifyRenderer(renderer, fields) {
             // minimum is optional, so we have to keep track of the previous max as fallback
             renderer.classBreakInfos.forEach(cbi => {
                 const minval = isNaN(cbi.classMinValue) ? lastMinimum : cbi.classMinValue;
-                cbi.definitionClause = `(${f} > ${minval} AND ${f} <= ${cbi.classMaxValue})`;
+                if (minval === cbi.classMaxValue) {
+                    cbi.definitionClause = `(${f} = ${cbi.classMaxValue})`;
+                } else {
+                    cbi.definitionClause = `(${f} > ${minval} AND ${f} <= ${cbi.classMaxValue})`;
+                }
                 lastMinimum = cbi.classMaxValue;
             });
 
