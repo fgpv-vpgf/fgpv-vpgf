@@ -149,12 +149,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // apply to block so changes reflect on map
             self.block.definitionQuery = fullDef;
-
-            // save `definitionClause` on layer
-            layerRecord.definitionClause = defClause;
-
             // trigger event which table uses to update
-            events.$broadcast(events.rvLayerDefinitionClauseChanged);
+            events.$broadcast(events.rvSymbDefinitionQueryChanged);
         };
 
         const ref = {

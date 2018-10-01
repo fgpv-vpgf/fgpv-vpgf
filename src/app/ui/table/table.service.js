@@ -91,7 +91,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function init() {
 
-        events.$on(events.rvLayerDefinitionClauseChanged, () => {
+        events.$on(events.rvSymbDefinitionQueryChanged, () => {
             if (filterTimeStamps.onCreated !== null) {
                 filteredState().then(() => {
                     filterTimeStamps.onChanged = Date.now();
@@ -386,7 +386,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
     function setDefinitionExpression(legendEntry, defs) {
         // stringnify the array
         const definition = defs.join(' AND ');
-        const legendBlock = stateManager.display.table.requester.legendEntry
+        const legendBlock = stateManager.display.table.requester.legendEntry;
 
         // add table query to block for symbology access
         legendBlock.tableDefinitionQuery = definition;
@@ -676,10 +676,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @return  {Promise}   resolves to undefined when the filtering is complete
      */
     function filteredState() {
-        const layerRecId = layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId);
+        const legendBlock = stateManager.display.table.requester.legendEntry;
 
         // we're not filtering by either symbology or extent, so resolve with all oid's as valid
-        if (!service.filter.isActive && typeof layerRecId.definitionClause !== 'string') {
+        if (!service.filter.isActive && typeof legendBlock.symbDefinitionQuery !== 'string') {
             validOIDs = stateManager.display.table.data.rows.map(row => parseInt(row[stateManager.display.table.data.oidField]));
             return $q.resolve();
         }
@@ -701,7 +701,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         const layerRecId = layerRegistry.getLayerRecord(legEntry.layerRecordId);
 
         const filterByExtent = service.filter.isActive;
-        const filterBySymbology = typeof layerRecId.definitionClause === 'string';
+        const filterBySymbology = typeof legEntry.symbDefinitionQuery === 'string';
 
         const queryOpts = { outFields: [state.data.oidField] };
         if (filterByExtent) {
@@ -728,7 +728,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
 
         if (filterBySymbology) {
-            queryOpts.where += `(${layerRecId.definitionClause})`;
+            queryOpts.where += `(${legEntry.symbDefinitionQuery})`;
         }
 
         return gapiService.gapi.query.queryGeometry(queryOpts).then(featureSet => {
