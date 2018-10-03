@@ -38,8 +38,8 @@ function exportGenerators(
         titleGenerator,
 
         mapDummyGenerator,
-        mapLocalGenerator,
-        mapServerGenerator,
+        mapSVGGenerator,
+        mapImageGenerator,
 
         legendGenerator,
 
@@ -135,7 +135,7 @@ function exportGenerators(
     /**
      * Generates an image of the svg-based layers.
      *
-     * @function mapLocalGenerator
+     * @function mapSVGGenerator
      * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notifcation for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
@@ -143,16 +143,16 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapLocalGenerator(exportSize) {
-        const localGeneratorPromise = geoService.map.printLocal(exportSize);
+    function mapSVGGenerator(exportSize) {
+        const svgGeneratorPromise = geoService.map.printLocal(exportSize);
 
-        return wrapOutput(localGeneratorPromise);
+        return wrapOutput(svgGeneratorPromise);
     }
 
     /**
      * Generates an image of the image-based layers.
      *
-     * @function mapServerGenerator
+     * @function mapImageGenerator
      * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notifcation for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
@@ -161,7 +161,7 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapServerGenerator(exportSize, showToast, value, timeout = 0) {
+    function mapImageGenerator(exportSize, showToast, value, timeout = 0) {
         const {
             map: { instance: mapInstance },
             services: { exportMapUrl }
@@ -170,9 +170,53 @@ function exportGenerators(
         let isCanceled = false;
         let timeoutHandle;
 
-        const serverGeneratorPromise = serverGenerate();
+        const localGeneratorPromise = localGenerate(/* cleanCanvas flag or isIE */);
+        let serverGeneratorPromise;
 
-        return wrapOutput(serverGeneratorPromise);
+        if (exportMapUrl) {
+            serverGeneratorPromise = serverGenerate();
+            return wrapOutput(serverGeneratorPromise);
+        } else {
+            return wrapOutput(localGeneratorPromise);
+        }
+
+        function localGenerate(cleanCanvas) {
+            const localPrintPromise = $q((resolve, reject) => {
+                const mainCanvas = createCanvas(exportSize.width, exportSize.height);
+                const ctx = mainCanvas.getContext('2d');
+
+                ctx.fillStyle = 'green';
+                ctx.fillRect(0, 0, exportSize.width, exportSize.height);
+
+                resolve(mainCanvas);
+
+                /**
+                 * Creates a canvas DOM node;
+                 * @function createCanvas
+                 * @param {Number} width target widht with of the canvas
+                 * @param {Number} height target height with of the canvas
+                 * @param {String} backgroundColor [optional = null] if specified, the canvas is coloured with it
+                 * @return {Object} canvas DOM node
+                 */
+                function createCanvas(width, height, backgroundColor = null) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    if (backgroundColor !== null) {
+                        const context = canvas.getContext('2d');
+
+                        // paint it white
+                        context.fillStyle = backgroundColor;
+                        context.fillRect(0, 0, width, height);
+                    }
+
+                    return canvas;
+                }
+            });
+
+            return localPrintPromise;
+        }
 
         function serverGenerate() {
             // create a promise and start generating the export map image
