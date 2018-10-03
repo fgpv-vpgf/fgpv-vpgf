@@ -82,15 +82,25 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 // test if it's a WFS
                 // make a quick request for a single feature and see what the prediction function says
                 const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
-
-                // TODO: might need to workaround if `predictLayerUrl` start failing on trying to get WFS responses
                 return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(serviceInfo => {
-                    // if the service is identified as WFS, parse as WFS
-                    // if not, run the prediction on the original url again because adding extra WFS parameters to the url messes up predictions
-                    if (serviceInfo.serviceType === Geo.Service.Types.WFS) {
+
+                    // workaround in case predictUrl fails (assuming it is a WFS service)
+                    if (serviceInfo.serviceType === Geo.Service.Types.Error) {
+                        let layerInfo = _parseAsWfs(serviceUrl);
+
+                        const updatedServiceInfo = {
+                            serviceType: 'wfs',
+                            index: '-1',
+                            tileSupport: false,
+                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
+                        }
+
+                        return _parseAsSomethingElse(updatedServiceInfo);
+                    }
+                    // if service is identified as WFS, parse as WFS
+                    else if (serviceInfo.serviceType === Geo.Service.Types.WFS) {
                         return _parseAsSomethingElse(serviceInfo);
                     }
-
                     return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
                 });
             })
