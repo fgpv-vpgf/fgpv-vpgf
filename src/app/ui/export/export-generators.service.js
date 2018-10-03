@@ -180,15 +180,106 @@ function exportGenerators(
             return wrapOutput(localGeneratorPromise);
         }
 
-        function localGenerate(cleanCanvas) {
+        function localGenerate(cleanOrigin = true) {
             const localPrintPromise = $q((resolve, reject) => {
                 const mainCanvas = createCanvas(exportSize.width, exportSize.height);
                 const ctx = mainCanvas.getContext('2d');
 
-                ctx.fillStyle = 'green';
-                ctx.fillRect(0, 0, exportSize.width, exportSize.height);
+                const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
+                const imagePromises = [].slice.call(esriRoot.querySelectorAll('img')).map(img =>
+                    imageLoader(img.src)
+                        .then(corsImg => ({
+                            imgSource: img,
+                            imgItem: corsImg,
+                            error: false
+                        }))
+                        .catch(error => ({
+                            imgSource: img,
+                            imgItem: img,
+                            error
+                        }))
+                );
 
-                resolve(mainCanvas);
+                // need to wait for all images to load, so they can be added to the canvas in the correct order
+                Promise.all(imagePromises).then(data => {
+
+                    data.forEach(({ imgSource, imgItem, error }) => {
+                        // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
+                        // if the image loading failed, check if the local copy of the image is tainted
+                        let imgTainted = error ? isTainted(imgItem) : false;
+
+                        if (cleanOrigin && imgTainted) {
+                            return;
+                        }
+
+                        const offset = getOffset(imgSource, esriRoot);
+                        addToCanvas(imgItem, offset, imgSource.style.opacity || 1);
+                    });
+
+                    resolve(mainCanvas);
+                });
+
+                function addToCanvas(imgItem, offset, opacity = 1) {
+                    ctx.globalAlpha = opacity;
+                    ctx.drawImage(imgItem, offset.left, offset.top);
+                }
+
+                function getOffset(element, container) {
+                    const elementRect = element.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+
+                    return {
+                        top: elementRect.top - containerRect.top,
+                        left: elementRect.left - containerRect.left
+                    };
+                }
+
+                function imageLoader(src) {
+                    const loadPromise = new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+
+                        // ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
+                        // always try to load as CORS; if fails, the orignal image will be used (it will taint the canvas though)
+                        img.crossOrigin = 'anonymous';
+
+                        img.onerror = reject;
+                        img.src = src;
+                        if (img.complete === true) {
+                            // Inline XML images may fail to parse, throwing an Error later on
+                            setTimeout(() => resolve(img), 500);
+                        }
+
+                        const timeout = 2000;
+
+                        window.setTimeout(
+                            () => reject('Timeout'),
+                            timeout
+                        );
+                    });
+                    return loadPromise;
+                }
+
+                // accepts img or canvas items
+                function isTainted(item) {
+                    let ctx;
+
+                    // if image, first draw it on a piece of canvas
+                    if (item.nodeName === 'IMG') {
+                        const testCanvas = createCanvas(item.width, item.height);
+                        ctx = testCanvas.getContext('2d');
+                        ctx.drawImage(item, 0, 0);
+                    } else {
+                        ctx = item.getContext('2d');
+                    }
+
+                    try {
+                        ctx.getImageData(0, 0, 1, 1);
+                        return false;
+                    } catch (err) {
+                        return true;
+                    }
+                }
 
                 /**
                  * Creates a canvas DOM node;
