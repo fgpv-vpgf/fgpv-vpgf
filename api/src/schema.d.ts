@@ -370,6 +370,10 @@ export interface FgpvConfigSchema {
        * A timeout delay in milliseconds after which the export image generation is considered to have failed. Defaults to 120sec.
        */
       timeout?: number;
+      /**
+       * If set to true the export will omit layers and images that would cause issues with saving. If set to false users may need to save by right-clicking and selecting save image.
+       */
+      cleanCanvas?: boolean;
     };
   };
   /**

@@ -164,25 +164,41 @@ function exportGenerators(
     function mapImageGenerator(exportSize, showToast, value, timeout = 0) {
         const {
             map: { instance: mapInstance },
-            services: { exportMapUrl }
+            services: {
+                exportMapUrl,
+                export: { cleanCanvas }
+            }
         } = configService.getSync;
 
         let isCanceled = false;
+        let hasOmittedImage = false;
+        let canvasIsTainted = false;
         let timeoutHandle;
 
-        const localGeneratorPromise = localGenerate(/* cleanCanvas flag or isIE */);
+        const localGeneratorPromise = localGenerate(cleanCanvas || RV.isIE);
         let serverGeneratorPromise;
 
         if (exportMapUrl) {
             serverGeneratorPromise = serverGenerate();
-            return wrapOutput(serverGeneratorPromise);
+            return localGeneratorPromise.then(() => {
+                if (!hasOmittedImage && !canvasIsTainted) {
+                    return wrapOutput(localGeneratorPromise);
+                } else {
+                    return serverGeneratorPromise.then(
+                        // on success
+                        () => wrapOutput(serverGeneratorPromise),
+                        // on error
+                        () => wrapOutput(localGeneratorPromise)
+                    );
+                }
+            });
         } else {
             return wrapOutput(localGeneratorPromise);
         }
 
-        function localGenerate(cleanOrigin = true) {
-            const localPrintPromise = $q((resolve, reject) => {
-                const mainCanvas = createCanvas(exportSize.width, exportSize.height);
+        function localGenerate(cleanOrigin) {
+            const localPrintPromise = new Promise((resolve, reject) => {
+                const mainCanvas = graphicsService.createCanvas(exportSize.width, exportSize.height);
                 const ctx = mainCanvas.getContext('2d');
 
                 const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
@@ -202,14 +218,16 @@ function exportGenerators(
 
                 // need to wait for all images to load, so they can be added to the canvas in the correct order
                 Promise.all(imagePromises).then(data => {
-
                     data.forEach(({ imgSource, imgItem, error }) => {
                         // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
                         // if the image loading failed, check if the local copy of the image is tainted
                         let imgTainted = error ? isTainted(imgItem) : false;
 
                         if (cleanOrigin && imgTainted) {
+                            hasOmittedImage = true;
                             return;
+                        } else if (imgTainted) {
+                            canvasIsTainted = true;
                         }
 
                         const offset = getOffset(imgSource, esriRoot);
@@ -252,10 +270,7 @@ function exportGenerators(
 
                         const timeout = 2000;
 
-                        window.setTimeout(
-                            () => reject('Timeout'),
-                            timeout
-                        );
+                        window.setTimeout(() => reject('Timeout'), timeout);
                     });
                     return loadPromise;
                 }
@@ -266,7 +281,7 @@ function exportGenerators(
 
                     // if image, first draw it on a piece of canvas
                     if (item.nodeName === 'IMG') {
-                        const testCanvas = createCanvas(item.width, item.height);
+                        const testCanvas = graphicsService.createCanvas(item.width, item.height);
                         ctx = testCanvas.getContext('2d');
                         ctx.drawImage(item, 0, 0);
                     } else {
@@ -279,30 +294,6 @@ function exportGenerators(
                     } catch (err) {
                         return true;
                     }
-                }
-
-                /**
-                 * Creates a canvas DOM node;
-                 * @function createCanvas
-                 * @param {Number} width target widht with of the canvas
-                 * @param {Number} height target height with of the canvas
-                 * @param {String} backgroundColor [optional = null] if specified, the canvas is coloured with it
-                 * @return {Object} canvas DOM node
-                 */
-                function createCanvas(width, height, backgroundColor = null) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    if (backgroundColor !== null) {
-                        const context = canvas.getContext('2d');
-
-                        // paint it white
-                        context.fillStyle = backgroundColor;
-                        context.fillRect(0, 0, width, height);
-                    }
-
-                    return canvas;
                 }
             });
 

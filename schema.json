@@ -1017,7 +1017,8 @@
                         "legend": { "$ref": "#/definitions/legendExportComponent", "description": "Legend component." },
                         "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
                         "timestamp": { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." },
-                        "timeout": { "type": "number", "default": 120000, "description": "A timeout delay in milliseconds after which the export image generation is considered to have failed. Defaults to 120sec." }
+                        "timeout": { "type": "number", "default": 120000, "description": "A timeout delay in milliseconds after which the export image generation is considered to have failed. Defaults to 120sec." },
+                        "cleanCanvas": {"type": "boolean", "default": false, "description": "If set to true the export will omit layers and images that would cause issues with saving. If set to false users may need to save by right-clicking and selecting save image."}
                     },
                     "additionalProperties": false
                 }

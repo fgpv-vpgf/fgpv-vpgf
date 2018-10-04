@@ -1926,6 +1926,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._footnote = new ExportComponent(source.footnote);
             this._timestamp = new ExportComponent(source.timestamp);
             this._timeout = typeof source.timeout === 'undefined' ? 120000 : source.timeout;
+            this._cleanCanvas = typeof source.cleanCanvas === 'undefined' ? false : source.cleanCanvas;
         }
 
         get title () { return this._title; }
@@ -1935,6 +1936,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get footnote () { return this._footnote; }
         get timestamp () { return this._timestamp; }
         get timeout () { return this._timeout; }
+        get cleanCanvas () { return this._cleanCanvas; }
 
         get JSON() {
             return {
@@ -1944,7 +1946,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 legend: this.legend.JSON,
                 footnote: this.footnote.JSON,
                 timestamp: this.timestamp.JSON,
-                timeout: this.timeout
+                timeout: this.timeout,
+                cleanCanvas: this.cleanCanvas
             };
         }
     }
