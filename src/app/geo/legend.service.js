@@ -1245,12 +1245,13 @@ function legendServiceFactory(
     function _updateApiReloadedBlock(reloadedBlock) {
         // Only run when the parent is ready on the reloadedBlock
         const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
-            const index = parent.entries.indexOf(reloadedBlock);
-            const parentElement = parent.name === "I'm root" ? // not sure if there's a better way to check for root
-                { children: mApi.ui.configLegend.children } :
+            parent = parent.collapsed ? parent.parent : parent;
+            const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
+            const parentElement = parent.blockConfig === configService.getSync.map.legend.root ?
+                mApi.ui.configLegend :
                 _findParentElement(parent);
 
-            if (index > -1) {
+            if (index > -1 && parentElement) {
                 parentElement.children[index]._initSettings(reloadedBlock);
             }
 
@@ -1262,12 +1263,13 @@ function legendServiceFactory(
             for (let element of list) {
                 if (element._legendBlock === parentBlock) {
                     return element;
-                }
-                else if (element.children) {
-                    return _findParentElement(parentBlock, element.children);
+                } else if (element.children) {
+                    const pElement = _findParentElement(parentBlock, element.children);
+                    if (pElement) {
+                        return pElement;
+                    }
                 }
             }
-
         }
     }
 }
