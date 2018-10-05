@@ -3,11 +3,11 @@
 
 function getLayerTypeBuilder(esriBundle) {
     /**
-    * Will return a string indicating the type of layer a layer object is.
-    * @method getLayerType
-    * @param  {Object} layer an ESRI API layer object
-    * @return {String} layer type
-    */
+     * Will return a string indicating the type of layer a layer object is.
+     * @method getLayerType
+     * @param  {Object} layer an ESRI API layer object
+     * @return {String} layer type
+     */
     return layer => {
         if (layer instanceof esriBundle.FeatureLayer) {
             return 'FeatureLayer';
@@ -22,16 +22,15 @@ function getLayerTypeBuilder(esriBundle) {
             return 'UNKNOWN';
         }
     };
-
 }
 
 /**
-* Get a 'good enough' uuid. For backup purposes if client does not supply its own
-* unique layer id
-*
-* @method  generateUUID
-* @returns {String} a uuid
-*/
+ * Get a 'good enough' uuid. For backup purposes if client does not supply its own
+ * unique layer id
+ *
+ * @method  generateUUID
+ * @returns {String} a uuid
+ */
 function generateUUID() {
     let d = Date.now();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -39,31 +38,30 @@ function generateUUID() {
         /*jslint bitwise: true */
         const r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
         /*jslint bitwise: false */
     });
 }
 
 /**
-* Convert an image to a canvas element
-*
-* @param {String} url image url to convert (result from the esri print task)
-* @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
-* @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
-* @return {Promise} conversion promise resolving into a canvas of the image
-*/
+ * Convert an image to a canvas element
+ *
+ * @param {String} url image url to convert (result from the esri print task)
+ * @param {Object} canvas [optional = null] canvas to draw the image upon; if not supplied, a new canvas will be made
+ * @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
+ * @return {Promise} conversion promise resolving into a canvas of the image
+ */
 function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
     canvas = canvas || window.document.createElement('canvas');
 
     const image = window.document.createElement('img'); // create image node
 
     if (crossOrigin) {
-        image.crossOrigin = 'Anonymous'; // configure the CORS request
+        image.crossOrigin = 'anonymous'; // configure the CORS request
     }
 
     const conversionPromise = new Promise((resolve, reject) => {
         image.addEventListener('load', () => {
-
             canvas.width = image.width; // changing canvas size will clear all previous content
             canvas.height = image.height;
             canvas.getContext('2d').drawImage(image, 0, 0); // draw image onto a canvas
@@ -71,8 +69,7 @@ function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
             // return canvas
             resolve(canvas);
         });
-        image.addEventListener('error', error =>
-            reject(error));
+        image.addEventListener('error', error => reject(error));
     });
 
     // set image source to the one generated from the print task
