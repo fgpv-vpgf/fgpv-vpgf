@@ -108,9 +108,6 @@
                                 "layerId": "f_layer_3"
                             }
                         ]
-                    },
-                    {
-                        "layerId": "fs_layer_2"
                     }
                 ]
             }
@@ -194,19 +191,11 @@
             },
             {
                 "id": "fs_layer",
-                "name": "Hydrometric Stations - Start with 6000th index",
+                "name": "Hydrometric Stations - Start with 6000th index [WFS]",
                 "layerType": "ogcWfs",
                 "nameField": "STATION_NAME",
                 "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=6000",
                 "colour": "#FF0000"
-            },
-            {
-                "id": "fs_layer_2",
-                "name": "German homes [WFS]",
-                "layerType": "ogcWfs",
-                "nameField": "STATION_NAME",
-                "url": "https://www.ldproxy.nrw.de/rest/services/kataster/collections/flurstueck/items?flag=red&startindex=9305456",
-                "colour": "#FFFF00"
             },
             {
                 "id": "i_layer",
