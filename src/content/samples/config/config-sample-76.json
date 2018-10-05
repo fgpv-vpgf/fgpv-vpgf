@@ -82,7 +82,7 @@
             {
                 "id": "AHCCD_tmean_JAN_en",
                 "layerType": "ogcWfs",
-                "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/ahccd-trends/items?measurement_type=temp_mean&period=Jan",
+                "url": "http://geo.weather.gc.ca/geomet-beta/features/collections/ahccd-trends/items?measurement_type__type_mesure=temp_max&period__periode=Jan&startindex=0&limit=1000",
                 "name": "Homogenized mean temperature",
                 "nameField": "station_name",
                 "state": {
