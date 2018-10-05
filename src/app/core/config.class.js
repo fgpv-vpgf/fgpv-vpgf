@@ -1892,7 +1892,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._showInfoSymbology = source.showInfoSymbology || false;
             this._showControlledSymbology = source.showControlledSymbology || false;
-            this._columnWidth = source.columnWidth || null;
+            this._columnWidth = source.columnWidth || 350;
         }
 
         get showInfoSymbology () {      return this._showInfoSymbology; }

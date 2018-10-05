@@ -1,8 +1,6 @@
 /* global Logdown */
 // eslint-disable-next-line max-statements
 
-import geoapi from 'geoApi';
-
 // fixes logger issue where it can be called before it is loaded, this reverts it to console
 // TODO: load logger lib before app starts
 RV.logger = console;

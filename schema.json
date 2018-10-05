@@ -184,7 +184,7 @@
                 },
                 "columnWidth": {
                     "type": "integer",
-                    "default": false,
+                    "default": 350,
                     "description": "Value in pixels to be used as the column width for the export legend."
                 }
             },

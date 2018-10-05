@@ -31,7 +31,7 @@ const INFO_FONT_SIZE = 14;
  */
 angular.module('app.ui').service('exportLegendService', exportLegendService);
 
-function exportLegendService($q, $rootElement, geoService, LegendBlock, configService, gapiService, graphicsService) {
+function exportLegendService($q, $rootElement, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
         generate
     };
@@ -48,17 +48,17 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @param {Number} preferredSectionWidth width of the individual legend sections inside the legend graphic
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
-    function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
+    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
-        const legendData = extractLegendTree(
+        const legendData = await extractLegendTree(
             configService.getSync.map.legendBlocks,
             preferredSectionWidth,
             availableWidth
         );
 
-        // resolve with an empty 0 x 0 canvas if there is not layers in the legend
+        // resolve with an empty 0 x 0 canvas if there is no layers in the legend
         if (legendData.length === 0) {
             return $q.resolve(graphicsService.createCanvas(0, 0));
         }
@@ -84,11 +84,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         while (sectionsUsed !== sectionInfo.count) {
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
-            legendDataCopy = angular.copy(extractLegendTree(
-                configService.getSync.map.legendBlocks,
-                sectionInfo.width,
-                availableWidth
-            ));
+            legendDataCopy = angular.copy(
+                await extractLegendTree(configService.getSync.map.legendBlocks, sectionInfo.width, availableWidth)
+            );
 
             legendSection.clear();
 
@@ -114,7 +112,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         hiddenNode.remove();
 
         const localCanvas = document.createElement('canvas'); // create canvas element
-        const generationPromise = $q(resolve => {
+        const generationPromise = new Promise(resolve => {
             canvg(localCanvas, legend.node.outerHTML, {
                 ignoreAnimation: true,
                 ignoreMouse: true,
@@ -388,7 +386,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             runningHeight += Math.max(legendItem.rbox().height, imageItemViewbox.height);
 
             item.height = legendItem.rbox().height;
-            item.y = legendItem.y()
+            item.y = legendItem.y();
 
             itemStore.push(legendItem);
 
@@ -464,19 +462,21 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Array} a flat array of layers and their symbology items
      */
     function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
+        // `TYPE_TO_SYMBOLOGY` functions return promises
         const TYPE_TO_SYMBOLOGY = {
-            [LegendBlock.TYPES.NODE]: entry => ({
+            [LegendBlock.TYPES.NODE]: entry =>
+                Promise.resolve({
+                    name: entry.name,
+                    items: _censorSymbologyStack(entry.symbologyStack.stack)
+                }),
+            [LegendBlock.TYPES.GROUP]: async entry => ({
                 name: entry.name,
-                items: entry.symbologyStack.stack
+                items: await extractLegendTree(entry)
             }),
-            [LegendBlock.TYPES.GROUP]: entry => ({
-                name: entry.name,
-                items: extractLegendTree(entry)
-            }),
-            [LegendBlock.TYPES.SET]: () => null,
-            [LegendBlock.TYPES.INFO]: entry => {
+            [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
+            [LegendBlock.TYPES.INFO]: async entry => {
                 if (entry.infoType === 'image') {
-                    const svgCode = _createSVGCode(entry.content);
+                    const svgCode = await _censorImage(entry.content);
                     return {
                         name: '',
                         items: [{ name: '', svgcode: svgCode }],
@@ -488,24 +488,24 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
                     // ie can't handle fancy markdown image rendering so we strip markdown entirely
                     if (RV.isIE) {
-                        return {
+                        return Promise.resolve({
                             name: removeMd(content),
-                            items: entry.symbologyStack.stack || [],
+                            items: _censorSymbologyStack(entry.symbologyStack.stack) || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
-                        };
+                        });
                     }
 
                     const contentToHtml = marked(content);
 
                     // if no markdown was parsed, return as text
                     if (content === contentToHtml) {
-                        return {
+                        return Promise.resolve({
                             name: entry.layerName || entry.content,
                             items: entry.symbologyStack.stack || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
-                        };
+                        });
                     }
 
                     // restrict width to full legend size
@@ -537,7 +537,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(data);
 
                     // we now have a local image and URL that we can wrap in a legend generator supported svg element
-                    return {
+                    return Promise.resolve({
                         name: '',
                         items: [
                             {
@@ -546,43 +546,45 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                                     img.src
                                 }"></image></svg>`
                             }
-                        ].concat(entry.symbologyStack.stack || []),
+                        ].concat(_censorSymbologyStack(entry.symbologyStack.stack) || []),
                         blockType: LegendBlock.TYPES.INFO,
                         infoType: entry.infoType
-                    };
+                    });
                 }
             }
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        let legendTreeData = legendBlock
-            .walk(
-                entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
-                entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
-            ) // don't walk entry's children if it's a group
-            .filter(a => a !== null);
+        let legendTreeData = legendBlock.walk(
+            entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
+            entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
+        ); // don't walk entry's children if it's a group
 
         let titleBefore = false;
-        legendTreeData = legendTreeData
-            // filter out non-info blocks with no symbology
-            .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
-            // clear out titles where everything below it (or in between another title) has been removed
-            // The two reverses let us filter backwards, making detection of bad titles easier.
-            .reverse()
-            .filter((entry, index) => {
-                if (entry.infoType && entry.infoType === 'title') {
-                    if (index === 0 || titleBefore) {
+
+        return Promise.all(legendTreeData).then(data =>
+            data
+                // filter out nulls
+                .filter(a => a !== null)
+                // filter out non-info blocks with no symbology
+                .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
+                // clear out titles where everything below it (or in between another title) has been removed
+                // The two reverses let us filter backwards, making detection of bad titles easier.
+                .reverse()
+                .filter((entry, index) => {
+                    if (entry.infoType && entry.infoType === 'title') {
+                        if (index === 0 || titleBefore) {
+                            titleBefore = true;
+                            return false;
+                        }
                         titleBefore = true;
-                        return false;
+                    } else {
+                        titleBefore = false;
                     }
-                    titleBefore = true;
-                } else {
-                    titleBefore = false;
-                }
-                return true;
-            })
-            .reverse();
-        return legendTreeData;
+                    return true;
+                })
+                .reverse()
+        );
     }
 
     /**
@@ -604,28 +606,97 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
     }
 
     /**
-     * Helper function to get HTML fragment of SVG element provided a URL
+     * Takes in a symbology stack and replaces any of the non-CORS graphics with a placeholder of
+     * the same size if the `cleanCanvas` is set to true in the config file.
      *
-     * @function _createSVGCode
-     * @private
-     * @param {String} link the link of an image
-     * @return {String} the HTML fragment of the SVG element created
+     * @param {*} stack symbology stack from a legend entry/block
+     * @returns a censored symbology stack with tainted images removed
      */
-    function _createSVGCode(link) {
-        const img = $rootElement.find(`[src="${link}"]`)[0];
+    function _censorSymbologyStack(stack) {
+        // if not defined, return empty array
+        if (stack === undefined) {
+            return [];
+        }
 
-        let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-        svg.setAttribute('height', img.naturalHeight);
-        svg.setAttribute('width', img.naturalWidth);
+        const {
+            services: {
+                export: { cleanCanvas }
+            }
+        } = configService.getSync;
 
-        let svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-        svgimg.setAttribute('height', img.naturalHeight);
-        svgimg.setAttribute('width', img.naturalWidth);
-        svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', link);
+        // if `cleanCanvas` is not set, do nothing
+        if (!cleanCanvas) {
+            return stack;
+        }
 
-        svg.appendChild(svgimg);
+        const censoredStack = stack.map(symbologyItem => {
+            const { name, image, svgcode } = symbologyItem;
 
-        return svg.outerHTML;
+            // it's already base 64, hence won't taint the canvas
+            // or if the image url is not present into the symbology item's svg code,
+            // it means it was successfully converted to base64 (geoApi will always try to load imagery as `anonymous`)
+            if (image === undefined || image.startsWith('data:') || svgcode.indexOf(image) === -1) {
+                return symbologyItem;
+            } else {
+                const draw = graphicsService.createSvg(100, 100).svg(svgcode);
+                // get the image from the svg and its bounding box
+                const bbox = draw
+                    .select('image')
+                    .get(0)
+                    .bbox();
+
+                // create a placeholder box of the same size and fill it with grey
+                // TODO: add a note in it that it can't be exported
+                const placeholder = graphicsService.createSvg(bbox.w, bbox.h);
+                placeholder.rect(bbox.w, bbox.h).fill('#bdc3c7');
+
+                return {
+                    name,
+                    image,
+                    svgcode: placeholder.svg()
+                };
+            }
+        });
+
+        console.log(stack, censoredStack);
+
+        return censoredStack;
+    }
+
+    /**
+     * Takes in an image url or its dataurl and returns an svg fragment with that image.
+     * The tainted, non-CORS image will be replaced with a placehoder of the same size if
+     * the `cleanCanvas` option is set to `true` in the config file.
+     *
+     * @param {*} imgUrl an image url or its dataurl
+     * @returns an svg fragment with the supplied image as its url or dataurl
+     */
+    async function _censorImage(imgUrl) {
+        const imgSource = $rootElement.find(`[src="${imgUrl}"]`)[0];
+        const svgResult = graphicsService.createSvg(imgSource.width, imgSource.height); // create svg container
+
+        const {
+            services: {
+                export: { cleanCanvas }
+            }
+        } = configService.getSync;
+
+        let dataUrl = imgUrl;
+
+        // if `cleanCanvas` is not set, don't remove non-CORS images
+        // if set, try to convert image to dataurl; geoApi will try to load the image as CORS
+        if (cleanCanvas) {
+            dataUrl = await gapiService.gapi.shared.convertImagetoDataURL(imgUrl);
+        }
+
+        // `convertImagetoDataURL` returns original url if loading as anonymous fails
+        // if the `dataUrl` starts with `data:`, it's in base 64 already
+        if (!cleanCanvas || dataUrl.startsWith('data:') || dataUrl !== imgUrl) {
+            svgResult.image(dataUrl, imgSource.width, imgSource.height);
+        } else {
+            svgResult.rect(imgSource.width, imgSource.height).fill('#bdc3c7');
+        }
+
+        return svgResult.svg();
     }
 }
