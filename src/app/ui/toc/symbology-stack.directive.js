@@ -149,6 +149,10 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
 
             // apply to block so changes reflect on map
             self.block.definitionQuery = fullDef;
+
+            // save `definitionClause` on layerRecord (do not delete important for accurate identify results)
+            layerRecord.definitionClause = defClause;
+
             // trigger event which table uses to update
             events.$broadcast(events.rvSymbDefinitionQueryChanged);
         };
