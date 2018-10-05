@@ -203,7 +203,7 @@ function exportGenerators(
 
                 const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
                 const imagePromises = [].slice.call(esriRoot.querySelectorAll('img')).map(img =>
-                    imageLoader(img.src)
+                    graphicsService.imageLoader(img.src)
                         .then(corsImg => ({
                             imgSource: img,
                             imgItem: corsImg,
@@ -250,29 +250,6 @@ function exportGenerators(
                         top: elementRect.top - containerRect.top,
                         left: elementRect.left - containerRect.left
                     };
-                }
-
-                function imageLoader(src) {
-                    const loadPromise = new Promise((resolve, reject) => {
-                        const img = new Image();
-                        img.onload = () => resolve(img);
-
-                        // ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
-                        // always try to load as CORS; if fails, the orignal image will be used (it will taint the canvas though)
-                        img.crossOrigin = 'anonymous';
-
-                        img.onerror = reject;
-                        img.src = src;
-                        if (img.complete === true) {
-                            // Inline XML images may fail to parse, throwing an Error later on
-                            setTimeout(() => resolve(img), 500);
-                        }
-
-                        const timeout = 2000;
-
-                        window.setTimeout(() => reject('Timeout'), timeout);
-                    });
-                    return loadPromise;
                 }
 
                 // accepts img or canvas items

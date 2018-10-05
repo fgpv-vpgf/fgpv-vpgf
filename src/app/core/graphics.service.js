@@ -17,7 +17,8 @@ function graphicsService($q) {
         createCanvas,
         mergeCanvases,
         getTextWidth,
-        setSvgHref
+        setSvgHref,
+        imageLoader
     };
 
     return service;
@@ -139,5 +140,34 @@ function graphicsService($q) {
     function setSvgHref(link) {
         // TODO: send issue to svg library
         return link.replace(/ns1:href/gi, 'xlink:href');
+    }
+
+    /**
+     * Returns a promise that resolves with the image, rejects if it surpases a 2 second load
+     * @function imageLoader
+     * @param {String} src the source for the image
+     * @return {Promise<image>} A promise resolving with the loaded image
+     */
+    function imageLoader(src) {
+        const loadPromise = new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+
+            // ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
+            // always try to load as CORS; if fails, the orignal image will be used (it will taint the canvas though)
+            img.crossOrigin = 'anonymous';
+
+            img.onerror = reject;
+            img.src = src;
+            if (img.complete === true) {
+                // Inline XML images may fail to parse, throwing an Error later on
+                setTimeout(() => resolve(img), 500);
+            }
+
+            const timeout = 2000;
+
+            window.setTimeout(() => reject('Timeout'), timeout);
+        });
+        return loadPromise;
     }
 }
