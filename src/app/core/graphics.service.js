@@ -18,7 +18,8 @@ function graphicsService($q) {
         mergeCanvases,
         getTextWidth,
         setSvgHref,
-        imageLoader
+        imageLoader,
+        isTainted
     };
 
     return service;
@@ -169,5 +170,31 @@ function graphicsService($q) {
             window.setTimeout(() => reject('Timeout'), timeout);
         });
         return loadPromise;
+    }
+
+    /**
+     * Returns true if canvas is tained (not readable), false otherwise
+     * @function isTainted
+     * @param {Image | Canvas} item the image or canvas to test
+     * @returns {boolean} true iff image/canvas is not readable
+     */
+    function isTainted(item) {
+        let ctx;
+
+        // if image, first draw it on a piece of canvas
+        if (item.nodeName === 'IMG') {
+            const testCanvas = createCanvas(item.width, item.height);
+            ctx = testCanvas.getContext('2d');
+            ctx.drawImage(item, 0, 0);
+        } else {
+            ctx = item.getContext('2d');
+        }
+
+        try {
+            ctx.getImageData(0, 0, 1, 1);
+            return false;
+        } catch (err) {
+            return true;
+        }
     }
 }

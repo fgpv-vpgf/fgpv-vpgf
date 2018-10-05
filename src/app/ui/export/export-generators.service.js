@@ -221,7 +221,7 @@ function exportGenerators(
                     data.forEach(({ imgSource, imgItem, error }) => {
                         // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
                         // if the image loading failed, check if the local copy of the image is tainted
-                        let imgTainted = error ? isTainted(imgItem) : false;
+                        let imgTainted = error ? graphicsService.isTainted(imgItem) : false;
 
                         if (cleanOrigin && imgTainted) {
                             hasOmittedImage = true;
@@ -250,27 +250,6 @@ function exportGenerators(
                         top: elementRect.top - containerRect.top,
                         left: elementRect.left - containerRect.left
                     };
-                }
-
-                // accepts img or canvas items
-                function isTainted(item) {
-                    let ctx;
-
-                    // if image, first draw it on a piece of canvas
-                    if (item.nodeName === 'IMG') {
-                        const testCanvas = graphicsService.createCanvas(item.width, item.height);
-                        ctx = testCanvas.getContext('2d');
-                        ctx.drawImage(item, 0, 0);
-                    } else {
-                        ctx = item.getContext('2d');
-                    }
-
-                    try {
-                        ctx.getImageData(0, 0, 1, 1);
-                        return false;
-                    } catch (err) {
-                        return true;
-                    }
                 }
             });
 
