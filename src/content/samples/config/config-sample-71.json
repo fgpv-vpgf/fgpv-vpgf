@@ -93,7 +93,7 @@
         "name": "mean (nasty) temps",
         "layerType": "ogcWfs",
         "nameField": "station_id",
-        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/ahccd-trends/items?measurement_type=temp_mean"
+        "url": "https://geo.weather.gc.ca/geomet-beta/features/collections/ahccd-trends/items?measurement_type__type_mesure=temp_mean&period__periode=Ann&startindex=0&limit=1000"
       }
     ],
     "extentSets": [

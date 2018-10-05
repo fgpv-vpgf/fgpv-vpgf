@@ -118,9 +118,6 @@
               },
               {
                 "layerId": "hydrometric-stationsAll"
-              },
-              {
-                "layerId": "flurstuck"
               }
             ]
           }
@@ -176,12 +173,6 @@
         "nameField": "STATION_NAME",
         "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items",
         "colour": "#00FF00"
-      },
-      {
-        "id": "flurstuck",
-        "layerType": "ogcWfs",
-        "nameField": "OBJECTID",
-        "url": "https://www.ldproxy.nrw.de/rest/services/kataster/collections/flurstueck/items"
       }
     ],
     "extentSets": [

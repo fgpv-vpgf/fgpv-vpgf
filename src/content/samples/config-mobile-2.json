@@ -16,12 +16,6 @@
         "sideMenu": {
             "logo": true
         },
-        "tableIsOpen": {
-            "id": "DateLayer",
-            "large": true,
-            "medium": true,
-            "small": false
-        },
         "legend": {
             "isOpen": {
                 "large": true,
@@ -374,18 +368,6 @@
                         "symbologyRenderStyle": "icons"
                     },
                     {
-                        "layerId": "scaleDep",
-                        "controlledIds": [
-                            "ecogeo",
-                            "powerplant100mw-25"
-                        ],
-                        "description": "Ozone's odour is sharp, reminiscent of chlorine, and detectable by many people at concentrations of as little as 100 ppb in air. Ozone's O3 structure was determined in 1865."
-                    },
-                    {
-                        "layerId": "DateLayer",
-                        "description": "Ozone is a powerful oxidant (far more so than dioxygen) and has many industrial and consumer applications related to oxidation."
-                    },
-                    {
                         "layerId": "powerplant100mw-24",
                         "hidden": true
                     },
@@ -425,9 +407,6 @@
                         "layerId": "ecogeofull2"
                     },
                     {
-                        "layerId": "oilsandsbasemaptile"
-                    },
-                    {
                         "layerId": "ecogeosec"
                     },
                     {
@@ -457,12 +436,6 @@
                                     }
                                 ],
                                 "symbologyRenderStyle": "icons"
-                            },
-                            {
-                                "layerId": "crop_density_wheat"
-                            },
-                            {
-                                "layerId": "aafc_plant_hardiness_zones"
                             },
                             {
                                 "layerId": "ecogeofull",
@@ -546,9 +519,6 @@
                                     },
                                     {
                                         "layerId": "powerplant100mw-1"
-                                    },
-                                    {
-                                        "layerId": "scaleDep2"
                                     }
                                 ]
                             }
@@ -609,92 +579,6 @@
                 "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
             },
             {
-                "id": "aafc_plant_hardiness_zones",
-                "name": "AAFC Plant Hardiness Zones",
-                "layerType": "esriDynamic",
-                "layerEntries": [
-                    {
-                        "index": 0
-                    }
-                ],
-                "url": "http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer",
-                "state": {
-                    "visibility": false
-                }
-            },
-            {
-                "id": "crop_density_wheat",
-                "name": "Crop Destiny",
-                "layerType": "esriDynamic",
-                "singleEntryCollapse": true,
-                "layerEntries": [
-                    {
-                        "index": 0
-                    }
-                ],
-                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer"
-            },
-            {
-                "id": "DateLayer",
-                "name": "Date layer field",
-                "layerType": "esriFeature",
-                "metadataUrl": "http://csw.open.canada.ca/geonetwork/srv/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&ElementSetName=full&id=3a1eb6ef-6054-4f9d-b1f6-c30322cd7abf",
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0",
-                "table": {
-                    "title": "my custom title",
-                    "description": "This table is use to show all possibilities when we start to use custom table. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at tristique felis. Nullam porttitor vel dui nec pharetra. Nulla sit amet pulvinar diam. Ut id urna eros. Praesent ultrices, mi ac scelerisque eleifend, nisi sem mollis ipsum, vel hendrerit tortor risus id diam. Nam eu pellentesque risus. Nam quis nibh vel turpis egestas vulputate. Vivamus nibh eros, vulputate convallis consequat nec, ultricies a lorem. Fusce vitae nisi justo. Proin eu leo et mauris porta lobortis. Proin scelerisque elit vel fringilla volutpat.",
-                    "maximize": true,
-                    "search": {
-                        "enabled": true,
-                        "value": "INC2008"
-                    },
-                    "applyMap": true,
-                    "columns": [
-                        {
-                            "data": "OBJECTID",
-                            "filter": {
-                                "type": "number",
-                                "value": "0,100"
-                            }
-                        },
-                        {
-                            "data": "YEAR",
-                            "description": "This field represent the number of incidents in a certain period of time...",
-                            "sort": "desc",
-                            "visible": false
-                        },
-                        {
-                            "data": "INCIDENT_T",
-                            "title": "Incident Type",
-                            "visible": true,
-                            "width": 100,
-                            "filter": {
-                                "type": "selector",
-                                "value": [
-                                    "\"Fire\"",
-                                    "\"Fatality\""
-                                ],
-                                "static": false
-                            }
-                        },
-                        {
-                            "data": "INCIDENT_N",
-                            "title": "Incident Report Number",
-                            "description": "This field represent the number of incidents in a certain period of time...",
-                            "visible": true,
-                            "width": 450,
-                            "sort": "asc",
-                            "searchable": true,
-                            "filter": {
-                                "type": "string",
-                                "value": "INC2008",
-                                "static": true
-                            }
-                        }
-                    ]
-                }
-            },
-            {
                 "id": "powerplant100mw-25",
                 "name": "Power Plants, 25",
                 "layerType": "esriDynamic",
@@ -743,15 +627,6 @@
                 "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
             },
             {
-                "id": "oilsandsbasemaptile",
-                "name": "Oilsands basemap tile",
-                "layerType": "esriTile",
-                "state": {
-                    "opacity": 0.2
-                },
-                "url": "http://ec.gc.ca/arcgis/rest/services/Basemaps/OilSandsBasemap/MapServer/"
-            },
-            {
                 "id": "powerplant100mw-12",
                 "name": "Power Plants, 12",
                 "layerType": "esriFeature",
@@ -769,19 +644,6 @@
                 "name": "Power Plants, 24",
                 "layerType": "esriFeature",
                 "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/24"
-            },
-            {
-                "id": "scaleDep",
-                "name": "Air Ozone Scale Dependency x2 More Ozone Than Other Planets",
-                "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_Ozone/MapServer/2",
-                "layerType": "esriFeature",
-                "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
-                "state": {
-                    "opacity": 0.75
-                },
-                "disabledControls": [
-                    "query"
-                ]
             },
             {
                 "id": "scaleDep2",

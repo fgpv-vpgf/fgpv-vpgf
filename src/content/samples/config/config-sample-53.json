@@ -140,7 +140,7 @@
       },
       {
         "id": "crops",
-        "name": "crops",
+        "name": "Spatial Density of Major Crops in Canada",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
@@ -150,7 +150,7 @@
         "state": {
           "visibility": false
         },
-        "url": "http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_plant_hardiness_zones/MapServer"
+        "url": "http://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer"
       },
       {
         "id": "powerplant100mw-liquids",
