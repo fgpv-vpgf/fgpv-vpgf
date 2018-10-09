@@ -36,6 +36,11 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
         generate
     };
 
+    const ref = {
+        showToast: angular.noop,
+        hasOmittedImage: false
+    };
+
     return service;
 
     /***/
@@ -46,11 +51,14 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
      * @param {Number} availableHeight map height, used in legend wraping logic
      * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
      * @param {Number} preferredSectionWidth width of the individual legend sections inside the legend graphic
+     * @param {Function} showToast a function display a toast notifcation for the user
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
-    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
+    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500, showToast) {
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
+
+        ref.showToast = showToast;
 
         const legendData = await extractLegendTree(
             configService.getSync.map.legendBlocks,
@@ -467,16 +475,17 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
             [LegendBlock.TYPES.NODE]: entry =>
                 Promise.resolve({
                     name: entry.name,
-                    items: _censorSymbologyStack(entry.symbologyStack.stack)
+                    items: _cleanSymbologyStack(entry.symbologyStack.stack)
                 }),
             [LegendBlock.TYPES.GROUP]: async entry => ({
                 name: entry.name,
                 items: await extractLegendTree(entry)
             }),
             [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
+            // eslint-disable-next-line complexity
             [LegendBlock.TYPES.INFO]: async entry => {
                 if (entry.infoType === 'image') {
-                    const svgCode = await _censorImage(entry.content);
+                    const svgCode = await _cleanImage(entry.content);
                     return {
                         name: '',
                         items: [{ name: '', svgcode: svgCode }],
@@ -490,7 +499,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                     if (RV.isIE) {
                         return Promise.resolve({
                             name: removeMd(content),
-                            items: _censorSymbologyStack(entry.symbologyStack.stack) || [],
+                            items: _cleanSymbologyStack(entry.symbologyStack.stack) || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
                         });
@@ -546,7 +555,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                                     img.src
                                 }"></image></svg>`
                             }
-                        ].concat(_censorSymbologyStack(entry.symbologyStack.stack) || []),
+                        ].concat(_cleanSymbologyStack(entry.symbologyStack.stack) || []),
                         blockType: LegendBlock.TYPES.INFO,
                         infoType: entry.infoType
                     });
@@ -609,10 +618,10 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
      * Takes in a symbology stack and replaces any of the non-CORS graphics with a placeholder of
      * the same size if the `cleanCanvas` is set to true in the config file.
      *
-     * @param {*} stack symbology stack from a legend entry/block
-     * @returns a censored symbology stack with tainted images removed
+     * @param {Array} stack symbology stack from a legend entry/block
+     * @returns {Array} a cleaned symbology stack with tainted images removed
      */
-    function _censorSymbologyStack(stack) {
+    function _cleanSymbologyStack(stack) {
         // if not defined, return empty array
         if (stack === undefined) {
             return [];
@@ -629,7 +638,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
             return stack;
         }
 
-        const censoredStack = stack.map(symbologyItem => {
+        const cleaneddStack = stack.map(symbologyItem => {
             const { name, image, svgcode } = symbologyItem;
 
             // it's already base 64, hence won't taint the canvas
@@ -650,6 +659,8 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                 const placeholder = graphicsService.createSvg(bbox.w, bbox.h);
                 placeholder.rect(bbox.w, bbox.h).fill('#bdc3c7');
 
+                _notifyLegendCleaned();
+
                 return {
                     name,
                     image,
@@ -658,9 +669,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
             }
         });
 
-        console.log(stack, censoredStack);
-
-        return censoredStack;
+        return cleaneddStack;
     }
 
     /**
@@ -669,9 +678,9 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
      * the `cleanCanvas` option is set to `true` in the config file.
      *
      * @param {*} imgUrl an image url or its dataurl
-     * @returns an svg fragment with the supplied image as its url or dataurl
+     * @returns {String} an svg fragment with the supplied image as its url or dataurl
      */
-    async function _censorImage(imgUrl) {
+    async function _cleanImage(imgUrl) {
         const imgSource = $rootElement.find(`[src="${imgUrl}"]`)[0];
         const svgResult = graphicsService.createSvg(imgSource.width, imgSource.height); // create svg container
 
@@ -694,9 +703,25 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
         if (!cleanCanvas || dataUrl.startsWith('data:') || dataUrl !== imgUrl) {
             svgResult.image(dataUrl, imgSource.width, imgSource.height);
         } else {
+            _notifyLegendCleaned();
             svgResult.rect(imgSource.width, imgSource.height).fill('#bdc3c7');
         }
 
         return svgResult.svg();
+    }
+
+    /**
+     * Displays a notification to the user that some of the legend graphic are excluded from the legend export.
+     * This should only be called when `cleanCanvas` is set to `true`.
+     * This notificaiton should be called as early as possible in the export generation.
+     *
+     */
+    function _notifyLegendCleaned() {
+        if (ref.hasOmittedImage) {
+            return;
+        }
+
+        ref.hasOmittedImage = true;
+        ref.showToast('error.legend.tainted', { action: '', hideDelay: 5000 });
     }
 }

@@ -275,10 +275,12 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.download,Download,1,Télécharger,1
 ,export.undo,Undo,1,Annuler,1
 ,export.title,Enter Title,1,Titre,1
-,export.error.timeout,Connection timed out. Stopping export task.,1,Connexion expirée. Processus d’exportation arrêté.,1
+,export.error.image.tainted,Some layer images can't be exported (same-origin policy exception).,1,Certaines images de calques seront omises (exception de stratégie de même origine).,0
+,export.error.legend.tainted,Some legend images can't be exported (same-origin policy exception).,1,Certaines images de calques seront omises (exception de stratégie de même origine).,0
 ,export.error.tainted,We can't save the export image directly (same-origin policy exception). You can right click the image and select "Save As..." if supported by your browser.,1,Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet.,1
 ,export.error.cantgenerate,Export image cannot be generated right now,1,L'image d'exportation ne peut pas être générée maintenant,0
-,export.error.timeout,The print service does not respond,1,Le service d'impression ne répond pas,0
+,export.error.timeout,Connection timed out. Stopping export task.,1,Connexion expirée. Processus d’exportation arrêté.,1
+,export.error.service.timeout,The print service does not respond.,1,Le service d'impression ne répond pas.,0
 ,export.error.somethingelseiswrong,Ouch. Something went wrong. We cannot save the export image.,1,Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créée par l'outil d'exportation.,1
 ,export.error.minwidth, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
 ,export.error.minheight, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1

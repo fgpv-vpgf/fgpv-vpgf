@@ -216,7 +216,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 parent: self.scope.element || self.shellNode,
                 position: 'bottom rv-flex-global',
                 textContent: $translate.instant(`export.${textContent}`),
-                action: $translate.instant(`export.${action}`),
+                action: action !== '' ? $translate.instant(`export.${action}`) : action,
                 hideDelay
             };
 
@@ -290,31 +290,35 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 }
             }
 
-            try {
-                if (!RV.isSafari) {
-                    canvas.toBlob(blob => {
-                        FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
-                    });
-                } else {
-                    showToast('error.safari');
-                    self.isSafari = true;
-                }
-            } catch (error) {
+            // safari can't save image directly
+            if (RV.isSafari) {
+                showToast('error.safari');
+                self.isSafari = true;
+                return;
+            }
+
+            // check if the canvas is tained
+            if (graphicsService.isTainted(canvas)) {
                 // show error; nothing works
                 self.isError = true;
 
-                // this one is likely a tainted canvas issue
-                if (error.name === 'SecurityError') {
-                    showToast('error.tainted');
+                showToast('error.tainted');
 
-                    // some browsers (not IE) allow to right-click a canvas on the page and save it manually;
-                    // only when tainted, display resulting canvas inside the dialog, so users can save it manually, if the browser supports it
-                    self.isTainted = true;
-                    self.taintedGraphic = canvas;
-                } else {
-                    // something else happened
-                    showToast('error.somethingelseiswrong');
-                }
+                // some browsers (not IE) allow to right-click a canvas on the page and save it manually;
+                // only when tainted, display resulting canvas inside the dialog, so users can save it manually, if the browser supports it
+                self.isTainted = true;
+                self.taintedGraphic = canvas;
+                return;
+            }
+
+            try {
+                canvas.toBlob(blob => {
+                    FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
+                });
+            } catch (error) {
+                console.error(error);
+                // something else happened
+                showToast('error.somethingelseiswrong');
             }
         }
     }
