@@ -8,6 +8,7 @@ Appbar tooltip for layers icon,appbar.tooltip.layers,Layers,1,Couches,1
 Appbar headline for layers,appbar.headline.layers,Layers,1,Couches,1
 Appbar tooltip for point info icon,appbar.tooltip.pointInfo,Details,1,Détails,1
 Appbar tooltip for menu icon,appbar.tooltip.menu,Menu,1,Menu,1
+Appbar aria label for geosearch filter icon,appbar.aria.geosearchfilters,Clear Filters,1,Effacer les filtres,1
 Appbar tooltip for geosearch icon,appbar.tooltip.geosearch,Geolocation Search,1,Recherche géolocalisée,1
 ,appbar.tooltip.geosearchshort,Geo Search,1,Recherche géo,1
 Appbar tooltip for geosearch close icon,appbar.tooltip.geosearchclose,Close Geolocation Search,1,Fermer la recherche géolocalisée,1
