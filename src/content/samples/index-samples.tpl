@@ -193,7 +193,7 @@
     <button id="hideShow" class="chevron top fade" type="button"></button>
 
     <div class="myMap" id="sample-map" is="rv-map" rz-gtm
-        rv-config="config/config-sample-01-structured-visibility-sets.json"
+        rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
