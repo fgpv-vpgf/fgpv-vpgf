@@ -159,6 +159,7 @@ Click on the download button in the header to get the final generated map image.
 <sup>*</sup>Please note that the footnote may not be available depending on the map. <br/>
 <sup>†</sup>Please note timestamp is optional and may not be available depending on the map
 
+
 # Data Table Panel
 
 ![](datatable/overview_en.png)
