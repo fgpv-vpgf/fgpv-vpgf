@@ -1,7 +1,7 @@
 {
   "intentions": {
     "epsg": "default",
-    "table": "enhancedTable"
+    "table": "default"
   },
   "ui": {
     "title": "Custom Title",
