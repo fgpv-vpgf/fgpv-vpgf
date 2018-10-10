@@ -2019,13 +2019,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             if (!source || Object.keys(source).length === 0) {
                 this.epsg = 'default';
                 this.geoSearch = 'default'
-                //TODO fancyTable
-                //this.table = 'default';
+                this.table = 'default';
             } else {
                 this.epsg = source.epsg || 'default';
                 this.geoSearch = source.geoSearch || 'default';
-                //TODO fancyTable
-                //this.table = source.table || 'default';
+                this.table = source.table || 'default';
             }
         }
     }
