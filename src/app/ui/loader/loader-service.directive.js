@@ -32,6 +32,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
 
     self.closeLoaderService = closeLoaderService;
     self.isWMSLayerWithMultipleStyles = isWMSLayerWithMultipleStyles;
+    self.isHTTPS = location.protocol === 'https:';
 
     self.serviceTypes = [
         Geo.Service.Types.FeatureLayer,
@@ -169,7 +170,8 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
         const connect = self.connect;
 
         const layerBlueprintPromise = layerSource
-            .fetchServiceInfo(connect.serviceUrl)
+            // maps served over https can only accept https enabled services to avoid mixed content issues.
+            .fetchServiceInfo(self.isHTTPS ? connect.serviceUrl.replace('http:', 'https:') : connect.serviceUrl)
             .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
                 self.layerBlueprintOptions = layerBlueprintOptions;
                 self.layerBlueprint = layerBlueprintOptions[preselectedIndex];

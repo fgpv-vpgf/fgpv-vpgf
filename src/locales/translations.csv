@@ -323,6 +323,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.file.type.csv,CSV,1,CSV,1
 ,import.file.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
 ,import.file.type.geojson,GeoJSON,1,GeoJSON,1
+,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les demandes seront faites en utilisant HTTPS,0
 ,import.service.title,Import Service,1,Importer un service,1
 ,import.service.connect.title,Connect service,1,Connecter au service,1
 ,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
