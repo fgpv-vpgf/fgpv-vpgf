@@ -78,6 +78,7 @@ function legendServiceFactory(
             service.constructLegend(layers, newLegend);
 
             configService.getSync.map._legend = newLegend;
+            layerRegistry.synchronizeLayerOrder();
             $rootScope.$applyAsync();
         };
     });
