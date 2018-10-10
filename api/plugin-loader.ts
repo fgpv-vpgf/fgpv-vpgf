@@ -1,3 +1,4 @@
+import Table from '../intention/table/table.intention';
 import EPSG from '../intention/epsg/epsg.intention';
 import geoSearch from '../intention/geosearch/geosearch.intention.js';
 
@@ -5,7 +6,7 @@ import { FgpvConfigSchema } from 'api/schema';
 
 const iDict: any = {
     epsg: EPSG,
-    table: {}, // TODO: replace with simpleTable
+    table: Table,
     geoSearch
 };
 

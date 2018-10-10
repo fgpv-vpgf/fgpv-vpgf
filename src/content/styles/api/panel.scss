@@ -27,7 +27,7 @@
 }
 .panel-controls {
     padding: 4px 12px 4px 18px;
-    height: 40px;
+    height: 48px;
     overflow: hidden;
 
     .md-icon-button {
@@ -57,7 +57,7 @@
 .panel-body {
     padding: 5px 18px;
     border-top: lightgrey solid 1px;
-    height: calc(100% - 38px); // 100% minus the headers
+    height: calc(100% - 46px); // 100% minus the headers
 
     &.ag-theme-balham {
         border-top: initial;
