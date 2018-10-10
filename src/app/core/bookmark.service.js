@@ -208,7 +208,8 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             [types.OGC_WMS]: '1',
             [types.ESRI_TILE]: '2',
             [types.ESRI_DYNAMIC]: '3',
-            [types.ESRI_IMAGE]: '4'
+            [types.ESRI_IMAGE]: '4',
+            [types.OGC_WFS]: '5'
         };
         const layerCode = typeToCode[layerDefinition.layerType];
 
