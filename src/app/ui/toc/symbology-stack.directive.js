@@ -227,13 +227,17 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     const drawPromises = self.symbology.stack.map(s => s.drawPromise);
 
                     $q.all(drawPromises).then(() => {
-                        // create a ToggleSymbol instance for each symbol
-                        self.symbology.stack.forEach(s => {
-                            if (s.definitionClause) {
-                                // If the symbol doesn't have a query it shouldn't be a toggle symbol
-                                self.toggleList[s.name] = new ToggleSymbol(s);
-                            }
-                        });
+                        // If a dynamic is a raster layer the symbology toggles do nothing so they should be disabled
+                        // TODO: Use a constant - Geo.Service.Types is pretty much wrong and unused
+                        if (self.symbology._proxy.layerType !== 'esriRaster') {
+                            // create a ToggleSymbol instance for each symbol
+                            self.symbology.stack.forEach(s => {
+                                if (s.definitionClause) {
+                                    // If the symbol doesn't have a query it shouldn't be a toggle symbol
+                                    self.toggleList[s.name] = new ToggleSymbol(s);
+                                }
+                            });
+                        }
                     });
                 }
             }
