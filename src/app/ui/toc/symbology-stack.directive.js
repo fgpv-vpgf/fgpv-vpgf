@@ -218,11 +218,14 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                 }
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
+                // If a dynamic is a raster layer the symbology toggles do nothing so they should be disabled
+                // TODO: Use a constant for 'esriRaster' - Geo.Service.Types is pretty much wrong and unused
                 if (
                     layerRecord &&
                     (layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &&
                     layerRecord.config.toggleSymbology &&
-                    self.symbology.stack.length > 1
+                    self.symbology.stack.length > 1 &&
+                    self.symbology._proxy.layerType !== 'esriRaster'
                 ) {
                     const drawPromises = self.symbology.stack.map(s => s.drawPromise);
 
