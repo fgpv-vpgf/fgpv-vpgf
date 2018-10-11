@@ -169,7 +169,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
 
         svgLegend.items.forEach(svg => {
             // wrap the legend at elements previously marked
-            if (svg.remember('self').splitBefore) {
+            if (svg.remember('self').splitBefore || (svg.remember('self').parent && svg.remember('self').parent.splitBefore)) {
                 const svgY = svg.y();
 
                 // cut the group lines at the wrapping point
@@ -229,7 +229,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
             section.dmove(dx, LEGEND_MARGIN.t);
 
             // draws borders around individual sections
-            /*legend.rect(sectionInfo.width, sectionInfo.height)
+            /*section.rect(sectionInfo.width, sectionInfo.height)
                 .dmove(dx, LEGEND_MARGIN.t)
                 .fill('transparent').stroke({ color: 'black', opacity: 0.2 }).back();*/
         });
@@ -273,9 +273,13 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                 if (item.name !== '') {
                     makeHeader(item, INFO_FONT_SIZE);
                     runningHeight += INFO_GUTTER;
+                } else {
+                    item.items[0].parent = item;
                 }
-                item.items.forEach(item => {
-                    makeInfoItem(item);
+                item.height = 0;
+                item.items.forEach(i => {
+                    makeInfoItem(i);
+                    item.height += i.height;
                 });
             } else if (item.hasOwnProperty('items')) {
                 makeLayer(item);
@@ -479,7 +483,7 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                 }),
             [LegendBlock.TYPES.GROUP]: async entry => ({
                 name: entry.name,
-                items: await extractLegendTree(entry)
+                items: await extractLegendTree(entry, sectionWidth, availableWidth)
             }),
             [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
             // eslint-disable-next-line complexity
@@ -490,7 +494,8 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                         name: '',
                         items: [{ name: '', svgcode: svgCode }],
                         blockType: LegendBlock.TYPES.INFO,
-                        infoType: entry.infoType
+                        infoType: entry.infoType,
+                        height: $(svgCode).height()
                     };
                 } else {
                     const content = entry.layerName || entry.content;
