@@ -30,7 +30,7 @@ Le sélecteur de « Cartes de base » modifie le fond de carte sous-jacent pour 
 
 __Pour ouvrir le sélecteur de cartes de base:__
 
-![](basemap/open.png)
+![](basemap/open_fr.png)
 
 Ouvrez d'abord le panneau des couches en sélectionnant le bouton « Couches » (montré ci-dessus en rouge). Vous verrez alors le sélecteur de cartes de base apparaître à gauche du bouton couche (montré ci-dessus en bleu). Vous pouvez également ouvrir le sélecteur de cartes de base à partir du menu principal.
 
@@ -113,7 +113,7 @@ Notez que certaines options peuvent ne pas être offertes en fonction de divers 
 
 # Sous-menu Couches
 
-![](layer_submenu/menu.png)
+![](layer_submenu/menu_fr.png)
 
 Fournit des options supplémentaires lorsque la liste déroulante « Couches » ouverte. Le sous-menu est montré en rouge ci-dessus et il a les options suivantes:
 
