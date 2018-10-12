@@ -441,15 +441,15 @@ export interface FgpvConfigSchema {
    */
   intentions?: {
     /**
-     * Intention for EPSG Lookup
+     * Intention for EPSG Lookup. ESPG Lookup will be disabled if set to none
      */
     epsg?: string;
     /**
-     * Intention for displaying data
+     * Intention for displaying data. Table will be disabled if set to none
      */
     table?: string;
     /**
-     * intention for geoSearch.  geoSearch will be disabled in the viewer if set to none
+     * Intention for geoSearch. geoSearch will be disabled if set to none
      */
     geoSearch?: string;
   };
