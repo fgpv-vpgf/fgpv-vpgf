@@ -30,8 +30,7 @@
             "map": {},
             "mapElements": {},
             "legend": {
-                "showInfoSymbology": true,
-                "columnWidth": 1500
+                "showInfoSymbology": true
             },
             "timeout": 5000,
             "footnote": {

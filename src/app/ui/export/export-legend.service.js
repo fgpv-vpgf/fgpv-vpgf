@@ -169,7 +169,10 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
 
         svgLegend.items.forEach(svg => {
             // wrap the legend at elements previously marked
-            if (svg.remember('self').splitBefore || (svg.remember('self').parent && svg.remember('self').parent.splitBefore)) {
+            if (
+                svg.remember('self').splitBefore ||
+                (svg.remember('self').parent && svg.remember('self').parent.splitBefore)
+            ) {
                 const svgY = svg.y();
 
                 // cut the group lines at the wrapping point
@@ -274,8 +277,11 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
                     makeHeader(item, INFO_FONT_SIZE);
                     runningHeight += INFO_GUTTER;
                 } else {
+                    // If theres no svgItem created for the info section store it in the first
+                    // child so we can tell if we're supposed to break there
                     item.items[0].parent = item;
                 }
+                // Need to keep a height on the item for geoApi calculations
                 item.height = 0;
                 item.items.forEach(i => {
                     makeInfoItem(i);
