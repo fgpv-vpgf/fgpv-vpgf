@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="./extensions/enhancedTable.css" />
 
     <script src="./intentions/epsg.js"></script>
-    
+
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
@@ -29,11 +29,10 @@
 
 <body>
     <div class="myMap" id="intention-map" is="rv-map"
-        rv-config="config/config-sample-57.json"
+        rv-config="config-enhanced-table.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark"
-        rz-extensions="enhancedTable">
+        rv-restore-bookmark="bookmark">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

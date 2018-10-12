@@ -1060,24 +1060,19 @@
             "description": "Enable/Disable intentions or replace with your own implementation",
             "properties": {
                 "epsg": {
-                    "description": "Intention for EPSG Lookup",
+                    "description": "Intention for EPSG Lookup. ESPG Lookup will be disabled if set to none",
                     "type": "string",
-                    "default": "none"
+                    "default": "default"
                 },
                 "table": {
-                    "description": "Intention for displaying data",
+                    "description": "Intention for displaying data. Table will be disabled if set to none",
                     "type": "string",
-                    "default": "none"
-                },
-                "table": {
-                    "description": "Intention for displaying data",
-                    "type": "string",
-                    "default": "none"
+                    "default": "default"
                 },
                 "geoSearch" : {
-                    "description": "intention for geoSearch.  geoSearch will be disabled in the viewer if set to none",
+                    "description": "Intention for geoSearch. geoSearch will be disabled if set to none",
                     "type": "string",
-                    "default": "none"
+                    "default": "default"
                 }
             },
             "additionalProperties": false
