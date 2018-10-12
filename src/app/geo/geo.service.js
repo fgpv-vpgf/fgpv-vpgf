@@ -73,7 +73,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                         this._isMapReady = true;
                         $rootScope.$broadcast(events.rvApiReady);
                     });
-    
+
                     events.$on(events.rvApiMapAdded, (_, mapi) => {
                         this._pluginLoader.init(mapi);
                     });
