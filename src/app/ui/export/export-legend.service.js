@@ -169,6 +169,8 @@ function exportLegendService($q, $rootElement, LegendBlock, configService, gapiS
 
         svgLegend.items.forEach(svg => {
             // wrap the legend at elements previously marked
+            // NOTE: svg.remember('self') retrieves the item that spawned the svg
+            // it is a direct reference so the 'splitBefore' added by geoApi can be seen
             if (
                 svg.remember('self').splitBefore ||
                 (svg.remember('self').parent && svg.remember('self').parent.splitBefore)

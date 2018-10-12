@@ -176,30 +176,35 @@ function exportGenerators(
         let timeoutHandle;
 
         // force `cleanCanvas` on IE11, since it's not possible to right-click-save-as the resulting export image in IE11
+        // the clean canvas toggle tells the generator whether or not to omit tainted images, cleanCanvas = true iff omit tainted images
         const localGeneratorPromise = localGenerate(cleanCanvas || RV.isIE);
         let serverGeneratorPromise;
 
+        // If exportMapUrl is set, then start the server generation process
         if (exportMapUrl) {
             serverGeneratorPromise = serverGenerate();
 
             return localGeneratorPromise.then(() => {
                 if (!hasOmittedImage && !canvasIsTainted) {
+                    // if local generator comes back clean without omitting anything, return that
                     return wrapLocalOutput();
                 } else {
+                    // if local generator is tainted or had to skip something, check if the server returns properly
                     return serverGeneratorPromise.then(
-                        // on success
+                        // on success return server image
                         () => wrapOutput(serverGeneratorPromise),
-                        // on error
+                        // on error return local image
                         wrapLocalOutput
                     );
                 }
             });
         } else {
+            // no exportMapUrl set, only choice is to return local image
             return wrapLocalOutput();
         }
 
         /**
-         * A helper function which returns the local generation output and display an user notification if any of the layer images 
+         * A helper function which returns the local generation output and display an user notification if any of the layer images
          * are excluded when `cleanCanvas` is set and image are non-CORS.
          *
          * @return {Object} a result object in the form of { graphic, value }
@@ -377,7 +382,12 @@ function exportGenerators(
             columnWidth = configService.getSync.services.export.legend.columnWidth;
         }
 
-        const legendPromise = exportLegendService.generate(exportSize.height, exportSize.width, columnWidth || 350, showToast);
+        const legendPromise = exportLegendService.generate(
+            exportSize.height,
+            exportSize.width,
+            columnWidth || 350,
+            showToast
+        );
 
         return wrapOutput(legendPromise);
     }

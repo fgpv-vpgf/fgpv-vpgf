@@ -144,7 +144,7 @@ function graphicsService($q) {
     }
 
     /**
-     * Returns a promise that resolves with the image, rejects if it surpases a 2 second load
+     * Returns a promise that resolves with the image, rejects if it surpases the timeout (10 seconds by default)
      * @function imageLoader
      * @param {String} src the source for the image
      * @param {number} [timeout=10000] an optional timeout after which the image loading should fails assuming the service is not responding
