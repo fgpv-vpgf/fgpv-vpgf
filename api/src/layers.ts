@@ -155,7 +155,7 @@ export class BaseLayer {
     }
 
     /** Forces an attribute download. Function implementation in subclasses. */
-    fetchAttributes(): void {}
+    fetchAttributes(): void { }
 
     /** Sets the attribute object to value provided using the attributeKey. */
     setAttributes(attributeKey: number, value: Object): void;
@@ -453,6 +453,8 @@ export class ConfigLayer extends BaseLayer {
     _catalogueUrl: string;
     /** @ignore */
     _layerType: string;
+    /** @ignore */
+    attributeHeaders: any;
 
     /**
      * Requires a map instance where the layer is added and viewer layer record.
@@ -570,11 +572,48 @@ export class ConfigLayer extends BaseLayer {
 
         this._layerType = layerRecord.config.layerType;
 
+        this.attributeHeaders = {};
+        let configHeaders: any = {};
+
+        //create column headings for dynamic layers
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
             this._layerIndex = layerIndex;
             this._layerProxy = layerRecord.getChildProxy(layerIndex);
-        } else {
+
+            //get any column titles supplied in the config
+            this._layerProxy._source._parent.initialConfig._layerEntries.forEach((layerEntry: any) => {
+                layerEntry._table._columns.forEach((column: any) => {
+                    configHeaders[column.data] = column.title;
+                })
+            })
+
+            this._layerProxy._source._layerPackage.layerData.then((value: any) => {
+                const fields = value.fields;
+                for (let field of fields) {
+                    // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
+                    this.attributeHeaders[field.name] = {
+                        'id': field.name,
+                        'name': configHeaders[field.name] || field.alias || field.name
+                    }
+                }
+            })
+        }
+        //create column headings for non-dynamic layers
+        else {
             this._layerProxy = layerRecord.getProxy();
+
+            //get any column titles supplied in the config
+            this._layerProxy._source.initialConfig.table._columns.forEach((column: any) => {
+                configHeaders[column.data] = column.title;
+            });
+
+            for (let field of this._layerProxy._source._layer.fields) {
+                // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
+                this.attributeHeaders[field.name] = {
+                    'id': field.name,
+                    'name': configHeaders[field.name] || field.alias || field.name
+                }
+            }
         }
 
         this._viewerLayer = layerRecord;
