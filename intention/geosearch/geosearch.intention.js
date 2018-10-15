@@ -157,5 +157,6 @@ class GeoSearchUI {
 }
 
 export default {
+    intention: 'geoSearch',
     GeoSearchUI
 }
