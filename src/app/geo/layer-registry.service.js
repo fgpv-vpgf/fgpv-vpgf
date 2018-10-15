@@ -562,6 +562,8 @@ function layerRegistryFactory(
             mapBody.reorderLayer(highlightLayer, featureStackLastIndex);
         }
 
+        _syncApiElementOrder();
+
         /**
          * A helper function which synchronizes a single sort group of layers between the layer selector and internal layer stack.
          *
@@ -603,6 +605,28 @@ function layerRegistryFactory(
                 // just in case ESRI does not check for this, do not move layers if its target and current indexes match
                 if (layerRecordIndexes[index] !== mapLayerStack.indexOf(layerRecord.config.id)) {
                     mapBody.reorderLayer(layerRecord._layer, layerRecordIndexes[index]);
+                }
+            });
+        }
+
+        /**
+         * A helper function which synchronizes the order of the api elements
+         *
+         * @function _syncApiElementOrder
+         * @private
+         */
+        function _syncApiElementOrder() {
+            const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
+            const legendElements = mapApi.ui.configLegend.children;
+            let reorderedElements = [];
+            legendEntries.forEach((entry, index) => {
+                entry = entry.collapsed ? entry.entries[0] : entry;
+                if (entry !== legendElements[index]._legendBlock) {
+                    const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
+                    if (element) {
+                        reorderedElements.push(legendElements[index]);
+                        legendElements[index] = element;
+                    }
                 }
             });
         }
