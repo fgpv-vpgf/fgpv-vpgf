@@ -3,6 +3,8 @@ import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
 
 class TableBuilder {
+    intention = 'table';
+
     init(mapApi: any) {
         this.mapApi = mapApi;
         this.panel = new PanelManager(mapApi);
@@ -45,6 +47,7 @@ interface AttrBundle {
 }
 
 interface TableBuilder {
+    intention: string;
     id: string;
     mapApi: any;
     tableOptions: GridOptions;
