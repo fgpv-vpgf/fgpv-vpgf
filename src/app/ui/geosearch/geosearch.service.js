@@ -15,10 +15,8 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     let GSservice; // geosearch service from the geosearch intention
 
     events.$on(events.rvApiReady, () => {  // initilize geosearch intention
-        if (configService.getSync.intentions.geoSearch !== 'none') {
-            let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
-            GSservice = new (appInfo.intentions.geoSearch).GeoSearchUI({language});
-        }
+        let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
+        GSservice = new (appInfo.intentions.geoSearch).GeoSearchUI({language});
     });
 
     const service = {

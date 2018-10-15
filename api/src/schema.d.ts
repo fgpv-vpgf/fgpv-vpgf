@@ -436,23 +436,6 @@ export interface FgpvConfigSchema {
     legend?: LegendAuto | LegendStructured;
     [k: string]: any;
   };
-  /**
-   * Enable/Disable intentions or replace with your own implementation
-   */
-  intentions?: {
-    /**
-     * Intention for EPSG Lookup. ESPG Lookup will be disabled if set to none
-     */
-    epsg?: string;
-    /**
-     * Intention for displaying data. Table will be disabled if set to none
-     */
-    table?: string;
-    /**
-     * Intention for geoSearch. geoSearch will be disabled if set to none
-     */
-    geoSearch?: string;
-  };
 }
 /**
  * Provides configuration to the nav bar. If not supplied the default nav bar buttons are shown.

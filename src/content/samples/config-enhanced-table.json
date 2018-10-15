@@ -46,9 +46,6 @@
       }
     }
   },
-  "intentions": {
-    "table": "enhancedTable"
-  },
   "map": {
     "initialBasemapId": "baseNrCan",
     "components": {
