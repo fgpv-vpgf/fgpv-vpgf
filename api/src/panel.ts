@@ -229,7 +229,7 @@ class Btn extends PanelElem {
         super(scope, $('<md-button class="btn md-icon-button black rv-button-24"></md-button>'));
         // close button
         if (type === 'X') {
-            this.contents = '<md-icon md-svg-src="navigation:close"></md-icon>';
+            this.contents = `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`;
             $(this.panel.panelContents).on('click', '#' + this.id, () => {
                 this.panel.close();
             });
@@ -247,7 +247,7 @@ class Btn extends PanelElem {
                     this.contents = '<md-icon md-svg-src="content:add"></md-icon>'; // update icon
                 }
             });
-        
+
         } else {
             this.elementAttr.html(type || '');
         }
