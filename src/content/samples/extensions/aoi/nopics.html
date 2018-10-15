@@ -62,7 +62,7 @@
     $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css'));
     $.getScript('../../../rv-main.js', function () {
         $('body').append(`
-        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rz-extensions="areaOfInterest"></div>
+        <div id="fgpmap" style="height: 700px; display:flex;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-plugins="areaOfInterest"></div>
         `);
         new RZ.Map(document.getElementById('fgpmap'), '../../config/config-sample-73.json');
     });

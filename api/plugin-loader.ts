@@ -4,7 +4,7 @@ import geoSearch from '../intention/geosearch/geosearch.intention.js';
 
 import { FgpvConfigSchema } from 'api/schema';
 
-const iDict: any = {
+const loadIntentions: any = {
     epsg: EPSG,
     table: Table,
     geoSearch
@@ -16,51 +16,56 @@ export default class Loader {
     private mapElem: JQuery<HTMLElement>;
     private preInitPromises: Promise<void>[] = []; // all preInit promises must resolve prior to map loading
 
-    pluginList : Array<any> = []; // a list of all intentions and extensions
+    extensions: Array<any> = [];
+    intentions: any = {};
 
     constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
         this.config = Object.freeze(config); // no changes permitted
         this.mapElem = mapElem;
 
-        this.loadIntentions();
-        this.loadExtensions();
+        this.loader();
 
         // call all plugins pre-init method (if present)
         this.preInit();
     }
 
     /**
-     * Intentions are strictly loaded from the config. If `default` is set we use the imported (proper) intention.
-     * If not `none` we expect the string value to be present on the global window object which points to the (custom) intention.
+     * Plugins are strictly loaded from the `rv-plugins` map element property.
+     * We expect the string value, possibly comma-separated, to be present on the global window object which points to the plugin.
      */
-    loadIntentions() {
-        const configI: any = this.config.intentions;
-        for (const prop in configI) {
-            const val: string = configI[prop];
-            if (val === 'default' || val !== 'none') {
-                let i = val === 'default' ? iDict[prop] : (<any>window)[val];
+    loader() {
+        const rvPluginAttr = this.mapElem.attr('rv-plugins');
+        const pluginList = rvPluginAttr ? rvPluginAttr.split(',').map(x => x.trim()) : [];
 
-                // can contain a constructor, if so initialize. This is useful for multi-map support
-                try {
-                    i = new i();
-                } catch(e) {
-                    // do nothing
+        pluginList
+            .forEach((p: any) => {
+                const plugin = this.initialize((<any>window)[p]);
+
+                if (plugin.intention && loadIntentions[plugin.intention]) {
+                    delete loadIntentions[plugin.intention];
+                    this.intentions[plugin.intention] = plugin;
+                } else {
+                    this.extensions.push(plugin);
                 }
+            });
 
-                i.intention = prop; // indicate this is an intention and it's type
-                this.pluginList.push(i);
-            }
-        }
+        // Load remaining intentions that have not been replaced.
+        Object
+            .keys(loadIntentions)
+            .forEach((k: string) => {
+                const plugin = this.initialize(loadIntentions[k]);
+                this.intentions[plugin.intention] = plugin;
+            });
     }
 
-    /**
-     * Extensions are strictly loaded from the `rz-extensions` map element property.
-     * We expect the string value, possibly comma-separated, to be present on the global window object which points to the extension.
-     */
-    loadExtensions() {
-        const rvExtAttr = this.mapElem.attr('rz-extensions');
-        const extList = rvExtAttr ? rvExtAttr.split(',') : [];
-        extList.forEach(ext => this.pluginList.push((<any>window)[ext]));
+    initialize(plugin: any) {
+        try {
+            plugin = new plugin();
+        } catch(e) {
+            // do nothing
+        }
+
+        return plugin;
     }
 
     /**
@@ -68,39 +73,41 @@ export default class Loader {
      * If a promise is returned, adds it to the `preInitPromises` list.
      */
     preInit() {
-        this.pluginList.forEach((p, i, a) => {
+        this.extensions
+            .concat(Object.values(this.intentions))
+            .forEach((p) => {
+                if (p.preInit) {
+                    let returnedValue = p.preInit(this.config);
 
-            a[i] = typeof p === 'function' ? new p() : p;
-            p = a[i];
-
-            if (p.preInit) {
-                let returnedValue = p.preInit(this.config);
-
-                // check if a promise like object is returned
-                if (returnedValue && returnedValue.then) {
-                    this.preInitPromises.push(returnedValue);
+                    // check if a promise like object is returned
+                    if (returnedValue && returnedValue.then) {
+                        this.preInitPromises.push(returnedValue);
+                    }
                 }
-            }
-        });
+            });
     }
 
     /**
      * Checks each plugin for an init method. If set, calls the method and passes the maps api.
      */
     init(api: any) {
-        this.pluginList.forEach(p => {
-            if (p.init) {
-                p.init(api);
-            }
-        });
+        this.extensions
+            .concat(Object.values(this.intentions))
+            .forEach(p => {
+                if (p.init) {
+                    p.init(api);
+                }
+            });
     }
 
     loadTranslations(translationService: any) {
-        this.pluginList.forEach(p => {
-            if (p.translations) {
-                translationService(p.translations);
-            }
-        });
+        this.extensions
+            .concat(Object.values(this.intentions))
+            .forEach(p => {
+                if (p.translations) {
+                    translationService(p.translations);
+                }
+            });
     }
 
     /**
