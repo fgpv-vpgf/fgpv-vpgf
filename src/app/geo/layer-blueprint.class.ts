@@ -249,10 +249,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof BlueprintBase
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
-
-            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
             this.config = new ConfigClass(rawConfig);
-            this.config.epsgLookup = epsg.lookup;
+            this.config.epsgLookup = appInfo.intentions.epsg.lookup;
 
             // if there was a bookmark with enhancements for this layer, apply them.
             if (rawConfig.bookmarkData) {

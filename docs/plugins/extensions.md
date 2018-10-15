@@ -4,11 +4,11 @@ An extension uses the API to add or modify some specific functionality within RA
 
 ## Loading
 
-You specify which extensions will be loaded in the `rz-extensions` map element property as a comma separated list:
+You specify which extensions will be loaded in the `rv-plugins` map element property as a comma separated list:
 
 ```html
 <div is="rv-map"
-  rz-extensions="extension1,extension2, . . ."
+  rv-plugins="extension1,extension2, . . ."
   rv-config="config.json">
 </div>
 ```
@@ -32,7 +32,7 @@ window.myExtension = {
 
 ```html
 <div is="rv-map"
-  rz-extensions="myExtension"
+  rv-plugins="myExtension"
   rv-config="config.json">
 </div>
 ```
