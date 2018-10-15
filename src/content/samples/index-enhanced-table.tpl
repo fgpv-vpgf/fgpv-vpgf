@@ -11,8 +11,8 @@
             height: 100%;
         }
     </style>
-    <script src="./extensions/enhancedTable.js"></script>
-    <link rel="stylesheet" href="./extensions/enhancedTable.css" />
+    <script src="./extensions/enhancedTable/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./extensions/enhancedTable/enhancedTable.css" />
 
     <script src="./intentions/epsg.js"></script>
 
