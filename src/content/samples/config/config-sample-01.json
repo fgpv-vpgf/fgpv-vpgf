@@ -1,8 +1,4 @@
 {
-  "intentions": {
-    "epsg": "default",
-    "table": "default"
-  },
   "ui": {
     "title": "Custom Title",
     "navBar": {

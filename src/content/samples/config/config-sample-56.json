@@ -1,8 +1,4 @@
 {
-  "intentions": {
-    "epsg": "default",
-    "geoSearch": "default"
-  },
   "ui": {
     "title": "Custom Title",
     "navBar": {

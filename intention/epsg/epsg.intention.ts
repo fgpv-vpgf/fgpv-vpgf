@@ -11,6 +11,8 @@
  * @return {Promise} a Promise resolving to proj4 style definition or null if the definition
  */
 export default {
+    intention: 'epsg',
+
     lookup: (code: string | number) => {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
         const epsgRegex = /EPSG:(\d+)/;
