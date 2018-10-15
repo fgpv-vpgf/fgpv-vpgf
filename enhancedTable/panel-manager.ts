@@ -1,7 +1,7 @@
 import { Grid } from 'ag-grid/main';
 import { SEARCH_TEMPLATE, MENU_TEMPLATE } from './templates';
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-balham.css';
+import './main.scss';
 
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
@@ -15,7 +15,7 @@ export class PanelManager {
         this.panel = this.mapApi.createPanel(this.id);
 
         this.setSize();
-        this.panel.panelBody.addClass('ag-theme-balham');
+        this.panel.panelBody.addClass('ag-theme-material');
         this.panel.content = new this.panel.container(this.tableContent);
     }
 
