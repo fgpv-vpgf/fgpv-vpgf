@@ -249,10 +249,8 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof BlueprintBase
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
-
-            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
             this.config = new ConfigClass(rawConfig);
-            this.config.epsgLookup = epsg.lookup;
+            this.config.epsgLookup = appInfo.intentions.epsg.lookup;
 
             // hack fix for broken cors support
             if (this.config.url) {
