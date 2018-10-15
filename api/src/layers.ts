@@ -155,7 +155,7 @@ export class BaseLayer {
     }
 
     /** Forces an attribute download. Function implementation in subclasses. */
-    fetchAttributes(): void {}
+    fetchAttributes(): void { }
 
     /** Sets the attribute object to value provided using the attributeKey. */
     setAttributes(attributeKey: number, value: Object): void;
@@ -453,6 +453,8 @@ export class ConfigLayer extends BaseLayer {
     _catalogueUrl: string;
     /** @ignore */
     _layerType: string;
+    /** @ignore */
+    _formattedHeaders: any;
 
     /**
      * Requires a map instance where the layer is added and viewer layer record.
@@ -570,11 +572,24 @@ export class ConfigLayer extends BaseLayer {
 
         this._layerType = layerRecord.config.layerType;
 
+        this._formattedHeaders = {};
+
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
             this._layerIndex = layerIndex;
             this._layerProxy = layerRecord.getChildProxy(layerIndex);
+            //create table column headings for dynamic layers
+            this._layerProxy._source._layerPackage.layerData.then((value: any) => {
+                const fields = value.fields;
+                for (let field of fields) {
+                    this._formattedHeaders[field.name] = field.alias || field.name;
+                }
+            })
         } else {
             this._layerProxy = layerRecord.getProxy();
+            //create table column headings for non-dynamic layers
+            for (let field of this._layerProxy._source._layer.fields) {
+                this._formattedHeaders[field.name] = field.alias || field.name;
+            }
         }
 
         this._viewerLayer = layerRecord;
