@@ -1,76 +1,126 @@
-# Intentions
-
-Intentions are internal extensions that reside in a sub-folder of [fpgv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf). They are developed and fully supported by the core RAMP team. Intentions are default RAMP features that can be easily disabled or replaced. They come bundled with RAMP and no additional setup is needed to use them.
-
-## Getting Started
-
-Default Intentions are loaded automatically when starting RAMP.  If you want to remove or replace individual intentions, you will need to open your **configuration file** and add the following JSON object with property `intentions`.  This is not strictly needed however.
-
-```json
-    "intentions": {}
-```
+Plugins can add or modify functionality in RAMP. They are only limited by your imagination (and to some degree the RAMP API). Plugin code is external to RAMP so you get to decide how and where to write your code. TypeScript is recommended, but plain ol' JavaScript will do just fine as well. 
 
 <p class="tip">
-    By omitting the `intentions` property, RAMP will simply load all the default intentions.
+    If you use anything other than plain JavaScript (like TypeScript) be sure to compile it into JavaScript before including it on the host page. It's also a good idea to test your plugin in different browsers such as IE11, FireFox, and Chrome. 
 </p>
 
-## Ways of Loading Intentions
+## Introduction
 
-Each property inside `intentions` is an intention that will be loaded into RAMP.
+A plugin which **replaces** a specific feature in RAMP is called an **intention**. We'll go over this type of plugin in more detail further on in this guide. For now you can assume intentions act the same as any other plugins. 
 
-```json
-    "intentions": {
-        "epsg": "default"
+Here's a sample list of three possible plugins:
+
+1. an enhanced data table which replaces the default RAMP simple data table.
+2. a static north compass icon.
+3. a box with text, showing the latitude and longitude of the users mouse.
+
+<p align="center">
+  ![](assets/images/plugins/plugin-example.png)Figure 1.
+</p>
+
+All three plugins share a similar code structure, make use of the RAMP API, and perform custom DOM operations. Now let's look at how plugin code is structured with a sample.
+
+## Structure
+
+Plugins can be as simple as a few lines of code to hundreds or thousands. Let's dive right in and write a basic plugin that displays an alert box with lat/lon coordinates whenever the user clicks on the map.
+
+#### MyPlugin.js
+```js
+var api;
+window.MyPlugin = {
+    init(rampApi) {
+        api = rampApi;
+        listenToAlert();
+    },
+
+    listenToAlert() {
+        api.click.subscribe(function(pointObject) {
+            alert('You clicked on point ' + pointObject.x + ' ' + pointObject.y);
+        });
     }
+}
 ```
 
-The value of an intention indicates the way RAMP will be loading the intention. Default is set to `"none"` if the intention is not specified in `intention` thus it will not be loaded. There are 3 settings available:
+Inside our `MyPlugin.js` file a JavaScript object is defined on the browsers window object named **MyPlugin**. We'll make use of this later when it's time to register our plugin with RAMP.
 
-- `"default"`: This will load the default intention.
+Inside our plugin object we define two methods, `init` and `listenToAlert`.
 
-- `"none"`: This is the default setting.  As suggested, the intention will be excluded.
+ - `init` gets called by RAMP with a copy of the RAMP API once it has successfully loaded. So when this method gets called we store the RAMP API in a variable named `api` for later use.
+ - `listenToAlert` contains the logic for listening to a map click and displaying an alert box. That's all there is to it!
 
-- **Name of the extension**: The name of the extension you would like the default intention to be replaced by.
+<p align="center">
+  ![](assets/images/plugins/basic-plugin.png)
+</p>
 
-<p class="danger">
-    When setting the value for an intention. Please ensure the name matches the intention you are intended to add for the intention to be applied. However, having non-existing intentions will not affect RAMP nor causes errors.
-<p>
+ ## Registering
 
-## Replacing an Intention
+Lets bring our example plugin to life in the RAMP viewer in two steps: 
 
-First you will need to load the extension file before the main viewers JavaScript file `rv-main.js`. We will call it `my-extention.js` in our example.
+1. include `MyPlugin.js` in the same webpage as the RAMP viewer. 
+2. tell RAMP how to find the plugin by providing the pointer to our plugin object to the RAMP HTML element `rv-plugins`.
+
 
 ```html
-<script src="my-extention.js"></script>
+<html>
+    <head>
+        <script src="MyPlugin.js"></script>
+    </head>
+    
+    <body>
+        <div class="myMap" id="my-map" is="rv-map"
+            rv-config="myConfig.json"
+            rv-langs='["en-CA", "fr-CA"]'
+            rv-plugins="MyPlugin">
+        </div>
+    </body>
+</html>
 ```
 
-When writing an extension. You will need to create a variable and the name of that variable will be the name of the extension. It needs to contain methods either `preInit` or `init` or both depending on the intention you want to replace.
 
-Here is an example of the general structure.
+
+
+
 
 ```js
-var intentionExt = (() => {
-    return {
-        preInit: () => {
-            // ...
-        },
-        init: () => {
-            // ...
-        }
-    }
-})();
+var config;
+window.MyPlugin = {
+    preInit(rampConfig) {
+        config = rampConfig;
+    },
+
+    . . .
+}
 ```
 
-RAMP will call methods `preInit` and `init` automatically once the extension is loaded.  `preInit` will be called before the map object of RAMP and API are ready.  Instructions here should be intended to use for creating the map object.  Inversely `init` will be called when both map object and API are ready.  It should be used for actions that depend on the completion of map object.
+<p align="center">
+  ![](assets/images/plugins/plugin-intention.png)
+</p>
 
-<p class="danger">
-    Be sure to read the documentation for the intention you intend to replace. It may require both `preInit` and `init` to be defined, with specific return types from `preInit`.
-<p>
 
-Finally, You will also need to specify what the intention you are intended to replace and the name of the extensions.
 
-```json
-    "intentions": {
-        "myIntention": "intentionExt",
-    }
-```
+There are two types of plugins you can write - **intentions** and **extensions**. It's important you choose the correct type when starting to write your own plugin.
+
+## Intentions
+
+RAMP has a set of default plugins, called __intentions__, which are loaded automatically. **You can only replace existing intentions** - you cannot create a new type of intention. As an example, RAMP loads a simple data table for displaying attribute data for certain types of layers. You could replace this simple table implementation with your own data table implementation.
+
+Intentions can also have special optional or required methods and properties that you should be aware of. Each intention is documented which outlines any special properties/methods unique to that intention. These special properties/methods provide an additional interface between the intention and RAMP that would not otherwise be available through the API. 
+
+<p class="tip">
+    You can see a list of current intentions and their [documentation here](http://localhost:8080/#/plugins/intentions?id=intention-list).
+</p>
+
+### Overview
+
+- Full access to the RAMP API
+- You can only replace an existing default intention with your own implementation.
+- Read the intentions documentation you intend to replace for details on any special properties and methods.
+
+## Extensions
+
+asdasd
+
+### Overview
+
+- Full access to the RAMP API
+- Can implement or change functionality in a variety of ways 
