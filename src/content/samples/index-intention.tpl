@@ -11,8 +11,8 @@
             height: 100%;
         }
     </style>
-    <script src="./extensions/enhancedTable.js"></script>
-    <link rel="stylesheet" href="./extensions/enhancedTable.css" />
+    <script src="./extensions/enhancedTable/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./extensions/enhancedTable/enhancedTable.css" />
 
     <script src="./intentions/epsg.js"></script>
     
@@ -34,7 +34,7 @@
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
         rv-restore-bookmark="bookmark"
-        rz-extensions="rzTest,enhancedTable">
+        rv-plugins="customEPSG, enhancedTable">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

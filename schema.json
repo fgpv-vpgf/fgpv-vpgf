@@ -1053,29 +1053,6 @@
                 }
             },
             "required": [ "tileSchemas", "baseMaps" ]
-        },
-
-        "intentions": {
-            "type": "object",
-            "description": "Enable/Disable intentions or replace with your own implementation",
-            "properties": {
-                "epsg": {
-                    "description": "Intention for EPSG Lookup. ESPG Lookup will be disabled if set to none",
-                    "type": "string",
-                    "default": "default"
-                },
-                "table": {
-                    "description": "Intention for displaying data. Table will be disabled if set to none",
-                    "type": "string",
-                    "default": "default"
-                },
-                "geoSearch" : {
-                    "description": "Intention for geoSearch. geoSearch will be disabled if set to none",
-                    "type": "string",
-                    "default": "default"
-                }
-            },
-            "additionalProperties": false
         }
     },
 

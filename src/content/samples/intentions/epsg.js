@@ -12,6 +12,8 @@
  */
 window.customEPSG = {
 
+    intention: 'epsg',
+
     preInit: config => {
         console.warn('Custom EPSG', config);
     },

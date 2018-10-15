@@ -2008,24 +2008,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     /**
-     * Intentions(internal extentions)
-     * @class Intentions
-     */
-    class Intentions {
-        constructor(source) {
-            if (!source || Object.keys(source).length === 0) {
-                this.epsg = 'default';
-                this.geoSearch = 'default'
-                this.table = 'default';
-            } else {
-                this.epsg = source.epsg || 'default';
-                this.geoSearch = source.geoSearch || 'default';
-                this.table = source.table || 'default';
-            }
-        }
-    }
-
-    /**
      * Typed representation of the `map` section of the config.
      * @class Map
      */
@@ -2575,7 +2557,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
-            this._intentions = new Intentions(configSource.intentions);
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
@@ -2587,7 +2568,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             let optionName;
 
-            if (!this.map.components.geoSearch.enabled || this.intentions.geoSearch === 'none') {
+            if (!this.map.components.geoSearch.enabled) {
                 optionName = 'geoSearch';
 
                 this.ui.appBar.geoSearch = false;
@@ -2669,7 +2650,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
-        get intentions() { return this._intentions; }
 
         applyBookmark (value) {
             this.map.applyBookmark(value);

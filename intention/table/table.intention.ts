@@ -73,6 +73,8 @@ interface AttrBundle {
 }
 
 export default {
+    intention: 'table',
+    
     init(mapApi: any) {
         new Table(mapApi);
     }
