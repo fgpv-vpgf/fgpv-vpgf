@@ -230,20 +230,23 @@ function exportGenerators(
                 const ctx = mainCanvas.getContext('2d');
 
                 const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
-                const imagePromises = [].slice.call(esriRoot.querySelectorAll('img')).map(img =>
-                    graphicsService
-                        .imageLoader(img.src, 10000)
-                        .then(corsImg => ({
-                            imgSource: img,
-                            imgItem: corsImg,
-                            error: false
-                        }))
-                        .catch(error => ({
-                            imgSource: img,
-                            imgItem: img,
-                            error
-                        }))
-                );
+                const imagePromises = [].slice
+                    .call(esriRoot.querySelectorAll('img'))
+                    .filter(img => img.nodeName === 'IMG') // IE11 selects SVG Image elements even tough they have different nodeNames; filter them out
+                    .map(img =>
+                        graphicsService
+                            .imageLoader(img.src, 10000)
+                            .then(corsImg => ({
+                                imgSource: img,
+                                imgItem: corsImg,
+                                error: false
+                            }))
+                            .catch(error => ({
+                                imgSource: img,
+                                imgItem: img,
+                                error
+                            }))
+                    );
 
                 // need to wait for all images to load, so they can be added to the canvas in the correct order
                 Promise.all(imagePromises).then(data => {
