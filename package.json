@@ -27,9 +27,9 @@
         "node-sass": "4.9.3",
         "sass-loader": "7.1.0",
         "style-loader": "0.22.1",
-        "svg-loader": "0.0.2",
         "ts-loader": "4.4.2",
         "typescript": "3.0.1",
+        "url-loader": "^1.1.2",
         "webpack": "4.16.5",
         "webpack-cli": "3.1.0",
         "webpack-serve": "2.0.2"
