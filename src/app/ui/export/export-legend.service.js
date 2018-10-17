@@ -31,9 +31,14 @@ const INFO_FONT_SIZE = 14;
  */
 angular.module('app.ui').service('exportLegendService', exportLegendService);
 
-function exportLegendService($q, $rootElement, geoService, LegendBlock, configService, gapiService, graphicsService) {
+function exportLegendService($q, $rootElement, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
         generate
+    };
+
+    const ref = {
+        showToast: angular.noop,
+        hasOmittedImage: false
     };
 
     return service;
@@ -46,19 +51,22 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @param {Number} availableHeight map height, used in legend wraping logic
      * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
      * @param {Number} preferredSectionWidth width of the individual legend sections inside the legend graphic
+     * @param {Function} showToast a function display a toast notifcation for the user
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
-    function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500) {
+    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500, showToast) {
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
-        const legendData = extractLegendTree(
+        ref.showToast = showToast;
+
+        const legendData = await extractLegendTree(
             configService.getSync.map.legendBlocks,
             preferredSectionWidth,
             availableWidth
         );
 
-        // resolve with an empty 0 x 0 canvas if there is not layers in the legend
+        // resolve with an empty 0 x 0 canvas if there is no layers in the legend
         if (legendData.length === 0) {
             return $q.resolve(graphicsService.createCanvas(0, 0));
         }
@@ -84,11 +92,9 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         while (sectionsUsed !== sectionInfo.count) {
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
-            legendDataCopy = angular.copy(extractLegendTree(
-                configService.getSync.map.legendBlocks,
-                sectionInfo.width,
-                availableWidth
-            ));
+            legendDataCopy = angular.copy(
+                await extractLegendTree(configService.getSync.map.legendBlocks, sectionInfo.width, availableWidth)
+            );
 
             legendSection.clear();
 
@@ -114,7 +120,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
         hiddenNode.remove();
 
         const localCanvas = document.createElement('canvas'); // create canvas element
-        const generationPromise = $q(resolve => {
+        const generationPromise = new Promise(resolve => {
             canvg(localCanvas, legend.node.outerHTML, {
                 ignoreAnimation: true,
                 ignoreMouse: true,
@@ -163,7 +169,12 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
 
         svgLegend.items.forEach(svg => {
             // wrap the legend at elements previously marked
-            if (svg.remember('self').splitBefore) {
+            // NOTE: svg.remember('self') retrieves the item that spawned the svg
+            // it is a direct reference so the 'splitBefore' added by geoApi can be seen
+            if (
+                svg.remember('self').splitBefore ||
+                (svg.remember('self').parent && svg.remember('self').parent.splitBefore)
+            ) {
                 const svgY = svg.y();
 
                 // cut the group lines at the wrapping point
@@ -223,7 +234,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             section.dmove(dx, LEGEND_MARGIN.t);
 
             // draws borders around individual sections
-            /*legend.rect(sectionInfo.width, sectionInfo.height)
+            /*section.rect(sectionInfo.width, sectionInfo.height)
                 .dmove(dx, LEGEND_MARGIN.t)
                 .fill('transparent').stroke({ color: 'black', opacity: 0.2 }).back();*/
         });
@@ -267,9 +278,16 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                 if (item.name !== '') {
                     makeHeader(item, INFO_FONT_SIZE);
                     runningHeight += INFO_GUTTER;
+                } else {
+                    // If theres no svgItem created for the info section store it in the first
+                    // child so we can tell if we're supposed to break there
+                    item.items[0].parent = item;
                 }
-                item.items.forEach(item => {
-                    makeInfoItem(item);
+                // Need to keep a height on the item for geoApi calculations
+                item.height = 0;
+                item.items.forEach(i => {
+                    makeInfoItem(i);
+                    item.height += i.height;
                 });
             } else if (item.hasOwnProperty('items')) {
                 makeLayer(item);
@@ -388,7 +406,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
             runningHeight += Math.max(legendItem.rbox().height, imageItemViewbox.height);
 
             item.height = legendItem.rbox().height;
-            item.y = legendItem.y()
+            item.y = legendItem.y();
 
             itemStore.push(legendItem);
 
@@ -464,48 +482,52 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
      * @return {Array} a flat array of layers and their symbology items
      */
     function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
+        // `TYPE_TO_SYMBOLOGY` functions return promises
         const TYPE_TO_SYMBOLOGY = {
-            [LegendBlock.TYPES.NODE]: entry => ({
+            [LegendBlock.TYPES.NODE]: entry =>
+                Promise.resolve({
+                    name: entry.name,
+                    items: _cleanSymbologyStack(entry.symbologyStack.stack)
+                }),
+            [LegendBlock.TYPES.GROUP]: async entry => ({
                 name: entry.name,
-                items: entry.symbologyStack.stack
+                items: await extractLegendTree(entry, sectionWidth, availableWidth)
             }),
-            [LegendBlock.TYPES.GROUP]: entry => ({
-                name: entry.name,
-                items: extractLegendTree(entry)
-            }),
-            [LegendBlock.TYPES.SET]: () => null,
-            [LegendBlock.TYPES.INFO]: entry => {
+            [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
+            // eslint-disable-next-line complexity
+            [LegendBlock.TYPES.INFO]: async entry => {
                 if (entry.infoType === 'image') {
-                    const svgCode = _createSVGCode(entry.content);
+                    const svgCode = await _cleanImage(entry.content);
                     return {
                         name: '',
                         items: [{ name: '', svgcode: svgCode }],
                         blockType: LegendBlock.TYPES.INFO,
-                        infoType: entry.infoType
+                        infoType: entry.infoType,
+                        height: $(svgCode).height()
                     };
                 } else {
                     const content = entry.layerName || entry.content;
 
                     // ie can't handle fancy markdown image rendering so we strip markdown entirely
                     if (RV.isIE) {
-                        return {
+                        return Promise.resolve({
                             name: removeMd(content),
-                            items: entry.symbologyStack.stack || [],
+                            items: _cleanSymbologyStack(entry.symbologyStack.stack) || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
-                        };
+                        });
                     }
 
                     const contentToHtml = marked(content);
 
                     // if no markdown was parsed, return as text
                     if (content === contentToHtml) {
-                        return {
+                        return Promise.resolve({
                             name: entry.layerName || entry.content,
                             items: entry.symbologyStack.stack || [],
                             blockType: LegendBlock.TYPES.INFO,
                             infoType: entry.infoType
-                        };
+                        });
                     }
 
                     // restrict width to full legend size
@@ -537,7 +559,7 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                     img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(data);
 
                     // we now have a local image and URL that we can wrap in a legend generator supported svg element
-                    return {
+                    return Promise.resolve({
                         name: '',
                         items: [
                             {
@@ -546,43 +568,45 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
                                     img.src
                                 }"></image></svg>`
                             }
-                        ].concat(entry.symbologyStack.stack || []),
+                        ].concat(_cleanSymbologyStack(entry.symbologyStack.stack) || []),
                         blockType: LegendBlock.TYPES.INFO,
                         infoType: entry.infoType
-                    };
+                    });
                 }
             }
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        let legendTreeData = legendBlock
-            .walk(
-                entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
-                entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
-            ) // don't walk entry's children if it's a group
-            .filter(a => a !== null);
+        let legendTreeData = legendBlock.walk(
+            entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
+            entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
+        ); // don't walk entry's children if it's a group
 
         let titleBefore = false;
-        legendTreeData = legendTreeData
-            // filter out non-info blocks with no symbology
-            .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
-            // clear out titles where everything below it (or in between another title) has been removed
-            // The two reverses let us filter backwards, making detection of bad titles easier.
-            .reverse()
-            .filter((entry, index) => {
-                if (entry.infoType && entry.infoType === 'title') {
-                    if (index === 0 || titleBefore) {
+
+        return Promise.all(legendTreeData).then(data =>
+            data
+                // filter out nulls
+                .filter(a => a !== null)
+                // filter out non-info blocks with no symbology
+                .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
+                // clear out titles where everything below it (or in between another title) has been removed
+                // The two reverses let us filter backwards, making detection of bad titles easier.
+                .reverse()
+                .filter((entry, index) => {
+                    if (entry.infoType && entry.infoType === 'title') {
+                        if (index === 0 || titleBefore) {
+                            titleBefore = true;
+                            return false;
+                        }
                         titleBefore = true;
-                        return false;
+                    } else {
+                        titleBefore = false;
                     }
-                    titleBefore = true;
-                } else {
-                    titleBefore = false;
-                }
-                return true;
-            })
-            .reverse();
-        return legendTreeData;
+                    return true;
+                })
+                .reverse()
+        );
     }
 
     /**
@@ -604,28 +628,113 @@ function exportLegendService($q, $rootElement, geoService, LegendBlock, configSe
     }
 
     /**
-     * Helper function to get HTML fragment of SVG element provided a URL
+     * Takes in a symbology stack and replaces any of the non-CORS graphics with a placeholder of
+     * the same size if the `cleanCanvas` is set to true in the config file.
      *
-     * @function _createSVGCode
-     * @private
-     * @param {String} link the link of an image
-     * @return {String} the HTML fragment of the SVG element created
+     * @param {Array} stack symbology stack from a legend entry/block
+     * @returns {Array} a cleaned symbology stack with tainted images removed
      */
-    function _createSVGCode(link) {
-        const img = $rootElement.find(`[src="${link}"]`)[0];
+    function _cleanSymbologyStack(stack) {
+        // if not defined, return empty array
+        if (stack === undefined) {
+            return [];
+        }
 
-        let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-        svg.setAttribute('height', img.naturalHeight);
-        svg.setAttribute('width', img.naturalWidth);
+        const {
+            services: {
+                export: { cleanCanvas }
+            }
+        } = configService.getSync;
 
-        let svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-        svgimg.setAttribute('height', img.naturalHeight);
-        svgimg.setAttribute('width', img.naturalWidth);
-        svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', link);
+        // if `cleanCanvas` is not set, do nothing
+        if (!cleanCanvas) {
+            return stack;
+        }
 
-        svg.appendChild(svgimg);
+        const cleaneddStack = stack.map(symbologyItem => {
+            const { name, image, svgcode } = symbologyItem;
 
-        return svg.outerHTML;
+            // it's already base 64, hence won't taint the canvas
+            // or if the image url is not present into the symbology item's svg code,
+            // it means it was successfully converted to base64 (geoApi will always try to load imagery as `anonymous`)
+            if (image === undefined || image.startsWith('data:') || svgcode.indexOf(image) === -1) {
+                return symbologyItem;
+            } else {
+                const draw = graphicsService.createSvg(100, 100).svg(svgcode);
+                // get the image from the svg and its bounding box
+                const bbox = draw
+                    .select('image')
+                    .get(0)
+                    .bbox();
+
+                // create a placeholder box of the same size and fill it with grey
+                // TODO: add a note in it that it can't be exported
+                const placeholder = graphicsService.createSvg(bbox.w, bbox.h);
+                placeholder.rect(bbox.w, bbox.h).fill('#bdc3c7');
+
+                _notifyLegendCleaned();
+
+                return {
+                    name,
+                    image,
+                    svgcode: placeholder.svg()
+                };
+            }
+        });
+
+        return cleaneddStack;
+    }
+
+    /**
+     * Takes in an image url or its dataurl and returns an svg fragment with that image.
+     * The tainted, non-CORS image will be replaced with a placehoder of the same size if
+     * the `cleanCanvas` option is set to `true` in the config file.
+     *
+     * @param {*} imgUrl an image url or its dataurl
+     * @returns {String} an svg fragment with the supplied image as its url or dataurl
+     */
+    async function _cleanImage(imgUrl) {
+        const imgSource = $rootElement.find(`[src="${imgUrl}"]`)[0];
+        const svgResult = graphicsService.createSvg(imgSource.width, imgSource.height); // create svg container
+
+        const {
+            services: {
+                export: { cleanCanvas }
+            }
+        } = configService.getSync;
+
+        let dataUrl = imgUrl;
+
+        // if `cleanCanvas` is not set, don't remove non-CORS images
+        // if set, try to convert image to dataurl; geoApi will try to load the image as CORS
+        if (cleanCanvas) {
+            dataUrl = await gapiService.gapi.shared.convertImagetoDataURL(imgUrl);
+        }
+
+        // `convertImagetoDataURL` returns original url if loading as anonymous fails
+        // if the `dataUrl` starts with `data:`, it's in base 64 already
+        if (!cleanCanvas || dataUrl.startsWith('data:') || dataUrl !== imgUrl) {
+            svgResult.image(dataUrl, imgSource.width, imgSource.height);
+        } else {
+            _notifyLegendCleaned();
+            svgResult.rect(imgSource.width, imgSource.height).fill('#bdc3c7');
+        }
+
+        return svgResult.svg();
+    }
+
+    /**
+     * Displays a notification to the user that some of the legend graphic are excluded from the legend export.
+     * This should only be called when `cleanCanvas` is set to `true`.
+     * This notificaiton should be called as early as possible in the export generation.
+     *
+     */
+    function _notifyLegendCleaned() {
+        if (ref.hasOmittedImage) {
+            return;
+        }
+
+        ref.hasOmittedImage = true;
+        ref.showToast('error.legend.tainted', { action: '', hideDelay: 5000 });
     }
 }

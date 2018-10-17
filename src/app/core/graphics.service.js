@@ -17,7 +17,9 @@ function graphicsService($q) {
         createCanvas,
         mergeCanvases,
         getTextWidth,
-        setSvgHref
+        setSvgHref,
+        imageLoader,
+        isTainted
     };
 
     return service;
@@ -139,5 +141,59 @@ function graphicsService($q) {
     function setSvgHref(link) {
         // TODO: send issue to svg library
         return link.replace(/ns1:href/gi, 'xlink:href');
+    }
+
+    /**
+     * Returns a promise that resolves with the image, rejects if it surpases the timeout (10 seconds by default)
+     * @function imageLoader
+     * @param {String} src the source for the image
+     * @param {number} [timeout=10000] an optional timeout after which the image loading should fails assuming the service is not responding
+     * @return {Promise<image>} A promise resolving with the loaded image
+     */
+    function imageLoader(src, timeout = 10000) {
+        const loadPromise = new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+
+            // ios safari 10.3 taints canvas with data urls unless crossOrigin is set to anonymous
+            // always try to load as CORS; if fails, the orignal image will be used (it will taint the canvas though)
+            img.crossOrigin = 'anonymous';
+
+            img.onerror = reject;
+            img.src = src;
+            if (img.complete === true) {
+                // Inline XML images may fail to parse, throwing an Error later on
+                setTimeout(() => resolve(img), 500);
+            }
+
+            window.setTimeout(() => reject('timeout'), timeout);
+        });
+        return loadPromise;
+    }
+
+    /**
+     * Returns true if canvas is tained (not readable), false otherwise
+     * @function isTainted
+     * @param {Image | Canvas} item the image or canvas to test
+     * @returns {boolean} true iff image/canvas is not readable
+     */
+    function isTainted(item) {
+        let ctx;
+
+        // if image, first draw it on a piece of canvas
+        if (item.nodeName === 'IMG') {
+            const testCanvas = createCanvas(item.width, item.height);
+            ctx = testCanvas.getContext('2d');
+            ctx.drawImage(item, 0, 0);
+        } else {
+            ctx = item.getContext('2d');
+        }
+
+        try {
+            ctx.getImageData(0, 0, 1, 1);
+            return false;
+        } catch (err) {
+            return true;
+        }
     }
 }

@@ -43,7 +43,7 @@ import './details/layer-list-slider.directive.js';
 
 import './export/custom-size.directive.js';
 import './export/export-component.class.js';
-import './export/export-components.service.js';
+import './export/export-components.service.ts';
 import './export/export-generators.service.js';
 import './export/export-legend.service.js';
 import './export/export-size.class.js';

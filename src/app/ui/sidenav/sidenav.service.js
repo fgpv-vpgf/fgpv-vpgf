@@ -343,7 +343,7 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
             // or just let it failed
             // or do these checks together with layer definition validity checks and remove export from the sidemenu options at that point
-            service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
+            //service.controls.export.isHidden = typeof config.services.exportMapUrl === 'undefined';
 
             // generate the language selector menu;
             const langs = config.languages;

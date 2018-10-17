@@ -1,7 +1,9 @@
+// IEBUG: import geoApi here, even if it's not used in this file
+// this is needed for IE11, since without it, IE can't find SVG library imported by geoApi
+import geoapi from 'geoApi';
+
 /* global Logdown */
 // eslint-disable-next-line max-statements
-
-import geoapi from 'geoApi';
 
 // fixes logger issue where it can be called before it is loaded, this reverts it to console
 // TODO: load logger lib before app starts

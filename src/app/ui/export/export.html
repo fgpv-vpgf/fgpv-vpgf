@@ -108,7 +108,7 @@
                     md-mode="indeterminate"></md-progress-linear>
 
             <md-select aria-label="{{ 'export.size.selector' | translate }}" translate
-                ng-if="!self.isGenerateError"
+                ng-if="false && !self.isGenerateError"
                 ng-model="self.exportSizes.selectedOption"
                 md-container-class="rv-export-select">
 
@@ -122,7 +122,7 @@
             </md-select>
 
             <!-- don't display a settings button if none of the settings can be edited -->
-            <span class="rv-button-divider-24" ng-if="self.isSettingsEditable() && !self.isGenerateError"></span>
+            <span class="rv-button-divider-24" ng-if="false && self.isSettingsEditable() && !self.isGenerateError"></span>
 
             <md-button
                 class="md-icon-button"

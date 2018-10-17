@@ -1,3 +1,22 @@
+import angular from 'angular';
+
+type InitialExportConfig = {
+    [key: string]: {
+        generators: any[];
+        graphicOrder?: number[];
+        isVisible?: boolean;
+    };
+};
+
+type ExportComponentsService = {
+    items: ExportComponent[] | null;
+    init: (force?: boolean) => Promise<void>;
+    update: (timeout: number, showToast: (...args: any[]) => void) => Object;
+    get: (id: string) => ExportComponent;
+};
+
+type ExportComponent = any;
+
 /**
  * @module exportComponentsService
  * @memberof app.ui
@@ -9,17 +28,17 @@
  */
 angular.module('app.ui').factory('exportComponentsService', exportComponentsService);
 
+exportComponentsService.$inject = ['$q', 'ExportComponent', 'configService', 'exportSizesService', 'exportGenerators'];
+
 function exportComponentsService(
-    $q,
-    ExportComponent,
-    configService,
-    exportSizesService,
-    exportLegendService,
-    graphicsService,
-    exportGenerators
+    $q: any,
+    ExportComponent: any,
+    configService: any,
+    exportSizesService: any,
+    exportGenerators: any
 ) {
     // these are initial configs for the default map export components; all default values are being filled by the ExportComponent constructor class
-    const initialExportConfig = {
+    const initialExportConfig: InitialExportConfig = {
         title: {
             generators: [exportGenerators.titleGenerator],
             isVisible: false
@@ -27,8 +46,8 @@ function exportComponentsService(
         map: {
             generators: [
                 exportGenerators.mapDummyGenerator,
-                exportGenerators.mapLocalGenerator,
-                exportGenerators.mapServerGenerator
+                exportGenerators.mapSVGGenerator,
+                exportGenerators.mapImageGenerator
             ],
             graphicOrder: [0, 2, 1]
         },
@@ -50,7 +69,7 @@ function exportComponentsService(
     // indicates the order of the components, top to bottom
     const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp'];
 
-    const service = {
+    const service: ExportComponentsService = {
         items: null,
 
         init,
@@ -67,10 +86,10 @@ function exportComponentsService(
      * @param {Function} showToast [optional = angular.noop] a function to show notification toasts in the export dialog
      * @return {Object} the service itself
      */
-    function update(timeout, showToast = angular.noop) {
+    function update(timeout: number, showToast = angular.noop) {
         const promise = init().then(() =>
             $q.all(
-                service.items.map(item => item.generate(exportSizesService.selectedOption, timeout, showToast, true))
+                service.items!.map(item => item.generate(exportSizesService.selectedOption, timeout, showToast, true))
             )
         );
 
@@ -81,7 +100,7 @@ function exportComponentsService(
      * Creates ExportComponents using values from the config.
      *
      * @function init
-     * @param {Boolean} force [optional = false] inidicates that export components will be created anew, all setting will be reset to defaults; the config will be read again; this should be used after switching being different config files
+     * @param {Boolean} force [optional = false] indicates that export components will be created anew, all setting will be reset to defaults; the config will be read again; this should be used after switching being different config files
      * @return {Promise} a promise resolving after the initialization is complete
      */
     function init(force = false) {
@@ -91,7 +110,7 @@ function exportComponentsService(
         if (service.items === null || force) {
             service.items = [];
 
-            initPromise = configService.getAsync.then(config => {
+            initPromise = configService.getAsync.then((config: any) => {
                 componentOrder.forEach(id => {
                     const exportComponent = config.services.export[id];
 
@@ -99,7 +118,7 @@ function exportComponentsService(
                     exportComponent.generators = initialExportConfig[id].generators;
                     exportComponent.graphicOrder = initialExportConfig[id].graphicOrder;
 
-                    service.items.push(new ExportComponent(id, exportComponent));
+                    service.items!.push(new ExportComponent(id, exportComponent));
                 });
             });
         } else {
@@ -116,7 +135,7 @@ function exportComponentsService(
      * @param {String} id the internal name of the component
      * @return {ExportComponent} component with the specified id
      */
-    function get(id) {
-        return service.items.find(c => c.id === id);
+    function get(id: string): ExportComponent {
+        return service.items!.find(c => c.id === id);
     }
 }

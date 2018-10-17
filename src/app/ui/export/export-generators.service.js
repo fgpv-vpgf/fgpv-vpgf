@@ -38,8 +38,8 @@ function exportGenerators(
         titleGenerator,
 
         mapDummyGenerator,
-        mapLocalGenerator,
-        mapServerGenerator,
+        mapSVGGenerator,
+        mapImageGenerator,
 
         legendGenerator,
 
@@ -135,7 +135,7 @@ function exportGenerators(
     /**
      * Generates an image of the svg-based layers.
      *
-     * @function mapLocalGenerator
+     * @function mapSVGGenerator
      * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notifcation for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
@@ -143,16 +143,16 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapLocalGenerator(exportSize) {
-        const localGeneratorPromise = geoService.map.printLocal(exportSize);
+    function mapSVGGenerator(exportSize) {
+        const svgGeneratorPromise = geoService.map.printLocal(exportSize);
 
-        return wrapOutput(localGeneratorPromise);
+        return wrapOutput(svgGeneratorPromise);
     }
 
     /**
      * Generates an image of the image-based layers.
      *
-     * @function mapServerGenerator
+     * @function mapImageGenerator
      * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notifcation for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
@@ -161,18 +161,137 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapServerGenerator(exportSize, showToast, value, timeout = 0) {
+    function mapImageGenerator(exportSize, showToast, value, timeout = 0) {
         const {
             map: { instance: mapInstance },
-            services: { exportMapUrl }
+            services: {
+                exportMapUrl,
+                export: { cleanCanvas }
+            }
         } = configService.getSync;
 
-        let isCanceled = false;
+        let isGenerateCanceled = false; // the server print job was cancelled
+        let hasOmittedImage = false; // the local printing has ommited tainted images
+        let canvasIsTainted = false; // the local printing has tainted the canvas
         let timeoutHandle;
 
-        const serverGeneratorPromise = serverGenerate();
+        // force `cleanCanvas` on IE11, since it's not possible to right-click-save-as the resulting export image in IE11
+        // the clean canvas toggle tells the generator whether or not to omit tainted images, cleanCanvas = true iff omit tainted images
+        const localGeneratorPromise = localGenerate(cleanCanvas || RV.isIE);
+        let serverGeneratorPromise;
 
-        return wrapOutput(serverGeneratorPromise);
+        // If exportMapUrl is set, then start the server generation process
+        if (exportMapUrl) {
+            serverGeneratorPromise = serverGenerate();
+
+            return localGeneratorPromise.then(() => {
+                if (!hasOmittedImage && !canvasIsTainted) {
+                    // if local generator comes back clean without omitting anything, return that
+                    return wrapLocalOutput();
+                } else {
+                    // if local generator is tainted or had to skip something, check if the server returns properly
+                    return serverGeneratorPromise.then(
+                        // on success return server image
+                        () => wrapOutput(serverGeneratorPromise),
+                        // on error return local image
+                        wrapLocalOutput
+                    );
+                }
+            });
+        } else {
+            // no exportMapUrl set, only choice is to return local image
+            return wrapLocalOutput();
+        }
+
+        /**
+         * A helper function which returns the local generation output and display an user notification if any of the layer images
+         * are excluded when `cleanCanvas` is set and image are non-CORS.
+         *
+         * @return {Object} a result object in the form of { graphic, value }
+         *                  graphic {Canvas} - a resulting graphic
+         *                  value {Object} - a modified value passed from the ExportComponent
+         */
+        function wrapLocalOutput() {
+            const outputPromise = localGeneratorPromise.then(canvas => {
+                // we only want to show this message if the local output is included in the final export image
+                if (hasOmittedImage) {
+                    showToast('error.image.tainted', { action: '', hideDelay: 5000 });
+                }
+
+                return canvas;
+            });
+
+            return wrapOutput(outputPromise);
+        }
+
+        function localGenerate(cleanCanvas) {
+            const localPrintPromise = new Promise((resolve, reject) => {
+                const mainCanvas = graphicsService.createCanvas(exportSize.width, exportSize.height);
+                const ctx = mainCanvas.getContext('2d');
+
+                const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
+                const imagePromises = angular
+                    .element(esriRoot)
+                    .find('img:visible')
+                    .toArray()
+                    .filter(img => img.nodeName === 'IMG') // IE11 selects SVG Image elements even tough they have different nodeNames; filter them out
+                    .map(img =>
+                        graphicsService
+                            .imageLoader(img.src, 10000)
+                            .then(corsImg => ({
+                                imgSource: img,
+                                imgItem: corsImg,
+                                error: false
+                            }))
+                            .catch(error => ({
+                                imgSource: img,
+                                imgItem: img,
+                                error
+                            }))
+                    );
+
+                // need to wait for all images to load, so they can be added to the canvas in the correct order
+                Promise.all(imagePromises).then(data => {
+                    // eslint-disable-next-line complexity
+                    data.forEach(({ imgSource, imgItem, error }) => {
+                        // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
+                        // if the image loading failed, check if the local copy of the image is tainted
+                        // UPDATE: IE11 somehow manages to load non-cors images with 'anonymous' tag without errors, and this ends up taining canvas afterall
+                        // always check if the loaded image is tainted
+                        let imgTainted = graphicsService.isTainted(imgItem);
+
+                        if (cleanCanvas && imgTainted) {
+                            hasOmittedImage = true;
+                            return;
+                        } else if (imgTainted) {
+                            canvasIsTainted = true;
+                        }
+
+                        const offset = getOffset(imgSource, esriRoot);
+                        addToCanvas(imgItem, offset, imgSource.style.opacity || 1);
+                    });
+
+                    resolve(mainCanvas);
+                });
+
+                function addToCanvas(imgItem, offset, opacity = 1) {
+                    ctx.globalAlpha = opacity;
+                    ctx.drawImage(imgItem, offset.left, offset.top);
+                }
+
+                function getOffset(element, container) {
+                    const elementRect = element.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+
+                    return {
+                        top: elementRect.top - containerRect.top,
+                        left: elementRect.left - containerRect.left
+                    };
+                }
+            });
+
+            return localPrintPromise;
+        }
 
         function serverGenerate() {
             // create a promise and start generating the export map image
@@ -189,7 +308,7 @@ function exportGenerators(
                 // console.log('generation timeout started', timeout);
                 common.$timeout.cancel(timeoutHandle);
                 timeoutHandle = common.$timeout(() => {
-                    isCanceled = true;
+                    isGenerateCanceled = true;
                     // console.log('generation timed out');
                     reject({ timeout: true });
                 }, timeout);
@@ -215,7 +334,7 @@ function exportGenerators(
                     })
                     .catch(error => {
                         // stop; the promise has been rejected already
-                        if (isCanceled) {
+                        if (isGenerateCanceled) {
                             return;
                         }
 
@@ -234,7 +353,7 @@ function exportGenerators(
                         } else {
                             // stop the timeout and ask the user if she wants to retry
                             common.$timeout.cancel(timeoutHandle);
-                            showToast('error.timeout', { action: 'retry', hideDelay: 5000 }).then(response => {
+                            showToast('error.service.timeout', { action: 'retry', hideDelay: 5000 }).then(response => {
                                 if (response === 'ok') {
                                     // promise resolves with 'ok' when user clicks 'retry'
                                     console.log('exportGeneratorsService', `trying print task again`);
@@ -263,14 +382,19 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function legendGenerator(exportSize) {
+    function legendGenerator(exportSize, showToast) {
         // update `exportLegendService.generate` function to take ExportSize object as the first parameter
         let columnWidth;
         if (configService.getSync.services.export && configService.getSync.services.export.legend) {
             columnWidth = configService.getSync.services.export.legend.columnWidth;
         }
 
-        const legendPromise = exportLegendService.generate(exportSize.height, exportSize.width, columnWidth || 350);
+        const legendPromise = exportLegendService.generate(
+            exportSize.height,
+            exportSize.width,
+            columnWidth || 350,
+            showToast
+        );
 
         return wrapOutput(legendPromise);
     }
