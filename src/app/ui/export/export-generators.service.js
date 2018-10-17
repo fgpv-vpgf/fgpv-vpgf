@@ -230,8 +230,10 @@ function exportGenerators(
                 const ctx = mainCanvas.getContext('2d');
 
                 const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
-                const imagePromises = [].slice
-                    .call(esriRoot.querySelectorAll('img'))
+                const imagePromises = angular
+                    .element(esriRoot)
+                    .find('img:visible')
+                    .toArray()
                     .filter(img => img.nodeName === 'IMG') // IE11 selects SVG Image elements even tough they have different nodeNames; filter them out
                     .map(img =>
                         graphicsService
