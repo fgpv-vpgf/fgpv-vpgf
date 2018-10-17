@@ -254,7 +254,9 @@ function exportGenerators(
                     data.forEach(({ imgSource, imgItem, error }) => {
                         // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
                         // if the image loading failed, check if the local copy of the image is tainted
-                        let imgTainted = error ? graphicsService.isTainted(imgItem) : false;
+                        // UPDATE: IE11 somehow manages to load non-cors images with 'anonymous' tag without errors, and this ends up taining canvas afterall
+                        // always check if the loaded image is tainted
+                        let imgTainted = graphicsService.isTainted(imgItem);
 
                         if (cleanCanvas && imgTainted) {
                             hasOmittedImage = true;
