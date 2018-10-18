@@ -20,14 +20,23 @@ export class PanelManager {
     }
 
     open(tableOptions: any, layer: any) {
-        this.tableOptions = tableOptions;
-        const controls = this.header;
-        controls.push(new this.panel.container(`<h2>Features: ${layer.name}</h2>`));
-        this.panel.controls = controls;
+        if (this.currentTableLayer === layer) {
+            this.close();
+        } else {
+            this.tableOptions = tableOptions;
+            const controls = this.header;
+            controls.push(new this.panel.container(`<h2>Features: ${layer.name}</h2>`));
+            this.panel.controls = controls;
+            this.currentTableLayer = layer;
+            this.tableContent.empty();
+            new Grid(this.tableContent[0], tableOptions);
+            this.panel.open();
+        }
+    }
 
-        this.tableContent.empty();
-        new Grid(this.tableContent[0], tableOptions);
-        this.panel.open();
+    close() {
+        this.panel.close();
+        this.currentTableLayer = undefined;
     }
 
     onBtnExport() {
@@ -133,6 +142,7 @@ export interface PanelManager {
     mapApi: any;
     tableContent: JQuery<HTMLElement>;
     _id: string;
+    currentTableLayer: any,
     maximized: boolean;
     tableOptions: any;
 }
