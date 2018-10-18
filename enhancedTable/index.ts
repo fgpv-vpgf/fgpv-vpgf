@@ -11,7 +11,6 @@ class TableBuilder {
 
         this.mapApi.layers.click.subscribe(baseLayer => {
             const attrs = baseLayer.getAttributes();
-
             if (attrs.length === 0) {
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
                     this.createTable(attrs);
