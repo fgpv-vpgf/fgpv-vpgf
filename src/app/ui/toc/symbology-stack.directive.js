@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout) {
+function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -70,7 +70,7 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             container: '=?'
         },
         link: link,
-        controller: () => {},
+        controller: () => { },
         controllerAs: 'self',
         bindToController: true
     };
@@ -91,6 +91,8 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
         self.fanOutSymbology = fanOutSymbology;
 
         self.symbologyWidth = 32;
+
+        self.stackToggled = false;
 
         const canvas = document.createElement('canvas');
 
@@ -118,7 +120,59 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
             // do nothing
         }
 
-        self.onToggleClick = name => {
+        // Helper function: apply definition to block so changes reflect on map and table
+        function setTableDefinition(fullDef, defClause) {
+            self.block.definitionQuery = fullDef;
+            self.block.symbDefinitionQuery = defClause;
+            events.$broadcast(events.rvSymbDefinitionQueryChanged);
+        }
+
+        if (self.block.visibilityChanged) {
+            // change all symbology stack to toggled/untoggled if top layer is visible/invisible
+            self.block.visibilityChanged.subscribe(val => {
+                //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
+                if (!self.stackToggled) {
+                    const query = val ? undefined : '1=2';
+                    const keys = Object.keys(self.toggleList);
+                    if (self.block.proxyWrapper.state === 'rv-loaded') {
+                        //only update if currently selected...otherwise causes all sorts of race conditions
+                        if (self.block.isSelected) {
+                            setTableDefinition(query, query);
+                        }
+                        keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                    } else {
+                        const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
+                            if (state === 'rv-loaded') {
+                                //only update if currently selected...otherwise causes all sorts of race conditions
+                                if (self.block.isSelected) {
+                                    setTableDefinition(query, query);
+                                }
+                                keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                                self.stackToggled = false;
+                                proxyLoaded();
+                            }
+                        });
+                    }
+                }
+                self.stackToggled = false;
+            });
+        }
+
+        // if the table is opened, set the table definition
+        if (self.block.selectedChanged) {
+            self.block.selectedChanged.subscribe(val => {
+                if (val) {
+                    // if invisible, all symbols should be off, if visibile and a definition query is defined display only those
+                    //if no definition query is defined display all symbols
+                    const query = !self.block.visibility ? '1=2'
+                        : self.block.symbDefinitionQuery ? self.block.symbDefinitionQuery
+                            : undefined;
+                    setTableDefinition(query, query);
+                }
+            });
+        }
+
+        self.onToggleClick = (name, setDefinitionQuery = true) => {
             self.toggleList[name].click();
 
             let defClause;
@@ -137,24 +191,27 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                     .join(' OR ');
             }
 
-            // add symbology query to block for table access
-            self.block.symbDefinitionQuery = defClause;
-
             // determine query definition based on symbology and table queries
             let fullDef = self.block.tableDefinitionQuery
-                        ? defClause
-                            ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
-                            : self.block.tableDefinitionQuery
-                        : defClause;
-
-            // apply to block so changes reflect on map
-            self.block.definitionQuery = fullDef;
+                ? defClause
+                    ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
+                    : self.block.tableDefinitionQuery
+                : defClause;
 
             // save `definitionClause` on layerRecord (do not delete important for accurate identify results)
             layerRecord.definitionClause = defClause;
 
-            // trigger event which table uses to update
-            events.$broadcast(events.rvSymbDefinitionQueryChanged);
+            // apply to block so changes reflect on map
+            if (setDefinitionQuery) {
+                setTableDefinition(fullDef, defClause);
+            }
+
+            if (noSymbolsVisible()) {
+                self.block.visibility = false;
+            } else if (self.block.visibility === false) {
+                self.stackToggled = true;
+                self.block.visibility = true;
+            }
         };
 
         const ref = {
@@ -235,6 +292,15 @@ function rvSymbologyStack($q, Geo, animationService, layerRegistry, stateManager
                             if (s.definitionClause) {
                                 // If the symbol doesn't have a query it shouldn't be a toggle symbol
                                 self.toggleList[s.name] = new ToggleSymbol(s);
+
+                                // toggle list gets generated each time block is reloaded, make sure check boxes and definition queries actually match the toggle list
+                                const query = self.block.visibility ? undefined : '1=2';
+                                const keys = Object.keys(self.toggleList);
+                                keys.forEach(key => {
+                                    if (self.toggleList[key].isSelected !== self.block.visibility) {
+                                        self.onToggleClick(key, false);
+                                    }
+                                });
                             }
                         });
                     });
@@ -793,7 +859,7 @@ function symbologyStack($q, ConfigObject, gapiService) {
             if (proxy) {
                 $q.resolve(proxy)
                     .then(proxy => (this._proxy = proxy))
-                    .catch(() => {}); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
+                    .catch(() => { }); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
             }
 
             this._renderStyle = renderStyle;
