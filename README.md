@@ -1,5 +1,7 @@
 # fgpv-vpgf
 
+### [V3 Documentation](https://ramp-docs.fgpv-vpgf.com/v3-doc-1023/#/) is progress!
+
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
