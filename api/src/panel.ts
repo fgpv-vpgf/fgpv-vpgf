@@ -226,7 +226,8 @@ export class PanelElem {
 
 class Btn extends PanelElem {
     constructor(scope: Panel, type?: string) {
-        super(scope, $('<md-button class="btn md-icon-button black rv-button-24"></md-button>'));
+        const buttonType = type === 'X' ? 'contentPane.aria.close' : 'toggle'; // TODO: add translation for toggle
+        super(scope, $(`<md-button class="btn md-icon-button black rv-button-24" aria-label="{{ '${buttonType}' | translate }}"></md-button>`));
         // close button
         if (type === 'X') {
             this.contents = `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`;
