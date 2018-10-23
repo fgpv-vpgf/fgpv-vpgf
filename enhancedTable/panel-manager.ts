@@ -1,5 +1,5 @@
 import { Grid } from 'ag-grid/main';
-import { SEARCH_TEMPLATE, MENU_TEMPLATE } from './templates';
+import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE } from './templates';
 import 'ag-grid/dist/styles/ag-grid.css';
 import './main.scss';
 
@@ -98,7 +98,13 @@ export class PanelManager {
         const searchBar = new this.panel.container(SEARCH_TEMPLATE);
         searchBar.element.css('float', 'right');
 
-        return [closeBtn, menuBtn, searchBar];
+        const clearFiltersBtn = new this.panel.container(CLEAR_FILTERS_TEMPLATE);
+        clearFiltersBtn.element.css('float', 'right');
+
+        const columnVisibilityMenuBtn = new this.panel.container(COLUMN_VISIBILITY_MENU_TEMPLATE);
+        columnVisibilityMenuBtn.element.css('float', 'right');
+
+        return [closeBtn, menuBtn, clearFiltersBtn, columnVisibilityMenuBtn, searchBar];
     }
 
     angularHeader() {
@@ -132,6 +138,64 @@ export class PanelManager {
             // export button has been clicked
             this.export = function() {
                 that.onBtnExport();
+            };
+        });
+
+        this.mapApi.agControllerRegister('ClearFiltersCtrl', function() {
+            // clear all column filters
+            this.clearFilters = function() {
+                that.tableOptions.api.setFilterModel(null);
+            };
+
+            // determine if any column filters are present
+            this.anyFilters = function() {
+                return that.tableOptions.api.isAdvancedFilterPresent();
+            }
+        });
+
+        this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function() {
+            this.columns = that.tableOptions.columnDefs;
+            this.columnVisibilities = this.columns.map(element => ({id: element.field, title: element.headerName, visibility: true}));
+
+            that.tableOptions.onGridReady = () => {
+                const columns = that.tableOptions.columnApi.getAllDisplayedColumns();
+                this.autoSizeToMaxWidth(columns);
+            };
+
+            // toggle column visibility
+            this.toggleColumn = function(col) {
+                col.visibility = !col.visibility;
+                that.tableOptions.columnApi.setColumnVisible(col.id, col.visibility);
+
+                // on showing a column resize to autowidth then shrink columns that are too wide
+                const columns = that.tableOptions.columnApi.getAllDisplayedColumns();
+                if (col.visibility) {
+                    this.autoSizeToMaxWidth(columns);
+                }
+
+                // fit columns widths to table if there's empty space
+                const panel = that.tableOptions.api.gridPanel;
+                const availableWidth = panel.getWidthForSizeColsToFit();
+                const usedWidth = panel.columnController.getWidthOfColsInList(columns);
+                if (usedWidth < availableWidth) {
+                    that.tableOptions.api.sizeColumnsToFit();
+                }
+            };
+
+            /**
+             * Auto size all columns but check the max width
+             * Note: Need a custom function here since setting maxWidth prevents
+             *       `sizeColumnsToFit()` from filling the entire panel width
+            */
+            this.autoSizeToMaxWidth = function(columns) {
+                const maxWidth = 400;
+
+                that.tableOptions.columnApi.autoSizeColumns(columns);
+                columns.forEach(c => {
+                    if (c.actualWidth > maxWidth) {
+                        that.tableOptions.columnApi.setColumnWidth(c, maxWidth);
+                    }
+                });
             };
         });
     }
