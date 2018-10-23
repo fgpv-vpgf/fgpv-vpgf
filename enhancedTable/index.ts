@@ -4,6 +4,7 @@ import { PanelManager } from './panel-manager';
 
 class TableBuilder {
     intention = 'table';
+    attributeHeaders: any;
 
     init(mapApi: any) {
         this.mapApi = mapApi;
@@ -11,9 +12,13 @@ class TableBuilder {
 
         this.mapApi.layers.click.subscribe(baseLayer => {
             const attrs = baseLayer.getAttributes();
+            this.attributeHeaders = baseLayer.attributeHeaders;
             if (attrs.length === 0) {
+                // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    this.createTable(attrs);
+                    if (attrs.attributes[0]['rvSymbol'] !== undefined && attrs.attributes[0]['rvInteractive'] !== undefined) {
+                        this.createTable(attrs);
+                    }
                 });
             } else {
                 this.createTable({
@@ -25,10 +30,38 @@ class TableBuilder {
     }
 
     createTable(attrBundle: AttrBundle) {
-        const cols = Object.keys(attrBundle.attributes[0]).map(columnName => ({
-            headerName: columnName,
-            field: columnName
-        }));
+
+        let cols: Array<any> = [];
+
+        Object.keys(attrBundle.attributes[0]).forEach(columnName => {
+            if (columnName !== 'rvSymbol' && columnName !== 'rvInteractive') {
+                cols.push({
+                    headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                    headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                    field: columnName
+                })
+            }
+            else if (columnName === 'rvSymbol') {
+                cols = [
+                    {
+                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        field: columnName,
+                        cellRenderer: function (cellImg) {
+                            return cellImg.value;
+                        }
+                    },
+                    ...cols
+                ];
+            }
+            else {
+                cols = [{
+                    headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                    headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                    field: columnName
+                }, ...cols];
+            }
+        });
 
         (<any>Object).assign(this.tableOptions, {
             columnDefs: cols,
