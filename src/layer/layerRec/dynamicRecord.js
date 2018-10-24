@@ -731,7 +731,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             const objId = unAliasAtt[lData.oidField];
                             const objIdStr = objId.toString();
 
-                            // TODO traditionally, we did not pass fields into attributesToDetails as data was
+                            // TODO: traditionally, we did not pass fields into attributesToDetails as data was
                             //      already aliased from the server. now, since we are extracting field type as
                             //      well, this means things like date formatting might not be applied to
                             //      identify results. examine the impact of providing the fields parameter
@@ -739,7 +739,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             let svg = this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer);
 
                             //if the current svg is a valid symbology to be identified, push its data into identifyResult
-                            if (validSymbologies.indexOf(svg) !== -1) {
+                            // TODO: replace Safari only `ns1:href` attributes with regular links before trying to match against the results
+                            if (validSymbologies.indexOf(svg.replace(/ns1:href/gi, 'xlink:href')) !== -1) {
                                 identifyResult.data.push({
                                     name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
                                     data: this.attributesToDetails(ele.feature.attributes, lData.fields),
