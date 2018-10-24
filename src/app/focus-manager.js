@@ -18,7 +18,7 @@ const focusSelector = [
     'md-select:not([disabled])',
     'md-checkbox:not([disabled])',
     'md-switch:not([disabled])',
-    'md-slider:not([disabled])',
+    'md-slider:not([disabled]) > div',
     'textarea:not([disabled])',
     'button:not([disabled]):not([nofocus])',
     '.rv-esri-map',
