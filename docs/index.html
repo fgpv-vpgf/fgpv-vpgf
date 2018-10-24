@@ -18,26 +18,22 @@
     docute.init({
         nav: [
             {title: 'Home', path: '/'},
-            {title: 'Using the map', type: 'dropdown', items: [
-                {title: 'On a webpage', path: '/user/index'},
-                {title: 'Configuration', path: '/user/working_examples'}
+            {title: 'Map authoring guide', type: 'dropdown', items: [
+                {title: 'Introduction', path: '/mapauthor/intro'},
+                {title: 'Configuration', path: '/mapauthor/working_examples'},
+                {title: 'Setup on a webpage', path: '/mapauthor/working_examples'}
             ]},
-            {title: 'API', type: 'dropdown', items: [
-                {title: 'An Introduction', path: '/api/welcome'},
-                {title: 'Core extensions', path: '/api/core-extensions'},
-                {title: 'Technical Documentation', path: `${url}api/developer`}
+            {title: 'Developer Guide', type: 'dropdown', items: [
+                {title: 'Introduction', path: '/developer/intro'},
+                {title: 'API', path: '/developer/api'},
+                {title: 'Plugins', path: '/developer/plugins'},
+                {title: 'Technical Documentation', path: `${url}developer/api/tech_docs`}
             ]},
-            {title: 'Plugins', type: 'dropdown', items: [
-                {title: 'Intro', path: '/plugins/intro'},
-                {title: 'Intentions', path: '/plugins/intentions'},
-                {title: 'Extensions', path: '/plugins/extensions'}
-            ]},
-            {title: 'Developer Documenation', type: 'dropdown', items: [
-                {title: 'An overview', path: '/developer/getting_started'},
-                {title: 'How to contribute', path: '/developer/contributing_guide'},
-                {title: 'Writing extensions', path: '/developer/plugins'},
-                {title: 'Technical JSDocs', path: `${url}developer/jsDocs/`},
-                {title: 'Release Tutorial', path: '/developer/release_tutorial'}
+            {title: 'Contributing to RAMP', type: 'dropdown', items: [
+                {title: 'Getting started', path: '/contribute/getting_started'},
+                {title: 'How to contribute', path: '/contribute/contributing_guide'},
+                {title: 'Technical JSDocs', path: `${url}contribute/jsDocs/`},
+                {title: 'Release Tutorial', path: '/contribute/release_tutorial'}
             ]}
         ],
         plugins: [],
