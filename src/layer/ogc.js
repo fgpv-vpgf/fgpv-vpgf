@@ -57,6 +57,15 @@ function getFeatureInfoBuilder(esriBundle) {
             INFO_FORMAT: mimeType
         };
 
+        // apply any custom parameters (ignore styles for the moment)
+        if (wmsLayer.customLayerParameters) {
+            Object.keys(wmsLayer.customLayerParameters).forEach(key => {
+                if (key.toLowerCase() !== 'styles') {
+                    settings[key] = wmsLayer.customLayerParameters[key];
+                }
+            });
+        }
+
         Object.keys(settings).forEach(key => req[key] = settings[key]);
 
         return Promise.resolve(esriBundle.esriRequest({
