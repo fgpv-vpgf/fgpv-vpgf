@@ -1,6 +1,5 @@
-# fgpv-vpgf
+### [V3 Documentation](https://ramp-docs.fgpv-vpgf.com/v3-doc-1024/#/) is in progress!
 
-### [V3 Documentation](https://ramp-docs.fgpv-vpgf.com/v3-doc-1023/#/) is progress!
 
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -20,10 +19,10 @@ Requirements:
 
 Running a local build:
 
-0. Checkout the repo
-0. Switch to the develop branch (master is for stable, released code)
-0. Run `npm install` to install dependencies
-0. Run `npm run serve` to build and launch a dev server
+1. Checkout the repo
+2. Switch to the develop branch (master is for stable, released code)
+3. Run `npm install` to install dependencies
+4. Run `npm run serve` to build and launch a dev server
 
 We use a fork and pull model for contributions, see our [contributing guidelines](https://github.com/fgpv-vpgf/fgpv-vpgf/blob/develop/CONTRIBUTING.md) for more details.
 
