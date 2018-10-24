@@ -13,6 +13,42 @@ export const SEARCH_TEMPLATE = `
 <span class="rv-table-divider"></span>
 `;
 
+export const CLEAR_FILTERS_TEMPLATE = `
+<md-button
+        ng-controller="ClearFiltersCtrl as ctrl"
+        aria-label="{{ 'filter.table.clear.tooltip' | translate }}"
+        class="md-icon-button black"
+        rv-help="table-clear-button"
+        ng-click="ctrl.clearFilters()"
+        ng-disabled="!ctrl.anyFilters()">
+        <md-tooltip>{{ 'filter.table.clear.tooltip' | translate }}</md-tooltip>
+        <md-icon md-svg-src="community:filter-remove"></md-icon>
+</md-button>
+`;
+
+export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
+<md-menu-bar ng-controller="ColumnVisibilityMenuCtrl as ctrl">
+    <md-menu md-position-mode="target-right target">
+
+        <md-button
+            aria-label="Menu"
+            class="md-icon-button black rv-button-24"
+            ng-click="$mdOpenMenu($event)">
+            <md-icon md-svg-src="community:format-list-checks"></md-icon>
+        </md-button>
+
+        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="4">
+            <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
+                <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }} " md-prevent-menu-close="md-prevent-menu-close">
+                    {{col.title}}
+                    <md-icon md-svg-icon="action:done" ng-if="col.visibility"></md-icon>
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>
+`;
+
 export const MENU_TEMPLATE = `
 <md-menu-bar ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
