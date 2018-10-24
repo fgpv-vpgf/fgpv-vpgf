@@ -155,7 +155,7 @@ export class PanelManager {
 
         this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function() {
             this.columns = that.tableOptions.columnDefs;
-            this.columnVisibilities = this.columns.map(element => ({id: element.field, title: element.headerName, visibility: true}));
+            this.columnVisibilities = this.columns.filter(element => element.headerName).map(element => ({id: element.field, title: element.headerName, visibility: true}));
 
             that.tableOptions.onGridReady = () => {
                 const columns = that.tableOptions.columnApi.getAllDisplayedColumns();

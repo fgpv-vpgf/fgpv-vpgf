@@ -1,6 +1,7 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
+import { ComponentResolver } from 'node_modules/ag-grid/dist/lib/components/framework/componentResolver';
 
 class TableBuilder {
     intention = 'table';
@@ -16,12 +17,9 @@ class TableBuilder {
             if (attrs.length === 0) {
                 // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    if (
-                        attrs.attributes[0]['rvSymbol'] !== undefined &&
-                        attrs.attributes[0]['rvInteractive'] !== undefined
-                    ) {
-                        this.createTable(attrs);
-                    }
+                    setTimeout( () => {
+                            this.createTable(attrs);
+                    }, 0);
                 });
             } else {
                 this.createTable({
@@ -45,8 +43,8 @@ class TableBuilder {
             } else if (columnName === 'rvSymbol') {
                 cols = [
                     {
-                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        headerName: '',
+                        headerTooltip: '',
                         field: columnName,
                         cellRenderer: function(cellImg) {
                             return cellImg.value;
@@ -54,15 +52,13 @@ class TableBuilder {
                     },
                     ...cols
                 ];
-            } else {
-                cols = [
-                    {
-                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        field: columnName
-                    },
-                    ...cols
-                ];
+            }
+            else {
+                cols = [{
+                    headerName: '',
+                    headerTooltip: '',
+                    field: columnName
+                }, ...cols];
             }
         });
 
