@@ -1,125 +1,286 @@
-Plugins allow viewer functionality to be added or modified. On a high level there are three kinds of plugins:
+Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible. 
 
-1. {@tutorial core_plugins}
+## The basics
 
-  Contain common functionality needed by many users. They are created and maintained by us. It comes bundled with the viewer code - no additional files need to be loaded.
+Let's begin with an example of the RAMP viewer and three imaginary plugins:
 
-2. {@tutorial external_plugins}
+1. an enhanced data table which replaces the default RAMP simple data table.
+2. a static north compass icon.
+3. a box with text, showing the latitude and longitude of the users mouse.
 
-  Not bundled with the viewer code - needs to be loaded manually before use. Can be created and maintained by us, third party developers, or yourself!
+<p align="center">
+  ![](assets/images/plugins/plugin-example.png)Figure 1.
+</p>
 
-3. {@tutorial base_plugins}
+All three plugins share a similar code structure, make use of the RAMP API, and perform custom DOM operations. Next we'll explore how plugin code is structured with a coding example.
 
-  Are more 'abstract' in that they don't do anything useful right off the bat. They are an interface between external and core plugins to the viewer and therefore contain all the code needed to make a plugin. In fact, all plugins must extend a base plugin.
+## Structure
 
-## Registering a plugin
+Plugins can be as simple as a few lines of code to hundreds or thousands. We'll write a basic plugin that displays an alert box with lat/lon coordinates whenever the user clicks on the map.
 
-A plugin is registered to a specific viewer instance. If there is more than one viewer on the page with each one needing a specific plugin, you'll need to register a plugin for every viewer instance.
-
-This is how you register a plugin:
+#### MyPlugin.js
 ```js
-RV.getMap('fgp').registerPlugin(HelloWorldPlugin, 'The viewer id is {0}');
-```
+var api;
+window.MyPlugin = {
+    init(rampApi) {
+        api = rampApi;
+        listenToAlert();
+    },
 
-We call `registerPlugin` on the viewer instance, passing the plugin class reference as the first parameter. Note that we do not instantiate the plugin here, the viewer will do this for us.
-
-We can also pass zero or more other parameters, these will be passed to our plugins `init` method untouched. For now just ignore the string `'The viewer id is {0}'` in the above example, this will be explained in more detail below.
-
-## HelloWorldPlugin example
-
-In this example we'll create a plugin which adds a link to the left menu of the viewer and displays an alert box when clicked. Our alert box will also contain the viewers id to give you a feel for accessing the API. Don't worry if you don't understand what's happening at first, it will make more sense as you read on.
-
-```js
->> HelloWorldPlugin.js
-
-class HelloWorldPlugin extends RV.Plugins.MenuItem {
-  init (alertText) {
-     // replace the {0} in our string with the viewers id
-     this.alertText = alertText.format(this.api.appInfo.id);
-  }
-  // set the link text that will appear in the left side menu
-  get name () {
-    return 'Hello World Button';
-  }
-  // show the alert when the link is clicked
-  get action () {
-    return () => alert(this.alertText);
-  }
+    listenToAlert() {
+        api.click.subscribe(function(pointObject) {
+            alert('You clicked on point ' + pointObject.x + ' ' + pointObject.y);
+        });
+    }
 }
 ```
 
-`class HelloWorldPlugin extends RV.Plugins.MenuItem`
+Inside our `MyPlugin.js` file a JavaScript object is defined on the browsers window object named **MyPlugin**. We'll make use of this later when it's time to register our plugin with RAMP.
 
-> We create a class named `HelloWorldPlugin`. Notice that we extend it with `RV.Plugins.MenuItem`. This tells the viewer that our plugin will be creating a link in the left side menu. You can visit the {@tutorial base_plugins} wiki page for a full list of available base plugins and how to use them. The remainder of our plugin simply overrides some default properties of `MenuItem` so that it does what we want - to show an alert box!
+Inside our plugin object we define two methods, `init` and `listenToAlert`.
 
-`init (alertText) {`
+ - `init` gets called by RAMP with a copy of the RAMP API once it has successfully loaded. So when this method gets called we store the RAMP API in a variable named `api` for later use.
+ - `listenToAlert` contains the logic for listening to a map click and displaying an alert box. That's all there is to it!
 
-> The `init` method is special to all plugin types in that it is called when the plugin is initialized by the viewer. This is where we can add code that we want executed on plugin startup. We can add any number of parameters here, and as you saw above, we passed a string value when registering this plugin.
+<p class="tip">
+    If you use anything other than plain JavaScript (like TypeScript) be sure to compile it into JavaScript before including it on the host page. It's also a good idea to test your plugin in different browsers such as IE11, FireFox, and Chrome. 
+</p>
 
-`this.alertText = alertText.format(this.api.appInfo.id);`
+ ## Register
 
-> Here we're just setting a property of this class, namely `alertText` to whatever we passed in on plugin registration. The only twist - we replaced the occurance of '{0}' in our string with the viewers id. The viewers api is available via `this.api`, and in this case `appInfo.id` contains the viewer id. -- FIXME: Reference API here --
+Let's bring our example plugin to life in the RAMP viewer in two steps: 
 
-`get name () {`
+1. include `MyPlugin.js` in the same webpage as the RAMP viewer. 
+2. tell RAMP how to find the plugin by providing the pointer to our plugin object to the RAMP HTML element `rv-plugins`.
 
-> This is the text that appears in our link. In this example we return a string 'Hello World Button'. We could have also passed a translation key, see below for an example of this.
 
-`get action () {`
-
-> This function will be executed whenever someone clicks on our link, so it's the perfect place to put our alert box code.
-
-## Translations
-
-Some plugin properties like `name` in the above example can have translations. Let's extend the above example to include this functionality. First we create a translation object:
-
-```js
-const translations = {
-    'en-CA': {
-        helloButtonLabel: 'Hello World'
-    },
-
-    'fr-CA': {
-        helloButtonLabel: 'Bonjour Monde'
-    }
-};
+```html
+<html>
+    <head>
+        <script src="MyPlugin.js"></script>
+    </head>
+    
+    <body>
+        <div class="myMap" id="my-map" is="rv-map"
+            rv-config="myConfig.json"
+            rv-langs='["en-CA", "fr-CA"]'
+            rv-plugins="MyPlugin">
+        </div>
+    </body>
+</html>
 ```
 
-Each property of `translations` is a language key. In this example we will have an english and french translation denoted `en-CA` and `fr-CA` respectively. Within each language object we have keys which we'll use to identify the translation string as the value. Confused? Don't be! Watch and learn:
+<p align="center">
+  ![](assets/images/plugins/basic-plugin.png)
+</p>
 
-From the example above lets remove the `get name ()` method entirely, and instead we'll add two additional lines to the `init` method:
+Our plugin will now load and work when the viewer is opened in a browser!
+
+## Advanced Topics
+
+###  preInit(rampConfig) : Promise(any) | void;
+
+`preInit` is an optional method for the plugin object which is called before the `init` method and before the RAMP API is ready. This method accepts the RAMP configuration as a read-only object.
+
+There may be cases where you'd like to perform some asynchronous operations before the viewer loads. If you return a promise from this method RAMP will pause loading until it resolves into a value that evaluates to `true`. 
+
+Let's see this in action with an example:
 
 ```js
-this.name = 'helloButtonLabel'; // translation object key
-this.translations = translations; // give the plugin our translation object
-```
-
-That's all there is to it, your plugin will display the correct link text based on the current language of the map. Here is a full version with translations:
-
-```js
->> HelloWorldPlugin.js
-
-const translations = {
-    'en-CA': {
-        helloButtonLabel: 'Hello World'
+var config;
+window.MyPlugin = {
+    preInit(rampConfig) {
+        config = rampConfig; // store the config for later use
+        return new Promise(function(resolve) {
+            // do some async operations . . . 
+            resolve(true);
+        });
     },
 
-    'fr-CA': {
-        helloButtonLabel: 'Bonjour Monde'
-    }
-};
-
-class HelloWorldPlugin extends RV.Plugins.MenuItem {
-  init (alertText) {
-     // replace the {0} in our string with the viewers id
-     this.alertText = alertText.format(this.api.appInfo.id);
-     this.name = 'helloButtonLabel';
-     this.translations = translations;
-  }
-  // show the alert when the link is clicked
-  get action () {
-    return () => alert(this.alertText);
-  }
+    . . .
 }
 ```
 
-What about translating the alert text? Unfortunately this is not yet possible :-1:
+### intentions
+
+In Figure 1 above, the first plugin (denoted with a red border) is a special type of plugin called an **intention plugin**. These types of plugins are similar to regular plugins except:
+
+1. it can only be used to replace certain features of the ramp viewer
+2. there may be specific properties or methods (required or optional) that are unique to the feature of ramp you will be replacing
+
+The only required property for any type of intention plugin is `intention`. This tells RAMP that the plugin is an intention and which specific feature it will replace. Let's see what an intention plugin looks like with the following example that replaces the default way the RAMP viewer performs projection definition lookups:
+
+```js
+window.MyPlugin = {
+    intention: 'epsg',
+
+    lookup(epsgCode) {
+        return new Promise(function(resolve){
+            // perform proj4 style definition lookup
+            resolve(proj4);
+        }); 
+    }
+}
+```
+
+It is very similar in structure to a regular plugin. But how did we know to set the `intention` property to `epsg` and where did this `lookup` method come from? Recall that intention plugins can only replace certain features in the viewer. All replaceable features are documented with a name (in this case `epsg`) and any optional or required methods and properties (in this case `lookup`).
+
+<p class="tip">
+    Read through [the list of intentions](#list-of-intentions) at the bottom of this documentation to get familiar with the various types of features that can be replaced.
+</p>
+
+### translations
+
+It's a good idea to translate any text displayed to the user so the plugin text always matches the rest of the text in the ramp viewer. Luckily this process is simplified into two steps:
+
+1. provide a `translations` property on the plugin object
+2. replace the text in your HTML into translation references
+
+The follow example shows an English/French translation object:
+
+```js
+window.MyPlugin = {
+    translations: {
+        'en-CA': {
+            search: {
+                placeholder: 'Search table'
+            },
+            menu: {
+                split: 'Split View',
+                max: 'Maximize'
+            }
+
+        'fr-CA': {
+            search: {
+                placeholder: 'Texte à rechercher'
+            },
+            menu: {
+                split: 'Diviser la vue',
+                max: 'Agrandir'
+            }
+        }
+    }
+}
+```
+
+Note that the language qualifiers `en-CA` and `fr-CA` should match the `rv-langs` property on the RAMP viewer HTML element.
+
+Now in the plugin HTML we can replace all text with our translations:
+
+```html
+<h2>{{ 't.search.placeholder' | translate }}</h2>
+<div>
+    {{ 't.menu.split' | translate }}
+</div>
+```
+
+The double curly braces are part of AngularJS, though you don't need to know it to use translations. Just replace the parts after `t.` to match what's inside your translation object.
+
+### angular
+
+The RAMP viewer uses the <a href="https://angularjs.org/">v1.x AngularJS</a> framework along with <a href="https://material.angularjs.org/latest/">Angular Material</a> for UI components. This means you are free to use Angular Material components and as well as define your own custom Angular controllers. 
+
+#### register a custom controller
+The `rampAPI.agControllerRegister(controllerName, controllerFunction)` method allows you to define a custom angular controller. You call this method with the two required parameters:
+
+1. the name of your controller
+2. your controller function
+
+```js
+rampAPI.agControllerRegister('MySearchCtrl', function() {
+    this.searchValue = '';
+    . . .
+}
+```
+
+```html
+<div ng-controller="MySearchCtrl as ctrl">
+    <input ng-model="ctrl.searchText">
+    <md-button>An angular Material Button!</md-button>
+</div>
+```
+
+Now `this.searchValue` in the `MySearchCtrl` function will always have the same value as the input field! Also notice we used `md-button` in our html to match the look and feel of the rest of the viewer.
+
+#### compiling HTML
+
+AngularJS needs to be aware of your HTML in order to compile it. In most cases this is taken care of automatically when you place your HTML inside a panel using the RAMP API `Panel` functionality. You can also compile HTML manually by passing an `HTMLElement` to the jQuery function `$` on the RAMP API, such as:
+
+``` js
+var jQueryElem = rampAPI.$(htmlElem);
+```
+
+The contents of `htmlElem` will be compiled and returned as a jQuery object.
+
+
+### configuring your plugin
+
+You can choose how map authors can configure your plugin. Generally a simple javascript object can be defined with configuration information for most types of applications. You should avoid the use of the RAMP configuration file as a source for plugin configuration since the RAMP configuration file has a defined schema which would be broken if plugin configuration objects are added.
+
+## List of Intentions
+
+### epsg
+
+This feature is used when an unknown projection is encountered.
+
+#### Required Methods
+
+```ts
+// given a projection code, returns a promise that resolves to a proj4 string definition
+lookup: (code: string | number) => Promise<"proj4 string definition">
+```
+
+### geoSearch
+
+#### Required methods
+
+```ts
+GeoSearchUI(config: geoSearchConfig): geoSearchObject
+
+interface geoSearchConfig {
+    includeTypes: string | Array<string>,
+    excludeTypes: string | Array<string>,
+    language: string,
+    maxResults: number,
+    geoLocateUrl: string,
+    geoNameUrl: string
+}
+
+interface geoSearchObject {
+    query: (query: string) => Promise<Array<LocationObject>>,
+    fetchProvinces: () => Array<Provinces>,
+    fetchTypes: () => Array<Types>
+}
+
+interface LocationObject {
+    name: string,
+    bbox: Array<number>, // exactly 4 entries. Longitudes and latitudes respectively twice
+    type: {
+        name: string
+    },
+    position: Array<number>, // exactly 2 entries. Longitude and latitude respectively
+    location: {
+        city: string,
+        latitude: number,
+        longitude: number,
+        province: string
+    }
+}
+
+interface Provinces {
+    code: string,
+    abbr: string,
+    name: string
+}
+
+interface Types {
+    code: string,
+    name: string
+}
+```
+
+### table
+
+The default simple data table for displaying layer attribute data.
+
+There are no required or optional methods/properties.

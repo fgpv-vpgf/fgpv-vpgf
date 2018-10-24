@@ -1,1 +1,0 @@
-The above resources are technical guides to understanding more complex parts of the codebase. These guides are not a substitution for a thorough reading of the inline and API documentation. Instead they will focus on the overall code architecture.
