@@ -78,6 +78,7 @@ function legendServiceFactory(
             service.constructLegend(layers, newLegend);
 
             configService.getSync.map._legend = newLegend;
+            layerRegistry.synchronizeLayerOrder();
             $rootScope.$applyAsync();
         };
     });
@@ -634,7 +635,7 @@ function legendServiceFactory(
                             apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
                         }
 
-                        _addChildItemToAPI(apiLegendElement);
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
                     }
 
                     item.childs.forEach(child => _addChildBlock(child, legendBlock));
@@ -650,14 +651,14 @@ function legendServiceFactory(
 
                     if (!legendBlock.hidden) {
                         apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
-                        _addChildItemToAPI(apiLegendElement);
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
                     }
                 }
 
                 parentLegendGroup.addEntry(legendBlock);
 
-                function _addChildItemToAPI(apiLegendElement) {
-                    let parentElement = _getParentById(apiLegendElement.id);
+                function _addChildItemToAPI(apiLegendElement, parentBlock) {
+                    let parentElement = _findParentElement(parentBlock);
                     if (parentElement && parentElement.children) {
                         apiLegendElement.visibilityChanged.subscribe(() => {
                             const oldVisibility = parentElement.visibility;
@@ -1240,11 +1241,11 @@ function legendServiceFactory(
      *
      * @function _updateApiReloadedBlock
      * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
-     * @param {Array<LegendItem | LegendGroup>} list -the list of existing elements in the LegendAPI
      */
     function _updateApiReloadedBlock(reloadedBlock) {
         // Only run when the parent is ready on the reloadedBlock
         const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
+            layerRegistry.syncApiElementOrder();
             parent = parent.collapsed ? parent.parent : parent;
             const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
             const parentElement = parent.blockConfig === configService.getSync.map.legend.root ?
@@ -1257,17 +1258,23 @@ function legendServiceFactory(
 
             watchParent();
         });
+    }
 
-        /** Find and return the element with given parentBlock in the Legend API */
-        function _findParentElement(parentBlock, list = mApi.ui.configLegend.children) {
-            for (let element of list) {
-                if (element._legendBlock === parentBlock) {
-                    return element;
-                } else if (element.children) {
-                    const pElement = _findParentElement(parentBlock, element.children);
-                    if (pElement) {
-                        return pElement;
-                    }
+    /**
+     * Find and return the element with given parentBlock in the Legend API
+     *
+     * @function _findParentElement
+     * @param {LegendGroup} parentBlock block of parent to find
+     * @param {Array<LegendItem | LegendGroup>} list list of elements to search through
+     * */
+    function _findParentElement(parentBlock, list = mApi.ui.configLegend.children) {
+        for (let element of list) {
+            if (element._legendBlock === parentBlock) {
+                return element;
+            } else if (element.children) {
+                const pElement = _findParentElement(parentBlock, element.children);
+                if (pElement) {
+                    return pElement;
                 }
             }
         }

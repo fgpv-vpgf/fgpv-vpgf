@@ -21,6 +21,7 @@ const THROTTLE_TIMEOUT = 3000;
  */
 angular.module('app.geo').factory('layerRegistry', layerRegistryFactory);
 
+// eslint-disable-next-line max-statements
 function layerRegistryFactory(
     $rootScope,
     $filter,
@@ -48,6 +49,7 @@ function layerRegistryFactory(
         removeBoundingBoxRecord,
 
         synchronizeLayerOrder,
+        syncApiElementOrder,
         getRcsLayerIDs
     };
 
@@ -562,6 +564,8 @@ function layerRegistryFactory(
             mapBody.reorderLayer(highlightLayer, featureStackLastIndex);
         }
 
+        syncApiElementOrder();
+
         /**
          * A helper function which synchronizes a single sort group of layers between the layer selector and internal layer stack.
          *
@@ -608,6 +612,27 @@ function layerRegistryFactory(
         }
     }
 
+    /**
+     * A helper function which synchronizes the order of the api elements
+     *
+     * @function syncApiElementOrder
+     * @private
+     */
+    function syncApiElementOrder() {
+        const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
+        const legendElements = mapApi.ui.configLegend.children;
+        let reorderedElements = [];
+        legendEntries.forEach((entry, index) => {
+            entry = entry.collapsed ? entry.entries[0] : entry;
+            if (entry !== legendElements[index]._legendBlock) {
+                const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
+                if (element) {
+                    reorderedElements.push(legendElements[index]);
+                    legendElements[index] = element;
+                }
+            }
+        });
+    }
     /**
      * // TODO: make a wrapper for the bounding box layer
      *
