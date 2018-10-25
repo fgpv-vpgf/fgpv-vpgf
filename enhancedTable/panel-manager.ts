@@ -9,6 +9,7 @@ import './main.scss';
  * This class also contains custom angular controllers to enable searching, printing, exporting, and more from angular material panel controls.
  */
 export class PanelManager {
+
     constructor(mapApi: any) {
         this.mapApi = mapApi;
         this.tableContent = $(`<div rv-focus-exempt></div>`);
@@ -37,8 +38,8 @@ export class PanelManager {
         return text;
     }
 
+    // gets the updated row range to get as table is scrolled vertically (example "showing 1-10 of 50 entries")
     getScrollRange() {
-
         let rowRange: string;
         if (this.tableOptions.api) {
             const topPixel = this.tableOptions.api.getVerticalPixelRange().top;
@@ -46,10 +47,12 @@ export class PanelManager {
             let firstRow;
             let lastRow;
             this.tableOptions.api.getRenderedNodes().forEach(row => {
-                if (firstRow === undefined && row.rowTop >= topPixel) {
+                //if the top row is greater than the top pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
+                if (firstRow === undefined && row.rowTop > topPixel - (row.rowHeight / 2)) {
                     firstRow = parseInt(row.rowIndex) + 1;
                 }
-                if ((row.rowTop + row.rowHeight) <= bottomPixel) {
+                //if the bottom row is less than the bottom pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
+                if ((row.rowTop + row.rowHeight) < bottomPixel + (row.rowHeight / 2)) {
                     lastRow = parseInt(row.rowIndex) + 1;
                 }
             });
@@ -57,7 +60,7 @@ export class PanelManager {
             rowRange = firstRow.toString() + "-" + lastRow.toString();
         }
         else {
-            rowRange = '1-5'
+            rowRange = this.maximized ? '1-15' : '1-5';
         }
         if (this.panel.panelControls.find('.scrollRecords')[0]) {
             this.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
@@ -89,10 +92,9 @@ export class PanelManager {
 
             let controls = this.header;
             controls = [new this.panel.container('<span style="flex: 1;"></span>'), ...controls];
-            controls = [new this.panel.container(`<div><h2><b>Features: ${layer.name}</b></h2><br><p><span class="scrollRecords">${this.getScrollRange()}</span> of <span class="filterRecords">${this.getFilterStatus()}</span></div>`), ...controls];
+            controls = [new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${layer.name}</b></h2><br><p><span class="scrollRecords">${this.getScrollRange()}</span> of <span class="filterRecords">${this.getFilterStatus()}</span></div>`), ...controls];
             this.panel.controls = controls;
             this.panel.panelBody.css('padding-top', '16px');
-            this.panel.panelControls.css('padding-bottom', '30px');
             this.panel.panelControls.css('display', 'flex');
             this.panel.panelControls.css('align-items', 'center');
             this.currentTableLayer = layer;
