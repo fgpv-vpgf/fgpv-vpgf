@@ -474,8 +474,9 @@ export class ConfigLayer extends BaseLayer {
         if (attribs) {
             attribs
                 .then((attrib: AttribObject) => {
-                    // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
-                    if (this._attributeArray.length > 0) {
+
+                    // the attributes were previously downloaded or do not contain rvSymbol, do not reupdate the array and do not trigger `attributes_added`
+                    if (this._attributeArray.length > 0 || (attrib.features[0] && !(<any>attrib.features[0].attributes)['rvSymbol'])) {
                         return;
                     }
 
