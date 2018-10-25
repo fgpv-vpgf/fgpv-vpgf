@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "target": "es5",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/*", "enhancedTable/node_modules/*", "enhancedTable/node_modules/*"]
+        }
+    }
+}

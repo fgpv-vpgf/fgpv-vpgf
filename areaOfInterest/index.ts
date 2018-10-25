@@ -2,7 +2,7 @@ import { pinImg, hasPic, noPic } from './html-assets';
 
 class AreasOfInterest {
     preInit() {
-        this.config = Object.assign({}, (<any>window).aioConfig);
+        this.config = (<any>Object).assign({}, (<any>window).aioConfig);
 
         // standardize the configuration language titles for translation
         this.config.areas.forEach((area, i) => {

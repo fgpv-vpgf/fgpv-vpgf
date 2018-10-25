@@ -13,6 +13,6 @@
     "author": "Miles Petrov",
     "license": "ISC",
     "dependencies": {
-        "ag-grid": "18.1.2"
+        "ag-grid-community": "19.0.0"
     }
 }

@@ -1,4 +1,4 @@
-import { GridOptions, GridApi } from 'ag-grid/main';
+import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
 
@@ -16,7 +16,10 @@ class TableBuilder {
             if (attrs.length === 0) {
                 // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    if (attrs.attributes[0]['rvSymbol'] !== undefined && attrs.attributes[0]['rvInteractive'] !== undefined) {
+                    if (
+                        attrs.attributes[0]['rvSymbol'] !== undefined &&
+                        attrs.attributes[0]['rvInteractive'] !== undefined
+                    ) {
                         this.createTable(attrs);
                     }
                 });
@@ -30,7 +33,6 @@ class TableBuilder {
     }
 
     createTable(attrBundle: AttrBundle) {
-
         let cols: Array<any> = [];
 
         Object.keys(attrBundle.attributes[0]).forEach(columnName => {
@@ -39,27 +41,28 @@ class TableBuilder {
                     headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                     headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                     field: columnName
-                })
-            }
-            else if (columnName === 'rvSymbol') {
+                });
+            } else if (columnName === 'rvSymbol') {
                 cols = [
                     {
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
                         headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
                         field: columnName,
-                        cellRenderer: function (cellImg) {
+                        cellRenderer: function(cellImg) {
                             return cellImg.value;
                         }
                     },
                     ...cols
                 ];
-            }
-            else {
-                cols = [{
-                    headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                    headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                    field: columnName
-                }, ...cols];
+            } else {
+                cols = [
+                    {
+                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        field: columnName
+                    },
+                    ...cols
+                ];
             }
         });
 
