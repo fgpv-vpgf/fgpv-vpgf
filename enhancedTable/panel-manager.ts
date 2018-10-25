@@ -1,6 +1,6 @@
-import { Grid } from 'ag-grid/main';
+import { Grid } from 'ag-grid-community/main';
 import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE } from './templates';
-import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
 
 /**
@@ -123,6 +123,7 @@ export class PanelManager {
         this.mapApi.agControllerRegister('MenuCtrl', function() {
             this.appID = that.mapApi.id;
             this.maximized = that.maximized ? 'true' : 'false';
+            this.showFilter = !!that.tableOptions.floatingFilter;
 
             // sets the table size, either split view or full height
             this.setSize = function(value) {
@@ -138,6 +139,12 @@ export class PanelManager {
             // export button has been clicked
             this.export = function() {
                 that.onBtnExport();
+            };
+
+            // Hide filters button has been clicked
+            this.toggleFilters = function() {
+                that.tableOptions.floatingFilter = this.showFilter;
+                that.tableOptions.api.refreshHeader();
             };
         });
 

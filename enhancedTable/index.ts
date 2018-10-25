@@ -1,7 +1,6 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
-import { ComponentResolver } from 'node_modules/ag-grid/dist/lib/components/framework/componentResolver';
 
 class TableBuilder {
     intention = 'table';
@@ -17,9 +16,7 @@ class TableBuilder {
             if (attrs.length === 0) {
                 // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    setTimeout( () => {
-                            this.createTable(attrs);
-                    }, 0);
+                    this.createTable(attrs);
                 });
             } else {
                 this.createTable({
@@ -48,7 +45,9 @@ class TableBuilder {
                         field: columnName,
                         cellRenderer: function(cellImg) {
                             return cellImg.value;
-                        }
+                        },
+                        suppressSorting: true,
+                        suppressFilter: true
                     },
                     ...cols
                 ];
@@ -57,7 +56,9 @@ class TableBuilder {
                 cols = [{
                     headerName: '',
                     headerTooltip: '',
-                    field: columnName
+                    field: columnName,
+                    suppressSorting: true,
+                    suppressFilter: true
                 }, ...cols];
             }
         });
@@ -99,13 +100,20 @@ TableBuilder.prototype.translations = {
         search: {
             placeholder: 'Search table'
         },
+        table: {
+            filter: {
+                clear: 'Clear filters'
+            },
+            hideColumns: 'Hide columns'
+        },
         menu: {
             split: 'Split View',
             max: 'Maximize',
             print: 'Print',
             export: 'Export',
             filter: {
-                extent: 'Filter by extent'
+                extent: 'Filter by extent',
+                show: 'Show filters'
             }
         }
     },
@@ -113,13 +121,20 @@ TableBuilder.prototype.translations = {
         search: {
             placeholder: 'Texte à rechercher'
         },
+        table: {
+            filter: {
+                clear: 'Effacer les filtres'
+            },
+            hideColumns: 'Hide columns' // TODO: Add French translation
+        },
         menu: {
             split: 'Diviser la vue',
             max: 'Agrandir',
             print: 'Imprimer',
             export: 'Exporter',
             filter: {
-                extent: 'Filtrer par étendue'
+                extent: 'Filtrer par étendue',
+                show: 'Afficher les filtres'
             }
         }
     }
