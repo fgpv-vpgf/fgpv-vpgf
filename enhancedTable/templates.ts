@@ -16,12 +16,12 @@ export const SEARCH_TEMPLATE = `
 export const CLEAR_FILTERS_TEMPLATE = `
 <md-button
         ng-controller="ClearFiltersCtrl as ctrl"
-        aria-label="{{ 'filter.table.clear.tooltip' | translate }}"
+        aria-label="{{ 't.table.filter.clear' | translate }}"
         class="md-icon-button black"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
         ng-disabled="!ctrl.anyFilters()">
-        <md-tooltip>{{ 'filter.table.clear.tooltip' | translate }}</md-tooltip>
+        <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
         <md-icon md-svg-src="community:filter-remove"></md-icon>
 </md-button>
 `;
@@ -34,6 +34,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
             aria-label="Menu"
             class="md-icon-button black rv-button-24"
             ng-click="$mdOpenMenu($event)">
+            <md-tooltip>{{ 't.table.hideColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
 
@@ -74,6 +75,10 @@ export const MENU_TEMPLATE = `
 
             <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
                 {{ 't.menu.filter.extent' | translate }}
+            </md-menu-item>
+
+            <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">
+                {{ 't.menu.filter.show' | translate }}
             </md-menu-item>
 
             <md-menu-divider></md-menu-divider>

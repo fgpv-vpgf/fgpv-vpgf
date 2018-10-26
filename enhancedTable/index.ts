@@ -16,12 +16,7 @@ class TableBuilder {
             if (attrs.length === 0) {
                 // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    if (
-                        attrs.attributes[0]['rvSymbol'] !== undefined &&
-                        attrs.attributes[0]['rvInteractive'] !== undefined
-                    ) {
-                        this.createTable(attrs);
-                    }
+                    this.createTable(attrs);
                 });
             } else {
                 this.createTable({
@@ -45,24 +40,26 @@ class TableBuilder {
             } else if (columnName === 'rvSymbol') {
                 cols = [
                     {
-                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
+                        headerName: '',
+                        headerTooltip: '',
                         field: columnName,
                         cellRenderer: function(cellImg) {
                             return cellImg.value;
-                        }
+                        },
+                        suppressSorting: true,
+                        suppressFilter: true
                     },
                     ...cols
                 ];
-            } else {
-                cols = [
-                    {
-                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName] : '',
-                        field: columnName
-                    },
-                    ...cols
-                ];
+            }
+            else {
+                cols = [{
+                    headerName: '',
+                    headerTooltip: '',
+                    field: columnName,
+                    suppressSorting: true,
+                    suppressFilter: true
+                }, ...cols];
             }
         });
 
@@ -103,13 +100,20 @@ TableBuilder.prototype.translations = {
         search: {
             placeholder: 'Search table'
         },
+        table: {
+            filter: {
+                clear: 'Clear filters'
+            },
+            hideColumns: 'Hide columns'
+        },
         menu: {
             split: 'Split View',
             max: 'Maximize',
             print: 'Print',
             export: 'Export',
             filter: {
-                extent: 'Filter by extent'
+                extent: 'Filter by extent',
+                show: 'Show filters'
             }
         }
     },
@@ -117,13 +121,20 @@ TableBuilder.prototype.translations = {
         search: {
             placeholder: 'Texte à rechercher'
         },
+        table: {
+            filter: {
+                clear: 'Effacer les filtres'
+            },
+            hideColumns: 'Hide columns' // TODO: Add French translation
+        },
         menu: {
             split: 'Diviser la vue',
             max: 'Agrandir',
             print: 'Imprimer',
             export: 'Exporter',
             filter: {
-                extent: 'Filtrer par étendue'
+                extent: 'Filtrer par étendue',
+                show: 'Afficher les filtres'
             }
         }
     }
