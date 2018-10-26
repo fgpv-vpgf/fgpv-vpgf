@@ -127,7 +127,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             events.$broadcast(events.rvSymbDefinitionQueryChanged);
         }
 
-        if (self.block.visibilityChanged) {
+        if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
             self.block.visibilityChanged.subscribe(val => {
                 //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
@@ -138,6 +138,9 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         //only update if currently selected...otherwise causes all sorts of race conditions
                         if (self.block.isSelected) {
                             setTableDefinition(query, query);
+                        } else {
+                            //update only map if not selected
+                            self.block.definitionQuery = query;
                         }
                         keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                     } else {
@@ -146,6 +149,9 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 //only update if currently selected...otherwise causes all sorts of race conditions
                                 if (self.block.isSelected) {
                                     setTableDefinition(query, query);
+                                } else {
+                                    // update only map if not selected
+                                    self.block.definitionQuery = query;
                                 }
                                 keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                                 self.stackToggled = false;
@@ -159,14 +165,21 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         // if the table is opened, set the table definition
-        if (self.block.selectedChanged) {
+        if (self.block && self.block.selectedChanged) {
             self.block.selectedChanged.subscribe(val => {
                 if (val) {
-                    // if invisible, all symbols should be off, if visibile and a definition query is defined display only those
-                    //if no definition query is defined display all symbols
-                    const query = !self.block.visibility ? '1=2'
-                        : self.block.symbDefinitionQuery ? self.block.symbDefinitionQuery
-                            : undefined;
+                    let query;
+                    if (!self.block.visibility) {
+                        // if block is invisibile, table should have no entries
+                        query = '1=2';
+                    } else if (self.block.symbDefinitionQuery && self.block.symbDefinitionQuery !== '1=2') {
+                        // if symbDefinitionQuery is defined then set table to definition query
+                        // leaves out case where === '1=2' to account for a block that was just made visible
+                        query = self.block.symbDefinitionQuery;
+                    } else {
+                        // all entries will be visible
+                        query = undefined;
+                    }
                     setTableDefinition(query, query);
                 }
             });
