@@ -139,6 +139,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         if (self.block.isSelected) {
                             setTableDefinition(query, query);
                         }
+                        //update only map if not selected
+                        else{
+                            self.block.definitionQuery = query;
+                        }
                         keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                     } else {
                         const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
@@ -146,6 +150,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 //only update if currently selected...otherwise causes all sorts of race conditions
                                 if (self.block.isSelected) {
                                     setTableDefinition(query, query);
+                                }
+                                // update only map if not selected
+                                else {
+                                    self.block.definitionQuery = query;
                                 }
                                 keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                                 self.stackToggled = false;
