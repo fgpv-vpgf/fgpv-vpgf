@@ -127,7 +127,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             events.$broadcast(events.rvSymbDefinitionQueryChanged);
         }
 
-        if (self.block.visibilityChanged) {
+        if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
             self.block.visibilityChanged.subscribe(val => {
                 //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
@@ -139,6 +139,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         if (self.block.isSelected) {
                             setTableDefinition(query, query);
                         }
+                        //update only map if not selected
+                        else{
+                            self.block.definitionQuery = query;
+                        }
                         keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                     } else {
                         const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
@@ -146,6 +150,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 //only update if currently selected...otherwise causes all sorts of race conditions
                                 if (self.block.isSelected) {
                                     setTableDefinition(query, query);
+                                }
+                                // update only map if not selected
+                                else {
+                                    self.block.definitionQuery = query;
                                 }
                                 keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                                 self.stackToggled = false;
@@ -159,7 +167,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         // if the table is opened, set the table definition
-        if (self.block.selectedChanged) {
+        if (self.block && self.block.selectedChanged) {
             self.block.selectedChanged.subscribe(val => {
                 if (val) {
                     // if invisible, all symbols should be off, if visibile and a definition query is defined display only those
