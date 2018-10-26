@@ -1,9 +1,9 @@
 // adjust the icons path
-$icons-path: "./node_modules/ag-grid-community/src/styles/material-icons/";
+$icons-path: './node_modules/ag-grid-community/src/styles/material-icons/';
 
 // Set the colors
-$primary-color: #607D8B;
-$accent-color: #00BCD4;
+$primary-color: #607d8b;
+$accent-color: #00bcd4;
 
 // Import the ag-Grid material theme
-@import "ag-grid-community/src/styles/ag-theme-material.scss";
+@import 'ag-grid-community/src/styles/ag-theme-material';

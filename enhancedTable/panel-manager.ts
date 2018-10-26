@@ -1,4 +1,4 @@
-import { Grid } from 'ag-grid-community/main';
+import { Grid } from 'ag-grid-community';
 import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE } from './templates';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
@@ -12,7 +12,7 @@ export class PanelManager {
     constructor(mapApi: any) {
         this.mapApi = mapApi;
         this.tableContent = $(`<div rv-focus-exempt></div>`);
-        this.panel = this.mapApi.createPanel(this.id);
+        this.panel = this.mapApi.createPanel('enhancedTable');
 
         this.setSize();
         this.panel.panelBody.addClass('ag-theme-material');
@@ -157,12 +157,14 @@ export class PanelManager {
             // determine if any column filters are present
             this.anyFilters = function() {
                 return that.tableOptions.api.isAdvancedFilterPresent();
-            }
+            };
         });
 
         this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function() {
             this.columns = that.tableOptions.columnDefs;
-            this.columnVisibilities = this.columns.filter(element => element.headerName).map(element => ({id: element.field, title: element.headerName, visibility: true}));
+            this.columnVisibilities = this.columns
+                .filter(element => element.headerName)
+                .map(element => ({ id: element.field, title: element.headerName, visibility: true }));
 
             that.tableOptions.onGridReady = () => {
                 const columns = that.tableOptions.columnApi.getAllDisplayedColumns();
@@ -193,7 +195,7 @@ export class PanelManager {
              * Auto size all columns but check the max width
              * Note: Need a custom function here since setting maxWidth prevents
              *       `sizeColumnsToFit()` from filling the entire panel width
-            */
+             */
             this.autoSizeToMaxWidth = function(columns) {
                 const maxWidth = 400;
 
@@ -213,7 +215,7 @@ export interface PanelManager {
     mapApi: any;
     tableContent: JQuery<HTMLElement>;
     _id: string;
-    currentTableLayer: any,
+    currentTableLayer: any;
     maximized: boolean;
     tableOptions: any;
 }

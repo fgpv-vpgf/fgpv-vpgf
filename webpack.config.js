@@ -43,7 +43,7 @@ module.exports = function(env = {}) {
         ],
 
         devServer: {
-            host: '0.0.0.0',
+            host: 'localhost',
             https: !!env.https,
             publicPath: '/dist/',
             contentBase: [
