@@ -1,4 +1,4 @@
-var page = require('./page');
+const page = require('./enhancedTable.page');
 
 describe('the enhancedTable panel', function() {
     beforeAll(function() {
@@ -6,6 +6,6 @@ describe('the enhancedTable panel', function() {
     });
 
     it('should open when a layer is clicked', function() {
-        expect(page.panel.isExisting()).toEqual(true);
+        expect(page.panel.waitForExist(3000)).toEqual(true);
     });
 });
