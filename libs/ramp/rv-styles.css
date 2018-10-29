@@ -21187,7 +21187,7 @@ Obviously you need some kind of rules and criteria:
         max-width: 24px; }
   [is=rv-map] .panel-controls, .fgpv .panel-controls {
     padding: 4px 12px 4px 18px;
-    height: 48px;
+    height: 55px;
     overflow: hidden; }
     [is=rv-map] .panel-controls .md-icon-button, .fgpv .panel-controls .md-icon-button {
       width: 24px;
