@@ -17,7 +17,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
 <md-button
         ng-controller="ClearFiltersCtrl as ctrl"
         aria-label="{{ 't.table.filter.clear' | translate }}"
-        class="md-icon-button black"
+        class="md-icon-button black rv-button-24"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
         ng-disabled="!ctrl.anyFilters()">

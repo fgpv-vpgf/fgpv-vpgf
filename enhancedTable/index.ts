@@ -16,7 +16,9 @@ class TableBuilder {
             if (attrs.length === 0) {
                 // make sure all attributes are added before creating the table (otherwise table displays without svgs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    this.createTable(attrs);
+                    if (attrs.attributes[0] && attrs.attributes[0]['rvSymbol'] !== undefined && attrs.attributes[0]['rvInteractive'] !== undefined) {
+                        this.createTable(attrs);
+                    }
                 });
             } else {
                 this.createTable({
@@ -29,21 +31,35 @@ class TableBuilder {
 
     createTable(attrBundle: AttrBundle) {
         let cols: Array<any> = [];
+        let firstColPopulated: boolean = false;
 
         Object.keys(attrBundle.attributes[0]).forEach(columnName => {
             if (columnName !== 'rvSymbol' && columnName !== 'rvInteractive') {
-                cols.push({
-                    headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                    headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                    field: columnName
-                });
-            } else if (columnName === 'rvSymbol') {
+                if (!firstColPopulated) {
+                    firstColPopulated = true;
+                    //the first column will have a default sort indicator
+                    cols.push({
+                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        field: columnName,
+                        sort: 'asc'
+                    })
+                }
+                else {
+                    cols.push({
+                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        field: columnName
+                    })
+                }
+            }
+            else if (columnName === 'rvSymbol') {
                 cols = [
                     {
                         headerName: '',
                         headerTooltip: '',
                         field: columnName,
-                        cellRenderer: function(cellImg) {
+                        cellRenderer: function (cellImg) {
                             return cellImg.value;
                         },
                         suppressSorting: true,
