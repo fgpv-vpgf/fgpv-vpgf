@@ -2,15 +2,29 @@
 
 This repo contains plugins for the RAMP viewer built by the core team.
 
-## Installing/Updating node_modules
+## Contributing
 
-This repo contains a master **node_modules** folder as well as an individual one for each plugin to keep things tidy. Run the command `npm run update` to install/update all module folders.
+We use the fork and pull model for contributions. Commits pushed to your forked repo are built using travis-ci.org and deployed as a GitHub page.
+
+For example, commit `5ea8ac3126957a8d2999ea4f9fed209e6080b935` would be deployed to https://your_github_username.github.io/plugins/5ea8ac3126957a8d2999ea4f9fed209e6080b935
+
+Steps to get started:
+
+1. Fork this repo
+2. Run `npm run init`
+3. Create a **personal access token** on GitHub with the `repo` top level scope selected.
+4. Sign in to travis-ci.org with your GitHub account
+5. Activate travis on the forked repo by visiting https://travis-ci.org/your_github_username/plugins
+6. On the travis settings page (https://travis-ci.org/your_github_username/plugins/settings) create an environment variable named `GITHUB_TOKEN` and the value being your GitHub access token.
+    > travis-ci uses this token to deploy the build back to your forked repo. It is not accessible outside of travis-ci
+
+This repo contains a master **node_modules** folder as well as an individual one for each plugin to keep things tidy. Run the command `npm run update` often to install/update all module folders.
 
 ## Run code locally with sample files
 
 `npm run serve` will start the dev server. Open a browser and input address **http://localhost:6001**.
 
-Any static file in `areaOfInterest/samples`, `enhancedTable/samples`, or `libs` can be accessed by appending its name to the url, such as **http://localhost:6001/et-index.html**.
+Example: **http://http://localhost:6001/enhancedTable/samples/et-index.html**.
 
 ## Run local selenium test suite
 

@@ -5,7 +5,8 @@
     "scripts": {
         "build": "webpack",
         "serve": "webpack-dev-server --progress --hot",
-        "update": "(cd ./areaOfInterest && npm i) && (cd ../enhancedTable && npm i) && (cd ../ && npm i && bash ./node_modules/.bin/selenium-standalone install)",
+        "update": "(cd ./areaOfInterest && npm i) && (cd ./enhancedTable && npm i) && (npm i)",
+        "init": "npm run update && bash ./node_modules/.bin/selenium-standalone install",
         "test": "bash ./node_modules/.bin/wdio wdio.conf.js"
     },
     "repository": {
@@ -25,6 +26,7 @@
     "devDependencies": {
         "@types/jquery": "3.3.22",
         "chromedriver": "2.43.0",
+        "copy-webpack-plugin": "4.5.4",
         "css-loader": "1.0.0",
         "mini-css-extract-plugin": "0.4.4",
         "node-sass": "4.9.4",

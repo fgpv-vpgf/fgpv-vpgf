@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const SOURCE_PATH = path.join(__dirname, '.');
@@ -39,18 +40,21 @@ module.exports = function(env = {}) {
         plugins: [
             new MiniCssExtractPlugin({
                 filename: './[name]/[name].css'
-            })
+            }),
+
+            new CopyWebpackPlugin([
+                {
+                    from: '*/samples/*.+(html|json)'
+                },
+                {
+                    from: 'libs/ramp'
+                }
+            ])
         ],
 
         devServer: {
             host: 'localhost',
             https: !!env.https,
-            publicPath: '/dist/',
-            contentBase: [
-                path.join(__dirname, 'enhancedTable/samples'),
-                path.join(__dirname, 'areaOfInterest/samples'),
-                path.join(__dirname, 'libs')
-            ],
             disableHostCheck: true,
             port: 6001,
             stats: { colors: true },

@@ -14,9 +14,13 @@ class TableBuilder {
             const attrs = baseLayer.getAttributes();
             this.attributeHeaders = baseLayer.attributeHeaders;
             if (attrs.length === 0) {
-                // make sure all attributes are added before creating the table (otherwise table displays without svgs)
+                // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    if (attrs.attributes[0] && attrs.attributes[0]['rvSymbol'] !== undefined && attrs.attributes[0]['rvInteractive'] !== undefined) {
+                    if (
+                        attrs.attributes[0] &&
+                        attrs.attributes[0]['rvSymbol'] !== undefined &&
+                        attrs.attributes[0]['rvInteractive'] !== undefined
+                    ) {
                         this.createTable(attrs);
                     }
                 });
@@ -40,26 +44,28 @@ class TableBuilder {
                     //the first column will have a default sort indicator
                     cols.push({
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName]
+                            ? this.attributeHeaders[columnName]['name']
+                            : '',
                         field: columnName,
                         sort: 'asc'
-                    })
-                }
-                else {
+                    });
+                } else {
                     cols.push({
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName]
+                            ? this.attributeHeaders[columnName]['name']
+                            : '',
                         field: columnName
-                    })
+                    });
                 }
-            }
-            else if (columnName === 'rvSymbol') {
+            } else if (columnName === 'rvSymbol') {
                 cols = [
                     {
                         headerName: '',
                         headerTooltip: '',
                         field: columnName,
-                        cellRenderer: function (cellImg) {
+                        cellRenderer: function(cellImg) {
                             return cellImg.value;
                         },
                         suppressSorting: true,
@@ -67,15 +73,17 @@ class TableBuilder {
                     },
                     ...cols
                 ];
-            }
-            else {
-                cols = [{
-                    headerName: '',
-                    headerTooltip: '',
-                    field: columnName,
-                    suppressSorting: true,
-                    suppressFilter: true
-                }, ...cols];
+            } else {
+                cols = [
+                    {
+                        headerName: '',
+                        headerTooltip: '',
+                        field: columnName,
+                        suppressSorting: true,
+                        suppressFilter: true
+                    },
+                    ...cols
+                ];
             }
         });
 

@@ -1,0 +1,63 @@
+version: 3
+
+pullapprove_conditions:
+    - condition: "base.ref in ['develop']"
+      unmet_status: success
+      explanation: 'Review not required for target base branch'
+    - condition: "base.ref != 'master'"
+      unmet_status: failure
+      explanation: 'Base branch cannot be the master branch'
+    - condition: 'commits == 1'
+      unmet_status: failure
+      explanation: 'PR must be squashed into one commit.'
+
+notifications:
+    - when: pullapprove.started
+      comment: >
+          Hey @{{ author }} please make sure your build is available to test at the following links
+
+          https://@{{ user.username }}.github.io/@{{ head.repo.name }}/@{{ head.sha }}/enhancedTable/samples/et-index.html
+
+          Thanks for the PR!
+    - when: pullapprove.approved
+      comment: 'The review is completed.'
+
+groups:
+    sanity:
+        reviewers:
+            users:
+                - dane-thomas
+                - ShrutiVellanki
+                - james-rae
+        reviews:
+            required: 2
+            request: 3
+            request_order: given
+
+    code:
+        conditions:
+            - "'sanity' in groups.approved"
+        reviewers:
+            users:
+                - milesap
+                - spencerwahl
+                - AleksueiR
+                - james-rae
+        reviews:
+            required: 1
+            request: 4
+            request_order: given
+
+    docs_tests:
+        conditions:
+            - "'code' in groups.approved"
+        reviewers:
+            users:
+                - milesap
+                - spencerwahl
+                - AleksueiR
+                - james-rae
+        reviews:
+            required: 1
+            request: 1
+            request_order: given

@@ -20,7 +20,7 @@ export class PanelManager {
         this.panel.content = new this.panel.container(this.tableContent);
     }
 
-    // gets the udpated text to display for the enhancedTable's filter status
+    // gets the updated text to display for the enhancedTable's filter status
     getFilterStatus() {
         let text: string;
 
