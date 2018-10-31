@@ -308,8 +308,13 @@ function LegendBlockFactory(
             if (!this._proxyCheck(() => (this.setDefinitionQuery = value))) {
                 return;
             }
-
-            this._proxy.setDefinitionQuery(value);
+            //only setDefinitionQuery once this._proxy has loaded
+            const proxyLoaded = $rootScope.$watch(() => this._proxy.state, (state, oldState) => {
+                if (state === 'rv-loaded') {
+                    this._proxy.setDefinitionQuery(value);
+                    proxyLoaded();
+                }
+            });
         }
 
         /**
