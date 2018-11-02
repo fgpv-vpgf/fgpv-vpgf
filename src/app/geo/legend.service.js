@@ -26,12 +26,13 @@ function legendServiceFactory(
         importLayerBlueprint,
         reloadBoundLegendBlocks,
         addLayerDefinition,
-        removeLegendBlock
+        removeLegendBlock,
+        resetApiBlueprints
     };
 
     let mApi = null;
-    const apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
-    const apiBlueprintsIds = [];
+    let apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
+    let apiBlueprintsIds = [];
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
@@ -1007,5 +1008,15 @@ function legendServiceFactory(
 
             return promise;
         }
+    }
+
+    /**
+     * Clears our trackers of api blueprints.
+     *
+     * @function resetApiBlueprints
+     */
+    function resetApiBlueprints() {
+        apiBlueprints = [];
+        apiBlueprintsIds = [];
     }
 }

@@ -19,7 +19,8 @@ function mapServiceFactory(
     events,
     $translate,
     errorService,
-    $http
+    $http,
+    legendService
 ) {
     const service = {
         destroyMap,
@@ -146,6 +147,7 @@ function mapServiceFactory(
 
         mapConfig.instance._map.destroy();
         mapConfig.reset();
+        legendService.resetApiBlueprints();
 
         referenceService.mapNode.empty();
 
