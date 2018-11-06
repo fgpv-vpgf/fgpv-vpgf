@@ -164,7 +164,7 @@ function layerRegistryFactory(
 
         layerRecordPromise
             .then(layerRecord => (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord)))
-            .catch(() => {}); // if layer record creation fails, the error will be handled elsewhere
+            .catch(() => { }); // if layer record creation fails, the error will be handled elsewhere
 
         /**
          * @function _attribsInvalidation
@@ -240,7 +240,7 @@ function layerRegistryFactory(
 
         // generate the layer record again
         // if layer record creation fails, the error will be handled elsewhere;
-        _startGeneratingLayerRecord(layerBlueprint, true).catch(() => {});
+        _startGeneratingLayerRecord(layerBlueprint, true).catch(() => { });
     }
 
     /**
@@ -303,7 +303,7 @@ function layerRegistryFactory(
                 ref.loadingQueue.push(layerRecord);
                 _loadNextLayerRecord();
             })
-            .catch(error => {});
+            .catch(error => { });
     }
 
     /**
@@ -550,14 +550,41 @@ function layerRegistryFactory(
         const orderedLayerRecords = (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
             ? layerRecordIDsInLegend
             : configService.getSync.map.layers
-                  .map(layer => layer.id)
-                  .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
+                .map(layer => layer.id)
+                .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
         )
             .map(getLayerRecord)
             .filter(lr => lr); // get appropriate layer records
 
+        const orderedLayerRecordsIds = orderedLayerRecords.map(record => record.layerId);
+        service.replacementIds = (service.replacementIds === undefined) ? {} : service.replacementIds;
+
+        // this massive loop is to ensure the graphicsLayerIds are properly formatted before being passed into the sortGroup
+        mapBody.graphicsLayerIds.forEach(id => {
+            if (service.replacementIds[id] === undefined) {
+                // if current graphicLayerId does not have a match yet
+                if (!orderedLayerRecordsIds.includes(id)
+                    && id !== 'graphicsLayer1'
+                    && id !== 'graphicsLayer2'
+                    && id !== 'rv_hilight') {
+                    // find a match for the case where the same ID is not stored in mapBody.graphicLayerIds and orderedLayerRecords
+                    const matches = Object.keys(service.replacementIds).map(key => service.replacementIds[key]);
+                    orderedLayerRecordsIds.forEach(orderedId => {
+                        if (!mapBody.graphicsLayerIds.includes(orderedId) && !mapBody.layerIds.includes(orderedId) && !matches.includes(orderedId)) {
+                            service.replacementIds[id] = orderedId;
+                        }
+                    });
+                } else {
+                    // mapBody.graphicLayerIds and orderedLayerRecords contain the same ID for the layer
+                    service.replacementIds[id] = id;
+                }
+            }
+        });
+
+        // sort group 0 corresponds to all the graphicLayerIDs (or the correct corresponding layers retrieved from orderedLayerRecords as done above)
+        const replacementIds = mapBody.graphicsLayerIds.map(id => service.replacementIds[id]);
         const mapLayerStacks = {
-            0: mapBody.graphicsLayerIds,
+            0: replacementIds,
             1: mapBody.layerIds
         };
 
@@ -719,7 +746,7 @@ function layerRegistryFactory(
                     events.$broadcast(events.rvFeatureMouseOver, true);
 
                     // a "fake" event preventDefault that disables default behavior
-                    e.preventDefault = function() {
+                    e.preventDefault = function () {
                         this._prevented = true;
                     };
 
@@ -757,7 +784,7 @@ function layerRegistryFactory(
                 mouseOut: e => {
                     events.$broadcast(events.rvFeatureMouseOver, false);
 
-                    e.preventDefault = function() {
+                    e.preventDefault = function () {
                         this._prevented = true;
                     };
 
