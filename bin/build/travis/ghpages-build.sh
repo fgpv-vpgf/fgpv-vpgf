@@ -1,6 +1,4 @@
 #!/bin/bash
-npm run update
-npm run build
 
 if git ls-remote --heads --exit-code https://github.com/$TRAVIS_REPO_SLUG.git gh-pages &> /dev/null; then
     echo "gh-pages exists - cloning ..."

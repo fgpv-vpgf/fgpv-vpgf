@@ -44,6 +44,6 @@ PageObject: https://martinfowler.com/bliki/PageObject.html
 
 `npm run build` will output all plugins to the `dist` folder.
 
-## libs/ramp
+## bin/test/ramp
 
-Samples include the RAMP viewer files found in the **libs/ramp** folder. Please update these files if you have made changes in RAMP.
+Samples include the RAMP viewer files found in the **bin/test/ramp** folder. Please update these files if you have made changes in RAMP.

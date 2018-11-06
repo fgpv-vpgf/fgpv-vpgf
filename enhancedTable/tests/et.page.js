@@ -1,4 +1,4 @@
-const RAMPage = require('../../tests/ramp.page');
+const RAMPage = require('../../bin/test/ramp.page');
 
 class Page extends RAMPage {
     /**

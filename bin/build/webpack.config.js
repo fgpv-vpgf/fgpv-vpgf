@@ -2,7 +2,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
-const SOURCE_PATH = path.join(__dirname, '.');
+const SOURCE_PATH = path.join(__dirname, '../../');
+require('dotenv').config({ path: path.join(SOURCE_PATH, '.env') });
 
 const pluginList = {
     enhancedTable: path.join(SOURCE_PATH, 'enhancedTable'),
@@ -47,13 +48,13 @@ module.exports = function(env = {}) {
                     from: '*/samples/*.+(html|json)'
                 },
                 {
-                    from: 'libs/ramp'
+                    from: 'bin/test/ramp'
                 }
             ])
         ],
 
         devServer: {
-            host: 'localhost',
+            host: '0.0.0.0',
             https: !!env.https,
             disableHostCheck: true,
             port: 6001,

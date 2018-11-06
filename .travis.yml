@@ -1,16 +1,29 @@
 language: node_js
-node_js:
-    - 8.11.1
 
-script:
-    - 'if [ "$TRAVIS_REPO_SLUG" != "fgpv-vpgf/plugins" ]; then bash ./libs/travis/ghpages-build.sh; fi'
+node_js:
+  - 8.11.1
+
+before_script:
+  - echo -e "Host fgpv-vpgf.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+before_deploy:
+  - bash ./bin/build/travis/before_deploy.sh
+
+script: echo "npm test temporarily disabled"
 
 deploy:
-    provider: pages
+  - provider: pages
     local-dir: page_files
     skip-cleanup: true
-    github-token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
+    github-token: $GITHUB_TOKEN
     keep-history: true
     on:
-        all_branches: true
-        condition: repo != "fgpv-vpgf/plugins"
+      all_branches: true
+      condition: $TRAVIS_REPO_SLUG != fgpv-vpgf/plugins
+
+  - provider: script
+    skip_cleanup: true
+    script: bash ./bin/build/travis/dist-build.sh
+    on:
+      all_branches: true
+      repo: fgpv-vpgf/plugins

@@ -1,8 +1,8 @@
-const page = require('./enhancedTable.page');
+const page = require('./et.page');
 
 describe('the enhancedTable panel', function() {
     beforeAll(function() {
-        browser.url('/et-index.html');
+        browser.url('/enhancedTable/samples/et-index.html');
     });
 
     it('should open when a layer is clicked', function() {

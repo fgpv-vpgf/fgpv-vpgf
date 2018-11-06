@@ -6,7 +6,7 @@
         "target": "es5",
         "baseUrl": ".",
         "paths": {
-            "*": ["node_modules/*", "enhancedTable/node_modules/*", "enhancedTable/node_modules/*"]
+            "*": ["node_modules/*", "enhancedTable/node_modules/*", "areaOfInterest/node_modules/*"]
         }
     }
 }

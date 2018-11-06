@@ -1,9 +1,6 @@
 version: 3
 
 pullapprove_conditions:
-    - condition: "base.ref in ['develop']"
-      unmet_status: success
-      explanation: 'Review not required for target base branch'
     - condition: "base.ref != 'master'"
       unmet_status: failure
       explanation: 'Base branch cannot be the master branch'
