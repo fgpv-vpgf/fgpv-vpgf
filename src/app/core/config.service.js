@@ -70,7 +70,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false indicates an exteral config
          */
-        parseSync() {
+        parseSync () {
             return this.parseAsJson() || this.parseAsGlobalObject();
         }
 
@@ -79,7 +79,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false otherwise
          */
-        parseAsJson() {
+        parseAsJson () {
             try {
                 this.config = JSON.parse(this.configAttr);
             } catch (e) {
@@ -93,7 +93,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false otherwise
          */
-        parseAsGlobalObject() {
+        parseAsGlobalObject () {
             if (window.hasOwnProperty(this.configAttr)) {
                 this.config = window[this.configAttr];
             }
@@ -118,14 +118,24 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
 
         get config() { return this._config; }
 
-        set rcsKeys(keys) { this._rcsKeys = keys; this.processRCS(); }
+        /**
+         * Sets RCS keys on the config object and initiates the RCS download.
+         *
+         * @param {Array}  keys          array of RCS keys (String) to be added
+         * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
+         */
+        setRcsKeys (keys, bookmarkInfo) { 
+            this._rcsKeys = keys;
+            this.processRCS(bookmarkInfo); 
+        }
 
         /**
          * Processes RCS keys if any are present
          *
-         * @return  {Promise}   resolves with config object (or undefined if not defined) when rcs lookup is complete
+         * @param  {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
+         * @return {Promise}              resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
-        processRCS() {
+        processRCS (bookmarkInfo) {
             if (this._rcsKeys.length === 0) {
                 return this.config;
             }
@@ -160,6 +170,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                             let layer = layerEntry.layers[0];
                             layer = schemaUpgrade.layerNodeUpgrade(layer);
                             layer.origin = 'rcs';
+
+                            // if there is bookmark information for the rcs layer, tack it on so it can be processed
+                            // after the typed config layer object is created
+                            if (bookmarkInfo) {
+                                const bmMatch = bookmarkInfo.find(bml => bml.id === layer.id);
+                                if (bmMatch) {
+                                    layer.bookmarkData = bmMatch;
+                                }
+                            }
                             result.push(layer);
                         }
                     });
@@ -216,7 +235,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         }
         get getAsync() { return getConfigByLanguage(currentLang()).promise; }
 
-        initialize() {
+        initialize () {
             _initialize();
         }
 
@@ -224,7 +243,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * reinitial when a new config file is loaded
          * @function  reInitialize
          */
-        reInitialize() {
+        reInitialize () {
             _loadingState = States.NEW;
             _initialize();
         }
@@ -235,17 +254,18 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @memberof app.core
          * @function rcsAddKeys
-         * @param {Array}  keys  array of RCS keys (String) to be added
+         * @param {Array}  keys          array of RCS keys (String) to be added
+         * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          */
-        rcsAddKeys(keys) {
-            configList.forEach(conf => { conf.rcsKeys = keys; });
+        rcsAddKeys (keys, bookmarkInfo = []) {
+            configList.forEach(conf => { conf.setRcsKeys(keys, bookmarkInfo); });
         }
 
         /**
          * Sets the current language to the supplied value and broadcasts config initialization event, since this is a new config object.
          * @param {String} lang language value to be set
          */
-        setLang(lang) {
+        setLang (lang) {
             $translate.use(lang);
             // only broadcast when config is ready
             getConfigByLanguage(lang).promise.then(() => {
@@ -258,7 +278,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @function  getLang
          * @returns  {function}    function tha returns the current language
          */
-        getLang() {
+        getLang () {
             return currentLang();
         }
 
@@ -267,7 +287,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * but the config is already in a loaded state
          * @param {Function} listener an event handler to be triggered on config changes
          */
-        onEveryConfigLoad(listener) {
+        onEveryConfigLoad (listener) {
             if (_loadingState >= States.LOADED) {
                 listener(getConfigByLanguage(currentLang()).config);
             }
@@ -384,7 +404,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 deregisterReadyListener = events.$on(events.rvApiReady, () => {
                     deregisterReadyListener();
                     deregisterBookmarkListener();
-                    configList.forEach(conf => { conf.rcsKeys = keys; });
+                    configList.forEach(conf => { conf.setRcsKeys(keys); });
                 });
 
                 // if we have a bookmark, abort loading from the rcs tags.

@@ -2201,13 +2201,26 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             // apply starting point
             this.startPoint = new StartPoint(value);
 
+            // filter out layers that are not present in the bookmark preserving the bookmark layer order
+            // this loop will also drop any bookmark information onto the raw config objects.
+            const filteredConfigLayers = value.bookmarkLayers
+                .map(bookmarkedLayer => {
+                    const matchingConfigLayer = this._layers.find(layer => layer.id === bookmarkedLayer.id);
+                    if (matchingConfigLayer) {
+                        // this is a raw config layer object, not the fancy typed layer object (defined in this file)
+                        // we sneak on our bookmark information, so it can easily be
+                        // accessed when a blueprint creates the fancy typed layer object
+                        matchingConfigLayer.bookmarkData = bookmarkedLayer;
+                    }
+                    return matchingConfigLayer;
+                })
+                .filter(a => a);    // FIXME: layers added through API will be undefined in the array
+
+            // only apply the filtered layer list to the config if we are in autopopulate legend.
+            // we run the above loop regardless to ensure any bookmark data gets tacked on the raw config items.
             if (this.legend.type === TYPES.legend.AUTOPOPULATE) {
-                // filter out layers that are not present in the bookmark preserving the bookmark layer order
-                this._layers = value.bookmarkLayers
-                    .map(bookmarkedLayer =>
-                        this._layers.find(layer => layer.id === bookmarkedLayer.id))
-                    .filter(a => a);    // FIXME: layers added through API will be undefined in the array
-            }
+                this._layers = filteredConfigLayers;
+            } 
 
             // re-create the legend structure
             // - in auto legend, this will generate the legend using the order of the layers array (in cases where it was modified by the bookmark)

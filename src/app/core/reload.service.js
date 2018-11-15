@@ -162,7 +162,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
                         bookmarkService.insertRcsLayers(rcsLayers);
 
                         // trigger rcs download
-                        configService.rcsAddKeys(keys);
+                        configService.rcsAddKeys(keys, rcsLayers);
                     });
                 }
 

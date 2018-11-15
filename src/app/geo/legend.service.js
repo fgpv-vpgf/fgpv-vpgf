@@ -30,8 +30,6 @@ function legendServiceFactory(
     };
 
     let mApi = null;
-    const apiBlueprints = []; // blueprint promises from nonstandard sources. enables us to block legend on them as well
-    const apiBlueprintsIds = [];
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
@@ -113,29 +111,19 @@ function legendServiceFactory(
             }
             // there is no blueprint already created for the layer, need to create one
             else {
-                // to avoid calling createBlueprint twice in the .map call below,
-                // we need to see if it's already been called when adding the layer
-                // via the API
-                // TODO need to investigate why layers being added via the API will not make it into newDefinitions
-                //      when the app has recently started, but do make it into newDefinitions if added later on.
-                //      probably one of many race conditions lurking with blueprints.
-                if (!apiBlueprintsIds.includes(ld.id)) {
-                    newDefinitions.push(ld);
-                }
+                newDefinitions.push(ld);
             }
         });
 
-        // all layer defintions are passed as config fragments - turning them into layer blueprints
-        const blueprintPromises = newDefinitions.map(createBlueprint).concat(apiBlueprints);
+        // all layer defintions are passed as config fragments - turn them into layer blueprints
+        newDefinitions.map(createBlueprint);
 
-        // wait for all promises to resolve then show info
-        Promise.all(blueprintPromises).then(() => {
-            // create mapping for all layer blueprints
-            mapConfig.layerBlueprints.forEach(lb => (legendMappings[lb.config.id] = []));
+        // create mapping for all layer blueprints
+        mapConfig.layerBlueprints.forEach(lb => (legendMappings[lb.config.id] = []));
 
-            const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
-            mapConfig.legendBlocks = legendBlocks;
-        });
+        const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
+        mapConfig.legendBlocks = legendBlocks;
+
     }
 
     /**
@@ -148,10 +136,7 @@ function legendServiceFactory(
      * @param {Boolean} addToLegend   indicates whether layer should be automatically added to legend. default true
      */
     function addLayerDefinition(layerDefinition, pos = null, addToLegend = true) {
-        const blueprintPromise = createBlueprint(layerDefinition);
-        apiBlueprints.push(blueprintPromise);
-        apiBlueprintsIds.push(layerDefinition.id);
-        blueprintPromise.then(def => importLayerBlueprint(def, pos, addToLegend));
+        importLayerBlueprint(createBlueprint(layerDefinition), pos, addToLegend);
     }
 
     /**
@@ -162,15 +147,9 @@ function legendServiceFactory(
      * @returns {LayerBlueprint} generated layer blueprint
      */
     function createBlueprint(layerDefinition) {
-        // TODO: remove
-        // const blueprintPromise = LayerBlueprint.buildLayer(layerDefinition);
-        // TODO: blueprint creating should not be async
-        const blueprintPromise = common.$q.resolve(LayerBlueprint.makeBlueprint(layerDefinition));
-
-        return blueprintPromise.then(blueprint => {
-            configService.getSync.map.layerBlueprints.push(blueprint);
-            return blueprint;
-        });
+        const blueprint = LayerBlueprint.makeBlueprint(layerDefinition);
+        configService.getSync.map.layerBlueprints.push(blueprint);
+        return blueprint;
     }
 
     /**
