@@ -4,7 +4,7 @@ const wpConfig = require('../build/webpack.config.js')();
 
 exports.config = Object.assign(
     {
-        services: ['firefox-profile', 'selenium-standalone', devServerService, 'chromedriver', 'iedriver'],
+        services: ['selenium-standalone', devServerService, 'chromedriver'],
         webpackConfig: wpConfig,
         webpackPort: wpConfig.devServer.port,
 
