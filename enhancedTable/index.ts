@@ -31,6 +31,24 @@ class TableBuilder {
                 });
             }
         });
+
+        // toggle the enhancedTable if toggleDataTable is called from Legend API
+        this.mapApi.ui.configLegend._legendStructure._root._tableToggled.subscribe(legendBlock => {
+            if (legendBlock.blockType === 'node') {
+                // make sure the item clicked is a node, and not group or other
+                let layer;
+                if (legendBlock.parentLayerType === 'esriDynamic') {
+                    layer = this.mapApi.layers.allLayers.find(function (l) {
+                        return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
+                    });
+                } else {
+                    layer = this.mapApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+                }
+                if (layer) {
+                    this.mapApi.layers._click.next(layer);
+                }
+            }
+        });
     }
 
     createTable(attrBundle: AttrBundle) {
@@ -65,7 +83,7 @@ class TableBuilder {
                         headerName: '',
                         headerTooltip: '',
                         field: columnName,
-                        cellRenderer: function(cellImg) {
+                        cellRenderer: function (cellImg) {
                             return cellImg.value;
                         },
                         suppressSorting: true,
