@@ -1063,7 +1063,7 @@ export interface FileLayerNode {
    */
   name?: string;
   /**
-   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+   * The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field.
    */
   nameField?: string;
   /**
@@ -1071,7 +1071,7 @@ export interface FileLayerNode {
    */
   tooltipField?: string;
   /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
+   * The url path to the file.  It should match the type provided in layerType.
    */
   url: string;
   /**
