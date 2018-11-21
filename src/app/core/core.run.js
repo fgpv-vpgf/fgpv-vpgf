@@ -138,11 +138,11 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
  * `apiBlock` sets up language and RCS calls for the global API
  */
 function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-    bookmarkService, gapiService, reloadService, appInfo, $rootElement,
-    $mdDialog, pluginService, mapToolService, $mdSidenav) {
+    bookmarkService, gapiService, reloadService, appInfo, stateManager, pluginService, mapToolService, $mdSidenav) {
 
     const service = {
         setLanguage,
+        panelVisibility,
         getCurrentLang,
         loadRcsLayers,
         getBookmark,
@@ -190,6 +190,11 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
      */
     function setLanguage(lang) {
         reloadService.loadNewLang(lang);
+    }
+
+    function panelVisibility(panelName, isVisible = true) {
+        stateManager.setActive({ [panelName]: isVisible });
+        $rootScope.$applyAsync();
     }
 
     /**
