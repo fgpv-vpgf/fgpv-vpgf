@@ -114,6 +114,7 @@
           "layerType": "esriFeature",
           "fileType": "geojson",
           "nameField": "name",
+          "tooltipField": "OBJECTID",
           "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json",
           "colour": "#0000FF"
       },
@@ -126,7 +127,10 @@
           "longField": "Long. (NAD83)",
           "nameField": "AGENO",
           "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/G%C3%A9ochronologie.csv",
-          "colour": "#00FF00"
+          "colour": "#00FF00",
+          "state": {
+            "visibility": false
+          }
       },
       {
           "id": "ne_10m_ports",
@@ -135,7 +139,10 @@
           "fileType": "shapefile",
           "nameField": "scalerank",
           "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/ne_10m_ports.zip",
-          "colour": "#CBCC7A"
+          "colour": "#000000",
+          "state": {
+            "opacity": 0.5
+          }
       }
     ],
     "extentSets": [
