@@ -254,8 +254,14 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             this.config = new ConfigClass(rawConfig);
             this.config.epsgLookup = epsg.lookup;
 
+            // if there was a bookmark with enhancements for this layer, apply them.
+            if (rawConfig.bookmarkData) {
+                this.config.applyBookmark(rawConfig.bookmarkData);
+            }
+
             // hack fix for broken cors support
-            if (this.config.url) {
+            // FIXME sometimes there is no map instance ready at this point (usually during initial language change). figure out if our timing is wrong
+            if (this.config.url && configService.getSync.map.instance) {
                 // if ESRI JSAPI fixes it's CORS bug this can be removed
                 configService.getSync.map.instance.checkCorsException(this.config.url);
             }
