@@ -626,9 +626,9 @@
             "properties": {
                 "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
                 "name": { "type": "string", "description": "The display name of the layer." },
-                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field." },
                 "tooltipField": { "type": "string", "description": "The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided)." },
-                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "url": { "type": "string", "description": "The url path to the file.  It should match the type provided in layerType." },
                 "colour": { "type": "string", "description": "The hex code representing the layer symbology colour." },
                 "layerType": { "type": "string", "enum": [ "esriFeature" ] },
                 "fileType": { "type": "string", "enum": [ "csv", "geojson", "shapefile" ] },
