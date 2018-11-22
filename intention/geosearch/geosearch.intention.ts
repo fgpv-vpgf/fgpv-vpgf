@@ -5,10 +5,23 @@
 
 import 'rz-geosearch';
 
-const CODE_TO_ABBR = ({"10":"NL","11":"PE","12":"NS","13":"NB",
-                        "24":"QC","35":"ON","46":"MB","47":"SK",
-                        "48":"AB","59":"BC","60":"YU","61":"NT",
-                        "62":"NU","72":"UF","73":"IW"});
+const CODE_TO_ABBR = {
+    10:"NL",
+    11:"PE",
+    12:"NS",
+    13:"NB",
+    24:"QC",
+    35:"ON",
+    46:"MB",
+    47:"SK",
+    48:"AB",
+    59:"BC",
+    60:"YU",
+    61:"NT",
+    62:"NU",
+    72:"UF",
+    73:"IW"
+};
 
 /**
  * A class/interface that wraps around a GeoSearch object and provides extra servinces.
@@ -26,18 +39,18 @@ const CODE_TO_ABBR = ({"10":"NL","11":"PE","12":"NS","13":"NB",
  */
 class GeoSearchUI {
     constructor(config={}) {
-        this._geoSearhObj = new GeoSearch(config);
-        this._lang = config.language || 'en';
-        this._provinceList = [];
-        this._typeList = [];
+        (<any>this)._geoSearhObj = new (<any>window).GeoSearch(config);
+        (<any>this)._lang = (<any>config).language || 'en';
+        (<any>this)._provinceList = [];
+        (<any>this)._typeList = [];
     }
 
-    get lang() { return this._lang; }
-    get provinceList() { return this._provinceList; }
-    get typeList() { return this._typeList; }
+    get lang() { return (<any>this)._lang; }
+    get provinceList() { return (<any>this)._provinceList; }
+    get typeList() { return (<any>this)._typeList; }
 
-    set provinceList(val) { this._provinceList = val; }
-    set typeList(val) { this._typeList = val; }
+    set provinceList(val) { (<any>this)._provinceList = val; }
+    set typeList(val) { (<any>this)._typeList = val; }
 
     /**
      * Find and return the province object in the province list
@@ -45,8 +58,8 @@ class GeoSearchUI {
      * @param {string} province the target province
      * @return {Object} the object of the found province object
      */
-    findProvinceObj(province) {
-        return this.fetchProvinces().find(p => {
+    findProvinceObj(province: string) {
+        return this.fetchProvinces().find((p: any) => {
             return p.name === province;
         });
     }
@@ -57,10 +70,9 @@ class GeoSearchUI {
      * @param {string} q the search string this query is based on
      * @return {Promise} the promise that resolves as a formated location objects
      */
-    query(q) {
-        return this._geoSearhObj.query(q.toUpperCase()).onComplete.then(q => {
-            let featureResult = [];
-            let results = [];
+    query(q: string) {
+        return (<any>this)._geoSearhObj.query(q.toUpperCase()).onComplete.then((q: any) => {
+            let featureResult: any[] = [];
             if (q.featureResults) { // it is a feature query
                 if (q.featureResults.fsa) { // FSA query
                     const bboxRange = 0.02;
@@ -98,7 +110,7 @@ class GeoSearchUI {
                     }];
                 }
             }
-            let queryResult = q.results.map(item => ({
+            let queryResult = q.results.map((item: any) => ({
                 name: item.name,
                 bbox: item.bbox,
                 type: {
@@ -112,7 +124,7 @@ class GeoSearchUI {
                     province: this.findProvinceObj(item.province)
                 }
             }));
-            return (featureResult.concat(queryResult));
+            return featureResult.concat(queryResult);
         });
     }
 
@@ -124,11 +136,11 @@ class GeoSearchUI {
     fetchProvinces() {
         if (this.provinceList.length > 0) return this.provinceList; // in cache
         let provinceList = [];
-        let rawProvinces = this._geoSearhObj.config.provinces.list;
+        let rawProvinces = (<any>this)._geoSearhObj.config.provinces.list;
         for (let code in rawProvinces) {
             provinceList.push({
                 code: code,
-                abbr: CODE_TO_ABBR[code],
+                abbr: (<any>CODE_TO_ABBR)[code],
                 name: rawProvinces[code]
             });
         }
@@ -144,7 +156,7 @@ class GeoSearchUI {
     fetchTypes() {
         if (this.typeList.length > 0) return this.typeList; // in cache
         let typeList = [];
-        let rawTypes = this._geoSearhObj.config.types.allTypes;
+        let rawTypes = (<any>this)._geoSearhObj.config.types.allTypes;
         for (let type in rawTypes) {
             typeList.push({
                 code: type,
