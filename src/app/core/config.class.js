@@ -1890,9 +1890,19 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor (source) {
             super(source);
 
-            this._showInfoSymbology = source.showInfoSymbology || false;
-            this._showControlledSymbology = source.showControlledSymbology || false;
-            this._columnWidth = source.columnWidth || 350;
+            // apply legend export component defaults
+            source = {
+                ...{
+                    showInfoSymbology: false,
+                    showControlledSymbology: false,
+                    columnWidth: 350
+                },
+                ...source
+            };
+
+            this._showInfoSymbology = source.showInfoSymbology;
+            this._showControlledSymbology = source.showControlledSymbology;
+            this._columnWidth = source.columnWidth;
         }
 
         get showInfoSymbology () {      return this._showInfoSymbology; }
@@ -2220,7 +2230,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             // we run the above loop regardless to ensure any bookmark data gets tacked on the raw config items.
             if (this.legend.type === TYPES.legend.AUTOPOPULATE) {
                 this._layers = filteredConfigLayers;
-            } 
+            }
 
             // re-create the legend structure
             // - in auto legend, this will generate the legend using the order of the layers array (in cases where it was modified by the bookmark)
