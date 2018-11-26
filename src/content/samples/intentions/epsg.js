@@ -14,15 +14,15 @@ window.customEPSG = {
 
     intention: 'epsg',
 
-    preInit: config => {
+    preInit: function(config) {
         console.warn('Custom EPSG', config);
     },
 
-    init: api => {
+    init: function(api) {
         console.warn('Custom EPSG', api);
     },
 
-    lookup: code => {
+    lookup: function(code) {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
         const epsgRegex = /EPSG:(\d+)/;
         let matcher = String(code).match(urnRegex) || String(code).match(epsgRegex) || [];
@@ -31,8 +31,8 @@ window.customEPSG = {
             throw new Error('Invalid code provided.');
         }
     
-        return new Promise((resolve, reject) => {
-            $.get(`http://epsg.io/${matcher[1]}.proj4`)
+        return new Promise(function(resolve, reject) {
+            $.get('http://epsg.io/' + matcher[1] + '.proj4')
                 .done(resolve)
                 .fail(reject);
         });

@@ -1,6 +1,6 @@
 import Table from '../intention/table/table.intention';
 import EPSG from '../intention/epsg/epsg.intention';
-import geoSearch from '../intention/geosearch/geosearch.intention.js';
+import geoSearch from '../intention/geosearch/geosearch.intention';
 
 import { FgpvConfigSchema } from 'api/schema';
 
