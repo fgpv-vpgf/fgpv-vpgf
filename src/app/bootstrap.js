@@ -80,6 +80,10 @@ const mapProxy = {
         this._proxy('setLanguage', lang);
     },
 
+    panelVisibility(panelName, isVisible = true) {
+        this._proxy('panelVisibility', panelName, isVisible);
+    },
+
     /**
      * Returns a bookmark for the current viewers state.
      *
