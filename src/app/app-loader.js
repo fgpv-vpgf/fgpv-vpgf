@@ -16,6 +16,7 @@ import 'datatables.net-buttons/js/buttons.print.js';
 import 'datatables.net-colreorder';
 import 'datatables.net-scroller';
 import 'datatables.net-select';
+import '../polyfills';
 
 // APPLICATION MAIN IMPORTS
 import './api-loader';

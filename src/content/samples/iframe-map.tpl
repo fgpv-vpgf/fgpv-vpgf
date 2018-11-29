@@ -36,23 +36,7 @@
     </noscript>
 </div>
 
-<script>
-    var needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype,
-        'outerHTML' in SVGElement.prototype
-    ].some(function(x) { return !x; });
-    if (needIePolyfills) {
-        // NOTE: this is the only correct way of injecting scripts into a page and have it execute before loading/executing any other scripts after this point (ie polyfills must be executed before the bootstrap)
-        // more info on script loading: https://www.html5rocks.com/en/tutorials/speed/script-loading/
-        document.write('<script src="../ie-polyfills.js"><\/script>');
-    }
-</script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
 
 <% for (var index in htmlWebpackPlugin.files.js) { %>
     <% if (webpackConfig.output.crossOriginLoading) { %>

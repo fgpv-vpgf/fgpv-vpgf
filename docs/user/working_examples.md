@@ -53,26 +53,18 @@ Note to include the `allowfullscreen` option on the iframe if you want users to 
 
 ### Loading Polyfills
 
-Polyfills are bundled in the viewers source code under `ie-polyfills.js`, but you must explicitly load it **before you load `rv-main.js`**. We first define what polyfills we want to include, then load the file. Below is the correct way to initialize polyfills:
+You are responsible for loading the required polyfills on the host page. 
+
+The easiest way is to include the following script **before** `rv-main.js`:
 
 ```js
-<script>
-    var needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype,
-        'outerHTML' in SVGElement.prototype
-    ].some(function(x) { return !x; });
-
-    if (needIePolyfills) {
-        document.write('<script src="ie-polyfills.js"><\/script>');
-    }
-</script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator"></script>
 ```
+
+If you'd prefer to load polyfills from an alternate source then the following is a list of all required polyfills:
+
+Array.isArray, Array.prototype.every, Array.prototype.filter, Array.prototype.forEach, Array.prototype.indexOf, Array.prototype.lastIndexOf, Array.prototype.map, Array.prototype.reduce, Array.prototype.reduceRight, Array.prototype.some, atob, CustomEvent, Date.now, Date.prototype.toISOString, Document, document.querySelector, document.visibilityState, DOMTokenList, Element, Element.prototype.classList, Element.prototype.cloneNode, Element.prototype.closest, Element.prototype.matches, Event, Event.DOMContentLoaded, Event.focusin, Event.hashchange, Function.prototype.bind, JSON, Object.assign, Object.create, Object.defineProperties, Object.defineProperty, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.keys, requestAnimationFrame, String.prototype.includes, String.prototype.trim, Window, XMLHttpRequest, ~html5-elements, Object.entries, Object.values, Array.prototype.find, Array.prototype.findIndex, Array.prototype.values, Array.prototype.includes, HTMLCanvasElement.prototype.toBlob, String.prototype.repeat, String.prototype.codePointAt, String.fromCodePoint, NodeList.prototype.@@iterator, Promise, Promise.prototype.finally
+
 
 ### Including rv-main.js
 Lastly we want to include `rv-main.js` at the end of our file (right before the closing `body` tag). Refer to {@tutorial app_startup} for more information about the bootstrapping process.
