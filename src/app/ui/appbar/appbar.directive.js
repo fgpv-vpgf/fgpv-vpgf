@@ -47,7 +47,6 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
 
     self.toggleDetails = toggleDetails;
     self.toggleToc = toggleTocBuilder();
-    self.toggleToolbox = toggleToolbox;
     self.openBasemapSelector = basemapService.open;
     self.toggleGeosearch = geosearchService.toggle;
 
@@ -65,9 +64,5 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
         return debounceService.registerDebounce(() => {
             stateManager.setActive({ side: false }, 'mainToc');
         }, 300);
-    }
-
-    function toggleToolbox() {
-        stateManager.setActive({ side: false }, 'mainToolbox');
     }
 }

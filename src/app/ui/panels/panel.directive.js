@@ -2,7 +2,6 @@ import { Panel } from 'api/ui';
 
 const templateUrls = {
     main: require('./main-panel.html'),
-    other: require('./other-panel.html'),
     side: require('./side-panel.html')
 };
 
@@ -48,6 +47,18 @@ function rvPanel(referenceService, stateManager, debounceService, events) {
      * @param {Array} attr directive's attributes
      */
     function link(scope, element, attrs) {
+
+        // this.panel = this.mapApi.createPanel('enhancedTable');
+
+        this.panel.panelContents.css({
+            top: '0px',
+            left: '410px',
+            right: '0px',
+            bottom: this.maximized ? '0px' : '50%',
+            padding: '0px 16px 16px 16px'
+        });
+
+        this.panel.content = new this.panel.container(this.tableContent);
         const self = scope.self;
         const pName = attrs.type;
 

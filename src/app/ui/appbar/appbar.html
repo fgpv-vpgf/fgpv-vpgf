@@ -78,17 +78,6 @@
         <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>
-
-    <!-- hiding tools section for now; TODO: re-enable when we have tools -->
-    <!--md-button
-        aria-label="{{ 'appbar.aria.tools' | translate }}"
-        class="md-icon-button primary"
-        rv-help="tool-button"
-        ng-class="{ selected: self.stateManager.state.mainToolbox.active }"
-        ng-click="self.toggleToolbox()">
-        <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
-        <md-icon md-svg-src="content:create"></md-icon>
-    </md-button-->
 </div>
 
 <rv-geosearch-bar ng-if="self.stateManager.state.mainGeosearch.active"></rv-geosearch-bar>
