@@ -139,7 +139,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
         $.fn.dataTable.ext.searchTemp.push((settings, data) =>
-            validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1);
+            validOIDs !== undefined && validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1);
     }
 
     /**
@@ -343,7 +343,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             }
         }
 
-         if (column.type === 'selector') {
+        if (column.type === 'selector') {
             const val =  column.filter.value.join(`' , '`);
             if (val !== '') {
                 defs.push(`UPPER(${column.name}) IN (\'${val.toUpperCase()}\')`);
@@ -393,10 +393,10 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // determine query definition based on symbology and table queries
         let fullDef = legendBlock.symbDefinitionQuery
-                    ? definition
-                        ? `(${definition}) AND (${legendBlock.symbDefinitionQuery})`
-                        : legendBlock.symbDefinitionQuery
-                    : definition;
+            ? definition
+                ? `(${definition}) AND (${legendBlock.symbDefinitionQuery})`
+                : legendBlock.symbDefinitionQuery
+            : definition;
 
         // apply to block so changes reflect on map
         legendBlock.definitionQuery = fullDef;
@@ -517,7 +517,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // show processing
         $rootElement.find('.dataTables_processing').css('display', 'block');
 
-         // keep filter state to know when to show apply map button
+        // keep filter state to know when to show apply map button
         setFiltersState(column, `${min}${max}`);
 
         // redraw table to filter (filters for range date are added on the table itself in table-definition.directive)
@@ -728,6 +728,11 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
 
         if (filterBySymbology) {
+            if (legEntry.symbDefinitionQuery === '1=2' && queryOpts.featureLayer !== undefined) {
+                // if this is an invisible file based layer
+                validOIDs = [];
+                return $q.resolve();
+            }
             queryOpts.where += `(${legEntry.symbDefinitionQuery})`;
         }
 
