@@ -439,6 +439,10 @@ function LegendBlockFactory(
         get metadataUrl() {
             return this._layerConfig.metadataUrl;
         }
+        set metadataUrl(url) {
+            this._layerConfig.metadataUrl = url;
+        }
+
         get catalogueUrl() {
             return this._layerConfig.catalogueUrl;
         }

@@ -96,6 +96,7 @@
         "id": "powerplant-nuclear",
         "name": "Power Plants, nuclear",
         "layerType": "esriDynamic",
+        "metadataUrl": "http://donnees-data.intranet.ec.gc.ca:80/geonetwork/srv/eng/xml.metadata.get?uuid=917b8854-64a5-41d6-ad7f-d0a3c0c3cb29",
         "layerEntries": [
           {
             "index": 22,
