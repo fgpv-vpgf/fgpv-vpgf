@@ -39,20 +39,9 @@
           {"name": "esri", "location": 'http://fgpv.cloudapp.net/demo/esrijso/esri' }
         ]
     };
-
-    const needIePolyfills = [
-        'Promise' in window,
-        'TextDecoder' in window,
-        'findIndex' in Array.prototype,
-        'find' in Array.prototype,
-        'from' in Array,
-        'startsWith' in String.prototype,
-        'endsWith' in String.prototype
-    ].some(function(x) { return !x; });
-    if (needIePolyfills) {
-        document.write('<script src="../ie-polyfills.js"><\/script>');
-    }
     </script>
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
 
     <script>
 

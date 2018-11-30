@@ -114,10 +114,6 @@ module.exports = function (env) {
             },{
                 from: 'src/locales/help',
                 to: 'samples/help'
-            },
-            {
-                from: 'src/polyfill/ie-polyfills.js',
-                to: ''
             }]),
 
             new webpack.ProvidePlugin({
