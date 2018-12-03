@@ -48,8 +48,11 @@ function legendServiceFactory(
                 const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
-                    events.$on(events.rvApiLayerAdded, (_, layers) => {
-                        resolve(layers);
+                    const deactivate = events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        if (layers[0].id === layerJSON.id) {
+                            deactivate();
+                            resolve(layers);
+                        }
                     });
                 });
             } else {
@@ -96,11 +99,10 @@ function legendServiceFactory(
         layerDefinitions.forEach(ld => {
             let index = layerBlueprintsCollection.findIndex(blueprint => blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(
-                    entry =>
-                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
-                            ? entry
-                            : null
+                .walk(entry =>
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
+                        ? entry
+                        : null
                 )
                 .filter(a => a)[0];
 
@@ -240,14 +242,13 @@ function legendServiceFactory(
             // need to find the actual legend block mapped to the legendBlock being reloaded and its parent container legendGroup
             const legendBlocks = configService.getSync.map.legendBlocks;
             const { legendBlock, legendBlockParent } = legendBlocks
-                .walk(
-                    (entry, index, parentEntry) =>
-                        entry.id === legendBlockId
-                            ? {
-                                  legendBlock: entry,
-                                  legendBlockParent: parentEntry
-                              }
-                            : null
+                .walk((entry, index, parentEntry) =>
+                    entry.id === legendBlockId
+                        ? {
+                              legendBlock: entry,
+                              legendBlockParent: parentEntry
+                          }
+                        : null
                 )
                 .filter(a => a !== null)[0];
 
