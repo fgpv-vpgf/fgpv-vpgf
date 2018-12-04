@@ -454,6 +454,8 @@ export class ConfigLayer extends BaseLayer {
     /** @ignore */
     _layerType: string;
     /** @ignore */
+    _table: any;
+    /** @ignore */
     attributeHeaders: any;
 
     /**
@@ -510,6 +512,11 @@ export class ConfigLayer extends BaseLayer {
     /** Returns the underlying layer type such as esriFeature, esriDynamic, and ogcWms. */
     get type(): string {
         return this._layerType;
+    }
+
+    /** Returns the table node that contains all table info for the layer */
+    get table(): any {
+        return this._table;
     }
 
     /** Returns the name of the key being used for the attributes OID field. */
@@ -621,6 +628,7 @@ export class ConfigLayer extends BaseLayer {
         this._id = layerRecord.config.id;
         this._name = layerRecord.config.name;
         this._catalogueUrl = layerRecord.config.catalogueUrl || '';
+        this._table = layerRecord.config.table;
 
         this._opacity = this._layerProxy.opacity;
         this._visibility = this._layerProxy.visibility;

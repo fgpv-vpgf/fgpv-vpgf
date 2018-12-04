@@ -99,6 +99,15 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 return $compile(html)($rootScope);
             };
 
+            // reference to the angular compiler that also returns the scope
+            apiMap.$compileWithScope = function(html) {
+                const scope = $rootScope.$new(true)
+                return {
+                    html: $compile(html)(scope),
+                    scope: scope
+                }
+            }
+
             // allows plugins to register components on the angular instance, usually to provide angular material support
             apiMap.agControllerRegister = $controllerProvider.register;
 

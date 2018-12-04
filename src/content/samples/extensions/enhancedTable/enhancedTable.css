@@ -3704,3 +3704,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     margin-right: -2px;
     padding-right: 1px; }
 
+md-datepicker > div {
+  border-bottom: none !important; }
+
