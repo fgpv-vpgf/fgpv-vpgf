@@ -25,7 +25,7 @@ angular
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
 function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
-    referenceService, appInfo) {
+    referenceService, appInfo, events) {
 
     const service = {
         addState,
@@ -382,6 +382,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
     function openPanel(panelToOpen, propagate = true) {
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
+        events.$broadcast('panelOpening', panelToOpen.name);
         if (panelToOpen.name === 'mainDetails') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 14);
         // prevent main panel from overlapping details panel in small/medium layouts
@@ -442,6 +443,9 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
 
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
+
+        events.$broadcast('panelClosing', panelToClose.name);
+
         if (panelToClose.name === 'mainDetails') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 11);
         }

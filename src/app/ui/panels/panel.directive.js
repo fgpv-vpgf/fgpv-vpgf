@@ -1,4 +1,4 @@
-import { Panel } from 'api/ui';
+import './panel-wrapper.service';
 
 const templateUrls = {
     main: require('./main-panel.html'),
@@ -20,7 +20,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(referenceService, stateManager, debounceService, events) {
+function rvPanel(referenceService, stateManager, debounceService, panelWrapperService) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {
@@ -48,33 +48,12 @@ function rvPanel(referenceService, stateManager, debounceService, events) {
      */
     function link(scope, element, attrs) {
 
-        // this.panel = this.mapApi.createPanel('enhancedTable');
-
-        this.panel.panelContents.css({
-            top: '0px',
-            left: '410px',
-            right: '0px',
-            bottom: this.maximized ? '0px' : '50%',
-            padding: '0px 16px 16px 16px'
-        });
-
-        this.panel.content = new this.panel.container(this.tableContent);
         const self = scope.self;
         const pName = attrs.type;
 
         referenceService.panels[pName] = element;
 
         self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
-
-        events.$on(events.rvApiMapAdded, (_, mapi) => {
-            const panelObj = new Panel(pName, element.find('> div').first());
-            panelObj.stateObservable.subscribe(open => {
-                stateManager.setActive({[pName]: open});
-                scope.$applyAsync();
-            });
-
-            mapi.ui.panels.add(panelObj);
-        });
 
         /**
          * Temporary function to close the panel.
