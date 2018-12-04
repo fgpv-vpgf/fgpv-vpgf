@@ -24,8 +24,8 @@ export class PanelManager {
     getFilterStatus() {
         let text: string;
 
-        if (this.tableOptions.api && this.tableOptions.api.getSelectedNodes().length > 0 && this.tableOptions.api.getSelectedNodes().length < this.tableOptions.rowData.length) {
-            text = `${this.tableOptions.api.getSelectedNodes().length} records shown (filtered from ${this.tableOptions.rowData.length} records)`;
+        if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
+            text = `${this.tableOptions.api.getDisplayedRowCount()} records shown (filtered from ${this.tableOptions.rowData.length} records)`;
         }
         else {
             text = `${this.tableOptions.rowData.length} records shown`;
@@ -56,11 +56,14 @@ export class PanelManager {
                     lastRow = parseInt(row.rowIndex) + 1;
                 }
             });
-
-            rowRange = firstRow.toString() + "-" + lastRow.toString();
+            if (firstRow === undefined && lastRow === undefined) {
+                firstRow = 0;
+                lastRow = 0;
+            }
+            rowRange = firstRow.toString() + " - " + lastRow.toString();
         }
         else {
-            rowRange = this.maximized ? '1-15' : '1-5';
+            rowRange = this.maximized ? '1 - 15' : '1 - 5';
         }
         if (this.panel.panelControls.find('.scrollRecords')[0]) {
             this.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
@@ -102,6 +105,13 @@ export class PanelManager {
             new Grid(this.tableContent[0], tableOptions);
             this.panel.open();
             this.getScrollRange();
+
+            this.tableOptions.onGridReady = () => {
+                this.autoSizeToMaxWidth();
+                this.sizeColumnsToFitIfNeeded();
+                let colApi = this.tableOptions.columnApi
+                colApi.getDisplayedColAfter(colApi.getColumn('rvInteractive')).setSort("asc");
+            };
         }
     }
 
@@ -151,6 +161,35 @@ export class PanelManager {
             bottom: this.maximized ? '0px' : '50%',
             padding: '0px 16px 16px 16px'
         });
+    }
+
+    /**
+     * Auto size all columns but check the max width
+     * Note: Need a custom function here since setting maxWidth prevents
+     *       `sizeColumnsToFit()` from filling the entire panel width
+    */
+    autoSizeToMaxWidth(columns?: Array<any>) {
+        const maxWidth = 400;
+        columns = columns ? columns : this.tableOptions.columnApi.getAllColumns();
+        this.tableOptions.columnApi.autoSizeColumns(columns);
+        columns.forEach(c => {
+            if (c.actualWidth > maxWidth) {
+                this.tableOptions.columnApi.setColumnWidth(c, maxWidth);
+            }
+        });
+    };
+
+    /**
+     * Check if columns don't take up entire grid width. If not size the columns to fit.
+     */
+    sizeColumnsToFitIfNeeded() {
+        const columns = this.tableOptions.columnApi.getAllDisplayedColumns();
+        const panel = this.tableOptions.api.gridPanel;
+        const availableWidth = panel.getWidthForSizeColsToFit();
+        const usedWidth = panel.columnController.getWidthOfColsInList(columns);
+        if (usedWidth < availableWidth) {
+            this.tableOptions.api.sizeColumnsToFit();
+        }
     }
 
     get id(): string {
@@ -235,45 +274,18 @@ export class PanelManager {
                 .filter(element => element.headerName)
                 .map(element => ({ id: element.field, title: element.headerName, visibility: true }));
 
-            that.tableOptions.onGridReady = () => {
-                const columns = that.tableOptions.columnApi.getAllDisplayedColumns();
-                this.autoSizeToMaxWidth(columns);
-            };
-
             // toggle column visibility
             this.toggleColumn = function (col) {
                 col.visibility = !col.visibility;
                 that.tableOptions.columnApi.setColumnVisible(col.id, col.visibility);
 
                 // on showing a column resize to autowidth then shrink columns that are too wide
-                const columns = that.tableOptions.columnApi.getAllDisplayedColumns();
                 if (col.visibility) {
-                    this.autoSizeToMaxWidth(columns);
+                    that.autoSizeToMaxWidth();
                 }
 
                 // fit columns widths to table if there's empty space
-                const panel = that.tableOptions.api.gridPanel;
-                const availableWidth = panel.getWidthForSizeColsToFit();
-                const usedWidth = panel.columnController.getWidthOfColsInList(columns);
-                if (usedWidth < availableWidth) {
-                    that.tableOptions.api.sizeColumnsToFit();
-                }
-            };
-
-            /**
-             * Auto size all columns but check the max width
-             * Note: Need a custom function here since setting maxWidth prevents
-             *       `sizeColumnsToFit()` from filling the entire panel width
-            */
-            this.autoSizeToMaxWidth = function (columns) {
-                const maxWidth = 400;
-
-                that.tableOptions.columnApi.autoSizeColumns(columns);
-                columns.forEach(c => {
-                    if (c.actualWidth > maxWidth) {
-                        that.tableOptions.columnApi.setColumnWidth(c, maxWidth);
-                    }
-                });
+                that.sizeColumnsToFitIfNeeded();
             };
         });
     }

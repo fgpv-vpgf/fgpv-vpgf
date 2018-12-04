@@ -102,6 +102,9 @@
                     },
                     {
                         "layerId": "7"
+                    },
+                    {
+                        "layerId": "8"
                     }
                 ]
             }
@@ -312,6 +315,12 @@
                     ]
                 },
                 "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+            },
+            {
+                "id": "8",
+                "name": "BadDates",
+                "layerType": "esriFeature",
+                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
             }
         ],
         "extentSets": [

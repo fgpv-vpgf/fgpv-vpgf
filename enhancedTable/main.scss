@@ -7,3 +7,8 @@ $accent-color: #00bcd4;
 
 // Import the ag-Grid material theme
 @import 'ag-grid-community/src/styles/ag-theme-material';
+
+md-datepicker > div {
+    // override this so ag-grid wont add a border to the div
+    border-bottom: none !important;
+}

@@ -1,37 +1,29 @@
 const page = require('./et.page');
 
-describe('the enhancedTable panel', function () {
+describe('the enhancedTable panel', function() {
     beforeAll(function () {
-        browser.url('/enhancedTable/samples/et-index.html');
+        browser.url('/enhancedTable/samples/et-test.html');
 
-        // used to check if window.RZ is defined
-        mApi = new Promise(function (resolve, reject) {
-            let rzWait = setInterval(function () {
-                browser.execute(function () {
-                    if (window.RZ === undefined) {
-                        return;
-                    }
-                    clearInterval(rzWait);
-                    resolve(window.RZ);
-                    return;
-                });
-            }, 100);
-        });
+        // when loading screen is finished RZ must be ready
+        browser.waitUntil(function () {
+            return browser.waitForVisible('.rv-loading-section', 25000, true);
+        }, 25000, 'expected the loading splash screen to be hidden after 25 seconds.');
     });
 
-    it('should open when a layer is clicked', function () {
-        mApi.then(function (RZ) {
-            page.open();
-            expect(browser.isVisible('#enhancedTable')).toEqual(true);
-        });
+    // Panel Tests
+    it('should open when a layer is clicked', function() {
+        page.open();
+        expect(page.panel.waitForVisible(3000)).toEqual(true);
     });
 
-    it('should open when datatable is toggled through the legend api', function () {
-        mApi.then(function (RZ) {
-            // test to see if the _tableToggled observable being fired leads to table being opened
-            let legendBlock = RZ.mapInstances[0].ui.configLegend.children[0]._legendBlock;
-            RZ.mapInstances[0].ui.configLegend._legendStructure._root._tableToggled.next(legendBlock);
-            expect(browser.isVisible('#enhancedTable')).toEqual(true);
-        });
+    // Filter Tests
+    it('should have a datefilter', function() {
+        expect(page.datepickerButton.isExisting()).toEqual(true);
+        expect(page.dateInput.isExisting()).toEqual(true);
+    });
+
+    it('should have a number filter with max and min', function() {
+        expect(page.numberInput.min.isExisting()).toEqual(true);
+        expect(page.numberInput.max.isExisting()).toEqual(true);
     });
 });

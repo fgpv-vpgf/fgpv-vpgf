@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <title>Plugin: Enhanced Table</title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .myMap {
+            height: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../rv-styles.css" />
+    <link rel="stylesheet" href="../enhancedTable.css" />
+    <script src="../enhancedTable.js"></script>
+</head>
+
+<body>
+    <div class="myMap" id="sample-map" is="rv-map" rv-config="ramp-config-test.json" rv-langs='["en-CA", "fr-CA"]'
+        rv-plugins="enhancedTable">
+        <noscript>
+            <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser
+                or download a browser that supports it.<p>
+
+                    <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer
+                        JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
+        </noscript>
+    </div>
+
+    <script>
+        var needIePolyfills = [
+            'Promise' in window,
+            'TextDecoder' in window,
+            'findIndex' in Array.prototype,
+            'find' in Array.prototype,
+            'from' in Array,
+            'startsWith' in String.prototype,
+            'endsWith' in String.prototype,
+            'outerHTML' in SVGElement.prototype
+        ].some(function (x) { return !x; });
+        if (needIePolyfills) {
+            document.write('<script src="../../ie-polyfills.js"><\/script>');
+        }
+    </script>
+
+
+    <script src="../../rv-main.js"></script>
+</body>
+
+</html>

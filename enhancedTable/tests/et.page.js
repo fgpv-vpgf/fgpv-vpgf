@@ -1,11 +1,37 @@
 const RAMPage = require('../../bin/test/ramp.page');
 
 class Page extends RAMPage {
+
     /**
-     * Opens the table by clicking on the first layer in the legend.
+     * Opens the table by clicking on layer `layer`
+     * If no layer is provided, open the first layer in the legend.
      */
-    open() {
-        this.legendLayer.click();
+    open(layer = this.legendLayer) {
+        layer.click();
+    }
+
+    // Filter things
+    /**
+     * Return the element containing the datepicker button
+     */
+    get datepickerButton() {
+        return browser.element('.md-datepicker-button');
+    }
+    /**
+     * Return the element containing the dateInput
+     */
+    get dateInput() {
+        return browser.element('.md-datepicker-input');
+    }
+
+    /**
+     * Return an object containing the min and max number filter elements
+     */
+    get numberInput() {
+        return {
+            min: browser.element('.rv-min'),
+            max:  browser.element('.rv-max')
+        }
     }
 
     /**
