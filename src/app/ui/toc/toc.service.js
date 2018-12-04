@@ -364,9 +364,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 };
             });
 
-        stateManager.setActive({
-            other: false
-        });
         stateManager
             .setActive({
                 side: false
@@ -403,9 +400,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 };
             });
 
-        stateManager.setActive({
-            other: false
-        });
         stateManager
             .setActive({
                 side: false

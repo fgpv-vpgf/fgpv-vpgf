@@ -204,8 +204,7 @@ rv-panel[type='main'] {
         }
     }
 
-    rv-toc,
-    rv-toolbox {
+    rv-toc {
         @include content-plug;
     }
 }

@@ -12,6 +12,12 @@ export class Panel {
         this.idAttr = id;
         this.mapObject = map;
 
+        this.openingSubject = new Subject();
+        this.closingSubject = new Subject();
+        this.positionChangedSubject = new Subject();
+        this.widthChangedSubject = new Subject();
+        this.heightChangedSubject = new Subject();
+
         this.opening = this.openingSubject.asObservable();
         this.closing = this.closingSubject.asObservable();
         this.positionChanged = this.positionChangedSubject.asObservable();
@@ -315,12 +321,6 @@ export interface Panel {
     widthChanged: Observable<number>
     heightChanged: Observable<number>
 }
-
-Panel.prototype.openingSubject = new Subject();
-Panel.prototype.closingSubject = new Subject();
-Panel.prototype.positionChangedSubject = new Subject();
-Panel.prototype.widthChangedSubject = new Subject();
-Panel.prototype.heightChangedSubject = new Subject();
 
 export interface PanelElem {
     idAttr: string;
