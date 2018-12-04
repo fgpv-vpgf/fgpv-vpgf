@@ -97,7 +97,5 @@ import './toc/symbology-stack.directive.js';
 import './toc/toc.directive.js';
 import './toc/toc.service.js';
 
-import './toolbox/toolbox.directive.js';
-
 import './tooltip/tooltip.directive.js';
 import './tooltip/tooltip.service.js';

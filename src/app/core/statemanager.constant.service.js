@@ -60,7 +60,6 @@ angular
 
         main: STATE_OBJECT_DEFAULTS(),
         mainToc: STATE_OBJECT_DEFAULTS('main'),
-        mainToolbox: STATE_OBJECT_DEFAULTS('main'),
         mainDetails: STATE_OBJECT_DEFAULTS('main', 'details'),
         mainGeosearch: STATE_OBJECT_DEFAULTS('main', 'geosearch'),
         mainLoaderFile: STATE_OBJECT_DEFAULTS('main'),
@@ -71,8 +70,6 @@ angular
         table: STATE_OBJECT_DEFAULTS(),
         tableFulldata: STATE_OBJECT_DEFAULTS('table', 'table'),
         tableNamedata: STATE_OBJECT_DEFAULTS('table'),
-        other: STATE_OBJECT_DEFAULTS(),
-        otherBasemap: STATE_OBJECT_DEFAULTS('other'),
         mapnav: STATE_OBJECT_DEFAULTS(),
         help: STATE_OBJECT_DEFAULTS()
     })

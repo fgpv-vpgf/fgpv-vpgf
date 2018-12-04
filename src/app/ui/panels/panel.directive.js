@@ -1,8 +1,7 @@
-import { Panel } from 'api/ui';
+import './panel-wrapper.service';
 
 const templateUrls = {
     main: require('./main-panel.html'),
-    other: require('./other-panel.html'),
     side: require('./side-panel.html')
 };
 
@@ -21,7 +20,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(referenceService, stateManager, debounceService, events) {
+function rvPanel(referenceService, stateManager, debounceService, panelWrapperService) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {
@@ -54,16 +53,6 @@ function rvPanel(referenceService, stateManager, debounceService, events) {
         referenceService.panels[pName] = element;
 
         self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
-
-        events.$on(events.rvApiMapAdded, (_, mapi) => {
-            const panelObj = new Panel(pName, element.find('> div').first());
-            panelObj.stateObservable.subscribe(open => {
-                stateManager.setActive({[pName]: open});
-                scope.$applyAsync();
-            });
-
-            mapi.ui.panels.add(panelObj);
-        });
 
         /**
          * Temporary function to close the panel.
