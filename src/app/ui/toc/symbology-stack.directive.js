@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout) {
+function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout, gapiService) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -120,16 +120,59 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // do nothing
         }
 
+        //TODO: find a better place for this function
+        // current plan is to get a list of valid OIDs for multiple query types (eg: filter by extent etc)
+        // enhancedTable will have a complete list of OIDs to show as calculated with multiple overlapping filters
+        function getSymbFilterOIDS(queryOpts) {
+            let legEntry = self.block;
+            legEntry.validOIDs = undefined;
+            const layerRecId = layerRegistry.getLayerRecord(legEntry.layerRecordId);
+            // query the layer itself instead of making a mapserver request
+            if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.dataSource() !== 'esri') {
+                queryOpts.featureLayer = layerRecId._layer;         // file based layer
+            } else {
+                queryOpts.url = legEntry.proxyWrapper.queryUrl;        // server based layer
+            }
+            gapiService.gapi.query.queryGeometry(queryOpts).then(featureSet => {
+                // save an array of OID's returned by the query
+                const validOIDs = featureSet.features.map(feat => parseInt(feat.attributes['OBJECTID']));
+                // set a list of validOIDs and fire an observable for the enhancedTable
+                legEntry.validOIDs = validOIDs;
+                if (legEntry.validOIDs !== undefined) {
+                    legEntry._symbolVisibilityChanged.next(true);
+                } else if (legEntry.validOIDs === undefined) {
+                    const proxyLoaded = $rootScope.$watch(() => legEntry.proxyWrapper.state, (state, oldState) => {
+                        if (state === 'rv-loaded') {
+                            legEntry._symbolVisibilityChanged.next();
+                        }
+                    });
+                }
+            });
+        }
+
         // Helper function: apply definition to block so changes reflect on map and table
         function setTableDefinition(fullDef, defClause) {
             self.block.definitionQuery = fullDef;
-            self.block.symbDefinitionQuery = defClause;
+            const state = stateManager.display.table;
+            if ((defClause !== '1=2' && defClause !== undefined)) {
+                const queryOpts = { outFields: ['OBJECTID'], where: `(${defClause})` };
+                getSymbFilterOIDS(queryOpts);
+                self.block.symbDefinitionQuery = defClause;
+            }
+            else if(defClause === '1=2'){
+                self.block.symbDefinitionQuery = '1=2';
+            }
+            else if (self.block.validOIDs !== undefined) {
+                self.block.symbDefinitionQuery = undefined;
+                self.block.visibility = true;
+            }
             events.$broadcast(events.rvSymbDefinitionQueryChanged);
         }
 
         if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
             self.block.visibilityChanged.subscribe(val => {
+                self.block.validOIDs = undefined;
                 //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
                 if (!self.stackToggled) {
                     const query = val ? undefined : '1=2';
@@ -164,26 +207,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             });
         }
 
-        // if the table is opened, set the table definition
-        if (self.block && self.block.selectedChanged) {
-            self.block.selectedChanged.subscribe(val => {
-                if (val) {
-                    let query;
-                    if (!self.block.visibility) {
-                        // if block is invisibile, table should have no entries
-                        query = '1=2';
-                    } else if (self.block.symbDefinitionQuery && self.block.symbDefinitionQuery !== '1=2') {
-                        // if symbDefinitionQuery is defined then set table to definition query
-                        // leaves out case where === '1=2' to account for a block that was just made visible
-                        query = self.block.symbDefinitionQuery;
-                    } else {
-                        // all entries will be visible
-                        query = undefined;
-                    }
-                    setTableDefinition(query, query);
-                }
-            });
-        }
 
         self.onToggleClick = (name, setDefinitionQuery = true) => {
             self.toggleList[name].click();
@@ -217,6 +240,17 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // apply to block so changes reflect on map
             if (setDefinitionQuery) {
                 setTableDefinition(fullDef, defClause);
+            }
+
+            if (defClause === undefined) {
+                if (self.block.validOIDs === undefined) {
+                    const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
+                        if (state === 'rv-loaded') {
+                            self.block._symbolVisibilityChanged.next();
+                            proxyLoaded();
+                        }
+                    });
+                }
             }
 
             if (noSymbolsVisible()) {

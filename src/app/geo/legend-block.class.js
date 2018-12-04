@@ -724,6 +724,7 @@ function LegendBlockFactory(
 
             this._aggregateStates = ref.aggregateStates;
             this._visibilityChanged = new Subject();
+            this._symbolVisibilityChanged = new Subject();
 
             this._symbologyStack = new SymbologyStack(
                 this.proxyWrapper.proxyPromise,
@@ -883,9 +884,6 @@ function LegendBlockFactory(
             return this.proxyWrapper.visibility;
         }
         set visibility(value) {
-            if (value === this.visibility) {
-                return;
-            }
 
             if (this.isControlSystemDisabled('visibility')) {
                 return;
@@ -905,6 +903,10 @@ function LegendBlockFactory(
 
         get visibilityChanged() {
             return this._visibilityChanged.asObservable();
+        }
+
+        get symbolVisibilityChanged() {
+            return this._symbolVisibilityChanged.asObservable();
         }
 
         get opacity() {
