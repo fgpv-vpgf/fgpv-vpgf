@@ -1,4 +1,4 @@
-Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible. 
+Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible.
 
 ## The basics
 
@@ -43,14 +43,14 @@ Inside our plugin object we define two methods, `init` and `listenToAlert`.
  - `listenToAlert` contains the logic for listening to a map click and displaying an alert box. That's all there is to it!
 
 <p class="tip">
-    If you use anything other than plain JavaScript (like TypeScript) be sure to compile it into JavaScript before including it on the host page. It's also a good idea to test your plugin in different browsers such as IE11, FireFox, and Chrome. 
+    If you use anything other than plain JavaScript (like TypeScript) be sure to compile it into JavaScript before including it on the host page. It's also a good idea to test your plugin in different browsers such as IE11, FireFox, and Chrome.
 </p>
 
  ## Register
 
-Let's bring our example plugin to life in the RAMP viewer in two steps: 
+Let's bring our example plugin to life in the RAMP viewer in two steps:
 
-1. include `MyPlugin.js` in the same webpage as the RAMP viewer. 
+1. include `MyPlugin.js` in the same webpage as the RAMP viewer.
 2. tell RAMP how to find the plugin by providing the pointer to our plugin object to the RAMP HTML element `rv-plugins`.
 
 
@@ -59,7 +59,7 @@ Let's bring our example plugin to life in the RAMP viewer in two steps:
     <head>
         <script src="MyPlugin.js"></script>
     </head>
-    
+
     <body>
         <div class="myMap" id="my-map" is="rv-map"
             rv-config="myConfig.json"
@@ -82,7 +82,7 @@ Our plugin will now load and work when the viewer is opened in a browser!
 
 `preInit` is an optional method for the plugin object which is called before the `init` method and before the RAMP API is ready. This method accepts the RAMP configuration as a read-only object.
 
-There may be cases where you'd like to perform some asynchronous operations before the viewer loads. If you return a promise from this method RAMP will pause loading until it resolves into a value that evaluates to `true`. 
+There may be cases where you'd like to perform some asynchronous operations before the viewer loads. If you return a promise from this method RAMP will pause loading until it resolves into a value that evaluates to `true`.
 
 Let's see this in action with an example:
 
@@ -92,7 +92,7 @@ window.MyPlugin = {
     preInit(rampConfig) {
         config = rampConfig; // store the config for later use
         return new Promise(function(resolve) {
-            // do some async operations . . . 
+            // do some async operations . . .
             resolve(true);
         });
     },
@@ -118,7 +118,7 @@ window.MyPlugin = {
         return new Promise(function(resolve){
             // perform proj4 style definition lookup
             resolve(proj4);
-        }); 
+        });
     }
 }
 ```
@@ -178,7 +178,7 @@ The double curly braces are part of AngularJS, though you don't need to know it 
 
 ### angular
 
-The RAMP viewer uses the <a href="https://angularjs.org/">v1.x AngularJS</a> framework along with <a href="https://material.angularjs.org/latest/">Angular Material</a> for UI components. This means you are free to use Angular Material components and as well as define your own custom Angular controllers. 
+The RAMP viewer uses the <a href="https://angularjs.org/">v1.x AngularJS</a> framework along with <a href="https://material.angularjs.org/latest/">Angular Material</a> for UI components. This means you are free to use Angular Material components and as well as define your own custom Angular controllers.
 
 #### register a custom controller
 The `rampAPI.agControllerRegister(controllerName, controllerFunction)` method allows you to define a custom angular controller. You call this method with the two required parameters:
@@ -204,10 +204,11 @@ Now `this.searchValue` in the `MySearchCtrl` function will always have the same 
 
 #### compiling HTML
 
-AngularJS needs to be aware of your HTML in order to compile it. In most cases this is taken care of automatically when you place your HTML inside a panel using the RAMP API `Panel` functionality. You can also compile HTML manually by passing an `HTMLElement` to the jQuery function `$` on the RAMP API, such as:
+AngularJS needs to be aware of your HTML in order to compile it. In most cases this is taken care of automatically when you place your HTML inside a panel using the RAMP API `Panel` functionality. You can also compile HTML manually by passing an `HTMLElement` to the `$compile` function on the RAMP API, such as:
 
 ``` js
 var jQueryElem = rampAPI.$(htmlElem);
+var scope = rampAPI.$compile(jQueryElem[0]);
 ```
 
 The contents of `htmlElem` will be compiled and returned as a jQuery object.

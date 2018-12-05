@@ -299,7 +299,7 @@ export interface Map {
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
     panelRegistryAttr: Panel[];
-    $: any;
+    $compile: any;
 }
 
 export default Map;
