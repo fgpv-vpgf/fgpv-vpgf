@@ -11,9 +11,10 @@ pullapprove_conditions:
 notifications:
     - when: pullapprove.started
       comment: >
-          Hey @{{ author }} please make sure your build is available to test at the following links
+          Hey @{{ author }},
+          
+          Please ensure your build is available at [https://{{ user.username }}.github.io/{{ head.repo.name }}/{{ head.sha }}/enhancedTable/samples/et-index.html](https://{{ user.username }}.github.io/{{ head.repo.name }}/{{ head.sha }}/enhancedTable/samples/et-index.html)
 
-          https://@{{ user.username }}.github.io/@{{ head.repo.name }}/@{{ head.sha }}/enhancedTable/samples/et-index.html
 
           Thanks for the PR!
     - when: pullapprove.approved
@@ -39,22 +40,7 @@ groups:
                 - milesap
                 - spencerwahl
                 - AleksueiR
-                - james-rae
         reviews:
             required: 1
-            request: 4
-            request_order: given
-
-    docs_tests:
-        conditions:
-            - "'code' in groups.approved"
-        reviewers:
-            users:
-                - milesap
-                - spencerwahl
-                - AleksueiR
-                - james-rae
-        reviews:
-            required: 1
-            request: 1
+            request: 2
             request_order: given
