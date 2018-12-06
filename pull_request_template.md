@@ -6,7 +6,8 @@
 
 ### Checklist
 <!-- check all that apply (some items wont apply to all PRs) -->
-- [ ] works in IE
+- [ ] works in IE11
+- [ ] works in Edge
 - [ ] works with projection change
 - [ ] works with language change
 - [ ] works via config file
