@@ -39,8 +39,27 @@ function mapServiceFactory(
         checkForBadZoom
     };
 
+    let externalOffset;
+    let externalPanel;
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+
+    // wire in a hook to zoom to feature
+    // this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.zoomToFeature = (proxy, oid, offset) => {
+            externalOffset = offset;
+            service.zoomToFeature(proxy, oid);
+        };
+
+        configService.getSync.map.instance.externalOffset = (offset) => {
+            externalOffset = offset;
+        };
+
+        configService.getSync.map.instance.externalPanel = (panel) => {
+            externalPanel = panel;
+        };
+    });
 
     let fakeFileLayer = null;
     let firstBasemapFlag = true;
@@ -492,12 +511,14 @@ function mapServiceFactory(
      * @return {Promise} a promise resolving after map completes extent change
      */
     function zoomToFeature(proxy, oid) {
-        const offset = referenceService.mainPanelsOffset;
+        const offset = (externalOffset !== undefined)? externalOffset: referenceService.mainPanelsOffset;
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
         if (offset.x > peekFactor || offset.y > peekFactor) {
             offset.x = offset.y = 0;
             referenceService.peekAtMap();
+        } else if (externalPanel !== undefined){
+            referenceService.peekAtMap(externalPanel);
         }
 
         const map = configService.getSync.map.instance;
