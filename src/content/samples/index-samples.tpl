@@ -179,6 +179,7 @@
                 <option value="config/config-sample-82.json">82. Mystery config 1</option>
                 <option value="config/config-sample-83.json">83. Mystery config 2</option>
                 <option value="config/config-sample-84.json">84. Local Export + Tainted Images + cleanCanvas option</option>
+                <option value="config/config-sample-85.json">85. File based layers</option>
             </select>
         </div>
 

@@ -621,6 +621,39 @@
             "required": [ "id", "layerType", "url" ],
             "additionalProperties": false
         },
+        "fileLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field." },
+                "tooltipField": { "type": "string", "description": "The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided)." },
+                "url": { "type": "string", "description": "The url path to the file.  It should match the type provided in layerType." },
+                "colour": { "type": "string", "description": "The hex code representing the layer symbology colour." },
+                "layerType": { "type": "string", "enum": [ "esriFeature" ] },
+                "fileType": { "type": "string", "enum": [ "csv", "geojson", "shapefile" ] },
+                "latField": { "type": "string", "description": "The latitude field of the layer (only for CSVs)." },
+                "longField": { "type": "string", "description": "The longitude field of the layer (only for CSVs)." },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table" },
+                "customRenderer": { "type": "object", "additionalProperties": true, "description": "Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention"},
+                "details" : {
+                    "type": "object",
+                    "properties": {
+                        "parser": {"type": "string", "description": "A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used."},
+                        "template": { "type": "string", "description": "A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc."}
+                    },
+                    "required":["template"],
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "layerType", "fileType", "url" ],
+            "additionalProperties": false
+        },
         "wfsLayerNode": {
             "type": "object",
             "properties": {
@@ -730,6 +763,7 @@
             "oneOf": [
                 { "$ref": "#/definitions/basicLayerNode" },
                 { "$ref": "#/definitions/featureLayerNode" },
+                { "$ref": "#/definitions/fileLayerNode" },
                 { "$ref": "#/definitions/wfsLayerNode" },
                 { "$ref": "#/definitions/wmsLayerNode" },
                 { "$ref": "#/definitions/dynamicLayerNode" }

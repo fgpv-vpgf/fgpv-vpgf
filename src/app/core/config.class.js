@@ -924,6 +924,26 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    class FileLayerNode extends FeatureLayerNode {
+        constructor (source) {
+            super(source);
+            this._fileType = source.fileType;
+            this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
+        }
+
+        get fileType () { return this._fileType; }
+
+        get colour () { return this._colour; }
+        set colour (value) { this._colour = value; }
+
+        get JSON() {
+            return angular.merge(super.JSON, {
+                fileType: this.fileType,
+                colour: this.colour
+            });
+        }
+    }
+
     class WFSLayerNode extends FeatureLayerNode {
         constructor (source) {
             super(source); // when a regular source isn't enough, call for super-source
@@ -934,6 +954,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get xyInAttribs () { return this._xyInAttribs; }
 
         get colour () { return this._colour; }
+        set colour (value) { this._colour = value; }
 
         get JSON() {
             return angular.merge(super.JSON, {
@@ -2764,6 +2785,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             DynamicLayerNode,
             WMSLayerNode,
             WFSLayerNode,
+            FileLayerNode,
 
             DynamicLayerEntryNode,
             WMSLayerEntryNode
