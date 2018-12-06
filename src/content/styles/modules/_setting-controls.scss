@@ -78,16 +78,23 @@
         }
 
         .rv-input-footer {
-            display: flex;
             margin-top: rem(1.0);
 
             .rv-input-changeat {
+                display: inline;
+                margin: 0 rem(0.4);
+                font-size: rem(1.2);
+                line-height: rem(1.2);
+                min-height: rem(1.2);
+                text-transform: none;
+                padding: 0 rem(0.4);
                 .rv-control-name {
                     text-transform: lowercase;
                 }
             }
 
             rv-legend-control {
+                display: inline;
                 padding: 0;
                 margin: 0 rem(0.4);
 
@@ -167,19 +174,25 @@
         }
 
         .rv-slider-footer {
-            display: flex;
             padding-left: rem(3.2);
             top: - rem(1.2);
             position: relative;
             margin-bottom: - rem(1.3);
 
             .rv-slider-changeat {
+                display: inline;
+                margin: 0 rem(0.4);
+                padding: 0 rem(0.4);
+                font-size: rem(1.2);
+                line-height: rem(1.2);
+                min-height: rem(1.2);
                 .rv-control-name {
                     text-transform: lowercase;
                 }
             }
 
             rv-legend-control {
+                display: inline;
                 padding: 0;
                 margin: 0 rem(0.4);
 
