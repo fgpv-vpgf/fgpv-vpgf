@@ -20,9 +20,9 @@
     <span class="rv-slider-footer md-caption" ng-if="!self.uiControl.same" translate="toc.slider.mixed"></span>
 
     <!-- this block is used when the control is disabled -->
-    <div class="rv-slider-footer" ng-if="self.valueParentBlock" >
+    <div class="rv-slider-footer md-caption" ng-if="self.valueParentBlock" >
         <!-- double variable replacement https://github.com/angular-translate/angular-translate/issues/1667 -->
-        <span class="rv-slider-changeat md-caption" translate="settings.change.at" translate-values="{ controlName: self.uiControl.controlName }" translate-compile></span>
+        <span class="rv-slider-changeat" translate="settings.change.at" translate-values="{ controlName: self.uiControl.controlName }" translate-compile></span>
 
         <rv-legend-control block="self.valueParentBlock" template="link" name="settings"></rv-legend-control>
     </div>
