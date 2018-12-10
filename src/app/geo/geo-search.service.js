@@ -67,7 +67,7 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
             return enabled;
 
         } else {
-            return !disableSearch || typeof disableSearch.find(t => t === type) !== 'undefined';
+            return !disableSearch || typeof disableSearch.find(t => t === type) === 'undefined';
         }
     }
 
