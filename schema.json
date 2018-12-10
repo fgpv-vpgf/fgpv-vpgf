@@ -944,14 +944,14 @@
         },
         "searchService": {
             "type": "object",
-            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+            "description": "Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG) and to set service endpoint urls",
             "properties": {
                 "disabledSearches": {
                     "type": "array",
-                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                    "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG", "SCALE" ] },
                     "minItems": 1,
                     "uniqueItems": true,
-                    "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                    "description": "Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG"
                 },
                 "serviceUrls": {
                     "type": "object",

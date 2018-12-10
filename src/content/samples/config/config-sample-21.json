@@ -37,6 +37,7 @@
       }
     },
     "search": {
+      "disabledSearches": ["FSA"],
       "serviceUrls": {
         "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
         "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
