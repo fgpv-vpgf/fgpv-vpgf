@@ -295,11 +295,12 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
             // fot NTS http://www.nrcan.gc.ca/earth-sciences/geography/topographic-information/maps/9765
             // for lat/long dd http://stackoverflow.com/questions/3518504/regular-expression-for-matching-latitude-longitude-coordinates
             // for lat long dms http://stackoverflow.com/questions/19839728/regex-for-latitude-and-longitude-with-form-ddmmssx
+            // note the [*] at the end of the regex's is because the searchbox is auto-appending a * to every query
             // jscs:disable maximumLineLength
             const fsaReg = /^[A-Za-z]\d[A-Za-z][*]$/; // look only for the first 3 characters because we do not have data for the whole postal code.
             const ntsReg = /^\d{3}[a-pA-P](0[1-9]|1[0-6])*[*]$/;
-            const latlngRegDD = /^([-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))([\s+|,|;])([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?))[*]$/; // [-+] 0-90 [space , ;] [-+] 0-180 (lat/long)
-            const latlngRegDMS = /^[-+]?(?:[0-8]\d|90)\s(?:[0-5]\d)\s(?:[0-5]\d)[,|;][-+]?(?:\d{2}|1[0-7]\d|180)\s(?:[0-5]\d)\s(?:[0-5]\d)[*]$/; // [+-] 0-90 [space] 0-60 [space] 0-60 [, ;] [+-] 0-120 [space] 0-60 [space] 60 [space] (lat/long)
+            const latlngRegDD = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/; // [-+] 0-90 [decimals] [ one delimiter (space , ; |) and as many extra spaces] [-+] 0-180 [decimals] (lat/long)
+            const latlngRegDMS = /^[-+]?([0-8]?\d|90)\s*([0-5]?\d)\s*([0-5]?\d)\s*[,|;\s]\s*[-+]?(\d{2}|1[0-7]\d|180)\s*([0-5]?\d)\s*([0-5]?\d)[*]$/; // [+-] 0-90 [spacse] 0-59 [spaces] 0-59 [ one delimiter (space , ; |) and as many extra spaces] [+-] 0-180 [spaces] 0-59 [spaces] 0-59 (lat/long)
             const scaleReg = /^[1][:]\d{1,3}[ ]*\d{1,3}[ ]*\d{1,3}[*]$/; // from 1:100 to 1:100 000 000
             // jscs:enable maximumLineLength
 
@@ -390,8 +391,11 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
     function parseLatLong(coord, type) {
         // if decimal degree, split by one of the delimiters
         // if degree, minute, second, convert to decimal degree
-        let coordinates = (type === 'dd') ? coord.split(/[\s|,|;|]/) : convertLatLongDms(coord);
-        coordinates = coordinates.map(item => parseFloat(item)).reverse(); // reverse, need to be long/lat
+
+        // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
+        const filteredCoords = coord.split(/[\s|,|;|]/).filter(n => !isNaN(n) && n !== '').map(n => parseFloat(n));
+        let coordinates = (type === 'dd') ? filteredCoords : convertLatLongDms(filteredCoords);
+        coordinates = coordinates.reverse(); // reverse, need to be long/lat
 
         // apply buffer to create bbox from point coordinates
         const buff = 0.015; // degrees
@@ -414,21 +418,16 @@ function geoSearch($http, $q, configService, geoService, mapService, gapiService
      *
      * @function convertLatLongDMS
      * @private
-     * @param   {String}    coord   the lat long coordinates ("latitude,longitude")
-     *                                  * "45,-100"
-     *                                  * "56.54535455;120.344342"
+     * @param   {Array}    coord   6 element array of co-ords representing lat long in degree minute second
      * @return {Array}     the lat long coordinate in decimal degree [lat, long]
      */
-    function convertLatLongDms(coord) {
-        const latLong = coord.split(/[,|;]/);
-        const lat = latLong[0].split(' ').map(item => parseFloat(item));
-        const long = latLong[1].split(' ').map(item => parseFloat(item));
-        let latdd = Math.abs(lat[0]) + lat[1] / 60 + lat[2] / 3600; // unsigned
-        let longdd = Math.abs(long[0]) + long[1] / 60 + long[2] / 3600; // unsigned
+    function convertLatLongDms(coord) {       
+        let latdd = Math.abs(coord[0]) + coord[1] / 60 + coord[2] / 3600; // unsigned
+        let longdd = Math.abs(coord[3]) + coord[4] / 60 + coord[5] / 3600; // unsigned
 
         // check if we need to reset sign
-        latdd = (lat[0] > 0) ? latdd : latdd * -1;
-        longdd = (long[0] > 0) ? longdd : longdd * -1;
+        latdd = (coord[0] > 0) ? latdd : latdd * -1;
+        longdd = (coord[3] > 0) ? longdd : longdd * -1;
 
         return [latdd, longdd];
     }
