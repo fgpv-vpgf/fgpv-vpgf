@@ -243,6 +243,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          * @function saveImage
          * @private
          */
+        // eslint-disable-next-line max-statements
         function saveImage() {
             // get generated graphics from the export components
             const exportGraphics = self.exportComponents.items
@@ -311,10 +312,18 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 return;
             }
 
+
             try {
-                canvas.toBlob(blob => {
-                    FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
-                });
+                // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3184
+                // IE 10+ and Edge have their own `toBlob` implmenetation called `msToblob` ...
+                if (canvas.msToBlob) {
+                    // ... and it's synchronous!
+                    FileSaver.saveAs(canvas.msToBlob(), `${fileName}.${self.fileType}`);
+                } else {
+                    canvas.toBlob(blob => {
+                        FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
+                    });
+                }
             } catch (error) {
                 console.error(error);
                 // something else happened

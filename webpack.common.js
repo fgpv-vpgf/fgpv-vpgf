@@ -180,7 +180,7 @@ module.exports = function (env) {
                 inject: false,
                 filename: `${filePath.join('/')}/${fileName.replace(/\.[^/.]+$/, '.html')}`,
                 template: `src/content/${file}`,
-                excludeChunks: ['ie-polyfills']
+                excludeChunks: ['ie-polyfills'] // TODO: dead code; remove?
             });
         }
         }).filter(x => x)
