@@ -9,6 +9,8 @@
 </head>
 <body>
   <div id="app"></div>
+  <script src="https://unpkg.com/docute-emojify"></script>
+  <script src="https://unpkg.com/docute-evanyou"></script>
   <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
   <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
   <script>
@@ -16,27 +18,44 @@
       var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
 
     docute.init({
-        nav: [
-            {title: 'Home', path: '/'},
-            {title: 'Map authoring guide', type: 'dropdown', items: [
+        landing: 'landing.html',
+        nav: {
+            default: [
+                {title: 'Home', path: '/'},
+                {title: 'Developer Guide', path: '/developer/intro'},
+                {title: 'Map authoring guide', path: '/mapauthor/intro'},
+                {title: 'Contributing to RAMP', path: '/contribute/getting_started'},
+            ],
+            author: [
                 {title: 'Introduction', path: '/mapauthor/intro'},
                 {title: 'Configuration', path: '/mapauthor/working_examples'},
                 {title: 'Setup on a webpage', path: '/mapauthor/working_examples'}
-            ]},
-            {title: 'Developer Guide', type: 'dropdown', items: [
+            ],
+            dev: [
+                {title: 'Home', path: '/'},
                 {title: 'Introduction', path: '/developer/intro'},
-                {title: 'API', path: '/developer/api'},
+                {title: 'API', type: 'dropdown', items: [
+                    {type: 'label', title: 'UI Components'},
+                    {title: 'Panels', path: '/developer/panels'},
+                    {title: 'Legend', path: '/developer/panels'},
+                    {type: 'sep'},
+                    {type: 'label', title: 'Layers'},
+                ]},
+
                 {title: 'Plugins', path: '/developer/plugins'},
                 {title: 'Technical Documentation', path: `${url}developer/api/tech_docs`}
-            ]},
-            {title: 'Contributing to RAMP', type: 'dropdown', items: [
+            ],
+            contribute: [
                 {title: 'Getting started', path: '/contribute/getting_started'},
                 {title: 'How to contribute', path: '/contribute/contributing_guide'},
                 {title: 'Technical JSDocs', path: `${url}contribute/jsDocs/`},
                 {title: 'Release Tutorial', path: '/contribute/release_tutorial'}
-            ]}
+            ]
+            },
+        plugins: [
+            docuteEmojify(),
+            evanyou()
         ],
-        plugins: [],
         repo: 'fgpv-vpgf/fgpv-vpgf'
     })
   </script>

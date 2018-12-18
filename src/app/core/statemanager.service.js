@@ -25,7 +25,7 @@ angular
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
 function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
-    referenceService, appInfo) {
+    referenceService, appInfo, events) {
 
     const service = {
         addState,
@@ -380,6 +380,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return {Promise}  resolves to undefined when all panel animations have completed
      */
     function openPanel(panelToOpen, propagate = true) {
+        events.$broadcast('panelOpening', panelToOpen.name);
+
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
         if (panelToOpen.name === 'mainDetails') {
@@ -439,6 +441,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      */
     function closePanel(panelToClose, propagate = true) {
         let animationPromise;
+
+        events.$broadcast('panelClosing', panelToClose.name);
 
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
