@@ -225,11 +225,11 @@ function getDateFloatingFilterComponent(mapApi) {
 
     DateFloatingFilter.prototype.init = function (params) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        const template = mapApi.$compileWithScope(`<span><md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker><md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker></span>`);
-        this.scope = template.scope;
+        let template = $(`<span><md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker><md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker></span>`);
+        this.scope = mapApi.$compile(template[0]);
         this.scope.min = null;
         this.scope.max = null;
-        this.eGui = template.html[0];
+        this.eGui = template[0];
         var that = this;
 
         this.scope.minChanged = function() {
@@ -311,7 +311,8 @@ TableBuilder.prototype.tableOptions = {
         width: 100
     },
     autoSizePadding: 75,
-    suppressColumnVirtualisation: true
+    suppressColumnVirtualisation: true,
+    ensureDomOrder: true
 };
 
 TableBuilder.prototype.id = 'fancyTable';
