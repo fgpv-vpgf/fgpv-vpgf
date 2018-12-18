@@ -13,11 +13,19 @@ angular
     .module('app.core')
     .factory('displayManager', displayManager);
 
-function displayManager($timeout, $q, $rootElement) {
+function displayManager($timeout, $q, $rootElement, configService, events) {
     const service = {
         toggleDisplayPanel,
         clearDisplayPanel
     };
+
+    // wire in a hook to toggle details panel, this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.toggleDetailsPanel = (details) => {
+            service.toggleDisplayPanel('mainDetails', details, {}, 1);
+        };
+    });
+
     let stateManager;
     let requestIdCounter = 1;
 
