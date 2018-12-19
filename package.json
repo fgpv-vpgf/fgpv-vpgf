@@ -33,7 +33,7 @@
     "rcolor": "1.0.1",
     "remove-markdown": "0.2.2",
     "rxjs": "6.1.0",
-    "screenfull": "3.3.2",
+    "screenfull": "3.3.3",
     "svg.textflow.js": "github:fgpv-vpgf/svg.textflow.js"
   },
   "devDependencies": {
