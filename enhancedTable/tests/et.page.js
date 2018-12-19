@@ -30,8 +30,24 @@ class Page extends RAMPage {
     get numberInput() {
         return {
             min: browser.element('.rv-min'),
-            max:  browser.element('.rv-max')
+            max: browser.element('.rv-max')
         }
+    }
+
+    // Details and zoom
+
+    /**
+     * Returns the first details button
+     */
+    get detailsButton() {
+        return browser.element('.enhanced-table-details');
+    }
+
+    /**
+     * Returns the first zoom button
+     */
+    get zoomButton() {
+        return browser.element('.enhanced-table-zoom');
     }
 
     /**

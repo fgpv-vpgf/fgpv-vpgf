@@ -2,7 +2,12 @@
     "ui": {
         "navBar": {
             "zoom": "buttons",
-            "extra": ["fullscreen", "geoLocator", "home", "help"]
+            "extra": [
+                "fullscreen",
+                "geoLocator",
+                "home",
+                "help"
+            ]
         },
         "sideMenu": {
             "logo": true
@@ -75,7 +80,7 @@
                 "name": "root",
                 "children": [
                     {
-                        "layerId": "0"
+                        "layerId": "4"
                     },
                     {
                         "layerId": "1"
@@ -87,7 +92,7 @@
                         "layerId": "3"
                     },
                     {
-                        "layerId": "4"
+                        "layerId": "0"
                     },
                     {
                         "name": "child",

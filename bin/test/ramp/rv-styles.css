@@ -20299,6 +20299,8 @@ Obviously you need some kind of rules and criteria:
     transition: opacity 0.3s cubic-bezier(0.35, 0, 0.25, 1); }
   [is=rv-map] .rv-peek.rv-peek-enabled, .fgpv .rv-peek.rv-peek-enabled {
     outline: 1px solid #999; }
+    [is=rv-map] .rv-peek.rv-peek-enabled.panel-contents, .fgpv .rv-peek.rv-peek-enabled.panel-contents {
+      background-color: rgba(255, 255, 255, 0.14); }
     [is=rv-map] .rv-peek.rv-peek-enabled > *, .fgpv .rv-peek.rv-peek-enabled > * {
       opacity: 0.14 !important; }
       [is=rv-map] .rv-peek.rv-peek-enabled > *:after, .fgpv .rv-peek.rv-peek-enabled > *:after {
@@ -20997,9 +20999,7 @@ Obviously you need some kind of rules and criteria:
         pointer-events: all; }
       [is=rv-map] rv-panel[type='main'].geosearch .rv-panel:after, .fgpv rv-panel[type='main'].geosearch .rv-panel:after {
         box-shadow: none !important; }
-  [is=rv-map] rv-panel[type='main'] rv-toc,
-  [is=rv-map] rv-panel[type='main'] rv-toolbox, .fgpv rv-panel[type='main'] rv-toc,
-  .fgpv rv-panel[type='main'] rv-toolbox {
+  [is=rv-map] rv-panel[type='main'] rv-toc, .fgpv rv-panel[type='main'] rv-toc {
     top: 0;
     left: 0;
     right: 0;

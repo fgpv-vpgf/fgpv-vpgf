@@ -1,7 +1,10 @@
 import { Grid } from 'ag-grid-community';
 import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE } from './templates';
+import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
+import { PanelRowsManager } from './panel-rows-manager';
+import { PanelStatusManager } from './panel-status-manager';
 
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
@@ -20,56 +23,16 @@ export class PanelManager {
         this.panel.content = new this.panel.container(this.tableContent);
     }
 
-    // gets the updated text to display for the enhancedTable's filter status
-    getFilterStatus() {
-        let text: string;
-
-        if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
-            text = `${this.tableOptions.api.getDisplayedRowCount()} records shown (filtered from ${this.tableOptions.rowData.length} records)`;
-        }
-        else {
-            text = `${this.tableOptions.rowData.length} records shown`;
-        }
-
-        if (this.panel.panelControls.find('.filterRecords')[0]) {
-            this.panel.panelControls.find('.filterRecords')[0].innerHTML = text;
-        }
-        this.getScrollRange();
-        return text;
-    }
-
-    // gets the updated row range to get as table is scrolled vertically (example "showing 1-10 of 50 entries")
-    getScrollRange() {
-        let rowRange: string;
-        if (this.tableOptions.api) {
-            const topPixel = this.tableOptions.api.getVerticalPixelRange().top;
-            const bottomPixel = this.tableOptions.api.getVerticalPixelRange().bottom;
-            let firstRow;
-            let lastRow;
-            this.tableOptions.api.getRenderedNodes().forEach(row => {
-                //if the top row is greater than the top pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
-                if (firstRow === undefined && row.rowTop > topPixel - (row.rowHeight / 2)) {
-                    firstRow = parseInt(row.rowIndex) + 1;
-                }
-                //if the bottom row is less than the bottom pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
-                if ((row.rowTop + row.rowHeight) < bottomPixel + (row.rowHeight / 2)) {
-                    lastRow = parseInt(row.rowIndex) + 1;
-                }
-            });
-            if (firstRow === undefined && lastRow === undefined) {
-                firstRow = 0;
-                lastRow = 0;
+    // recursively find and set the legend block for the layer
+    setLegendBlock(legendEntriesList: any) {
+        legendEntriesList.forEach(entry => {
+            if (entry.proxyWrapper !== undefined && this.currentTableLayer._layerProxy === entry.proxyWrapper.proxy) {
+                this.legendBlock = entry;
             }
-            rowRange = firstRow.toString() + " - " + lastRow.toString();
-        }
-        else {
-            rowRange = this.maximized ? '1 - 15' : '1 - 5';
-        }
-        if (this.panel.panelControls.find('.scrollRecords')[0]) {
-            this.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
-        }
-
-        return rowRange;
+            else if (entry.children || entry.entries) {
+                this.setLegendBlock(entry.children || entry.entries);
+            }
+        });
     }
 
     open(tableOptions: any, layer: any) {
@@ -77,34 +40,40 @@ export class PanelManager {
             this.close();
         } else {
             this.tableOptions = tableOptions;
+            this.panelStatusManager = new PanelStatusManager(this);
+            this.panelStatusManager.setFilterAndScrollWatch();
 
             let panelManager = this;
 
-            // when filter is changed, get the correct filter status
-            this.tableOptions.onFilterChanged = function (event) {
-                if (panelManager.tableOptions.api) {
-                    panelManager.tableOptions.api.selectAllFiltered();
-                    panelManager.getFilterStatus();
-                    panelManager.tableOptions.api.deselectAllFiltered();
-                }
-            }
 
-            this.tableOptions.onBodyScroll = function (event) {
-                panelManager.getScrollRange();
-            }
+            // set legend block / layer that the panel corresponds to
+            this.currentTableLayer = layer;
+            this.setLegendBlock(this.currentTableLayer._mapInstance.legendBlocks.entries);
 
+            this.panelRowsManager = new PanelRowsManager(this);
+
+
+            // set header / controls for panel
             let controls = this.header;
-            controls = [new this.panel.container('<span style="flex: 1;"></span>'), ...controls];
-            controls = [new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${layer.name}</b></h2><br><p><span class="scrollRecords">${this.getScrollRange()}</span> of <span class="filterRecords">${this.getFilterStatus()}</span></div>`), ...controls];
+            controls = [
+                new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${this.legendBlock.name}</b></h2><br><p><span class="scrollRecords">${this.panelStatusManager.getScrollRange()}</span> of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`),
+                new this.panel.container('<span style="flex: 1;"></span>'),
+                ...controls
+            ];
             this.panel.controls = controls;
+
+            // set css for panel
             this.panel.panelBody.css('padding-top', '16px');
             this.panel.panelControls.css('display', 'flex');
             this.panel.panelControls.css('align-items', 'center');
-            this.currentTableLayer = layer;
             this.tableContent.empty();
+
+            //create details and zoom buttons, open the panel and display proper filter values
+            new DetailsAndZoomButtons(this);
             new Grid(this.tableContent[0], tableOptions);
+            this.panelRowsManager.initObservers();
             this.panel.open();
-            this.getScrollRange();
+            this.panelStatusManager.getScrollRange();
 
             this.tableOptions.onGridReady = () => {
                 this.autoSizeToMaxWidth();
@@ -219,11 +188,15 @@ export class PanelManager {
             this.searchText = '';
             this.updatedSearchText = function () {
                 that.tableOptions.api.setQuickFilter(this.searchText);
+                that.panelRowsManager.quickFilterText = this.searchText;
+                that.tableOptions.api.selectAllFiltered();
+                that.panelStatusManager.getFilterStatus();
+                that.tableOptions.api.deselectAllFiltered();
             };
             this.clearSearch = function () {
                 this.searchText = '';
                 this.updatedSearchText();
-                that.getFilterStatus();
+                that.panelStatusManager.getFilterStatus();
             };
         });
 
@@ -235,8 +208,9 @@ export class PanelManager {
             // sets the table size, either split view or full height
             this.setSize = function (value) {
                 that.maximized = value === 'true' ? true : false;
+                !that.maximized ? that.mapApi.mapI.externalPanel(undefined) : that.mapApi.mapI.externalPanel($('#enhancedTable'));
                 that.setSize();
-                that.getScrollRange();
+                that.panelStatusManager.getScrollRange();
             };
 
             // print button has been clicked
@@ -299,6 +273,9 @@ export interface PanelManager {
     currentTableLayer: any;
     maximized: boolean;
     tableOptions: any;
+    legendBlock: any;
+    panelRowsManager: PanelRowsManager;
+    panelStatusManager: PanelStatusManager;
 }
 
 PanelManager.prototype.maximized = false;

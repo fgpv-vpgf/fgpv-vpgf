@@ -101,3 +101,17 @@ export const MENU_TEMPLATE = `
     </md-menu>
 </md-menu-bar>
 `;
+
+export const DETAILS_AND_ZOOM = (rowIndex) =>
+    `<div class='rv-wrapper' ng-controller='DetailsAndZoomCtrl as ctrl'>
+        <button ng-click='ctrl.openDetails(${rowIndex})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
+            <md-icon md-svg-src="action:description" aria-hidden='false' class='ng-scope' role='img'>
+                <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.details' | translate }}</md-tooltip>
+            </md-icon>
+        </button>
+        <button ng-click='ctrl.zoomToFeature(${rowIndex})'  md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-zoom' aria-label="{{ 't.detailsAndZoom.zoom' | translate }}">
+            <md-icon md-svg-src="action:zoom_in" aria-hidden='false'>
+                <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.zoom' | translate }}</md-tooltip>
+            </md-icon>
+        </button>
+    </div>`;

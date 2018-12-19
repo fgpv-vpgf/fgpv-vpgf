@@ -1,6 +1,7 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
+import { DETAILS_AND_ZOOM } from './templates';
 
 const NUMBER_TYPES = ["esriFieldTypeOID", "esriFieldTypeDouble", "esriFieldTypeInteger"];
 const DATE_TYPE = "esriFieldTypeDate";
@@ -56,6 +57,7 @@ class TableBuilder {
     }
 
     createTable(attrBundle: AttrBundle) {
+        const panel = this.panel.panel;
         let cols: Array<any> = [];
 
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
@@ -101,7 +103,7 @@ class TableBuilder {
                                 }
                             }
                         };
-                        colDef.floatingFilterComponent  = getDateFloatingFilterComponent(this.mapApi);
+                        colDef.floatingFilterComponent = getDateFloatingFilterComponent(this.mapApi);
                         colDef.cellRenderer = function (cell) {
                             let element = document.createElement('span');
                             element.innerHTML = getDateString(cell.value);
@@ -110,7 +112,7 @@ class TableBuilder {
                         colDef.getQuickFilterText = function (params) {
                             return getDateString(params.value);
                         }
-                    } else if (fieldInfo.type === TEXT_TYPE && !attrBundle.layer.table.lazyFilter) {
+                    } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined && !attrBundle.layer.table.lazyFilter) {
                         // Default to "regex" filtering for text columns
                         colDef.filterParams = {
                             textCustomComparator: function (filter, value, filterText) {
@@ -124,6 +126,11 @@ class TableBuilder {
                     colDef.cellRenderer = function (cellImg) {
                         return cellImg.value;
                     };
+                } else if (columnName === 'rvInteractive') {
+                    // sets details and zoom buttons for the row
+                    colDef.cellRenderer = function (cellImg) {
+                        return new panel.container(DETAILS_AND_ZOOM(cellImg.rowIndex)).elementAttr[0];
+                    }
                 }
 
                 if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
@@ -156,7 +163,7 @@ function getNumberFloatingFilterComponent() {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = `<input class="rv-min" style="width:50%" type="text" placeholder="MIN"/>
                             <input class="rv-max" style="width:50%" type="text" placeholder="MAX"/>`
-        this.currentValues = {min: null, max: null};
+        this.currentValues = { min: null, max: null };
         this.minFilterInput = this.eGui.querySelector(".rv-min");
         this.maxFilterInput = this.eGui.querySelector(".rv-max");
         var that = this;
@@ -167,7 +174,7 @@ function getNumberFloatingFilterComponent() {
             } else {
                 that.currentValues.min = Number(that.minFilterInput.value);
             }
-            that.onFloatingFilterChanged({model: getModel()});
+            that.onFloatingFilterChanged({ model: getModel() });
         }
 
         function onMaxInputBoxChanged() {
@@ -176,7 +183,7 @@ function getNumberFloatingFilterComponent() {
             } else {
                 that.currentValues.max = Number(that.maxFilterInput.value);
             }
-            that.onFloatingFilterChanged({model: getModel()});
+            that.onFloatingFilterChanged({ model: getModel() });
         }
 
         function getModel() {
@@ -232,21 +239,21 @@ function getDateFloatingFilterComponent(mapApi) {
         this.eGui = template[0];
         var that = this;
 
-        this.scope.minChanged = function() {
-            that.onFloatingFilterChanged({model: getModel()});
+        this.scope.minChanged = function () {
+            that.onFloatingFilterChanged({ model: getModel() });
         };
 
-        this.scope.maxChanged = function() {
-            that.onFloatingFilterChanged({model: getModel()});
+        this.scope.maxChanged = function () {
+            that.onFloatingFilterChanged({ model: getModel() });
         };
 
         function getModel() {
             const min = that.scope.min !== null
-                      ? `${that.scope.min.getFullYear()}-${that.scope.min.getMonth() + 1}-${that.scope.min.getDate()}`
-                      : null;
+                ? `${that.scope.min.getFullYear()}-${that.scope.min.getMonth() + 1}-${that.scope.min.getDate()}`
+                : null;
             const max = that.scope.max !== null
-                      ? `${that.scope.max.getFullYear()}-${that.scope.max.getMonth() + 1}-${that.scope.max.getDate()}`
-                      : null;
+                ? `${that.scope.max.getFullYear()}-${that.scope.max.getMonth() + 1}-${that.scope.max.getDate()}`
+                : null;
             if (min !== null && max !== null) {
                 return {
                     type: 'inRange',
@@ -260,7 +267,7 @@ function getDateFloatingFilterComponent(mapApi) {
                 };
             } else if (min === null && max) {
                 return {
-                    type:'lessThanOrEqual',
+                    type: 'lessThanOrEqual',
                     dateFrom: max
                 };
             } else {
@@ -337,6 +344,10 @@ TableBuilder.prototype.translations = {
                 extent: 'Filter by extent',
                 show: 'Show filters'
             }
+        },
+        detailsAndZoom: {
+            details: 'Details',
+            zoom: 'Zoom To Feature'
         }
     },
     'fr-CA': {
@@ -358,6 +369,10 @@ TableBuilder.prototype.translations = {
                 extent: 'Filtrer par étendue',
                 show: 'Afficher les filtres'
             }
+        },
+        detailsAndZoom: {
+            details: 'Détails',
+            zoom: "Zoom à l'élément"
         }
     }
 };
