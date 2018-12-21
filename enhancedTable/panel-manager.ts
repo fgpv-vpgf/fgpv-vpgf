@@ -21,6 +21,7 @@ export class PanelManager {
         this.setSize();
         this.panel.panelBody.addClass('ag-theme-material');
         this.panel.content = new this.panel.container(this.tableContent);
+        this.panel.element[0].addEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
     }
 
     // recursively find and set the legend block for the layer
@@ -81,10 +82,25 @@ export class PanelManager {
                 let colApi = this.tableOptions.columnApi
                 colApi.getDisplayedColAfter(colApi.getColumn('rvInteractive')).setSort("asc");
             };
+
+            // Set up grid panel accessibility
+            // Link clicked legend element to the opened table
+            const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
+            console.log(sourceEl, $(document).find(`#enhancedTable`));
+            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
+            // Go from last filter input to grid and reverse
+            let headers = this.panel.element[0].getElementsByClassName('ag-header-cell');
+            let filters = headers[headers.length - 1].getElementsByTagName('INPUT');
+            this.lastFilter = filters[filters.length - 1]; // final filter before grid
+            this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
+            this.gridBody.tabIndex = 0; // make grid container tabable
+            this.gridBody.addEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
         }
     }
 
     close() {
+        this.panel.element[0].removeEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
+        this.gridBody.removeEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
         this.panel.close();
         this.currentTableLayer = undefined;
     }
@@ -265,6 +281,63 @@ export class PanelManager {
     }
 }
 
+/**
+ * Function to ensure focused column filter is scrolled into view
+ * @param element filter being focused
+ * @param panel table panel with scrollbar
+ */
+function scrollIntoView(element: any, panel: HTMLElement) {
+    element = element.target;
+    let container = <HTMLElement>panel.getElementsByClassName('ag-body-viewport')[0];
+    const { elementRect, containerRect, offset } = getOffset(element, container);
+    let offsetDelta: number = 0;
+    if (offset.left < 0) {
+        offsetDelta = offset.left;
+    } else if (offset.left + elementRect.width > containerRect.width) {
+        offsetDelta = offset.left + elementRect.width - containerRect.width;
+    }
+
+    if (offsetDelta !== 0) {
+        container.scrollLeft += offsetDelta;
+    }
+
+    function getOffset(element: HTMLElement, container: HTMLElement) {
+        const elementRect = element.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        return {
+            elementRect,
+            containerRect,
+            offset: {
+                top: elementRect.top - containerRect.top,
+                left: elementRect.left - containerRect.left
+            }
+        };
+    }
+}
+
+/**
+ * Function to help enter and exit grid using the keyboard
+ * @param element grid being focused
+ * @param tableOptions provide access to table api
+ * @param lastFilter final filter input before entering the grid
+ */
+function tabToGrid(element: any, tableOptions: any, lastFilter: any) {
+    if (element.relatedTarget !== null && element.relatedTarget.tagName === 'INPUT') {
+        // scrolls to the first row
+        tableOptions.api.ensureIndexVisible(0);
+
+        // scrolls to the first column
+        let firstCol = tableOptions.columnApi.getAllDisplayedColumns()[0];
+        tableOptions.api.ensureColumnVisible(firstCol);
+
+        // sets focus into the first grid cell
+        tableOptions.api.setFocusedCell(0, firstCol);
+   } else {
+       lastFilter.focus();
+   }
+}
+
 export interface PanelManager {
     panel: any;
     mapApi: any;
@@ -276,6 +349,12 @@ export interface PanelManager {
     legendBlock: any;
     panelRowsManager: PanelRowsManager;
     panelStatusManager: PanelStatusManager;
+    lastFilter: any;
+    gridBody: any;
+}
+
+interface EnhancedJQuery extends JQuery {
+    link: any;
 }
 
 PanelManager.prototype.maximized = false;

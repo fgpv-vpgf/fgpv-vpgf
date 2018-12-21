@@ -14,16 +14,18 @@ export const SEARCH_TEMPLATE = `
 `;
 
 export const CLEAR_FILTERS_TEMPLATE = `
-<md-button
-        ng-controller="ClearFiltersCtrl as ctrl"
-        aria-label="{{ 't.table.filter.clear' | translate }}"
-        class="md-icon-button black rv-button-24"
-        rv-help="table-clear-button"
-        ng-click="ctrl.clearFilters()"
-        ng-disabled="!ctrl.anyFilters()">
-        <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
-        <md-icon md-svg-src="community:filter-remove"></md-icon>
-</md-button>
+<div>
+    <md-button
+            ng-controller="ClearFiltersCtrl as ctrl"
+            aria-label="{{ 't.table.filter.clear' | translate }}"
+            class="md-icon-button black rv-button-24"
+            rv-help="table-clear-button"
+            ng-click="ctrl.clearFilters()"
+            ng-disabled="!ctrl.anyFilters()">
+            <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
+            <md-icon md-svg-src="community:filter-remove"></md-icon>
+    </md-button>
+</div>
 `;
 
 export const COLUMN_VISIBILITY_MENU_TEMPLATE = `

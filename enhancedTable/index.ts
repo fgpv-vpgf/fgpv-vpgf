@@ -358,7 +358,7 @@ TableBuilder.prototype.translations = {
             filter: {
                 clear: 'Effacer les filtres'
             },
-            hideColumns: 'Hide columns' // TODO: Add French translation
+            hideColumns: 'Masquer les colonnes' // TODO: Add Official French translation
         },
         menu: {
             split: 'Diviser la vue',
