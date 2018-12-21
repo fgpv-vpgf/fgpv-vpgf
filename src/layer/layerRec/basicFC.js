@@ -153,6 +153,24 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         const scaleSet = this.getScaleSet();
         return this._parent._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
     }
+
+    /**
+     * Indicate the data source of this FC (e.g. ESRI server, file, WFS, WMS)
+     *
+     * @function dataSource
+     * @returns {String}        The source of the feature class. Will be a member of the shared.dataSources enum
+     */
+    dataSource () {
+        return this._parent.dataSource();
+    }
+
+    applyFilterToLayer () {
+        throw new Error('Cannot apply filters to non-attribute layers');
+    }
+
+    getLayerFilterOIDs () {
+        throw new Error('Cannot get OIDs for non-attribute layers');
+    }
 }
 
 module.exports = () => ({

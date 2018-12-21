@@ -6,7 +6,7 @@ const states = { // these are used as css classes; hence the `rv` prefix
     REFRESH: 'rv-refresh',
     LOADING: 'rv-loading',
     LOADED: 'rv-loaded', // TODO maybe loaded and default are the same?
-    DEFAULT: 'rv-default',
+    DEFAULT: 'rv-default', // TODO it appears this is not being used?
     ERROR: 'rv-error'
 };
 
@@ -24,6 +24,20 @@ const clientLayerType = {
     UNRESOLVED: 'unresolved',
     UNKNOWN: 'unknown'
 };
+
+const dataSources = {
+    ESRI: 'esri',
+    WFS: 'wfs',
+    WMS: 'wms',
+    FILE: 'file'
+}
+
+const filterType = {
+    SYMBOL: 'symbol',
+    API: 'api',
+    GRID: 'grid',
+    EXTENT: 'extent'
+}
 
 /**
  * Takes an array of (possibly pending) legend data and constructs an array of default
@@ -155,12 +169,96 @@ class IdentifyResult {
     }
 }
 
+/**
+ * @class FakeEvent
+ */
+class FakeEvent {
+    constructor () {
+        this._listeners = [];
+    }
+
+    /**
+     * Triggers the event (i.e. notifies all listeners)
+     *
+     * @function fireEvent
+     * @private
+     * @param {...Object} eventParams   arbitrary set of parameters to pass to the event handler functions
+     */
+    fireEvent (...eventParams) {
+        // if we don't copy the array we could be looping on an array
+        // that is being modified as it is being read
+        this._listeners.slice(0).forEach(l => l(...eventParams));
+    }
+
+    /**
+     * Register a function to listen to this event.
+     *
+     * @function addListener
+     * @param {Function} listenerCallback function to call when the event fires
+     * @returns {Function} the input function (for fun and reference)
+     */
+    addListener (listenerCallback) {
+        this._listeners.push(listenerCallback);
+        return listenerCallback;
+    }
+
+    /**
+     * Remove a mouse filter listener.
+     *
+     * @function removeListener
+     * @param {Function} listenerCallback function to not call when a filter event happens
+     */
+    removeListener (listenerCallback) {
+        const idx = this._listeners.indexOf(listenerCallback);
+        if (idx < 0) {
+            throw new Error('Attempting to remove a listener which is not registered.');
+        }
+        this._listeners.splice(idx, 1);
+    }
+
+    get listenerCount () { return this._listeners.length; }
+}
+
+/**
+ * Determines if two extents are the same.
+ *
+ * @function areExtentsSame
+ * @param {Extent} e1 an extent.
+ * @param {Extent} e2 another extent.
+ * @return {Boolean} indicates if input extents are the same
+ */
+function areExtentsSame(e1, e2) {
+    if (!(e1 && e2)) {
+        // a param was empty/nothing
+        return false;
+    }
+    return e1.xmin === e2.xmin && e1.ymin === e2.ymin && e1.xmax === e2.xmax && e1.ymax === e2.ymax;
+}
+
+/**
+ * Returns array of common elements. Assumes each array has no duplicates (e.g. no [1,1,2] type arrays).
+ * This is mainly used for arrays of object ids
+ *
+ * @function arrayIntersect
+ * @param {Array} a1 an array.
+ * @param {Array} a2 another array.
+ * @return {Array} array that has elements common to both input arrays
+ */
+function arrayIntersect(a1, a2) {
+    return a1.filter(e => -1 !== a2.indexOf(e));
+}
+
 module.exports = () => ({
     states,
     clientLayerType,
+    dataSources,
+    filterType,
     makeSymbologyArray,
     IdentifyResult,
     parseUrlIndex,
     layerLoaded,
-    makeSafeExtent
+    makeSafeExtent,
+    areExtentsSame,
+    arrayIntersect,
+    FakeEvent
 });

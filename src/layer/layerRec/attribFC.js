@@ -2,6 +2,7 @@
 
 const shared = require('./shared.js')();
 const basicFC = require('./basicFC.js')();
+const filter = require('./filter.js')();
 
 /**
  * @class AttribFC
@@ -28,6 +29,7 @@ class AttribFC extends basicFC.BasicFC {
             attribs: {},
             geoms: {}
         };
+        this.filter = new filter.Filter(this);
     }
 
     get geomType () { return this._geometryType; }
@@ -37,6 +39,15 @@ class AttribFC extends basicFC.BasicFC {
     set oidField (value) { this._oidField = value; }
 
     get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
+
+    // basically an identifier object for this FC. 
+    // TODO maybe consider using the id on the esri layer? to handle cases where no id provided / collision of ids?
+    get fcID () {
+        return {
+            layerId: this._parent.initialConfig.id,
+            layerIdx: this._idx
+        };
+    }
 
     get loadedFeatureCount () { return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0; }
 
@@ -60,7 +71,7 @@ class AttribFC extends basicFC.BasicFC {
 
                 // for file layers, since attributes are local and we have promise initially,
                 // must set loadIsDone to true after promise resolved to ensure we trigger event once and only once
-                if (this._parent.dataSource() !== 'esri') {
+                if (this._parent.dataSource() !== shared.dataSources.ESRI) {
                     this._layerPackage.loadIsDone = true;
                 }
             }
@@ -383,7 +394,7 @@ class AttribFC extends basicFC.BasicFC {
                     });
                 });
 
-            } else if (this._parent.dataSource() !== 'esri' && layerObj.graphics) {
+            } else if (this._parent.dataSource() !== shared.dataSources.ESRI && layerObj.graphics) {
                 // it is a feature layer that is file based. we can extract info from it.
                 localGraphic = huntLocalGraphic(objectId);
                 resultFeat.attributes = localGraphic.attributes;
@@ -558,6 +569,103 @@ class AttribFC extends basicFC.BasicFC {
                 // map is at best position we can manage. do any offsetting for UI elements
                 return map.moveToOffsetExtent(extent, offsetFraction);
             });
+    }
+
+    /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applyFilterToLayer
+     */
+    applyFilterToLayer () {
+        // note DynamicFC will override this function to handle the dynamic layer case
+        const p = this._parent;
+        const sql = this.filter.getSqlPlusGrid();
+
+        if (p.dataSource() === shared.dataSources.ESRI) {
+            // feature layer on a server
+            p.setDefinitionQuery(sql);
+        } else {
+            // file or wfs
+            p._apiRef.query.sqlGraphicsVisibility(p._layer.graphics, sql);
+        }
+    }
+
+    /**
+     * Gets array of object ids that currently pass layer-based filters (i.e. not a grid filter)
+     *
+     * @function getLayerFilterOIDs
+     *
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getLayerFilterOIDs (extent) {
+
+        const p = this._parent;
+        const api = p._apiRef;
+        const sql = this.filter.getCombinedSql();
+        const opts = {
+            featureLayer: p._layer,
+            geometry: extent,
+            where: sql
+        };
+        let cacheProp;
+
+        if (!(sql || extent)) {
+            // no filters active. return undefined so caller can not worry about applying filters
+            return Promise.resolve(undefined);
+        }
+
+        if (extent) {
+            // essentially this determines if our extent was already cached,
+            // bonks the cache if it is stale
+            this.filter.setExtent(extent);
+            cacheProp = '_layerExtentOID';
+        } else {
+            cacheProp = '_layerSqlOID';
+        }
+
+        // TODO once things are working, attempt to make all the promise caching into worker functions.
+
+        // if not cached, execute a query
+        if (!this.filter[cacheProp]) {
+            if (p.dataSource() === shared.dataSources.ESRI) {
+                // feature layer on a server. just use query task
+                opts.url = this.queryUrl;
+                this.filter[cacheProp] = api.query.queryIds(opts);
+            } else {
+                // file or wfs
+                let eProm, sArray;
+
+                if (extent) {
+                    // execute a query against the map extent
+                    // cannot do the where in the esri query for files
+                    opts.where = '';
+                    opts.featureLayer = p._layer;
+                    eProm = api.query.queryIds(opts);
+                    if (!sql) {
+                        // nothing else to filter, set the cache
+                        this.filter[cacheProp] = eProm;
+                    }
+                } 
+                if (sql) {
+                    // use our custom filter to find graphics that satisfy our sql
+                    const oid = this.oidField;
+                    sArray = api.query.sqlAttributeFilter(p._layer.graphics, sql, true)
+                                .map(a => a[oid]);
+                    if (!extent) {
+                        // nothing else to filter, set the cache
+                        this.filter[cacheProp] = Promise.resolve(sArray);
+                    }
+                }
+                if (sql && extent) {
+                    // combine the two results, cache it
+                    this.filter[cacheProp] = eProm.then(qArray => {
+                        return shared.arrayIntersect(qArray, sArray);
+                    })
+                }
+            }
+        }
+        return this.filter[cacheProp];
     }
 
 }

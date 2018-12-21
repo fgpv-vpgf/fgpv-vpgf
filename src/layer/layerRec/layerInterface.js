@@ -42,6 +42,7 @@ class LayerInterface {
 
     // layer states
     get state () { return undefined; } // returns String
+    get isActiveState () { return false; } // returns String
 
     // these return the current values of the corresponding controls
     get visibility () { return undefined; } // returns Boolean
@@ -56,6 +57,8 @@ class LayerInterface {
     get attribs () { return undefined; } // returns Promise of Object
 
     get queryUrl () { return undefined; } // returns String
+
+    get filter ()  { return undefined; } // returns Filter object, for valid proxies
 
     // returns a feature name of an attribute set
     getFeatureName () { return undefined; } // returns String
@@ -132,6 +135,7 @@ class LayerInterface {
 
         newProp(this, 'symbology', standardGetSymbology);
         newProp(this, 'state', standardGetState);
+        newProp(this, 'isActiveState', standardGetIsActiveState);
         newProp(this, 'query', standardGetQuery);
         newProp(this, 'itemIndex', standardGetItemIndex);
         newProp(this, 'geometryType', standardGetGeometryType);
@@ -159,6 +163,7 @@ class LayerInterface {
         newProp(this, 'loadedFeatureCount', featureGetLoadedFeatureCount);
         newProp(this, 'highlightFeature', featureGetHighlightFeature);
         newProp(this, 'queryUrl', featureGetQueryUrl);
+        newProp(this, 'filter', featureGetFilter);
 
         this.getFeatureName = featureGetFeatureName;
         this.attributesToDetails = featureAttributesToDetails;
@@ -174,6 +179,7 @@ class LayerInterface {
 
         newProp(this, 'symbology', dynamicLeafGetSymbology);
         newProp(this, 'state', dynamicLeafGetState);
+        newProp(this, 'isActiveState', dynamicLeafGetIsActiveState);
 
         newProp(this, 'name', dynamicLeafGetName);
         newProp(this, 'itemIndex', dynamicLeafGetItemIndex);
@@ -194,6 +200,8 @@ class LayerInterface {
 
         newProp(this, 'highlightFeature', dynamicLeafGetHighlightFeature);
         newProp(this, 'queryUrl', dynamicLeafGetQueryUrl);
+
+        newProp(this, 'filter', dynamicLeafGetFilter);
 
         this.setVisibility = dynamicLeafSetVisibility;
         this.setOpacity = dynamicLeafSetOpacity;
@@ -256,6 +264,16 @@ function standardGetState() {
 function dynamicLeafGetState() {
     /* jshint validthis: true */
     return this._source.state;
+}
+
+function standardGetIsActiveState() {
+    /* jshint validthis: true */
+    return this._source.isActiveState;
+}
+
+function dynamicLeafGetIsActiveState() {
+    /* jshint validthis: true */
+    return this._source._parent.isActiveState;
 }
 
 function standardGetVisibility() {
@@ -473,6 +491,16 @@ function featureGetHighlightFeature() {
 function dynamicLeafGetHighlightFeature() {
     /* jshint validthis: true */
     return this._source.highlightFeature;
+}
+
+function featureGetFilter() {
+    /* jshint validthis: true */
+    return this._source.filter;
+}
+
+function dynamicLeafGetFilter() {
+    /* jshint validthis: true */
+    return this._source.filter;
 }
 
 function standardZoomToBoundary(map) {

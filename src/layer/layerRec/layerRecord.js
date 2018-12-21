@@ -22,6 +22,11 @@ class LayerRecord extends root.Root {
     set legendEntry (value) { this._legendEntry = value; } // TODO: determine if we still link legends inside this class
     get state () { return this._state; }
     set state (value) { this._state = value; }
+    get isActiveState () {
+        // indicates if layer is in an active, interactable state.
+        // in other words, would be false if it's still initializing, or has error'd.
+        return shared.layerLoaded(this.state);
+    }
     get layerId () { return this.config.id; }
 
     get rootUrl () { return this._rootUrl; }
@@ -115,10 +120,7 @@ class LayerRecord extends root.Root {
     _stateChange (newState) {
         // console.log(`State change for ${this.layerId} to ${newState}`);
         this._state = newState;
-
-        // if we don't copy the array we could be looping on an array
-        // that is being modified as it is being read
-        this._fireEvent(this._stateListeners, this._state);
+        this._stateEvent.fireEvent(this._state);
     }
 
     /**
@@ -128,8 +130,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to call when a state change event happens
      */
     addStateListener (listenerCallback) {
-        this._stateListeners.push(listenerCallback);
-        return listenerCallback;
+        return this._stateEvent.addListener(listenerCallback);
     }
 
     /**
@@ -139,11 +140,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to not call when a state change event happens
      */
     removeStateListener (listenerCallback) {
-        const idx = this._stateListeners.indexOf(listenerCallback);
-        if (idx < 0) {
-            throw new Error('Attempting to remove a listener which is not registered.');
-        }
-        this._stateListeners.splice(idx, 1);
+        this._stateEvent.removeListener(listenerCallback);
     }
 
     /**
@@ -155,9 +152,7 @@ class LayerRecord extends root.Root {
      * @param {Object} attribs the layer attributes downloaded
      */
     _attribsAdded (idx, attribs) {
-        // if we don't copy the array we could be looping on an array
-        // that is being modified as it is being read
-        this._fireEvent(this._attribListeners, this, idx, attribs);
+        this._attribEvent.fireEvent(this, idx, attribs);
     }
 
     /**
@@ -167,8 +162,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to call when attributes download event happens
      */
     addAttribListener (listenerCallback) {
-        this._attribListeners.push(listenerCallback);
-        return listenerCallback;
+        return this._attribEvent.addListener(listenerCallback);
     }
 
     /**
@@ -178,11 +172,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to not call when attributes download event happens
      */
     removeAttribListener (listenerCallback) {
-        const idx = this._attribListeners.indexOf(listenerCallback);
-        if (idx < 0) {
-            throw new Error('Attempting to remove a listener which is not registered.');
-        }
-        this._attribListeners.splice(idx, 1);
+        this._attribEvent.removeListener(listenerCallback);
     }
 
     /**
@@ -192,8 +182,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to call when a hover event happens
      */
     addHoverListener (listenerCallback) {
-        this._hoverListeners.push(listenerCallback);
-        return listenerCallback;
+        return this._hoverEvent.addListener(listenerCallback);
     }
 
     /**
@@ -203,11 +192,7 @@ class LayerRecord extends root.Root {
      * @param {Function} listenerCallback function to not call when a hover event happens
      */
     removeHoverListener (listenerCallback) {
-        const idx = this._hoverListeners.indexOf(listenerCallback);
-        if (idx < 0) {
-            throw new Error('Attempting to remove a listener which is not registered.');
-        }
-        this._hoverListeners.splice(idx, 1);
+        this._hoverEvent.removeListener(listenerCallback);
     }
 
     /**
@@ -296,7 +281,7 @@ class LayerRecord extends root.Root {
      */
     dataSource () {
         // only instances of FeatureLayer can be file based or WFS and only instances of WMSLayer are type wms; those classes override this function
-        return 'esri';
+        return shared.dataSources.ESRI;
     }
 
     /**
@@ -595,9 +580,9 @@ class LayerRecord extends root.Root {
         this._defaultFC = '0';
         this._apiRef = apiRef;
         this.initialConfig = config;
-        this._stateListeners = [];
-        this._attribListeners = [];
-        this._hoverListeners = [];
+        this._stateEvent = new shared.FakeEvent();
+        this._attribEvent = new shared.FakeEvent();
+        this._hoverEvent = new shared.FakeEvent();
         this._user = false;
         this._epsgLookup = epsgLookup;
         this.extent = config.extent; // if missing, will fill more values after layer loads

@@ -1,6 +1,6 @@
 {
     "name": "geoApi",
-    "version": "3.0.0-1",
+    "version": "3.0.0-2",
     "description": "",
     "main": "src/index.js",
     "dependencies": {
@@ -15,6 +15,7 @@
         "docdash": "https://github.com/alyec/docdash#master",
         "jasmine": "^2.6.0",
         "jsdoc": "^3.4.0",
+        "js-sql-parser": "1.0.7",
         "lodash": "^4.17.4",
         "proj4": "^2.4.3",
         "rcolor": "1.0.1",

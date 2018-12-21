@@ -103,6 +103,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
     onLoad () {
         const loadPromises = super.onLoad();
 
+        // we run into a lot of funny business with functions/constructors modifying parameters.
+        // this essentially clones an object to protect original objects against trickery.
+        const jsonCloner = inputObject => {
+            return JSON.parse(JSON.stringify(inputObject));
+        };
+
         // attempt to set custom renderer here. if fails, we can attempt on client but prefer it here
         // as this doesnt care where the layer came from
         if (this.config.customRenderer.type) {
@@ -113,14 +119,17 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 uniqueValue: this._apiRef.symbology.UniqueValueRenderer
             }
 
-            const custRend = classMapper[this.config.customRenderer.type](this.config.customRenderer);
+            // renderer constructors apparently convert their input json from server style to client style.
+            // we dont want that. use a clone to protect config's property.
+            const cloneRenderer = jsonCloner(this.config.customRenderer);
+            const custRend = classMapper[cloneRenderer.type](cloneRenderer);
             this._layer.setRenderer(custRend);
         }
 
         // get attribute package
         let attribPackage;
         let featIdx;
-        if (this.dataSource() !== 'esri') {
+        if (this.dataSource() !== shared.dataSources.ESRI) {
             featIdx = '0';
             attribPackage = this._apiRef.attribs.loadFileAttribs(this._layer);
         } else {
@@ -130,9 +139,9 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
             // methods in the attrib loader will update our copy of the renderer. if we pass in the config reference, it gets
             // updated and some weird stuff happens. Make a copy.
-            const custClone = JSON.parse(JSON.stringify(this.config.customRenderer));
+            const cloneRenderer = jsonCloner(this.config.customRenderer);
             attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields,
-                custClone);
+                cloneRenderer);
         }
 
         // feature has only one layer
@@ -154,7 +163,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             // been supplied from the wizard (it pre-fetches fields to present a choice
             // to the user). If the nameField / tooltipField was adjusted for bad characters, we need to
             // re-synchronize it here.
-            if (this.dataSource() !== 'esri') {
+            if (this.dataSource() !== shared.dataSources.ESRI) {
                 if (ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
                     const validField = ld.fields.find(f => f.alias === aFC.nameField);
                     if (validField) {
@@ -216,11 +225,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
     dataSource () {
         // 'this.layerType' will be 'esriFeature' even for WFS layers, so must use 'this.config.layerType'
         if (this.config.layerType === shared.clientLayerType.OGC_WFS) {
-            return 'wfs';
+            return shared.dataSources.WFS;
         } else if (this._layer && !this._layer.url) {   // TODO revisit.  is it robust enough?
-            return 'file'
+            return shared.dataSources.FILE;
         } else {
-            return 'esri'
+            return shared.dataSources.ESRI;
         }
     }
 
@@ -245,6 +254,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
     get loadedFeatureCount () { return this._featClasses[this._defaultFC].loadedFeatureCount; }
 
+    get filter () { return this._featClasses[this._defaultFC].filter; }
+
     /**
      * Triggers when the mouse enters a feature of the layer.
      *
@@ -252,7 +263,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Object} standard mouse event object
      */
     onMouseOver (e) {
-        if (this._hoverListeners.length > 0) {
+        if (this._hoverEvent.listenerCount > 0) {
 
             const showBundle = {
                 type: 'mouseOver',
@@ -261,7 +272,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             };
 
             // tell anyone listening we moused into something
-            this._fireEvent(this._hoverListeners, showBundle);
+            this._hoverEvent.fireEvent(showBundle);
 
             // pull metadata for this layer.
             let oid;
@@ -287,7 +298,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 };
 
                 // tell anyone listening we moused into something
-                this._fireEvent(this._hoverListeners, loadBundle);
+                this._hoverEvent.fireEvent(loadBundle);
 
             });
         }
@@ -305,7 +316,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             type: 'mouseOut',
             target: e.target
         };
-        this._fireEvent(this._hoverListeners, outBundle);
+        this._hoverEvent.fireEvent(outBundle);
     }
 
     /**
@@ -343,13 +354,16 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // more accurate results without making the buffer if we're dealing with extents
         // polygons from added file need buffer
         // TODO further investigate why esri is requiring buffer for file-based polygons. logic says it shouldnt
-        if (this.getGeomType() === 'esriGeometryPolygon' && this.dataSource() === 'esri') {
+        if (this.getGeomType() === 'esriGeometryPolygon' && this.dataSource() === shared.dataSources.ESRI) {
             qry.geometry = opts.geometry;
         } else {
             // TODO investigate why we are using opts.clickEvent.mapPoint and not opts.geometry
             qry.geometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
         }
 
+        // TODO possible efficiency boost.  change logic to not force the getAttribs() call.
+        //      instead, recognize if attribs are not loaded, and use the fast-cache attrib load
+        //      instead (similar to what a hovertip does)
         const identifyPromise = Promise.all([
                 this.getAttribs(),
                 Promise.resolve(this._layer.queryFeatures(qry)),
@@ -361,8 +375,29 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 // each feature will have its attributes converted into a table
                 // placeholder for now until we figure out how to signal the panel that
                 // we want to make a nice table
+
+                let validResults;
+                if (this.dataSource() === shared.dataSources.ESRI) {
+                    // because server-sourced layers use definition expression, the results are automatically filtered
+                    validResults = queryResult.features;
+                } else {
+                    // file / wfs
+                    // the query will return items that are invisible due to filters. banish them.
+                    validResults = queryResult.features.filter(f => {
+                        const objId = f.attributes[layerData.oidField];
+                        const graphic = this._layer.graphics.find(g => {
+                            return g.attributes[layerData.oidField] === objId;
+                        });
+                        if (graphic) {
+                            return graphic.visible;
+                        } else {
+                            // couldn't find this graphic. should never happen
+                            return false;
+                        }
+                    });
+                }
                 identifyResult.isLoading = false;
-                identifyResult.data = queryResult.features.map(
+                identifyResult.data = validResults.map(
                     feat => {
                         // grab the object id of the feature we clicked on.
                         const objId = feat.attributes[layerData.oidField];

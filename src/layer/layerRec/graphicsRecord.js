@@ -62,7 +62,7 @@ class GraphicsRecord extends root.Root {
         this._id = name;
         this._layer = this._layerClass({ id: this._name });
         this.bindEvents(this._layer);
-        this._hoverListeners = [];
+        this._hoverEvent = new shared.FakeEvent();
     }
 
     get layerId () { return this._id; }
@@ -132,8 +132,7 @@ class GraphicsRecord extends root.Root {
      * @param {Function} listenerCallback function to call when a hover event happens
      */
     addHoverListener (listenerCallback) {
-        this._hoverListeners.push(listenerCallback);
-        return listenerCallback;
+        return this._hoverEvent.addListener(listenerCallback);
     }
 
     /**
@@ -143,11 +142,7 @@ class GraphicsRecord extends root.Root {
      * @param {Function} listenerCallback function to not call when a hover event happens
      */
     removeHoverListener (listenerCallback) {
-        const idx = this._hoverListeners.indexOf(listenerCallback);
-        if (idx < 0) {
-            throw new Error('Attempting to remove a listener which is not registered.');
-        }
-        this._hoverListeners.splice(idx, 1);
+        this._hoverEvent.removeListener(listenerCallback);
     }
 
     /**
@@ -171,18 +166,15 @@ class GraphicsRecord extends root.Root {
      * @param {Object} standard mouse event object
      */
     onMouseOver (e) {
-        if (this._hoverListeners.length > 0) {
+        const showBundle = {
+            type: 'mouseOver',
+            point: e.screenPoint,
+            target: e.target,
+            graphic: e.graphic
+        };
 
-            const showBundle = {
-                type: 'mouseOver',
-                point: e.screenPoint,
-                target: e.target,
-                graphic: e.graphic
-            };
-
-            // tell anyone listening we moused into something
-            this._fireEvent(this._hoverListeners, showBundle);
-        }
+        // tell anyone listening we moused into something
+        this._hoverEvent.fireEvent(showBundle);
     }
 
     /**
@@ -197,7 +189,7 @@ class GraphicsRecord extends root.Root {
             type: 'mouseOut',
             target: e.target
         };
-        this._fireEvent(this._hoverListeners, outBundle);
+        this._hoverEvent.fireEvent(outBundle);
     }
 
     /**

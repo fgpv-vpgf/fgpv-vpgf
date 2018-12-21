@@ -573,6 +573,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
     }
 
     /**
+     * Applies the current filter settings to the physical map layer.
+     *
+     * @function applyFilterToLayer
+     * @param {String}  childIndex      index of the child layer to target
+     */
+    applyFilterToLayer (childIndex) {
+        this._featClasses[childIndex].applyFilterToLayer();
+    }
+
+    /**
      * Check to see if the attribute in question is an esriFieldTypeDate type.
      *
      * @function checkDateType
@@ -677,34 +687,18 @@ class DynamicRecord extends attribRecord.AttribRecord {
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
 
-        let validSymbologies = [];
+        // if there are filter queries on the layer, apply them in the identify task
+        opts.layerDefinitions = [];
 
         opts.layerIds.forEach(leafIndex => {
             let childProxy = this.getChildProxy(leafIndex);
-            childProxy.symbology.forEach(symbol => {
-                //if there is a definition clause, filter out by definition clause
-                if (this.definitionClause && this.definitionClause.includes(symbol.definitionClause)) {
-                    validSymbologies.push(symbol.svgcode);
-                }
-                //otherwise all symbols are valid symbols
-                else if (this.definitionClause === undefined) {
-                    validSymbologies.push(symbol.svgcode);
-                }
-            });
+            opts.layerDefinitions[leafIndex] = childProxy.filter.getSqlPlusGrid();
             const identifyResult = new shared.IdentifyResult(childProxy);
             identifyResults[leafIndex] = identifyResult;
         });
 
         // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
         opts.tolerance = opts.tolerance || this.clickTolerance || 5;
-
-        // if there are filter queries on the layer, don't include them in the identify results
-        opts.layerDefinitions = [];
-        this.config.layerEntries.forEach(entry => {
-            if (entry.initialFilteredQuery) {
-                opts.layerDefinitions[entry.index] = entry.initialFilteredQuery;
-            }
-        });
 
         const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
             .then(clickResults => {
@@ -738,18 +732,14 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             //      to data that is already aliased.
                             let svg = this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer);
 
-                            //if the current svg is a valid symbology to be identified, push its data into identifyResult
-                            // TODO: replace Safari only `ns1:href` attributes with regular links before trying to match against the results
-                            if (validSymbologies.indexOf(svg.replace(/ns1:href/gi, 'xlink:href')) !== -1) {
-                                identifyResult.data.push({
-                                    name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
-                                    data: this.attributesToDetails(ele.feature.attributes, lData.fields),
-                                    oid: unAliasAtt[lData.oidField],
-                                    symbology: [{
-                                        svgcode: svg
-                                    }]
-                                });
-                            }
+                            identifyResult.data.push({
+                                name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
+                                data: this.attributesToDetails(ele.feature.attributes, lData.fields),
+                                oid: unAliasAtt[lData.oidField],
+                                symbology: [{
+                                    svgcode: svg
+                                }]
+                            });
 
                         }
                         identifyResult.isLoading = false;

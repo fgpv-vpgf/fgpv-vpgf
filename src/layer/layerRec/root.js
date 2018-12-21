@@ -24,20 +24,6 @@ class Root {
     get extent () { return this._extent; }
     set extent (value) { this._extent = value; }
 
-    /**
-     * Utility for triggering an event and giving it to the listeners
-     *
-     * @function _fireEvent
-     * @private
-     * @param {Array} handlerArray      array of event handler functions
-     * @param {...Object} eventParams   arbitrary set of parameters to pass to the event handler functions
-     */
-    _fireEvent (handlerArray, ...eventParams) {
-        // if we don't copy the array we could be looping on an array
-        // that is being modified as it is being read
-        handlerArray.slice(0).forEach(l => l(...eventParams));
-    }
-
 }
 
 module.exports = () => ({
