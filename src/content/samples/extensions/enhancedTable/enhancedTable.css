@@ -3707,3 +3707,17 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 md-datepicker > div {
   border-bottom: none !important; }
 
+.custom-header-label {
+  text-transform: none; }
+
+.reorder-icons {
+  position: absolute;
+  top: 0px;
+  right: 0px; }
+
+.reorder-button {
+  margin: 0 !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-height: 0; }
+

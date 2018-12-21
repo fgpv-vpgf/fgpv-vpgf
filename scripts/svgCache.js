@@ -7,7 +7,7 @@ const iconCache = [
     { file: 'src/content/images/iconsets/content-icons.svg', prefix: 'content', icons: 'create add remove'.split(' ') },
     { file: 'src/content/images/iconsets/editor-icons.svg', prefix: 'editor', icons: 'insert_drive_file drag_handle'.split(' ') },
     { file: 'src/content/images/iconsets/file-icons.svg', prefix: 'file', icons: 'file_upload cloud'.split(' ') },
-    { file: 'src/content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_down keyboard_arrow_up'.split(' ') },
+    { file: 'src/content/images/iconsets/hardware-icons.svg', prefix: 'hardware', icons: 'keyboard_arrow_right keyboard_arrow_left keyboard_arrow_down keyboard_arrow_up'.split(' ') },
     { file: 'src/content/images/iconsets/image-icons.svg', prefix: 'image', icons: 'tune photo'.split(' ') },
     { file: 'src/content/images/iconsets/maps-icons.svg', prefix: 'maps', icons: 'place layers my_location map layers_clear navigation'.split(' ') },
     { file: 'src/content/images/iconsets/navigation-icons.svg', prefix: 'navigation', icons: 'menu check more_vert close more_horiz refresh arrow_back arrow_upward arrow_downward fullscreen'.split(' ') },
