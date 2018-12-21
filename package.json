@@ -1,6 +1,6 @@
 {
     "name": "geoApi",
-    "version": "2.6.0",
+    "version": "3.0.0-1",
     "description": "",
     "main": "src/index.js",
     "dependencies": {
@@ -14,7 +14,6 @@
         "dgeni-packages": "^0.19.1",
         "docdash": "https://github.com/alyec/docdash#master",
         "jasmine": "^2.6.0",
-        "jquery": "^2.2.1",
         "jsdoc": "^3.4.0",
         "lodash": "^4.17.4",
         "proj4": "^2.4.3",
