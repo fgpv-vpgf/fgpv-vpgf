@@ -19,7 +19,7 @@
         </div>
 
         <md-button
-            class="md-icon-button rv-icon-20 toggle-button"
+            class="md-icon-button rv-icon-20 toggle-button data-test-symbol-toggle-button"
             ng-click="self.onToggleClick(symbol.name)"
             ng-if="self.toggleList[symbol.name]"
             aria-pressed = "{{ self.toggleList[symbol.name].isSelected }}"
@@ -29,7 +29,6 @@
             <md-tooltip md-direction="top">{{ (self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.on' | translate)) ||
                 (!self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.off' | translate)) }}</md-tooltip>
         </md-button>
-
     </div>
 
     <md-button
