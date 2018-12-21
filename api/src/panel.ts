@@ -234,7 +234,7 @@ export class PanelElem {
 class Btn extends PanelElem {
     constructor(scope: Panel, type?: string) {
         const buttonType = type === 'X' ? 'contentPane.aria.close' : 'toggle'; // TODO: add translation for toggle
-        super(scope, $(`<md-button class="btn md-icon-button black rv-button-24" aria-label="{{ '${buttonType}' | translate }}"></md-button>`));
+        super(scope, `<div><md-button class="btn md-icon-button black rv-button-24" aria-label="{{ '${buttonType}' | translate }}"></md-button></div>`);
         // close button
         if (type === 'X') {
             this.contents = `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`;
@@ -268,12 +268,9 @@ class Btn extends PanelElem {
     */
     set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
         contents = $(contents);
-        this.elementAttr.html('');
 
-        let compiledContents = contents[0];
-        this.panel.map.$compile(compiledContents);
-
-        this.elementAttr.append(compiledContents);
+        this.panel.map.$compile(contents[0]);
+        $(this.elementAttr.children('button')[0]).append(contents[0]);
     }
 
     /**
@@ -281,8 +278,9 @@ class Btn extends PanelElem {
     * @param {string} txt - the text to be set for the Btn
     */
     set text(txt: string) {
-        this.elementAttr.html(txt);
-        this.elementAttr.addClass('text-btn');
+        let buttonElement = $(this.elementAttr.children('button')[0]);
+        buttonElement.html(txt);
+        buttonElement.addClass('text-btn');
     }
 }
 
