@@ -2,7 +2,7 @@ const page = require('./et.page');
 
 describe('the enhancedTable panel', function() {
     beforeAll(function () {
-        browser.url('/enhancedTable/samples/et-test.html');
+        browser.url('enhancedTable/samples/et-test.html');
 
         // when loading screen is finished RZ must be ready
         browser.waitUntil(function () {
@@ -14,16 +14,5 @@ describe('the enhancedTable panel', function() {
     it('should open when a layer is clicked', function() {
         page.open();
         expect(page.panel.waitForVisible(3000)).toEqual(true);
-    });
-
-    // Filter Tests
-    it('should have a datefilter', function() {
-        expect(page.datepickerButton.isExisting()).toEqual(true);
-        expect(page.dateInput.isExisting()).toEqual(true);
-    });
-
-    it('should have a number filter with max and min', function() {
-        expect(page.numberInput.min.isExisting()).toEqual(true);
-        expect(page.numberInput.max.isExisting()).toEqual(true);
     });
 });

@@ -51,6 +51,28 @@ class Page extends RAMPage {
     }
 
     /**
+     * Return move left button for the first column
+     */
+    get firstColumnLeftButton() {
+        return browser.elements('.move-left').value[0];
+    }
+
+    /**
+     * Return move right button for the last column
+     */
+    get lastColumnRightButton() {
+        let list = browser.elements('.move-right').value;
+        return list[list.length - 1];
+    }
+
+    /**
+     * Return a move column button that isn't disabled
+     */
+    get nonDisabledMoveButton() {
+        return browser.elements('.move-left').value[1];
+    }
+
+    /**
      * Returns the panel element the table is in.
      */
     get panel() {

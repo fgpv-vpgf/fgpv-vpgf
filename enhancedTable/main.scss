@@ -12,3 +12,20 @@ md-datepicker > div {
     // override this so ag-grid wont add a border to the div
     border-bottom: none !important;
 }
+
+.custom-header-label {
+    text-transform: none;
+}
+
+.reorder-icons {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.reorder-button {
+    margin: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    min-height: 0;
+}

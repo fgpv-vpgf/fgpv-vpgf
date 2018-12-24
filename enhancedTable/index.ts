@@ -2,6 +2,8 @@ import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
 import { DETAILS_AND_ZOOM } from './templates';
+import { NumberFloatingFilter, DateFloatingFilter } from './custom-floating-filters';
+import { CustomHeader } from './custom-header';
 
 const NUMBER_TYPES = ["esriFieldTypeOID", "esriFieldTypeDouble", "esriFieldTypeInteger"];
 const DATE_TYPE = "esriFieldTypeDate";
@@ -62,20 +64,14 @@ class TableBuilder {
 
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
             Object.keys(attrBundle.attributes[0]).forEach(columnName => {
-                let colDef = {
+                let colDef: ColumnDefinition = {
                     headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                     headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                    minWidth: undefined,
-                    maxWidth: undefined,
                     field: columnName,
                     filter: 'agTextColumnFilter',
-                    filterParams: {},
-                    floatingFilterComponent: undefined,
-                    floatingFilterComponentParams: { suppressFilterButton: true },
-                    cellRenderer: undefined,
+                    floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
                     suppressSorting: false,
                     suppressFilter: false,
-                    getQuickFilterText: undefined
                 };
 
                 const fieldInfo = a.fields.find(field => field.name === columnName)
@@ -86,7 +82,7 @@ class TableBuilder {
                         colDef.filterParams = {
                             inRangeInclusive: true
                         };
-                        colDef.floatingFilterComponent = getNumberFloatingFilterComponent();
+                        colDef.floatingFilterComponent = NumberFloatingFilter;
                     } else if (fieldInfo.type === DATE_TYPE) {
                         colDef.minWidth = 423;
                         // Column should render and filter date properly
@@ -103,7 +99,7 @@ class TableBuilder {
                                 }
                             }
                         };
-                        colDef.floatingFilterComponent = getDateFloatingFilterComponent(this.mapApi);
+                        colDef.floatingFilterComponent = DateFloatingFilter;
                         colDef.cellRenderer = function (cell) {
                             let element = document.createElement('span');
                             element.innerHTML = getDateString(cell.value);
@@ -120,6 +116,12 @@ class TableBuilder {
                                 return re.test(value);
                             }
                         };
+                    }
+
+                    // set header compoenent
+                    colDef.headerComponent = CustomHeader;
+                    colDef.headerComponentParams = {
+                        mapApi: this.mapApi
                     }
                 }
                 if (columnName === 'rvSymbol') {
@@ -142,7 +144,6 @@ class TableBuilder {
                     cols.push(colDef);
                 }
             });
-
             (<any>Object).assign(this.tableOptions, {
                 columnDefs: cols,
                 rowData: attrBundle.attributes
@@ -152,142 +153,6 @@ class TableBuilder {
             this.tableApi = this.tableOptions.api;
         });
     }
-}
-
-function getNumberFloatingFilterComponent() {
-    function NumberFloatingFilter() {
-    }
-
-    NumberFloatingFilter.prototype.init = function (params) {
-        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.eGui = document.createElement('div');
-        this.eGui.innerHTML = `<input class="rv-min" style="width:50%" type="text" placeholder="MIN"/>
-                            <input class="rv-max" style="width:50%" type="text" placeholder="MAX"/>`
-        this.currentValues = { min: null, max: null };
-        this.minFilterInput = this.eGui.querySelector(".rv-min");
-        this.maxFilterInput = this.eGui.querySelector(".rv-max");
-        var that = this;
-
-        function onMinInputBoxChanged() {
-            if (that.minFilterInput.value === '') {
-                that.currentValues.min = null;
-            } else {
-                that.currentValues.min = Number(that.minFilterInput.value);
-            }
-            that.onFloatingFilterChanged({ model: getModel() });
-        }
-
-        function onMaxInputBoxChanged() {
-            if (that.maxFilterInput.value === '') {
-                that.currentValues.max = null;
-            } else {
-                that.currentValues.max = Number(that.maxFilterInput.value);
-            }
-            that.onFloatingFilterChanged({ model: getModel() });
-        }
-
-        function getModel() {
-            if (that.currentValues.min !== null && that.currentValues.max !== null) {
-                return {
-                    type: 'inRange',
-                    filter: that.currentValues.min,
-                    filterTo: that.currentValues.max
-                };
-            } else if (that.currentValues.min !== null && that.currentValues.max === null) {
-                return {
-                    type: 'greaterThanOrEqual',
-                    filter: that.currentValues.min
-                };
-            } else if (that.currentValues.min === null && that.currentValues.max !== null) {
-                return {
-                    type: 'lessThanOrEqual',
-                    filter: that.currentValues.max
-                };
-            } else {
-                return {};
-            }
-        }
-
-        this.minFilterInput.addEventListener('input', onMinInputBoxChanged);
-        this.maxFilterInput.addEventListener('input', onMaxInputBoxChanged);
-    };
-
-    NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
-        if (parentModel === null) {
-            this.minFilterInput.value = '';
-            this.maxFilterInput.value = '';
-        }
-    };
-
-    NumberFloatingFilter.prototype.getGui = function () {
-        return this.eGui;
-    };
-
-    return NumberFloatingFilter;
-}
-
-function getDateFloatingFilterComponent(mapApi) {
-    function DateFloatingFilter() {
-    }
-
-    DateFloatingFilter.prototype.init = function (params) {
-        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        let template = $(`<span><md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker><md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker></span>`);
-        this.scope = mapApi.$compile(template[0]);
-        this.scope.min = null;
-        this.scope.max = null;
-        this.eGui = template[0];
-        var that = this;
-
-        this.scope.minChanged = function () {
-            that.onFloatingFilterChanged({ model: getModel() });
-        };
-
-        this.scope.maxChanged = function () {
-            that.onFloatingFilterChanged({ model: getModel() });
-        };
-
-        function getModel() {
-            const min = that.scope.min !== null
-                ? `${that.scope.min.getFullYear()}-${that.scope.min.getMonth() + 1}-${that.scope.min.getDate()}`
-                : null;
-            const max = that.scope.max !== null
-                ? `${that.scope.max.getFullYear()}-${that.scope.max.getMonth() + 1}-${that.scope.max.getDate()}`
-                : null;
-            if (min !== null && max !== null) {
-                return {
-                    type: 'inRange',
-                    dateFrom: min,
-                    dateTo: max
-                };
-            } else if (min && max === null) {
-                return {
-                    type: 'greaterThanOrEqual',
-                    dateFrom: min
-                };
-            } else if (min === null && max) {
-                return {
-                    type: 'lessThanOrEqual',
-                    dateFrom: max
-                };
-            } else {
-                return null;
-            }
-        }
-    };
-
-    DateFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
-        if (parentModel === null) {
-            this.scope.min = null;
-            this.scope.max = null;
-        }
-    };
-
-    DateFloatingFilter.prototype.getGui = function () {
-        return this.eGui;
-    };
-
-    return DateFloatingFilter;
 }
 
 function getDateString(value) {
@@ -311,15 +176,41 @@ interface TableBuilder {
     translations: any;
 }
 
+interface ColumnDefinition {
+    headerName: string;
+    headerTooltip: string;
+    minWidth?: number;
+    maxWidth?: number;
+    field: string;
+    headerComponent?: {new(): CustomHeader};
+    headerComponentParams?: HeaderComponentParams;
+    filter: string;
+    filterParams?: any;
+    floatingFilterComponent?: {new(): NumberFloatingFilter|DateFloatingFilter};
+    floatingFilterComponentParams: FloatingFilterComponentParams;
+    cellRenderer?: (cellParams: any) => string|Element;
+    suppressSorting: boolean;
+    suppressFilter: boolean;
+    getQuickFilterText?: (cellParams: any) => string;
+}
+
+interface HeaderComponentParams {
+    mapApi: any;
+}
+
+interface FloatingFilterComponentParams {
+    suppressFilterButton: boolean;
+    mapApi: any;
+}
+
 TableBuilder.prototype.tableOptions = {
     enableSorting: true,
     floatingFilter: true,
-    defaultColDef: {
-        width: 100
-    },
     autoSizePadding: 75,
     suppressColumnVirtualisation: true,
-    ensureDomOrder: true
+    defaultColDef: {
+        width: 100
+    }
 };
 
 TableBuilder.prototype.id = 'fancyTable';

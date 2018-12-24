@@ -4,7 +4,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
 describe('the enhancedTable panel', function () {
 
     beforeAll(function () {
-        browser.url('/enhancedTable/samples/et-index.html');
+        browser.url('enhancedTable/samples/et-index.html');
 
         // when loading screen is finished RZ must be ready
         browser.waitUntil(function () {

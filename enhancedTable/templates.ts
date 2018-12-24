@@ -16,14 +16,14 @@ export const SEARCH_TEMPLATE = `
 export const CLEAR_FILTERS_TEMPLATE = `
 <div>
     <md-button
-            ng-controller="ClearFiltersCtrl as ctrl"
-            aria-label="{{ 't.table.filter.clear' | translate }}"
-            class="md-icon-button black rv-button-24"
-            rv-help="table-clear-button"
-            ng-click="ctrl.clearFilters()"
-            ng-disabled="!ctrl.anyFilters()">
-            <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
-            <md-icon md-svg-src="community:filter-remove"></md-icon>
+        ng-controller="ClearFiltersCtrl as ctrl"
+        aria-label="{{ 't.table.filter.clear' | translate }}"
+        class="md-icon-button black rv-button-24"
+        rv-help="table-clear-button"
+        ng-click="ctrl.clearFilters()"
+        ng-disabled="!ctrl.anyFilters()">
+        <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
+        <md-icon md-svg-src="community:filter-remove"></md-icon>
     </md-button>
 </div>
 `;
@@ -117,3 +117,31 @@ export const DETAILS_AND_ZOOM = (rowIndex) =>
             </md-icon>
         </button>
     </div>`;
+
+export const NUMBER_FILTER_TEMPLATE = `
+<input class="rv-min" style="width:50%" type="text" placeholder="MIN"/>
+<input class="rv-max" style="width:50%" type="text" placeholder="MAX"/>
+`;
+
+export const DATE_FILTER_TEMPLATE = `
+<span>
+    <md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker>
+    <md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker>
+</span>
+`;
+
+export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
+<div>
+    <md-button md-no-ink class="custom-header-label">${displayName}</md-button>
+    <md-icon ng-if="sortAsc" md-svg-icon="navigation:arrow_upward"></md-icon>
+    <md-icon ng-if="sortDesc" md-svg-icon="navigation:arrow_downward"></md-icon>
+    <div class="reorder-icons">
+        <md-button class="reorder-button md-icon-button move-left" md-no-ink ng-disabled="min">
+            <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_left"></md-icon>
+        </md-button>
+        <md-button class="reorder-button md-icon-button move-right" md-no-ink ng-disabled="max">
+            <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_right"></md-icon>
+        </md-button>
+    </div>
+</div>
+`;

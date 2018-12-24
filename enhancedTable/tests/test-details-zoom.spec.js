@@ -2,7 +2,7 @@ const page = require('./et.page');
 
 describe('the enhancedTable panel', function () {
     beforeAll(function () {
-        browser.url('/enhancedTable/samples/et-index.html');
+        browser.url('enhancedTable/samples/et-index.html');
 
         // when loading screen is finished RZ must be ready
         browser.waitUntil(function () {
