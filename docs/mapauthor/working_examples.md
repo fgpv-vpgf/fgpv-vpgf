@@ -1,3 +1,7 @@
+---
+nav: author
+---
+
 This section will show you how to load a viewer on your own host page.
 
 ### Getting the source
