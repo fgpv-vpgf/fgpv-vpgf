@@ -945,6 +945,10 @@ export interface FeatureLayerNode {
      * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
      */
     columns?: ColumnNode[];
+    /**
+     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+     */
+    searchStrictMatch?: boolean;
   };
   /**
    * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
@@ -1095,6 +1099,10 @@ export interface WfsLayerNode {
      * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
      */
     columns?: ColumnNode[];
+    /**
+     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+     */
+    searchStrictMatch?: boolean;
   };
   /**
    * Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons.
@@ -1353,6 +1361,10 @@ export interface DynamicLayerEntryNode {
      * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
      */
     columns?: ColumnNode[];
+    /**
+     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+     */
+    searchStrictMatch?: boolean;
   };
 }
 export interface LegendAuto {

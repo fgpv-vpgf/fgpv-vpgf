@@ -121,6 +121,8 @@
         "layerType": "esriFeature",
         "table": {
           "applyMap": true,
+          "lazyFilter": true,
+          "searchStrictMatch": true,
           "columns": [
             {
               "data": "OBJECTID",
@@ -140,6 +142,7 @@
         "layerType": "esriFeature",
         "table": {
           "applyMap": true,
+          "lazyFilter": true,
           "columns": [
             {
               "data": "OBJECTID",
