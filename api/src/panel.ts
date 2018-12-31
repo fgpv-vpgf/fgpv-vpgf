@@ -267,7 +267,7 @@ class Btn extends PanelElem {
     * @param {SVG} svg - the icon to be set for the Btn
     */
     set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
-        contents = $(contents);
+        contents = $((<any>contents));
 
         this.panel.map.$compile(contents[0]);
         $(this.elementAttr.children('button')[0]).append(contents[0]);

@@ -8,7 +8,7 @@ const pkg           = require('./package.json');
 const ZipPlugin     = require('zip-webpack-plugin');
 const CopyPlugin    = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = function(env) {
@@ -41,9 +41,9 @@ module.exports = function(env) {
         ],
         optimization: {
             minimizer: [
-                new UglifyJsPlugin({
+                new TerserPlugin({
                     sourceMap: true,
-                    uglifyOptions: {
+                    terserOptions: {
                         compress: {
                             pure_funcs: [
                                 'console.log',
