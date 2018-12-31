@@ -28,6 +28,7 @@ module.exports = function (env) {
 
     const config = {
         entry: {
+            'legacy-api': path.resolve(__dirname, 'src/legacy-api.ts'),
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js')
         },
 
@@ -64,7 +65,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.ts$/,
-                    include: [path.resolve(__dirname, 'intention'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app')],
+                    include: [path.resolve(__dirname, 'intention'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/legacy-api.ts')],
                     use: [{
                         loader: 'babel-loader',
                         options: babelPresets

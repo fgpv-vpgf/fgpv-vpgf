@@ -1,3 +1,7 @@
+---
+nav: author
+---
+
 # A guide for map authors
 
 This guide is intended for those who are looking to use the RAMP viewer for their webpage or project.
