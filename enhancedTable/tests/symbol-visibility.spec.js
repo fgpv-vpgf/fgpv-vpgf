@@ -26,7 +26,7 @@ describe('the enhancedTable panel', function () {
 
         // toggle symbology
         page.expandSymbologyStackButton.click();
-        page.toggleSymbolVisibility();
+        page.toggleSymbologyButton.click();
 
         // filter  status and container height after toggling symbology
         const currFilterStatus = browser.getText('.filterRecords');
@@ -34,8 +34,8 @@ describe('the enhancedTable panel', function () {
         const currHeight = browser.getElementSize('.ag-body-container', 'height');
 
         // container height and number of rows after toggle should be less than before toggle
-        expect(currHeight).toBeLessThan(prevHeight);
-        expect(currNumRows).toBeLessThan(prevNumRows);
+        expect(currHeight).toBeLessThan(prevHeight + 1);
+        expect(currNumRows).toBeLessThan(prevNumRows + 1);
     });
 
     it('should update rows and filter status when symbologies are toggled to visible', function () {
@@ -46,7 +46,7 @@ describe('the enhancedTable panel', function () {
         const prevNumRows = parseInt(prevFilterStatus.slice(0, prevFilterStatus.indexOf(' ')));
 
         // toggle symbology
-        page.toggleSymbolVisibility();
+        page.toggleSymbologyButton.click();
 
         // filter  status and container height after toggling symbology
         const currFilterStatus = browser.getText('.filterRecords');
@@ -54,7 +54,7 @@ describe('the enhancedTable panel', function () {
         const currHeight = browser.getElementSize('.ag-body-container', 'height');
 
         // container height and number of rows after toggle should be less than before toggle
-        expect(prevHeight).toBeLessThan(currHeight);
-        expect(prevNumRows).toBeLessThan(currNumRows);
+        expect(prevHeight).toBeLessThan(currHeight + 1);
+        expect(prevNumRows).toBeLessThan(currNumRows + 1);
     });
 });

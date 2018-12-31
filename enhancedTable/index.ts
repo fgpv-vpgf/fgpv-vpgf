@@ -2,7 +2,10 @@ import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
 import { DETAILS_AND_ZOOM } from './templates';
-import { NumberFloatingFilter, DateFloatingFilter } from './custom-floating-filters';
+import { ConfigManager, ColumnConfigManager } from './config-manager';
+import {
+    setUpDateFilter, setUpNumberFilter, setUpTextFilter
+} from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
 
 const NUMBER_TYPES = ["esriFieldTypeOID", "esriFieldTypeDouble", "esriFieldTypeInteger"];
@@ -28,10 +31,14 @@ class TableBuilder {
                         attrs.attributes[0]['rvSymbol'] !== undefined &&
                         attrs.attributes[0]['rvInteractive'] !== undefined
                     ) {
+                        this.configManager = new ConfigManager(baseLayer, this.panel);
+                        this.panel.configManager = this.configManager;
                         this.createTable(attrs);
                     }
                 });
             } else {
+                this.configManager = new ConfigManager(baseLayer, this.panel);
+                this.panel.configManager = this.configManager;
                 this.createTable({
                     attributes: attrs,
                     layer: baseLayer
@@ -64,85 +71,64 @@ class TableBuilder {
 
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
             Object.keys(attrBundle.attributes[0]).forEach(columnName => {
-                let colDef: ColumnDefinition = {
-                    headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                    headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                    field: columnName,
-                    filter: 'agTextColumnFilter',
-                    floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
-                    suppressSorting: false,
-                    suppressFilter: false,
-                };
 
-                const fieldInfo = a.fields.find(field => field.name === columnName)
-                if (fieldInfo) {
-                    if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
-                        //Column should filter numbers properly
-                        colDef.filter = 'agNumberColumnFilter';
-                        colDef.filterParams = {
-                            inRangeInclusive: true
-                        };
-                        colDef.floatingFilterComponent = NumberFloatingFilter;
-                    } else if (fieldInfo.type === DATE_TYPE) {
-                        colDef.minWidth = 423;
-                        // Column should render and filter date properly
-                        colDef.filter = 'agDateColumnFilter';
-                        colDef.filterParams = {
-                            comparator: function (filterDate, entryDate) {
-                                let entry = new Date(entryDate);
-                                if (entry > filterDate) {
-                                    return 1;
-                                } else if (entry < filterDate) {
-                                    return -1;
-                                } else {
-                                    return 0;
-                                }
-                            }
-                        };
-                        colDef.floatingFilterComponent = DateFloatingFilter;
-                        colDef.cellRenderer = function (cell) {
-                            let element = document.createElement('span');
-                            element.innerHTML = getDateString(cell.value);
-                            return element;
-                        }
-                        colDef.getQuickFilterText = function (params) {
-                            return getDateString(params.value);
-                        }
-                    } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined && !attrBundle.layer.table.lazyFilter) {
-                        // Default to "regex" filtering for text columns
-                        colDef.filterParams = {
-                            textCustomComparator: function (filter, value, filterText) {
-                                const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-                                return re.test(value);
-                            }
-                        };
-                    }
+                if (columnName === 'rvSymbol' ||
+                    columnName === 'rvInteractive' ||
+                    this.configManager.filteredAttributes.length === 0 ||
+                    this.configManager.filteredAttributes.indexOf(columnName) > -1) {
+                    // only create column if it is valid according to config, or a symbol/interactive column
 
-                    // set header compoenent
-                    colDef.headerComponent = CustomHeader;
-                    colDef.headerComponentParams = {
-                        mapApi: this.mapApi
-                    }
-                }
-                if (columnName === 'rvSymbol') {
-                    colDef.cellRenderer = function (cellImg) {
-                        return cellImg.value;
+                    // set up the column according to the specifications from ColumnConfigManger
+                    const column = new ColumnConfigManager(this.configManager, columnName);
+
+                    let colDef: ColumnDefinition = {
+                        width: column.width || 100,
+                        minWidth: column.width,
+                        headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        field: columnName,
+                        filterParams: {},
+                        filter: 'agTextColumnFilter',
+                        floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
+                        suppressSorting: false,
+                        suppressFilter: column.searchDisabled,
+                        sort: column.sort,
+                        visibility: column.column ? column.column.visible : undefined
                     };
-                } else if (columnName === 'rvInteractive') {
-                    // sets details and zoom buttons for the row
-                    colDef.cellRenderer = function (cellImg) {
-                        return new panel.container(DETAILS_AND_ZOOM(cellImg.rowIndex)).elementAttr[0];
+
+                    // set up floating filters and column header
+                    const fieldInfo = a.fields.find(field => field.name === columnName)
+                    if (fieldInfo) {
+                        const isSelector = column.isSelector;
+                        const isStatic = column.isFilterStatic;
+
+                        if (!column.searchDisabled || column.searchDisabled === undefined) {
+                            // only set up floating filters if search isn't disabled
+                            // floating filters of type number, date, text
+                            // text can be of type text or selector
+                            if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
+                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions);
+                            } else if (fieldInfo.type === DATE_TYPE) {
+                                setUpDateFilter(colDef, isStatic, this.mapApi);
+                            } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined && !attrBundle.layer.table.lazyFilter) {
+                                setUpTextFilter(colDef, isStatic, isSelector, this.configManager.lazyFilterEnabled, column.value);
+                            }
+                        }
+
+                        // only set up header component if column is visible
+                        // TODO: have a way to set up header component properly if column is not visible
+                        if (colDef.visibility === true || colDef.visibility === undefined) {
+                            setUpHeaderComponent(colDef, this.mapApi);
+                        } else {
+                            let map = this.mapApi;
+                            colDef.setHeaderComponent = function (colDef, map) { setUpHeaderComponent(colDef, map) };
+                        }
                     }
+
+                    // symbols and interactive columns are set up for every table
+                    setUpSymbolsAndInteractive(columnName, colDef, cols, panel);
                 }
 
-                if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
-                    colDef.suppressSorting = true;
-                    colDef.suppressFilter = true;
-                    colDef.maxWidth = 100;
-                    cols.splice(0, 0, colDef);
-                } else {
-                    cols.push(colDef);
-                }
             });
             (<any>Object).assign(this.tableOptions, {
                 columnDefs: cols,
@@ -155,10 +141,37 @@ class TableBuilder {
     }
 }
 
-function getDateString(value) {
-    const date = new Date(value)
-    const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
-    return date.toLocaleDateString('en-CA', options);
+/* Helper function to set up symbols and interactive columns*/
+function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, panel: any) {
+    if (columnName === 'rvSymbol') {
+        // set svg symbol for the symbol column
+        colDef.cellRenderer = function (cellImg) {
+            return cellImg.value;
+        };
+    } else if (columnName === 'rvInteractive') {
+        // sets details and zoom buttons for the row
+        colDef.cellRenderer = function (cellImg) {
+            return new panel.container(DETAILS_AND_ZOOM(cellImg.rowIndex)).elementAttr[0];
+        }
+    }
+
+    if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
+        // symbols and interactive columns don't have options for sort, filter and have default widths
+        colDef.suppressSorting = true;
+        colDef.suppressFilter = true;
+        colDef.maxWidth = 100;
+        cols.splice(0, 0, colDef);
+    } else {
+        cols.push(colDef);
+    }
+}
+
+/*Helper function to set up column headers*/
+function setUpHeaderComponent(colDef, mApi) {
+    colDef.headerComponent = CustomHeader;
+    colDef.headerComponentParams = {
+        mapApi: mApi
+    }
 }
 
 interface AttrBundle {
@@ -174,6 +187,7 @@ interface TableBuilder {
     tableApi: GridApi;
     panel: PanelManager;
     translations: any;
+    configManager: ConfigManager;
 }
 
 interface ColumnDefinition {
@@ -181,17 +195,21 @@ interface ColumnDefinition {
     headerTooltip: string;
     minWidth?: number;
     maxWidth?: number;
+    width?: number;
     field: string;
-    headerComponent?: {new(): CustomHeader};
+    headerComponent?: { new(): CustomHeader };
     headerComponentParams?: HeaderComponentParams;
     filter: string;
     filterParams?: any;
-    floatingFilterComponent?: {new(): NumberFloatingFilter|DateFloatingFilter};
+    floatingFilterComponent?: undefined;
     floatingFilterComponentParams: FloatingFilterComponentParams;
-    cellRenderer?: (cellParams: any) => string|Element;
+    cellRenderer?: (cellParams: any) => string | Element;
     suppressSorting: boolean;
     suppressFilter: boolean;
     getQuickFilterText?: (cellParams: any) => string;
+    sort?: any;
+    visibility?: any;
+    setHeaderComponent?: any;
 }
 
 interface HeaderComponentParams {

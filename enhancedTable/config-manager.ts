@@ -1,0 +1,216 @@
+/**
+ * Creates and manages one table config that corresponds to an enhancedTable.
+ *
+ * Used to establish default settings on table open as well as table behaviour.
+ */
+export class ConfigManager {
+
+    constructor(baseLayer: any, panelManager: any) {
+
+        //init ConfigManager properties
+        this.baseLayer = baseLayer;
+        this.panelManager = panelManager;
+        this.attributeHeaders = baseLayer.attributeHeaders;
+        this.attributeArray = baseLayer._attributeArray;
+        this.tableConfig = baseLayer.table;
+        this.searchEnabled = this.tableConfig.search.enabled;
+        this.tableInit();
+    }
+
+    /**
+     * Set up table for first time open.
+     * Called upon ConfigManager creation which is called on table creation
+     */
+    tableInit(): void {
+        this.maximize();
+    }
+
+    /**
+     * Returns table title as defined in config, or as the layer name if undefined in the config.
+     */
+    get title(): string {
+        return this.tableConfig.title || this.panelManager.legendBlock.name;
+    }
+
+    /**
+     * Maximizes table on open if maximized is set as true in the config.
+     * Helper method to tableInit
+     */
+    maximize(): void {
+        const maximized = this.tableConfig.maximize || false;
+        this.panelManager.maximized = maximized;
+        this.panelManager.setSize();
+    }
+
+    /**
+     * Return whether global search is enabled/disabled according to config (default is enabled)
+     */
+    get globalSearchEnabled(): boolean {
+        return (this.searchEnabled !== undefined) ? this.searchEnabled : true;
+    }
+
+    /**
+     * Set default search parameter for global search if defined in the config.
+     */
+    setDefaultSearchParameter(): void {
+        const searchText = this.tableConfig.search.value
+        if (searchText !== undefined && this.globalSearchEnabled) {
+            let enhancedTable = document.getElementById('enhancedTable');
+
+            //TODO FIXME: the input isn't getting updated in the input field, but getting updated in the DOM!
+            let input = <HTMLInputElement>enhancedTable.querySelector('.md-input');
+            input.value = searchText;
+
+            this.panelManager.tableOptions.api.setQuickFilter(searchText);
+        }
+    }
+
+    /**
+     * Return whether lazy filter is enabled for the table as defined in config, if undefined defaults to false.
+     */
+    get lazyFilterEnabled(): boolean {
+        return (this.tableConfig.lazyFilter !== undefined) ? this.tableConfig.lazyFilter : false;
+    }
+
+
+    /**
+     * Return whether table filters apply to map as defined in config, if undefined defaults to false.
+     */
+    get applyMap(): boolean {
+        return (this.tableConfig.applyMap !== undefined) ? this.tableConfig.applyMap : false; // TODO: applyMap still has to be implemented
+    }
+
+    /**
+     * Returns a list of column data defined in the config, so that the table can be initialized according to them.
+     */
+    get filteredAttributes(): any[] {
+        let filteredAttributes = [];
+        this.tableConfig.columns.forEach(column => {
+            filteredAttributes.push(column.data)
+        });
+        return filteredAttributes;
+    }
+
+    /**
+    * Sets column visibility according to the config file.
+    * (Different from filtering out because invisible columns can be toggled back on)
+    * Helper method to initColumns
+    */
+    setColumnVisibilities(column: any): void {
+        if (!column.visible) {
+            this.panelManager.tableOptions.columnApi.setColumnVisible(column.data, false);
+        }
+    }
+
+    /**
+     * Initializes columns according to specifications in the config on table open.
+     */
+    initColumns(): void {
+        this.tableConfig.columns.forEach(column => {
+            this.setColumnVisibilities(column);
+        });
+    }
+
+}
+
+/**
+ * Creates and manages one column node's config that corresponds to a table config that corresponds to an enhancedTable.
+ * Note: one table config can have many column node config specifications
+ * Used to establish default settings for columns on table open as well as column behaviour and floating filter behaviours.
+ */
+export class ColumnConfigManager {
+    constructor(configManager: ConfigManager, colData: any) {
+        this.configManager = configManager;
+        this.column = this.findColumn(colData);
+    }
+
+    /**
+     * Finds columns in config based on supplied column data
+     * Helper method
+     */
+    findColumn(colData: any) {
+        let matchingColumn;
+        this.configManager.tableConfig.columns.forEach(column => {
+            if (column.data === colData) {
+                matchingColumn = column;
+            }
+        });
+        return matchingColumn;
+    }
+
+    /**
+    * Initializes column width according to specifications in the config on table creation
+    * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
+    */
+    get width(): any {
+        return (this.column !== undefined) ? this.column.width : undefined;
+    }
+
+    /**
+     * Initializes column sorts according to specifications in the config on table creation
+     * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
+     */
+    get sort(): any {
+        return (this.column !== undefined) ? this.column.sort : undefined;
+    }
+
+    /**
+     * Leaves out floating search bar from column if column is not searchable.
+     * Set on table creation
+     */
+    get searchDisabled(): boolean {
+        if (this.column == undefined || this.column.searchable === undefined) {
+            return false;
+        }
+        return !this.column.searchable;
+    }
+
+    /**
+     * Returns if the type of filter is selector
+     * Selector filter is initiated for when default data field types are string
+     * Set up on table create
+     */
+    get isSelector(): boolean {
+        // make comment indicating that that part of the config is ignored entirely if not selector and if default not string
+        if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.type === undefined)) {
+            return this.column.filter.type === 'selector';
+        }
+        return false;
+    }
+
+    /**
+    * Returns whether filter is static
+    * Set up on table create
+    */
+    get isFilterStatic(): boolean {
+        if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.static === undefined)) {
+            return this.column.filter.static;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the column filter value that is seen on tabl open.
+     */
+    get value(): any {
+        if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.value === undefined)) {
+            return this.column.filter.value;
+        }
+        return undefined;
+    }
+}
+
+export interface ConfigManager {
+    baseLayer: any;
+    attributeHeaders: any;
+    attributeArray: [any];
+    tableConfig: any;
+    panelManager: any;
+    searchEnabled: boolean;
+}
+
+
+export interface ColumnConfigManager {
+    column: any;
+    configManager: ConfigManager;
+}

@@ -6,6 +6,7 @@ import './main.scss';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
 import { scrollIntoView, tabToGrid } from './grid-accessibility';
+import { ConfigManager, ColumnConfigManager } from './config-manager';
 
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
@@ -58,7 +59,9 @@ export class PanelManager {
             // set header / controls for panel
             let controls = this.header;
             controls = [
-                new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${this.legendBlock.name}</b></h2><br><p><span class="scrollRecords">${this.panelStatusManager.getScrollRange()}</span> of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`),
+                new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${this.configManager.title}</b>
+                                            </h2><br><p><span class="scrollRecords">${this.panelStatusManager.getScrollRange()}</span>
+                                             of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`),
                 new this.panel.container('<span style="flex: 1;"></span>'),
                 ...controls
             ];
@@ -74,6 +77,7 @@ export class PanelManager {
             new DetailsAndZoomButtons(this);
             new Grid(this.tableContent[0], tableOptions);
             this.panelRowsManager.initObservers();
+            this.configManager.setDefaultSearchParameter();
             this.panel.open();
             this.panelStatusManager.getScrollRange();
 
@@ -81,14 +85,18 @@ export class PanelManager {
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
                 let colApi = this.tableOptions.columnApi
-                colApi.getDisplayedColAfter(colApi.getColumn('rvInteractive')).setSort("asc");
+                let col = colApi.getDisplayedColAfter(colApi.getColumn('rvInteractive'));
+                if (col !== (undefined || null) && col.sort === undefined) {
+                    // set sort of first column to ascending by default if sort isn't specified
+                    col.setSort("asc");
+                }
             };
 
             // Set up grid panel accessibility
             // Link clicked legend element to the opened table
             const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
             console.log(sourceEl, $(document).find(`#enhancedTable`));
-            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
+            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`fco#enhancedTable`));
             // Go from last filter input to grid and reverse
             let headers = this.panel.element[0].getElementsByClassName('ag-header-cell');
             let filters = headers[headers.length - 1].getElementsByTagName('INPUT');
@@ -96,6 +104,7 @@ export class PanelManager {
             this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
             this.gridBody.tabIndex = 0; // make grid container tabable
             this.gridBody.addEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
+            this.configManager.initColumns();
         }
     }
 
@@ -196,7 +205,12 @@ export class PanelManager {
 
         const columnVisibilityMenuBtn = new this.panel.container(COLUMN_VISIBILITY_MENU_TEMPLATE);
 
-        return [searchBar, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn];
+        if (this.configManager.globalSearchEnabled) {
+            return [searchBar, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn]
+        }
+        else {
+            return [columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn];
+        }
     }
 
     angularHeader() {
@@ -263,7 +277,9 @@ export class PanelManager {
             this.columns = that.tableOptions.columnDefs;
             this.columnVisibilities = this.columns
                 .filter(element => element.headerName)
-                .map(element => ({ id: element.field, title: element.headerName, visibility: true }));
+                .map(element => {
+                    return ({ id: element.field, title: element.headerName, visibility: element.visibility })
+                });
 
             // toggle column visibility
             this.toggleColumn = function (col) {
@@ -273,6 +289,11 @@ export class PanelManager {
                 // on showing a column resize to autowidth then shrink columns that are too wide
                 if (col.visibility) {
                     that.autoSizeToMaxWidth();
+                    that.tableOptions.columnDefs.forEach(def => {
+                        if (def.field === col.id) {
+                            def.setHeaderComponent(def, that.mapApi);
+                        }
+                    })
                 }
 
                 // fit columns widths to table if there's empty space
@@ -295,9 +316,10 @@ export interface PanelManager {
     panelStatusManager: PanelStatusManager;
     lastFilter: HTMLElement;
     gridBody: HTMLElement;
+    configManager: any;
 }
 
-interface EnhancedJQuery extends JQuery {
+interface EnhancedJQuery extends JQuery {
     link: any;
 }
 

@@ -118,17 +118,38 @@ export const DETAILS_AND_ZOOM = (rowIndex) =>
         </button>
     </div>`;
 
-export const NUMBER_FILTER_TEMPLATE = `
-<input class="rv-min" style="width:50%" type="text" placeholder="MIN"/>
-<input class="rv-max" style="width:50%" type="text" placeholder="MAX"/>
-`;
+export const NUMBER_FILTER_TEMPLATE = (value, isStatic) => {
+    value = (value === undefined) ? '' : value;
+    if (isStatic === false) {
+        return `<input class="rv-min" style="width:50%" type="text" placeholder="MIN" value='${value}'/>
+         <input class="rv-max" style="width:50%" type="text" placeholder="MAX" value='${value}'/>`;
+    } else {
+        return `<input class="rv-min" style="width:45%; border-bottom: lightgrey dashed 1px" type="text" placeholder="MIN" value='${value}' disabled/>
+         <input class="rv-max" style="width:45%; border-bottom: lightgrey dashed 1px" type="text" placeholder="MAX" value='${value}' disabled/>`;
+    }
+}
 
-export const DATE_FILTER_TEMPLATE = `
-<span>
-    <md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker>
-    <md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker>
-</span>
-`;
+export const DATE_FILTER_TEMPLATE = (value, isStatic) => {
+    value = (value === undefined) ? '' : value;
+
+    if (isStatic === false) {
+        return `<span>
+                 <md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker>
+                 <md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker>
+             </span>`;
+    } else {
+        /*return `<span>
+                <md-datepicker ng-change="minChanged()" ng-model="min" disabled></md-datepicker>
+                <md-datepicker ng-change="maxChanged()" ng-model="max" disabled></md-datepicker>
+            </span>`;*/
+    }
+
+}
+
+export const STATIC_TEXT_FIELD_DISABLED = (value) => {
+    value = (value === undefined) ? '' : value;
+    return `<input type="text" disabled style ='border-bottom: dashed lightgrey 1px' placeholder='${value}'/>`
+};
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div>

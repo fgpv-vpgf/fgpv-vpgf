@@ -17,7 +17,8 @@
                 "large": true,
                 "medium": true,
                 "small": false
-            }
+            },
+            "reorderable": false
         }
     },
     "version": "2.0",
@@ -80,7 +81,7 @@
                 "name": "root",
                 "children": [
                     {
-                        "layerId": "4"
+                        "layerId": "8"
                     },
                     {
                         "layerId": "1"
@@ -90,6 +91,9 @@
                     },
                     {
                         "layerId": "3"
+                    },
+                    {
+                        "layerId": "4"
                     },
                     {
                         "layerId": "0"
@@ -109,7 +113,7 @@
                         "layerId": "7"
                     },
                     {
-                        "layerId": "8"
+                        "layerId": "9"
                     }
                 ]
             }
@@ -124,7 +128,6 @@
                     "columns": [
                         {
                             "data": "OBJECTID",
-                            "title": "ID Of Object",
                             "filter": {
                                 "type": "number",
                                 "value": "0,10"
@@ -143,7 +146,6 @@
                     "columns": [
                         {
                             "data": "OBJECTID",
-                            "title": "ID Of Object",
                             "filter": {
                                 "type": "number",
                                 "value": "0,10"
@@ -169,7 +171,6 @@
                     "columns": [
                         {
                             "data": "OBJECTID",
-                            "title": "ID Of Object",
                             "filter": {
                                 "type": "number",
                                 "value": "0,25"
@@ -180,11 +181,11 @@
                             "filter": {
                                 "type": "string",
                                 "value": "Canada"
-                            }
+                            },
+                            "searchable": false
                         },
                         {
                             "data": "Latitude",
-                            "title": "Horizontal Map Lines",
                             "filter": {
                                 "type": "number",
                                 "value": "48,49"
@@ -212,7 +213,8 @@
                             "data": "Country",
                             "filter": {
                                 "type": "string",
-                                "value": "Canada"
+                                "value": "Canada",
+                                "static": true
                             }
                         }
                     ]
@@ -223,7 +225,55 @@
                 "id": "4",
                 "name": "No initial filter",
                 "layerType": "esriFeature",
-                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5",
+                "table": {
+                    "title": "Table Test One - Custom Title",
+                    "maximize": true,
+                    "search": {
+                        "enabled": false
+                    },
+                    "lazyFilter": true,
+                    "applyMap": true
+                }
+            },
+            {
+                "id": "8",
+                "name": "No initial filter 2",
+                "layerType": "esriFeature",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5",
+                "table": {
+                    "title": "Table Test Two - Custom Title",
+                    "search": {
+                        "enabled": true,
+                        "value": "Ener"
+                    },
+                    "applyMap": false,
+                    "columns": [
+                        {
+                            "data": "OBJECTID",
+                            "title": "Custom OID",
+                            "description": "the object ids for the features",
+                            "width": 20,
+                            "sort": "desc",
+                            "filter": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "data": "Country",
+                            "width": 20,
+                            "sort": "asc",
+                            "filter": {
+                                "type": "selector",
+                                "value": "[\"Canada\", \"Mexico\"]"
+                            }
+                        },
+                        {
+                            "data": "Operator",
+                            "visible": false
+                        }
+                    ]
+                }
             },
             {
                 "id": "5",
@@ -275,7 +325,6 @@
                             "columns": [
                                 {
                                     "data": "OBJECTID",
-                                    "title": "Cool OID!",
                                     "filter": {
                                         "type": "number",
                                         "value": "0,20"
@@ -301,7 +350,8 @@
                             "data": "OBJECTID",
                             "filter": {
                                 "type": "number",
-                                "value": "0,25"
+                                "value": "0,25",
+                                "static": true
                             }
                         },
                         {
@@ -314,7 +364,8 @@
                         {
                             "data": "Latitude",
                             "filter": {
-                                "type": "number"
+                                "type": "number",
+                                "static": true
                             }
                         }
                     ]
@@ -322,10 +373,10 @@
                 "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
             },
             {
-                "id": "8",
+                "id": "9",
                 "name": "BadDates",
                 "layerType": "esriFeature",
-                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
+                "url": "https://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
             }
         ],
         "extentSets": [
