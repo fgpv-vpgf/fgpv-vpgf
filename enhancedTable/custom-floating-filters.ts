@@ -7,9 +7,7 @@ let isStatic = false;
 export function setUpNumberFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any) {
     //Column should filter numbers properly
     colDef.filter = 'agNumberColumnFilter';
-    colDef.filterParams = {
-        inRangeInclusive: true
-    };
+    colDef.filterParams.inRangeInclusive = true;
     isStatic = isItStatic;
     colDef.floatingFilterComponent = NumberFloatingFilter;
     //value = defaultValue;
@@ -20,16 +18,14 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
     colDef.minWidth = 423;
     // Column should render and filter date properly
     colDef.filter = 'agDateColumnFilter';
-    colDef.filterParams = {
-        comparator: function (filterDate, entryDate) {
-            let entry = new Date(entryDate);
-            if (entry > filterDate) {
-                return 1;
-            } else if (entry < filterDate) {
-                return -1;
-            } else {
-                return 0;
-            }
+    colDef.filterParams.comparator = function (filterDate, entryDate) {
+        let entry = new Date(entryDate);
+        if (entry > filterDate) {
+            return 1;
+        } else if (entry < filterDate) {
+            return -1;
+        } else {
+            return 0;
         }
     };
     map = mapApi;
@@ -46,22 +42,48 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
 }
 
 /**Sets up text floating filter accounting for static types, default values and selector types*/
-export function setUpTextFilter(colDef: any, isStatic: boolean, isSelector: boolean, lazyFilterEnabled: boolean, defaultValue: any) {
+export function setUpTextFilter(colDef: any, isStatic: boolean, isSelector: boolean, lazyFilterEnabled: boolean, searchStrictMatchEnabled: boolean, defaultValue: any) {
     //value = defaultValue;
-    if (!lazyFilterEnabled && !isSelector) {
+    if (!isSelector) {
+        if (!searchStrictMatchEnabled) {
+            // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
+            let disregardAccents = function (s) {
+                let r = s.toLowerCase();
+                r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
+                r = r.replace(new RegExp("æ", 'g'),"ae");
+                r = r.replace(new RegExp("ç", 'g'),"c");
+                r = r.replace(new RegExp("[èéêë]", 'g'),"e");
+                r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+                r = r.replace(new RegExp("ñ", 'g'),"n");
+                r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
+                r = r.replace(new RegExp("œ", 'g'),"oe");
+                r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
+                r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
+                return r;
+            }
 
-        if (isStatic) {
-            colDef.floatingFilterComponent = StaticTextFloatingFilter;
-        } else {
-            // Default to "regex" filtering for text columns
-            colDef.filterParams = {
-                textCustomComparator: function (filter, value, filterText) {
+            // for individual columns
+            colDef.filterParams.textFormatter = function (s) {
+                return disregardAccents(s);
+            }
+
+            // for global search
+            colDef.getQuickFilterText = function (params) {
+                return disregardAccents(params.value);
+            }
+        }
+
+        if (!lazyFilterEnabled) {
+            if (isStatic) {
+                colDef.floatingFilterComponent = StaticTextFloatingFilter;
+            } else {
+                // Default to "regex" filtering for text columns
+                colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
                     const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
                     return re.test(value);
                 }
-            };
+            }
         }
-
     } /*TODO: add a selector floating filter
          else if (isSelector) {
          // if this text filter needs to be converted into a selector type

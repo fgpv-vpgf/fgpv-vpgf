@@ -72,6 +72,12 @@ export class ConfigManager {
         return (this.tableConfig.lazyFilter !== undefined) ? this.tableConfig.lazyFilter : false;
     }
 
+    /**
+     * Return whether strict match is enabled when searching in the table as defined in config, if undefined defaults to false.
+     */
+    get searchStrictMatchEnabled(): boolean {
+        return (this.tableConfig.searchStrictMatch !== undefined) ? this.tableConfig.searchStrictMatch : false;
+    }
 
     /**
      * Return whether table filters apply to map as defined in config, if undefined defaults to false.

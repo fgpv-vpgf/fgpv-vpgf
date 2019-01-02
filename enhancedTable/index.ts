@@ -87,9 +87,10 @@ class TableBuilder {
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                         headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                         field: columnName,
-                        filterParams: {},
+                        filterParams: <FilterParameters>{},
                         filter: 'agTextColumnFilter',
                         floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
+                        floatingFilterComponent: undefined,
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
@@ -110,8 +111,8 @@ class TableBuilder {
                                 setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions);
                             } else if (fieldInfo.type === DATE_TYPE) {
                                 setUpDateFilter(colDef, isStatic, this.mapApi);
-                            } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined && !attrBundle.layer.table.lazyFilter) {
-                                setUpTextFilter(colDef, isStatic, isSelector, this.configManager.lazyFilterEnabled, column.value);
+                            } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
+                                setUpTextFilter(colDef, isStatic, isSelector, this.configManager.lazyFilterEnabled, this.configManager.searchStrictMatchEnabled, column.value);
                             }
                         }
 
@@ -219,6 +220,13 @@ interface HeaderComponentParams {
 interface FloatingFilterComponentParams {
     suppressFilterButton: boolean;
     mapApi: any;
+}
+
+interface FilterParameters {
+    inRangeInclusive?: boolean;
+    comparator?: Function;
+    textCustomComparator?: Function;
+    textFormatter?: Function;
 }
 
 TableBuilder.prototype.tableOptions = {
