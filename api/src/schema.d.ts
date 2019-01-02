@@ -1006,7 +1006,7 @@ export interface ColumnNode {
  */
 export interface FilterNode {
   /**
-   * Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails.
+   * Specifies the filter type to use. Mainly used to change default text filters to selector filters if the user wishes.
    */
   type: "string" | "number" | "date" | "selector";
   /**
