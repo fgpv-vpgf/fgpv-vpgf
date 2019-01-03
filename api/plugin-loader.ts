@@ -2,7 +2,7 @@ import Table from '../intention/table/table.intention';
 import EPSG from '../intention/epsg/epsg.intention';
 import geoSearch from '../intention/geosearch/geosearch.intention';
 
-import { FgpvConfigSchema } from 'api/schema';
+import { FGPVConfigSchema } from 'api/schema';
 
 const loadIntentions: any = {
     epsg: EPSG,
@@ -12,14 +12,14 @@ const loadIntentions: any = {
 
 // Each map instance will make a Loader instance
 export default class Loader {
-    private config: FgpvConfigSchema;
+    private config: FGPVConfigSchema;
     private mapElem: JQuery<HTMLElement>;
     private preInitPromises: Promise<void>[] = []; // all preInit promises must resolve prior to map loading
 
     extensions: Array<any> = [];
     intentions: any = {};
 
-    constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
+    constructor(config: FGPVConfigSchema, mapElem: JQuery<HTMLElement>) {
         this.config = Object.freeze(config); // no changes permitted
         this.mapElem = mapElem;
 
