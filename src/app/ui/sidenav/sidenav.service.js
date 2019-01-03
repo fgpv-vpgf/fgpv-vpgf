@@ -177,7 +177,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
 
     return service;
 
-    function ShareController(scope, $mdDialog, $rootElement, $http, configService) {
+    function ShareController(scope, $mdDialog, $rootElement, $http, configService, appInfo) {
         'ngInject';
         const self = this;
 
@@ -213,8 +213,17 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
         * @function getLongLink
         */
         function getLongLink() {
+            if (typeof URLS.long === 'undefined' && window.RV.getMap(appInfo.id)) { // no cached url exists
+                // eslint-disable-next-line no-return-assign
+                window.RV.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
+                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
+                }).then(() => {
+                    selectURL();
+                });
+            } else {
                 self.url = URLS.long;
                 selectURL();
+            }
         }
 
         /**
