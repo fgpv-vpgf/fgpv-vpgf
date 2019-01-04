@@ -127,6 +127,24 @@ function layerRegistryFactory(
         }
     });
 
+    // listen for filter changes. inspect if they are relevant and apply to target layer if they are
+    events.$on(events.rvFilterChanged, (_, params) => {
+        // Don't react to extent filters. Layer is auto-filtered by extent just by being on the map.
+        // TODO maybe make constant that aligns with geoApi 
+        if (['symbol', 'api', 'grid'].indexOf(params.filterType) > -1) {
+            // see if the layer exists and is active
+            const layerRecord = getLayerRecord(params.layerID);
+            if (layerRecord && layerRecord.isActiveState) {
+                // tell geoApi to have the layer apply its filter to itself on the map
+                if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layerRecord.applyFilterToLayer(params.layerIdx);
+                } else {
+                    layerRecord.applyFilterToLayer();
+                }
+            }
+        }
+    });
+
     /**
      * Finds and returns the layer record using the id specified.
      *
@@ -273,6 +291,7 @@ function layerRegistryFactory(
 
         if (layerRecord.state === Geo.Layer.States.LOADED) {
             layerRecord.removeAttribListener(_onLayerAttribDownload);
+            layerRecord.removeFilterListener(_onLayerFilterChange);
         }
         _removeLayerFromApiMap(layerRecord);
 
@@ -379,6 +398,7 @@ function layerRegistryFactory(
         // normal situation
         layerRecord.addStateListener(_onLayerRecordInitialLoad);
         layerRecord.addAttribListener(_onLayerAttribDownload);
+        layerRecord.addFilterListener(_onLayerFilterChange);
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount++;
 
@@ -1062,7 +1082,6 @@ function layerRegistryFactory(
      * @param {LayerRecord} layerRecord a layerRecod whose id is used to trigger observable
      * @param {String} idx index of the layer whose attribtues were downloaded
      * @param {Object} attribs the attributes that were downloaded
-     * @private
      */
     function _onLayerAttribDownload(layerRecord, idx, attribs) {
         let configLayer;
@@ -1077,6 +1096,17 @@ function layerRegistryFactory(
         if (configLayer) {
             configLayer.fetchAttributes();
         }
+    }
+
+    /**
+     * Listens for filter changes on a layer, converts it to an angular event
+     *
+     * @function _onLayerFilterChange
+     * @private
+     * @param {Object} params event parameters from geoApi event
+     */
+    function _onLayerFilterChange(params) {
+       events.$broadcast(events.rvFilterChanged, params);
     }
 
     /**

@@ -273,7 +273,9 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
                     if (currentSubLayer.table) {        // if table exists, we need to reaply the definition query every time on reload
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
-                        proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
+                        // proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery); // no longer directly mess with definition query
+                        // this will mimick as if the grid had applied its filter goodness.
+                        proxy.filter.setGridSql(currentSubLayer.initialFilteredQuery);
                     }
                 });
             }

@@ -415,6 +415,19 @@ function mapServiceFactory(
                 }
 
                 events.$broadcast(events.rvExtentChange, data);
+
+                // TODO design consideration.
+                //      perhaps we abandon the concept of an "extent filter" event and things
+                //      just react to the rvExtentChange and adjust filters accordingly.
+                //      most other filter change events are layer specific.
+                //      second alternate is to wire up a callback to the geoApi map class to trigger
+                //      filter events, so it's more analogous to how layer-level filter events
+                //      get raised.
+                const fcParam = {
+                    filterType: 'extent',
+                    extent: data.extent
+                };
+                events.$broadcast(events.rvFilterChanged, fcParam);
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {

@@ -630,6 +630,7 @@ function legendServiceFactory(
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
                     // show filter flag if there is a filter query being applied
+                    // TODO may want to update this to use proxyWrapper.filterState.isActive() method.
                     legendBlock.filter =
                         (item.proxyWrapper.layerConfig.initialFilteredQuery !== undefined &&
                             item.proxyWrapper.layerConfig.initialFilteredQuery !== '') ? true : false;
@@ -904,6 +905,7 @@ function legendServiceFactory(
             // show filter flag if there is a filter query being applied
             node.filter = false;
 
+            // TODO may want to update this to use proxyWrapper.filterState.isActive() method to check if filters are on.
             if (layerConfig.table.columns !== undefined) {
                 layerConfig.table.columns.forEach(column => {
                     if (column.filter !== undefined && column.filter.value !== undefined) {

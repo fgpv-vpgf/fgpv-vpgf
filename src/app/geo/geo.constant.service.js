@@ -6,6 +6,7 @@ const GEO = {
             ESRI_FEATURE: 'esriFeature',
             ESRI_IMAGE: 'esriImage',
             ESRI_TILE: 'esriTile',
+            ESRI_RASTER: 'esriRaster', // Note this type can only exist as a child of a dynamic layer. Can be used to check types via child proxy objects.
             OGC_WMS: 'ogcWms',
             OGC_WFS: 'ogcWfs'
         },
@@ -30,7 +31,7 @@ const GEO = {
             REFRESH: 'rv-refresh',
             LOADING: 'rv-loading',
             LOADED: 'rv-loaded', // TODO maybe loaded and default are the same?
-            DEFAULT: 'rv-default',
+            DEFAULT: 'rv-default', // TODO no code is referencing rv-default. remove?
             ERROR: 'rv-error'
         }
     },
