@@ -94,7 +94,7 @@ class TableBuilder {
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
-                        visibility: column.column ? column.column.visible : undefined
+                        visibility: this.configManager.filteredAttributes.length === 0 ? true : column.column ? column.column.visible : undefined
                     };
 
                     // set up floating filters and column header
@@ -116,14 +116,7 @@ class TableBuilder {
                             }
                         }
 
-                        // only set up header component if column is visible
-                        // TODO: have a way to set up header component properly if column is not visible
-                        if (colDef.visibility === true || colDef.visibility === undefined) {
-                            setUpHeaderComponent(colDef, this.mapApi);
-                        } else {
-                            let map = this.mapApi;
-                            colDef.setHeaderComponent = function (colDef, map) { setUpHeaderComponent(colDef, map) };
-                        }
+                        setUpHeaderComponent(colDef, this.mapApi);
                     }
 
                     // symbols and interactive columns are set up for every table
@@ -160,6 +153,7 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
         // symbols and interactive columns don't have options for sort, filter and have default widths
         colDef.suppressSorting = true;
         colDef.suppressFilter = true;
+        colDef.lockPosition = true;
         colDef.maxWidth = 100;
         cols.splice(0, 0, colDef);
     } else {
@@ -207,10 +201,10 @@ interface ColumnDefinition {
     cellRenderer?: (cellParams: any) => string | Element;
     suppressSorting: boolean;
     suppressFilter: boolean;
+    lockPosition?: boolean;
     getQuickFilterText?: (cellParams: any) => string;
     sort?: any;
     visibility?: any;
-    setHeaderComponent?: any;
 }
 
 interface HeaderComponentParams {

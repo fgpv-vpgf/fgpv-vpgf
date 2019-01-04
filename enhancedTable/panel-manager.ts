@@ -95,7 +95,6 @@ export class PanelManager {
             // Set up grid panel accessibility
             // Link clicked legend element to the opened table
             const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
-            console.log(sourceEl, $(document).find(`#enhancedTable`));
             (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`fco#enhancedTable`));
             // Go from last filter input to grid and reverse
             let headers = this.panel.element[0].getElementsByClassName('ag-header-cell');
@@ -289,11 +288,6 @@ export class PanelManager {
                 // on showing a column resize to autowidth then shrink columns that are too wide
                 if (col.visibility) {
                     that.autoSizeToMaxWidth();
-                    that.tableOptions.columnDefs.forEach(def => {
-                        if (def.field === col.id) {
-                            def.setHeaderComponent(def, that.mapApi);
-                        }
-                    })
                 }
 
                 // fit columns widths to table if there's empty space

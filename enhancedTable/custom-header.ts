@@ -42,6 +42,21 @@ export class CustomHeader {
         return this.eGui;
     }
 
+    destroy(): void {
+        let moveLeftListener = this.moveLeft.bind(this);
+        let moveRightListener = this.moveRight.bind(this);
+        let onSortChangedListener = this.onSortChanged.bind(this);
+        let onColumnReorderListener = this.onColumnReorder.bind(this);
+
+        this.headerButton.removeEventListener('click', (event) => {
+            this.agParams.progressSort(event.shiftKey);
+        });
+        this.moveLeftButton.removeEventListener('click', moveLeftListener);
+        this.moveRightButton.removeEventListener('click', moveRightListener);
+        this.agParams.column.removeEventListener('sortChanged', onSortChangedListener);
+        this.agParams.column.removeEventListener('leftChanged', onColumnReorderListener);
+    }
+
     /** Update sort indicator visibility */
     onSortChanged() {
         this.scope.sortAsc = this.agParams.column.isSortAscending();
