@@ -14,12 +14,12 @@ export class PanelManager extends Panel {
             right: '0px',
             bottom: '50%'
         });
-        this.content = new this.container(this.tableContent);
+        this.setBody(this.tableContent);
         this.panelBody.css({'overflow-x': 'scroll', padding: 'initial'});
         
         const closeBtn = new this.button('X');
         closeBtn.element.css('float', 'right');
-        this.controls = [closeBtn];
+        this.setControls([closeBtn]);
     }
 }
 

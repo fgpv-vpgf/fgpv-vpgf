@@ -29,11 +29,18 @@ Default panels are created by the viewer and are a core part of the user experie
 
 ## Creating a panel
 ```js
-const myPanel = mapI.createPanel('panelName');
+const panelCSS = {
+    top: '0px',
+    left: '410px',
+    right: '0px',
+    bottom: '50%',
+    padding: '0px 16px 16px 16px'
+};
+
+const myPanel = mapI.createPanel('panelName', panelCSS, '<div>Panel body HTML.</div>');
 ```
 
-## Position & size
-A panels size and position are defined as a CSS style on the `panelContents` property.
+Only the first argument in `createPanel` is required (the ID of the panel). Panel CSS can also be set on `myPanel.panelContents`.
 
 ```js
 myPanel.panelContents.css({
@@ -47,21 +54,17 @@ myPanel.panelContents.css({
 
 See figure 1. above which shows the rough layout of this custom panel. 
 
-## Content
-The contents of a panel can be set via the `content` property on a panel instance. You must wrap your HTML `string`, `HTMLElement`, or `JQuery<HTMLElement>` in a panel container before assigning it to the `content` property.
+## Body content
+The contents of a panel body can be set with the `setBody` method which accepts either an HTML `string`, an `HTMLElement`, or a `JQuery<HTMLElement>`.
 
 ```js
-const content = new myPanel.container('string, HTMLElement, or JQuery<HTMLElement>')
+myPanel.setBody('<div>Panel content. . .</div>');
 ```
 
-This container normalizes the input into a `JQuery<HTMLElement>` and **compiles it with Angular within the viewers scope**. This allows you to use angular materials (https://material.angularjs.org/latest/) natively, or define and use your own angular controller.
-
-```js
-myPanel.content = new myPanel.container('<div>My HTML content</div>');
-```
+The content is normalized to a `JQuery<HTMLElement>` and gets **compiled with Angular**. This allows you to use angular materials (https://material.angularjs.org/latest/) natively, or define and use your own angular controller.
 
 ### Custom Angular directives
-Since panel content is passed through an angular compiler (version 1) you can define and use your own controllers. There are two steps required to use a custom controller.
+You can define and use your own Angular controllers in two steps:
 
 1. Define your controller name and function
     ```js
@@ -71,7 +74,7 @@ Since panel content is passed through an angular compiler (version 1) you can de
     ```
 2. Use it in your content
    ```js
-    myPanel.content = new myPanel.container('<div ng-controller="MyPanelCtrl as ctrl">My HTML content</div>');
+   myPanel.setBody('<div ng-controller="MyPanelCtrl as ctrl">My HTML content</div>');
    ```
 
 More information: https://angularjs.org/
@@ -85,15 +88,14 @@ const tocPanel = mapI.panelRegistry.find(p => p.id === 'toc');
 ```
 
 ## Controls
-Controls appear near the top of a panel and can include action buttons, a title, and custom elements. Controls are defined as part of an array on the `controls` property of a panel instance. 
+Controls appear near the top of a panel and can include action buttons, a title, and custom elements. Controls are defined as part of an array passed to the `setControls` method. 
 
 
 ```js
-myPanel.controls = ['X', new myPanel.container('<input type="text" name="searchbar">')];
+myPanel.setControls('X', '<input type="text" name="searchbar">');
 ```
 
 This adds two controls to the panels header - a close button and an HTML input box. The `X` is a special case along with `T` that creates a close and toggle button respectively.
-
 
 
 ## Watching a panel

@@ -51,12 +51,12 @@ export class Table {
 
         this.panel.tableContent.html(`<table class="table table-bordered">${cols} ${rows}</table>`);
 
-        if (this.panel.controls.length > 1) {
-            this.panel.controls.pop();
+        if (this.panel.getControls().length > 1) {
+            this.panel.getControls().pop();
         }
 
-        this.panel.controls.push(new this.panel.container(`<h2>Features: ${attrBundle.layer.name}</h2>`));
-        this.panel.controls = this.panel.controls;
+        this.panel.getControls().push(new this.panel.container(`<h2>Features: ${attrBundle.layer.name}</h2>`));
+        this.panel.setControls(this.panel.getControls());
 
         this.panel.open();
     }

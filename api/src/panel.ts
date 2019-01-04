@@ -76,28 +76,19 @@ export class Panel {
         $(this.mapObject.innerShell).append(this.documentFragment);
     }
 
-    /**
-    * Returns controls for the Panel
-    * @return {(PanelElem | Btn)[]} - a list of controls for the Panel.
-    */
-    get controls(): (PanelElem | Btn)[] {
+    getControls(): (PanelElem | Btn)[] {
         return this.controlList;
     }
 
-    /**
-    * Sets panel controls.
-    * @param {(PanelElem | Btn)[]} elems - the array of control elements that are set as panel controls
-    */
-    set controls(elems: (PanelElem | Btn)[]) {
+    setControls(elems: (PanelElem | Btn | string | HTMLElement | JQuery<HTMLElement>)[]) {
         this.panelControls.removeClass('hidden');
-        this.controlList = elems;
-        let body = this.panelBody;
+        this.controlList = elems.map(e => this.isPanelElem(e) ? e : new this.container(e));
+
         //First empty existing controls
         this.panelControls.html('');
-        let panel = this;
 
         //then fill in new controls
-        elems.forEach(elem => {
+        this.controlList.forEach(elem => {
             this.panelControls.append(elem.elementAttr);
         });
     }
@@ -120,23 +111,35 @@ export class Panel {
     }
 
     /**
-    * Returns contents for panel
-    */
-    get content(): PanelElem {
-        return this.contentAttr;
+     * Determines if the content passed is a typeof PanelElem.
+     * 
+     * @param content   panel body content
+     */
+    isPanelElem(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>): content is PanelElem {
+        return !!(<PanelElem>content).element;
     }
 
     /**
-    * Sets the contents for the Panel.
-    * @param {PanelElem} content - the PanelElem to be used as panel's contents (scopes other PanelElems)
-    */
-    set content(content: PanelElem) {
+     * Sets the panel body to the provided content.
+     * 
+     * @param content   panel body content
+     */
+    setBody(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>) {
+        const pElemContent = this.isPanelElem(content) ? content : new this.container(content);
         this.panelBody.removeClass('hidden');
-        this.contentAttr = content;
+        this.contentAttr = pElemContent;
         //First empty existing content
         this.panelBody.html('');
         //then fill in new contents
-        this.panelBody.append(content.element);
+        this.panelBody.append(this.getBody());
+        return this;
+    }
+
+    /**
+     * Returns the panel body.
+     */
+    getBody() {
+        return this.contentAttr.element;
     }
 
     /**

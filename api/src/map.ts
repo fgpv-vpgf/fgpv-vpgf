@@ -24,7 +24,7 @@ import { seeder } from 'app/app-seed';
 import { FGPVConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { LayerGroup, SimpleLayer } from 'api/layers';
-import { Panel } from 'api/panel';
+import { Panel, PanelElem } from 'api/panel';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -96,8 +96,17 @@ export class Map {
      * @param {string} id - the ID of the panel to be created
      * @return {Panel} - the Panel that was created
      */
-    createPanel(id: string): Panel {
+    createPanel(id: string, css?: any, body?: PanelElem | string | HTMLElement | JQuery<HTMLElement>): Panel {
         let panel = new Panel(id, this);
+
+        if (css) {
+            panel.panelContents.css(css);
+        }
+
+        if (body) {
+            panel.setBody(body);
+        }
+
         this.panelRegistry.push(panel);
         return panel;
     }
