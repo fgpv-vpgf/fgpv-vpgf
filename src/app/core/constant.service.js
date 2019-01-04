@@ -77,8 +77,9 @@ function events($rootScope) {
         rvFeatureMouseOver: 'rvFeatureMouseOver',
         rvProjectiontChanged: 'rvProjectiontChanged',
         rvLanguageChanged: 'rvLanguageChanged',
+        rvFilterChanged: 'rvFilterChanged', // fires when a filter updates
 
-        rvSymbDefinitionQueryChanged: 'rvSymbDefinitionQueryChanged',
+        rvSymbDefinitionQueryChanged: 'rvSymbDefinitionQueryChanged', // TODO consider depreciating/removing. rvFilterChanged should handle symbols
 
         // fired when mApi is ready but before plugins are executed
         rvApiPrePlugin: 'rvApiPrePlugin',

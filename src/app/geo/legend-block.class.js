@@ -174,6 +174,10 @@ function LegendBlockFactory(
             return this._lastState;
         }
 
+        get isActiveState () {
+            return this._proxy ? this._proxy.activeState : false;
+        }
+
         get name() {
             return this._proxy ? this._proxy.name : this._layerConfig.name;
         }
@@ -223,6 +227,12 @@ function LegendBlockFactory(
             this._proxyCheck();
             return this._proxy.queryUrl;
         }
+        // TODO pick better name.  using filterState due to current collision with other config-based .filter getter
+        get filterState() {
+            this._proxyCheck();
+            return this._proxy.filter;
+        }
+
         get query() {
             return this._proxy ? this._proxy.query : this._layerConfig.state.query;
         }
@@ -297,6 +307,7 @@ function LegendBlockFactory(
             this._layerConfig.state.boundingBox = value;
         }
 
+        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
         /**
          * Set definition query to filter feature layer or dynamic layer
          *
@@ -402,6 +413,8 @@ function LegendBlockFactory(
             return this._layerConfig.state.userAdded;
         }
 
+        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
+        //      might want to use this.filterState.isActive() which returns boolean
         /**
          * Returns the value of the `filter` state flag.
          *
@@ -760,6 +773,7 @@ function LegendBlockFactory(
                 }
             );
 
+            // TODO grid plugin should have better way of hiding rows if grid is invisible. should not be tied to symbology
             // applies visibility settings to grid
             if (!this.visibility) {
                 this.symbDefinitionQuery = '1=2';
@@ -942,6 +956,7 @@ function LegendBlockFactory(
          * @param {String} value the definition query to set
          */
         set definitionQuery(value) {
+            // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
             this.proxyWrapper.definitionQuery = value;
         }
 
@@ -1011,6 +1026,7 @@ function LegendBlockFactory(
             return this.proxyWrapper.userAdded;
         }
 
+        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
         get filter() {
             return this.proxyWrapper.filter;
         }
