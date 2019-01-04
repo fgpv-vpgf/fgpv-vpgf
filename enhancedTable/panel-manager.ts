@@ -22,7 +22,7 @@ export class PanelManager {
 
         this.setSize();
         this.panel.panelBody.addClass('ag-theme-material');
-        this.panel.content = new this.panel.container(this.tableContent);
+        this.panel.setBody(this.tableContent);
         this.panel.element[0].addEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
     }
 
@@ -59,13 +59,13 @@ export class PanelManager {
             // set header / controls for panel
             let controls = this.header;
             controls = [
-                new this.panel.container(`<div style="padding-bottom :30px"><h2><b>Features: ${this.configManager.title}</b>
+                `<div style="padding-bottom :30px"><h2><b>Features: ${this.configManager.title}</b>
                                             </h2><br><p><span class="scrollRecords">${this.panelStatusManager.getScrollRange()}</span>
-                                             of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`),
-                new this.panel.container('<span style="flex: 1;"></span>'),
+                                             of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`,
+                '<span style="flex: 1;"></span>',
                 ...controls
             ];
-            this.panel.controls = controls;
+            this.panel.setControls(controls);
 
             // set css for panel
             this.panel.panelBody.css('padding-top', '16px');

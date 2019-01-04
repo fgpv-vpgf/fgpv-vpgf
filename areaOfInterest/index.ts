@@ -54,14 +54,8 @@ class AreasOfInterest {
         let closeBtn = new this.panel.button('X');
         closeBtn.element.css('float', 'right');
         this.panel.open();
-        this.panel.controls = [
-            new this.panel.container(
-                `<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 't.title' | translate }}</h2>`
-            ),
-            closeBtn
-        ];
-
-        this.panel.content = new this.panel.container(bodyElement);
+        this.panel.setControls([`<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 't.title' | translate }}</h2>`, closeBtn]);
+        this.panel.setBody(bodyElement);
     }
 }
 
