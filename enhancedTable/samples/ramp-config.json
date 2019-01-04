@@ -246,8 +246,7 @@
                 "table": {
                     "title": "Table Test Two - Custom Title",
                     "search": {
-                        "enabled": true,
-                        "value": "Ener"
+                        "enabled": true
                     },
                     "applyMap": false,
                     "columns": [

@@ -166,3 +166,15 @@ export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
     </div>
 </div>
 `;
+
+export const SELECTOR_FILTER_TEMPLATE = (value, isStatic) => {
+    if (isStatic === true) {
+        return `<md-select placeholder='selection' multiple="{{true}}" md-on-close='selectionChanged() style='height: 20px; opacity: 0.4; color: lightgrey' ng-model="selectedOptions" ng-disabled='true'>
+                         <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
+                     </md-select>`;
+    } else {
+        return `<md-select placeholder='selection' multiple="{{true}}" style='height: 20px' md-on-close='selectionChanged()' ng-model="selectedOptions">
+                         <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
+                     </md-select>`;
+    }
+}

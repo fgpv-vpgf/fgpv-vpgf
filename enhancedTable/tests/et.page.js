@@ -17,6 +17,14 @@ class Page extends RAMPage {
     get datepickerButton() {
         return browser.element('.md-datepicker-button');
     }
+
+    /**
+     * Returns the first selector drop down
+     */
+    get selectorDropDown() {
+        return browser.element('.md-select-value');
+    }
+
     /**
      * Return the element containing the dateInput
      */

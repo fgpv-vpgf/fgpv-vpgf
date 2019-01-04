@@ -4,7 +4,7 @@ import { PanelManager } from './panel-manager';
 import { DETAILS_AND_ZOOM } from './templates';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
 import {
-    setUpDateFilter, setUpNumberFilter, setUpTextFilter
+    setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter
 } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
 
@@ -112,7 +112,12 @@ class TableBuilder {
                             } else if (fieldInfo.type === DATE_TYPE) {
                                 setUpDateFilter(colDef, isStatic, this.mapApi);
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
-                                setUpTextFilter(colDef, isStatic, isSelector, this.configManager.lazyFilterEnabled, this.configManager.searchStrictMatchEnabled, column.value);
+                                if (isSelector) {
+                                    setUpSelectorFilter(colDef, isStatic, column.value, this.tableOptions, this.mapApi);
+                                } else {
+                                    setUpTextFilter(colDef, isStatic, this.configManager.lazyFilterEnabled,
+                                        this.configManager.searchStrictMatchEnabled, column.value);
+                                }
                             }
                         }
 

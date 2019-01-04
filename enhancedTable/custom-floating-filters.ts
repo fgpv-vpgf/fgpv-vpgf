@@ -1,6 +1,6 @@
-import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, STATIC_TEXT_FIELD_DISABLED } from "./templates";
+import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, STATIC_TEXT_FIELD_DISABLED, SELECTOR_FILTER_TEMPLATE } from "./templates";
 
-let map, value;
+let map, value, tableOptions, currColumn;
 let isStatic = false;
 
 /**Sets up number floating filter accounting for static types and default values*/
@@ -42,53 +42,63 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
 }
 
 /**Sets up text floating filter accounting for static types, default values and selector types*/
-export function setUpTextFilter(colDef: any, isStatic: boolean, isSelector: boolean, lazyFilterEnabled: boolean, searchStrictMatchEnabled: boolean, defaultValue: any) {
-    //value = defaultValue;
-    if (!isSelector) {
-        if (!searchStrictMatchEnabled) {
-            // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-            let disregardAccents = function (s) {
-                let r = s.toLowerCase();
-                r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
-                r = r.replace(new RegExp("æ", 'g'),"ae");
-                r = r.replace(new RegExp("ç", 'g'),"c");
-                r = r.replace(new RegExp("[èéêë]", 'g'),"e");
-                r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
-                r = r.replace(new RegExp("ñ", 'g'),"n");
-                r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
-                r = r.replace(new RegExp("œ", 'g'),"oe");
-                r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
-                r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-                return r;
-            }
-
-            // for individual columns
-            colDef.filterParams.textFormatter = function (s) {
-                return disregardAccents(s);
-            }
-
-            // for global search
-            colDef.getQuickFilterText = function (params) {
-                return disregardAccents(params.value);
-            }
+export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean, searchStrictMatchEnabled: boolean, defaultValue: any) {
+    if (!searchStrictMatchEnabled) {
+        // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
+        let disregardAccents = function (s) {
+            let r = s.toLowerCase();
+            r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+            r = r.replace(new RegExp("æ", 'g'), "ae");
+            r = r.replace(new RegExp("ç", 'g'), "c");
+            r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+            r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+            r = r.replace(new RegExp("ñ", 'g'), "n");
+            r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+            r = r.replace(new RegExp("œ", 'g'), "oe");
+            r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+            r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+            return r;
         }
 
-        if (!lazyFilterEnabled) {
-            if (isStatic) {
-                colDef.floatingFilterComponent = StaticTextFloatingFilter;
-            } else {
-                // Default to "regex" filtering for text columns
-                colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
-                    const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-                    return re.test(value);
-                }
+        // for individual columns
+        colDef.filterParams.textFormatter = function (s) {
+            return disregardAccents(s);
+        }
+
+        // for global search
+        colDef.getQuickFilterText = function (params) {
+            return disregardAccents(params.value);
+        }
+    }
+
+    if (!lazyFilterEnabled) {
+        if (isStatic) {
+            colDef.floatingFilterComponent = StaticTextFloatingFilter;
+        } else {
+            // Default to "regex" filtering for text columns
+            colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
+                const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
+                return re.test(value);
             }
         }
-    } /*TODO: add a selector floating filter
-         else if (isSelector) {
-         // if this text filter needs to be converted into a selector type
-         colDef.floatingFilterComponent = getSelectorFloatingFilterComponent(isStatic);
-     }*/
+    }
+}
+
+/**Sets up a selector floating filter accounting for static types and default values*/
+export function setUpSelectorFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, mapApi: any) {
+    map = mapApi;
+    tableOptions = gridOptions;
+    currColumn = colDef;
+    isStatic = isItStatic;
+    colDef.floatingFilterComponent = SelectorFloatingFilter;
+
+    // our custom comparator looks to see if row values are contained within selected value
+    // since selector can select multiple values
+    colDef.filterParams = {
+        textCustomComparator: function (filter, value, filterText) {
+            return filterText.includes(value);
+        }
+    }
 }
 
 /**Helper method to setUpDateFilter*/
@@ -262,6 +272,62 @@ class DateFloatingFilter {
 
 }
 
+/**
+* Floating filter component enhanced for Static Text Filters
+*/
+class SelectorFloatingFilter {
+
+    init(params: any) {
+        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
+        this.eGui = $(SELECTOR_FILTER_TEMPLATE(value, isStatic))[0];
+        this.scope = map.$compile(this.eGui);
+
+        // keep track of the number of distinct row values for the column
+        // these will form the selector drop down
+        function getDistinctRows(rowData) {
+            let distinctRows = {};
+            rowData.filter(row => {
+                return distinctRows.hasOwnProperty(row[currColumn.headerName]) ? false : (distinctRows[row[currColumn.headerName]] = true);
+            });
+            return distinctRows;
+        }
+
+        this.scope.options = Object.keys(getDistinctRows(tableOptions.rowData));
+
+        // fires when user makes selection changes and closes the drop down menu window
+        this.scope.selectionChanged = () => {
+            this.onFloatingFilterChanged({ model: this.getModel() })
+        }
+
+    }
+
+    /** Helper function to determine filter model */
+    getModel(): any {
+        let selectedOptions = this.scope.selectedOptions;
+        let optionsList = '';
+
+        // add all selection options and pass it onto the filter
+        [].forEach.call(selectedOptions, function (option) {
+            optionsList += option;
+        });
+
+        return { type: 'contains', filter: optionsList };
+    }
+
+    /** Return component GUI */
+    getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    /** Pass through parent change for all filter clear.*/
+    onParentModelChanged(parentModel: any) {
+        if (parentModel === null) {
+            this.scope.selectedOptions = [];
+        }
+    }
+
+}
+
 interface NumberFloatingFilter {
     onFloatingFilterChanged: any;
     eGui: HTMLElement;
@@ -285,4 +351,12 @@ interface StaticTextFloatingFilter {
     eGui: HTMLElement;
     defaultValue: any;
     value: any;
+}
+
+interface SelectorFloatingFilter {
+    onFloatingFilterChanged: any;
+    eGui: HTMLElement;
+    defaultValue: any;
+    value: any;
+    scope: any;
 }
