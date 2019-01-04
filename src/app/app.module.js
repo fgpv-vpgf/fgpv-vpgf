@@ -16,10 +16,10 @@ angular
         'app.ui',
         'app.layout'
     ])
-    .config(($mdInkRippleProvider, $provide, $controllerProvider, api) => {
+    .config(($mdInkRippleProvider, $provide, $controllerProvider) => {
         $provide.value('$controllerProvider', $controllerProvider);
         // to improve IE performance disable ripple effects globally and debug info
-        if (api.isIE) {
+        if (!!window.MSInputMethodContext && !!document.documentMode) {
             $mdInkRippleProvider.disableInkRipple();
         }
     });

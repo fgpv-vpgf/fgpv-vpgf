@@ -31,7 +31,7 @@ const INFO_FONT_SIZE = 14;
  */
 angular.module('app.ui').service('exportLegendService', exportLegendService);
 
-function exportLegendService($q, $rootElement, api, LegendBlock, configService, gapiService, graphicsService) {
+function exportLegendService($q, $rootElement, appInfo, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
         generate
     };
@@ -509,7 +509,7 @@ function exportLegendService($q, $rootElement, api, LegendBlock, configService, 
                     const content = entry.layerName || entry.content;
 
                     // ie can't handle fancy markdown image rendering so we strip markdown entirely
-                    if (api.isIE) {
+                    if (appInfo.isIE11) {
                         return {
                             name: removeMd(content),
                             items: _cleanSymbologyStack(entry.symbologyStack.stack) || [],

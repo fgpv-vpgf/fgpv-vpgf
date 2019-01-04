@@ -79,7 +79,7 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
 
             // API related initialization ------------------
             api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
-            api.isIE = /Edge\/|Trident\/|MSIE /.test(window.navigator.userAgent);
+            api.isIE11 = appInfo.isIE11;
             const apiMap = new Map($rootElement);
             apiMap.fgpMap = mapInstance;
             apiMap._legendStructure = configService.getSync.map.legend;

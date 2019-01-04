@@ -11,7 +11,7 @@ angular
     .module('app.layout')
     .factory('animationService', animationService);
 
-function animationService($rootElement, api) {
+function animationService($rootElement, appInfo) {
 
     const service = {
         timeLineLite,
@@ -50,7 +50,7 @@ function animationService($rootElement, api) {
         return function () {
             const args = [...arguments];
             // set duration to 0.001 when animations are disabled so they complete almost immediately. Cannot be 0 or it fails.
-            args[1] = api.isIE || $rootElement.hasClass('rv-touch') ? 0.001 : args[1];
+            args[1] = appInfo.isIE11 || $rootElement.hasClass('rv-touch') ? 0.001 : args[1];
             const originalWrap = 'orig' + toWrap;
             return TLLinstance[originalWrap] ? TLLinstance[originalWrap](...args) : TLLinstance[toWrap](...args);
         };
