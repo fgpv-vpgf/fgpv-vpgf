@@ -19,7 +19,7 @@ angular
  * @function rvGeosearch
  * @return {object} directive body
  */
-function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope, events, api) {
+function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope, events, appInfo) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -33,7 +33,7 @@ function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope
             // IE requires a specific fix because it will not size a flex child's height correctly unless its parent has a set height (not percentage); so the height is set explicitly every time the main panel height changes;
             // read here for more details http://stackoverflow.com/a/35537510
             // tecnhically, this fix will work for all browsers, but it's ugly and should be reserved for IE only; other browsers are fixes using CSS just fine;
-            if (api.isIE) {
+            if (appInfo.isIE11) {
                 const geosearchContentNode = element.find('.rv-geosearch-content:first');
 
                 const debounceUpdateMaxHeight = debounceService.registerDebounce(newDimensions =>

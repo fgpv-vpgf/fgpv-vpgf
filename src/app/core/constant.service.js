@@ -92,7 +92,8 @@ function events($rootScope) {
 function appInfo() {
     const service = {
         id: null,
-        apiMap: null
+        apiMap: null,
+        isIE11: !!window.MSInputMethodContext && !!document.documentMode
     };
 
     return service;
