@@ -16,10 +16,12 @@ angular
         'app.ui',
         'app.layout'
     ])
-    .config(($mdInkRippleProvider, $provide, $controllerProvider, api) => {
+    .config(($mdInkRippleProvider, $provide, $controllerProvider) => {
         $provide.value('$controllerProvider', $controllerProvider);
-        // to improve IE performance disable ripple effects globally and debug info
-        if (api.isIE) {
+        
+        // appInfo.isIE11 is not available before the application has run
+        if (!!window.MSInputMethodContext && !!document.documentMode) {
+            // to improve IE performance disable ripple effects globally and debug info
             $mdInkRippleProvider.disableInkRipple();
         }
     });
