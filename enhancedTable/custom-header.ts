@@ -65,23 +65,25 @@ export class CustomHeader {
 
     /** Disable button if column is at an end */
     onColumnReorder() {
-        const columns = this.agParams.columnApi.getAllGridColumns();
+        const columns = this.agParams.columnApi.getAllDisplayedColumns();
         const index = columns.indexOf(this.agParams.column);
-        this.scope.min = index === 2; // 2 since icon and zoom/details columns are left most
+        this.scope.min = index === 3; // 3 since icon and zoom/details columns are left most
         this.scope.max = index === columns.length - 1;
     }
 
     /** Move column 1 position left */
     moveLeft() {
-        const columns = this.agParams.columnApi.getAllGridColumns();
-        const index = columns.indexOf(this.agParams.column) - 1;
+        const columns = this.agParams.columnApi.getAllDisplayedColumns();
+        const allColumns = this.agParams.columnApi.getAllGridColumns();
+        const index = allColumns.indexOf(columns[columns.indexOf(this.agParams.column) - 1]);
         this.agParams.columnApi.moveColumn(this.agParams.column, index);
     }
 
     /** Move column 1 position right */
     moveRight() {
-        const columns = this.agParams.columnApi.getAllGridColumns();
-        const index = columns.indexOf(this.agParams.column) + 1;
+        const columns = this.agParams.columnApi.getAllDisplayedColumns();
+        const allColumns = this.agParams.columnApi.getAllGridColumns();
+        const index = allColumns.indexOf(columns[columns.indexOf(this.agParams.column) + 1]);
         this.agParams.columnApi.moveColumn(this.agParams.column, index);
     }
 }

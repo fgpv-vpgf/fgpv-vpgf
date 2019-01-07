@@ -1,7 +1,7 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
-import { DETAILS_AND_ZOOM } from './templates';
+import { DETAILS_TEMPLATE, ZOOM_TEMPLATE } from './templates';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
 import {
     setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter
@@ -142,24 +142,45 @@ class TableBuilder {
 
 /* Helper function to set up symbols and interactive columns*/
 function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, panel: any) {
-    if (columnName === 'rvSymbol') {
-        // set svg symbol for the symbol column
-        colDef.cellRenderer = function (cellImg) {
-            return cellImg.value;
-        };
-    } else if (columnName === 'rvInteractive') {
-        // sets details and zoom buttons for the row
-        colDef.cellRenderer = function (cellImg) {
-            return new panel.container(DETAILS_AND_ZOOM(cellImg.rowIndex)).elementAttr[0];
-        }
-    }
-
     if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
         // symbols and interactive columns don't have options for sort, filter and have default widths
         colDef.suppressSorting = true;
         colDef.suppressFilter = true;
         colDef.lockPosition = true;
-        colDef.maxWidth = 100;
+
+        if (columnName === 'rvSymbol') {
+            colDef.maxWidth = 100;
+            // set svg symbol for the symbol column
+            colDef.cellRenderer = function (cell) {
+                return cell.value;
+            };
+        } else if (columnName === 'rvInteractive') {
+            colDef.maxWidth = 40;
+            // sets details and zoom buttons for the row
+            let detailsDef = (<any>Object).assign({}, colDef);
+            detailsDef.cellRenderer = function (params) {
+                var eSpan = new panel.container(ZOOM_TEMPLATE(params.rowIndex)).elementAttr[0];
+                params.eGridCell.addEventListener('keydown', function(e) {
+                    if (e.key === "Enter") {
+                        eSpan.click();
+                    }
+                });
+                params.eGridCell.style.padding = 0;
+                return eSpan;
+            }
+            cols.splice(0, 0, detailsDef);
+            colDef.cellRenderer = function (params) {
+                var eSpan = new panel.container(DETAILS_TEMPLATE(params.rowIndex)).elementAttr[0];
+                params.eGridCell.addEventListener('keydown', function(e) {
+                    if (e.key === "Enter") {
+                        console.log(eSpan);
+                        eSpan.click();
+                    }
+                });
+                params.eGridCell.style.padding = 0;
+                return eSpan;
+            }
+        }
         cols.splice(0, 0, colDef);
     } else {
         cols.push(colDef);

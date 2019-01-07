@@ -10,11 +10,10 @@ describe('the enhancedTable panel', function () {
         browser.waitUntil(function () {
             return browser.waitForVisible('.rv-loading-section', 25000, true);
         }, 25000, 'expected the loading splash screen to be hidden after 25 seconds.');
-    });
 
-    it('should open when a layer is clicked', function () {
+        // open table before running filter tests
         page.open();
-        expect(browser.waitForVisible('#enhancedTable', 20000)).toEqual(true);
+        page.panel.waitForVisible(3000);
     });
 
     it('should update rows and filter status when symbologies are toggled to invisible', function () {
@@ -26,6 +25,7 @@ describe('the enhancedTable panel', function () {
 
         // toggle symbology
         page.expandSymbologyStackButton.click();
+        page.toggleSymbologyButton.waitForVisible(3000);
         page.toggleSymbologyButton.click();
 
         // filter  status and container height after toggling symbology

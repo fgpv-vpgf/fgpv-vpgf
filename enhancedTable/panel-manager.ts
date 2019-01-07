@@ -95,7 +95,7 @@ export class PanelManager {
             // Set up grid panel accessibility
             // Link clicked legend element to the opened table
             const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
-            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`fco#enhancedTable`));
+            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
             // Go from last filter input to grid and reverse
             let headers = this.panel.element[0].getElementsByClassName('ag-header-cell');
             let filters = headers[headers.length - 1].getElementsByTagName('INPUT');

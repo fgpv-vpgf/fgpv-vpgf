@@ -1,6 +1,6 @@
 const page = require('./et.page');
 
-describe('the enhancedTable headers', function() {
+describe('the enhancedTable headers', function () {
     beforeAll(function () {
         browser.url('enhancedTable/samples/et-test.html');
 
