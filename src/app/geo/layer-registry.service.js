@@ -484,7 +484,6 @@ function layerRegistryFactory(
                 break;
 
             case 'rv-loaded':
-                console.log('rv-loaded', layerRecord, state);
                 // clear up the error timeout delay if any
                 common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
 

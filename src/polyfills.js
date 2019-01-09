@@ -15,10 +15,8 @@ if (isIE11) {
     function serializeSvgContent(e){for(var n="<"+e.nodeName,l=null,t=null,r=0;r<e.attributes.length;r++){var i=e.attributes[r],o=i.name||i.nodeName,a=(i.value||i.nodeValue).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");o===l&&a===t||(n+=" "+o+'="'+a+'"',l=o,t=a)}if(l=null,t=null,e.childNodes.length>0){for(n+=">",r=0;r<e.childNodes.length;r++){var d=e.childNodes[r];1===d.nodeType?n+=serializeSvgContent(d):3===d.nodeType&&(n+=d.nodeValue.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;"))}n+="</"+e.nodeName+">"}else n+="/>";return n}function newSvg(e){var n=document.createElement("svg");if(!(e&&this instanceof SVG.Parent))return n.appendChild(e=document.createElement("svg")),this.writeDataToDom(),e.appendChild(this.node.cloneNode(!0)),serializeSvgContent(e).replace(/^<svg>/i,"").replace(/<\/svg>$/i,"");n.innerHTML="<svg>"+e.replace(/\n/,"").replace(/<(\w+)([^<]+?)\/>/g,"<$1$2></$1>")+"</svg>";for(var l=0,t=n.firstChild.childNodes.length;l<t;l++);return this.node.appendChild(n.firstChild.firstChild),this}Object.defineProperty(SVGElement.prototype,"outerHTML",{get:function(){return serializeSvgContent(this)},enumerable:!1,configurable:!0}),window.RV=window.RV?window.RV:{},window.RV._deferredPolyfills=window.RV._deferredPolyfills?window.RV._deferredPolyfills:[],window.RV._deferredPolyfills.push(function(){SVG.extend(SVG.Element,{svg:newSvg})});
 }
 
-// NodeList forEach support: https://developer.mozilla.org/en-US/docs/Web/API/NodeList/forEach
-if (window.NodeList && !NodeList.prototype.forEach) {
-    NodeList.prototype.forEach = Array.prototype.forEach;
-}
+// NodeList forEach support
+window.NodeList&&!NodeList.prototype.forEach&&(NodeList.prototype.forEach=function(o,t){t=t||window;for(var i=0;i<this.length;i++)o.call(t,this[i],i,this)});
 
 if(!window.TextEncoder) {
     window.TextEncoder = function (){}
