@@ -43,7 +43,13 @@ export type LegendEntryControls = (
   | "settings"
   | "data"
   | "styles")[];
-export type LayerNode = BasicLayerNode | FeatureLayerNode | WfsLayerNode | WmsLayerNode | DynamicLayerNode;
+export type LayerNode =
+  | BasicLayerNode
+  | FeatureLayerNode
+  | FileLayerNode
+  | WfsLayerNode
+  | WmsLayerNode
+  | DynamicLayerNode;
 export type SymbologyStack = {
   image: string;
   text: string;
@@ -505,13 +511,13 @@ export interface LegendUI {
   };
 }
 /**
- * Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls
+ * Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG) and to set service endpoint urls
  */
 export interface SearchService {
   /**
-   * Disable specific types of searches including NTS, FSA, or LAT/LNG
+   * Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG
    */
-  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG")[];
+  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG" | "SCALE")[];
   /**
    * Service endpoint urls
    */
@@ -1018,6 +1024,118 @@ export interface FilterNode {
    * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
    */
   static?: boolean;
+}
+export interface FileLayerNode {
+  /**
+   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
+   */
+  id: string;
+  /**
+   * The display name of the layer.
+   */
+  name?: string;
+  /**
+   * The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field.
+   */
+  nameField?: string;
+  /**
+   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+   */
+  tooltipField?: string;
+  /**
+   * The url path to the file.  It should match the type provided in layerType.
+   */
+  url: string;
+  /**
+   * The hex code representing the layer symbology colour.
+   */
+  colour?: string;
+  layerType: "esriFeature";
+  fileType: "csv" | "geojson" | "shapefile";
+  /**
+   * The latitude field of the layer (only for CSVs).
+   */
+  latField?: string;
+  /**
+   * The longitude field of the layer (only for CSVs).
+   */
+  longField?: string;
+  /**
+   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+   */
+  tolerance?: number;
+  extent?: ExtentWithReferenceNode;
+  controls?: LegendEntryControls;
+  /**
+   * A list of controls which are visible, but disabled for user modification
+   */
+  disabledControls?: (
+    | "opacity"
+    | "visibility"
+    | "boundingBox"
+    | "query"
+    | "snapshot"
+    | "metadata"
+    | "boundaryZoom"
+    | "refresh"
+    | "reload"
+    | "remove"
+    | "settings"
+    | "data"
+    | "styles")[];
+  state?: InitialLayerSettings;
+  /**
+   * Settings for the table
+   */
+  table?: {
+    /**
+     * Specifies the table title to apply.
+     */
+    title?: string;
+    /**
+     * Specifies the additional information to display in the setting panel to give more information about a table.
+     */
+    description?: string;
+    /**
+     * Specifies the default table size when first open. True: maximize view; False: split view.
+     */
+    maximize?: boolean;
+    search?: {
+      [k: string]: any;
+    };
+    /**
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
+     */
+    lazyFilter?: boolean;
+    /**
+     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     */
+    applyMap?: boolean;
+    /**
+     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+     */
+    columns?: ColumnNode[];
+    /**
+     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+     */
+    searchStrictMatch?: boolean;
+  };
+  /**
+   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
+   */
+  customRenderer?: {
+    [k: string]: any;
+  };
+  details?: {
+    /**
+     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     */
+    parser?: string;
+    /**
+     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     */
+    template: string;
+  };
 }
 export interface WfsLayerNode {
   /**

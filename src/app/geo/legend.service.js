@@ -54,8 +54,11 @@ function legendServiceFactory(
                 const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
-                    events.$on(events.rvApiLayerAdded, (_, layers) => {
-                        resolve(layers);
+                    const deactivate = events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        if (layers[0].id === layerJSON.id) {
+                            deactivate();
+                            resolve(layers);
+                        }
                     });
                 });
             } else {
@@ -103,11 +106,10 @@ function legendServiceFactory(
         layerDefinitions.forEach(ld => {
             let index = layerBlueprintsCollection.findIndex(blueprint => blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(
-                    entry =>
-                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
-                            ? entry
-                            : null
+                .walk(entry =>
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
+                        ? entry
+                        : null
                 )
                 .filter(a => a)[0];
 
@@ -534,6 +536,8 @@ function legendServiceFactory(
             const legendBlockGroup = new LegendBlock.Group(derivedEntryGroupConfig, rootProxyWrapper, true);
             // map this legend block to the layerRecord
             legendBlockGroup.layerRecordId = layerConfig.id;
+            // store the provided metadataUrl on the parent group block
+            legendBlockGroup.metadataUrl = blueprints.main.config.metadataUrl;
 
             legendMappings[layerConfig.id].push({
                 legendBlockId: legendBlockGroup.id,
@@ -608,6 +612,7 @@ function legendServiceFactory(
                     const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
                     legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
+                    legendBlock.metadataUrl = parentLegendGroup.metadataUrl; // store the provided metadataUrl on the parent group block
 
                     if (!legendBlock.hidden) {
                         if (!legendBlock.collapsed) {
@@ -622,6 +627,7 @@ function legendServiceFactory(
                     item.childs.forEach(child => _addChildBlock(child, legendBlock));
                 } else {
                     const entryConfig = new ConfigObject.legend.Entry(item);
+                    item.proxyWrapper.metadataUrl = parentLegendGroup.metadataUrl; // store the provided metadataUrl on the proxy wrapper
                     legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
@@ -636,6 +642,9 @@ function legendServiceFactory(
                     }
                 }
 
+                if (legendBlock.metadataUrl === undefined) {
+                    legendBlock.disabledControls.push('metadata');
+                }
                 parentLegendGroup.addEntry(legendBlock);
 
                 function _addChildItemToAPI(apiLegendElement, parentBlock) {

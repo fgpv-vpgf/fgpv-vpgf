@@ -70,9 +70,9 @@ type QueryMap = { [name: string]: string };
  */
 angular.module('app.geo').factory('LayerBlueprint', LayerBlueprint);
 
-LayerBlueprint.$inject = ['$http', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
+LayerBlueprint.$inject = ['$http', '$q', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
 
-function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: any, appInfo: any, configService: any) {
+function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigObject: any, appInfo: any, configService: any) {
 
     /**
      * The base class for the mixins. This just declares what base properties are available across mixins.
@@ -122,12 +122,30 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             this._isDataPreloaded = true;
         }
 
+        // WFS layer overrides this since it has a special loading behaviour
         async loadData(): Promise<any> {
-            // this needs to be implement to allow loading file-layers from the config
-            // TODO: default behaviour is to load data file; look for config.url|path value
-            // WFS layer overrides this since it has a special loading behaviour
+            // TODO: change type 'any' here if possible
+            const [error, response] = await to<any>($http.get(this.config.url, {
+                responseType: 'blob'
+            }));
 
-            throw new Error('fork!');
+            if (!response) {
+                console.error(`File data failed to load for "${this.config.id}"`, error);
+                return Promise.reject(error);
+            }
+
+            const reader = new FileReader();
+
+            return $q((resolve: any, reject: any) => {
+                reader.onerror = error => {
+                    console.error(`File data failed to load for "${this.config.id}"`, error);
+                    reject({ reason: 'error', message: 'Failed to read file' });
+                };
+                reader.onload = () =>
+                    resolve(reader.result);
+
+                reader.readAsArrayBuffer(response.data);
+            });
         }
 
         /**
@@ -648,7 +666,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         constructor(rawConfig: any) {
             super();
 
-            this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
+            this._setConfig(rawConfig, ConfigObject.layers.FileLayerNode);
         }
 
         /**
@@ -670,9 +688,6 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof CSVSource
          */
         async validate(): Promise<any> {
-            // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
-
             const validationResult = await super.validate();
             this.setLatLongOptions(validationResult);
             this.setFieldsOptions(validationResult);
@@ -697,7 +712,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         constructor(rawConfig: any) {
             super();
 
-            this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
+            this._setConfig(rawConfig, ConfigObject.layers.FileLayerNode);
         }
 
         /**
@@ -719,9 +734,6 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof GeoJSONSource
          */
         async validate(): Promise<any> {
-            // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
-
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
 
@@ -745,7 +757,7 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
         constructor(rawConfig: any) {
             super();
 
-            this._setConfig(rawConfig, ConfigObject.layers.FeatureLayerNode);
+            this._setConfig(rawConfig, ConfigObject.layers.FileLayerNode);
         }
 
         /**
@@ -767,9 +779,6 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
          * @memberof ShapefileSource
          */
         async validate(): Promise<any> {
-            // TODO: this should be handled by the typed config, when they are created for file-based layers
-            this.config.colour = this.config.colour || RColor({ saturation: 0.4, value: 0.8 }); // generate a nice random colour to use with imported file-based layers
-
             const validationResult = await super.validate();
             this.setFieldsOptions(validationResult);
 
@@ -866,10 +875,17 @@ function LayerBlueprint($http: any, Geo: any, gapiService: any, ConfigObject: an
             [Geo.Layer.Types.ESRI_TILE]: TileServiceSource,
             [Geo.Layer.Types.OGC_WMS]: WMSServiceSource,
             [Geo.Layer.Types.OGC_WFS]: WFSServiceSource,
-            [Geo.Layer.Types.ESRI_FEATURE]: FeatureServiceSource
+            [Geo.Layer.Types.ESRI_FEATURE]: FeatureServiceSource,
+
+            // service types used for loading file-layers through config
+            [Geo.Service.Types.CSV]: CSVSource,
+            [Geo.Service.Types.GeoJSON]: GeoJSONSource,
+            [Geo.Service.Types.Shapefile]: ShapefileSource
         };
 
-        const serviceSource = new constructors[rawConfig.layerType](rawConfig);
+        // if 'fileType' is a property, then we know we are dealing with a file based layer.
+        // the layerType for these will still be 'esriFeature' but we need to know which type of file it is using 'fileType'
+        const serviceSource = new constructors[rawConfig.fileType ? rawConfig.fileType : rawConfig.layerType](rawConfig);
         return serviceSource;
     }
 
