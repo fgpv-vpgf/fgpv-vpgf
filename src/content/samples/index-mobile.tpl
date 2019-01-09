@@ -62,8 +62,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('mobile-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        //RV.getMap('mobile-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        //RV.getMap('mobile-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {

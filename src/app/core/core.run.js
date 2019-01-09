@@ -39,15 +39,20 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
     function readyDelay() {
         const waitAttr = $rootElement.attr('rv-wait');
 
-        preLoadApiBlock();
-
+        // this is done before preLoadApiBlock because of a race condition
+        // bookmarkBlocking must be flagged before the API is created
+        // if initialBookmark is called before the flag is set it will throw out the bookmark and freeze startup
         if (typeof waitAttr !== 'undefined') {
             reloadService.bookmarkBlocking = true;
             const deRegister = $rootScope.$on(events.rvBookmarkInit, () => {
                 $rootScope.$broadcast(events.rvReady);
                 deRegister(); // de-register `rvBookmarkInit` listener to prevent broadcasting `rvReady` in the future
             });
-        } else {
+        }
+
+        preLoadApiBlock();
+
+        if (typeof waitAttr === 'undefined') {
             $rootScope.$broadcast(events.rvReady);
         }
     }
