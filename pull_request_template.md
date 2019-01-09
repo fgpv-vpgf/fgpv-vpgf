@@ -6,7 +6,8 @@
 
 ### Checklist
 <!-- check all that apply (some items wont apply to all PRs) -->
-- [ ] works in IE
+- [ ] works in IE11
+- [ ] works in Edge
 - [ ] works with projection change
 - [ ] works with language change
 - [ ] works via config file
@@ -30,7 +31,7 @@
 - [ ] Release notes have been updated
 - [ ] PR targets the correct release version
 - [ ] Help files and documentation have been updated
-- [ ] orignal issue has been reviewed & updated to reflect the PR content
+- [ ] original issue has been reviewed & updated to reflect the PR content
 
 Remember, it is a *muffin offence* to open a PR with any of the above checklist items incomplete.
 

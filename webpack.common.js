@@ -179,8 +179,7 @@ module.exports = function (env) {
             return new HtmlWebpackPlugin({
                 inject: false,
                 filename: `${filePath.join('/')}/${fileName.replace(/\.[^/.]+$/, '.html')}`,
-                template: `src/content/${file}`,
-                excludeChunks: ['ie-polyfills']
+                template: `src/content/${file}`
             });
         }
         }).filter(x => x)

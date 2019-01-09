@@ -87,7 +87,7 @@ function exportGenerators(
         const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
 
         const titleSvg = containerSvg
-            .text(titleText || '')
+            .textflow(titleText || '', containerWidth - 20 * 2)
             .attr({
                 'font-family': 'Roboto',
                 'font-weight': 'normal',

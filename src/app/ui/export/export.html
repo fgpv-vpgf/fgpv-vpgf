@@ -78,6 +78,7 @@
                         ng-if="self.titleComponent.isSelected && !self.isGenerateError">
                         <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
                             <input ng-model="self.titleComponent.value"
+                                maxlength='128'
                                 ng-change="self.updateTitleComponent()"
                                 ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
                                 placeholder="{{ 'export.title' | translate }}">

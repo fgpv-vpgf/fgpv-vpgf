@@ -1,5 +1,6 @@
 {
   "ui": {
+    "title": "Custom Title",
     "navBar": {
       "zoom": "buttons",
       "extra": [
@@ -11,6 +12,9 @@
     },
     "sideMenu": {
       "logo": true
+    },
+    "help": {
+      "folderName": "default"
     },
     "legend": {
       "isOpen": {
@@ -68,7 +72,8 @@
       },
       "overviewMap": {
         "enabled": true,
-        "layerType": "imagery"
+        "layerType": "imagery",
+        "initiallyExpanded": false
       },
       "scaleBar": {
         "enabled": true
@@ -79,55 +84,65 @@
       "root": {
         "name": "root",
         "children": [
-          {
-            "layerId": "powerplant-nuclear"
-          },
-          {
-            "layerId": "powerplant-wind"
-          },
-          {
-            "layerId": "powerplant-solar"
-          }
+            {
+                "layerId": "hydrometric-stations6k"
+            },
+            {
+                "layerId": "happy"
+            },
+            {
+                "layerId": "geochronologie"
+            },
+            {
+                "layerId": "ne_10m_ports"
+            }
         ]
       }
     },
     "layers": [
       {
-        "id": "powerplant-nuclear",
-        "name": "Power Plants, nuclear",
-        "layerType": "esriDynamic",
-        "metadataUrl": "http://donnees-data.intranet.ec.gc.ca:80/geonetwork/srv/eng/xml.metadata.get?uuid=917b8854-64a5-41d6-ad7f-d0a3c0c3cb29",
-        "layerEntries": [
-          {
-            "index": 22,
-            "table": {
-              "title": "A custom title"
-            }
-          }
-        ],
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+        "id": "hydrometric-stations6k",
+        "name": "Hydrometric Stations - Start with 6000th index",
+        "layerType": "ogcWfs",
+        "nameField": "STATION_NAME",
+        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=6000",
+        "colour": "#FF0000"
       },
       {
-        "id": "powerplant-solar",
-        "name": "Power Plants, solar",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 34
-          }
-        ],
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+          "id": "happy",
+          "name": "happy.json",
+          "layerType": "esriFeature",
+          "fileType": "geojson",
+          "nameField": "name",
+          "tooltipField": "OBJECTID",
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/happy.json",
+          "colour": "#0000FF"
       },
       {
-        "id": "powerplant-wind",
-        "name": "Power Plants, wind",
-        "layerType": "esriDynamic",
-        "layerEntries": [
-          {
-            "index": 27
+          "id": "geochronologie",
+          "name": "geochronologie.csv",
+          "layerType": "esriFeature",
+          "fileType": "csv",
+          "latField": "Lat. (NAD83)",
+          "longField": "Long. (NAD83)",
+          "nameField": "AGENO",
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/G%C3%A9ochronologie.csv",
+          "colour": "#00FF00",
+          "state": {
+            "visibility": false
           }
-        ],
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+      },
+      {
+          "id": "ne_10m_ports",
+          "name": "ne_10m_ports.zip",
+          "layerType": "esriFeature",
+          "fileType": "shapefile",
+          "nameField": "scalerank",
+          "url": "http://fgpv.cloudapp.net/demo/__assets__/Sample%20Data/ne_10m_ports.zip",
+          "colour": "#000000",
+          "state": {
+            "opacity": 0.5
+          }
       }
     ],
     "extentSets": [
@@ -369,8 +384,7 @@
         "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
         "name": "Lambert Maps",
         "extentSetId": "EXT_NRCAN_Lambert_3978",
-        "lodSetId": "LOD_NRCAN_Lambert_3978",
-        "hasNorthPole": true
+        "lodSetId": "LOD_NRCAN_Lambert_3978"
       },
       {
         "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
@@ -392,7 +406,16 @@
             "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
           }
         ],
-        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
+        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+        "attribution": {
+          "text": {
+            "enabled": true,
+            "value": "Custom Attribution"
+          },
+          "logo": {
+            "enabled": true
+          }
+        }
       },
       {
         "id": "baseSimple",
