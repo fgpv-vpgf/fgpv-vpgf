@@ -511,13 +511,13 @@ export interface LegendUI {
   };
 }
 /**
- * Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls
+ * Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG) and to set service endpoint urls
  */
 export interface SearchService {
   /**
-   * Disable specific types of searches including NTS, FSA, or LAT/LNG
+   * Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG
    */
-  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG")[];
+  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG" | "SCALE")[];
   /**
    * Service endpoint urls
    */
@@ -1115,6 +1115,10 @@ export interface FileLayerNode {
      * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
      */
     columns?: ColumnNode[];
+    /**
+     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+     */
+    searchStrictMatch?: boolean;
   };
   /**
    * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
