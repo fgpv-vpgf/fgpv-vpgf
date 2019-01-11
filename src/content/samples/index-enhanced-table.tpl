@@ -32,7 +32,6 @@
         rv-config="config-enhanced-table.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark"
         rv-plugins="enhancedTable,customEPSG">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>

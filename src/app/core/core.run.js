@@ -18,7 +18,7 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
     configService.initialize();
 
     // Do nothing if legacy-api.js is not present on the page
-    if(!LEGACY_API) {
+    if(!LEGACY_API || !LEGACY_API.getMap) {
         events.$on(events.rvCfgInitialized, () => $rootScope.$broadcast(events.rvReady));
         return;
     }
@@ -151,7 +151,7 @@ function apiBlock($rootScope, geoService, configService, events,
     bookmarkService, gapiService, reloadService, appInfo, stateManager, detailService, mapToolService, $mdSidenav, LEGACY_API) {
     
     // Do nothing if legacy-api.js is not present on the page
-    if(!LEGACY_API) {
+    if(!LEGACY_API || !LEGACY_API.getMap) {
         return;
     }
 
