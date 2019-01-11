@@ -1,20 +1,22 @@
-import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, STATIC_TEXT_FIELD_DISABLED, SELECTOR_FILTER_TEMPLATE } from "./templates";
-
-let map, value, tableOptions, currColumn;
-let isStatic = false;
+import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, TEXT_FILTER_TEMPLATE, SELECTOR_FILTER_TEMPLATE } from "./templates";
+import { TextFloatingFilterComp } from "ag-grid-community/dist/lib/filter/floatingFilter";
 
 /**Sets up number floating filter accounting for static types and default values*/
 export function setUpNumberFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any) {
+
+    $.extend(colDef.floatingFilterComponentParams, {
+        isStatic: isItStatic,
+        defaultValue: defaultValue
+    });
+
     //Column should filter numbers properly
     colDef.filter = 'agNumberColumnFilter';
     colDef.filterParams.inRangeInclusive = true;
-    isStatic = isItStatic;
     colDef.floatingFilterComponent = NumberFloatingFilter;
-    //value = defaultValue;
 }
 
 /**Sets up date floating filter accounting for static types and default values*/
-export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
+export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, defaultValue: any) {
     colDef.minWidth = 423;
     // Column should render and filter date properly
     colDef.filter = 'agDateColumnFilter';
@@ -28,8 +30,13 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
             return 0;
         }
     };
-    map = mapApi;
-    isStatic = isItStatic;
+
+    $.extend(colDef.floatingFilterComponentParams, {
+        isStatic: isItStatic,
+        value: defaultValue,
+        map: mapApi,
+    });
+
     colDef.floatingFilterComponent = DateFloatingFilter;
     colDef.cellRenderer = function (cell) {
         let element = document.createElement('span');
@@ -42,7 +49,16 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any) {
 }
 
 /**Sets up text floating filter accounting for static types, default values and selector types*/
-export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean, searchStrictMatchEnabled: boolean, defaultValue: any) {
+export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean,
+    searchStrictMatchEnabled: boolean, defaultValue: any, map: any) {
+
+    $.extend(colDef.floatingFilterComponentParams, {
+        isStatic: isStatic,
+        defaultValue: defaultValue,
+        map: map,
+    });
+
+    colDef.floatingFilterComponent = TextFloatingFilter;
     if (!searchStrictMatchEnabled) {
         // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
         let disregardAccents = function (s) {
@@ -72,24 +88,25 @@ export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnable
     }
 
     if (!lazyFilterEnabled) {
-        if (isStatic) {
-            colDef.floatingFilterComponent = StaticTextFloatingFilter;
-        } else {
-            // Default to "regex" filtering for text columns
-            colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
-                const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
-                return re.test(value);
-            }
+        // Default to "regex" filtering for text columns
+        colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
+            const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
+            return re.test(value);
         }
     }
 }
 
 /**Sets up a selector floating filter accounting for static types and default values*/
 export function setUpSelectorFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, mapApi: any) {
-    map = mapApi;
-    tableOptions = gridOptions;
-    currColumn = colDef;
-    isStatic = isItStatic;
+
+    $.extend(colDef.floatingFilterComponentParams, {
+        isStatic: isItStatic,
+        value: defaultValue,
+        tableOptions: gridOptions,
+        map: mapApi,
+        currColumn: colDef
+    });
+
     colDef.floatingFilterComponent = SelectorFloatingFilter;
 
     // our custom comparator looks to see if row values are contained within selected value
@@ -111,45 +128,72 @@ function getDateString(value) {
 /**
 * Floating filter component enhanced for Static Text Filters
 */
-class StaticTextFloatingFilter {
+export class TextFloatingFilter {
 
     init(params) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = STATIC_TEXT_FIELD_DISABLED(value);
-        var that = this;
-
-        function getModel() {
-            return {};
+        this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(params.defaultValue, params.isStatic);
+        this.scope = params.map.$compile(this.eGui);
+        this.scope.input = params.defaultValue !== undefined ? params.defaultValue : '';
+        this.scope.inputChanged = () => {
+            this.onFloatingFilterChanged({ model: this.getModel() });
         }
+
+        // in case there are default filters, change model as soon as element is ready in DOM
+        $('.rv-input').ready(() => {
+            this.onFloatingFilterChanged({ model: this.getModel() });
+        });
     };
 
-    getGui() {
-        return this.eGui;
-    };
-
-    getModelAsString(model) {
-        return model ? model : '';
+    /** Helper function to determine filter model */
+    getModel(): any {
+        return {
+            type: 'contains',
+            filter: this.scope.input
+        }
     }
 
+    /** Return component GUI */
+    getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    onParentModelChanged(parentModel: any) {
+        if (parentModel === null) {
+            this.scope.input = '';
+        }
+    }
 }
 
 /**
 * Floating filter component enhanced for number
 * Has separate min and max input boxes
 */
-class NumberFloatingFilter {
+export class NumberFloatingFilter {
 
     init(params: any) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(value, isStatic);
-        this.currentValues = { min: null, max: null };
+        (<any>this.eGui).class = 'rv-min-max';
+        this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(params.defaultValue, params.isStatic);
+
+        if (params.defaultValue === undefined) {
+            this.currentValues = { min: null, max: null };
+        } else {
+            this.currentValues = { min: Number(params.defaultValue.split(',')[0]), max: Number(params.defaultValue.split(',')[1]) };
+        }
+
         this.minFilterInput = this.eGui.querySelector(".rv-min");
         this.maxFilterInput = this.eGui.querySelector(".rv-max");
 
         this.minFilterInput.addEventListener('input', this.onMinInputBoxChanged.bind(this));
         this.maxFilterInput.addEventListener('input', this.onMaxInputBoxChanged.bind(this));
+
+        // in case there are default filters, change model as soon as element is ready in DOM
+        $('.rv-min-max').ready(() => {
+            this.onFloatingFilterChanged({ model: this.getModel() });
+        });
     }
 
     /** Update filter nimimum */
@@ -210,14 +254,17 @@ class NumberFloatingFilter {
 }
 
 /** Return a floating filter enhanced for dates */
-class DateFloatingFilter {
+export class DateFloatingFilter {
 
     init(params: any) {
+
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.eGui = $(DATE_FILTER_TEMPLATE(value, isStatic))[0];
-        this.scope = map.$compile(this.eGui);
-        this.scope.min = null;
-        this.scope.max = null;
+        this.eGui = $(DATE_FILTER_TEMPLATE(params.value, params.isStatic))[0];
+        (<any>this.eGui).class = 'rv-date-picker'
+        this.scope = params.map.$compile(this.eGui);
+
+        this.scope.min = params.value !== undefined ? new Date(params.value.split(',')[0]) : null;
+        this.scope.max = params.value !== undefined ? new Date(params.value.split(',')[1]) : null;
 
         this.scope.minChanged = () => {
             this.onFloatingFilterChanged({ model: this.getModel() });
@@ -226,6 +273,11 @@ class DateFloatingFilter {
         this.scope.maxChanged = () => {
             this.onFloatingFilterChanged({ model: this.getModel() });
         };
+
+        // in case there are default filters, change model as soon as element is ready in DOM
+        $('.rv-date-picker').ready(() => {
+            this.onFloatingFilterChanged({ model: this.getModel() });
+        });
     }
 
     /** Helper function to determine filter model */
@@ -269,35 +321,47 @@ class DateFloatingFilter {
     getGui(): HTMLElement {
         return this.eGui;
     }
-
 }
 
 /**
 * Floating filter component enhanced for Static Text Filters
 */
-class SelectorFloatingFilter {
+export class SelectorFloatingFilter {
 
     init(params: any) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.eGui = $(SELECTOR_FILTER_TEMPLATE(value, isStatic))[0];
-        this.scope = map.$compile(this.eGui);
+        this.eGui = $(SELECTOR_FILTER_TEMPLATE(params.value, params.isStatic))[0];
+        (<any>this.eGui).class = 'rv-selector';
+        this.scope = params.map.$compile(this.eGui);
+
+
+        function getDefaultOptions(substr) {
+            return substr !== '[' && substr !== ']' && substr !== ', ';
+        }
+
+        this.scope.selectedOptions = params.value !== undefined ? params.value.split('"').filter(getDefaultOptions) : '';
 
         // keep track of the number of distinct row values for the column
         // these will form the selector drop down
         function getDistinctRows(rowData) {
             let distinctRows = {};
             rowData.filter(row => {
-                return distinctRows.hasOwnProperty(row[currColumn.headerName]) ? false : (distinctRows[row[currColumn.headerName]] = true);
+                return distinctRows.hasOwnProperty(row[params.currColumn.headerName]) ? false : (distinctRows[row[params.currColumn.headerName]] = true);
             });
             return distinctRows;
         }
 
-        this.scope.options = Object.keys(getDistinctRows(tableOptions.rowData));
+        this.scope.options = Object.keys(getDistinctRows(params.tableOptions.rowData));
 
         // fires when user makes selection changes and closes the drop down menu window
         this.scope.selectionChanged = () => {
             this.onFloatingFilterChanged({ model: this.getModel() })
         }
+
+        // in case there are default filters, change model as soon as element is ready in DOM
+        $('.rv-selector').ready(() => {
+            this.onFloatingFilterChanged({ model: this.getModel() });
+        });
 
     }
 
@@ -325,10 +389,9 @@ class SelectorFloatingFilter {
             this.scope.selectedOptions = [];
         }
     }
-
 }
 
-interface NumberFloatingFilter {
+export interface NumberFloatingFilter {
     onFloatingFilterChanged: any;
     eGui: HTMLElement;
     currentValues: any;
@@ -338,7 +401,7 @@ interface NumberFloatingFilter {
     value: any;
 }
 
-interface DateFloatingFilter {
+export interface DateFloatingFilter {
     onFloatingFilterChanged: any;
     scope: any;
     eGui: HTMLElement;
@@ -346,14 +409,15 @@ interface DateFloatingFilter {
     value: any;
 }
 
-interface StaticTextFloatingFilter {
+export interface TextFloatingFilter {
     onFloatingFilterChanged: any;
     eGui: HTMLElement;
     defaultValue: any;
     value: any;
+    scope: any;
 }
 
-interface SelectorFloatingFilter {
+export interface SelectorFloatingFilter {
     onFloatingFilterChanged: any;
     eGui: HTMLElement;
     defaultValue: any;

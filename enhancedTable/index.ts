@@ -110,13 +110,13 @@ class TableBuilder {
                             if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
                                 setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions);
                             } else if (fieldInfo.type === DATE_TYPE) {
-                                setUpDateFilter(colDef, isStatic, this.mapApi);
+                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value);
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
                                 if (isSelector) {
                                     setUpSelectorFilter(colDef, isStatic, column.value, this.tableOptions, this.mapApi);
                                 } else {
                                     setUpTextFilter(colDef, isStatic, this.configManager.lazyFilterEnabled,
-                                        this.configManager.searchStrictMatchEnabled, column.value);
+                                        this.configManager.searchStrictMatchEnabled, column.value, this.mapApi);
                                 }
                             }
                         }
@@ -285,6 +285,14 @@ TableBuilder.prototype.translations = {
         detailsAndZoom: {
             details: 'Details',
             zoom: 'Zoom To Feature'
+        },
+        columnFilters: {
+            selector: 'selection',
+            date: {
+                min: 'date min',
+                max: 'date max'
+            },
+            text: 'text'
         }
     },
     'fr-CA': {
@@ -310,6 +318,14 @@ TableBuilder.prototype.translations = {
         detailsAndZoom: {
             details: 'Détails',
             zoom: "Zoom à l'élément"
+        },
+        columnFilters: {
+            selector: 'sélection',
+            date: {
+                min: 'date min',
+                max: 'date max'
+            },
+            text: 'texte'
         }
     }
 };

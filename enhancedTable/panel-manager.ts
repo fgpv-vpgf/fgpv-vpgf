@@ -263,7 +263,24 @@ export class PanelManager {
         this.mapApi.agControllerRegister('ClearFiltersCtrl', function () {
             // clear all column filters
             this.clearFilters = function () {
-                that.tableOptions.api.setFilterModel(null);
+
+                const columns = Object.keys(that.tableOptions.api.getFilterModel());
+                let newFilterModel = {};
+
+                // go through the columns in the current filter model
+                // save columns that have static filters
+                // because static filters remain intact even on clear all filters
+                let preservedColumns = columns.map(column => {
+                    const columnConfigManager = new ColumnConfigManager(that.configManager, column);
+                    if (columnConfigManager.isFilterStatic) {
+                        newFilterModel[column] = that.tableOptions.api.getFilterModel()[column];
+                        return column;
+                    }
+                });
+
+                newFilterModel = newFilterModel !== {} ? newFilterModel : null;
+
+                that.tableOptions.api.setFilterModel(newFilterModel);
             };
 
             // determine if any column filters are present

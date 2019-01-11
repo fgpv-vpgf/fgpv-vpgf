@@ -9,7 +9,6 @@ export const SEARCH_TEMPLATE = `
         <md-tooltip>{{ 't.search.placeholder' | translate }}</md-tooltip>
     </md-icon>
 </md-input-container>
-
 <span class="rv-table-divider"></span>
 `;
 
@@ -31,7 +30,6 @@ export const CLEAR_FILTERS_TEMPLATE = `
 export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 <md-menu-bar ng-controller="ColumnVisibilityMenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
-
         <md-button
             aria-label="Menu"
             class="md-icon-button black rv-button-24"
@@ -39,7 +37,6 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
             <md-tooltip>{{ 't.table.hideColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
-
         <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="4">
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
                 <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }} " md-prevent-menu-close="md-prevent-menu-close">
@@ -55,50 +52,39 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 export const MENU_TEMPLATE = `
 <md-menu-bar ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
-
         <md-button
             aria-label="Menu"
             class="md-icon-button black rv-button-24"
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
         </md-button>
-
         <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="5">
-
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
                 {{ 't.menu.split' | translate }}
             </md-menu-item>
-
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
                 {{ 't.menu.max' | translate }}
             </md-menu-item>
-
             <md-menu-divider class="rv-lg"></md-menu-divider>
-
             <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
                 {{ 't.menu.filter.extent' | translate }}
             </md-menu-item>
-
             <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">
                 {{ 't.menu.filter.show' | translate }}
             </md-menu-item>
-
             <md-menu-divider></md-menu-divider>
-
             <md-menu-item>
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 't.menu.print' | translate }}
                 </md-button>
             </md-menu-item>
-
             <md-menu-item>
                 <md-button ng-click="ctrl.export()">
                     <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                     {{ 't.menu.export' | translate }}
                 </md-button>
             </md-menu-item>
-
         </md-menu-content>
     </md-menu>
 </md-menu-bar>
@@ -119,36 +105,38 @@ export const ZOOM_TEMPLATE = (rowIndex) =>
     </button>`;
 
 export const NUMBER_FILTER_TEMPLATE = (value, isStatic) => {
-    value = (value === undefined) ? '' : value;
+    const minVal = (value === undefined) ? '' : parseInt(value.split(',')[0]);
+    const maxVal = (value === undefined) ? '' : parseInt(value.split(',')[1]);
     if (isStatic === false) {
-        return `<input class="rv-min" style="width:50%" type="text" placeholder="MIN" value='${value}'/>
-         <input class="rv-max" style="width:50%" type="text" placeholder="MAX" value='${value}'/>`;
-    } else {
-        return `<input class="rv-min" style="width:45%; border-bottom: lightgrey dashed 1px" type="text" placeholder="MIN" value='${value}' disabled/>
-         <input class="rv-max" style="width:45%; border-bottom: lightgrey dashed 1px" type="text" placeholder="MAX" value='${value}' disabled/>`;
+        return `<input class="rv-min" style="width:50%" type="text" placeholder="min" value='${minVal}'/>
+         <input class="rv-max" style="width:50%" type="text" placeholder="max" value='${maxVal}'/>`;
     }
+    return `<input class="rv-min" style="width:45%; opacity: 0.4" type="text" placeholder="min" value='${minVal}' disabled/>
+         <input class="rv-max" style="width:45%; opacity: 0.4" type="text" placeholder="max" value='${maxVal}' disabled/>`;
+
 }
 
 export const DATE_FILTER_TEMPLATE = (value, isStatic) => {
-    value = (value === undefined) ? '' : value;
 
-    if (isStatic === false) {
+    if (isStatic === true) {
         return `<span>
-                 <md-datepicker ng-change="minChanged()" ng-model="min"></md-datepicker>
-                 <md-datepicker ng-change="maxChanged()" ng-model="max"></md-datepicker>
+                 <md-datepicker md-placeholder="{{ 't.columnFilters.date.min' | translate }}" ng-model='min' ng-change="minChanged()" ng-disabled='true' style='opacity: 0.4'></md-datepicker>
+                 <md-datepicker md-placeholder="{{ 't.columnFilters.date.max' | translate }}" ng-model='max' ng-change="maxChanged()" ng-disabled='true' style='opacity: 0.4'></md-datepicker>
              </span>`;
-    } else {
-        /*return `<span>
-                <md-datepicker ng-change="minChanged()" ng-model="min" disabled></md-datepicker>
-                <md-datepicker ng-change="maxChanged()" ng-model="max" disabled></md-datepicker>
-            </span>`;*/
     }
-
+    return `<span>
+                 <md-datepicker md-placeholder="{{ 't.columnFilters.date.min' | translate }}" ng-model='min' ng-change="minChanged()"></md-datepicker>
+                 <md-datepicker md-placeholder="{{ 't.columnFilters.date.max' | translate }}" ng-model='max' ng-change="maxChanged()"></md-datepicker>
+             </span>`;
 }
 
-export const STATIC_TEXT_FIELD_DISABLED = (value) => {
+export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
     value = (value === undefined) ? '' : value;
-    return `<input type="text" disabled style ='border-bottom: dashed lightgrey 1px' placeholder='${value}'/>`
+
+    if (isStatic) {
+        return `<input class='rv-input' type="text" placeholder="{{ 't.columnFilters.text' | translate }}"' disabled style='opacity: 0.4' value='${value}'/>`
+    }
+    return `<input class='rv-input' ng-model='input' ng-change='inputChanged()' type="text" placeholder="{{ 't.columnFilters.text' | translate }}"' value='${value}'/>`
 };
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
@@ -169,11 +157,11 @@ export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 
 export const SELECTOR_FILTER_TEMPLATE = (value, isStatic) => {
     if (isStatic === true) {
-        return `<md-select placeholder='selection' multiple="{{true}}" md-on-close='selectionChanged() style='height: 20px; opacity: 0.4; color: lightgrey' ng-model="selectedOptions" ng-disabled='true'>
+        return `<md-select placeholder="{{ 't.columnFilters.selector' | translate }}" multiple="{{true}}" md-on-close='selectionChanged() style='height: 20px; opacity: 0.4; color: lightgrey' ng-model="selectedOptions" ng-disabled='true'>
                          <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
                      </md-select>`;
     } else {
-        return `<md-select placeholder='selection' multiple="{{true}}" style='height: 20px' md-on-close='selectionChanged()' ng-model="selectedOptions">
+        return `<md-select placeholder="{{ 't.columnFilters.selector' | translate }}" multiple="{{true}}" style='height: 20px' md-on-close='selectionChanged()' ng-model="selectedOptions">
                          <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
                      </md-select>`;
     }

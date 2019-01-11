@@ -173,23 +173,20 @@
                         {
                             "data": "OBJECTID",
                             "filter": {
-                                "type": "number",
-                                "value": "0,25"
+                                "type": "number"
                             }
                         },
                         {
                             "data": "Country",
                             "filter": {
-                                "type": "string",
-                                "value": "Canada"
+                                "type": "string"
                             },
                             "searchable": false
                         },
                         {
                             "data": "Latitude",
                             "filter": {
-                                "type": "number",
-                                "value": "48,49"
+                                "type": "number"
                             }
                         }
                     ]
@@ -377,7 +374,24 @@
                 "id": "9",
                 "name": "BadDates",
                 "layerType": "esriFeature",
-                "url": "https://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
+                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0",
+                "table": {
+                    "columns": [
+                        {
+                            "data": "iStartToParty",
+                            "title": "iStartToParty"
+                        },
+                        {
+                            "data": "iEndTheParty",
+                            "title": "iEndTheParty",
+                            "filter": {
+                                "type": "date",
+                                "value": "2017-02-01,2019-04-30",
+                                "static": true
+                            }
+                        }
+                    ]
+                }
             }
         ],
         "extentSets": [
