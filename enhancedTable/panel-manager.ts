@@ -1,13 +1,12 @@
 import { Grid } from 'ag-grid-community';
-import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE } from './templates';
+import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE } from './templates';
 import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
 import { scrollIntoView, tabToGrid } from './grid-accessibility';
-import { ConfigManager, ColumnConfigManager } from './config-manager';
-
+import { ColumnConfigManager } from './config-manager';
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
  *
@@ -19,11 +18,22 @@ export class PanelManager {
         this.mapApi = mapApi;
         this.tableContent = $(`<div rv-focus-exempt></div>`);
         this.panel = this.mapApi.createPanel('enhancedTable');
-
         this.setSize();
         this.panel.panelBody.addClass('ag-theme-material');
         this.panel.setBody(this.tableContent);
+        this.panel.element[0].setAttribute('type', 'table');
+        this.panel.element[0].classList.add('default');
         this.panel.element[0].addEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
+
+        // add mobile menu to the dom
+        let mobileMenuTemplate = $(MOBILE_MENU_TEMPLATE)[0];
+        this.mobileMenuScope = this.mapApi.$compile(mobileMenuTemplate);
+        this.panel.panelControls.after(mobileMenuTemplate);
+
+        // Add the scroll record count if it hasn't been added yet
+        let recordCountTemplate = $(RECORD_COUNT_TEMPLATE);
+        this.recordCountScope = this.mapApi.$compile(recordCountTemplate);
+        this.panel.panelControls.after(recordCountTemplate);
     }
 
     // recursively find and set the legend block for the layer
@@ -46,9 +56,6 @@ export class PanelManager {
             this.panelStatusManager = new PanelStatusManager(this);
             this.panelStatusManager.setFilterAndScrollWatch();
 
-            let panelManager = this;
-
-
             // set legend block / layer that the panel corresponds to
             this.currentTableLayer = layer;
             this.setLegendBlock(this.currentTableLayer._mapInstance.legendBlocks.entries);
@@ -59,9 +66,7 @@ export class PanelManager {
             // set header / controls for panel
             let controls = this.header;
             controls = [
-                `<div style="padding-bottom :30px"><h2><b>Features: ${this.configManager.title}</b>
-                                            </h2><br><p><span class="scrollRecords">${this.panelStatusManager.getScrollRange()}</span>
-                                             of <span class="filterRecords">${this.panelStatusManager.getFilterStatus()}</span></div>`,
+                `<h3 class="md-title table-title">Features: ${this.configManager.title}</h3>`,
                 '<span style="flex: 1;"></span>',
                 ...controls
             ];
@@ -79,7 +84,7 @@ export class PanelManager {
             this.panelRowsManager.initObservers();
             this.configManager.setDefaultSearchParameter();
             this.panel.open();
-            this.panelStatusManager.getScrollRange();
+            this.panelStatusManager.getFilterStatus();
 
             this.tableOptions.onGridReady = () => {
                 this.autoSizeToMaxWidth();
@@ -148,13 +153,19 @@ export class PanelManager {
     }
 
     setSize() {
+        if (this.maximized) {
+            this.panel.element[0].classList.add('full');
+        } else {
+            this.panel.element[0].classList.remove('full');
+        }
         this.panel.panelContents.css({
-            top: '0px',
-            left: '410px',
-            right: '0px',
-            bottom: this.maximized ? '0px' : '50%',
+            margin: 0,
             padding: '0px 16px 16px 16px'
         });
+    }
+
+    isMobile(): boolean {
+        return $('.rv-small').length > 0 || $('.rv-medium').length > 0;
     }
 
     /**
@@ -182,6 +193,12 @@ export class PanelManager {
         const availableWidth = panel.getWidthForSizeColsToFit();
         const usedWidth = panel.columnController.getWidthOfColsInList(columns);
         if (usedWidth < availableWidth) {
+            const symbolCol = columns.find(c => c.colId === 'zoom');
+            if (columns.length === 3) {
+                symbolCol.maxWidth = undefined;
+            } else {
+                symbolCol.maxWidth = 40;
+            }
             this.tableOptions.api.sizeColumnsToFit();
         }
     }
@@ -204,11 +221,15 @@ export class PanelManager {
 
         const columnVisibilityMenuBtn = new this.panel.container(COLUMN_VISIBILITY_MENU_TEMPLATE);
 
+        const mobileMenuBtn = new this.panel.container(MOBILE_MENU_BTN_TEMPLATE);
+
         if (this.configManager.globalSearchEnabled) {
-            return [searchBar, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn]
+            this.mobileMenuScope.searchEnabled = true;
+            return [mobileMenuBtn, searchBar, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn]
         }
         else {
-            return [columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn];
+            this.mobileMenuScope.searchEnabled = false;
+            return [mobileMenuBtn, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn];
         }
     }
 
@@ -311,6 +332,15 @@ export class PanelManager {
                 that.sizeColumnsToFitIfNeeded();
             };
         });
+
+        this.mapApi.agControllerRegister('MobileMenuCtrl', function () {
+            that.mobileMenuScope.visible = false;
+            that.mobileMenuScope.sizeDisabled = true;
+
+            this.toggleMenu = function () {
+                that.mobileMenuScope.visible = !that.mobileMenuScope.visible;
+            };
+        });
     }
 }
 
@@ -328,10 +358,23 @@ export interface PanelManager {
     lastFilter: HTMLElement;
     gridBody: HTMLElement;
     configManager: any;
+    mobileMenuScope: MobileMenuScope;
+    recordCountScope: RecordCountScope
 }
 
 interface EnhancedJQuery extends JQuery {
     link: any;
+}
+
+interface MobileMenuScope {
+    visible: boolean;
+    searchEnabled: boolean;
+    sizeDisabled: boolean;
+}
+
+interface RecordCountScope {
+    scrollRecords: string;
+    filterRecords: string;
 }
 
 PanelManager.prototype.maximized = false;

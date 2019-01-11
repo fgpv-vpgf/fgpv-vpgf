@@ -29,3 +29,49 @@ md-datepicker > div {
     height: 18px !important;
     min-height: 0;
 }
+
+.record-count {
+    padding: 0px 12px 0px 18px;
+    margin: 0;
+    overflow: hidden;
+}
+
+.table-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 75%;
+}
+
+.table-control {
+    display: inherit;
+}
+
+.mobile-table-control {
+    display: none;
+}
+
+.rv-small {
+
+    .table-control {
+        display: none !important;
+    }
+
+    .mobile-table-control {
+        display: inherit;
+
+        .panel-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+    }
+
+    .mobile-table-control .table-control {
+        display: flex !important;
+    }
+}
+
+.md-open-menu-container {
+    max-height: 90%;
+}

@@ -20692,7 +20692,7 @@ Obviously you need some kind of rules and criteria:
     line-height: 20px;
     min-height: 20px;
     min-width: 65px; }
-  .rv-small[is=rv-map] rv-panel[type='table'].default, .rv-small[is=rv-map] rv-panel[type='table'].full, .rv-small[is=rv-map] rv-panel[type='table'].attached, .rv-small.fgpv rv-panel[type='table'].default, .rv-small.fgpv rv-panel[type='table'].full, .rv-small.fgpv rv-panel[type='table'].attached {
+  .rv-small[is=rv-map] div[type='table'].default, .rv-small[is=rv-map] div[type='table'].full, .rv-small[is=rv-map] div[type='table'].attached, .rv-small.fgpv div[type='table'].default, .rv-small.fgpv div[type='table'].full, .rv-small.fgpv div[type='table'].attached {
     position: absolute;
     left: 0;
     top: 0;
@@ -20701,17 +20701,17 @@ Obviously you need some kind of rules and criteria:
     width: 100%;
     height: auto;
     z-index: 13; }
-    .rv-small[is=rv-map] rv-panel[type='table'].default .rv-panel, .rv-small[is=rv-map] rv-panel[type='table'].full .rv-panel, .rv-small[is=rv-map] rv-panel[type='table'].attached .rv-panel, .rv-small.fgpv rv-panel[type='table'].default .rv-panel, .rv-small.fgpv rv-panel[type='table'].full .rv-panel, .rv-small.fgpv rv-panel[type='table'].attached .rv-panel {
+    .rv-small[is=rv-map] div[type='table'].default .rv-panel, .rv-small[is=rv-map] div[type='table'].full .rv-panel, .rv-small[is=rv-map] div[type='table'].attached .rv-panel, .rv-small.fgpv div[type='table'].default .rv-panel, .rv-small.fgpv div[type='table'].full .rv-panel, .rv-small.fgpv div[type='table'].attached .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-    .rv-small.rv-small[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-small.rv-small[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-small.rv-small[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-small.rv-small.fgpv rv-panel[type='table'].default.ng-animate, .rv-small.rv-small.fgpv rv-panel[type='table'].full.ng-animate, .rv-small.rv-small.fgpv rv-panel[type='table'].attached.ng-animate {
+    .rv-small.rv-small[is=rv-map] div[type='table'].default.ng-animate, .rv-small.rv-small[is=rv-map] div[type='table'].full.ng-animate, .rv-small.rv-small[is=rv-map] div[type='table'].attached.ng-animate, .rv-small.rv-small.fgpv div[type='table'].default.ng-animate, .rv-small.rv-small.fgpv div[type='table'].full.ng-animate, .rv-small.rv-small.fgpv div[type='table'].attached.ng-animate {
       overflow: hidden; }
-    .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-medium.rv-small.fgpv rv-panel[type='table'].default.ng-animate, .rv-medium.rv-small.fgpv rv-panel[type='table'].full.ng-animate, .rv-medium.rv-small.fgpv rv-panel[type='table'].attached.ng-animate,
-    .rv-large.rv-small[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-large.rv-small[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-large.rv-small[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-large.rv-small.fgpv rv-panel[type='table'].default.ng-animate, .rv-large.rv-small.fgpv rv-panel[type='table'].full.ng-animate, .rv-large.rv-small.fgpv rv-panel[type='table'].attached.ng-animate {
+    .rv-medium.rv-small[is=rv-map] div[type='table'].default.ng-animate, .rv-medium.rv-small[is=rv-map] div[type='table'].full.ng-animate, .rv-medium.rv-small[is=rv-map] div[type='table'].attached.ng-animate, .rv-medium.rv-small.fgpv div[type='table'].default.ng-animate, .rv-medium.rv-small.fgpv div[type='table'].full.ng-animate, .rv-medium.rv-small.fgpv div[type='table'].attached.ng-animate,
+    .rv-large.rv-small[is=rv-map] div[type='table'].default.ng-animate, .rv-large.rv-small[is=rv-map] div[type='table'].full.ng-animate, .rv-large.rv-small[is=rv-map] div[type='table'].attached.ng-animate, .rv-large.rv-small.fgpv div[type='table'].default.ng-animate, .rv-large.rv-small.fgpv div[type='table'].full.ng-animate, .rv-large.rv-small.fgpv div[type='table'].attached.ng-animate {
       overflow: hidden;
       height: auto;
       width: 100%;
@@ -20719,13 +20719,13 @@ Obviously you need some kind of rules and criteria:
       right: 0;
       top: -10px;
       bottom: -10px; }
-      .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-small[is=rv-map] rv-panel[type='table'].attached.ng-animate .rv-panel, .rv-medium.rv-small.fgpv rv-panel[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-small.fgpv rv-panel[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-small.fgpv rv-panel[type='table'].attached.ng-animate .rv-panel,
-      .rv-large.rv-small[is=rv-map] rv-panel[type='table'].default.ng-animate .rv-panel, .rv-large.rv-small[is=rv-map] rv-panel[type='table'].full.ng-animate .rv-panel, .rv-large.rv-small[is=rv-map] rv-panel[type='table'].attached.ng-animate .rv-panel, .rv-large.rv-small.fgpv rv-panel[type='table'].default.ng-animate .rv-panel, .rv-large.rv-small.fgpv rv-panel[type='table'].full.ng-animate .rv-panel, .rv-large.rv-small.fgpv rv-panel[type='table'].attached.ng-animate .rv-panel {
+      .rv-medium.rv-small[is=rv-map] div[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-small[is=rv-map] div[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-small[is=rv-map] div[type='table'].attached.ng-animate .rv-panel, .rv-medium.rv-small.fgpv div[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-small.fgpv div[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-small.fgpv div[type='table'].attached.ng-animate .rv-panel,
+      .rv-large.rv-small[is=rv-map] div[type='table'].default.ng-animate .rv-panel, .rv-large.rv-small[is=rv-map] div[type='table'].full.ng-animate .rv-panel, .rv-large.rv-small[is=rv-map] div[type='table'].attached.ng-animate .rv-panel, .rv-large.rv-small.fgpv div[type='table'].default.ng-animate .rv-panel, .rv-large.rv-small.fgpv div[type='table'].full.ng-animate .rv-panel, .rv-large.rv-small.fgpv div[type='table'].attached.ng-animate .rv-panel {
         margin-left: 10px;
         margin-right: 0;
         margin-top: 10px;
         margin-bottom: 10px; }
-  .rv-medium[is=rv-map] rv-panel[type='table'].default, .rv-medium[is=rv-map] rv-panel[type='table'].full, .rv-medium[is=rv-map] rv-panel[type='table'].attached, .rv-medium.fgpv rv-panel[type='table'].default, .rv-medium.fgpv rv-panel[type='table'].full, .rv-medium.fgpv rv-panel[type='table'].attached {
+  .rv-medium[is=rv-map] div[type='table'].default, .rv-medium[is=rv-map] div[type='table'].full, .rv-medium[is=rv-map] div[type='table'].attached, .rv-medium.fgpv div[type='table'].default, .rv-medium.fgpv div[type='table'].full, .rv-medium.fgpv div[type='table'].attached {
     position: absolute;
     left: 8px;
     top: 8px;
@@ -20734,17 +20734,17 @@ Obviously you need some kind of rules and criteria:
     width: auto;
     height: auto;
     z-index: 13; }
-    .rv-medium[is=rv-map] rv-panel[type='table'].default .rv-panel, .rv-medium[is=rv-map] rv-panel[type='table'].full .rv-panel, .rv-medium[is=rv-map] rv-panel[type='table'].attached .rv-panel, .rv-medium.fgpv rv-panel[type='table'].default .rv-panel, .rv-medium.fgpv rv-panel[type='table'].full .rv-panel, .rv-medium.fgpv rv-panel[type='table'].attached .rv-panel {
+    .rv-medium[is=rv-map] div[type='table'].default .rv-panel, .rv-medium[is=rv-map] div[type='table'].full .rv-panel, .rv-medium[is=rv-map] div[type='table'].attached .rv-panel, .rv-medium.fgpv div[type='table'].default .rv-panel, .rv-medium.fgpv div[type='table'].full .rv-panel, .rv-medium.fgpv div[type='table'].attached .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-    .rv-small.rv-medium[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-small.rv-medium[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-small.rv-medium[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-small.rv-medium.fgpv rv-panel[type='table'].default.ng-animate, .rv-small.rv-medium.fgpv rv-panel[type='table'].full.ng-animate, .rv-small.rv-medium.fgpv rv-panel[type='table'].attached.ng-animate {
+    .rv-small.rv-medium[is=rv-map] div[type='table'].default.ng-animate, .rv-small.rv-medium[is=rv-map] div[type='table'].full.ng-animate, .rv-small.rv-medium[is=rv-map] div[type='table'].attached.ng-animate, .rv-small.rv-medium.fgpv div[type='table'].default.ng-animate, .rv-small.rv-medium.fgpv div[type='table'].full.ng-animate, .rv-small.rv-medium.fgpv div[type='table'].attached.ng-animate {
       overflow: hidden; }
-    .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-medium.rv-medium.fgpv rv-panel[type='table'].default.ng-animate, .rv-medium.rv-medium.fgpv rv-panel[type='table'].full.ng-animate, .rv-medium.rv-medium.fgpv rv-panel[type='table'].attached.ng-animate,
-    .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].default.ng-animate, .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].full.ng-animate, .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].attached.ng-animate, .rv-large.rv-medium.fgpv rv-panel[type='table'].default.ng-animate, .rv-large.rv-medium.fgpv rv-panel[type='table'].full.ng-animate, .rv-large.rv-medium.fgpv rv-panel[type='table'].attached.ng-animate {
+    .rv-medium.rv-medium[is=rv-map] div[type='table'].default.ng-animate, .rv-medium.rv-medium[is=rv-map] div[type='table'].full.ng-animate, .rv-medium.rv-medium[is=rv-map] div[type='table'].attached.ng-animate, .rv-medium.rv-medium.fgpv div[type='table'].default.ng-animate, .rv-medium.rv-medium.fgpv div[type='table'].full.ng-animate, .rv-medium.rv-medium.fgpv div[type='table'].attached.ng-animate,
+    .rv-large.rv-medium[is=rv-map] div[type='table'].default.ng-animate, .rv-large.rv-medium[is=rv-map] div[type='table'].full.ng-animate, .rv-large.rv-medium[is=rv-map] div[type='table'].attached.ng-animate, .rv-large.rv-medium.fgpv div[type='table'].default.ng-animate, .rv-large.rv-medium.fgpv div[type='table'].full.ng-animate, .rv-large.rv-medium.fgpv div[type='table'].attached.ng-animate {
       overflow: hidden;
       height: auto;
       width: auto;
@@ -20752,13 +20752,13 @@ Obviously you need some kind of rules and criteria:
       right: 8px;
       top: -2px;
       bottom: -2px; }
-      .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-medium[is=rv-map] rv-panel[type='table'].attached.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv rv-panel[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv rv-panel[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv rv-panel[type='table'].attached.ng-animate .rv-panel,
-      .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].default.ng-animate .rv-panel, .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].full.ng-animate .rv-panel, .rv-large.rv-medium[is=rv-map] rv-panel[type='table'].attached.ng-animate .rv-panel, .rv-large.rv-medium.fgpv rv-panel[type='table'].default.ng-animate .rv-panel, .rv-large.rv-medium.fgpv rv-panel[type='table'].full.ng-animate .rv-panel, .rv-large.rv-medium.fgpv rv-panel[type='table'].attached.ng-animate .rv-panel {
+      .rv-medium.rv-medium[is=rv-map] div[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-medium[is=rv-map] div[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-medium[is=rv-map] div[type='table'].attached.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv div[type='table'].default.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv div[type='table'].full.ng-animate .rv-panel, .rv-medium.rv-medium.fgpv div[type='table'].attached.ng-animate .rv-panel,
+      .rv-large.rv-medium[is=rv-map] div[type='table'].default.ng-animate .rv-panel, .rv-large.rv-medium[is=rv-map] div[type='table'].full.ng-animate .rv-panel, .rv-large.rv-medium[is=rv-map] div[type='table'].attached.ng-animate .rv-panel, .rv-large.rv-medium.fgpv div[type='table'].default.ng-animate .rv-panel, .rv-large.rv-medium.fgpv div[type='table'].full.ng-animate .rv-panel, .rv-large.rv-medium.fgpv div[type='table'].attached.ng-animate .rv-panel {
         margin-left: 10px;
         margin-right: 0;
         margin-top: 10px;
         margin-bottom: 10px; }
-  .rv-large[is=rv-map] rv-panel[type='table'].default, .rv-large.fgpv rv-panel[type='table'].default {
+  .rv-large[is=rv-map] div[type='table'].default, .rv-large.fgpv div[type='table'].default {
     position: absolute;
     left: 420px;
     top: 10px;
@@ -20767,14 +20767,14 @@ Obviously you need some kind of rules and criteria:
     width: auto;
     height: auto;
     z-index: 13; }
-    .rv-large[is=rv-map] rv-panel[type='table'].default .rv-panel, .rv-large.fgpv rv-panel[type='table'].default .rv-panel {
+    .rv-large[is=rv-map] div[type='table'].default .rv-panel, .rv-large.fgpv div[type='table'].default .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-  .rv-large[is=rv-map] rv-panel[type='table'].full, .rv-large.fgpv rv-panel[type='table'].full {
+  .rv-large[is=rv-map] div[type='table'].full, .rv-large.fgpv div[type='table'].full {
     position: absolute;
     left: 420px;
     top: 10px;
@@ -20783,14 +20783,14 @@ Obviously you need some kind of rules and criteria:
     width: auto;
     height: auto;
     z-index: 13; }
-    .rv-large[is=rv-map] rv-panel[type='table'].full .rv-panel, .rv-large.fgpv rv-panel[type='table'].full .rv-panel {
+    .rv-large[is=rv-map] div[type='table'].full .rv-panel, .rv-large.fgpv div[type='table'].full .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-  .rv-large[is=rv-map] rv-panel[type='table'].attached, .rv-large.fgpv rv-panel[type='table'].attached {
+  .rv-large[is=rv-map] div[type='table'].attached, .rv-large.fgpv div[type='table'].attached {
     position: absolute;
     left: 410px;
     top: 59px;
@@ -20798,14 +20798,14 @@ Obviously you need some kind of rules and criteria:
     right: auto;
     width: 300px;
     height: auto; }
-    .rv-large[is=rv-map] rv-panel[type='table'].attached .rv-panel, .rv-large.fgpv rv-panel[type='table'].attached .rv-panel {
+    .rv-large[is=rv-map] div[type='table'].attached .rv-panel, .rv-large.fgpv div[type='table'].attached .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-    .rv-large[is=rv-map] rv-panel[type='table'].attached:before, .rv-large.fgpv rv-panel[type='table'].attached:before {
+    .rv-large[is=rv-map] div[type='table'].attached:before, .rv-large.fgpv div[type='table'].attached:before {
       content: "";
       position: absolute;
       top: 0;
@@ -20814,9 +20814,9 @@ Obviously you need some kind of rules and criteria:
       width: 1px;
       border-left: 1px solid #B6B6B6;
       z-index: 11; }
-    .rv-large[is=rv-map] rv-panel[type='table'].attached.ng-animate:before, .rv-large.fgpv rv-panel[type='table'].attached.ng-animate:before {
+    .rv-large[is=rv-map] div[type='table'].attached.ng-animate:before, .rv-large.fgpv div[type='table'].attached.ng-animate:before {
       bottom: 10px; }
-  [is=rv-map] rv-panel[type='table'].minimized, .fgpv rv-panel[type='table'].minimized {
+  [is=rv-map] div[type='table'].minimized, .fgpv div[type='table'].minimized {
     position: absolute;
     left: 420px;
     top: 10px;
@@ -20824,14 +20824,14 @@ Obviously you need some kind of rules and criteria:
     right: 10px;
     width: auto;
     height: 100px; }
-    [is=rv-map] rv-panel[type='table'].minimized .rv-panel, .fgpv rv-panel[type='table'].minimized .rv-panel {
+    [is=rv-map] div[type='table'].minimized .rv-panel, .fgpv div[type='table'].minimized .rv-panel {
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       position: absolute;
       background-color: white; }
-  [is=rv-map] rv-panel[type='table'] rv-table-default, .fgpv rv-panel[type='table'] rv-table-default {
+  [is=rv-map] div[type='table'] rv-table-default, .fgpv div[type='table'] rv-table-default {
     top: 0;
     left: 0;
     right: 0;

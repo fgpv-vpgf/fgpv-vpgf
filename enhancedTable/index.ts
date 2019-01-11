@@ -157,8 +157,9 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
         } else if (columnName === 'rvInteractive') {
             colDef.maxWidth = 40;
             // sets details and zoom buttons for the row
-            let detailsDef = (<any>Object).assign({}, colDef);
-            detailsDef.cellRenderer = function (params) {
+            let zoomDef = (<any>Object).assign({}, colDef);
+            zoomDef.field = 'zoom';
+            zoomDef.cellRenderer = function (params) {
                 var eSpan = new panel.container(ZOOM_TEMPLATE(params.rowIndex)).elementAttr[0];
                 params.eGridCell.addEventListener('keydown', function(e) {
                     if (e.key === "Enter") {
@@ -168,7 +169,7 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
                 params.eGridCell.style.padding = 0;
                 return eSpan;
             }
-            cols.splice(0, 0, detailsDef);
+            cols.splice(0, 0, zoomDef);
             colDef.cellRenderer = function (params) {
                 var eSpan = new panel.container(DETAILS_TEMPLATE(params.rowIndex)).elementAttr[0];
                 params.eGridCell.addEventListener('keydown', function(e) {

@@ -13,7 +13,7 @@ export class PanelStatusManager {
     // sets watches for when table filters are changed, or the table is scrolled
     // updates the panel status accordingly
     setFilterAndScrollWatch() {
-        let tableOptions = this.panelManager.tableOptions;
+        let tableOptions = this.tableOptions;
         let that = this;
         tableOptions.onFilterChanged = function (event) {
             if (tableOptions && tableOptions.api) {
@@ -42,6 +42,7 @@ export class PanelStatusManager {
             this.panelManager.panel.panelControls.find('.filterRecords')[0].innerHTML = text;
         }
         this.getScrollRange();
+        this.panelManager.recordCountScope.filterRecords = text;
         return text;
     }
 
@@ -63,7 +64,7 @@ export class PanelStatusManager {
                     lastRow = parseInt(row.rowIndex) + 1;
                 }
             });
-            if (firstRow === undefined && lastRow === undefined) {
+            if ((firstRow === undefined && lastRow === undefined) || topPixel === bottomPixel) {
                 firstRow = 0;
                 lastRow = 0;
             }
@@ -75,6 +76,7 @@ export class PanelStatusManager {
         if (this.panelManager.panel.panelControls.find('.scrollRecords')[0]) {
             this.panelManager.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
         }
+        this.panelManager.recordCountScope.scrollRecords = rowRange;
         return rowRange;
     }
 }

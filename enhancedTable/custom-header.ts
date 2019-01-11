@@ -20,7 +20,10 @@ export class CustomHeader {
         this.moveRightButton = this.eGui.querySelector('.move-right');
 
         // progress sort on header title click
-        this.headerButton.addEventListener('click', (event) => {
+        this.headerButton.addEventListener('click', (event: MouseEvent) => {
+            this.agParams.progressSort(event.shiftKey);
+        });
+        this.headerButton.addEventListener('touchstart', (event: TouchEvent) => {
             this.agParams.progressSort(event.shiftKey);
         });
 
@@ -29,6 +32,8 @@ export class CustomHeader {
         let moveRightListener = this.moveRight.bind(this);
         this.moveLeftButton.addEventListener('click', moveLeftListener);
         this.moveRightButton.addEventListener('click', moveRightListener);
+        this.moveLeftButton.addEventListener('touchstart', moveLeftListener);
+        this.moveRightButton.addEventListener('touchstart', moveRightListener);
 
         // set indicator arrow visibility on sort change
         let onSortChangedListener = this.onSortChanged.bind(this);
@@ -48,11 +53,17 @@ export class CustomHeader {
         let onSortChangedListener = this.onSortChanged.bind(this);
         let onColumnReorderListener = this.onColumnReorder.bind(this);
 
-        this.headerButton.removeEventListener('click', (event) => {
+        this.headerButton.removeEventListener('click', (event: MouseEvent) => {
             this.agParams.progressSort(event.shiftKey);
         });
+        this.headerButton.removeEventListener('touchstart', (event: TouchEvent) => {
+            this.agParams.progressSort(event.shiftKey);
+        });
+
         this.moveLeftButton.removeEventListener('click', moveLeftListener);
         this.moveRightButton.removeEventListener('click', moveRightListener);
+        this.moveLeftButton.removeEventListener('touchstart', moveLeftListener);
+        this.moveRightButton.removeEventListener('touchstart', moveRightListener);
         this.agParams.column.removeEventListener('sortChanged', onSortChangedListener);
         this.agParams.column.removeEventListener('leftChanged', onColumnReorderListener);
     }

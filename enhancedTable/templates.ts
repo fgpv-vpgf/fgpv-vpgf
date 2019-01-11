@@ -1,5 +1,5 @@
 export const SEARCH_TEMPLATE = `
-<md-input-container ng-controller="SearchCtrl as ctrl" md-no-float class="rv-table-search md-block">
+<md-input-container ng-controller="SearchCtrl as ctrl" md-no-float class="rv-table-search md-block table-control">
     <input
         ng-model="ctrl.searchText"
         ng-keyup="ctrl.updatedSearchText()"
@@ -13,7 +13,7 @@ export const SEARCH_TEMPLATE = `
 `;
 
 export const CLEAR_FILTERS_TEMPLATE = `
-<div>
+<div class="table-control">
     <md-button
         ng-controller="ClearFiltersCtrl as ctrl"
         aria-label="{{ 't.table.filter.clear' | translate }}"
@@ -28,7 +28,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
 `;
 
 export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
-<md-menu-bar ng-controller="ColumnVisibilityMenuCtrl as ctrl">
+<md-menu-bar class="table-control" ng-controller="ColumnVisibilityMenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
@@ -50,7 +50,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 `;
 
 export const MENU_TEMPLATE = `
-<md-menu-bar ng-controller="MenuCtrl as ctrl">
+<md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
@@ -59,10 +59,11 @@ export const MENU_TEMPLATE = `
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
         </md-button>
         <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="5">
-            <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
+
+            <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" rv-right-icon="none">
                 {{ 't.menu.split' | translate }}
             </md-menu-item>
-            <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)" rv-right-icon="none">
+            <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)"  ng-if="!sizeDisabled" rv-right-icon="none">
                 {{ 't.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
@@ -89,6 +90,32 @@ export const MENU_TEMPLATE = `
     </md-menu>
 </md-menu-bar>
 `;
+
+export const MOBILE_MENU_BTN_TEMPLATE = `
+<div class="mobile-table-control">
+    <md-button
+        ng-controller="MobileMenuCtrl as ctrl"
+        class="md-icon-button black rv-button-24"
+        ng-click="ctrl.toggleMenu()">
+        <md-icon md-svg-src="navigation:more_vert"></md-icon>
+    </md-button>
+</div>`;
+
+export const MOBILE_MENU_TEMPLATE = `
+<div class="mobile-table-control mobile-table-menu">
+    <div ng-if="visible" class="panel-controls">
+        <span ng-if="searchEnabled">${SEARCH_TEMPLATE}</span>
+        ${CLEAR_FILTERS_TEMPLATE}
+        ${COLUMN_VISIBILITY_MENU_TEMPLATE}
+        ${MENU_TEMPLATE}
+    </div>
+</div>`;
+
+export const RECORD_COUNT_TEMPLATE = `
+<p class="record-count">
+    <span class="scrollRecords">{{ scrollRecords }}</span> of
+    <span class="filterRecords">{{ filterRecords }}</span>
+</p>`;
 
 export const DETAILS_TEMPLATE = (rowIndex) =>
     `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${rowIndex})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
