@@ -2,7 +2,12 @@
     "ui": {
         "navBar": {
             "zoom": "buttons",
-            "extra": ["fullscreen", "geoLocator", "home", "help"]
+            "extra": [
+                "fullscreen",
+                "geoLocator",
+                "home",
+                "help"
+            ]
         },
         "sideMenu": {
             "logo": true
@@ -85,7 +90,7 @@
                 "id": "0",
                 "name": "BadDates",
                 "layerType": "esriFeature",
-                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
+                "url": "https://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
             }
         ],
         "extentSets": [
