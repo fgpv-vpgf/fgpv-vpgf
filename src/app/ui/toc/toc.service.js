@@ -1,3 +1,5 @@
+import { Observable, Subject } from 'rxjs';
+
 /**
  * @module tocService
  * @memberof app.ui
@@ -143,41 +145,57 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             const panel = panelSwitch[openPanel.name].panel;
             stateManager.setActive({ [panel]: false });
         } else {    // open panel not being reloaded, close any open panel
-            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+            stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
         }
 
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
-            if (openPanel) {
-                const findBlock = block
-                    .walk(entry =>
-                        entry.id === openPanel.requester.id ?
-                            entry : null)
-                    .filter(a => a)[0];
 
-                if (findBlock) {        // open panel not reloaded, close any open panel
-                    stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
-                    return;
+            if (openPanel || $('enhancedTable') !== undefined) {
+                if (openPanel) {
+                    const findBlock = block
+                        .walk(entry =>
+                            entry.id === openPanel.requester.id ?
+                                entry : null)
+                        .filter(a => a)[0];
+
+                    if (findBlock) {        // open panel not reloaded, close any open panel
+                        stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
+                        return;
+                    }
                 }
+
 
                 // for the table, panel data is columns, rows, etc. instead of the actual entry
                 // thus, we need to take the legend entry in those cases
                 // for settings and metadata, if data exists it is the correct entry
-                const node = openPanel.name !== 'table' && openPanel.data ?
+                // if openPanel doesn't exist (like with enhancedTables, node = legendBlock)
+                const node = openPanel ? (openPanel.name !== 'table' && openPanel.data ?
                     openPanel.data :
                     openPanel.requester.legendEntry ?
-                        openPanel.requester.legendEntry : legendBlock;
+                        openPanel.requester.legendEntry : legendBlock) : legendBlock;
 
                 // find reloaded legend block
                 // if there are multiple instances of the same layer, reloading any record other than the first one will still
                 // return the first legend block and open the panel for that one instead (they are identical though)
                 legendBlock = block
                     .walk(entry =>
-                        (node.parentLayerType ===  Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
-                        entry.layerRecordId === node.layerRecordId) ?
+                        (node.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
+                            entry.layerRecordId === node.layerRecordId) ?
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
-                if (openPanel.name === 'table') {
+                if ($('enhancedTable') !== undefined && window.RZ !== undefined) {
+
+                    const configLegend = window.RZ.mapInstances.find(mapInstance => {
+                        if (mapInstance.ui.configLegend._mapInstance === configService.getSync.map) {
+                            // find the matching mapInstance object for the current map
+                            // retrive the configLegend from the matching mapInstance
+                            return mapInstance.ui.configLegend;
+                        }
+                    });
+                    // fire table toggle observable with reloaded legendblock
+                    configLegend._legendStructure._root._tableToggled.next(legendBlock);
+                } else if (openPanel.name === 'table') {
                     toggleLayerTablePanel(legendBlock);
                 } else if (openPanel.name === 'settings') {
                     toggleSettings(legendBlock);
@@ -188,6 +206,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         }, (layerName) => {
             console.error('Failed to reload layer:', layerName);
         });
+
+
+
     }
 
     /**
@@ -235,8 +256,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         if (showToast) {
             // promise resolves with 'ok' when user clicks 'undo'
             $mdToast.show(undoToast)
-            .then(response =>
-                response === 'ok' ? _restoreLegendBlock() : resolve());
+                .then(response =>
+                    response === 'ok' ? _restoreLegendBlock() : resolve());
         } else {
             resolve();
         }
@@ -413,7 +434,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             .catch(error => {
                 // do not show error message if loading was aborted
                 if (error.message === 'ABORTED') {
-                    return ;
+                    return;
                 }
 
                 requester.error = true; // this will hide the table loading splash
