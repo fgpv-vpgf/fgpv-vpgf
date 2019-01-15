@@ -1558,11 +1558,7 @@ function LegendBlockFactory(
                 this._selectedEntry = newlySelectedEntry;
             }
 
-            const isAllOff = this._activeEntries.every(entry => !entry.visibility);
-
-            if (isAllOff && this._selectedEntry) {
-                this._selectedEntry.visibility = false;
-            }
+            const anyVisible = this._activeEntries.some(entry => entry.visibility);
 
             // if this visiblity set is collapsed and has active entries,
             // hide all other entries except the selection one (or the first of active entreis if the selection is null)
@@ -1577,7 +1573,7 @@ function LegendBlockFactory(
                 });
             }
 
-            return this._selectedEntry === null ? false : this._selectedEntry.visibility;
+            return anyVisible;
         }
 
         set visibility(value) {
