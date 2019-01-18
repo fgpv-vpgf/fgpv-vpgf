@@ -27,6 +27,15 @@ export class PanelManager {
         this.panel.element[0].classList.add('default');
         this.panel.element[0].addEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
 
+        // Enhance panel's close function so panel close button destroys table properly
+        let close = this.panel.close.bind(this.panel);
+        this.panel.close = () => {
+            this.panel.element[0].removeEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
+            this.gridBody.removeEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
+            this.currentTableLayer = undefined;
+            close();
+        }
+
         // add mobile menu to the dom
         let mobileMenuTemplate = $(MOBILE_MENU_TEMPLATE)[0];
         this.mobileMenuScope = this.mapApi.$compile(mobileMenuTemplate);
@@ -114,10 +123,7 @@ export class PanelManager {
     }
 
     close() {
-        this.panel.element[0].removeEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
-        this.gridBody.removeEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
         this.panel.close();
-        this.currentTableLayer = undefined;
     }
 
     onBtnExport() {
@@ -321,7 +327,7 @@ export class PanelManager {
             this.columnVisibilities = this.columns
                 .filter(element => element.headerName)
                 .map(element => {
-                    return ({ id: element.field, title: element.headerName, visibility: element.visibility })
+                    return ({ id: element.field, title: element.headerName, visibility: !element.hide })
                 });
 
             // toggle column visibility
@@ -365,7 +371,7 @@ export interface PanelManager {
     gridBody: HTMLElement;
     configManager: any;
     mobileMenuScope: MobileMenuScope;
-    recordCountScope: RecordCountScope
+    recordCountScope: RecordCountScope;
     panelStateManager: PanelStateManager;
     searchText: string;
 }

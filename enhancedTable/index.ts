@@ -22,38 +22,13 @@ class TableBuilder {
         this.panel = new PanelManager(mapApi);
 
         this.mapApi.layers.click.subscribe(baseLayer => {
+            this.openTable(baseLayer);
+        });
 
-            if (baseLayer.panelStateManager === undefined) {
-                // if no PanelStateManager exists for this BaseLayer, create a new one
-                baseLayer.panelStateManager = new PanelStateManager(baseLayer);
-            }
-
-            this.panel.panelStateManager = baseLayer.panelStateManager;
-
-            const attrs = baseLayer.getAttributes();
-            this.attributeHeaders = baseLayer.attributeHeaders;
-            if (attrs.length === 0) {
-                baseLayer.fetchAttributes();
-                // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
-                // TODO: on layer reload, attributes never seem to be added
-                this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                    if (
-                        attrs.attributes[0] &&
-                        attrs.attributes[0]['rvSymbol'] !== undefined &&
-                        attrs.attributes[0]['rvInteractive'] !== undefined
-                    ) {
-                        this.configManager = new ConfigManager(baseLayer, this.panel);
-                        this.panel.configManager = this.configManager;
-                        this.createTable(attrs);
-                    }
-                });
-            } else {
-                this.configManager = new ConfigManager(baseLayer, this.panel);
-                this.panel.configManager = this.configManager;
-                this.createTable({
-                    attributes: attrs,
-                    layer: baseLayer
-                });
+        this.mapApi.layers.reload.subscribe((baseLayer: any, interval: boolean) => {
+            if (!interval && baseLayer === this.panel.currentTableLayer) {
+                this.panel.close();
+                this.openTable(baseLayer);
             }
         });
 
@@ -70,19 +45,46 @@ class TableBuilder {
                     layer = this.mapApi.layers.getLayersById(legendBlock.layerRecordId)[0];
                 }
                 if (layer) {
-                    this.mapApi.layers._click.next(layer);
                     this.legendBlock = legendBlock;
+                    this.openTable(layer);
                 }
             }
         });
     }
 
+    openTable(baseLayer) {
+        if (baseLayer.panelStateManager === undefined) {
+            // if no PanelStateManager exists for this BaseLayer, create a new one
+            baseLayer.panelStateManager = new PanelStateManager(baseLayer);
+        }
+        this.panel.panelStateManager = baseLayer.panelStateManager;
+
+        const attrs = baseLayer.getAttributes();
+        this.attributeHeaders = baseLayer.attributeHeaders;
+        if (attrs.length === 0) {
+            // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
+            this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
+                if (attrs.attributes[0]) {
+                    this.configManager = new ConfigManager(baseLayer, this.panel);
+                    this.panel.configManager = this.configManager;
+                    this.createTable(attrs);
+                }
+            });
+        } else {
+            this.configManager = new ConfigManager(baseLayer, this.panel);
+            this.panel.configManager = this.configManager;
+            this.createTable({
+                attributes: attrs,
+                layer: baseLayer
+            });
+        }
+    }
+
     createTable(attrBundle: AttrBundle) {
         const panel = this.panel.panel;
         let cols: Array<any> = [];
-
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
-            Object.keys(attrBundle.attributes[0]).forEach(columnName => {
+            Object.keys(a.rows[0]).forEach(columnName => {
 
                 if (columnName === 'rvSymbol' ||
                     columnName === 'rvInteractive' ||
@@ -106,7 +108,7 @@ class TableBuilder {
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
-                        visibility: this.configManager.filteredAttributes.length === 0 ? true : column.column ? column.column.visible : undefined
+                        hide: this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined
                     };
 
                     // set up floating filters and column header
@@ -244,8 +246,8 @@ interface ColumnDefinition {
     suppressFilter: boolean;
     lockPosition?: boolean;
     getQuickFilterText?: (cellParams: any) => string;
-    sort?: any;
-    visibility?: any;
+    sort?: string;
+    hide?: boolean;
 }
 
 interface HeaderComponentParams {
