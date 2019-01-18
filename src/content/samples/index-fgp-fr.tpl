@@ -460,7 +460,7 @@
                         <input type="text" id="bookmarkDisplay" style="width:100%;" />
                         <button onclick="testBackToCart()">Retour au panier</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["fr-CA", "en-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-plugins="backToCart">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["fr-CA", "en-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-wait="true" rv-plugins="backToCart">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
