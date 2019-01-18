@@ -169,8 +169,33 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
         }
     };
 
+    events.$on(events.rvCfgInitialized, () => {
+        // When the map is reloaded (language switch, projection switch)
+        // Plugins are initialized again so clear out old plugin buttons
+        if (service.controls.plugins.children.length > 0) {
+            service.controls.plugins.children = [];
+        }
+    })
+
     events.$on(events.rvApiPrePlugin, (_, mApi) => {
         mApi.changeLanguage = reloadService.loadNewLang;
+
+        configService.getSync.map.instance.addPluginButton = (label, action) => {
+            // first plugin created should add the plugin group
+            if (service.controls.plugins.children.length === 0) {
+                SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
+            }
+
+            let mItem = {
+                type: 'link',
+                label,
+                action
+            }
+
+            mItem.isChecked = () => mItem.isActive;
+            service.controls.plugins.children.push(mItem);
+            return mItem;
+        };
     });
 
     init();
