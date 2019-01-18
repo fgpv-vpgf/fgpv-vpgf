@@ -10,8 +10,10 @@ export class PanelRowsManager {
         this.tableOptions = panelManager.tableOptions;
     }
 
-    // table is set up according to layer visibiltiy on open
-    // observers are set up in case of change to layer visibility or symbol visibility
+    /**
+    * Table is set up according to layer visibiltiy on open
+    * Observers are set up in case of change to layer visibility or symbol visibility
+    */
     initObservers() {
         this.legendBlock = this.panelManager.legendBlock;
         this.currentTableLayer = this.panelManager.currentTableLayer;
@@ -20,8 +22,10 @@ export class PanelRowsManager {
         this.symbolVisibilityObserver();
     }
 
-    // helper method to initTableRowVisibility
-    // sets table filters based on table visibility on open
+    /**
+    * Helper method to initTableRowVisibility
+    * Sets table filters based on table visibility on open
+    */
     initialFilterSettings() {
         if (!this.currentTableLayer.visibility) {
             // if  layer is invisible, table needs to show zero entries
@@ -34,9 +38,20 @@ export class PanelRowsManager {
         }
     }
 
-    // helper method to initObservers
-    // sets up initial row visibility based on layer visibility and symbology visibilities on open
+    /**
+     * Helper method to initObservers
+     * Sets up initial row visibility based on layer visibility and symbology visibilities on open
+     */
     initTableRowVisibility() {
+
+        if (this.legendBlock.visibility === false) {
+            // if the legendBlock is invisible on table open, table rows should be empty
+            if (this.legendBlock.parent.blockType === 'set') {
+                this.invisibleSetFilterSettings();
+            } else {
+                this.invisibileNodeFilterSettings();
+            }
+        }
         if (this.tableOptions.api) {
             let that = this;
 
@@ -55,23 +70,28 @@ export class PanelRowsManager {
         }
     }
 
-    // helper method to layerVisibilityObserver
-    // saves table filters for when a LegendNode gets toggled to invisible
+    /**
+    * Helper method to layerVisibilityObserver
+    * Saves table filters for when a LegendNode gets toggled to invisible
+    */
     invisibileNodeFilterSettings() {
         //if set to invisible: store current filter, and then filter out all visible rows
-        this.tableOptions.api.validOIDs = undefined;
-        this.storedFilter = this.tableOptions.api.getFilterModel();
-        this.prevQuickFilterText = this.quickFilterText;
-        this.tableOptions.api.setQuickFilter('1=2');
-        this.quickFilterText = '1=2';
-        this.visibility = false;
-        this.tableOptions.api.selectAllFiltered();
-        this.panelManager.panelStatusManager.getFilterStatus();
-        this.tableOptions.api.deselectAllFiltered();
+        if (this.quickFilterText !== '1=2') {
+            this.tableOptions.api.validOIDs = undefined;
+            this.prevQuickFilterText = this.quickFilterText;
+            this.tableOptions.api.setQuickFilter('1=2');
+            this.quickFilterText = '1=2';
+            this.visibility = false;
+            this.tableOptions.api.selectAllFiltered();
+            this.panelManager.panelStatusManager.getFilterStatus();
+            this.tableOptions.api.deselectAllFiltered();
+        }
     }
 
-    // helper method to layerVisibilityObserver
-    // resets/updates table filters for when a LegendNode gets toggled to visible
+    /**
+    * Helper method to layerVisibilityObserver
+    * Resets/updates table filters for when a LegendNode gets toggled to visible
+    */
     visibileNodeFilterSettings() {
         // if set to visibile: show all rows and clear external filter (because all symbologies will be checked in)
         if (this.prevQuickFilterText !== undefined && this.prevQuickFilterText !== '1=2') {
@@ -79,8 +99,8 @@ export class PanelRowsManager {
             this.quickFilterText = this.prevQuickFilterText;
         }
         else {
-            this.tableOptions.api.setQuickFilter('');
-            this.quickFilterText = '';
+            this.tableOptions.api.setQuickFilter(this.panelManager.searchText);
+            this.quickFilterText = this.panelManager.searchText;
         }
         this.externalFilter = false;
         this.tableOptions.api.onFilterChanged();
@@ -95,17 +115,20 @@ export class PanelRowsManager {
         this.tableOptions.api.deselectAllFiltered();
     }
 
-    // helper method to layerVisibilityObserver
-    // saves table filters for when a LegendSet gets toggled to invisible
+    /**
+    * Helper method to layerVisibilityObserver
+    * Saves table filters for when a LegendSet gets toggled to invisible
+    */
     invisibleSetFilterSettings() {
-        this.storedFilter = this.tableOptions.api.getFilterModel();
         this.tableOptions.api.setQuickFilter('1=2');
         this.quickFilterText = '1=2';
         this.visibility = false;
     }
 
-    // helper method to layerVisibilityObserver
-    // resets/updates table filters for when a LegendSet gets toggled to visible
+    /**
+    * Helper method to layerVisibilityObserver
+    * Resets/updates table filters for when a LegendSet gets toggled to visible
+    */
     visibleSetFilterSettings() {
         this.tableOptions.api.setQuickFilter('');
         this.quickFilterText = '';
@@ -117,8 +140,10 @@ export class PanelRowsManager {
         this.visibility = true;
     }
 
-    // helper method to initObservers
-    // saves table and update table filter states upon layer visibilty changes
+    /**
+    * Helper method to initObservers
+    * Saves table and update table filter states upon layer visibilty changes
+    */
     layerVisibilityObserver() {
         this.legendBlock.visibilityChanged.subscribe(visibility => {
             if (this.tableOptions.api
@@ -142,8 +167,10 @@ export class PanelRowsManager {
         });
     }
 
-    // helper method to multiple methods
-    // tricks ag-grid into updating filter status by selecting all filtered rows
+    /**
+    * Helper method to multiple methods
+    * Tricks ag-grid into updating filter status by selecting all filtered rows
+    */
     updateGridFilters() {
         this.tableOptions.api.onFilterChanged();
         this.tableOptions.api.selectAllFiltered();
@@ -151,8 +178,10 @@ export class PanelRowsManager {
         this.tableOptions.api.deselectAllFiltered();
     }
 
-    // helper method to symboLVisibilityObserver
-    // updates table filter states
+    /**
+    * Helper method to symbolVisibilityObserver
+    * Updates table filter states
+    */
     setFiltersOnSymbolUpdate() {
         if (this.quickFilterText === '1=2') {
             // if this is a symbol being toggled on which sets layer visibility to true
@@ -174,8 +203,10 @@ export class PanelRowsManager {
         }
     }
 
-    // helper method to initObservers
-    // saves table and update table filter states upon symbol visibilty changes
+    /**
+    * Helper method to initObservers
+    * Saves table and updates table filter states upon symbol visibilty changes
+    */
     symbolVisibilityObserver() {
         // when one of the symbols are toggled on/off, filter the table
         this.legendBlock.symbolVisibilityChanged.subscribe(visibility => {

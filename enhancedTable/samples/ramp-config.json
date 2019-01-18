@@ -125,6 +125,8 @@
                 "layerType": "esriFeature",
                 "table": {
                     "applyMap": true,
+                    "lazyFilter": true,
+                    "searchStrictMatch": true,
                     "columns": [
                         {
                             "data": "OBJECTID",
@@ -231,8 +233,7 @@
                         "enabled": false
                     },
                     "lazyFilter": true,
-                    "applyMap": true,
-                    "searchStrictMatch": true
+                    "applyMap": true
                 }
             },
             {
@@ -243,7 +244,7 @@
                 "table": {
                     "title": "Table Test Two - Custom Title",
                     "search": {
-                        "enabled": true
+                        "value": "Ener"
                     },
                     "applyMap": false,
                     "columns": [
@@ -267,8 +268,7 @@
                             }
                         },
                         {
-                            "data": "Operator",
-                            "visible": false
+                            "data": "Operator"
                         }
                     ]
                 }

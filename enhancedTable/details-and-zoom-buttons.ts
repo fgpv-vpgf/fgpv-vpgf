@@ -20,9 +20,13 @@ export class DetailsAndZoomButtons {
             let proxy = that.legendBlock.proxyWrapper.proxy;
 
             // opens the details panel corresponding to the row where the details button is found
-            this.openDetails = function (rowIndex) {
+            this.openDetails = function (oid) {
                 let data = proxy.attribs.then(function (attribs) {
-                    const attributes = attribs.features[rowIndex].attributes;
+                    const attributes = attribs.features.find(attrib => {
+                        if (attrib.attributes.OBJECTID === oid) {
+                            return attrib.attributes;
+                        }
+                    }).attributes;
                     let symbology = attributes['rvSymbol'];
                     let dataObj = [];
                     const map = that.mapApi.mapI;
@@ -53,7 +57,7 @@ export class DetailsAndZoomButtons {
                     let detailsObj = {
                         isLoading: false,
                         data: [{
-                            name: proxy.getFeatureName(rowIndex, attributes),
+                            name: proxy.getFeatureName(oid, attributes),
                             data: proxy.attributesToDetails(attributes, dataObj),
                             oid: attributes[proxy.oidField],
                             symbology: [{ svgcode: symbology }]
@@ -75,15 +79,12 @@ export class DetailsAndZoomButtons {
             };
 
             // determine if any column filters are present
-            this.zoomToFeature = function (rowIndex) {
-                proxy.attribs.then(function (attribs) {
-                    let oid = attribs.features[rowIndex].attributes[proxy.oidField];
-                    const map = that.mapApi.mapI;
-                    //set appropriate offset for point before zooming
-                    (that.panelManager.maximized || that.panelManager.isMobile()) ? that.mapApi.mapI.externalPanel($('#enhancedTable')) : that.mapApi.mapI.externalPanel(undefined);
-                    let offset = (that.panelManager.maximized || that.panelManager.isMobile()) ? { x: 0, y: 0 } : { x: 0.10416666666666667, y: 0.24464094319399785 };
-                    map.zoomToFeature(proxy, oid, offset);
-                });
+            this.zoomToFeature = function (oid) {
+                const map = that.mapApi.mapI;
+                //set appropriate offset for point before zooming
+                (that.panelManager.maximized || that.panelManager.isMobile()) ? that.mapApi.mapI.externalPanel($('#enhancedTable')) : that.mapApi.mapI.externalPanel(undefined);
+                let offset = (that.panelManager.maximized || that.panelManager.isMobile()) ? { x: 0, y: 0 } : { x: 0.10416666666666667, y: 0.24464094319399785 };
+                map.zoomToFeature(proxy, oid, offset);
             };
         });
     }

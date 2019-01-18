@@ -18609,14 +18609,18 @@ Obviously you need some kind of rules and criteria:
         background-color: #9E9E9E !important;
         border-color: #9E9E9E !important; }
     [is=rv-map] .rv-slider .rv-slider-footer, .fgpv .rv-slider .rv-slider-footer {
-      display: flex;
       padding-left: 32px;
       top: -12px;
       position: relative;
       margin-bottom: -13px; }
-      [is=rv-map] .rv-slider .rv-slider-footer .rv-slider-changeat .rv-control-name, .fgpv .rv-slider .rv-slider-footer .rv-slider-changeat .rv-control-name {
-        text-transform: lowercase; }
+      [is=rv-map] .rv-slider .rv-slider-footer .rv-slider-changeat, .fgpv .rv-slider .rv-slider-footer .rv-slider-changeat {
+        display: inline;
+        margin: 0 4px;
+        padding: 0 4px; }
+        [is=rv-map] .rv-slider .rv-slider-footer .rv-slider-changeat .rv-control-name, .fgpv .rv-slider .rv-slider-footer .rv-slider-changeat .rv-control-name {
+          text-transform: lowercase; }
       [is=rv-map] .rv-slider .rv-slider-footer rv-legend-control, .fgpv .rv-slider .rv-slider-footer rv-legend-control {
+        display: inline;
         padding: 0;
         margin: 0 4px; }
         [is=rv-map] .rv-slider .rv-slider-footer rv-legend-control .rv-link-button, .fgpv .rv-slider .rv-slider-footer rv-legend-control .rv-link-button {
@@ -18629,6 +18633,13 @@ Obviously you need some kind of rules and criteria:
           margin: 0;
           padding: 0 4px;
           height: 20px; }
+          [is=rv-map] .rv-slider .rv-slider-footer rv-legend-control .rv-link-button span, .fgpv .rv-slider .rv-slider-footer rv-legend-control .rv-link-button span {
+            text-align: left;
+            width: 250px;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; }
   [is=rv-map] rv-settings .rv-subheader, .fgpv rv-settings .rv-subheader {
     border: none !important; }
   [is=rv-map] rv-settings .rv-settings-divider, .fgpv rv-settings .rv-settings-divider {
@@ -18669,11 +18680,15 @@ Obviously you need some kind of rules and criteria:
     left: 280px;
     padding-bottom: 10px !important; }
   [is=rv-map] rv-settings .rv-input-footer, .fgpv rv-settings .rv-input-footer {
-    display: flex;
     margin-top: 10px; }
-    [is=rv-map] rv-settings .rv-input-footer .rv-input-changeat .rv-control-name, .fgpv rv-settings .rv-input-footer .rv-input-changeat .rv-control-name {
-      text-transform: lowercase; }
+    [is=rv-map] rv-settings .rv-input-footer .rv-input-changeat, .fgpv rv-settings .rv-input-footer .rv-input-changeat {
+      display: inline;
+      margin: 0 4px;
+      padding: 0 4px; }
+      [is=rv-map] rv-settings .rv-input-footer .rv-input-changeat .rv-control-name, .fgpv rv-settings .rv-input-footer .rv-input-changeat .rv-control-name {
+        text-transform: lowercase; }
     [is=rv-map] rv-settings .rv-input-footer rv-legend-control, .fgpv rv-settings .rv-input-footer rv-legend-control {
+      display: inline;
       padding: 0;
       margin: 0 4px; }
       [is=rv-map] rv-settings .rv-input-footer rv-legend-control .rv-link-button, .fgpv rv-settings .rv-input-footer rv-legend-control .rv-link-button {
@@ -18686,6 +18701,13 @@ Obviously you need some kind of rules and criteria:
         margin: 0;
         padding: 0 4px;
         height: 20px; }
+        [is=rv-map] rv-settings .rv-input-footer rv-legend-control .rv-link-button span, .fgpv rv-settings .rv-input-footer rv-legend-control .rv-link-button span {
+          text-align: left;
+          width: 250px;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis; }
   [is=rv-map] rv-toc .rv-content-pane .rv-content, .fgpv rv-toc .rv-content-pane .rv-content {
     padding: 0; }
   [is=rv-map] .rv-toc, .fgpv .rv-toc {

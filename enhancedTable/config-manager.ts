@@ -37,7 +37,7 @@ export class ConfigManager {
      * Helper method to tableInit
      */
     maximize(): void {
-        const maximized = this.tableConfig.maximize || false;
+        const maximized = this.panelManager.panelStateManager.maximized;
         this.panelManager.maximized = maximized;
         this.panelManager.setSize();
     }
@@ -50,18 +50,16 @@ export class ConfigManager {
     }
 
     /**
-     * Set default search parameter for global search if defined in the config.
+     * Gets default search parameter for global search if defined in the config.
      */
-    setDefaultSearchParameter(): void {
-        const searchText = this.tableConfig.search.value
-        if (searchText !== undefined && this.globalSearchEnabled) {
-            let enhancedTable = document.getElementById('enhancedTable');
+    get defaultGlobalSearch(): string {
+        const searchText = this.tableConfig.search.value === undefined ? '' : this.tableConfig.search.value;
+        return searchText;
+    }
 
-            //TODO FIXME: the input isn't getting updated in the input field, but getting updated in the DOM!
-            let input = <HTMLInputElement>enhancedTable.querySelector('.md-input');
-            input.value = searchText;
-
-            this.panelManager.tableOptions.api.setQuickFilter(searchText);
+    setDefaultGlobalSearchFilter(): void {
+        if (this.globalSearchEnabled) {
+            this.panelManager.tableOptions.api.setQuickFilter(this.defaultGlobalSearch);
         }
     }
 

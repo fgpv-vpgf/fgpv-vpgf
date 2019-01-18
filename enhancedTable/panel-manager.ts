@@ -6,7 +6,9 @@ import './main.scss';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
 import { scrollIntoView, tabToGrid } from './grid-accessibility';
-import { ColumnConfigManager } from './config-manager';
+import { ConfigManager, ColumnConfigManager } from './config-manager';
+import { PanelStateManager } from './panel-state-manager';
+
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
  *
@@ -59,10 +61,7 @@ export class PanelManager {
             // set legend block / layer that the panel corresponds to
             this.currentTableLayer = layer;
             this.setLegendBlock(this.currentTableLayer._mapInstance.legendBlocks.entries);
-
             this.panelRowsManager = new PanelRowsManager(this);
-
-
             // set header / controls for panel
             let controls = this.header;
             controls = [
@@ -81,10 +80,10 @@ export class PanelManager {
             //create details and zoom buttons, open the panel and display proper filter values
             new DetailsAndZoomButtons(this);
             new Grid(this.tableContent[0], tableOptions);
-            this.panelRowsManager.initObservers();
-            this.configManager.setDefaultSearchParameter();
+            this.configManager.setDefaultGlobalSearchFilter();
             this.panel.open();
-            this.panelStatusManager.getFilterStatus();
+            this.panelStatusManager.getScrollRange();
+            this.panelRowsManager.initObservers();
 
             this.tableOptions.onGridReady = () => {
                 this.autoSizeToMaxWidth();
@@ -110,6 +109,8 @@ export class PanelManager {
             this.gridBody.addEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
             this.configManager.initColumns();
         }
+
+        this.panelStatusManager.getFilterStatus();
     }
 
     close() {
@@ -236,16 +237,19 @@ export class PanelManager {
     angularHeader() {
         const that = this;
         this.mapApi.agControllerRegister('SearchCtrl', function () {
-            this.searchText = '';
+
+            that.searchText = that.configManager.defaultGlobalSearch;
+            this.searchText = that.searchText;
             this.updatedSearchText = function () {
-                that.tableOptions.api.setQuickFilter(this.searchText);
-                that.panelRowsManager.quickFilterText = this.searchText;
+                that.tableOptions.api.setQuickFilter(that.searchText);
+                that.panelRowsManager.quickFilterText = that.searchText;
                 that.tableOptions.api.selectAllFiltered();
                 that.panelStatusManager.getFilterStatus();
                 that.tableOptions.api.deselectAllFiltered();
             };
             this.clearSearch = function () {
-                this.searchText = '';
+                that.searchText = '';
+                this.searchText = that.searchText;
                 this.updatedSearchText();
                 that.panelStatusManager.getFilterStatus();
             };
@@ -257,9 +261,11 @@ export class PanelManager {
             this.showFilter = !!that.tableOptions.floatingFilter;
 
             // sets the table size, either split view or full height
+            // saves the set size to PanelStateManager
             this.setSize = function (value) {
-                that.maximized = value === 'true' ? true : false;
+                that.panelStateManager.maximized = value === 'true' ? true : false;
                 !that.maximized ? that.mapApi.mapI.externalPanel(undefined) : that.mapApi.mapI.externalPanel($('#enhancedTable'));
+                that.maximized = value === 'true' ? true : false;
                 that.setSize();
                 that.panelStatusManager.getScrollRange();
             };
@@ -360,6 +366,8 @@ export interface PanelManager {
     configManager: any;
     mobileMenuScope: MobileMenuScope;
     recordCountScope: RecordCountScope
+    panelStateManager: PanelStateManager;
+    searchText: string;
 }
 
 interface EnhancedJQuery extends JQuery {

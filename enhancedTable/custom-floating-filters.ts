@@ -1,12 +1,35 @@
 import { NUMBER_FILTER_TEMPLATE, DATE_FILTER_TEMPLATE, TEXT_FILTER_TEMPLATE, SELECTOR_FILTER_TEMPLATE } from "./templates";
 import { TextFloatingFilterComp } from "ag-grid-community/dist/lib/filter/floatingFilter";
 
+
+function setUpMinMaxFilters(colDef, defaultValue, panelStateManager) {
+    let min = panelStateManager.getColumnFilter([colDef.field + ' min']);
+    let max = panelStateManager.getColumnFilter([colDef.field + ' max']);
+
+    if (min !== undefined || max !== undefined) {
+        // if value saved was null means filter was cleared
+        // if value is undefined, means use default value in config
+        // otherwise used saved value (will be a number)
+        min = (min === null) ? '' : (min === undefined ? defaultValue.split(',')[0] : min);
+        max = (max === null) ? '' : (max === undefined ? defaultValue.split(',')[1] : max);
+        return defaultValue = `${min},${max}`;
+    }
+
+    return undefined;
+
+}
+
 /**Sets up number floating filter accounting for static types and default values*/
-export function setUpNumberFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any) {
+export function setUpNumberFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, panelStateManager: any) {
+
+    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue, panelStateManager);
+    defaultValue = minAndMaxFilters !== undefined ? minAndMaxFilters : defaultValue;
 
     $.extend(colDef.floatingFilterComponentParams, {
         isStatic: isItStatic,
-        defaultValue: defaultValue
+        defaultValue: defaultValue,
+        panelStateManager: panelStateManager,
+        currColumn: colDef
     });
 
     //Column should filter numbers properly
@@ -16,7 +39,11 @@ export function setUpNumberFilter(colDef: any, isItStatic: boolean, defaultValue
 }
 
 /**Sets up date floating filter accounting for static types and default values*/
-export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, defaultValue: any) {
+export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, defaultValue: any, panelStateManager: any) {
+
+    const minAndMaxFilters = setUpMinMaxFilters(colDef, defaultValue, panelStateManager);
+    defaultValue = minAndMaxFilters !== undefined ? minAndMaxFilters : defaultValue;
+
     colDef.minWidth = 423;
     // Column should render and filter date properly
     colDef.filter = 'agDateColumnFilter';
@@ -35,6 +62,8 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, d
         isStatic: isItStatic,
         value: defaultValue,
         map: mapApi,
+        panelStateManager: panelStateManager,
+        currColumn: colDef
     });
 
     colDef.floatingFilterComponent = DateFloatingFilter;
@@ -50,12 +79,19 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, d
 
 /**Sets up text floating filter accounting for static types, default values and selector types*/
 export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean,
-    searchStrictMatchEnabled: boolean, defaultValue: any, map: any) {
+    searchStrictMatchEnabled: boolean, defaultValue: any, map: any, panelStateManager: any) {
+
+    // if PanelStateManager has a value saved, it is going to override the default value in the config
+    defaultValue = panelStateManager.getColumnFilter(colDef.field) !== undefined ?
+        panelStateManager.getColumnFilter(colDef.field) :
+        defaultValue;
 
     $.extend(colDef.floatingFilterComponentParams, {
         isStatic: isStatic,
         defaultValue: defaultValue,
         map: map,
+        panelStateManager: panelStateManager,
+        currColumn: colDef
     });
 
     colDef.floatingFilterComponent = TextFloatingFilter;
@@ -97,14 +133,23 @@ export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnable
 }
 
 /**Sets up a selector floating filter accounting for static types and default values*/
-export function setUpSelectorFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, mapApi: any) {
+export function setUpSelectorFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, mapApi: any, panelStateManager: any) {
+
+    // if there was a previously saved value, that takes precedence over default config selector filter
+    // if the previously saved value was null, it means the selector filter was cleared on table close/reload
+    // so no default filter is set
+    let value = (panelStateManager.getColumnFilter(colDef.field) !== undefined) ?
+        (panelStateManager.getColumnFilter(colDef.field) === null ? undefined :
+            panelStateManager.getColumnFilter(colDef.field)) :
+        defaultValue;
 
     $.extend(colDef.floatingFilterComponentParams, {
         isStatic: isItStatic,
-        value: defaultValue,
+        value: value,
         tableOptions: gridOptions,
         map: mapApi,
-        currColumn: colDef
+        currColumn: colDef,
+        panelStateManager: panelStateManager
     });
 
     colDef.floatingFilterComponent = SelectorFloatingFilter;
@@ -131,12 +176,14 @@ function getDateString(value) {
 export class TextFloatingFilter {
 
     init(params) {
+        this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(params.defaultValue, params.isStatic);
         this.scope = params.map.$compile(this.eGui);
         this.scope.input = params.defaultValue !== undefined ? params.defaultValue : '';
         this.scope.inputChanged = () => {
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
             this.onFloatingFilterChanged({ model: this.getModel() });
         }
 
@@ -162,6 +209,7 @@ export class TextFloatingFilter {
     onParentModelChanged(parentModel: any) {
         if (parentModel === null) {
             this.scope.input = '';
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
         }
     }
 }
@@ -173,6 +221,7 @@ export class TextFloatingFilter {
 export class NumberFloatingFilter {
 
     init(params: any) {
+        this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
         (<any>this.eGui).class = 'rv-min-max';
@@ -181,7 +230,9 @@ export class NumberFloatingFilter {
         if (params.defaultValue === undefined) {
             this.currentValues = { min: null, max: null };
         } else {
-            this.currentValues = { min: Number(params.defaultValue.split(',')[0]), max: Number(params.defaultValue.split(',')[1]) };
+            let minVal = params.defaultValue.split(',')[0] === '' ? null : Number(params.defaultValue.split(',')[0]);
+            let maxVal = params.defaultValue.split(',')[1] === '' ? null : Number(params.defaultValue.split(',')[1]);
+            this.currentValues = { min: minVal, max: maxVal };
         }
 
         this.minFilterInput = this.eGui.querySelector(".rv-min");
@@ -203,6 +254,11 @@ export class NumberFloatingFilter {
         } else {
             this.currentValues.min = Number(this.minFilterInput.value);
         }
+
+        // save value on panel reload manager
+        let key = this.params.currColumn.field + ' min';
+        this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
+
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
@@ -213,6 +269,11 @@ export class NumberFloatingFilter {
         } else {
             this.currentValues.max = Number(this.maxFilterInput.value);
         }
+
+        // save value on panel reload manager
+        let key = this.params.currColumn.field + ' max';
+        this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
+
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
@@ -244,6 +305,8 @@ export class NumberFloatingFilter {
         if (parentModel === null) {
             this.minFilterInput.value = '';
             this.maxFilterInput.value = '';
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
         }
     }
 
@@ -257,20 +320,31 @@ export class NumberFloatingFilter {
 export class DateFloatingFilter {
 
     init(params: any) {
-
+        this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = $(DATE_FILTER_TEMPLATE(params.value, params.isStatic))[0];
         (<any>this.eGui).class = 'rv-date-picker'
         this.scope = params.map.$compile(this.eGui);
 
-        this.scope.min = params.value !== undefined ? new Date(params.value.split(',')[0]) : null;
-        this.scope.max = params.value !== undefined ? new Date(params.value.split(',')[1]) : null;
+        this.scope.min = params.value !== undefined &&
+            params.value.split(',')[0] !== '' ?
+            new Date(params.value.split(',')[0]) : null;
+
+        this.scope.max = params.value !== undefined &&
+            params.value.split(',')[1] !== '' ?
+            new Date(params.value.split(',')[1]) : null;
 
         this.scope.minChanged = () => {
+            // save value on panel reload manager
+            let key = this.params.currColumn.field + ' min';
+            this.params.panelStateManager.setColumnFilter(key, this.scope.min !== null ? this.scope.min.toString() : null);
             this.onFloatingFilterChanged({ model: this.getModel() });
         };
 
         this.scope.maxChanged = () => {
+            // save value on panel reload manager
+            let key = this.params.currColumn.field + ' max';
+            this.params.panelStateManager.setColumnFilter(key, this.scope.max !== null ? this.scope.max.toString() : null);
             this.onFloatingFilterChanged({ model: this.getModel() });
         };
 
@@ -314,6 +388,8 @@ export class DateFloatingFilter {
         if (parentModel === null) {
             this.scope.min = null;
             this.scope.max = null;
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' max', null);
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field + ' min', null);
         }
     }
 
@@ -329,6 +405,7 @@ export class DateFloatingFilter {
 export class SelectorFloatingFilter {
 
     init(params: any) {
+        this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = $(SELECTOR_FILTER_TEMPLATE(params.value, params.isStatic))[0];
         (<any>this.eGui).class = 'rv-selector';
@@ -355,6 +432,18 @@ export class SelectorFloatingFilter {
 
         // fires when user makes selection changes and closes the drop down menu window
         this.scope.selectionChanged = () => {
+
+            // stores selected options for panel reload manager to reuse
+            let selectedOptions = '[';
+            this.scope.selectedOptions.forEach(option => {
+                if (this.scope.selectedOptions[this.scope.selectedOptions.length - 1] === option) {
+                    selectedOptions += `"${option}"`
+                } else {
+                    selectedOptions += `"${option}", `
+                }
+            });
+            selectedOptions += ']';
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, selectedOptions);
             this.onFloatingFilterChanged({ model: this.getModel() })
         }
 
@@ -387,6 +476,7 @@ export class SelectorFloatingFilter {
     onParentModelChanged(parentModel: any) {
         if (parentModel === null) {
             this.scope.selectedOptions = [];
+            this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, null);
         }
     }
 }
@@ -399,6 +489,7 @@ export interface NumberFloatingFilter {
     maxFilterInput: any;
     isStatic: boolean;
     value: any;
+    params: any;
 }
 
 export interface DateFloatingFilter {
@@ -407,6 +498,7 @@ export interface DateFloatingFilter {
     eGui: HTMLElement;
     isStatic: boolean;
     value: any;
+    params: any;
 }
 
 export interface TextFloatingFilter {
@@ -415,6 +507,7 @@ export interface TextFloatingFilter {
     defaultValue: any;
     value: any;
     scope: any;
+    params: any;
 }
 
 export interface SelectorFloatingFilter {
@@ -423,4 +516,5 @@ export interface SelectorFloatingFilter {
     defaultValue: any;
     value: any;
     scope: any;
+    params: any;
 }

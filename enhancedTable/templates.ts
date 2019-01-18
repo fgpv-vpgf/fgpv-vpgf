@@ -117,23 +117,23 @@ export const RECORD_COUNT_TEMPLATE = `
     <span class="filterRecords">{{ filterRecords }}</span>
 </p>`;
 
-export const DETAILS_TEMPLATE = (rowIndex) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${rowIndex})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
+export const DETAILS_TEMPLATE = (oid) =>
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
         <md-icon md-svg-src="action:description" aria-hidden='false' class='ng-scope' role='img'>
             <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.details' | translate }}</md-tooltip>
         </md-icon>
     </button>`;
 
-export const ZOOM_TEMPLATE = (rowIndex) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${rowIndex})'  md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-zoom' aria-label="{{ 't.detailsAndZoom.zoom' | translate }}">
+export const ZOOM_TEMPLATE = (oid) =>
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})'  md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-zoom' aria-label="{{ 't.detailsAndZoom.zoom' | translate }}">
         <md-icon md-svg-src="action:zoom_in" aria-hidden='false'>
             <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.zoom' | translate }}</md-tooltip>
         </md-icon>
     </button>`;
 
 export const NUMBER_FILTER_TEMPLATE = (value, isStatic) => {
-    const minVal = (value === undefined) ? '' : parseInt(value.split(',')[0]);
-    const maxVal = (value === undefined) ? '' : parseInt(value.split(',')[1]);
+    const minVal = (value === undefined) ? '' : (value.split(',')[0] !== '') ? parseInt(value.split(',')[0]) : '';
+    const maxVal = (value === undefined) ? '' : (value.split(',')[1] !== '') ? parseInt(value.split(',')[1]) : '';
     if (isStatic === false) {
         return `<input class="rv-min" style="width:50%" type="text" placeholder="min" value='${minVal}'/>
          <input class="rv-max" style="width:50%" type="text" placeholder="max" value='${maxVal}'/>`;

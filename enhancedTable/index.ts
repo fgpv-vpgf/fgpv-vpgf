@@ -7,6 +7,7 @@ import {
     setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter
 } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
+import { PanelStateManager } from './panel-state-manager';
 
 const NUMBER_TYPES = ["esriFieldTypeOID", "esriFieldTypeDouble", "esriFieldTypeInteger"];
 const DATE_TYPE = "esriFieldTypeDate";
@@ -21,10 +22,20 @@ class TableBuilder {
         this.panel = new PanelManager(mapApi);
 
         this.mapApi.layers.click.subscribe(baseLayer => {
+
+            if (baseLayer.panelStateManager === undefined) {
+                // if no PanelStateManager exists for this BaseLayer, create a new one
+                baseLayer.panelStateManager = new PanelStateManager(baseLayer);
+            }
+
+            this.panel.panelStateManager = baseLayer.panelStateManager;
+
             const attrs = baseLayer.getAttributes();
             this.attributeHeaders = baseLayer.attributeHeaders;
             if (attrs.length === 0) {
+                baseLayer.fetchAttributes();
                 // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
+                // TODO: on layer reload, attributes never seem to be added
                 this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
                     if (
                         attrs.attributes[0] &&
@@ -60,6 +71,7 @@ class TableBuilder {
                 }
                 if (layer) {
                     this.mapApi.layers._click.next(layer);
+                    this.legendBlock = legendBlock;
                 }
             }
         });
@@ -108,15 +120,16 @@ class TableBuilder {
                             // floating filters of type number, date, text
                             // text can be of type text or selector
                             if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
-                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions);
+                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions, this.panel.panelStateManager);
                             } else if (fieldInfo.type === DATE_TYPE) {
-                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value);
+                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value, this.panel.panelStateManager);
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
                                 if (isSelector) {
-                                    setUpSelectorFilter(colDef, isStatic, column.value, this.tableOptions, this.mapApi);
+                                    setUpSelectorFilter(colDef, isStatic, column.value, this.tableOptions,
+                                        this.mapApi, this.panel.panelStateManager);
                                 } else {
                                     setUpTextFilter(colDef, isStatic, this.configManager.lazyFilterEnabled,
-                                        this.configManager.searchStrictMatchEnabled, column.value, this.mapApi);
+                                        this.configManager.searchStrictMatchEnabled, column.value, this.mapApi, this.panel.panelStateManager);
                                 }
                             }
                         }
@@ -160,8 +173,8 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             let zoomDef = (<any>Object).assign({}, colDef);
             zoomDef.field = 'zoom';
             zoomDef.cellRenderer = function (params) {
-                var eSpan = new panel.container(ZOOM_TEMPLATE(params.rowIndex)).elementAttr[0];
-                params.eGridCell.addEventListener('keydown', function(e) {
+                var eSpan = new panel.container(ZOOM_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
+                params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === "Enter") {
                         eSpan.click();
                     }
@@ -171,8 +184,8 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             }
             cols.splice(0, 0, zoomDef);
             colDef.cellRenderer = function (params) {
-                var eSpan = new panel.container(DETAILS_TEMPLATE(params.rowIndex)).elementAttr[0];
-                params.eGridCell.addEventListener('keydown', function(e) {
+                var eSpan = new panel.container(DETAILS_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
+                params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === "Enter") {
                         console.log(eSpan);
                         eSpan.click();
@@ -210,6 +223,7 @@ interface TableBuilder {
     panel: PanelManager;
     translations: any;
     configManager: ConfigManager;
+    legendBlock: any;
 }
 
 interface ColumnDefinition {
