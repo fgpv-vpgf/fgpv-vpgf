@@ -52,11 +52,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
     let errorToast;
 
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
+
     // set state change watches on metadata, settings and table panel
     watchPanelState('sideMetadata', 'metadata');
     watchPanelState('sideSettings', 'settings');
     watchPanelState('tableFulldata', 'table');
-
 
     events.$on(events.rvMapLoaded, () => {
         // wire in a hook to any map for removing a layer. this makes it available on the API
@@ -120,7 +122,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @function reloadLayer
      * @param {LegendBlock} legendBlock legend block to be reloaded
      */
-    function reloadLayer(legendBlock) {
+    function reloadLayer(legendBlock, interval = false) {
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
         const layerRecord = configService.getSync.map.layerRecords.find(item =>
             item.config.id === legendBlock.layerRecordId);
@@ -184,6 +186,19 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 } else if (openPanel.name === 'metadata') {
                     toggleMetadata(legendBlock);
                 }
+            }
+
+            // fire layer reloaded observable if layer can be found
+            let layer;
+            if (legendBlock.parentLayerType === 'esriDynamic') {
+                layer = mApi.layers.allLayers.find(function (l) {
+                    return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
+                });
+            } else {
+                layer = mApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+            }
+            if (layer) {
+                mApi.layers._reload.next(layer, interval);
             }
         }, (layerName) => {
             console.error('Failed to reload layer:', layerName);

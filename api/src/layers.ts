@@ -477,8 +477,8 @@ export class ConfigLayer extends BaseLayer {
             attribs
                 .then((attrib: AttribObject) => {
 
-                    // the attributes were previously downloaded or do not contain rvSymbol, do not reupdate the array and do not trigger `attributes_added`
-                    if (this._attributeArray.length > 0 || (attrib.features[0] && !(<any>attrib.features[0].attributes)['rvSymbol'])) {
+                    // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
+                    if (this._attributeArray.length > 0) {
                         return;
                     }
 
@@ -873,6 +873,7 @@ export class LayerGroup {
     _attributesRemoved: Subject<LayerAndAttribs>;
 
     _click: Subject<BaseLayer>;
+    _reload: Subject<BaseLayer>;
 
     /** @ignore */
     _identify: Subject<any>;
@@ -889,6 +890,7 @@ export class LayerGroup {
         this._attributesRemoved = new Subject();
 
         this._click = new Subject();
+        this._reload = new Subject();
         this._identify = new Subject<any>();
     }
 
@@ -943,6 +945,14 @@ export class LayerGroup {
      */
     get click(): Observable<BaseLayer> {
         return this._click.asObservable();
+    }
+
+    /**
+     * Emits whenever a layer is reloaded.
+     * @event reload
+     */
+    get reload(): Observable<BaseLayer> {
+        return this._reload.asObservable();
     }
 
     /**
