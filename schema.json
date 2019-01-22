@@ -480,6 +480,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect."
+                },
+                "printEnabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if print button is available on the datatable. Defaults to false."
                 }
             },
             "description": "Specifies how layers columns and global search are set",

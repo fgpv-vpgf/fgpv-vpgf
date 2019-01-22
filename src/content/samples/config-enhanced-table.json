@@ -145,7 +145,6 @@
         "layerType": "esriFeature",
         "table": {
           "applyMap": true,
-          "lazyFilter": true,
           "columns": [
             {
               "data": "OBJECTID",
@@ -161,13 +160,14 @@
                 "value": "Abbotsford"
               }
             }
-          ]
+          ],
+          "lazyFilter": true
         },
         "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
       },
       {
         "id": "2",
-        "name": "3 column filters",
+        "name": "3 columns no filters",
         "layerType": "esriFeature",
         "table": {
           "applyMap": true,
@@ -175,23 +175,20 @@
             {
               "data": "OBJECTID",
               "filter": {
-                "type": "number",
-                "value": "0,25"
+                "type": "number"
               }
             },
             {
               "data": "Country",
               "filter": {
-                "type": "string",
-                "value": "Canada"
+                "type": "string"
               },
               "searchable": false
             },
             {
               "data": "Latitude",
               "filter": {
-                "type": "number",
-                "value": "48,49"
+                "type": "number"
               }
             }
           ]
@@ -236,18 +233,18 @@
             "enabled": false
           },
           "lazyFilter": true,
-          "applyMap": true
+          "applyMap": true,
+          "printEnabled": true
         }
       },
       {
         "id": "8",
-        "name": "No initial filter 2",
+        "name": "Has initial filters",
         "layerType": "esriFeature",
         "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5",
         "table": {
           "title": "Table Test Two - Custom Title",
           "search": {
-            "enabled": true,
             "value": "Ener"
           },
           "applyMap": false,
@@ -272,15 +269,14 @@
               }
             },
             {
-              "data": "Operator",
-              "visible": false
+              "data": "Operator"
             }
           ]
         }
       },
       {
         "id": "5",
-        "name": "Dynamic Layer",
+        "name": "Dynamic Layer with both children with filters",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
@@ -307,7 +303,7 @@
                   "data": "OBJECTID",
                   "filter": {
                     "type": "number",
-                    "value": "0,30"
+                    "value": "0,15"
                   }
                 }
               ]
@@ -379,7 +375,24 @@
         "id": "9",
         "name": "BadDates",
         "layerType": "esriFeature",
-        "url": "https://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
+        "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0",
+        "table": {
+          "columns": [
+            {
+              "data": "iStartToParty",
+              "title": "iStartToParty"
+            },
+            {
+              "data": "iEndTheParty",
+              "title": "iEndTheParty",
+              "filter": {
+                "type": "date",
+                "value": "2017-02-01,2019-04-30",
+                "static": true
+              }
+            }
+          ]
+        }
       }
     ],
     "extentSets": [
