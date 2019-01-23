@@ -41,6 +41,11 @@ export default class Loader {
             .forEach((p: any) => {
                 const plugin = this.initialize((<any>window)[p]);
 
+                if (!plugin) {
+                    console.error(`Plugin with name ${p} is not defined at window.${p}. This plugin is ignored.`);
+                    return;
+                }
+
                 if (plugin.intention && loadIntentions[plugin.intention]) {
                     delete loadIntentions[plugin.intention];
                     this.intentions[plugin.intention] = plugin;
@@ -90,10 +95,11 @@ export default class Loader {
     /**
      * Checks each plugin for an init method. If set, calls the method and passes the maps api.
      */
-    init(api: any) {
+    init(api: any, legacy_api: any) {
         this.extensions
             .concat(Object.values(this.intentions))
             .forEach(p => {
+                p._RV = legacy_api;
                 if (p.init) {
                     p.init(api);
                 }

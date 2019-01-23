@@ -238,13 +238,10 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
         * @function getLongLink
         */
         function getLongLink() {
-            if (typeof URLS.long === 'undefined' && LEGACY_API.getMap(appInfo.id)) { // no cached url exists
+            if (typeof URLS.long === 'undefined') { // no cached url exists
                 // eslint-disable-next-line no-return-assign
-                LEGACY_API.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
-                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
-                }).then(() => {
-                    selectURL();
-                });
+                URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(LEGACY_API.getBookmark());
+                selectURL();
             } else {
                 self.url = URLS.long;
                 selectURL();

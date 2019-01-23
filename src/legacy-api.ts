@@ -4,6 +4,7 @@ class MapInstance {
     id: string;
     queues: { [key:number]: Array<() => void>; }; // queue function list waiting to be executed
     legacyFunctions: { [key:string]: (...args: any[]) => any };
+    deprecatedWarning: boolean = false;
 
     constructor(id: string) {
         this.id = id;
@@ -32,6 +33,11 @@ class MapInstance {
      * @param {...any} args         legacy api function parameters
      */
     queue(action: string, priority: number, ...args: any[]) {
+        if (!this.deprecatedWarning) {
+            console.error('This api is deprecated and will be removed in a future release. Please use the new api located at window.RZ');
+            this.deprecatedWarning = true;
+        }
+
         // ramp has defined the legacy function, call immediately
         if (this.legacyFunctions[action]) {
             return new Promise(resolve => resolve(this.legacyFunctions[action](...args)));

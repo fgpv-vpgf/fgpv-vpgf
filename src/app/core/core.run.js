@@ -17,12 +17,6 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
     // initialize config service
     configService.initialize();
 
-    // Do nothing if legacy-api.js is not present on the page
-    if(!LEGACY_API || !LEGACY_API.getMap) {
-        events.$on(events.rvCfgInitialized, () => $rootScope.$broadcast(events.rvReady));
-        return;
-    }
-
     // wait on the config and geoapi
     events.$on(events.rvCfgInitialized, () => readyDelay());
 
@@ -70,10 +64,13 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
             start
         };
 
-        const legacyAPI = LEGACY_API.getMap(appInfo.id);
-        Object.assign(legacyAPI.legacyFunctions, preMapService);
+        if (window.RV && window.RV.getMap) {
+            const legacyAPI = window.RV.getMap(appInfo.id);
+            Object.assign(legacyAPI.legacyFunctions, preMapService);
+            legacyAPI.runQueue();
+        }
 
-        legacyAPI.runQueue();
+        Object.assign(LEGACY_API, preMapService);
 
         /******************/
 
@@ -105,7 +102,7 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
                 reloadService.loadWithExtraKeys(bookmark, keys);
                 sessionStorage.removeItem(appInfo.id);
             } else {
-                legacyAPI.loadRcsLayers(keys);
+                LEGACY_API.loadRcsLayers(keys);
                 start();
             }
         }
@@ -149,11 +146,6 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
  */
 function apiBlock($rootScope, geoService, configService, events,
     bookmarkService, gapiService, reloadService, appInfo, stateManager, detailService, mapToolService, $mdSidenav, LEGACY_API) {
-    
-    // Do nothing if legacy-api.js is not present on the page
-    if(!LEGACY_API || !LEGACY_API.getMap) {
-        return;
-    }
 
     const service = {
         setLanguage,
@@ -177,7 +169,11 @@ function apiBlock($rootScope, geoService, configService, events,
         getConfig
     };
 
-    Object.assign(LEGACY_API.getMap(appInfo.id).legacyFunctions, service);
+    if (window.RV && window.RV.getMap) {
+        Object.assign(window.RV.getMap(appInfo.id).legacyFunctions, service);
+    }
+
+    Object.assign(LEGACY_API, service);
 
     /**
      * Sets the translation language and reloads the map
