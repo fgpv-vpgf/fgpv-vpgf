@@ -21,7 +21,7 @@ import $ from 'jquery';
 import { MouseEvent, esriMouseEvent, MapClickEvent } from 'api/events';
 import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
-import { FGPVConfigSchema as ViewerConfigSchema } from 'api/schema';
+import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { LayerGroup, SimpleLayer } from 'api/layers';
 import { Panel, PanelElem } from 'api/panel';

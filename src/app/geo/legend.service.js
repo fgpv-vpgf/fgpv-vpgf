@@ -54,11 +54,8 @@ function legendServiceFactory(
                 const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
-                    const deactivate = events.$on(events.rvApiLayerAdded, (_, layers) => {
-                        if (layers[0].id === layerJSON.id) {
-                            deactivate();
-                            resolve(layers);
-                        }
+                    events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        resolve(layers);
                     });
                 });
             } else {
@@ -106,10 +103,11 @@ function legendServiceFactory(
         layerDefinitions.forEach(ld => {
             let index = layerBlueprintsCollection.findIndex(blueprint => blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(entry =>
-                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
-                        ? entry
-                        : null
+                .walk(
+                    entry =>
+                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
+                            ? entry
+                            : null
                 )
                 .filter(a => a)[0];
 
@@ -633,8 +631,8 @@ function legendServiceFactory(
 
                     // show filter flag if there is a filter query being applied
                     legendBlock.filter =
-                        item.proxyWrapper.layerConfig.initialFilteredQuery &&
-                        item.proxyWrapper.layerConfig.initialFilteredQuery !== '';
+                        (item.proxyWrapper.layerConfig.initialFilteredQuery !== undefined &&
+                            item.proxyWrapper.layerConfig.initialFilteredQuery !== '') ? true : false;
 
                     if (!legendBlock.hidden) {
                         apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
@@ -904,7 +902,15 @@ function legendServiceFactory(
             node.layerRecordId = layerConfig.id;
 
             // show filter flag if there is a filter query being applied
-            node.filter = layerConfig.initialFilteredQuery && layerConfig.initialFilteredQuery !== '';
+            node.filter = false;
+
+            if (layerConfig.table.columns !== undefined) {
+                layerConfig.table.columns.forEach(column => {
+                    if (column.filter !== undefined && column.filter.value !== undefined) {
+                        node.filter = true;
+                    }
+                })
+            }
 
             legendMappings[layerConfig.id].push({
                 legendBlockId: node.id,
