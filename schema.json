@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "FGPV Config Schema",
+    "title": "Fgpv Config Schema",
     "type": "object",
     "version": 2.3,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
