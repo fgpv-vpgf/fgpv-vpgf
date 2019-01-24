@@ -7,7 +7,8 @@ require('dotenv').config({ path: path.join(SOURCE_PATH, '.env') });
 
 const pluginList = {
     enhancedTable: path.join(SOURCE_PATH, 'enhancedTable'),
-    areaOfInterest: path.join(SOURCE_PATH, 'areaOfInterest')
+    areaOfInterest: path.join(SOURCE_PATH, 'areaOfInterest'),
+    backToCart: path.join(SOURCE_PATH, 'backToCart')
 };
 
 module.exports = function(env = {}) {

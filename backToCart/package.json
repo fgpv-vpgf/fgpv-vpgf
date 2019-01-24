@@ -1,0 +1,10 @@
+{
+    "name": "backToCart",
+    "version": "1.0.0",
+    "description": "An extension for rerouting to the data catalogue from a RAMP instance",
+    "main": "index.ts",
+    "scripts": {},
+    "keywords": ["back", "cart", "catalogue", "ramp", "extension", "plugin"],
+    "license": "ISC",
+    "dependencies": {}
+}
