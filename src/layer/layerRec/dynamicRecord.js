@@ -692,7 +692,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
         opts.layerIds.forEach(leafIndex => {
             let childProxy = this.getChildProxy(leafIndex);
-            opts.layerDefinitions[leafIndex] = childProxy.filter.getSqlPlusGrid();
+            opts.layerDefinitions[leafIndex] = childProxy.filter.getCombinedSql();
             const identifyResult = new shared.IdentifyResult(childProxy);
             identifyResults[leafIndex] = identifyResult;
         });

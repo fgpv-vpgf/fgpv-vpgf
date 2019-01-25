@@ -579,7 +579,7 @@ class AttribFC extends basicFC.BasicFC {
     applyFilterToLayer () {
         // note DynamicFC will override this function to handle the dynamic layer case
         const p = this._parent;
-        const sql = this.filter.getSqlPlusGrid();
+        const sql = this.filter.getCombinedSql();
 
         if (p.dataSource() === shared.dataSources.ESRI) {
             // feature layer on a server
@@ -591,24 +591,52 @@ class AttribFC extends basicFC.BasicFC {
     }
 
     /**
-     * Gets array of object ids that currently pass layer-based filters (i.e. not a grid filter)
+     * Gets array of object ids that currently pass any filters
      *
-     * @function getLayerFilterOIDs
+     * @function getFilterOIDs
      *
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
      */
-    getLayerFilterOIDs (extent) {
+    getFilterOIDs (extent) {
+        const sql = this.filter.getCombinedSql();
+        const cache = this.filter.getCacheKey(true, extent);
+        return this.getLayerFilterOIDs(sql, cache, extent);
+    }
+
+    /**
+     * Gets array of object ids that currently pass any filters, but excludes grid-originating filters
+     *
+     * @function getNonGridFilterOIDs
+     *
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of object ids that pass non-grid filters. if no filters are active, resolves with undefined.
+     */
+    getNonGridFilterOIDs (extent) {
+        const sql = this.filter.getCombinedNonGridSql();
+        const cache = this.filter.getCacheKey(false, extent);
+        return this.getLayerFilterOIDs(sql, cache, extent);
+    }
+
+    /**
+     * Worker function. Gets array of object ids that currently pass layer-based filters (i.e. not a grid filter)
+     *
+     * @function getLayerFilterOIDs
+     * @private
+     *
+     * @param {String} sql the where clause to use for the filter
+     * @param {String} cacheKey appropriate cache to utilize
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
+     */
+    getLayerFilterOIDs (sql, cacheKey, extent) {
 
         const p = this._parent;
         const api = p._apiRef;
-        const sql = this.filter.getCombinedSql();
         const opts = {
-            featureLayer: p._layer,
             geometry: extent,
             where: sql
         };
-        let cacheProp;
 
         if (!(sql || extent)) {
             // no filters active. return undefined so caller can not worry about applying filters
@@ -619,19 +647,16 @@ class AttribFC extends basicFC.BasicFC {
             // essentially this determines if our extent was already cached,
             // bonks the cache if it is stale
             this.filter.setExtent(extent);
-            cacheProp = '_layerExtentOID';
-        } else {
-            cacheProp = '_layerSqlOID';
         }
 
         // TODO once things are working, attempt to make all the promise caching into worker functions.
 
         // if not cached, execute a query
-        if (!this.filter[cacheProp]) {
+        if (!this.filter[cacheKey]) {
             if (p.dataSource() === shared.dataSources.ESRI) {
                 // feature layer on a server. just use query task
                 opts.url = this.queryUrl;
-                this.filter[cacheProp] = api.query.queryIds(opts);
+                this.filter[cacheKey] = api.query.queryIds(opts);
             } else {
                 // file or wfs
                 let eProm, sArray;
@@ -644,7 +669,7 @@ class AttribFC extends basicFC.BasicFC {
                     eProm = api.query.queryIds(opts);
                     if (!sql) {
                         // nothing else to filter, set the cache
-                        this.filter[cacheProp] = eProm;
+                        this.filter[cacheKey] = eProm;
                     }
                 } 
                 if (sql) {
@@ -654,18 +679,18 @@ class AttribFC extends basicFC.BasicFC {
                                 .map(a => a[oid]);
                     if (!extent) {
                         // nothing else to filter, set the cache
-                        this.filter[cacheProp] = Promise.resolve(sArray);
+                        this.filter[cacheKey] = Promise.resolve(sArray);
                     }
                 }
                 if (sql && extent) {
                     // combine the two results, cache it
-                    this.filter[cacheProp] = eProm.then(qArray => {
+                    this.filter[cacheKey] = eProm.then(qArray => {
                         return shared.arrayIntersect(qArray, sArray);
                     })
                 }
             }
         }
-        return this.filter[cacheProp];
+        return this.filter[cacheKey];
     }
 
 }

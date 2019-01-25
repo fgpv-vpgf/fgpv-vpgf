@@ -176,48 +176,8 @@ class DynamicFC extends attribFC.AttribFC {
     applyFilterToLayer () {
         // TODO do we need a check incase this FC is targeting a RasterLayer?
         //      i think as is the UI will turn off anything that would call this function.
-        const sql = this.filter.getSqlPlusGrid();
-        this.setDefinitionQuery(sql);
-    }
-
-    /**
-     * Gets array of object ids that currently pass layer-based filters (i.e. not a grid filter)
-     *
-     * @function getLayerFilterOIDs
-     *
-     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
-     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
-     */
-    getLayerFilterOIDs (extent) {
-
         const sql = this.filter.getCombinedSql();
-        if (!(sql || extent)) {
-            // no filters active. return undefined so caller can not worry about applying filters
-            return Promise.resolve(undefined);
-        }
-
-        let cacheProp;
-
-        if (extent) {
-            // essentially this determines if our extent was already cached,
-            // bonks the cache if it is stale
-            this.filter.setExtent(extent);
-            cacheProp = '_layerExtentOID';
-        } else {
-            cacheProp = '_layerSqlOID';
-        }
-
-        // if not cached, execute a query
-        if (!this.filter[cacheProp]) {
-            const opts = {
-                url: this.queryUrl,
-                geometry: extent,
-                where: sql
-            };
-            this.filter[cacheProp] = this._parent._apiRef.query.queryIds(opts);
-            
-        }
-        return this.filter[cacheProp];
+        this.setDefinitionQuery(sql);
     }
 
 }

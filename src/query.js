@@ -168,7 +168,7 @@ class AqlDiatomic extends AqlRoot {
 class AqlLiteral extends AqlAtomic {
     // constructor param is the literal value
 
-    eval () {
+    evaluate () {
         return this.value;
     }
 }
@@ -177,7 +177,7 @@ class AqlLiteral extends AqlAtomic {
 class AqlIdentifier extends AqlAtomic {
     // constructor param is the property name of the attribute
 
-    eval (attribute) {
+    evaluate (attribute) {
         return attribute[this.value];
     }
 }
@@ -186,64 +186,64 @@ class AqlIdentifier extends AqlAtomic {
 class AqlArray extends AqlAtomic {
     // constructor param is the array
 
-    eval () {
+    evaluate () {
         return this.value;
     }
 }
 
 // handles an equals operator
 class AqlEquals extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) === this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) === this.right.evaluate(attribute);
     }
 }
 
 // handles a not-equals operator
 class AqlNotEquals extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) !== this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) !== this.right.evaluate(attribute);
     }
 }
 
 // handles a greater-than-equals operator
 class AqlGreaterEquals extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) >= this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) >= this.right.evaluate(attribute);
     }
 }
 
 // handles a less-than-equals operator
 class AqlLessEquals extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) <= this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) <= this.right.evaluate(attribute);
     }
 }
 
 // handles a greater-than operator
 class AqlGreater extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) > this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) > this.right.evaluate(attribute);
     }
 }
 
 // handles a less-than operator
 class AqlLess extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) < this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) < this.right.evaluate(attribute);
     }
 }
 
 // handles an and operator
 class AqlAnd extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) && this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) && this.right.evaluate(attribute);
     }
 }
 
 // handles an or operator
 class AqlOr extends AqlDiatomic {
-    eval (attribute) {
-        return this.left.eval(attribute) || this.right.eval(attribute);
+    evaluate (attribute) {
+        return this.left.evaluate(attribute) || this.right.evaluate(attribute);
     }
 }
 
@@ -254,9 +254,9 @@ class AqlIn extends AqlDiatomic {
         this.hasNot = hasNot;
     }
 
-    eval (attribute) {
+    evaluate (attribute) {
         // we assume .right is an array (AqlArray)
-        const result = this.right.eval(attribute).includes(this.left.eval(attribute));
+        const result = this.right.evaluate(attribute).includes(this.left.evaluate(attribute));
         return this.hasNot ? !result : result;
     }
 }
@@ -268,13 +268,15 @@ class AqlLike extends AqlDiatomic {
         this.hasNot = hasNot;
     }
 
-    eval (attribute) {
+    evaluate (attribute) {
         // we assume .right evaulates to a string
-        const attVal = this.left.eval(attribute);
-        let pattern = this.right.eval(attribute);
+        const attVal = this.left.evaluate(attribute);
+        let pattern = this.right.evaluate(attribute);
 
         // TODO basic wildcard search for now. may need to handle escaping special characters
         //      can steal codes from https://stackoverflow.com/questions/1314045/emulating-sql-like-in-javascript
+
+        // convert % to *
         pattern = pattern.replace(/%/g, '.*');
 
         const result = RegExp(pattern).test(attVal);
@@ -284,16 +286,16 @@ class AqlLike extends AqlDiatomic {
 
 // handles a not operator
 class AqlNot extends AqlAtomic {
-    eval (attribute) {
-        return !this.value.eval(attribute);
+    evaluate (attribute) {
+        return !this.value.evaluate(attribute);
     }
 }
 
 // handles a set of parenthesis
 class AqlParentheses extends AqlAtomic {
-    eval (attribute) {
+    evaluate (attribute) {
         // INTENSE
-        return this.value.eval(attribute);
+        return this.value.evaluate(attribute);
     }
 }
 
@@ -311,9 +313,9 @@ class AqlFunctionCall extends AqlRoot {
         }
     }
 
-    eval (attribute) {
+    evaluate (attribute) {
         // call our named function. evaluate the parameters array then pass them as actual params to the function
-        return this[this.fName](...this.params.map(p => p.eval(attribute)));
+        return this[this.fName](...this.params.map(p => p.evaluate(attribute)));
     }
 
     // assumes param will be a string
@@ -338,8 +340,6 @@ class AqlFunctionCall extends AqlRoot {
 // converts a tree node from our SQL parse output to the appropriate Aql object
 function sqlNodeToAqlNode (node) {
 
-    // TODO figure out date fields
-    // TODO add support for LIKE ?
     // TODO add support for datatype casting?
 
     const typeReactor = {
@@ -359,8 +359,6 @@ function sqlNodeToAqlNode (node) {
             return new AqlLike(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot);
         },
         ComparisonBooleanPrimary: n => {
-            // TODO wrap lefts and rights in brackets?
-
             const operatorMap = {
                 '=': AqlEquals,
                 '==': AqlEquals,
@@ -392,7 +390,7 @@ function sqlNodeToAqlNode (node) {
         },
         String: n => {
             // remove embedded quotes from string
-            // TODO check if escaped double quote actually exists or was just part of that debug form
+            // TODO check if escaped double quote actually exists or was just part of the npm test page output display
             let s = n.value;
             if (s.startsWith('"') || s.startsWith(`'`)) {
                 s = s.substring(1, s.length - 1);
@@ -408,14 +406,14 @@ function sqlNodeToAqlNode (node) {
         ExpressionList: n => {
             // this code currently assumes that items in the expression list are literals.
             // if we need any dynamically generated stuff (i.e. checking against other attribute properties)
-            // then this needs to change and the guts of AqlArray.eval needs to generate the array at
+            // then this needs to change and the guts of AqlArray.evaluate needs to generate the array at
             // every call (way less efficient)
-            return new AqlArray(n.value.map(nn => sqlNodeToAqlNode(nn).eval()));
+            return new AqlArray(n.value.map(nn => sqlNodeToAqlNode(nn).evaluate()));
         },
         SimpleExprParentheses: n => {
             // n.value here is an ExpressionList, but i've yet to see an instance where it has more than one element in the array.
-            // for now we do a hack hoist up the first element. This hack lets us pre-evaluate other expression lists
-            // that are filled with constants.
+            // for now we do a hack and hoist up the first element. This hack lets us pre-evaluate other expression lists
+            // (i.e. ones used in IN commands) that are filled with constants.
 
             // TODO invest some time to try to find a case where there is > 1 element, and ensure the ExpressionList result
             //      formatting doesn't break the equation.
@@ -433,8 +431,6 @@ function sqlNodeToAqlNode (node) {
                 console.warn(`While converting SQL to AQL, encountered a parsed bracket containing ${n.value.type} instead of ExpressionList`);
                 return new AqlParentheses(sqlNodeToAqlNode(n.value));
             }
-
-
         }
     }
 
@@ -519,11 +515,11 @@ function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false)
     // split in two to avoid doing boolean check at every iteration
     if (attribAsProperty) {
         return attributeArray.filter(a => {
-            return aql.eval(a.attributes);
+            return aql.evaluate(a.attributes);
          });
     } else {
         return attributeArray.filter(a => {
-            return aql.eval(a);
+            return aql.evaluate(a);
          });
     }
 }
@@ -561,7 +557,7 @@ function sqlGraphicsVisibility (graphics, sqlWhere) {
     const visibleAttributes = [];
 
     graphics.forEach(g => {
-        if (aql.eval(g.attributes)) {
+        if (aql.evaluate(g.attributes)) {
             g.show();
             visibleAttributes.push(g.attributes);
         } else {

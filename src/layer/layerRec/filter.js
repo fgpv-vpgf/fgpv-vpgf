@@ -28,10 +28,10 @@ class Filter {
     /**
      * Returns a SQL WHERE condition that is combination of any symbol and api filter statements that are active
      *
-     * @method getCombinedSql
+     * @method getCombinedNonGridSql
      * @returns {String} combination of any active symbol and/or api filter statements
      */
-    getCombinedSql () {
+    getCombinedNonGridSql () {
         // puts all active layer-based sql statements into a single statement, ANDed
         if (this._symbolSql && this._apiSql) {
             return `${this._symbolSql} AND ${this._apiSql}`;
@@ -41,15 +41,14 @@ class Filter {
     }
 
     /**
-     * Returns a SQL WHERE condition that is combination of any symbol and api filter statements that are active
-     * and also includes a condition that restricts against any active grid filter
+     * Returns a SQL WHERE condition that is combination of any active filters.
      *
-     * @method getSqlPlusGrid
+     * @method getCombinedSql
      * @returns {String} combination of any active symbol, api, and grid filter statements
      */
-    getSqlPlusGrid () {
+    getCombinedSql () {
         // puts all active sql statements into a single statement, ANDed
-        const cSql = this.getCombinedSql();
+        const cSql = this.getCombinedNonGridSql();
 
         if (cSql && this._gridSql) {
             return `${cSql} AND ${this._gridSql}`;
@@ -59,14 +58,25 @@ class Filter {
     }
 
     /**
-     * Tells what object ids are currently passing the layer-specific filters.
+     * Tells what object ids are currently passing the layer's filters, but omits any influence from grid filters.
      *
-     * @method getLayerFilterOIDs
+     * @method getNonGridFilterOIDs
+     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
+     * @returns {Promise} resolves with array of valid OIDs that layer is filtering (excluding grid filters). resolves with undefined if there is no filters being used
+     */
+    getNonGridFilterOIDs (extent) {
+        return this._parent.getNonGridFilterOIDs(extent);
+    }
+
+    /**
+     * Tells what object ids are currently passing the layer's filters.
+     *
+     * @method getFilterOIDs
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of valid OIDs that layer is filtering. resolves with undefined if there is no filters being used
      */
-    getLayerFilterOIDs (extent) {
-        return this._parent.getLayerFilterOIDs(extent);
+    getFilterOIDs (extent) {
+        return this._parent.getFilterOIDs(extent);
     }
 
     /**
@@ -104,8 +114,7 @@ class Filter {
         this._symbolSql = whereClause;
 
         // invalidate caches
-        this._layerExtentOID = undefined;
-        this._layerSqlOID = undefined;
+        this.clearAllCaches();
 
         // tell the world
         this.eventRaiser(shared.filterType.SYMBOL);
@@ -119,6 +128,10 @@ class Filter {
      */
     setGridSql (whereClause) {
         this._gridSql = whereClause;
+
+        // clear caches that care about grid state.
+        this._layerOID = undefined;
+        this._layerExtentOID = undefined;
 
         // tell the world
         this.eventRaiser(shared.filterType.GRID);
@@ -134,8 +147,7 @@ class Filter {
         this._apiSql = whereClause;
 
         // invalidate caches
-        this._layerExtentOID = undefined;
-        this._layerSqlOID = undefined;
+        this.clearAllCaches();
 
         // tell the world
         this.eventRaiser(shared.filterType.API);
@@ -156,9 +168,33 @@ class Filter {
         // and update our tracker
         if (!shared.areExtentsSame(extent, this._extent)) {
             this._extent = extent;
+
+            // clear caches that care about extent.
             this._layerExtentOID = undefined;
+            this._layerNoGridExtentOID = undefined;
         }
         
+    }
+
+    /**
+     * Returns cache property depending on the situation we are in.
+     * Values should align to properties of this class
+     *
+     * @method getCacheKey
+     * @param {Boolean} includeGridFilter if the cache includes grid based filters
+     * @param {Boolean} includeExtent if the cache includes extent based filters
+     * @returns {String} the cache key to use
+     */
+    getCacheKey (includeGridFilter, includeExtent) {
+        const key = `${includeGridFilter ? 'Y' : 'N'}${includeExtent ? 'Y' : 'N'}`;
+        const resultMap = {
+            YY: '_layerExtentOID',
+            YN: '_layerOID',
+            NY: '_layerNoGridExtentOID',
+            NN: '_layerNoGridOID'
+        };
+
+        return resultMap[key];
     }
 
     /**
@@ -171,8 +207,19 @@ class Filter {
         this._apiSql = '';  // holds any api-defined sql string. '' means no filter active
         this._gridSql = ''; // holds any grid sql string. '' means no filter active
         this._extent = undefined; 
-        this._layerSqlOID = undefined; // promise.  resolves with list of OIDs that pass any SQL filters that are active
+        this.clearAllCaches();
+    }
+
+    /**
+     * Resets all internal caches.
+     *
+     * @method clearAllCaches
+     */
+    clearAllCaches () {
+        this._layerOID = undefined; // promise.  resolves with list of OIDs that pass any SQL filters that are active
         this._layerExtentOID = undefined; // promise.  resolves with list of OIDs that pass any SQL filters AND extent filters that are active
+        this._layerNoGridOID = undefined; // promise.  resolves with list of OIDs that pass any SQL filters that are active except for grid filters
+        this._layerNoGridExtentOID = undefined; // promise.  resolves with list of OIDs that pass any SQL filters (except for grid filters) AND extent filters that are active
     }
 
 }

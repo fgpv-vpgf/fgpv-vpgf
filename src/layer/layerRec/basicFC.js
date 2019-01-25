@@ -168,7 +168,11 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         throw new Error('Cannot apply filters to non-attribute layers');
     }
 
-    getLayerFilterOIDs () {
+    getFilterOIDs () {
+        throw new Error('Cannot get OIDs for non-attribute layers');
+    }
+
+    getNonGridFilterOIDs () {
         throw new Error('Cannot get OIDs for non-attribute layers');
     }
 }
