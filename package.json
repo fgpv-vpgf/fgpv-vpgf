@@ -5,7 +5,7 @@
     "scripts": {
         "build": "webpack --config ./bin/build/webpack.config.js",
         "serve": "webpack-dev-server --progress --hot --config ./bin/build/webpack.config.js",
-        "update": "(cd ./areaOfInterest && npm i && cd ../) && (cd ./enhancedTable && npm i && cd ../) && (cd ./ && npm i)",
+        "update": "(cd ./areaOfInterest && npm i && cd ../) && (cd ./enhancedTable && npm i && cd ../) && (cd ./backToCart && npm i && cd ../) && (cd ./ && npm i)",
         "init": "npm run update && bash ./node_modules/.bin/selenium-standalone install",
         "test": "bash ./node_modules/.bin/wdio ./bin/test/wdio.conf.js"
     },

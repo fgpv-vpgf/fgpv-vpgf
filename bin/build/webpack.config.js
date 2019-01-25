@@ -13,7 +13,7 @@ const pluginList = {
 
 module.exports = function(env = {}) {
     const config = {
-        mode: 'development',
+        mode: env.prod ? 'production' : 'development',
 
         entry: {},
 
