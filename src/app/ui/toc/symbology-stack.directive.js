@@ -154,7 +154,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         applySymbolFilter(query);
                         /*
                         if (self.block.isSelected) {
-                           
+                            setTableDefinition(query, query);
                         } else {
                             //update only map if not selected
                             self.block.definitionQuery = query;

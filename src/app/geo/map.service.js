@@ -423,6 +423,9 @@ function mapServiceFactory(
                 //      second alternate is to wire up a callback to the geoApi map class to trigger
                 //      filter events, so it's more analogous to how layer-level filter events
                 //      get raised.
+                //      S. Vellanki mentioned that reacting directly to extent might overly-trigger
+                //      the filter. if there is an extent debouncer, might be smarter to trigger
+                //      the rvFilterChanged there to avoid redundant server hits.
                 const fcParam = {
                     filterType: 'extent',
                     extent: data.extent
