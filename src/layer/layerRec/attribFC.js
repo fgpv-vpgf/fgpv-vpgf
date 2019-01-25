@@ -575,11 +575,12 @@ class AttribFC extends basicFC.BasicFC {
      * Applies the current filter settings to the physical map layer.
      *
      * @function applyFilterToLayer
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applyFilterToLayer () {
+    applyFilterToLayer (exclusions = []) {
         // note DynamicFC will override this function to handle the dynamic layer case
         const p = this._parent;
-        const sql = this.filter.getCombinedSql();
+        const sql = this.filter.getCombinedSql(exclusions);
 
         if (p.dataSource() === shared.dataSources.ESRI) {
             // feature layer on a server
@@ -595,41 +596,12 @@ class AttribFC extends basicFC.BasicFC {
      *
      * @function getFilterOIDs
      *
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all filters
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
      */
-    getFilterOIDs (extent) {
-        const sql = this.filter.getCombinedSql();
-        const cache = this.filter.getCacheKey(true, extent);
-        return this.getLayerFilterOIDs(sql, cache, extent);
-    }
-
-    /**
-     * Gets array of object ids that currently pass any filters, but excludes grid-originating filters
-     *
-     * @function getNonGridFilterOIDs
-     *
-     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
-     * @returns {Promise} resolves with array of object ids that pass non-grid filters. if no filters are active, resolves with undefined.
-     */
-    getNonGridFilterOIDs (extent) {
-        const sql = this.filter.getCombinedNonGridSql();
-        const cache = this.filter.getCacheKey(false, extent);
-        return this.getLayerFilterOIDs(sql, cache, extent);
-    }
-
-    /**
-     * Worker function. Gets array of object ids that currently pass layer-based filters (i.e. not a grid filter)
-     *
-     * @function getLayerFilterOIDs
-     * @private
-     *
-     * @param {String} sql the where clause to use for the filter
-     * @param {String} cacheKey appropriate cache to utilize
-     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
-     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
-     */
-    getLayerFilterOIDs (sql, cacheKey, extent) {
+    getFilterOIDs (exclusions = [], extent) {
+        const sql = this.filter.getCombinedSql(exclusions);
 
         const p = this._parent;
         const api = p._apiRef;
@@ -649,14 +621,18 @@ class AttribFC extends basicFC.BasicFC {
             this.filter.setExtent(extent);
         }
 
+        // this must be done after the setExtent() call, as that call can potentially invalidate caches
+        const impactedFilters = this.filter.sqlActiveFilters(exclusions);
+        let cache = this.filter.getCache(impactedFilters, extent);
+
         // TODO once things are working, attempt to make all the promise caching into worker functions.
 
-        // if not cached, execute a query
-        if (!this.filter[cacheKey]) {
+        // if not cached, execute a query and store the result as the cache
+        if (!cache) {
             if (p.dataSource() === shared.dataSources.ESRI) {
                 // feature layer on a server. just use query task
                 opts.url = this.queryUrl;
-                this.filter[cacheKey] = api.query.queryIds(opts);
+                cache = api.query.queryIds(opts);
             } else {
                 // file or wfs
                 let eProm, sArray;
@@ -669,28 +645,29 @@ class AttribFC extends basicFC.BasicFC {
                     eProm = api.query.queryIds(opts);
                     if (!sql) {
                         // nothing else to filter, set the cache
-                        this.filter[cacheKey] = eProm;
+                        cache = eProm;
                     }
                 } 
                 if (sql) {
                     // use our custom filter to find graphics that satisfy our sql
                     const oid = this.oidField;
                     sArray = api.query.sqlAttributeFilter(p._layer.graphics, sql, true)
-                                .map(a => a[oid]);
+                                .map(a => a.attributes[oid]);
                     if (!extent) {
                         // nothing else to filter, set the cache
-                        this.filter[cacheKey] = Promise.resolve(sArray);
+                        cache = Promise.resolve(sArray);
                     }
                 }
                 if (sql && extent) {
                     // combine the two results, cache it
-                    this.filter[cacheKey] = eProm.then(qArray => {
+                    cache = eProm.then(qArray => {
                         return shared.arrayIntersect(qArray, sArray);
-                    })
+                    });
                 }
             }
+            this.filter.setCache(cache, impactedFilters, extent);
         }
-        return this.filter[cacheKey];
+        return cache;
     }
 
 }
