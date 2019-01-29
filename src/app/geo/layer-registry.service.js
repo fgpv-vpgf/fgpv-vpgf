@@ -130,8 +130,7 @@ function layerRegistryFactory(
     // listen for filter changes. inspect if they are relevant and apply to target layer if they are
     events.$on(events.rvFilterChanged, (_, params) => {
         // Don't react to extent filters. Layer is auto-filtered by extent just by being on the map.
-        // TODO maybe make constant that aligns with geoApi 
-        if (['symbol', 'api', 'grid'].indexOf(params.filterType) > -1) {
+        if (params.filterType !== 'extent') {
             // see if the layer exists and is active
             const layerRecord = getLayerRecord(params.layerID);
             if (layerRecord && layerRecord.isActiveState) {
