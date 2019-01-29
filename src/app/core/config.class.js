@@ -578,6 +578,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     (new ColumnNode(columnsSource))) :
                 [];
             this._searchStrictMatch = source.searchStrictMatch || false
+            this._printEnabled = source.printEnabled || false;
         }
 
         get title () { return this._title; }
@@ -601,6 +602,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get searchStrictMatch () { return this._searchStrictMatch}
 
+        get printEnabled() { return this._printEnabled }
+
         get JSON () {
             return {
                 title: this.title,
@@ -609,7 +612,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 search: this.search,
                 applyMap: this.applyMap,
                 columns: this.columns.JSON,
-                searchStrictMatch: this.searchStrictMatch
+                searchStrictMatch: this.searchStrictMatch,
+                printEnabled: this.printEnabled
             }
         }
     }

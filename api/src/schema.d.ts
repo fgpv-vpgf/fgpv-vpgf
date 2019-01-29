@@ -955,6 +955,11 @@ export interface FeatureLayerNode {
      * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
      */
     searchStrictMatch?: boolean;
+
+    /**
+     * Specifies if print button is available on the datatable. Defaults to false.
+     */
+    printEnabled?: boolean;
   };
   /**
    * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
@@ -1118,6 +1123,11 @@ export interface FileLayerNode {
      * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
      */
     searchStrictMatch?: boolean;
+
+    /**
+     * Specifies if print button is available on the datatable. Defaults to false.
+     */
+    printEnabled?: boolean;
   };
   /**
    * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
@@ -1222,6 +1232,11 @@ export interface WfsLayerNode {
      * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
      */
     searchStrictMatch?: boolean;
+
+    /**
+     * Specifies if print button is available on the datatable. Defaults to false.
+     */
+    printEnabled?: boolean;
   };
   /**
    * Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons.
@@ -1484,6 +1499,11 @@ export interface DynamicLayerEntryNode {
      * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
      */
     searchStrictMatch?: boolean;
+
+    /**
+     * Specifies if print button is available on the datatable. Defaults to false.
+     */
+    printEnabled?: boolean;
   };
 }
 export interface LegendAuto {
