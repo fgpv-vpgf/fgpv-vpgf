@@ -4,7 +4,7 @@ node_js:
   - 8.11.1
 
 before_script:
-  - echo -e "Host fgpv-vpgf.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 before_deploy:
   - bash ./bin/build/travis/before_deploy.sh

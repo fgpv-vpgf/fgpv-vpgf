@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
-        "allowJs": true,
-        "sourceMap": true,
-        "target": "es5",
-        "baseUrl": ".",
-        "paths": {
-            "*": ["node_modules/*", "enhancedTable/node_modules/*", "areaOfInterest/node_modules/*"]
-        }
-    }
-}
+      "noImplicitAny": false,
+      "target": "es5",
+      "module": "commonjs",
+      "declaration": true,
+      "outDir": "./lib",
+      "lib": ["es5", "es2015", "dom", "scripthost"]
+    },
+    "include": ["enhancedTable", "areaOfInterest", "backToCart"],
+    "exclude": ["node_modules", "**/__tests__/*"]
+  }

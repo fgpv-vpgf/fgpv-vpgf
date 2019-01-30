@@ -1,9 +1,9 @@
 {
     "name": "plugins",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "description": "Plugins for the RAMP viewer supported by the core team.",
     "scripts": {
-        "build": "webpack --config ./bin/build/webpack.config.js",
+        "build": "webpack --config ./bin/build/webpack.config.js && tsc",
         "serve": "webpack-dev-server --progress --hot --config ./bin/build/webpack.config.js",
         "update": "(cd ./areaOfInterest && npm i && cd ../) && (cd ./enhancedTable && npm i && cd ../) && (cd ./backToCart && npm i && cd ../) && (cd ./ && npm i)",
         "init": "npm run update && bash ./node_modules/.bin/selenium-standalone install",
@@ -25,6 +25,7 @@
     "homepage": "https://github.com/fgpv-vpgf/extensions#readme",
     "devDependencies": {
         "@types/jquery": "3.3.22",
+        "@types/node": "10.12.18",
         "@wdio/cli": "5.3.0",
         "@wdio/jasmine-framework": "5.2.8",
         "@wdio/local-runner": "5.3.0",
