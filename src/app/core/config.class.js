@@ -2171,6 +2171,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     events.$on(events.rvExtentChange, (_, d) => subscriber.next(extentToApi(d.extent)));
                 });
 
+                // add this to avoid issues with projection changes
+                // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
+                mapInstance.extentChanged = Observable.create(subscriber => {
+                    events.$on(events.rvExtentChange, (_, d) => subscriber.next(d.extent));
+                });
+
                 mapInstance.centerChanged = Observable.create(subscriber => {
                     events.$on(events.rvExtentChange, (_, d) => {
                         const centerXY = d.extent.getCenter();

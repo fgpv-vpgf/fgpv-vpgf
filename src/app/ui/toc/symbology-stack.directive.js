@@ -209,11 +209,21 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
             if (triggerFilter) {
                 applySymbolFilter(defClause);
+                self.block._symbolVisibilityChanged.next();
+
+                // Turn off layer if all symbols are unchecked
+                let noSymb = noSymbolsVisible();
+                if (noSymb) {
+                    self.block.visibility = false;
+                } else if (!noSymb && self.block.visibility === false) {
+                    self.stackToggled = true;
+                    self.block.visibility = true;
+                }
             }
 
             // TODO this appears to handle a checkevent prior to layer loading, and will notify API observables that
             //      the symbol visibility changed after the layer loads
-            //      confused why this only triggers if definition clause is undefined (now ''); 
+            //      confused why this only triggers if definition clause is undefined (now '');
             //      that would indiicate we only trigger symbolVisibilitychanged when all are set to visible.  i think
             //      we should be triggering visibility changes any time it changes.
             //      might also want to wrap this inside the triggerFilter, to avoid calling it when
@@ -231,14 +241,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 }
             }
             */
-
-            // Turn off layer if all symbols are unchecked
-            if (noSymbolsVisible()) {
-                self.block.visibility = false;
-            } else if (self.block.visibility === false) {
-                self.stackToggled = true;
-                self.block.visibility = true;
-            }
         };
 
         //wire in a hook to the SymbologyStack item!
