@@ -304,6 +304,7 @@ export interface Map {
     fgpMapObj: Object;
     boundsObj: geo.XYBounds;
     boundsChangedObj: Observable<geo.XYBounds>;
+    extentChanged: Observable<any>; // add this to avoid issues with projection changes see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
     uiObj: UI;
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
