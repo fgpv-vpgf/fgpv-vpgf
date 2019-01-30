@@ -13,7 +13,7 @@ angular
     .module('app.ui')
     .directive('rvExpandImage', rvExpandImage);
 
-function rvExpandImage($mdDialog, referenceService, $compile, $templateCache, layoutService) {
+function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templateCache, layoutService) {
     const directive = {
         restrict: 'A',
         link
@@ -22,12 +22,15 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache, la
     return directive;
 
     function link(scope, element, attr) {
-        const self = scope.self;
+        // scope is shared between all elements (symbology stack items) and thus, it only stores the values from the last element
+        // need to define a newScope so we have access to values for each individual element
+        const newScope = $rootScope.$new();
+        newScope.self = {};
+        newScope.self.canEnlarge = false;
 
         const shellNode = referenceService.panels.shell;
         let width = 0;
         let height = 0;
-        self.canEnlarge = false;
 
         if (layoutService.currentLayout() === 'small') {
             return;
@@ -42,20 +45,20 @@ function rvExpandImage($mdDialog, referenceService, $compile, $templateCache, la
         // also get the natural width and height of the image
         const img = new Image();
         img.onload = function() {
-            self.canEnlarge = this.width + 50 > referenceService.panels.main.width();
+            newScope.self.canEnlarge = this.width + 50 > referenceService.panels.main.width();
             width = Math.min(this.width + 50, shellNode.width() * 0.8);
             height = Math.min(this.height, shellNode.height() * 0.8);
         }
         img.src = imageUrl;
 
         const template = $templateCache.get(buttonTemplateUrl);
-        element.after($compile(template)(scope));
+        element.after($compile(template)(newScope));
 
         /**
          * Shows a dialog with the full-size image
          * @function open
          */
-        self.open = () => {
+        newScope.self.open = () => {
             $mdDialog.show({
                 controller: ExpandDialogController,
                 controllerAs: 'self',

@@ -102,7 +102,15 @@
                     "layerId": "powerplant100mw-electric"
                   },
                   {
-                    "layerId": "powerplant100mw-naturalGas"
+                    "layerId": "powerplant100mw-naturalGas",
+                    "symbologyStack": [{
+                      "image": "http://fgpv.cloudapp.net/demo/__assets__/beautiful.png",
+                      "text": ""
+                    }, {
+                      "image": "http://fgpv.cloudapp.net/demo/__assets__/step1.gif",
+                      "text": ""
+                    }],
+                    "symbologyRenderStyle": "images"
                   },
                   {
                     "layerId": "powerplant100mw-liquids"
