@@ -4,6 +4,13 @@ import geoSearch from '../intention/geosearch/geosearch.intention';
 
 import { FgpvConfigSchema } from 'api/schema';
 
+import BackToCart from 'plugins/lib/backToCart';
+
+
+const AUTOLOAD_PLUGINS: any = {
+    'backToCart': BackToCart
+};
+
 const loadIntentions: any = {
     epsg: EPSG,
     table: Table,
@@ -36,6 +43,19 @@ export default class Loader {
     loader() {
         const rvPluginAttr = this.mapElem.attr('rv-plugins');
         const pluginList = rvPluginAttr ? rvPluginAttr.split(',').map(x => x.trim()) : [];
+
+        Object.keys(AUTOLOAD_PLUGINS).forEach(pk => {
+            const pI = pluginList.findIndex(p => p === pk || p === `no-${pk}`);
+            const pN = pluginList[pI];
+
+            if (!pN) {
+                const plugin = new AUTOLOAD_PLUGINS[pk]();
+                this.extensions.push(plugin);
+                console.warn(`The plugin ${pk} was loaded automatically. This functionality is being removed in the next major release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
+            } else if (pN === `no-${pk}`) {
+                pluginList.splice(pI, 1);
+            }
+        });
 
         pluginList
             .forEach((p: any) => {
