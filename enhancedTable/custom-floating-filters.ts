@@ -179,9 +179,7 @@ export class TextFloatingFilter {
         this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(params.defaultValue, params.isStatic);
-        this.scope = params.map.$compile(this.eGui);
-        this.scope.input = params.defaultValue !== undefined ? params.defaultValue : '';
+        this.preLoadedValue();
         this.scope.inputChanged = () => {
             this.params.panelStateManager.setColumnFilter(this.params.currColumn.field, this.scope.input);
             this.onFloatingFilterChanged({ model: this.getModel() });
@@ -192,6 +190,25 @@ export class TextFloatingFilter {
             this.onFloatingFilterChanged({ model: this.getModel() });
         });
     };
+
+    /**
+    * Helper function to init
+    * Determines if preloaded value exists.
+    * If so fills col filter from either panelStateManager or default value from config
+    */
+    preLoadedValue(): void {
+        const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+        if (reloadedVal !== undefined) {
+            this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(reloadedVal, this.params.isStatic);
+            this.scope = this.params.map.$compile(this.eGui);
+            this.scope.input = reloadedVal;
+        } else {
+            this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
+            this.scope = this.params.map.$compile(this.eGui);
+            this.scope.input = this.params.defaultValue !== undefined ? this.params.defaultValue : '';
+        }
+    }
+
 
     /** Helper function to determine filter model */
     getModel(): any {
@@ -225,15 +242,8 @@ export class NumberFloatingFilter {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
         (<any>this.eGui).class = 'rv-min-max';
-        this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(params.defaultValue, params.isStatic);
 
-        if (params.defaultValue === undefined) {
-            this.currentValues = { min: null, max: null };
-        } else {
-            let minVal = params.defaultValue.split(',')[0] === '' ? null : Number(params.defaultValue.split(',')[0]);
-            let maxVal = params.defaultValue.split(',')[1] === '' ? null : Number(params.defaultValue.split(',')[1]);
-            this.currentValues = { min: minVal, max: maxVal };
-        }
+        this.currentValues = this.preLoadedValue;
 
         this.minFilterInput = this.eGui.querySelector(".rv-min");
         this.maxFilterInput = this.eGui.querySelector(".rv-max");
@@ -245,6 +255,41 @@ export class NumberFloatingFilter {
         $('.rv-min-max').ready(() => {
             this.onFloatingFilterChanged({ model: this.getModel() });
         });
+    }
+
+    /**
+    * Helper function to init
+    * Determines if preloaded value exists.
+    * If so fills col filter from either panelStateManager or default value from config
+    */
+    get preLoadedValue(): any {
+        const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
+        const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
+
+        const defaultMinVal = (this.params.defaultValue === undefined ||
+            this.params.defaultValue.split(',')[0] === '') ? null :
+            Number(this.params.defaultValue.split(',')[0]);
+
+        const defaultMaxVal = (this.params.defaultValue === undefined ||
+            this.params.defaultValue.split(',')[1] === '') ? null :
+            Number(this.params.defaultValue.split(',')[1]);
+
+        if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
+
+            this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic);
+
+            return {
+                min: reloadedMinVal !== undefined ? reloadedMinVal : null,
+                max: reloadedMaxVal !== undefined ? reloadedMaxVal : null,
+            }
+        } else {
+            this.eGui.innerHTML = NUMBER_FILTER_TEMPLATE(this.params.defaultValue, this.params.isStatic);
+
+            return {
+                min: defaultMinVal,
+                max: defaultMaxVal
+            }
+        }
     }
 
     /** Update filter nimimum */
@@ -322,17 +367,7 @@ export class DateFloatingFilter {
     init(params: any) {
         this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.eGui = $(DATE_FILTER_TEMPLATE(params.value, params.isStatic))[0];
-        (<any>this.eGui).class = 'rv-date-picker'
-        this.scope = params.map.$compile(this.eGui);
-
-        this.scope.min = params.value !== undefined &&
-            params.value.split(',')[0] !== '' ?
-            new Date(params.value.split(',')[0]) : null;
-
-        this.scope.max = params.value !== undefined &&
-            params.value.split(',')[1] !== '' ?
-            new Date(params.value.split(',')[1]) : null;
+        this.preLoadedValue();
 
         this.scope.minChanged = () => {
             // save value on panel reload manager
@@ -352,6 +387,39 @@ export class DateFloatingFilter {
         $('.rv-date-picker').ready(() => {
             this.onFloatingFilterChanged({ model: this.getModel() });
         });
+    }
+
+    /**
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
+    preLoadedValue(): void {
+        const defaultMinVal = this.params.value !== undefined &&
+            this.params.value.split(',')[0] !== '' ?
+            new Date(this.params.value.split(',')[0]) : null;
+
+        const defaultMaxVal = this.params.value !== undefined &&
+            this.params.value.split(',')[1] !== '' ?
+            new Date(this.params.value.split(',')[1]) : null;
+
+        const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
+        const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
+
+        if (reloadedMinVal !== undefined || reloadedMaxVal !== undefined) {
+
+            this.eGui = $(DATE_FILTER_TEMPLATE(`${reloadedMinVal},${reloadedMaxVal}`, this.params.isStatic))[0];
+            (<any>this.eGui).class = 'rv-date-picker'
+            this.scope = this.params.map.$compile(this.eGui);
+            this.scope.min = reloadedMinVal !== undefined ? reloadedMinVal : null;
+            this.scope.max = reloadedMaxVal !== undefined ? reloadedMaxVal : null;
+        } else {
+            this.eGui = $(DATE_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
+            (<any>this.eGui).class = 'rv-date-picker'
+            this.scope = this.params.map.$compile(this.eGui);
+            this.scope.min = defaultMinVal;
+            this.scope.max = defaultMaxVal;
+        }
     }
 
     /** Helper function to determine filter model */
@@ -407,16 +475,7 @@ export class SelectorFloatingFilter {
     init(params: any) {
         this.params = params;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.eGui = $(SELECTOR_FILTER_TEMPLATE(params.value, params.isStatic))[0];
-        (<any>this.eGui).class = 'rv-selector';
-        this.scope = params.map.$compile(this.eGui);
-
-
-        function getDefaultOptions(substr) {
-            return substr !== '[' && substr !== ']' && substr !== ', ';
-        }
-
-        this.scope.selectedOptions = params.value !== undefined ? params.value.split('"').filter(getDefaultOptions) : '';
+        this.preLoadedValue();
 
         // keep track of the number of distinct row values for the column
         // these will form the selector drop down
@@ -452,6 +511,31 @@ export class SelectorFloatingFilter {
             this.onFloatingFilterChanged({ model: this.getModel() });
         });
 
+    }
+
+    /**
+    * Helper function to init
+    * Determines if preloaded value exists.
+    * If so fills col filter from either panelStateManager or default value from config
+    */
+    preLoadedValue(): void {
+        const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field) === null ? '' :
+            this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+        function getDefaultOptions(substr) {
+            return substr !== '[' && substr !== ']' && substr !== ', ';
+        }
+
+        this.eGui = reloadedVal !== undefined ?
+            $(SELECTOR_FILTER_TEMPLATE(reloadedVal, this.params.isStatic))[0] :
+            $(SELECTOR_FILTER_TEMPLATE(this.params.value, this.params.isStatic))[0];
+
+        (<any>this.eGui).class = 'rv-selector';
+        this.scope = this.params.map.$compile(this.eGui);
+
+        this.scope.selectedOptions = reloadedVal !== undefined ?
+            reloadedVal.split('"').filter(getDefaultOptions) :
+            (this.params.value !== undefined ?
+                this.params.value.split('"').filter(getDefaultOptions) : '');
     }
 
     /** Helper function to determine filter model */

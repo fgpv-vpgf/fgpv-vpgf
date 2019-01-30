@@ -167,7 +167,7 @@
             },
             {
                 "id": "2",
-                "name": "3 column filters",
+                "name": "3 columns no filters",
                 "layerType": "esriFeature",
                 "table": {
                     "applyMap": true,
@@ -233,12 +233,13 @@
                         "enabled": false
                     },
                     "lazyFilter": true,
-                    "applyMap": true
+                    "applyMap": true,
+                    "printEnabled": true
                 }
             },
             {
                 "id": "8",
-                "name": "No initial filter 2",
+                "name": "Has initial filters",
                 "layerType": "esriFeature",
                 "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5",
                 "table": {
@@ -246,6 +247,7 @@
                     "search": {
                         "value": "Ener"
                     },
+                    "printEnabled": true,
                     "applyMap": false,
                     "columns": [
                         {
@@ -275,7 +277,7 @@
             },
             {
                 "id": "5",
-                "name": "Dynamic Layer",
+                "name": "Dynamic Layer with both children with filters",
                 "layerType": "esriDynamic",
                 "layerEntries": [
                     {
@@ -302,7 +304,7 @@
                                     "data": "OBJECTID",
                                     "filter": {
                                         "type": "number",
-                                        "value": "0,30"
+                                        "value": "0,15"
                                     }
                                 }
                             ]
@@ -332,7 +334,10 @@
                         }
                     },
                     {
-                        "index": 15
+                        "index": 15,
+                        "table": {
+                            "printEnabled": true
+                        }
                     }
                 ],
                 "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"

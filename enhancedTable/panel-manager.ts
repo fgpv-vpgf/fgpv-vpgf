@@ -8,6 +8,7 @@ import { PanelStatusManager } from './panel-status-manager';
 import { scrollIntoView, tabToGrid } from './grid-accessibility';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
 import { PanelStateManager } from './panel-state-manager';
+import { PRINT_TABLE } from './templates'
 
 /**
  * Creates and manages one api panel instance to display the table in the ramp viewer. One panelManager is created for each map instance on the page.
@@ -116,7 +117,6 @@ export class PanelManager {
             this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
             this.gridBody.tabIndex = 0; // make grid container tabable
             this.gridBody.addEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
-            this.configManager.initColumns();
         }
 
         this.panelStatusManager.getFilterStatus();
@@ -131,32 +131,26 @@ export class PanelManager {
     }
 
     onBtnPrint() {
-        this.panel.panelBody.css({
-            position: 'absolute',
-            top: '0px',
-            left: '0px',
-            width: this.tableOptions.api.getPreferredWidth() + 2,
-            'z-index': '5',
-            height: 'auto'
+        let win = window.open('../print-table.html', '_blank');
+        win.document.write(this.createHTMLTable());
+    }
+
+    createHTMLTable() {
+        // make a dictionary of column keys with header names
+        let columns = {};
+        this.tableOptions.columnApi.columnController.allDisplayedCenterVirtualColumns.map(col => {
+            if (col.colDef.field !== 'rvSymbol' && col.colDef.field !== 'rvInteractive' && col.colDef.field !== 'zoom') {
+                columns[col.colDef.field] = col.colDef.headerName;
+            }
         });
 
-        this.tableOptions.api.setGridAutoHeight(true);
-        this.panel.panelBody.prependTo('body');
+        // get displayed rows
+        const rows = this.tableOptions.api.rowModel.rowsToDisplay;
 
-        setTimeout(() => {
-            window.print();
-            this.panel.panelBody.appendTo(this.panel.panelContents);
-            this.panel.panelBody.css({
-                position: '',
-                top: '',
-                left: '',
-                width: '',
-                'z-index': '',
-                height: 'calc(100% - 38px)'
-            });
-            this.setSize();
-            this.tableOptions.api.setGridAutoHeight(false);
-        }, 650);
+        // create a printable HTML table with only rows and columns that
+        // are currently displayed.
+        return PRINT_TABLE(this.configManager.title, columns, rows);
+
     }
 
     setSize() {
@@ -218,7 +212,7 @@ export class PanelManager {
     get header(): any[] {
         this.angularHeader();
 
-        const menuBtn = new this.panel.container(MENU_TEMPLATE);
+        const menuBtn = new this.panel.container(MENU_TEMPLATE(this.configManager.printEnabled));
 
         const closeBtn = new this.panel.button('X');
 
@@ -247,8 +241,9 @@ export class PanelManager {
             that.searchText = that.configManager.defaultGlobalSearch;
             this.searchText = that.searchText;
             this.updatedSearchText = function () {
-                that.tableOptions.api.setQuickFilter(that.searchText);
-                that.panelRowsManager.quickFilterText = that.searchText;
+                that.searchText = this.searchText;
+                that.tableOptions.api.setQuickFilter(this.searchText);
+                that.panelRowsManager.quickFilterText = this.searchText;
                 that.tableOptions.api.selectAllFiltered();
                 that.panelStatusManager.getFilterStatus();
                 that.tableOptions.api.deselectAllFiltered();
@@ -316,9 +311,23 @@ export class PanelManager {
                 that.tableOptions.api.setFilterModel(newFilterModel);
             };
 
-            // determine if any column filters are present
-            this.anyFilters = function () {
-                return that.tableOptions.api.isAdvancedFilterPresent();
+            // determine if there are any active column filters
+            // returns true if there are no active column filters, false otherwise
+            // this determines if Clear Filters button is disabled (when true) or enabled (when false)
+            this.noActiveColumnFilters = function () {
+                const columns = Object.keys(that.tableOptions.api.getFilterModel());
+                let noActiveFilters = true;
+
+                columns.forEach(column => {
+                    const columnConfigManager = new ColumnConfigManager(that.configManager, column);
+                    if (!columnConfigManager.isFilterStatic) {
+                        // if there is a non static column fiter, the clearFilters button is disabled
+                        noActiveFilters = false;
+                    }
+                });
+
+                // if column filters don't exist or are static, clearFilters button is disabled
+                return noActiveFilters;
             };
         });
 
@@ -332,7 +341,13 @@ export class PanelManager {
 
             // toggle column visibility
             this.toggleColumn = function (col) {
+
+                if (col.visibility !== false) {
+                    console.log(that.tableOptions.api.getFilterInstance(col.def));
+                }
+
                 col.visibility = !col.visibility;
+
                 that.tableOptions.columnApi.setColumnVisible(col.id, col.visibility);
 
                 // on showing a column resize to autowidth then shrink columns that are too wide

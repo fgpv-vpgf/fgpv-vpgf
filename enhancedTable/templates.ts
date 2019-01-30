@@ -20,7 +20,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
         class="md-icon-button black rv-button-24"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
-        ng-disabled="!ctrl.anyFilters()">
+        ng-disabled="ctrl.noActiveColumnFilters()">
         <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
         <md-icon md-svg-src="community:filter-remove"></md-icon>
     </md-button>
@@ -37,10 +37,10 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
             <md-tooltip>{{ 't.table.hideColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
-        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="4">
+        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense">
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
                 <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }} " md-prevent-menu-close="md-prevent-menu-close">
-                    {{col.title}}
+                    <span style='overflow-wrap:normal'>{{col.title}}</span>
                     <md-icon md-svg-icon="action:done" ng-if="col.visibility"></md-icon>
                 </md-button>
             </md-menu-item>
@@ -49,8 +49,8 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 </md-menu-bar>
 `;
 
-export const MENU_TEMPLATE = `
-<md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
+export const MENU_TEMPLATE = (printEnabled: boolean) => {
+    let menuTemplate = `<md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
@@ -58,8 +58,7 @@ export const MENU_TEMPLATE = `
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
         </md-button>
-        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense" width="5">
-
+        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense">
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" rv-right-icon="none">
                 {{ 't.menu.split' | translate }}
             </md-menu-item>
@@ -74,7 +73,7 @@ export const MENU_TEMPLATE = `
                 {{ 't.menu.filter.show' | translate }}
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
-            <md-menu-item>
+            <md-menu-item ng-if='${printEnabled}'>
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 't.menu.print' | translate }}
@@ -86,10 +85,12 @@ export const MENU_TEMPLATE = `
                     {{ 't.menu.export' | translate }}
                 </md-button>
             </md-menu-item>
-        </md-menu-content>
-    </md-menu>
-</md-menu-bar>
-`;
+            </md-menu-content>
+        </md-menu>
+    </md-menu-bar>`;
+
+    return menuTemplate;
+}
 
 export const MOBILE_MENU_BTN_TEMPLATE = `
 <div class="mobile-table-control">
@@ -192,4 +193,57 @@ export const SELECTOR_FILTER_TEMPLATE = (value, isStatic) => {
                          <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
                      </md-select>`;
     }
+}
+
+export const PRINT_TABLE = (title, cols, rws) => {
+
+    // make headers with the column names of the currentlyu displayed columns
+    let headers = ``;
+    const columnNames = Object.keys(cols).map(column => cols[column]);
+    columnNames.forEach(columnName => {
+        console.log(columnName);
+        if (columnName !== 'SHAPE' && columnName !== ' ' && columnName !== '') {
+            headers += `<th style='width:200%; padding: 5px; border-bottom: 2px solid #000000'><div class='cell'>${columnName}</div></th>`;
+        }
+    });
+
+    const columns = `<thead><tr>` + headers + `</tr></thead>`;
+
+    // make rows
+    // make sure row attributes are only pushed for columns that are currently displayed.
+    const rows = `<tbody>${rws.map((rowAttributes: any) => {
+        let eachRow = Object.keys(cols).map(attribute => rowAttributes.data[attribute]);
+        return `<tr>${eachRow.map((r: any) => {
+            return `<td><div class='cell'>${r}</div></td>`;
+        }).join('')}</tr>`;
+    }).join('')}</tbody>`;
+
+    // return formatted HTML table
+    return `<head>
+                <style>
+                    table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                    }
+                    td, th {
+                        border-bottom: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 3px;
+                        padding-right: 50px;
+                        min-width: 150px;
+                    }
+                    h1{
+                        font-family: arial, sans-serif;
+                    }
+                    .cell{
+                        min-height: 40px;
+                    }
+                </style>
+            </head>
+            <body class ='dt-print-view'>
+                <div>
+                    <h1 class="md-title table-title" style='padding:8px;'>Features: ${title}</h1>
+                    <table>${columns}${rows}</table>
+                </div>
+            </body>`;
 }

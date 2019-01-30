@@ -33,9 +33,11 @@ export class PanelStatusManager {
 
         if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
             text = `${this.tableOptions.api.getDisplayedRowCount()} records shown (filtered from ${this.tableOptions.rowData.length} records)`;
+            this.panelManager.legendBlock.filter = true; // add filter flag if rows are filtered
         }
         else {
             text = `${this.tableOptions.rowData.length} records shown`;
+            this.panelManager.legendBlock.filter = false; // clear filter flag if all rows shown
         }
 
         if (this.panelManager.panel.panelControls.find('.filterRecords')[0]) {

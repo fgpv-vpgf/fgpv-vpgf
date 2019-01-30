@@ -12,8 +12,16 @@ export class ConfigManager {
         this.panelManager = panelManager;
         this.attributeHeaders = baseLayer.attributeHeaders;
         this.attributeArray = baseLayer._attributeArray;
-        this.tableConfig = baseLayer.table;
-        this.searchEnabled = this.tableConfig.search.enabled;
+
+        if (baseLayer.layerIndex) {
+            // if baseLayer is a dynamic layer, table config corresponds to the one on layerEntry not baseLayer
+            let layer = baseLayer._mapInstance.layers.find(layer => layer.id === baseLayer.id);
+            let layerEntry = layer.layerEntries.find(entry => entry.index === baseLayer.layerIndex);
+            this.tableConfig = (layerEntry.table !== undefined) ? layerEntry.table : baseLayer.table;
+        } else {
+            this.tableConfig = baseLayer.table;
+        }
+        this.searchEnabled = this.tableConfig.search && this.tableConfig.search.enabled;
         this.tableInit();
     }
 
@@ -50,10 +58,17 @@ export class ConfigManager {
     }
 
     /**
+     * Return whether printing is enabled/disabled according to config (default is disabled)
+     */
+    get printEnabled(): boolean {
+        return this.tableConfig.printEnabled !== undefined ? this.tableConfig.printEnabled : false;
+    }
+
+    /**
      * Gets default search parameter for global search if defined in the config.
      */
     get defaultGlobalSearch(): string {
-        const searchText = this.tableConfig.search.value === undefined ? '' : this.tableConfig.search.value;
+        const searchText = this.tableConfig.search === undefined || this.tableConfig.search.value === undefined ? '' : this.tableConfig.search.value;
         return searchText;
     }
 
@@ -89,32 +104,13 @@ export class ConfigManager {
      */
     get filteredAttributes(): any[] {
         let filteredAttributes = [];
-        this.tableConfig.columns.forEach(column => {
-            filteredAttributes.push(column.data)
-        });
+        if (this.tableConfig.columns !== undefined) {
+            this.tableConfig.columns.forEach(column => {
+                filteredAttributes.push(column.data)
+            });
+        }
         return filteredAttributes;
     }
-
-    /**
-    * Sets column visibility according to the config file.
-    * (Different from filtering out because invisible columns can be toggled back on)
-    * Helper method to initColumns
-    */
-    setColumnVisibilities(column: any): void {
-        if (!column.visible) {
-            this.panelManager.tableOptions.columnApi.setColumnVisible(column.data, false);
-        }
-    }
-
-    /**
-     * Initializes columns according to specifications in the config on table open.
-     */
-    initColumns(): void {
-        this.tableConfig.columns.forEach(column => {
-            this.setColumnVisibilities(column);
-        });
-    }
-
 }
 
 /**
@@ -134,11 +130,13 @@ export class ColumnConfigManager {
      */
     findColumn(colData: any) {
         let matchingColumn;
-        this.configManager.tableConfig.columns.forEach(column => {
-            if (column.data === colData) {
-                matchingColumn = column;
-            }
-        });
+        if (this.configManager.tableConfig.columns !== undefined) {
+            this.configManager.tableConfig.columns.forEach(column => {
+                if (column.data === colData) {
+                    matchingColumn = column;
+                }
+            });
+        }
         return matchingColumn;
     }
 
@@ -211,6 +209,7 @@ export interface ConfigManager {
     tableConfig: any;
     panelManager: any;
     searchEnabled: boolean;
+    printEnabled: boolean;
 }
 
 

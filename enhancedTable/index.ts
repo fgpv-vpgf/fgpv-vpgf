@@ -164,11 +164,16 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
         colDef.lockPosition = true;
 
         if (columnName === 'rvSymbol') {
-            colDef.maxWidth = 100;
+            colDef.maxWidth = 82;
             // set svg symbol for the symbol column
             colDef.cellRenderer = function (cell) {
                 return cell.value;
             };
+            colDef.cellStyle = function (cell) {
+                return {
+                    paddingTop: '7px'
+                }
+            }
         } else if (columnName === 'rvInteractive') {
             colDef.maxWidth = 40;
             // sets details and zoom buttons for the row
@@ -248,6 +253,7 @@ interface ColumnDefinition {
     getQuickFilterText?: (cellParams: any) => string;
     sort?: string;
     hide?: boolean;
+    cellStyle?: any;
 }
 
 interface HeaderComponentParams {
