@@ -93,7 +93,12 @@ class TableBuilder {
                     // only create column if it is valid according to config, or a symbol/interactive column
 
                     // set up the column according to the specifications from ColumnConfigManger
-                    const column = new ColumnConfigManager(this.configManager, columnName);
+                    let column = this.configManager.columnConfigs[columnName];
+                    // If the column has no config, create a default config for it
+                    if (column === undefined) {
+                        column = new ColumnConfigManager(this.configManager, undefined);
+                        this.configManager.columnConfigs[columnName] = column;
+                    }
 
                     let colDef: ColumnDefinition = {
                         width: column.width || 100,
@@ -194,7 +199,6 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
                 var eSpan = new panel.container(DETAILS_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
                 params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === "Enter") {
-                        console.log(eSpan);
                         eSpan.click();
                     }
                 });
@@ -291,7 +295,8 @@ TableBuilder.prototype.translations = {
         },
         table: {
             filter: {
-                clear: 'Clear filters'
+                clear: 'Clear filters',
+                apply: 'Apply filters to map'
             },
             hideColumns: 'Hide columns'
         },
@@ -324,7 +329,8 @@ TableBuilder.prototype.translations = {
         },
         table: {
             filter: {
-                clear: 'Effacer les filtres'
+                clear: 'Effacer les filtres',
+                apply: 'Appliquer des filtres à la carte' // TODO: Add official French translation
             },
             hideColumns: 'Masquer les colonnes' // TODO: Add Official French translation
         },

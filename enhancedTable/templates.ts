@@ -27,6 +27,20 @@ export const CLEAR_FILTERS_TEMPLATE = `
 </div>
 `;
 
+export const APPLY_TO_MAP_TEMPLATE = `
+<div>
+    <md-button
+        ng-controller="ApplyToMapCtrl as ctrl"
+        aria-label="{{ 't.table.filter.apply' | translate }}"
+        class="md-icon-button black rv-button-24"
+        ng-click="ctrl.applyToMap()"
+        ng-disabled="!ctrl.filtersChanged">
+        <md-tooltip>{{ 't.table.filter.apply' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:map-refresh"></md-icon>
+    </md-button>
+</div>
+`;
+
 export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 <md-menu-bar class="table-control" ng-controller="ColumnVisibilityMenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
@@ -66,7 +80,7 @@ export const MENU_TEMPLATE = (printEnabled: boolean) => {
                 {{ 't.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
-            <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.applyFilter(self.filter.isActive)" rv-right-icon="community:filter">
+            <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.toggleExtentFilter()" rv-right-icon="community:filter">
                 {{ 't.menu.filter.extent' | translate }}
             </md-menu-item>
             <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">
@@ -201,7 +215,6 @@ export const PRINT_TABLE = (title, cols, rws) => {
     let headers = ``;
     const columnNames = Object.keys(cols).map(column => cols[column]);
     columnNames.forEach(columnName => {
-        console.log(columnName);
         if (columnName !== 'SHAPE' && columnName !== ' ' && columnName !== '') {
             headers += `<th style='width:200%; padding: 5px; border-bottom: 2px solid #000000'><div class='cell'>${columnName}</div></th>`;
         }

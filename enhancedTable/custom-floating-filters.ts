@@ -540,13 +540,8 @@ export class SelectorFloatingFilter {
 
     /** Helper function to determine filter model */
     getModel(): any {
-        let selectedOptions = this.scope.selectedOptions;
-        let optionsList = '';
-
-        // add all selection options and pass it onto the filter
-        [].forEach.call(selectedOptions, function (option) {
-            optionsList += option;
-        });
+        let selectedOptions = this.scope.selectedOptions.map(option => `'${option}'`);
+        let optionsList = selectedOptions.join();
 
         return { type: 'contains', filter: optionsList };
     }

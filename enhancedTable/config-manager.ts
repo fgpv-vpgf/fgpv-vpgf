@@ -12,6 +12,7 @@ export class ConfigManager {
         this.panelManager = panelManager;
         this.attributeHeaders = baseLayer.attributeHeaders;
         this.attributeArray = baseLayer._attributeArray;
+        this.columnConfigs = {};
 
         if (baseLayer.layerIndex) {
             // if baseLayer is a dynamic layer, table config corresponds to the one on layerEntry not baseLayer
@@ -31,6 +32,11 @@ export class ConfigManager {
      */
     tableInit(): void {
         this.maximize();
+
+        // populate array of column configs
+        this.tableConfig.columns.forEach(column => {
+            this.columnConfigs[column.data] = new ColumnConfigManager(this, column);
+        });
     }
 
     /**
@@ -119,25 +125,9 @@ export class ConfigManager {
  * Used to establish default settings for columns on table open as well as column behaviour and floating filter behaviours.
  */
 export class ColumnConfigManager {
-    constructor(configManager: ConfigManager, colData: any) {
+    constructor(configManager: ConfigManager, column: any) {
         this.configManager = configManager;
-        this.column = this.findColumn(colData);
-    }
-
-    /**
-     * Finds columns in config based on supplied column data
-     * Helper method
-     */
-    findColumn(colData: any) {
-        let matchingColumn;
-        if (this.configManager.tableConfig.columns !== undefined) {
-            this.configManager.tableConfig.columns.forEach(column => {
-                if (column.data === colData) {
-                    matchingColumn = column;
-                }
-            });
-        }
-        return matchingColumn;
+        this.column = column;
     }
 
     /**
@@ -207,6 +197,7 @@ export interface ConfigManager {
     attributeHeaders: any;
     attributeArray: [any];
     tableConfig: any;
+    columnConfigs: any;
     panelManager: any;
     searchEnabled: boolean;
     printEnabled: boolean;

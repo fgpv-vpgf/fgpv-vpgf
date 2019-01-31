@@ -1,5 +1,5 @@
 import { Grid } from 'ag-grid-community';
-import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE } from './templates';
+import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE, APPLY_TO_MAP_TEMPLATE } from './templates';
 import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
@@ -33,6 +33,7 @@ export class PanelManager {
         this.panel.close = () => {
             this.panel.element[0].removeEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
             this.gridBody.removeEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
+            this.panelRowsManager.destroyObservers();
             this.currentTableLayer = undefined;
             close();
         }
@@ -220,17 +221,19 @@ export class PanelManager {
 
         const clearFiltersBtn = new this.panel.container(CLEAR_FILTERS_TEMPLATE);
 
+        const applyToMapBtn = new this.panel.container(APPLY_TO_MAP_TEMPLATE);
+
         const columnVisibilityMenuBtn = new this.panel.container(COLUMN_VISIBILITY_MENU_TEMPLATE);
 
         const mobileMenuBtn = new this.panel.container(MOBILE_MENU_BTN_TEMPLATE);
 
         if (this.configManager.globalSearchEnabled) {
             this.mobileMenuScope.searchEnabled = true;
-            return [mobileMenuBtn, searchBar, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn]
+            return [mobileMenuBtn, searchBar, columnVisibilityMenuBtn, clearFiltersBtn, applyToMapBtn, menuBtn, closeBtn]
         }
         else {
             this.mobileMenuScope.searchEnabled = false;
-            return [mobileMenuBtn, columnVisibilityMenuBtn, clearFiltersBtn, menuBtn, closeBtn];
+            return [mobileMenuBtn, columnVisibilityMenuBtn, clearFiltersBtn, applyToMapBtn, menuBtn, closeBtn];
         }
     }
 
@@ -260,6 +263,7 @@ export class PanelManager {
             this.appID = that.mapApi.id;
             this.maximized = that.maximized ? 'true' : 'false';
             this.showFilter = !!that.tableOptions.floatingFilter;
+            this.filterByExtent = that.filterByExtent;
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
@@ -286,6 +290,16 @@ export class PanelManager {
                 that.tableOptions.floatingFilter = this.showFilter;
                 that.tableOptions.api.refreshHeader();
             };
+
+            // Sync filterByExtent
+            this.toggleExtentFilter = function() {
+                that.filterByExtent = this.filterByExtent;
+                if (that.filterByExtent) {
+                    that.panelRowsManager.extent = that.mapApi.mapI.extent;
+                } else {
+                    that.panelRowsManager.extent = undefined;
+                }
+            };
         });
 
         this.mapApi.agControllerRegister('ClearFiltersCtrl', function () {
@@ -299,7 +313,7 @@ export class PanelManager {
                 // save columns that have static filters
                 // because static filters remain intact even on clear all filters
                 let preservedColumns = columns.map(column => {
-                    const columnConfigManager = new ColumnConfigManager(that.configManager, column);
+                    const columnConfigManager = that.configManager.columnConfigs[column];
                     if (columnConfigManager.isFilterStatic) {
                         newFilterModel[column] = that.tableOptions.api.getFilterModel()[column];
                         return column;
@@ -328,7 +342,105 @@ export class PanelManager {
 
                 // if column filters don't exist or are static, clearFilters button is disabled
                 return noActiveFilters;
+            }
+        });
+
+        this.mapApi.agControllerRegister('ApplyToMapCtrl', function () {
+            // TODO: set this true when a column filter or the global search changes
+            // then reset to false once the apply to map button has been pressed
+            this.filtersChanged = true;
+
+            // apply filters to map
+            this.applyToMap = function () {
+                getFiltersQuery();
+                that.legendBlock.proxyWrapper.filterState.setGridSql(getFiltersQuery());
             };
+
+            // get filter SQL qeury string
+            function getFiltersQuery() {
+                const filterModel = that.tableOptions.api.getFilterModel();
+                let colStrs = [];
+                Object.keys(filterModel).forEach(col => {
+                    colStrs.push(filterToSql(col, filterModel[col]));
+                });
+                if (that.searchText) {
+                    const globalSearchVal = globalSearchToSql();
+                    if (globalSearchVal) { // will be an empty string if there are no visible rows
+                        colStrs.push(globalSearchVal);
+                    }
+                }
+                return colStrs.join(' AND ');
+            }
+
+            // convert column fitler to SQL string
+            function filterToSql(col: string, colFilter: any): string {
+                const column = that.configManager.columnConfigs[col];
+                switch (colFilter.filterType) {
+                    case 'text':
+                        if (column.isSelector) {
+                            return `UPPER(${col}) IN (${colFilter.filter.toUpperCase()})`;
+                        } else {
+                            let val = colFilter.filter.replace(/'/g, /''/);
+                            if (that.configManager.lazyFilterEnabled) {
+                                const filterVal = `*${val}`;
+                                val = filterVal.split(" ").join("*");
+                            }
+                            if (val !== '') {
+                                return `UPPER(${col}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`;
+                            }
+                        }
+                    case 'number':
+                        switch(colFilter.type) {
+                            case 'greaterThanOrEqual':
+                                return `${col} >= ${colFilter.filter}`;
+
+                            case 'lessThanOrEqual':
+                                return `${col} <= ${colFilter.filter}`;
+
+                            case 'inRange':
+                                return `${col} >= ${colFilter.filter} AND ${col} <= ${colFilter.filterTo}`;
+                            default:
+                                break;
+                        }
+                    case 'date':
+                        const dateFrom = new Date(colFilter.dateFrom);
+                        const dateTo = new Date(colFilter.dateTo);
+                        const from = dateFrom ? `${dateFrom.getMonth() + 1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}` : undefined;
+                        const to = dateTo ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}` : undefined;
+                        switch(colFilter.type) {
+                            case 'greaterThanOrEqual':
+                                return `${col} >= DATE ${from}`;
+
+                            case 'lessThanOrEqual':
+                                return `${col} <= DATE ${from}`; // ag-grid uses from for a single upper limit as well
+
+                            case 'inRange':
+                                return `${col} >= DATE ${from} AND ${col} <= DATE ${to}`;
+                            default:
+                                break;
+                        }
+                }
+            }
+
+            // convert global search to SQL string filter of columns excluding unfiltered columns
+            function globalSearchToSql(): string {
+                let val = that.searchText.replace(/'/g, "''");
+                const filterVal = `%${val.replace(/\*/g, '%').split(" ").join("%").toUpperCase()}`;
+                const re = new RegExp(`.*${val.split(" ").join(".*")}`);
+                const sortedRows = that.tableOptions.api.rowModel.rowsToDisplay;
+                const columns = that.tableOptions.columnApi.getAllDisplayedColumns()
+                                .filter(column => column.colDef.filter === 'agTextColumnFilter');
+                columns.splice(0, 3);
+                let filteredColumns = [];
+                columns.forEach(column => {
+                    for (let row of sortedRows) {
+                        if (re.test(row.data[column.colId])) {
+                            filteredColumns.push(`UPPER(${column.colId}) LIKE \'${filterVal}%\'`);
+                        }
+                    }
+                });
+                return filteredColumns.join(' AND ');
+            }
         });
 
         this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function () {
@@ -336,7 +448,7 @@ export class PanelManager {
             this.columnVisibilities = this.columns
                 .filter(element => element.headerName)
                 .map(element => {
-                    return ({ id: element.field, title: element.headerName, visibility: !element.hide })
+                    return ({ id: element.field, title: element.headerName, visibility: !element.hide });
                 });
 
             // toggle column visibility
@@ -389,6 +501,7 @@ export interface PanelManager {
     recordCountScope: RecordCountScope;
     panelStateManager: PanelStateManager;
     searchText: string;
+    filterByExtent: boolean;
 }
 
 interface EnhancedJQuery extends JQuery {
