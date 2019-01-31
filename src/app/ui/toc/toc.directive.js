@@ -275,7 +275,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
 
                         // proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery); // no longer directly mess with definition query
                         // this will mimick as if the grid had applied its filter goodness.
-                        proxy.filter.setGridSql(currentSubLayer.initialFilteredQuery);
+                        proxy.filter.setSql(proxy.filter.coreFilterTypes.GRID, currentSubLayer.initialFilteredQuery);
                     }
                 });
             }

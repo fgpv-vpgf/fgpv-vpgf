@@ -134,7 +134,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             */
 
             // TODO need a test for proxyWrapper?  it might not be ready yet?  might need a watch on 'loaded' if not ready
-            self.block.proxyWrapper.filterState.setSymbolSql(defClause);
+            const fs = self.block.proxyWrapper.filterState;
+            fs.setSql(fs.coreFilterTypes.SYMBOL, defClause);
         }
 
         // wire up a listener on the visibility change of the legend block
