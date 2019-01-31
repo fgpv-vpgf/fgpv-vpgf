@@ -169,7 +169,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
         }
     };
 
-    events.$on(events.rvMapLoaded, () => {
+    events.$on(events.rvApiMapAdded, () => {
         // When the map is reloaded (language switch, projection switch)
         // Plugins are initialized again so clear out old plugin buttons
         if (service.controls.plugins.children.length > 0) {
