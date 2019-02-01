@@ -3,8 +3,6 @@
  * 
  * Attempts to determine the user's intent... like a crystal ball, only with mouse movement! It is similar to jQuery's hover method. 
  * However, instead of calling the handlerIn function immediately, hoverIntent waits until the user's mouse slows down enough before making the call.
- * 
- * Not to be confused with our intention/extension system, hence the name fancyHover.
  */
 
 const _cfg = {

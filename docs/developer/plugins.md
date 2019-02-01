@@ -82,9 +82,28 @@ Our plugin will now load and work when the viewer is opened in a browser!
 
 ## Advanced Topics
 
-###  preInit(rampConfig) : Promise(any) | void;
+### Configuration
 
-`preInit` is an optional method for the plugin object which is called before the `init` method and before the RAMP API is ready. This method accepts the RAMP configuration as a read-only object.
+If your plugin is configurable by a user they can do so by defining a section under the **plugins** property of the ramp configuration file with the name of your plugin as the key and an object as the value. For example, in the ramp config:
+
+```json
+{
+...
+  "plugins": {
+    "yourPlugin": {
+      "aConfigProperty": true,
+      "bConfigProperty": "sure"
+    }
+  }
+...
+}
+```
+
+The plugin config object is then passed to your plugins preInit method.
+
+###  preInit(pluginConfig, rampConfig) : Promise(any) | void;
+
+`preInit` is an optional method for the plugin object which is called before the `init` method and before the RAMP API is ready. This method accepts your plugin config object that the user defined in their config (or null if not defined), and the entire RAMP configuration as a read-only object.
 
 There may be cases where you'd like to perform some asynchronous operations before the viewer loads. If you return a promise from this method RAMP will pause loading until it resolves into a value that evaluates to `true`.
 
@@ -93,30 +112,33 @@ Let's see this in action with an example:
 ```js
 var config;
 window.MyPlugin = {
-    preInit(rampConfig) {
-        config = rampConfig; // store the config for later use
+    preInit(pluginConfig, rampConfig) {
         return new Promise(function(resolve) {
-            // do some async operations . . .
-            resolve(true);
+            if (pluginConfig.asyncWork) {
+                // do some async operations and resolve . . .
+            } else {
+                resolve(true); // resolve immediatly
+            }
         });
     },
-
     . . .
 }
 ```
 
-### intentions
+### Plugins replacing RAMP features
 
-In Figure 1 above, the first plugin (denoted with a red border) is a special type of plugin called an **intention plugin**. These types of plugins are similar to regular plugins except:
+Plugins usually add features to the RAMP viewer. They can however also **replace** select features entirely. In Figure 1 above, the first plugin (denoted with a red border) is such a plugin. A plugin can only replace one ramp feature, and it must declare which feature it is replacing by defining a property on itself named `feature`. Plugins which replace a feature may have zero or more:
 
-1. it can only be used to replace certain features of the ramp viewer
-2. there may be specific properties or methods (required or optional) that are unique to the feature of ramp you will be replacing
+1. additional API methods and/or properies available through the ramp api
+2. optional or required special properties and methods which are invoked by ramp when certain conditions are met
 
-The only required property for any type of intention plugin is `intention`. This tells RAMP that the plugin is an intention and which specific feature it will replace. Let's see what an intention plugin looks like with the following example that replaces the default way the RAMP viewer performs projection definition lookups:
+A list of replaceable features and any special requirements can be found further on in this guide. 
+
+Here we have a plugin which replaces how ramp handles projection definition lookups:
 
 ```js
 window.MyPlugin = {
-    intention: 'epsg',
+    feature: 'epsg',
 
     lookup(epsgCode) {
         return new Promise(function(resolve){
@@ -127,13 +149,9 @@ window.MyPlugin = {
 }
 ```
 
-It is very similar in structure to a regular plugin. But how did we know to set the `intention` property to `epsg` and where did this `lookup` method come from? Recall that intention plugins can only replace certain features in the viewer. All replaceable features are documented with a name (in this case `epsg`) and any optional or required methods and properties (in this case `lookup`).
+The `feature: 'epsg'` property tells ramp that this plugin will be replacing a specific feature within ramp which handles projection definition lookups. Ramp then invokes the method `lookup` (a special required method) whenever it needs a lookup performed. The required method parameters and return value are document further on in the guide.
 
-<p class="tip">
-    Read through [the list of intentions](#list-of-intentions) at the bottom of this documentation to get familiar with the various types of features that can be replaced.
-</p>
-
-### translations
+### Translations
 
 It's a good idea to translate any text displayed to the user so the plugin text always matches the rest of the text in the ramp viewer. Luckily this process is simplified into two steps:
 
@@ -222,7 +240,7 @@ The contents of `htmlElem` will be compiled and returned as a jQuery object.
 
 You can choose how map authors can configure your plugin. Generally a simple javascript object can be defined with configuration information for most types of applications. You should avoid the use of the RAMP configuration file as a source for plugin configuration since the RAMP configuration file has a defined schema which would be broken if plugin configuration objects are added.
 
-## List of Intentions
+## List of replaceable features
 
 ### epsg
 

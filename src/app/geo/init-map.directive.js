@@ -105,27 +105,10 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
             // allows plugins to register components on the angular instance, usually to provide angular material support
             apiMap.agControllerRegister = $controllerProvider.register;
 
-            loadExtensions(apiMap);
             events.$broadcast(events.rvApiMapAdded, apiMap);
             gtm(apiMap);
             api.mapAdded.next(apiMap);
         });
-
-        /**
-         * Fetches any `rv-extensions` scripts and evals them with the api map instance scoped in.
-
-         * @param {Object} apiMap the api map instance
-         */
-        function loadExtensions(apiMap) {
-            const rvextensions = $rootElement.attr('rv-extensions');
-            const extensionList = rvextensions ? rvextensions.split(',') : [];
-
-            extensionList.forEach(url => {
-                $.ajax({ method: 'GET', dataType: 'text', url }).then(data =>
-                    eval(`(function(mapInstance) { ${data} })(apiMap);`)
-                );
-            });
-        }
 
         /**
          * Track mousedown events on the map that start map pan.

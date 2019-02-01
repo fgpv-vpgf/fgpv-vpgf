@@ -11,10 +11,10 @@
             height: 100%;
         }
     </style>
-    <script src="./extensions/enhancedTable/enhancedTable.js"></script>
-    <link rel="stylesheet" href="./extensions/enhancedTable/enhancedTable.css" />
+    <script src="./plugins/enhancedTable/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./plugins/enhancedTable/enhancedTable.css" />
 
-    <script src="./intentions/epsg.js"></script>
+    <script src="./features/epsg.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -38,7 +38,7 @@
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
 
 <body>
-    <div class="myMap" id="intention-map" is="rv-map"
+    <div class="myMap" id="feature-map" is="rv-map"
         rv-config="config-enhanced-table.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
@@ -75,7 +75,7 @@
 
         var bookmark = queryStr.rv;
         console.log(bookmark);
-        RV.getMap('intention-map').initialBookmark(bookmark);
+        RV.getMap('feature-map').initialBookmark(bookmark);
     </script>
 </body>
 

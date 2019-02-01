@@ -1,10 +1,10 @@
-import Table from '../intention/table/table.intention';
-import EPSG from '../intention/epsg/epsg.intention';
-import geoSearch from '../intention/geosearch/geosearch.intention';
+import Table from '../features/table/table.feature';
+import EPSG from '../features/epsg/epsg.feature';
+import geoSearch from '../features/geosearch/geosearch.feature';
 
 import { FgpvConfigSchema } from 'api/schema';
 
-const loadIntentions: any = {
+const loadFeatures: any = {
     epsg: EPSG,
     table: Table,
     geoSearch
@@ -16,8 +16,8 @@ export default class Loader {
     private mapElem: JQuery<HTMLElement>;
     private preInitPromises: Promise<void>[] = []; // all preInit promises must resolve prior to map loading
 
-    extensions: Array<any> = [];
-    intentions: any = {};
+    plugins: Array<any> = [];
+    features: any = {};
 
     constructor(config: FgpvConfigSchema, mapElem: JQuery<HTMLElement>) {
         this.config = Object.freeze(config); // no changes permitted
@@ -49,20 +49,20 @@ export default class Loader {
                 // save the plugin name which is lost once we initialize it.
                 plugin._name = p;
 
-                if (plugin.intention && loadIntentions[plugin.intention]) {
-                    delete loadIntentions[plugin.intention];
-                    this.intentions[plugin.intention] = plugin;
+                if (plugin.feature && loadFeatures[plugin.feature]) {
+                    delete loadFeatures[plugin.feature];
+                    this.features[plugin.feature] = plugin;
                 } else {
-                    this.extensions.push(plugin);
+                    this.plugins.push(plugin);
                 }
             });
 
-        // Load remaining intentions that have not been replaced.
+        // Load remaining features that have not been replaced.
         Object
-            .keys(loadIntentions)
+            .keys(loadFeatures)
             .forEach((k: string) => {
-                const plugin = this.initialize(loadIntentions[k]);
-                this.intentions[plugin.intention] = plugin;
+                const plugin = this.initialize(loadFeatures[k]);
+                this.features[plugin.feature] = plugin;
             });
     }
 
@@ -81,8 +81,8 @@ export default class Loader {
      * If a promise is returned, adds it to the `preInitPromises` list.
      */
     preInit() {
-        this.extensions
-            .concat(Object.values(this.intentions))
+        this.plugins
+            .concat(Object.values(this.features))
             .forEach((p) => {
                 if (p.preInit) {
                     // config type is any since plugins property is not schema defined.
@@ -101,8 +101,8 @@ export default class Loader {
      * Checks each plugin for an init method. If set, calls the method and passes the maps api.
      */
     init(api: any, legacy_api: any) {
-        this.extensions
-            .concat(Object.values(this.intentions))
+        this.plugins
+            .concat(Object.values(this.features))
             .forEach(p => {
                 p._RV = legacy_api;
                 if (p.init) {
@@ -112,8 +112,8 @@ export default class Loader {
     }
 
     loadTranslations(translationService: any) {
-        this.extensions
-            .concat(Object.values(this.intentions))
+        this.plugins
+            .concat(Object.values(this.features))
             .forEach(p => {
                 if (p.translations) {
                     translationService(p.translations);

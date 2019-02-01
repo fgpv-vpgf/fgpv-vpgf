@@ -93,7 +93,7 @@
     "svgcache": "node scripts/svgCache.js",
     "angular-material": "node scripts/generateAngularMaterial.js",
     "docute": "docute ./docs",
-    "install-all": "npm install && (cd intention && npm install)",
+    "install-all": "npm install && (cd features && npm install)",
     "enhance-configs": "node scripts/enhanceConfigs.js"
   }
 }
