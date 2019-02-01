@@ -46,6 +46,9 @@ export default class Loader {
                     return;
                 }
 
+                // save the plugin name which is lost once we initialize it.
+                plugin._name = p;
+
                 if (plugin.intention && loadIntentions[plugin.intention]) {
                     delete loadIntentions[plugin.intention];
                     this.intentions[plugin.intention] = plugin;
@@ -82,7 +85,9 @@ export default class Loader {
             .concat(Object.values(this.intentions))
             .forEach((p) => {
                 if (p.preInit) {
-                    let returnedValue = p.preInit(this.config);
+                    // config type is any since plugins property is not schema defined.
+                    const pluginConfig = (<any>this.config).plugins ? (<any>this.config).plugins[p._name] : null;
+                    const returnedValue = p.preInit(pluginConfig, this.config);
 
                     // check if a promise like object is returned
                     if (returnedValue && returnedValue.then) {

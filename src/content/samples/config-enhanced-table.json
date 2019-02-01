@@ -1,4 +1,10 @@
 {
+  "plugins": {
+    "configReader": {
+      "title": "Config Reader Plugin",
+      "run": true
+    }
+  },
   "ui": {
     "navBar": {
       "zoom": "buttons",

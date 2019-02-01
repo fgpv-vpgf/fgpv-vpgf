@@ -23,6 +23,16 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
+    <script>
+    window.configReader = {
+        preInit: function(config={showText: [], title: 'Title not set in config!'}, completeConfig) {
+            if (config.run) {
+                console.log('configReader: Started with title "' + config.title + '".');
+            }
+        }
+    };
+    </script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -32,7 +42,7 @@
         rv-config="config-enhanced-table.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-plugins="enhancedTable,customEPSG">
+        rv-plugins="enhancedTable,customEPSG,configReader">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
