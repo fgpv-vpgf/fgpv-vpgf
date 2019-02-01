@@ -102,7 +102,9 @@ export class PanelRowsManager {
      * Helper method to fetch valid oids from the map
      */
     fetchValidOids(extent?: any) {
-        this.legendBlock.proxyWrapper.filterState.getNonGridFilterOIDs(extent).then(oids => {
+        // get all filtered oids, but exclude any filters created by the grid itself
+        const filter = this.legendBlock.proxyWrapper.filterState;
+        filter.getFilterOIDs([filter.coreFilterTypes.GRID], extent).then(oids => {
             // filter symbologies if there's a filter applied
             this.validOids = oids === null ? [] : oids;
             this.externalFilter = oids !== undefined;

@@ -352,8 +352,9 @@ export class PanelManager {
 
             // apply filters to map
             this.applyToMap = function () {
+                const filter = that.legendBlock.proxyWrapper.filterState;
                 getFiltersQuery();
-                that.legendBlock.proxyWrapper.filterState.setGridSql(getFiltersQuery());
+                filter.setSql(filter.coreFilterTypes.GRID, getFiltersQuery());
             };
 
             // get filter SQL qeury string
