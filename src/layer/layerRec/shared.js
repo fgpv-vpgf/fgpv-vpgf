@@ -32,9 +32,10 @@ const dataSources = {
     FILE: 'file'
 }
 
+// these are "officially supported" types.  our filters can take other names (e.g. a plugin wants to name its own filter)
 const filterType = {
     SYMBOL: 'symbol',
-    API: 'api',
+    API: 'api', // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
     GRID: 'grid',
     EXTENT: 'extent'
 }

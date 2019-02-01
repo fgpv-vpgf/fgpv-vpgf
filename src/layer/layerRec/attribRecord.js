@@ -136,9 +136,10 @@ class AttribRecord extends layerRecord.LayerRecord {
      * Applies the current filter settings to the physical map layer.
      *
      * @function applyFilterToLayer
+     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applyFilterToLayer () {
-        this._featClasses[this._defaultFC].applyFilterToLayer();
+    applyFilterToLayer (exclusions = []) {
+        this._featClasses[this._defaultFC].applyFilterToLayer(exclusions);
     }
 
     /**

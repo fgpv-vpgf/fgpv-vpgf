@@ -576,10 +576,11 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * Applies the current filter settings to the physical map layer.
      *
      * @function applyFilterToLayer
-     * @param {String}  childIndex      index of the child layer to target
+     * @param {String}  childIndex  index of the child layer to target
+     * @param {Array} [exclusions]  list of any filters to not apply. omission includes all filters
      */
-    applyFilterToLayer (childIndex) {
-        this._featClasses[childIndex].applyFilterToLayer();
+    applyFilterToLayer (childIndex, exclusions = []) {
+        this._featClasses[childIndex].applyFilterToLayer(exclusions);
     }
 
     /**
