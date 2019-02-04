@@ -4,7 +4,12 @@
     "description": "An extension for rerouting to the data catalogue from a RAMP instance",
     "main": "index.ts",
     "scripts": {},
-    "keywords": ["back", "cart", "catalogue", "ramp", "extension", "plugin"],
+    "keywords": [
+        "cart",
+        "catalogue",
+        "ramp",
+        "plugin"
+    ],
     "license": "ISC",
     "dependencies": {}
 }

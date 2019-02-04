@@ -9,5 +9,6 @@ else
 fi
 
 mkdir -p page_files/$TRAVIS_COMMIT
+npm run build
 mv dist/* page_files/$TRAVIS_COMMIT
 echo "" > page_files/index.html

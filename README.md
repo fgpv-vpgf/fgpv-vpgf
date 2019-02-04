@@ -1,6 +1,14 @@
-# Plugins
+# Plugins ![](https://img.shields.io/npm/v/@fgpv/rv-plugins.svg)
 
-Plugins for the [RAMP v3 Viewer](https://github.com/fgpv-vpgf/fgpv-vpgf).
+Plugins for [RAMP](https://github.com/fgpv-vpgf/fgpv-vpgf) supported by the core developer team.
+
+## Documentation
+
+https://docs.fgpv.org/fgpv-vpgf/plugins/
+
+## Publishing a release
+
+`npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease]` will create a version commit and tag then push the tag `upstream` for pushlishing to npm.
 
 ## Build distribution files
 
@@ -12,7 +20,7 @@ Samples and automated testing use the ramp viewer code found in `bin/test/ramp`.
 
 ## Contributing
 
-This project uses the fork and pull model. Once forked, run `npm run init` from the project root directory to setup for first time use. 
+This project uses the fork and pull model. Once forked, run `npm i` from the project root directory to setup for first time use. 
 
 ### Running locally
 
