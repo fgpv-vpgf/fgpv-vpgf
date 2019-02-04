@@ -245,8 +245,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         };
 
         //wire in a hook to the SymbologyStack item!
-        self.symbology.toggleList = self.toggleList;
-        self.symbology.onToggleClick = self.onToggleClick;
+        if (self.symbology) {
+            self.symbology.toggleList = self.toggleList;
+            self.symbology.onToggleClick = self.onToggleClick;
+        }
 
         const ref = {
             isReady: false,
