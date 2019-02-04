@@ -6,7 +6,7 @@
         "build": "webpack --config ./bin/build/webpack.config.js",
         "serve": "webpack-dev-server --progress --hot --config ./bin/build/webpack.config.js",
         "test": "./node_modules/.bin/wdio ./bin/test/wdio.conf.js",
-        "install": "./bin/build/npm-install-subdirs.sh ./",
+        "prepare": "./bin/build/npm-install-subdirs.sh ./",
         "prepublishOnly": "tsc",
         "postversion": "git push upstream v$npm_package_version"
     },
