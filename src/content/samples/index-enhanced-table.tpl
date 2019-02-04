@@ -11,10 +11,10 @@
             height: 100%;
         }
     </style>
-    <script src="./extensions/enhancedTable/enhancedTable.js"></script>
-    <link rel="stylesheet" href="./extensions/enhancedTable/enhancedTable.css" />
+    <script src="./plugins/enhancedTable/enhancedTable.js"></script>
+    <link rel="stylesheet" href="./plugins/enhancedTable/enhancedTable.css" />
 
-    <script src="./intentions/epsg.js"></script>
+    <script src="./features/epsg.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -23,16 +23,26 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
+    <script>
+    window.configReader = {
+        preInit: function(config={showText: [], title: 'Title not set in config!'}, completeConfig) {
+            if (config.run) {
+                console.log('configReader: Started with title "' + config.title + '".');
+            }
+        }
+    };
+    </script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
 
 <body>
-    <div class="myMap" id="intention-map" is="rv-map"
+    <div class="myMap" id="feature-map" is="rv-map"
         rv-config="config-enhanced-table.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-plugins="enhancedTable,customEPSG">
+        rv-plugins="enhancedTable,customEPSG,configReader">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -65,7 +75,7 @@
 
         var bookmark = queryStr.rv;
         console.log(bookmark);
-        RV.getMap('intention-map').initialBookmark(bookmark);
+        RV.getMap('feature-map').initialBookmark(bookmark);
     </script>
 </body>
 

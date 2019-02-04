@@ -2620,6 +2620,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._version = configSource.version;
             this._language = configSource.language;
             this._languages = configSource.languages;
+            this._plugins = configSource.plugins;
 
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
@@ -2715,6 +2716,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get version () { return this._version; }
         get language () { return this._language; }
         get languages () { return this._languages; }
+        get plugins () { return this._plugins; }
 
         get ui () { return this._ui; }
         get services () { return this._services; }

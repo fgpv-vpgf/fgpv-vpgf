@@ -1,6 +1,6 @@
 /**
  * @namespace geoSearch
- * @description An intention that provides geo location search
+ * @description A feature that provides geo location search
  */
 
 import 'rz-geosearch';
@@ -169,6 +169,6 @@ class GeoSearchUI {
 }
 
 export default {
-    intention: 'geoSearch',
+    feature: 'geoSearch',
     GeoSearchUI
 }

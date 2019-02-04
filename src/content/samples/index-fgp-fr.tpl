@@ -7,7 +7,7 @@
     <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
 
-    <script src="./extensions/backToCart/backToCart.js"></script>
+    <script src="./plugins/backToCart/backToCart.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>

@@ -1,4 +1,4 @@
-import { Table } from './table.intention';
+import { Table } from './table.feature';
 import { Panel } from 'api/panel'; 
 
 /**

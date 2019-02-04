@@ -268,7 +268,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
             this.config = new ConfigClass(rawConfig);
-            this.config.epsgLookup = appInfo.intentions.epsg.lookup;
+            this.config.epsgLookup = appInfo.features.epsg.lookup;
 
             // if there was a bookmark with enhancements for this layer, apply them.
             if (rawConfig.bookmarkData) {

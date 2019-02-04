@@ -30,7 +30,7 @@ function tablePane(stateManager, $rootScope, appInfo) {
                     headerName: c.title, field: c.data
                 }));
                 $('#testTable1').empty();
-                const tableI = appInfo.plugins.find(p => p.intention === 'table');
+                const tableI = appInfo.plugins.find(p => p.feature === 'table');
                 table = tableI.create(document.querySelector('#testTable1'), cols, self.display.data.rows);
             }
         });

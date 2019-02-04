@@ -68,8 +68,8 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                     this._pluginLoader.isReady.then(() => {
                         this._pluginLoader.loadTranslations(translationService);
                         mapService.makeMap();
-                        appInfo.intentions = this._pluginLoader.intentions;
-                        appInfo.extensions = this._pluginLoader.extensions;
+                        appInfo.features = this._pluginLoader.features;
+                        appInfo.plugins = this._pluginLoader.plugins;
                         legendService.constructLegend(config.map.layers, config.map.legend);
                         this._isMapReady = true;
                         $rootScope.$broadcast(events.rvApiReady);

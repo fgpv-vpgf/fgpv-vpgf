@@ -12,7 +12,7 @@ install:
 cache:
   directories:
   - node_modules
-  - intention/node_modules
+  - features/node_modules
 after_success:
 - source ./scripts/devdeploy.sh
 deploy:
