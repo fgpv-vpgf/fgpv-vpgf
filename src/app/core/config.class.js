@@ -2184,6 +2184,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                         subscriber.next(pointToApi(centerXY.x, centerXY.y));
                     });
                 });
+
+                mapInstance.filterChanged = Observable.create(subscriber => {
+                    events.$on(events.rvFilterChanged, (_, params) => {
+                        subscriber.next(params);
+                    })
+                });
             });
 
             function extentToApi(extent) {
