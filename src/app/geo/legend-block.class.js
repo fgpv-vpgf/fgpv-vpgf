@@ -394,8 +394,9 @@ function LegendBlockFactory(
             return this._layerConfig.state.userAdded;
         }
 
-        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
-        //      might want to use this.filterState.isActive() which returns boolean
+        // find whos calling this. determine if still relevant. attempt to port to new filter regime
+        // might want to use this.filterState.isActive() which returns boolean.
+        // See https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3263#issuecomment-460794432 for further analysis on this
         /**
          * Returns the value of the `filter` state flag.
          *
