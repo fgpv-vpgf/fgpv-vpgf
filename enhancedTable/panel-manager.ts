@@ -65,7 +65,17 @@ export class PanelManager {
         if (this.currentTableLayer === layer) {
             this.close();
         } else {
+            // close previous table properly if open
+            if (this.currentTableLayer) {
+                this.close();
+            }
             this.tableOptions = tableOptions;
+
+            // set filter change flag to true
+            this.tableOptions.onFilterChanged = (event) => {
+                this.filtersChanged = true;
+            }
+
             this.panelStatusManager = new PanelStatusManager(this);
             this.panelStatusManager.setFilterAndScrollWatch();
 
@@ -292,13 +302,8 @@ export class PanelManager {
             };
 
             // Sync filterByExtent
-            this.toggleExtentFilter = function() {
+            this.setExtentFilter = function() {
                 that.filterByExtent = this.filterByExtent;
-                if (that.filterByExtent) {
-                    that.panelRowsManager.extent = that.mapApi.mapI.extent;
-                } else {
-                    that.panelRowsManager.extent = undefined;
-                }
             };
         });
 
@@ -346,15 +351,16 @@ export class PanelManager {
         });
 
         this.mapApi.agControllerRegister('ApplyToMapCtrl', function () {
-            // TODO: set this true when a column filter or the global search changes
-            // then reset to false once the apply to map button has been pressed
-            this.filtersChanged = true;
+            // returns true if a filter has been changed since the last
+            this.filtersChanged = function () {
+                return that.filtersChanged;
+            };
 
             // apply filters to map
             this.applyToMap = function () {
                 const filter = that.legendBlock.proxyWrapper.filterState;
-                getFiltersQuery();
                 filter.setSql(filter.coreFilterTypes.GRID, getFiltersQuery());
+                that.filtersChanged = false;
             };
 
             // get filter SQL qeury string
@@ -410,13 +416,13 @@ export class PanelManager {
                         const to = dateTo ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}` : undefined;
                         switch(colFilter.type) {
                             case 'greaterThanOrEqual':
-                                return `${col} >= DATE ${from}`;
+                                return `${col} >= DATE '${from}'`;
 
                             case 'lessThanOrEqual':
-                                return `${col} <= DATE ${from}`; // ag-grid uses from for a single upper limit as well
+                                return `${col} <= DATE '${from}'`; // ag-grid uses from for a single upper limit as well
 
                             case 'inRange':
-                                return `${col} >= DATE ${from} AND ${col} <= DATE ${to}`;
+                                return `${col} >= DATE '${from}' AND ${col} <= DATE '${to}'`;
                             default:
                                 break;
                         }
@@ -427,7 +433,7 @@ export class PanelManager {
             function globalSearchToSql(): string {
                 let val = that.searchText.replace(/'/g, "''");
                 const filterVal = `%${val.replace(/\*/g, '%').split(" ").join("%").toUpperCase()}`;
-                const re = new RegExp(`.*${val.split(" ").join(".*")}`);
+                const re = new RegExp(`.*${val.split(" ").join(".*").toUpperCase()}`);
                 const sortedRows = that.tableOptions.api.rowModel.rowsToDisplay;
                 const columns = that.tableOptions.columnApi.getAllDisplayedColumns()
                                 .filter(column => column.colDef.filter === 'agTextColumnFilter');
@@ -435,7 +441,7 @@ export class PanelManager {
                 let filteredColumns = [];
                 columns.forEach(column => {
                     for (let row of sortedRows) {
-                        if (re.test(row.data[column.colId])) {
+                        if (re.test(row.data[column.colId].toUpperCase())) {
                             filteredColumns.push(`UPPER(${column.colId}) LIKE \'${filterVal}%\'`);
                         }
                     }
@@ -503,6 +509,7 @@ export interface PanelManager {
     panelStateManager: PanelStateManager;
     searchText: string;
     filterByExtent: boolean;
+    filtersChanged: boolean;
 }
 
 interface EnhancedJQuery extends JQuery {

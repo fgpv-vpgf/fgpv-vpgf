@@ -34,7 +34,7 @@ export const APPLY_TO_MAP_TEMPLATE = `
         aria-label="{{ 't.table.filter.apply' | translate }}"
         class="md-icon-button black rv-button-24"
         ng-click="ctrl.applyToMap()"
-        ng-disabled="!ctrl.filtersChanged">
+        ng-disabled="!ctrl.filtersChanged()">
         <md-tooltip>{{ 't.table.filter.apply' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:map-refresh"></md-icon>
     </md-button>
@@ -80,7 +80,7 @@ export const MENU_TEMPLATE = (printEnabled: boolean) => {
                 {{ 't.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
-            <md-menu-item type="checkbox" ng-model="self.filter.isActive" ng-click="self.toggleExtentFilter()" rv-right-icon="community:filter">
+            <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.setExtentFilter()" rv-right-icon="community:filter">
                 {{ 't.menu.filter.extent' | translate }}
             </md-menu-item>
             <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">

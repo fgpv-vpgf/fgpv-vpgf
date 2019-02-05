@@ -21,16 +21,32 @@ export class PanelRowsManager {
         this.initTableRowVisibility();
 
         // Subscribers
-        // Filter all rows when visibility is off
+        // Filter all rows when visibility is off and none when it's on
+        // Requires a separate check since it's not handled as a filter change
         this.layerVisibilityObserver = this.legendBlock.visibilityChanged.subscribe(visibility => {
             this.validOids = visibility ? undefined : [];
             this.externalFilter = !visibility;
             this.updateGridFilters();
         });
 
-        // Fetch valid rows and filter table on symbol toggle
-        this.symbolVisibilityObserver = this.legendBlock.symbolVisibilityChanged.subscribe(() => {
-            this.fetchValidOids(this.extent);
+        // Update table on map filter change
+        this.mapFilterChangedObserver = this.mapApi.filterChanged.subscribe((params) =>  {
+            const filterTypes = this.legendBlock.proxyWrapper.filterState.coreFilterTypes;
+            if (params.filterType === filterTypes.EXTENT) {
+                // Filter table by extent if enabled
+                this.extent = params.extent;
+                if (this.panelManager.filterByExtent) {
+                    this.fetchValidOids(this.extent);
+                }
+            } else if (params.filterType !== filterTypes.GRID) {
+                // Filter table if not GRID or EXTENT filter
+                const layerMatch = this.legendBlock.parentLayerType === 'esriDynamic'
+                                    ? params.layerID === this.legendBlock.layerRecordId && params.layerIdx === this.legendBlock.itemIndex
+                                    : params.layerID === this.legendBlock.layerRecordId;
+                if (layerMatch) {
+                    this.fetchValidOids(this.extent);
+                }
+            }
         });
     }
 
@@ -39,7 +55,7 @@ export class PanelRowsManager {
     */
     destroyObservers() {
         this.layerVisibilityObserver.unsubscribe();
-        this.symbolVisibilityObserver.unsubscribe();
+        this.mapFilterChangedObserver.unsubscribe();
     }
 
     /**
@@ -93,9 +109,6 @@ export class PanelRowsManager {
     */
     updateGridFilters() {
         this.tableOptions.api.onFilterChanged();
-        this.tableOptions.api.selectAllFiltered();
-        this.panelManager.panelStatusManager.getFilterStatus();
-        this.tableOptions.api.deselectAllFiltered();
     }
 
     /**
@@ -103,8 +116,9 @@ export class PanelRowsManager {
      */
     fetchValidOids(extent?: any) {
         // get all filtered oids, but exclude any filters created by the grid itself
+        const filterExtent = this.panelManager.filterByExtent ? extent : undefined;
         const filter = this.legendBlock.proxyWrapper.filterState;
-        filter.getFilterOIDs([filter.coreFilterTypes.GRID], extent).then(oids => {
+        filter.getFilterOIDs([filter.coreFilterTypes.GRID], filterExtent).then(oids => {
             // filter symbologies if there's a filter applied
             this.validOids = oids === null ? [] : oids;
             this.externalFilter = oids !== undefined;
@@ -127,5 +141,5 @@ export interface PanelRowsManager {
     validOids: number[];
     extent: any; // implement after extent filter fixes
     layerVisibilityObserver: any;
-    symbolVisibilityObserver: any;
+    mapFilterChangedObserver: any
 }

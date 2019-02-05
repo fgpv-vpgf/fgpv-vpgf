@@ -34,9 +34,11 @@ export class ConfigManager {
         this.maximize();
 
         // populate array of column configs
-        this.tableConfig.columns.forEach(column => {
-            this.columnConfigs[column.data] = new ColumnConfigManager(this, column);
-        });
+        if (this.tableConfig.columns) {
+            this.tableConfig.columns.forEach(column => {
+                this.columnConfigs[column.data] = new ColumnConfigManager(this, column);
+            });
+        }
     }
 
     /**
@@ -99,10 +101,10 @@ export class ConfigManager {
     }
 
     /**
-     * Return whether table filters apply to map as defined in config, if undefined defaults to false.
+     * Returns if the default filters are applied to the map. If undefined defaults to false
      */
     get applyMap(): boolean {
-        return (this.tableConfig.applyMap !== undefined) ? this.tableConfig.applyMap : false; // TODO: applyMap still has to be implemented
+        return (this.tableConfig.applyMap !== undefined) ? this.tableConfig.applyMap : false;
     }
 
     /**

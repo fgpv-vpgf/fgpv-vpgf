@@ -15,13 +15,17 @@ export class PanelStatusManager {
     setFilterAndScrollWatch() {
         let tableOptions = this.tableOptions;
         let that = this;
+
+        let oldFilterChanged = tableOptions.onFilterChanged.bind(tableOptions);
         tableOptions.onFilterChanged = function (event) {
             if (tableOptions && tableOptions.api) {
                 tableOptions.api.selectAllFiltered();
                 that.getFilterStatus();
                 tableOptions.api.deselectAllFiltered();
             }
+            oldFilterChanged(event);
         }
+
         tableOptions.onBodyScroll = function (event) {
             that.getScrollRange();
         }
