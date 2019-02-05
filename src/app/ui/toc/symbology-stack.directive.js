@@ -123,16 +123,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         // Helper function: apply definition to filter system
         function applySymbolFilter(defClause) {
 
-            /* // TODO need to figure out what situation would result in an undefined SQL but a list of valid OIDs.
-               //     this would be everything selected (going forward, undefined becomes ''), and there were valid oids
-               // that woudl determine if we need this block.visibility=true still
-               // some tests are in order.
-            else if (self.block.validOIDs !== undefined) {
-                self.block.symbDefinitionQuery = undefined;
-                self.block.visibility = true;
-            }
-            */
-
             // TODO need a test for proxyWrapper?  it might not be ready yet?  might need a watch on 'loaded' if not ready
             const fs = self.block.proxyWrapper.filterState;
             fs.setSql(fs.coreFilterTypes.SYMBOL, defClause);
@@ -153,14 +143,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         // TODO ensure this is race condition no longer exists in new filter structure
                         // TODO once things are working, move these two statements to a function and call in both locations.
                         applySymbolFilter(query);
-                        /*
-                        if (self.block.isSelected) {
-                            setTableDefinition(query, query);
-                        } else {
-                            //update only map if not selected
-                            self.block.definitionQuery = query;
-                        }
-                        */
+
                         keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                     } else {
                         // layer not yet loaded, wait until it is then apply stuff
@@ -169,14 +152,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 // only update if currently selected...otherwise causes all sorts of race conditions
                                 // TODO ensure this is race condition no longer exists in new filter structure
                                 applySymbolFilter(query);
-                                /*
-                                if (self.block.isSelected) {
-                                    applySymbolFilter(query);
-                                } else {
-                                    // update only map if not selected
-                                    self.block.definitionQuery = query;
-                                }
-                                */
+
                                 keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
                                 self.stackToggled = false;
                                 proxyLoaded();

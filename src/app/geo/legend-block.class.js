@@ -174,7 +174,7 @@ function LegendBlockFactory(
             return this._lastState;
         }
 
-        get isActiveState () {
+        get isActiveState() {
             return this._proxy ? this._proxy.activeState : false;
         }
 
@@ -307,25 +307,6 @@ function LegendBlockFactory(
             this._layerConfig.state.boundingBox = value;
         }
 
-        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
-        /**
-         * Set definition query to filter feature layer or dynamic layer
-         *
-         * @param {String} value the definition query to set
-         */
-        set definitionQuery(value) {
-            // the proxy has not resolved yet; retry when resolved;
-            if (!this._proxyCheck(() => (this.setDefinitionQuery = value))) {
-                return;
-            }
-            //only setDefinitionQuery once this._proxy has loaded
-            const proxyLoaded = $rootScope.$watch(() => this._proxy.state, (state, oldState) => {
-                if (state === 'rv-loaded') {
-                    this._proxy.setDefinitionQuery(value);
-                    proxyLoaded();
-                }
-            });
-        }
 
         /**
          * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
@@ -423,6 +404,7 @@ function LegendBlockFactory(
         get filter() {
             return this._layerConfig.filter;
         }
+
         set filter(value) {
             this._layerConfig.filter = value;
         }
@@ -700,7 +682,7 @@ function LegendBlockFactory(
             this._selectedChanged.next(value);
         }
 
-        get selectedChanged(){
+        get selectedChanged() {
             return this._selectedChanged.asObservable();
         }
 
@@ -950,16 +932,6 @@ function LegendBlockFactory(
             updateLegendElementQueryable(this);
         }
 
-        /**
-         * Set definition query to filter feature layer or dynamic layer
-         *
-         * @param {String} value the definition query to set
-         */
-        set definitionQuery(value) {
-            // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
-            this.proxyWrapper.definitionQuery = value;
-        }
-
         get snapshot() {
             return this.proxyWrapper.snapshot;
         }
@@ -1030,6 +1002,7 @@ function LegendBlockFactory(
         get filter() {
             return this.proxyWrapper.filter;
         }
+
         set filter(value) {
             this.proxyWrapper.filter = value;
         }
