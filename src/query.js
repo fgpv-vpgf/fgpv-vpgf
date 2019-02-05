@@ -25,6 +25,7 @@ function queryGeometryBuilder(esriBundle) {
     return options => {
         // create and set the esri query parameters
 
+        const isFile = !!options.featureLayer;
         const query = new esriBundle.Query();
 
         query.returnGeometry = options.returnGeometry || false;
@@ -37,12 +38,22 @@ function queryGeometryBuilder(esriBundle) {
             query.outFields = ['*'];
         }
         if (options.where) {
-            if (options.featureLayer) {
+            if (isFile) {
                 throw new Error('Cannot use WHERE clauses in queries against non-ArcGIS Server based layers');
             }
             query.where = options.where;
         }
-        query.geometry = options.geometry;
+
+        if (isFile && options.geometry.type !== 'extent') {
+            throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
+        }
+        if (!isFile && options.geometry.type === 'extent') {
+            // convert extent to polygon to avoid issues when a service in a different projection
+            // attempts to warp the extent
+            query.geometry = esriBundle.Polygon.fromExtent(options.geometry);
+        } else {
+            query.geometry = options.geometry;
+        }
         query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
 
         return new Promise((resolve, reject) => {
@@ -59,7 +70,7 @@ function queryGeometryBuilder(esriBundle) {
                         reject(error);
                     }
                 );
-            } else if (options.featureLayer) {
+            } else if (isFile) {
                 // run the query on the layers internal data
                 options.featureLayer.queryFeatures(query,
                     featureSet => {
@@ -96,17 +107,27 @@ function queryIdsBuilder(esriBundle) {
     return options => {
         // create and set the esri query parameters
 
+        const isFile = !!options.featureLayer;
         const query = new esriBundle.Query();
         query.returnGeometry = false;
 
         if (options.where) {
-            if (options.featureLayer) {
+            if (isFile) {
                 throw new Error('Cannot use WHERE clauses in queries against non-ArcGIS Server based layers');
             }
             query.where = options.where;
         }
         if (options.geometry) {
-            query.geometry = options.geometry;
+            if (isFile && options.geometry.type !== 'extent') {
+                throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
+            }
+            if (!isFile && options.geometry.type === 'extent') {
+                // convert extent to polygon to avoid issues when a service in a different projection
+                // attempts to warp the extent
+                query.geometry = esriBundle.Polygon.fromExtent(options.geometry);
+            } else {
+                query.geometry = options.geometry;
+            }
             query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
         }
 
@@ -124,7 +145,7 @@ function queryIdsBuilder(esriBundle) {
                         reject(error);
                     }
                 );
-            } else if (options.featureLayer) {
+            } else if (isFile) {
                 // run the query on the layers internal data
                 options.featureLayer.queryIds(query,
                     oidArray => {
