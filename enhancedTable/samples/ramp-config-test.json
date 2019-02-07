@@ -80,17 +80,49 @@
                 "name": "root",
                 "children": [
                     {
-                        "layerId": "0"
+                        "layerId": "8"
                     }
                 ]
             }
         },
         "layers": [
             {
-                "id": "0",
-                "name": "BadDates",
+                "id": "8",
+                "name": "Has initial filters",
                 "layerType": "esriFeature",
-                "url": "https://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5",
+                "table": {
+                    "title": "Table Test Two - Custom Title",
+                    "search": {
+                        "value": "Ener"
+                    },
+                    "printEnabled": true,
+                    "applyMap": false,
+                    "columns": [
+                        {
+                            "data": "OBJECTID",
+                            "title": "Custom OID",
+                            "description": "the object ids for the features",
+                            "width": 20,
+                            "sort": "desc",
+                            "filter": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "data": "Country",
+                            "width": 20,
+                            "sort": "asc",
+                            "filter": {
+                                "type": "selector",
+                                "value": "[\"Canada\", \"Mexico\"]"
+                            }
+                        },
+                        {
+                            "data": "Operator"
+                        }
+                    ]
+                }
             }
         ],
         "extentSets": [

@@ -3,7 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const SOURCE_PATH = path.join(__dirname, '../../');
-require('dotenv').config({ path: path.join(SOURCE_PATH, '.env') });
 
 const pluginList = {
     enhancedTable: path.join(SOURCE_PATH, 'enhancedTable'),

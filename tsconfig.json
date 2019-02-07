@@ -5,8 +5,9 @@
       "module": "commonjs",
       "declaration": true,
       "outDir": "./lib",
-      "lib": ["es5", "es2015", "dom", "scripthost"]
+      "lib": ["es5", "es2015", "dom", "scripthost"],
+      "types": ["jquery", "intern"]
     },
-    "include": ["./index.ts", "enhancedTable", "areaOfInterest", "backToCart"],
-    "exclude": ["node_modules", "**/__tests__/*"]
+    "include": ["./**/*.ts"],
+    "exclude": ["node_modules", "lib"]
   }

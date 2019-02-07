@@ -1,0 +1,15 @@
+{
+    "functionalSuites": ["lib/tests/**/*.js"],
+    "functionalTimeouts": { 
+        "connectTimeout": 10000,
+        "executeAsync": 10000,
+        "find": 10000,
+        "pageLoad": 50000
+    },
+    "environments": [{"browserName": "chrome", "version": "71", "platform": "WIN10"}],
+    "tunnel": "testingbot",
+    "tunnelOptions": {
+        "username": "",
+        "accessKey": ""
+    }
+}
