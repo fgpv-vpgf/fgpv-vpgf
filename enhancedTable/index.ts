@@ -3,18 +3,16 @@ import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
 import { DETAILS_TEMPLATE, ZOOM_TEMPLATE } from './templates';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
-import {
-    setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter
-} from './custom-floating-filters';
+import { setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
 import { PanelStateManager } from './panel-state-manager';
 
-const NUMBER_TYPES = ["esriFieldTypeOID", "esriFieldTypeDouble", "esriFieldTypeInteger"];
-const DATE_TYPE = "esriFieldTypeDate";
-const TEXT_TYPE = "esriFieldTypeString";
+const NUMBER_TYPES = ['esriFieldTypeOID', 'esriFieldTypeDouble', 'esriFieldTypeInteger'];
+const DATE_TYPE = 'esriFieldTypeDate';
+const TEXT_TYPE = 'esriFieldTypeString';
 
 class TableBuilder {
-    intention = 'table';
+    feature = 'table';
     attributeHeaders: any;
 
     init(mapApi: any) {
@@ -38,7 +36,7 @@ class TableBuilder {
                 // make sure the item clicked is a node, and not group or other
                 let layer;
                 if (legendBlock.parentLayerType === 'esriDynamic') {
-                    layer = this.mapApi.layers.allLayers.find(function (l) {
+                    layer = this.mapApi.layers.allLayers.find(function(l) {
                         return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
                     });
                 } else {
@@ -85,11 +83,12 @@ class TableBuilder {
         let cols: Array<any> = [];
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
             Object.keys(a.rows[0]).forEach(columnName => {
-
-                if (columnName === 'rvSymbol' ||
+                if (
+                    columnName === 'rvSymbol' ||
                     columnName === 'rvInteractive' ||
                     this.configManager.filteredAttributes.length === 0 ||
-                    this.configManager.filteredAttributes.indexOf(columnName) > -1) {
+                    this.configManager.filteredAttributes.indexOf(columnName) > -1
+                ) {
                     // only create column if it is valid according to config, or a symbol/interactive column
 
                     // set up the column according to the specifications from ColumnConfigManger
@@ -113,11 +112,12 @@ class TableBuilder {
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
-                        hide: this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined
+                        hide:
+                            this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined
                     };
 
                     // set up floating filters and column header
-                    const fieldInfo = a.fields.find(field => field.name === columnName)
+                    const fieldInfo = a.fields.find(field => field.name === columnName);
                     if (fieldInfo) {
                         const isSelector = column.isSelector;
                         const isStatic = column.isFilterStatic;
@@ -132,11 +132,24 @@ class TableBuilder {
                                 setUpDateFilter(colDef, isStatic, this.mapApi, column.value, this.panel.panelStateManager);
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
                                 if (isSelector) {
-                                    setUpSelectorFilter(colDef, isStatic, column.value, this.tableOptions,
-                                        this.mapApi, this.panel.panelStateManager);
+                                    setUpSelectorFilter(
+                                        colDef,
+                                        isStatic,
+                                        column.value,
+                                        this.tableOptions,
+                                        this.mapApi,
+                                        this.panel.panelStateManager
+                                    );
                                 } else {
-                                    setUpTextFilter(colDef, isStatic, this.configManager.lazyFilterEnabled,
-                                        this.configManager.searchStrictMatchEnabled, column.value, this.mapApi, this.panel.panelStateManager);
+                                    setUpTextFilter(
+                                        colDef,
+                                        isStatic,
+                                        this.configManager.lazyFilterEnabled,
+                                        this.configManager.searchStrictMatchEnabled,
+                                        column.value,
+                                        this.mapApi,
+                                        this.panel.panelStateManager
+                                    );
                                 }
                             }
                         }
@@ -147,7 +160,6 @@ class TableBuilder {
                     // symbols and interactive columns are set up for every table
                     setUpSymbolsAndInteractive(columnName, colDef, cols, panel);
                 }
-
             });
             (<any>Object).assign(this.tableOptions, {
                 columnDefs: cols,
@@ -171,40 +183,40 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
         if (columnName === 'rvSymbol') {
             colDef.maxWidth = 82;
             // set svg symbol for the symbol column
-            colDef.cellRenderer = function (cell) {
+            colDef.cellRenderer = function(cell) {
                 return cell.value;
             };
-            colDef.cellStyle = function (cell) {
+            colDef.cellStyle = function(cell) {
                 return {
                     paddingTop: '7px'
-                }
-            }
+                };
+            };
         } else if (columnName === 'rvInteractive') {
             colDef.maxWidth = 40;
             // sets details and zoom buttons for the row
             let zoomDef = (<any>Object).assign({}, colDef);
             zoomDef.field = 'zoom';
-            zoomDef.cellRenderer = function (params) {
+            zoomDef.cellRenderer = function(params) {
                 var eSpan = new panel.container(ZOOM_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
-                params.eGridCell.addEventListener('keydown', function (e) {
-                    if (e.key === "Enter") {
+                params.eGridCell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
                         eSpan.click();
                     }
                 });
                 params.eGridCell.style.padding = 0;
                 return eSpan;
-            }
+            };
             cols.splice(0, 0, zoomDef);
-            colDef.cellRenderer = function (params) {
+            colDef.cellRenderer = function(params) {
                 var eSpan = new panel.container(DETAILS_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
-                params.eGridCell.addEventListener('keydown', function (e) {
-                    if (e.key === "Enter") {
+                params.eGridCell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
                         eSpan.click();
                     }
                 });
                 params.eGridCell.style.padding = 0;
                 return eSpan;
-            }
+            };
         }
         cols.splice(0, 0, colDef);
     } else {
@@ -217,7 +229,7 @@ function setUpHeaderComponent(colDef, mApi) {
     colDef.headerComponent = CustomHeader;
     colDef.headerComponentParams = {
         mapApi: mApi
-    }
+    };
 }
 
 interface AttrBundle {
@@ -244,7 +256,7 @@ interface ColumnDefinition {
     maxWidth?: number;
     width?: number;
     field: string;
-    headerComponent?: { new(): CustomHeader };
+    headerComponent?: { new (): CustomHeader };
     headerComponentParams?: HeaderComponentParams;
     filter: string;
     filterParams?: any;

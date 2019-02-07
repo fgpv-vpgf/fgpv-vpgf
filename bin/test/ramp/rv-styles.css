@@ -21197,7 +21197,8 @@ Obviously you need some kind of rules and criteria:
     top: 0px;
     left: 0px;
     overflow: hidden;
-    margin: 10px; }
+    margin: 10px;
+    z-index: 13; }
     [is=rv-map] .panel-contents .rv-button-24, .fgpv .panel-contents .rv-button-24 {
       overflow: visible;
       line-height: 24px;
@@ -21207,9 +21208,15 @@ Obviously you need some kind of rules and criteria:
       [is=rv-map] .panel-contents .rv-button-24 [md-icon], .fgpv .panel-contents .rv-button-24 [md-icon] {
         max-height: 24px;
         max-width: 24px; }
+    .rv-small[is=rv-map] .panel-contents.rv-panel-mobile-snap, .rv-small.fgpv .panel-contents.rv-panel-mobile-snap {
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0px;
+      top: 0px !important;
+      left: 0px !important; }
   [is=rv-map] .panel-controls, .fgpv .panel-controls {
     padding: 4px 12px 4px 18px;
-    height: 55px;
+    height: 48px;
     overflow: hidden; }
     [is=rv-map] .panel-controls .md-icon-button, .fgpv .panel-controls .md-icon-button {
       width: 24px;

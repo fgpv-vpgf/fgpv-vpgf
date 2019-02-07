@@ -7,7 +7,8 @@ const SOURCE_PATH = path.join(__dirname, '../../');
 const pluginList = {
     enhancedTable: path.join(SOURCE_PATH, 'enhancedTable'),
     areaOfInterest: path.join(SOURCE_PATH, 'areaOfInterest'),
-    backToCart: path.join(SOURCE_PATH, 'backToCart')
+    backToCart: path.join(SOURCE_PATH, 'backToCart'),
+    coordInfo: path.join(SOURCE_PATH, 'coordInfo')
 };
 
 module.exports = function(env = {}) {
