@@ -906,7 +906,9 @@ function legendServiceFactory(
             node.filter = false;
 
             // TODO may want to update this to use proxyWrapper.filterState.isActive() method to check if filters are on.
-            if (layerConfig.table.columns !== undefined) {
+            if (layerConfig.table !== undefined && layerConfig.table.columns !== undefined) {
+                // check whether tableNode exists on layerConfig
+                // image layers, tile layers and wms layers are not going to have tableNodes
                 layerConfig.table.columns.forEach(column => {
                     if (column.filter !== undefined && column.filter.value !== undefined) {
                         node.filter = true;
