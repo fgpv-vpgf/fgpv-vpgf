@@ -158,12 +158,16 @@ export class Panel {
         return this.panelContents;
     }
 
-    position(topLeft: number[], bottomRight: number[]): void {
+    position(topLeft: number[], bottomRight: number[], snapToMobile: boolean = false): void {
         this.panelContents.css({
             top: topLeft[1] + 'px',
             left: topLeft[0] + 'px',
             width: bottomRight[0] - topLeft[0] + 'px'
         });
+
+        if (snapToMobile) {
+            this.panelContents.addClass('rv-panel-mobile-snap');
+        }
 
         this.panelBody.css('height', bottomRight[1] - topLeft[1] + 'px');
     }
@@ -273,7 +277,7 @@ class Btn extends PanelElem {
         contents = $((<any>contents));
 
         this.panel.map.$compile(contents[0]);
-        $(this.elementAttr.children('button')[0]).append(contents[0]);
+        $(this.elementAttr.children('button')[0]).html(contents[0]);
     }
 
     /**
