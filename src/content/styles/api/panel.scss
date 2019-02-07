@@ -11,6 +11,7 @@
     left: 0px;
     overflow: hidden;
     margin: 10px;
+    z-index: 14;
 
     .rv-button-24 {
         overflow: visible;
@@ -24,10 +25,20 @@
             max-width: 24px;
         }
     }
+
+    &.rv-panel-mobile-snap {
+        @include include-size(rv-sm) {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0px;
+            top: 0px !important;
+            left: 0px !important;
+        }
+    }
 }
 .panel-controls {
     padding: 4px 12px 4px 18px;
-    height: 55px;
+    height: 48px;
     overflow: hidden;
 
     .md-icon-button {
