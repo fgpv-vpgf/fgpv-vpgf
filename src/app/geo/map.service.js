@@ -19,7 +19,8 @@ function mapServiceFactory(
     events,
     $translate,
     errorService,
-    $http
+    $http,
+    debounceService
 ) {
     const service = {
         destroyMap,
@@ -40,6 +41,7 @@ function mapServiceFactory(
     };
 
     let externalOffset;
+    let timeout;
     let externalPanel;
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
@@ -397,6 +399,7 @@ function mapServiceFactory(
                         .catch(() => _initMap()); // promise rejected due to server issues, so initialize map
                 }
             },
+            // eslint-disable-next-line max-statements
             'extent-change': data => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
                 if (angular.isObject(data.delta) && (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
@@ -423,14 +426,22 @@ function mapServiceFactory(
                 //      second alternate is to wire up a callback to the geoApi map class to trigger
                 //      filter events, so it's more analogous to how layer-level filter events
                 //      get raised.
-                //      S. Vellanki mentioned that reacting directly to extent might overly-trigger
-                //      the filter. if there is an extent debouncer, might be smarter to trigger
-                //      the rvFilterChanged there to avoid redundant server hits.
                 const fcParam = {
                     filterType: 'extent',
                     extent: data.extent
                 };
-                events.$broadcast(events.rvFilterChanged, fcParam);
+
+                function extentChanged() {
+                    // deals with the piled up calls by using a basic timeout
+                    // e.g. if ten calls to extentChanged are made within the same time period, keep clearing timeout
+                    // until the last call finally triggers rvFilterChanged
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => { events.$broadcast(events.rvFilterChanged, fcParam) },1000);
+                }
+
+                // delay all calls to extentChanged made within a three second period to fire in rapid succession
+                debounceService.registerDebounce(extentChanged, 3000, false)();
+
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {
@@ -527,13 +538,13 @@ function mapServiceFactory(
      * @return {Promise} a promise resolving after map completes extent change
      */
     function zoomToFeature(proxy, oid) {
-        const offset = (externalOffset !== undefined)? externalOffset: referenceService.mainPanelsOffset;
+        const offset = (externalOffset !== undefined) ? externalOffset : referenceService.mainPanelsOffset;
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
         if (offset.x > peekFactor || offset.y > peekFactor) {
             offset.x = offset.y = 0;
             referenceService.peekAtMap();
-        } else if (externalPanel !== undefined){
+        } else if (externalPanel !== undefined) {
             referenceService.peekAtMap(externalPanel);
         }
 
@@ -569,7 +580,7 @@ function mapServiceFactory(
             // promise resolves with 'ok' when user clicks 'undo'
             errorService
                 .display(toast)
-                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {}));
+                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => { }));
         }
     }
 }
