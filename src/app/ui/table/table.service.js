@@ -397,9 +397,6 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
                 ? `(${definition}) AND (${legendBlock.symbDefinitionQuery})`
                 : legendBlock.symbDefinitionQuery
             : definition;
-
-        // apply to block so changes reflect on map
-        legendBlock.definitionQuery = fullDef;
     }
 
     /**
