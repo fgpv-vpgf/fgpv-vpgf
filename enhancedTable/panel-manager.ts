@@ -18,6 +18,7 @@ import { PRINT_TABLE } from './templates'
 export class PanelManager {
 
     constructor(mapApi: any) {
+        this.notVisible = {}
         this.mapApi = mapApi;
         this.tableContent = $(`<div rv-focus-exempt></div>`);
         this.panel = this.mapApi.createPanel('enhancedTable');
@@ -131,6 +132,15 @@ export class PanelManager {
         }
 
         this.panelStatusManager.getFilterStatus();
+
+        this.tableOptions.columnDefs.forEach(column => {
+            if (column.floatingFilterComponentParams.defaultValue !== undefined && this.notVisible[column.field] === true) {
+                // we temporarily showed some hidden columns with default values (so that table would get filtered properly)
+                // now toggle them to hidden to respect config specifications
+                let matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
+                this.columnMenuCtrl.toggleColumn(matchingCol);
+            }
+        });
     }
 
     close() {
@@ -302,7 +312,7 @@ export class PanelManager {
             };
 
             // Sync filterByExtent
-            this.setExtentFilter = function() {
+            this.setExtentFilter = function () {
                 that.filterByExtent = this.filterByExtent;
             };
         });
@@ -397,7 +407,7 @@ export class PanelManager {
                             }
                         }
                     case 'number':
-                        switch(colFilter.type) {
+                        switch (colFilter.type) {
                             case 'greaterThanOrEqual':
                                 return `${col} >= ${colFilter.filter}`;
 
@@ -414,7 +424,7 @@ export class PanelManager {
                         const dateTo = new Date(colFilter.dateTo);
                         const from = dateFrom ? `${dateFrom.getMonth() + 1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}` : undefined;
                         const to = dateTo ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}` : undefined;
-                        switch(colFilter.type) {
+                        switch (colFilter.type) {
                             case 'greaterThanOrEqual':
                                 return `${col} >= DATE '${from}'`;
 
@@ -436,7 +446,7 @@ export class PanelManager {
                 const re = new RegExp(`.*${val.split(" ").join(".*").toUpperCase()}`);
                 const sortedRows = that.tableOptions.api.rowModel.rowsToDisplay;
                 const columns = that.tableOptions.columnApi.getAllDisplayedColumns()
-                                .filter(column => column.colDef.filter === 'agTextColumnFilter');
+                    .filter(column => column.colDef.filter === 'agTextColumnFilter');
                 columns.splice(0, 3);
                 let filteredColumns = [];
                 columns.forEach(column => {
@@ -451,6 +461,7 @@ export class PanelManager {
         });
 
         this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function () {
+            that.columnMenuCtrl = this;
             this.columns = that.tableOptions.columnDefs;
             this.columnVisibilities = this.columns
                 .filter(element => element.headerName)
@@ -460,11 +471,6 @@ export class PanelManager {
 
             // toggle column visibility
             this.toggleColumn = function (col) {
-
-                if (col.visibility !== false) {
-                    console.log(that.tableOptions.api.getFilterInstance(col.def));
-                }
-
                 col.visibility = !col.visibility;
 
                 that.tableOptions.columnApi.setColumnVisible(col.id, col.visibility);
@@ -510,6 +516,9 @@ export interface PanelManager {
     searchText: string;
     filterByExtent: boolean;
     filtersChanged: boolean;
+    hiddenColumns: any;
+    columnMenuCtrl: any;
+    notVisible: any;
 }
 
 interface EnhancedJQuery extends JQuery {

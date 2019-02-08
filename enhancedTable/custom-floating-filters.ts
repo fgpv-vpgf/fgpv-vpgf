@@ -80,7 +80,6 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, d
 /**Sets up text floating filter accounting for static types, default values and selector types*/
 export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean,
     searchStrictMatchEnabled: boolean, defaultValue: any, map: any, panelStateManager: any) {
-
     // if PanelStateManager has a value saved, it is going to override the default value in the config
     defaultValue = panelStateManager.getColumnFilter(colDef.field) !== undefined ?
         panelStateManager.getColumnFilter(colDef.field) :
@@ -98,18 +97,22 @@ export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnable
     if (!searchStrictMatchEnabled) {
         // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
         let disregardAccents = function (s) {
-            let r = s.toLowerCase();
-            r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
-            r = r.replace(new RegExp("æ", 'g'), "ae");
-            r = r.replace(new RegExp("ç", 'g'), "c");
-            r = r.replace(new RegExp("[èéêë]", 'g'), "e");
-            r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
-            r = r.replace(new RegExp("ñ", 'g'), "n");
-            r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
-            r = r.replace(new RegExp("œ", 'g'), "oe");
-            r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
-            r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
-            return r;
+            if (isNaN(s)) {
+                // check if s is a number before trying to convert it to lowercase (otherwise throws error)
+                let r = s.toLowerCase();
+                r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+                r = r.replace(new RegExp("æ", 'g'), "ae");
+                r = r.replace(new RegExp("ç", 'g'), "c");
+                r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+                r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+                r = r.replace(new RegExp("ñ", 'g'), "n");
+                r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+                r = r.replace(new RegExp("œ", 'g'), "oe");
+                r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+                r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+                return r;
+            }
+            return s;
         }
 
         // for individual columns
@@ -540,9 +543,8 @@ export class SelectorFloatingFilter {
 
     /** Helper function to determine filter model */
     getModel(): any {
-        let selectedOptions = this.scope.selectedOptions.map(option => `'${option}'`);
-        let optionsList = selectedOptions.join();
-
+        let optionsList = (this.scope.selectedOptions.length === 1 && this.scope.selectedOptions[0] === '') ?
+            [] : this.scope.selectedOptions.map(option => `'${option}'`).join();
         return { type: 'contains', filter: optionsList };
     }
 
