@@ -21,7 +21,8 @@ class MapInstance {
             .reverse()
             .forEach(key => {
                 let k = parseInt(key);
-                this.queues[k].forEach(qItem => qItem())
+                this.queues[k].forEach(qItem => qItem());
+                delete this.queues[k];
             })
     }
 
