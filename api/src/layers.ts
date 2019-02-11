@@ -611,17 +611,20 @@ export class ConfigLayer extends BaseLayer {
             this._layerProxy = layerRecord.getProxy();
 
             //get any column titles supplied in the config
-            this._layerProxy._source.initialConfig.table._columns.forEach((column: any) => {
-                configHeaders[column.data] = column.title;
-            });
+            if (this._layerProxy._source.initialConfig.table !== undefined) {
+                this._layerProxy._source.initialConfig.table._columns.forEach((column: any) => {
+                    configHeaders[column.data] = column.title;
+                });
 
-            for (let field of this._layerProxy._source._layer.fields) {
-                // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
-                this.attributeHeaders[field.name] = {
-                    'id': field.name,
-                    'name': configHeaders[field.name] || field.alias || field.name
+                for (let field of this._layerProxy._source._layer.fields) {
+                    // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
+                    this.attributeHeaders[field.name] = {
+                        'id': field.name,
+                        'name': configHeaders[field.name] || field.alias || field.name
+                    }
                 }
             }
+
         }
 
         this._viewerLayer = layerRecord;
