@@ -4,6 +4,46 @@
 
 const sqlParser = require('js-sql-parser');
 
+
+/**
+ * Helper function to modify input geometries for queries. Will attempt to avoid various pitfalls,
+ * usually around projections
+ *
+ * @private
+ * @param {Object} esriBundle internal system collection of esri api classes
+ * @param {Object} geometry the geometry we want to query against
+ * @param {Boolean} isFileLayer true if layer is not tied to an arcgis server
+ * @param {Integer} [mapScale] optional scale value of the map to help detect problem situations
+ * @param {Integer} [sourceWkid] optional WKID of the layer being queried to help detect problem situations
+ * @return {Object} resolves with a feature set of features that satisfy the query
+ */
+function queryGeometryHelper(esriBundle, geometry, isFileLayer, mapScale, sourceWkid) {
+
+    let finalGeom;
+
+    if (isFileLayer && geometry.type !== 'extent') {
+        throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
+    }
+    if (!isFileLayer && geometry.type === 'extent') {
+        // first check for case of very large extent in Lambert against a LatLong layer.
+        // in this case, we tend to get better results keeping things in an Extent form
+        // as it handles the north pole/180meridan crossage better.
+        if (mapScale && sourceWkid && mapScale > 20000000 && geometry.spatialReference &&
+            geometry.spatialReference.wkid === 3978 && sourceWkid === 4326) {
+            finalGeom = geometry;
+        } else {
+            // convert extent to polygon to avoid issues when a service in a different projection
+            // attempts to warp the extent
+            finalGeom = esriBundle.Polygon.fromExtent(geometry);
+        }
+    } else {
+        // take as is
+        finalGeom = geometry;
+    }
+
+    return finalGeom;
+}
+
 function queryGeometryBuilder(esriBundle) {
 
     /**
@@ -18,6 +58,10 @@ function queryGeometryBuilder(esriBundle) {
      *   - where: Optional. A SQL where clause to filter results further. Useful when dealing with more results than the server can return.
      *            Cannot be used with layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS)
      *   - returnGeometry: Optional. A boolean indicating if result geometery should be returned with results.  Defaults to false
+     *   - sourceWkid: Optional. An integer indicating the WKID that the queried layer is natively stored in on the server.
+     *                 If provided, allows query to attempt to mitigate any extent projection issues. Irrelevant for file based layers.
+     *   - mapScale: Optional. An integer indicating the current map scale. If provided, allows query to attempt to mitigate any
+     *               extent projection issues. Irrelevant for file based layers.
      *   - outSpatialReference: Required if returnGeometry is true. The spatial reference the return geometry should be in.
      * @param {Object} options settings to determine the details and behaviors of the query.
      * @return {Promise} resolves with a feature set of features that satisfy the query
@@ -44,16 +88,8 @@ function queryGeometryBuilder(esriBundle) {
             query.where = options.where;
         }
 
-        if (isFile && options.geometry.type !== 'extent') {
-            throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
-        }
-        if (!isFile && options.geometry.type === 'extent') {
-            // convert extent to polygon to avoid issues when a service in a different projection
-            // attempts to warp the extent
-            query.geometry = esriBundle.Polygon.fromExtent(options.geometry);
-        } else {
-            query.geometry = options.geometry;
-        }
+        query.geometry = queryGeometryHelper(esriBundle, options.geometry, isFile, options.mapScale, options.sourceWkid);
+
         query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
 
         return new Promise((resolve, reject) => {
@@ -101,6 +137,10 @@ function queryIdsBuilder(esriBundle) {
      *   - where: Optional. A SQL where clause to filter results further. Useful when dealing with more results than the server can return,
      *            or if additional filters are active.
      *            Cannot be used with layers that are not hosted on an ArcGIS Server (e.g. file layers, WFS)
+     *   - sourceWkid: Optional. An integer indicating the WKID that the queried layer is natively stored in on the server.
+     *                 If provided, allows query to attempt to mitigate any extent projection issues. Irrelevant for file based layers.
+     *   - mapScale: Optional. An integer indicating the current map scale. If provided, allows query to attempt to mitigate any
+     *               extent projection issues. Irrelevant for file based layers.
      * @param {Object} options settings to determine the details of the query
      * @return {Promise} resolves with an array of Object Ids that satisfy the query
      */
@@ -118,16 +158,7 @@ function queryIdsBuilder(esriBundle) {
             query.where = options.where;
         }
         if (options.geometry) {
-            if (isFile && options.geometry.type !== 'extent') {
-                throw new Error('Cannot use geometries other than Extents in queries against non-ArcGIS Server based layers');
-            }
-            if (!isFile && options.geometry.type === 'extent') {
-                // convert extent to polygon to avoid issues when a service in a different projection
-                // attempts to warp the extent
-                query.geometry = esriBundle.Polygon.fromExtent(options.geometry);
-            } else {
-                query.geometry = options.geometry;
-            }
+            query.geometry = queryGeometryHelper(esriBundle, options.geometry, isFile, options.mapScale, options.sourceWkid);
             query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
         }
 
