@@ -395,7 +395,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             });
     }
 
-
     function toggleLayerTablePanel(legendBlock) {
         const requester = {
             id: legendBlock.id,
@@ -415,29 +414,33 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 };
             });
 
-        stateManager
-            .setActive({
-                side: false
-            })
-            .then(() => {
-                if (errorToast) {
-                    errorService.remove();
-                }
-                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
-            })
-            .catch(error => {
-                // do not show error message if loading was aborted
-                if (error.message === 'ABORTED') {
-                    return ;
-                }
+        // fire table toggle observavle so table extensions can open
+        mApi.ui.configLegend._legendStructure._root._tableToggled.next(legendBlock);
 
-                requester.error = true; // this will hide the table loading splash
+        // TODO: determine if any of the other code in here is still needed
+        // stateManager
+        //     .setActive({
+        //         side: false
+        //     })
+        //     .then(() => {
+        //         if (errorToast) {
+        //             errorService.remove();
+        //         }
+        //         return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
+        //     })
+        //     .catch(error => {
+        //         // do not show error message if loading was aborted
+        //         if (error.message === 'ABORTED') {
+        //             return ;
+        //         }
 
-                errorToast = errorService.display({
-                    textContent: $translate.instant('toc.error.resource.loadfailed'),
-                    parent: referenceService.panes.filter
-                });
-            });
+        //         requester.error = true; // this will hide the table loading splash
+
+        //         errorToast = errorService.display({
+        //             textContent: $translate.instant('toc.error.resource.loadfailed'),
+        //             parent: referenceService.panes.filter
+        //         });
+        //     });
     }
 
     /**
