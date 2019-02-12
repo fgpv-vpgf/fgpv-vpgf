@@ -78,13 +78,20 @@ export class XY {
      */
     urlValue(precision: number = 6): string {
         return `${this.y.toFixed(precision)},${this.x.toFixed(precision)}`;
-    };
+    }
 
     /**
      * Returns a string of the form `y,x` for the current values of x and y, rounded to 6 decimal places.
      */
     toString(): string {
         return this.urlValue();
+    }
+
+    /**
+     * Returns a 2-element array with values x and y (i.e. [x, y])
+     */
+    toArray(): Array<number> {
+        return [this.x, this.y];
     }
 }
 
