@@ -283,7 +283,7 @@ export class PanelManager {
             this.appID = that.mapApi.id;
             this.maximized = that.maximized ? 'true' : 'false';
             this.showFilter = !!that.tableOptions.floatingFilter;
-            this.filterByExtent = that.filterByExtent;
+            this.filterByExtent = that.panelStateManager.filterByExtent;
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
@@ -312,8 +312,15 @@ export class PanelManager {
             };
 
             // Sync filterByExtent
-            this.setExtentFilter = function () {
-                that.filterByExtent = this.filterByExtent;
+            this.filterExtentToggled = function() {
+                that.panelStateManager.filterByExtent = this.filterByExtent;
+
+                // On toggle, filter by extent or remove the extent filter
+                if (that.panelStateManager.filterByExtent) {
+                    that.panelRowsManager.filterByExtent(that.mapApi.mapI.extent);
+                } else {
+                    that.panelRowsManager.fetchValidOids();
+                }
             };
         });
 

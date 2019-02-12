@@ -80,7 +80,7 @@ export const MENU_TEMPLATE = (printEnabled: boolean) => {
                 {{ 't.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
-            <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.setExtentFilter()" rv-right-icon="community:filter">
+            <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.filterExtentToggled()" rv-right-icon="community:filter">
                 {{ 't.menu.filter.extent' | translate }}
             </md-menu-item>
             <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">

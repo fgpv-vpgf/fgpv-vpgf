@@ -13,6 +13,7 @@ export class PanelStateManager {
     constructor(baseLayer: any) {
         this.baseLayer = baseLayer;
         this.isMaximized = baseLayer.table.maximize || false;
+        this.filterByExtent = false;
         this.columnFilters = {};
     }
 
@@ -37,6 +38,7 @@ export class PanelStateManager {
 export interface PanelStateManager {
     baseLayer: any;
     isMaximized: boolean;
+    filterByExtent: boolean;
     rows: any;
     columnFilters: any;
 }

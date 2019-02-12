@@ -20,6 +20,11 @@ export class PanelRowsManager {
         this.currentTableLayer = this.panelManager.currentTableLayer;
         this.initTableRowVisibility();
 
+        // If extent filter is enabled, apply the extent filter on init
+        if (this.panelManager.panelStateManager.filterByExtent) {
+            this.filterByExtent(this.mapApi.mapI.extent);
+        }
+
         // Subscribers
         // Filter all rows when visibility is off and none when it's on
         // Requires a separate check since it's not handled as a filter change
@@ -33,11 +38,7 @@ export class PanelRowsManager {
         this.mapFilterChangedObserver = this.mapApi.filterChanged.subscribe((params) =>  {
             const filterTypes = this.legendBlock.proxyWrapper.filterState.coreFilterTypes;
             if (params.filterType === filterTypes.EXTENT) {
-                // Filter table by extent if enabled
-                this.extent = params.extent;
-                if (this.panelManager.filterByExtent) {
-                    this.fetchValidOids(this.extent);
-                }
+                this.filterByExtent(params.extent)
             } else if (params.filterType !== filterTypes.GRID) {
                 // Filter table if not GRID or EXTENT filter
                 const layerMatch = this.legendBlock.parentLayerType === 'esriDynamic'
@@ -111,12 +112,20 @@ export class PanelRowsManager {
         this.tableOptions.api.onFilterChanged();
     }
 
+    /** Filter by extent if enabled */
+    filterByExtent(extent) {
+        this.extent = extent;
+        if (this.panelManager.panelStateManager.filterByExtent) {
+            this.fetchValidOids(this.extent);
+        }
+    }
+
     /**
      * Helper method to fetch valid oids from the map
      */
     fetchValidOids(extent?: any) {
         // get all filtered oids, but exclude any filters created by the grid itself
-        const filterExtent = this.panelManager.filterByExtent ? extent : undefined;
+        const filterExtent = this.panelManager.panelStateManager.filterByExtent ? extent : undefined;
         const filter = this.legendBlock.proxyWrapper.filterState;
         filter.getFilterOIDs([filter.coreFilterTypes.GRID], filterExtent).then(oids => {
             // filter symbologies if there's a filter applied
