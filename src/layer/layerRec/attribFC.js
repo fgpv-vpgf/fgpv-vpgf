@@ -607,7 +607,9 @@ class AttribFC extends basicFC.BasicFC {
         const api = p._apiRef;
         const opts = {
             geometry: extent,
-            where: sql
+            where: sql,
+            mapScale: p._layer._map && p._layer._map.__LOD ? p._layer._map.__LOD.scale  : undefined,
+            sourceWkid: p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined
         };
 
         if (!(sql || extent)) {
@@ -631,6 +633,8 @@ class AttribFC extends basicFC.BasicFC {
         if (!cache) {
             if (p.dataSource() === shared.dataSources.ESRI) {
                 // feature layer on a server. just use query task
+                opts.mapScale = p._layer._map && p._layer._map.__LOD ? p._layer._map.__LOD.scale  : undefined;
+                opts.sourceWkid = p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined;
                 opts.url = this.queryUrl;
                 cache = api.query.queryIds(opts);
             } else {
