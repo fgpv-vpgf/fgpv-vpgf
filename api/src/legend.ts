@@ -407,12 +407,7 @@ class BaseItem {
      */
     toggleDataTable(): any {
         if (this._availableControls.includes(AvailableControls.Data)) {
-            let legendBlock = this._legendBlock;
-            this._mapInstance.instance.toggleDataTable(legendBlock);
-            while (legendBlock.parent){
-                legendBlock = legendBlock.parent
-            }
-            legendBlock._blockConfig._tableToggled.next(this._legendBlock);
+            this._mapInstance.instance.toggleDataTable(this._legendBlock);
         }
     }
 }
