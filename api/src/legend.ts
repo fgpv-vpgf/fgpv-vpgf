@@ -16,13 +16,31 @@
 
 import { Observable, Subject } from 'rxjs';
 
-/**
- * Provides the core API fucntionality for all legends (simple and config)
+ /**
+ * All legend types must be derived from this class. Not intended to be instantiated on its own.
+ * Provides the core API functionality for both `SimpleLegend` and `ConfigLegend`
+ *
+ * You can think of Legends as the root of a tree, `LegendGroups` as nodes with children, and `LegendItems` as leaves.
+ *
+ * To access the structure of the legend using the API, use `legend.children` to access top level elements.
+ * For each child in `legend.children` that is a `LegendGroup` use `group.children` to access nested items.
+ *<br>
+ *<h2>Example Usecases for Legend API:</h2>
+ * <ul>
+ *     <li>Allow a plugin author to easily access attributes from the legend</li>
+ *     <li>Allow a plugin author to easily manipulate the legend</li>
+ *     <li>Allow a plugin author to listen for changes on the legend in order to update their plugin
+ *          <ul><li>e.g: listening to legendItem._tableToggled to toggle custom table plugin</li></ul>
+ *     </li>
+ *     <li>Allow a map author other paths for their end user to interact with the legend
+ *          <ul><li>e.g: allowing a user to manipulate legend using an external button on the map author's host page</li></ul>
+ *     </li>
+ *     <li>Allow a map author a way to listen for changes to the legend and update their host page if nescessary.</li>
+ *</ul>
  */
 class BaseLegend {
     /** @ignore */
     _children: Array<LegendItem | LegendGroup>;
-    // Element added/removed observables
     /** @ignore */
     _configSnippets: Array<JSON>;
 
@@ -35,10 +53,10 @@ class BaseLegend {
     _dataTableToggled: Subject<any>;
 
     /**
-     * Create a new legend instance. Most likely will not be used directly.
-     * Should be instantiated as either ConfigLegend or SimpleLegend
-     * @param mapInstance
-     * @param configSnippets
+     * Create a new legend instance that provides core functionality. Not to be used directly.
+     * Should be instantiated as either `ConfigLegend` or `SimpleLegend`
+     * @param mapInstance - the `mapInstance` that the legend is on
+     * @param configSnippets - an array of top level config snippets for `LegendItems` or `LegendGroups` as defined in the config file
      */
     constructor(mapInstance: any, configSnippets: Array<JSON>) {
         this._mapInstance = mapInstance;
@@ -48,14 +66,15 @@ class BaseLegend {
     }
 
     /**
-     * Return list of LegendItems and LegendGroups for the legend
+     * Return list of `LegendItems` and/or `LegendGroups` for the legend
      */
     get children(): Array<LegendItem | LegendGroup> {
         return this._children;
     }
 
     /**
-     * Return list of config snipppets for the legend
+     * Return list of config snipppets for the legend.
+     * The order of the `configSnippets` correspond to current top-level `LegendItems`/`LegendGroups` in the legend from top down
      */
     get configSnippets(): Array<JSON> {
         return this._configSnippets;
@@ -63,43 +82,46 @@ class BaseLegend {
 
     /**
      * Set list of config snipppets for the legend
+     * Changes legend to match snippet order from top down.
      */
     set configSnippets(snippets: Array<JSON>) {
         this._configSnippets = snippets;
     }
 
     /**
-     * Get a LegendItem or LegendGroup by id
+     * Get a `LegendItem` or `LegendGroup` by id
+     * Returns `undefined` if a matching `id` is not found
+     * @param {string} layerId - the layerId for the layer that the `LegendGroup` or `LegendItem` corresponds to.
      */
     getById(layerId: string): LegendItem | LegendGroup | undefined {
         return this._children.find(item => item.id === layerId);
     }
 
     /**
-     * Expand all LegendGroups in legend
+     * Expand all `LegendGroups` in legend
      */
-    expandGroups() {
+    expandGroups(): void {
         this._mapInstance.instance.toggleLegendGroupEntries();
     }
 
     /**
-     * Collapse all LegendGroups in legend
+     * Collapse all `LegendGroups` in legend
      */
-    collapseGroups() {
+    collapseGroups(): void {
         this._mapInstance.instance.toggleLegendGroupEntries(false);
     }
 
     /**
-     * Show all LegendItems and LegendGroups in legend
+     * Toggle all `LegendItems` and `LegendGroups` in legend to visible (so that all layer data shows on map)
      */
-    showAll() {
+    showAll(): void {
         this._mapInstance.instance.toggleLegendEntries();
     }
 
     /**
-     * Hide all LegendItems and LegendGroups in legend
+     * Toggle all `LegendItems` and `LegendGroups` in legend to invisible (so that all layer data is hidden on map)
      */
-    hideAll() {
+    hideAll(): void {
         this._mapInstance.instance.toggleLegendEntries(false);
     }
 
@@ -114,8 +136,31 @@ class BaseLegend {
 }
 
 /**
- * A single `ConfigLegend` instance is created for each map instance and can be
- * either structured or auto.
+ * A single `ConfigLegend` instance is created for each map instance.
+ * ConfigLegends can be of either "structured" or "auto" legend types.
+ *
+ * You can think of `ConfigLegend` as the root of a tree,`LegendGroups` as nodes with children, and `LegendItems` as leaves.
+ *
+ * To access the structure of the legend using the API, use `legend.children` to access top level elements.
+ * For each child in `legend.children` that is a `LegendGroup` use `group.children` to access nested items.
+ *
+ * @example
+ * ```js
+ * let configLegend = RZ.mapInstances[0].ui.configLegend; // access configLegend using the map API
+ * ```
+ *<br>
+ *<h2>Example Usecases for Legend API:</h2>
+ * <ul>
+ *     <li>Allow a plugin author to easily access attributes from the legend</li>
+ *     <li>Allow a plugin author to easily manipulate the legend</li>
+ *     <li>Allow a plugin author to listen for changes on the legend in order to update their plugin
+ *          <ul><li>e.g: listening to legendItem._tableToggled to toggle custom table plugin</li></ul>
+ *     </li>
+ *     <li>Allow a map author other paths for their end user to interact with the legend
+ *          <ul><li>e.g: allowing a user to manipulate legend using an external button on the map author's host page</li></ul>
+ *     </li>
+ *     <li>Allow a map author a way to listen for changes to the legend and update their host page if nescessary.</li>
+ *</ul>
  */
 export class ConfigLegend extends BaseLegend {
     _type: string;
@@ -123,6 +168,11 @@ export class ConfigLegend extends BaseLegend {
     _legendStructure: LegendStructure;
     _sortGroup: Array<Array<LegendItem | LegendGroup>>;
 
+    /**
+     * Create a new ConfigLegend instance.
+     * @param mapInstance -mapInstance that the ConfigLegend will sit on
+     * @param legendStructure - an object representation of the legend. Its children will correspond to the `configSnippets`
+     */
     constructor(mapInstance: any, legendStructure: LegendStructure) {
         super(mapInstance, legendStructure.JSON.root.children);
 
@@ -133,7 +183,8 @@ export class ConfigLegend extends BaseLegend {
     }
 
     /**
-     * Return list of config snipppets for the legend
+     * Return list of config snipppets for the legend.
+     * Config snippet order will correspond to current top-level `LegendItems`/`LegendGroups` in legend from top down.
      */
     get configSnippets(): Array<JSON> {
         return this._configSnippets;
@@ -141,6 +192,12 @@ export class ConfigLegend extends BaseLegend {
 
     /**
      * Set list of config snipppets for the legend
+     * Changes legend to match snippet order from top down.
+     *
+     * @example ### Setting Legend Structure:
+     * ```js
+     * configLegend.configSnippets = [{...}, ... , {...}];
+     * ```
      */
     set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix children array
         if (snippets) {
@@ -154,7 +211,8 @@ export class ConfigLegend extends BaseLegend {
     }
 
     /**
-     * Get a LegendItem or LegendGroup by id. Returns undefined if a matching `id` is not found
+     * Get a `LegendItem` or `LegendGroup` by id.
+     * Returns `undefined` if a matching `id` is not found
      */
     getById(id: string): LegendItem | LegendGroup | undefined {
         for (let item of this.children) {
@@ -216,12 +274,15 @@ export class ConfigLegend extends BaseLegend {
     }
 }
 
+/**
+ * WORK IN PROGRESS - to be implemented as mentioned in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2815
+ */
 export class SimpleLegend extends BaseLegend {
-    // TODO: implement SimpleLegen as menitioned in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2815
+    // TODO: implement SimpleLegend as mentioned in https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2815
 }
 
 /**
- * Provides the core API fucntionality for `LegendItems` and `LegendGroups`
+ * Provides the core API functionality for `LegendItems` and `LegendGroups`
  */
 class BaseItem {
     /** @ignore */
@@ -251,9 +312,9 @@ class BaseItem {
     _visibilityChanged: Subject<boolean>;
 
     /**
- * Create a new BaseItem, initialize the observables
- * @param mapInstance the mapInstance that this BaseItem is for
- */
+    * Create a new BaseItem, initialize the observables.
+    * @param mapInstance the mapInstance that this BaseItem is for
+    */
     constructor(mapInstance: any) {
         this._mapInstance = mapInstance;
 
@@ -282,8 +343,9 @@ class BaseItem {
     }
 
     /**
-     * Gets visibility of the BaseItem;
-     * True if the item is currently visible, false otherwise
+     * Gets visibility of the BaseItem
+     * @return {boolean | undefined} - true if the item is currently visible, false if invisible
+     *                               - undefined if "visibility" is not.part of `BaseItem's`  `_availableControls`.
      */
     get visibility(): boolean | undefined {
         return this._visibility;
@@ -291,7 +353,7 @@ class BaseItem {
 
     /**
      * Sets visibility of the BaseItem
-     * @param visibility true if visible, false if invisible. undefined has no effect.
+     * @param visibility - true if visible, false if invisible. Undefined has no effect.
      */
     set visibility(visibility: boolean | undefined) {
         if (typeof visibility !== 'undefined' && this._availableControls.includes(AvailableControls.Visibility)) {
@@ -304,16 +366,17 @@ class BaseItem {
     }
 
     /**
-     * Emits whenever the item visibility is changed.
-     * @event visibilityChanged
-     */
+    * Emits whenever the item visibility is changed.
+    * @event visibilityChanged
+    */
     get visibilityChanged(): Observable<boolean> {
         return this._visibilityChanged.asObservable();
     }
 
     /**
-     * Returns the opacity of the BaseItem;
-     * Ranges from 0 (hidden) to 1 (fully visible)
+     * Returns the opacity of the BaseItem.
+     * @return {number | undefined} - ranges from 0 (hidden) to 1 (fully visible).
+     *                              - undefined if "opacity" is not.part of `BaseItem's` `_availableControls`.
      */
     get opacity(): number | undefined {
         return this._opacity;
@@ -321,7 +384,7 @@ class BaseItem {
 
     /**
      * Sets the opacity value for the BaseItem
-     * @param opacity ranges from 0 (hidden) to 1 (fully visible); undefined has no effect
+     * @param opacity - ranges from 0 (hidden) to 1 (fully visible); `undefined` has no effect.
      */
     set opacity(opacity: number | undefined) {
         if (typeof opacity !== 'undefined' && this._availableControls.includes(AvailableControls.Opacity)) {
@@ -334,22 +397,24 @@ class BaseItem {
     }
 
     /**
-     * Emits whenever the item opacity is changed.
-     * @event opacityChanged
-     */
+    * Emits whenever the item opacity is changed.
+    * @event opacityChanged
+    */
     get opacityChanged(): Observable<number> {
         return this._opacityChanged.asObservable();
     }
 
     /**
-     * Gets queryable value of the BaseItem;
-     * True if the item is queryable, false otherwise
+    * Gets queryable value of the BaseItem;
+    * @return {boolean|undefined} - true if the item is queryable, false otherwise.
+    *                             - undefined if "query" is not.part of `BaseItem's` `_availableControls`.
     */
     get queryable(): boolean | undefined {
         return this._queryable;
     }
 
-    /** Sets query value of the BaseItem
+    /**
+     * Sets query value of the BaseItem
      * @param queryable true if item can be queried, false otherwise. undefined has no effect.
      */
     set queryable(queryable: boolean | undefined) {
@@ -370,23 +435,30 @@ class BaseItem {
         return this._queryableChanged.asObservable();
     }
 
-    /** Removes element from legend and removes layer if it's the last reference to it*/
-    remove() {
+    /**
+    * Removes element from legend and removes layer if it's the last reference to it.
+    * Does nothing if "remove" is not.part of `BaseItem's` s`_availableControls`.
+    */
+    remove(): void {
         if (this._availableControls.includes(AvailableControls.Remove)) {
             this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
         }
     }
 
-    /** Reloads element in legend */
-    reload() {
+    /**
+    * Reloads element in legend
+    * Does nothing if "reload" is not.part of `BaseItem's` `_availableControls`.
+    */
+    reload(): void {
         if (this._availableControls.includes(AvailableControls.Reload)) {
             this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
         }
     }
 
     /**
-     * Toggles metadata panel to open/close for the BaseItem
-     */
+    * Toggles metadata panel to open/close for the BaseItem
+    * Does nothing if "metadata" is not.part of `BaseItem's` `_availableControls`.
+    */
     toggleMetadata(): void {
         if (this._availableControls.includes(AvailableControls.Metadata)) {
             this._mapInstance.instance.toggleMetadata(this._legendBlock);
@@ -395,6 +467,7 @@ class BaseItem {
 
     /**
      * Toggles settings panel to open/close type for the BaseItem
+     * Does nothing if "settings" is not.part of `BaseItem's` `_availableControls`.
      */
     toggleSettings(): void {
         if (this._availableControls.includes(AvailableControls.Settings)) {
@@ -404,6 +477,7 @@ class BaseItem {
 
     /**
      * Toggles data table panel to open/close for the BaseItem
+     * Does nothing if "data" is not.part of `BaseItem's` `_availableControls`.
      */
     toggleDataTable(): any {
         if (this._availableControls.includes(AvailableControls.Data)) {
@@ -412,6 +486,9 @@ class BaseItem {
     }
 }
 
+ /**
+ * `LegendItems` can either be `LegendNodes` (they correspond to a layer) or `InfoSections` (they do not correspond to a layer)
+ */
 export class LegendItem extends BaseItem {
     /**
      * Creates a new LegendItem, initializes attributes.
@@ -424,7 +501,10 @@ export class LegendItem extends BaseItem {
         this._initSettings(itemBlock);
     }
 
-    /** Expand/collapses symbology stack. */
+    /**
+     * Expand/collapses symbology stack.
+     * Does nothing if `LegendItem` is an `InfoSection`
+     */
     toggleSymbologyStack(): void {
         if (this.type === LegendTypes.Node || this._legendBlock.infoType === 'unboundLayer') {
             this._legendBlock.symbologyStack.expanded = !this._legendBlock.symbologyStack.expanded;
@@ -433,7 +513,11 @@ export class LegendItem extends BaseItem {
 
     /**
      * Toggles the Symbologies for LegendItems of type legendNode with toggle-able symbology items (in a symbology stack).
-     * @param names List of strings matching the name of the symbologies to toggle
+     * @param names - List of strings matching the name of the symbologies to toggle
+     * @example
+     * ```js
+     * item.toggleSymbologies(['Natural Gas', 'Biomass']);
+     * ```
      */
     toggleSymbologies(names: Array<string>): void {
         if (this._availableControls.includes(AvailableControls.Symbology)) {
@@ -468,6 +552,10 @@ export class LegendItem extends BaseItem {
     }
 }
 
+ /**
+ * `LegendGroups` have children; they provide nesting capability for Legends.
+ * They can nest `LegendItems` or other `LegendGroups`.
+ */
 export class LegendGroup extends BaseItem {
 
     /** @ignore */
