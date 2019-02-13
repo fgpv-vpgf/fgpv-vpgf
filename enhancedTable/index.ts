@@ -19,10 +19,6 @@ class TableBuilder {
         this.mapApi = mapApi;
         this.panel = new PanelManager(mapApi);
 
-        this.mapApi.layers.click.subscribe(baseLayer => {
-            this.openTable(baseLayer);
-        });
-
         this.mapApi.layers.reload.subscribe((baseLayer: any, interval: boolean) => {
             if (!interval && baseLayer === this.panel.currentTableLayer) {
                 this.panel.close();
