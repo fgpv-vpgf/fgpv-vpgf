@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ "$mProc" == "dev" ]; then
+if [ "$mProc" == "dev" && ("$TRAVIS_BRANCH" == "develop" ] || "$TRAVIS_BRANCH" == "master" || [ ${TRAVIS_BRANCH:0:1} == "v")]; then
     npm run docs
-    mv ./docs "./$TRAVIS_TAG"
-    rsync -e 'ssh -i /tmp/docs_rsa' -r --delete-after --quiet "./$TRAVIS_TAG" milesap@fgpv-vpgf.com:/home/milesap/rootwww/ramp-docs
+    mv ./docs "./$TRAVIS_BRANCH"
+    rsync -e 'ssh -i /tmp/docs_rsa' -r --delete-after --quiet "./$TRAVIS_BRANCH" "milesap@fgpv.org:/disk/static/docs/$TRAVIS_REPO_SLUG"
     rm -rf ./docs/developer/jsDocs
     rm -rf ./docs/api/developer
 fi
