@@ -1,8 +1,11 @@
 import { pinImg, hasPic, noPic } from './html-assets';
 
 class AreasOfInterest {
-    preInit() {
-        this.config = (<any>Object).assign({}, (<any>window).aioConfig);
+    // A store of the instances of areasOfInterest, 1 per map
+    static instances: { [id: string]: AreasOfInterest } = {};
+
+    preInit(pluginConfig) {
+        this.config = pluginConfig;
 
         // standardize the configuration language titles for translation
         this.config.areas.forEach((area, i) => {
@@ -23,19 +26,33 @@ class AreasOfInterest {
 
     init(api: any) {
         this.api = api;
+
+        AreasOfInterest.instances[this.api.id] = this;
+
         const topElement = $('<ul style="overflow-y:auto;" class="rv-list rv-basemap-list"></ul>');
 
         this.config.areas.forEach((area, i) => {
             let areaHTML = this.config.noPicture ? noPic : hasPic;
             areaHTML = areaHTML.replace(/{areaIndex}/, i);
             areaHTML = areaHTML.replace(/{imgSrc}/, area.thumbnailUrl || pinImg);
-            topElement.append(this.api.$(areaHTML));
+            topElement.append(areaHTML);
 
             const currBtn = topElement.find('button').last();
             currBtn.click(() => (this.api.extent = area));
         });
 
+        this.button = this.api.mapI.addPluginButton(
+            AreasOfInterest.prototype.translations[this._RV.getCurrentLang()].title,
+            this.onMenuItemClick()
+        );
+
         this.makePanel(topElement);
+    }
+
+    onMenuItemClick() {
+        return () => {
+            this.button.isActive ? this.panel.close() : this.panel.open();
+        };
     }
 
     makePanel(bodyElement) {
@@ -45,7 +62,15 @@ class AreasOfInterest {
         }
 
         this.panel = this.api.createPanel('area-of-interest');
-        this.panel.position([420, 0], [720, this.api.div.height() - 62]);
+
+        this.panel.opening.subscribe(() => {
+            this.button.isActive = true;
+        });
+        this.panel.closing.subscribe(() => {
+            this.button.isActive = false;
+        });
+
+        this.panel.position([420, 0], [720, this.api.div.height() - (48 + 20)], true);
 
         if (!this.config.noPicture) {
             this.panel.panelBody.css('padding', '0px');
@@ -53,9 +78,12 @@ class AreasOfInterest {
 
         let closeBtn = new this.panel.button('X');
         closeBtn.element.css('float', 'right');
-        this.panel.open();
-        this.panel.setControls([`<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 't.title' | translate }}</h2>`, closeBtn]);
+        this.panel.setControls([
+            `<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 't.title' | translate }}</h2>`,
+            closeBtn
+        ]);
         this.panel.setBody(bodyElement);
+        this.panel.open();
     }
 }
 
@@ -64,6 +92,8 @@ interface AreasOfInterest {
     config: any;
     api: any;
     panel: any;
+    _RV: any;
+    button: any;
 }
 
 AreasOfInterest.prototype.translations = {
@@ -75,4 +105,4 @@ AreasOfInterest.prototype.translations = {
     }
 };
 
-(<any>window).areaOfInterest = AreasOfInterest;
+(<any>window).areasOfInterest = AreasOfInterest;

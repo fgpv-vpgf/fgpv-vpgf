@@ -1,0 +1,35 @@
+<html class="no-js" lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8" />
+        <title>FGP Viewer</title>
+        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <link rel="stylesheet" href="../../rv-styles.css" />
+        <script src="../areasOfInterest.js"></script>
+    </head>
+    <body style="padding:20px;">
+        <h1>
+            Federal Geospatial Platform Visualiser -
+            <span style="color:blue">Areas of Interest Demo</span>
+        </h1>
+        <p>
+            <a href="./nopics.html">No Pictures Demo</a>
+        </p>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"
+        ></script>
+        <div
+            id="fgpmap"
+            is="rv-map"
+            rv-config="aoi-config-pics.json"
+            style="height: 700px; display:flex;"
+            rv-langs='["en-CA", "fr-CA"]'
+            rv-service-endpoint="http://section917.cloudapp.net:8000/"
+            rv-plugins="areasOfInterest"
+        ></div>
+
+        <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
+        <script src="../../rv-main.js"></script>
+    </body>
+</html>
