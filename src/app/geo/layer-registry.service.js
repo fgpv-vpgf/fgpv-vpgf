@@ -80,7 +80,7 @@ function layerRegistryFactory(
         map.instance.addLayer(layerRecord._layer);
 
         const simpleLayer = new SimpleLayer(layerRecord, map);
-        mapApi._simpleLayer = simpleLayer;
+        mapApi.simpleLayerObj = simpleLayer;
         _initializeLayerObservables(simpleLayer);
         _setHover(layerRecord, simpleLayer);
 
