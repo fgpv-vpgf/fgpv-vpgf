@@ -82,6 +82,10 @@ Our plugin will now load and work when the viewer is opened in a browser!
 
 ## Advanced Topics
 
+### Legacy API
+
+You have access to the legacy API from within a plugin as soon as the `init` method is called. You can access the legacy api in a plugin with `this._RV`. Be sure to read the [legacy api docs](/developer/legacy_api) for more information, limitations, and best practices. 
+
 ### Configuration
 
 If your plugin is configurable by a user they can do so by defining a section under the **plugins** property of the ramp configuration file with the name of your plugin as the key and an object as the value. For example, in the ramp config:
