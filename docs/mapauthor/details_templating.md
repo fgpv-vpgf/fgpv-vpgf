@@ -1,6 +1,12 @@
+---
+nav: author
+---
+
+# Details Templating
+
 The viewer allows you to display identify/details results with a custom template.
 
-The related config options:
+The related config options, these are specified on a layer:
 
 **details** an object containing two properties:
 
@@ -8,8 +14,20 @@ The related config options:
 
 **parser** is needed for layers that return HTML/text responses as those cannot be handled in a general way. This path can be *relative* to the site (or *absolute*).
 
+Example:
+```json
+{
+    "id": "abc",
+    [...],
+    "details" : {
+        "template": <path to template>,
+        "parser": <path to parser>
+    }
+}
+```
 
-###Templates:
+
+## Templates
 
 The templates are *AngularJS* templates, which means they can use any angular functionality.
 The most useful one is variable binding which looks like: `{{ variable }}`
@@ -18,7 +36,7 @@ The data for feature layers will be given to you on `self.layer`, so lets say yo
 
 Your template would include `<h1>{{ self.layer['Country'] }}</h1>`
 
-###Parsers:
+## Parsers
 
 These are plain Javascript functions of the form
 ```

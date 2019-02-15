@@ -1,3 +1,9 @@
+---
+nav: author
+---
+
+# Custom Attributes
+
 The following attributes are defined on the application's DOM node (e.g. `<div is="rv-map"></div>`).
 
 **rv-langs** (example: `data-rv-langs='["en-CA", "fr-CA"]'`)
