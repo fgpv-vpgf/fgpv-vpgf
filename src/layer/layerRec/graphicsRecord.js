@@ -212,34 +212,24 @@ class GraphicsRecord extends root.Root {
 
         geometries.forEach(geometry => {
             const id = geometry.id;
+            const geomArray = geometry.toArray();
             if (geometry.type === geometryTypes.POINT) {
-                const coords = geometry.xy.toArray();
                 const icon = geometry.styleOptions.icon;
-                this._addPoint(coords, spatialReference, icon, id, geometry.styleOptions);
+                this._addPoint(geomArray, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
-                const points = geometry.pointArray.map(p => p.xy.toArray());
                 const icon = geometry.styleOptions.icon;
-                this._addMultiPoint(points, spatialReference, icon, id, geometry.styleOptions);
+                this._addMultiPoint(geomArray, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.LINESTRING) {
-                const path = geometry.pointArray.map(p => p.xy.toArray());
-                this._addLine(path, spatialReference, id, geometry.styleOptions);
+                this._addLine(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
-                const path = geometry.lineArray.map(line =>
-                    line.pointArray.map(p => p.xy.toArray())
-                );
-                this._addMultiLine(path, spatialReference, id, geometry.styleOptions);
+                this._addMultiLine(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.POLYGON) {
-                const rings = geometry.ringArray.map(ring =>
-                    ring.pointArray.map(p => p.xy.toArray())
-                );
-                this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
+
+                this._addPolygon(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
-                const multiPolyRings = geometry.polygonArray.map(polygon =>
-                    polygon.ringArray.map(ring =>
-                        ring.pointArray.map(p => p.xy.toArray())
-                    )
-                );
-                const rings = [].concat.apply([], multiPolyRings);
+                // the esri js api doesnt have a concept of multipolygon, so we combine all the polygons
+                // in the geometry to be one polygon (all the separate parts are treated as rings)
+                const rings = [].concat.apply([], geomArray);
 
                 // addPolygon functions works for MultiPolygon as well, since we set up the rings in the proper format
                 this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
