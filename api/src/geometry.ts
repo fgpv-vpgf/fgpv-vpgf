@@ -405,6 +405,13 @@ export class Point extends BaseGeometry {
     get type(): string {
         return 'Point';
     }
+
+    /**
+     * Returns a 2-element array with values x and y (i.e. [x, y])
+     */
+    toArray(): Array<number> {
+        return this.xy.toArray();
+    }
 }
 
 /**
@@ -486,6 +493,14 @@ export class MultiPoint extends BaseGeometry {
     /** Returns the string 'MultiPoint'. */
     get type(): string {
         return 'MultiPoint';
+    }
+
+    /**
+     * Returns an array of point arrays (e.g. [[x1, y1], [x2, y2]] )
+     */
+    toArray(): Array<Array<number>> {
+        // using private underscore property to avoid copying the array
+        return this._pointArray.map(p => p.toArray());
     }
 }
 
@@ -599,6 +614,14 @@ export class MultiLineString extends BaseGeometry {
     get type(): string {
         return 'MultiLineString';
     }
+
+    /**
+     * Returns an array of line arrays (e.g. [[[x1, y1], [x2, y2]], [[x3, y3], [x4, y4]]] )
+     */
+    toArray(): Array<Array<Array<number>>> {
+        // using private underscore property to avoid copying the array
+        return this._lineArray.map(l => l.toArray());
+    }
 }
 
 /**
@@ -672,6 +695,14 @@ export class Polygon extends BaseGeometry {
             get pointArray(): Array<Point> {
                 return [ ...this._pointArray ];
             }
+
+            /**
+             * Returns an array of point arrays (e.g. [[x1, y1], [x2, y2]] )
+             */
+            toArray(): Array<Array<number>> {
+                // using private underscore property to avoid copying the array
+                return this._pointArray.map(p => p.toArray());
+            }
         }
     }
 
@@ -731,6 +762,14 @@ export class Polygon extends BaseGeometry {
     /** Returns the string 'Polygon'. */
     get type(): string {
         return 'Polygon';
+    }
+
+    /**
+     * Returns an array of ring arrays (e.g. [[[x1, y1], [x2, y2], [x3, y3], [x1, y1]], [<another ring>]] )
+     */
+    toArray(): Array<Array<Array<number>>> {
+        // using private underscore property to avoid copying the array
+        return this._ringArray.map(r => r.toArray());
     }
 }
 
@@ -810,6 +849,14 @@ export class MultiPolygon extends BaseGeometry {
     /** Returns the string 'MultiPolygon'. */
     get type(): string {
         return 'MultiPolygon';
+    }
+
+    /**
+     * Returns an array of polygon arrays (e.g. [[[[x1, y1], [x2, y2], [x3, y3], [x1, y1]], [<another ring>]], <another polygon>] )
+     */
+    toArray(): Array<Array<Array<Array<number>>>> {
+        // using private underscore property to avoid copying the array
+        return this._polygonArray.map(p => p.toArray());
     }
 }
 
