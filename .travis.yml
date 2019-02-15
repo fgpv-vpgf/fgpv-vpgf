@@ -3,24 +3,32 @@ dist: trusty
 language: node_js
 node_js:
 - 8.11.1
+
+before_script:
+- echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
 before_deploy:
-- openssl aes-256-cbc -K $encrypted_d1c9a4d041a1_key -iv $encrypted_d1c9a4d041a1_iv
-  -in ./scripts/travis/azure_docs.enc -out /tmp/docs_rsa -d
+- openssl aes-256-cbc -K $encrypted_fc4de9544280_key -iv $encrypted_fc4de9544280_iv -in ./scripts/travis/azure_docs.enc -out /tmp/docs_rsa -d
 - chmod 600 /tmp/docs_rsa
+
 install:
   - npm run install-all
+
 cache:
   directories:
   - node_modules
   - features/node_modules
+
 after_success:
 - source ./scripts/devdeploy.sh
+
 deploy:
   provider: script
   skip_cleanup: true
   script: bash ./scripts/travis/builddocs.sh
   on:
-    tags: true
+    all_branches: true
+    repo: fgpv-vpgf/fgpv-vpgf
 notifications:
   webhooks:
     urls:
