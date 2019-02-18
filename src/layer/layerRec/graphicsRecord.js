@@ -40,6 +40,10 @@ const fillStyles = {
     VERTICAL: 'vertical'
 }
 
+const llSR = {
+    wkid: 4326
+}
+
 /**
  * @class GraphicsRecord
  */
@@ -200,53 +204,32 @@ class GraphicsRecord extends root.Root {
      * @param {Object} spatialReference          the projection the graphics should be in
      */
     addGeometry(geo, spatialReference) {
+        // for each geometry, figure out what type it is, massage the data
+        // to a format that our internal libraries can use, then call the
+        // appropriate _add function to get it on the map.
+
         const geometries = Array.isArray(geo) ? geo : [ geo ];
 
         geometries.forEach(geometry => {
             const id = geometry.id;
+            const geomArray = geometry.toArray();
             if (geometry.type === geometryTypes.POINT) {
-                const coords = geometry.xy.projectToPoint(spatialReference);
                 const icon = geometry.styleOptions.icon;
-                this._addPoint(coords, spatialReference, icon, id, geometry.styleOptions);
+                this._addPoint(geomArray, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOINT) {
-                const points = geometry.pointArray.map(point => {
-                    const p = point.xy.projectToPoint(spatialReference);
-                    return [p.x, p.y];
-                });
                 const icon = geometry.styleOptions.icon;
-                this._addMultiPoint(points, spatialReference, icon, id, geometry.styleOptions);
+                this._addMultiPoint(geomArray, spatialReference, icon, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.LINESTRING) {
-                const path = geometry.pointArray.map(point => {
-                    const p = point.xy.projectToPoint(spatialReference);
-                    return [p.x, p.y];
-                });
-                this._addLine(path, spatialReference, id, geometry.styleOptions);
+                this._addLine(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
-                const path = geometry.lineArray.map(line =>
-                    line.pointArray.map(point => {
-                        const p = point.xy.projectToPoint(spatialReference);
-                        return [p.x, p.y];
-                    })
-                );
-                this._addMultiLine(path, spatialReference, id, geometry.styleOptions);
+                this._addMultiLine(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.POLYGON) {
-                const rings = geometry.ringArray.map(ring =>
-                    ring.pointArray.map(point => {
-                        const p = point.xy.projectToPoint(spatialReference);
-                        return [p.x, p.y];
-                    })
-                );
-                this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
+
+                this._addPolygon(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
-                const multiPolyRings = geometry.polygonArray.map(polygon =>
-                    polygon.ringArray.map(ring =>
-                        ring.pointArray.map(point => {
-                            const p = point.xy.projectToPoint(spatialReference);
-                            return [p.x, p.y];
-                        })
-                    )
-                );
-                const rings = [].concat.apply([], multiPolyRings);
+                // the esri js api doesnt have a concept of multipolygon, so we combine all the polygons
+                // in the geometry to be one polygon (all the separate parts are treated as rings)
+                const rings = [].concat.apply([], geomArray);
 
                 // addPolygon functions works for MultiPolygon as well, since we set up the rings in the proper format
                 this._addPolygon(rings, spatialReference, id, geometry.styleOptions);
@@ -260,16 +243,17 @@ class GraphicsRecord extends root.Root {
      * @function _addPoint
      * @private
      * @param {Object} coords                    the long and lat to use as the graphic location
-     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {Object} spatialReference          the desired projection the graphics should be in
      * @param {String} icon                      data / image url or svg path for layer icon. defaults to a red point
      * @param {String} id                        id of api geometry being added to map
      * @param {Object} opts                      options to apply to point
      */
     _addPoint(coords, spatialReference, icon, id, opts) {
+        const projPt = this._apiRef.proj.localProjectPoint(llSR, spatialReference, coords);
         const point = new this._bundle.Point({
-            x: coords.x,
-            y: coords.y,
-            spatialReference: spatialReference
+            x: projPt[0],
+            y: projPt[1],
+            spatialReference
         });
 
         let symbol, marker;
@@ -316,16 +300,19 @@ class GraphicsRecord extends root.Root {
      * @function _addMultiPoint
      * @private
      * @param {Array} coords                     a 3D array of long and lat to use as the graphic location for each point
-     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {Object} spatialReference          the desired projection the graphics should be in
      * @param {String} icon                      data / image url or svg path for layer icon. defaults to a green point
      * @param {String} id                        id of api geometry being added to map
      * @param {Object} opts                      options to apply to points
      */
     _addMultiPoint(coords, spatialReference, icon, id, opts) {
-        const points = new this._bundle.Multipoint({
+        const llPoints =  new this._bundle.Multipoint({
             points: coords,
-            spatialReference: spatialReference
+            spatialReference: llSR
         });
+
+        const projPoints = this._apiRef.proj.localProjectGeometry(spatialReference, llPoints);
+        const points = new this._bundle.Multipoint(projPoints);
 
         let symbol, marker;
         if (opts.style === 'ICON') {
@@ -368,33 +355,12 @@ class GraphicsRecord extends root.Root {
      * @function _addLine
      * @private
      * @param {Array} path                       an array of long and lat to use as the path for the line
-     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {Object} spatialReference          the desired projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
      * @param {Object} opts                      options to apply to line
      */
     _addLine(path, spatialReference, id, opts) {
-        const line = new this._bundle.Polyline({
-            paths: [ path ],
-            spatialReference: spatialReference
-        });
-
-        const symbol = {
-            width: opts.width,
-            type: 'esriSLS',
-            color: opts.colour,
-            style: opts.style,
-            outline: {
-                color: [0, 0, 0],
-                width: 1,
-                type: 'esriSLS',
-                style: 'esriSLSSolid'
-            }
-        }
-        const marker = new this._bundle.Graphic({ symbol: symbol });
-        marker.setGeometry(line);
-
-        marker.geometry.apiId = id;
-        this._layer.add(marker);
+        this._addMultiLine([path], spatialReference, id, opts);
     }
 
     /**
@@ -403,15 +369,18 @@ class GraphicsRecord extends root.Root {
      * @function _addMultiLine
      * @private
      * @param {Array} paths                      a 3D array of long and lat to use as the paths for the lines
-     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {Object} spatialReference          the desired projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
      * @param {Object} opts                      options to apply to lines
      */
     _addMultiLine(paths, spatialReference, id, opts) {
-        const lines = new this._bundle.Polyline({
-            paths,
-            spatialReference
+        const llLine = new this._bundle.Polyline({
+            paths: paths,
+            spatialReference: llSR
         });
+
+        const projLine = this._apiRef.proj.localProjectGeometry(spatialReference, llLine);
+        const lines = new this._bundle.Polyline(projLine);
 
         const symbol = {
             width: opts.width,
@@ -437,16 +406,19 @@ class GraphicsRecord extends root.Root {
      *
      * @function _addPolygon
      * @private
-     * @param {Array} rings                      an array of rings containing an array of coordinates
-     * @param {Object} spatialReference          the projection the graphics should be in
+     * @param {Array} rings                      an array of rings containing an array of long-lat coordinates
+     * @param {Object} spatialReference          the desired projection the graphics should be in
      * @param {String} id                        id of api geometry being added to map
      * @param {Object} opts                      settings such as color and opacity for the polygon
      */
     _addPolygon(rings, spatialReference, id, opts) {
-        const polygon = new this._bundle.Polygon({
+        const llPoly = new this._bundle.Polygon({
             rings,
-            spatialReference
+            spatialReference: llSR
         });
+
+        const projPoly = this._apiRef.proj.localProjectGeometry(spatialReference, llPoly);
+        const polygon = new this._bundle.Polygon(projPoly);
 
         const lineSymbol = new this._bundle.SimpleLineSymbol();
         lineSymbol.setColor(opts.outlineColor);
@@ -546,7 +518,7 @@ class GraphicsRecord extends root.Root {
 
         } else {
             // TODO handle error correctly
-            console.log(`could not find graphic ${apiId}`);
+            console.warn(`could not find graphic ${apiId}`);
             return Promise.resolve();
         }
     }
