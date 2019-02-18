@@ -53,7 +53,7 @@
     }
   },
   "map": {
-    "initialBasemapId": "baseNrCan",
+    "initialBasemapId": "baseEsriWorld",
     "components": {
       "geoSearch": {
         "enabled": true,
@@ -526,6 +526,12 @@
             "id": "World_Imagery",
             "layerType": "esriFeature",
             "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+          },
+          {
+            "id": "World_Physical_Map",
+            "layerType": "esriFeature",
+            "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer",
+            "opacity": 0.7
           }
         ],
         "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
