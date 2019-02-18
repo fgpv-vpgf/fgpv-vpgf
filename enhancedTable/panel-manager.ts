@@ -5,7 +5,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import './main.scss';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
-import { scrollIntoView, tabToGrid } from './grid-accessibility';
+import { removeAccessibilityListeners, initAccessibilityListeners } from './grid-accessibility';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
 import { PanelStateManager } from './panel-state-manager';
 import { PRINT_TABLE } from './templates'
@@ -27,13 +27,11 @@ export class PanelManager {
         this.panel.setBody(this.tableContent);
         this.panel.element[0].setAttribute('type', 'table');
         this.panel.element[0].classList.add('default');
-        this.panel.element[0].addEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
 
         // Enhance panel's close function so panel close button destroys table properly
         let close = this.panel.close.bind(this.panel);
         this.panel.close = () => {
-            this.panel.element[0].removeEventListener('focus', (e: any) => scrollIntoView(e, this.panel.element[0]), true);
-            this.gridBody.removeEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
+            removeAccessibilityListeners(this.panel.element[0], this.gridBody);
             this.panelRowsManager.destroyObservers();
             this.currentTableLayer = undefined;
             close();
@@ -122,13 +120,11 @@ export class PanelManager {
             // Link clicked legend element to the opened table
             const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
             (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
-            // Go from last filter input to grid and reverse
-            let headers = this.panel.element[0].getElementsByClassName('ag-header-cell');
-            let filters = headers[headers.length - 1].getElementsByTagName('INPUT');
-            this.lastFilter = filters[filters.length - 1]; // final filter before grid
+
+            // Set up grid <-> filter accessibility
             this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
             this.gridBody.tabIndex = 0; // make grid container tabable
-            this.gridBody.addEventListener('focus', (e: any) => tabToGrid(e, this.tableOptions, this.lastFilter), false);
+            initAccessibilityListeners(this.panel.element[0], this.gridBody, this.tableOptions);
         }
 
         this.panelStatusManager.getFilterStatus();

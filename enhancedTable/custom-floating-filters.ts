@@ -535,6 +535,10 @@ export class SelectorFloatingFilter {
         (<any>this.eGui).class = 'rv-selector';
         this.scope = this.params.map.$compile(this.eGui);
 
+        // tab index is set to -3 by default
+        // keep this here so the selector is keyboard accessible
+        this.eGui.tabIndex = 0;
+
         this.scope.selectedOptions = reloadedVal !== undefined ?
             reloadedVal.split('"').filter(getDefaultOptions) :
             (this.params.value !== undefined ?

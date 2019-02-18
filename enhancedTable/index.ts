@@ -292,6 +292,7 @@ TableBuilder.prototype.tableOptions = {
     floatingFilter: true,
     autoSizePadding: 75,
     suppressColumnVirtualisation: true,
+    ensureDomOrder: true,
     defaultColDef: {
         width: 100
     }
