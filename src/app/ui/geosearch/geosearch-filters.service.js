@@ -108,7 +108,7 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         geosearchService.getProvinces().then(values =>
             (service.provinces = values));
 
-        geoSearch.getTypes().then(values => {
+        geosearchService.getTypes().then(values => {
             const disabledSearches = configService.getSync.services.search.disabledSearches || [];
             service.types = values.filter(x => !disabledSearches.includes(x.code))
         });

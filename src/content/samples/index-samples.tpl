@@ -181,6 +181,7 @@
                 <option value="config/config-sample-84.json">84. Local Export + Tainted Images + cleanCanvas option</option>
                 <option value="config/config-sample-85.json">85. File based layers</option>
                 <option value="config/config-sample-86.json">86. API 2 blocks for a single layer</option>
+                <option value="config/config-sample-87.json">87. Enlarge correct symbology from stack</option>
             </select>
         </div>
 
