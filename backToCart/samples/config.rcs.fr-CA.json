@@ -472,5 +472,10 @@
                 ]
             }
         ]
+    },
+    "plugins": {
+        "backToCart": {
+            "catalogueUrl": "backtocart-index.html?keys={RV_LAYER_LIST}"
+        }
     }
 }

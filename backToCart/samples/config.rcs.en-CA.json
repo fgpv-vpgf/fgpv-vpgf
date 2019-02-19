@@ -467,5 +467,10 @@
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             }
         ]
+    },
+    "plugins": {
+        "backToCart": {
+            "catalogueUrl": "backtocart-index.html?keys={RV_LAYER_LIST}"
+        }
     }
 }

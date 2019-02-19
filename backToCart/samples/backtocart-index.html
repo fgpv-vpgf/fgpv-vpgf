@@ -20,7 +20,7 @@
             is="rv-map"
             class="myMap"
             data-rv-config="config.rcs.[lang].json"
-            data-rv-langs="[&quot;en-CA&quot;, &quot;fr-CA&quot;]"
+            data-rv-langs='["en-CA", "fr-CA"]'
             data-rv-service-endpoint="http://section917.cloudapp.net:8000/"
             data-rv-keys=""
             data-rv-wait="true"
@@ -51,9 +51,11 @@
 
         <script>
             const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
+
+            /* // Example of programmatically setting the catalogue URL
             RZ.mapAdded.subscribe(function(mapi) {
                 backToCart.setCatalogueUrl('sample-map', baseUrl);
-            });
+            });*/
 
             function queryStringToJSON(q) {
                 var pairs = q.search.slice(1).split('&');

@@ -12,9 +12,12 @@ The only extra script you need is `backToCart.js`. Load them in the order: `back
 
 ## Setting the catalogue URL
 
-To set the catalogue URL, call `backToCart.setCatalogueUrl` with the map's id and the url. Use the placeholder `{RV_LAYER_LIST}` where the layer keys should go.
+There are two options for specifying the URL:
 
-This should be called within a callback on the `mapAdded` observable:
+1. In the RAMP config under a top level section `"plugins"` place `"backToCart": { "catalogueUrl": <desired url> }`
+
+2. Call `backToCart.setCatalogueUrl` with the map's id and the url.
+   This should be called within a callback on the `mapAdded` observable:
 
 ```
 RZ.mapAdded.subscribe(function(api) {
@@ -22,22 +25,10 @@ RZ.mapAdded.subscribe(function(api) {
 });
 ```
 
+IMPORTANT: in both cases use the placeholder `{RV_LAYER_LIST}` where the layer keys should go.
+
 ## Migrating from RAMP v2.X
 
-Replace the `RV.getMap(<map>).registerPlugin(...)` call with the code featured in `Setting the catalogue URL`.
+1. Remove the `RV.getMap(<map>).registerPlugin(...)` call
 
-The catalogue URL is the same format as in v2, and the map id will also be the same.
-
-Example:
-
-```
-RV.getMap('myMap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', 'www.google.ca?keys={RV_LAYER_LIST}');
-```
-
-becomes
-
-```
-RZ.mapAdded.subscribe(function(api) {
-    backToCart.setCatalogueUrl('myMap', 'www.google.ca?keys={RV_LAYER_LIST}');
-});
-```
+2. Choose one option from the `Setting the catalogue URL` section and follow that, use the same URL as before.
