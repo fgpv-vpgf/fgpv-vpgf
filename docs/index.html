@@ -1,65 +1,70 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>./docs</title>
-  <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css">
-</head>
-<body>
-  <div id="app"></div>
-  <script src="https://unpkg.com/docute-emojify"></script>
-  <script src="https://unpkg.com/docute-evanyou"></script>
-  <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
-  <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
-  <script>
-      var tag = window.location.href.match(/\.com\/([\d|\w|\.|-]+)/);
-      var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <title>./docs</title>
+        <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css" />
+    </head>
+    <body>
+        <div id="app"></div>
+        <script src="https://unpkg.com/docute-emojify"></script>
+        <script src="https://unpkg.com/docute-evanyou"></script>
+        <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
+        <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
+        <script>
+            var tag = window.location.href.match(/\.com\/([\d|\w|\.|-]+)/);
+            var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
 
-    docute.init({
-        landing: 'landing.html',
-        nav: {
-            default: [
-                {title: 'Home', path: '/'},
-                {title: 'Developer Guide', path: '/developer/intro'},
-                {title: 'Map authoring guide', path: '/mapauthor/intro'},
-                {title: 'Contributing to RAMP', path: '/contribute/getting_started'},
-            ],
-            author: [
-                {title: 'Introduction', path: '/mapauthor/intro'},
-                {title: 'Setup on host page', path: '/mapauthor/working_examples'}
-            ],
-            dev: [
-                {title: 'Home', path: '/'},
-                {title: 'Introduction', path: '/developer/intro'},
-                {title: 'API', type: 'dropdown', items: [
-                    {title: 'Overview', path: '/developer/api-overview'},
-                    {type: 'sep'},
-                    {type: 'label', title: 'UI Components'},
-                    {title: 'Panels', path: '/developer/panels'},
-                    {title: 'Legend', path: '/developer/panels'},
-                    {type: 'sep'},
-                    {type: 'label', title: 'Layers'},
-                ]},
-                {title: 'Legacy API', path: '/developer/legacy_api'},
-                {title: 'Plugins', path: '/developer/plugins'},
-                { title: 'Datatables', path: '/developer/datatables' },
-                {title: 'Technical Documentation', path: `${url}developer/api_tech_docs`}
-            ],
-            contribute: [
-                {title: 'Getting started', path: '/contribute/getting_started'},
-                {title: 'How to contribute', path: '/contribute/contributing_guide'},
-                {title: 'Technical JSDocs', path: `${url}contribute/jsDocs/`},
-                {title: 'Release Tutorial', path: '/contribute/release_tutorial'}
-            ]
-            },
-        plugins: [
-            docuteEmojify(),
-            evanyou()
-        ],
-        repo: 'fgpv-vpgf/fgpv-vpgf'
-    })
-  </script>
-</body>
+            docute.init({
+                landing: 'landing.html',
+                nav: {
+                    default: [
+                        { title: 'Home', path: '/' },
+                        { title: 'Developer Guide', path: '/developer/intro' },
+                        { title: 'Map authoring guide', path: '/mapauthor/intro' },
+                        { title: 'Contributing to RAMP', path: '/contribute/getting_started' }
+                    ],
+                    author: [
+                        { title: 'Home', path: '/' },
+                        { title: 'Introduction', path: '/mapauthor/intro' },
+                        { title: 'Custom Attributes', path: '/mapauthor/custom_attributes' },
+                        { title: 'Details Templating', path: '/mapauthor/details_templating' },
+                        { title: 'WCAG Compliance', path: '/mapauthor/wcag_compliance' }
+                    ],
+                    dev: [
+                        { title: 'Home', path: '/' },
+                        { title: 'Introduction', path: '/developer/intro' },
+                        {
+                            title: 'API',
+                            type: 'dropdown',
+                            items: [
+                                { title: 'Overview', path: '/developer/api-overview' },
+                                { type: 'sep' },
+                                { type: 'label', title: 'UI Components' },
+                                { title: 'Panels', path: '/developer/panels' },
+                                { title: 'Legend', path: '/developer/panels' },
+                                { type: 'sep' },
+                                { type: 'label', title: 'Layers' }
+                            ]
+                        },
+                        { title: 'Legacy API', path: '/developer/legacy_api' },
+                        { title: 'Plugins', path: '/developer/plugins' },
+                        { title: 'Datatables', path: '/developer/datatables' },
+                        { title: 'Technical Documentation', path: `${url}developer/api_tech_docs` }
+                    ],
+                    contribute: [
+                        { title: 'Home', path: '/' },
+                        { title: 'Getting started', path: '/contribute/getting_started' },
+                        { title: 'How to contribute', path: '/contribute/contributing_guide' },
+                        { title: 'Technical JSDocs', path: `${url}contribute/jsDocs/` },
+                        { title: 'Release Tutorial', path: '/contribute/release_tutorial' }
+                    ]
+                },
+                plugins: [docuteEmojify(), evanyou()],
+                repo: 'fgpv-vpgf/fgpv-vpgf'
+            });
+        </script>
+    </body>
 </html>
