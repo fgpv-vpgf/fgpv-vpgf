@@ -96,7 +96,7 @@ There is no additional customization for this component, but the host page can f
 
 ### 2.7. Scalebar and mouse coordinates
 
-The current map scale (both metric and imperial) is displayed in the right lower corner along with the current lat/long coordinates of the mouse cursor on the map. The coordinates update dynamically as the user moves the mouse.
+The current map scale (both metric and imperial) is displayed in the right lower corner along with the current coordinates of the mouse cursor on the map in the spatial reference of the basemap (in this case it'd be Lambert coordinates). The coordinates update dynamically as the user moves the mouse.
 
 There is no customization for these components, but the host page can forcefully hide and replace them with a custom implementation.
 
@@ -480,7 +480,7 @@ There is an ongoing discussion about changing how groups propagate their visibil
 
 By default, Dynamic layers are renders as groups. 
 
-If a Dynamic layer does not support children _opacity_ it is not a [not-true-dynamic Dynamic Layer](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049), and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed.
+If a Dynamic layer does not support children _opacity_, the logic applying opacity is different and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed. Read the following issue for more details: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049
 
 **Note:** Jump link should never point to group blocks not belonging to this layer record.
 
