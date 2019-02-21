@@ -35,7 +35,7 @@ export interface LocateResponse {
 export interface NameResponse {
     name: string,
     location: string,
-    province: {code: string},
+    province: { code: string },
     concise: { code: string },
     latitude: number,
     longitude: number,
@@ -45,7 +45,7 @@ export interface NameResponse {
 export interface Types {
     allTypes: GenericObjectType
     validTypes: GenericObjectType;
-    filterValidTypes(include?: string | string[], exclude?: string | string[]): GenericObjectType;
+    filterValidTypes(exclude?: string | string[]): GenericObjectType;
 }
 
 export interface Provinces {
@@ -85,10 +85,18 @@ export interface NTSResult {
     bbox: number[]
 }
 
+export interface LatLongResult {
+    latlong: string, // "54.54,-91.45"
+    desc: string, // "Latitude/Longitude",
+    LatLon: LatLon,
+    bbox: number[]
+}
+
 export type LocateResponseList = LocateResponse[];
 export type NameResultList = NameResult[]
 export type NTSResultList = NTSResult[];
-export type queryFeatureResults = FSAResult | NTSResult;
+export type LatLongResultList = LatLongResult[];
+export type queryFeatureResults = FSAResult | NTSResult | LatLongResult;
 
 export function isFSAResult(result: queryFeatureResults): result is FSAResult {
     return !!(<FSAResult>result).fsa;
@@ -97,4 +105,3 @@ export function isFSAResult(result: queryFeatureResults): result is FSAResult {
 export function isNTSResult(result: queryFeatureResults): result is NTSResult {
     return !!(<NTSResult>result).nts;
 }
-

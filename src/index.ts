@@ -33,8 +33,8 @@ export class GeoSearch {
             geoNameUrl,
             geoLocateUrl
         };
-        
-        this.config.types.filterValidTypes(uConfig.includeTypes, uConfig.excludeTypes);
+
+        this.config.types.filterValidTypes(uConfig.excludeTypes);
     }
 
     ui(resultHandler?: (results: defs.NameResultList) => HTMLElement, featureHandler?: (results: defs.queryFeatureResults) => HTMLElement, input?: HTMLInputElement, resultContainer?: HTMLElement, featureContainer?: HTMLElement) {
@@ -72,7 +72,7 @@ export class GeoSearch {
 
     defaultResultHandler(results: defs.NameResultList): HTMLElement {
         const ul = document.createElement('ul');
-        
+
         results.reverse().forEach(r => {
             const li = document.createElement('li');
             li.innerHTML = `${r.name} (${r.type})${r.location ? ', ' + r.location : ''}, ${r.province} @ lat: ${r.LatLon.lat}, lon: ${r.LatLon.lon}`;
@@ -87,18 +87,20 @@ export class GeoSearch {
 
         if (defs.isFSAResult(fR)) {
             output = `${fR.fsa} - FSA located in ${fR.province} @ lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`;
-        } else {
+        } else if (defs.isNTSResult(fR)) {
             output = `${fR.nts} - NTS located in ${fR.location} @ lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`;
+        } else {
+            output = `lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`
         }
 
         const p = document.createElement('p');
-        p.innerHTML = output;
+        p.innerHTML = <string>output;
         return p;
     }
 
     inputChanged(evt: KeyboardEvent) {
-        const qValue = (<HTMLInputElement>evt.target).value;    
-        
+        const qValue = (<HTMLInputElement>evt.target).value;
+
         if (qValue.length > 2 && qValue !== lastQuery) {
             lastQuery = qValue;
 
@@ -110,17 +112,17 @@ export class GeoSearch {
                 this.featureContainer.removeChild(this.featureContainer.firstChild);
             }
 
-            this.query(qValue).onComplete.then(q => {                
+            this.query(qValue).onComplete.then(q => {
                 if (q.featureResults) {
                     this.featureContainer.appendChild(this.featureHandler(q.featureResults));
                 }
-    
+
                 this.resultContainer.appendChild(this.resultHandler(q.results));
             }).catch(err => {
                 const p = document.createElement('p');
                 p.innerHTML = err;
                 this.resultContainer.appendChild(p);
-            });   
+            });
         }
     }
 

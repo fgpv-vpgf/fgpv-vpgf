@@ -1,6 +1,6 @@
 {
     "name": "rz-geosearch",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": "Configurable geolocation search library",
     "main": "src/geosearch.js",
     "repository": "git@github.com:RAMP-PCAR/geosearch.git",

@@ -1,23 +1,34 @@
 import * as defs from './definitions';
 
 export function make(config: defs.MainConfig, query: string): Query {
-    // FSA test
-    if (/^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/.test(query)) {
+    const latLngRegDD = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
+    const latLngRegDMS = /^[-+]?([0-8]?\d|90)\s*([0-5]?\d)\s*([0-5]?\d)\s*[,|;\s]\s*[-+]?(\d{2}|1[0-7]\d|180)\s*([0-5]?\d)\s*([0-5]?\d)[*]$/;
+    const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
+    const ntsReg = /^\d{2,3}[A-P]/;
+
+    if (fsaReg.test(query)) {
+        // FSA test
         return new FSAQuery(config, query);
-    // Partial NTS match (Sheet and Map Unit Subdivision)
-    } else if (/^\d{2,3}[A-P]/.test(query)) {
+    } else if (ntsReg.test(query)) {
+        // Partial NTS match (Sheet and Map Unit Subdivision)
         query = query.substring(0, 6).toUpperCase();
         return new NTSQuery(config, query);
-    // name based search
+    } else if (latLngRegDD.test(query)) {
+        // Lat/Long Decimal Degrees test
+        return new LatLongQuery(config, query.slice(0, -1), 'dd');
+    } else if (latLngRegDMS.test(query)) {
+        // Lat/Long Degree Minute Second test
+        return new LatLongQuery(config, query.slice(0, -1), 'dms')
     } else if (/^[A-Za-z]/.test(query)) {
+        // name based search
         const q = new Query(config, query);
         q.onComplete = q.search().then(results => {
             q.results = results;
             return q;
         });
         return q;
-    // possible street address search (not supported) or contains special characters
     } else {
+        // possible street address search (not supported) or contains special characters
         const q = new Query(config, query);
         q.onComplete = new Promise((resolve, reject) => resolve(q));
         return q;
@@ -31,6 +42,7 @@ export class Query {
     suggestions: defs.NTSResultList = [];
     results: defs.NameResultList = [];
     onComplete: Promise<this>;
+    latLongResult: any;
 
     constructor(config: defs.MainConfig, query?: string) {
         this.query = query;
@@ -42,10 +54,10 @@ export class Query {
         const query = altQuery ? altQuery : this.query;
         if (useLocate) {
             url = this.config.geoLocateUrl + '?q=' + query;
-        
+
         } else if (lat && lon) {
             url = `${this.config.geoNameUrl}?lat=${lat}&lon=${lon}&num=${this.config.maxResults}`
-        
+
         } else {
             url = `${this.config.geoNameUrl}?q=${query}&num=${this.config.maxResults}`
         }
@@ -68,18 +80,20 @@ export class Query {
                 location: i.location,
                 province: this.config.provinces.list[i.province.code],
                 type: this.config.types.allTypes[i.concise.code],
-                LatLon: { lat: i.latitude, lon: i.longitude},
+                LatLon: { lat: i.latitude, lon: i.longitude },
                 bbox: i.bbox
             }
         });
     }
 
     search(restrict?: number[]): Promise<defs.NameResultList> {
-       return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then(r => this.normalizeNameItems(r.items));
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then(r => this.normalizeNameItems(r.items));
     }
 
-    nameByLatLon(lat: number, lon: number, restrict?: number[]): Promise<defs.NameResultList> {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => this.normalizeNameItems(r.items));
+    nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => {
+            return this.normalizeNameItems(r.items)
+        });
     }
 
     locateByQuery(altQuery?: string): Promise<defs.LocateResponseList> {
@@ -103,21 +117,21 @@ export class Query {
     }
 }
 
-/** 
+/**
  * National Topographic System (NTS)
- * 
+ *
  * The following definitions have the form "name (value constraints) - description"
- * 
- * Sheet (two or three digits)      - aka "Map Numbers" are blocks of approximately 4,915,200 hectares. 
+ *
+ * Sheet (two or three digits)      - aka "Map Numbers" are blocks of approximately 4,915,200 hectares.
  * Map Units Subdivision ([A-P])    - each sheet is subdivided further into 16 blocks, approximately 307,200 hectares
  * Map Sheet Unit ([1-16])          - each map unit is subdivided further into 16 blocks, approximately 19,200 hectares
  * Blocks ([A-L])                   - each map sheet unit is subdivided further into 12 blocks, approximately 1600 hectares
  * Units ([1-100]*)                 - each block is finally divided into 100 units, approximately 64 hectares
- * 
+ *
  * Two subsets of the complete NTS format is supported:
  *     - Sheet and Map Unit Subdivision
  *     - Sheet, Map Unit Subdivision, and Map Sheet Unit
- * 
+ *
  * Note that "Blocks" and "Units" are currently not supported on geogratis and are ignored on the query.
  */
 export class NTSQuery extends Query {
@@ -139,7 +153,8 @@ export class NTSQuery extends Query {
                     this.mapSheets = allSheets;
 
                     this.featureResults = this.unit;
-                    this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then(r => {
+
+                    this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then((r: any) => {
                         this.results = r;
                         resolve(this);
                     });
@@ -158,7 +173,7 @@ export class NTSQuery extends Query {
                 location: title.join(' '), // "NUMABIN BAY"
                 code: 'NTS', // "NTS"
                 desc: this.config.types.allTypes.NTS, // "National Topographic System"
-                LatLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0]},
+                LatLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0] },
                 bbox: (<number[]>ls.bbox)
             };
         });
@@ -181,7 +196,7 @@ export class FSAQuery extends Query {
             this.formatLocationResult().then(fLR => {
                 if (fLR) {
                     this.featureResults = fLR;
-                    this.nameByLatLon(fLR.LatLon.lat, fLR.LatLon.lon, Object.keys(fLR._provinces).map(x => parseInt(x))).then(r => {
+                    this.nameByLatLon(fLR.LatLon.lat, fLR.LatLon.lon, Object.keys(fLR._provinces).map(x => parseInt(x))).then((r: any) => {
                         this.results = r;
                         resolve(this);
                     });
@@ -203,9 +218,57 @@ export class FSAQuery extends Query {
                     desc: this.config.types.allTypes.FSA,
                     province: Object.keys(provList).map(i => provList[i]).join(','),
                     _provinces: provList,
-                    LatLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0]}
+                    LatLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0] }
                 }
             }
+        });
+    }
+}
+
+export class LatLongQuery extends Query {
+    constructor(config: defs.MainConfig, query: string, type: string) {
+        super(config, query);
+        let coords: number[];
+
+        // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
+        const filteredQuery = query.split(/[\s|,|;|]/).filter(n => !isNaN(n as any) && n !== '').map(n => parseFloat(n));
+
+        if (type === 'dms') {
+            // if degree, minute, second, convert to decimal degree
+            let latdd = Math.abs(filteredQuery[0]) + filteredQuery[1] / 60 + filteredQuery[2] / 3600; // unsigned
+            let longdd = Math.abs(filteredQuery[3]) + filteredQuery[4] / 60 + filteredQuery[5] / 3600; // unsigned
+
+            // check if we need to reset sign
+            latdd = (filteredQuery[0] > 0) ? latdd : latdd * -1;
+            longdd = (filteredQuery[3] > 0) ? longdd : longdd * -1;
+
+            coords = [latdd, longdd];
+        } else {
+            coords = filteredQuery;
+        }
+
+        // apply buffer to create bbox from point coordinates
+        const buff = 0.015; //degrees
+        const boundingBox = [coords[0] - buff, coords[1] - buff, coords[0] + buff, coords[1] + buff];
+
+        // prep the lat/long result that needs to be generated along with name based results
+        this.latLongResult = {
+            name: `${coords[0]},${coords[1]}`,
+            location: {
+                latitude: coords[1],
+                longitude: coords[0]
+            },
+            type: { name: 'Latitude/Longitude', code: 'COORD' },
+            position: [coords[0], coords[1]],
+            bbox: boundingBox
+        }
+
+        this.onComplete = new Promise((resolve, reject) => {
+            //this.getLatLonResults(query, coords[0], coords[1]).then((r: any) => {
+            this.nameByLatLon(coords[0], coords[1]).then((r: any) => {
+                this.results = r;
+                resolve(this);
+            });
         });
     }
 }

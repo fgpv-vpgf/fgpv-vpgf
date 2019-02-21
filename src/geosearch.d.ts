@@ -46,7 +46,7 @@ declare module GeoSearch
 	export interface Types {
 	    allTypes: GenericObjectType;
 	    validTypes: GenericObjectType;
-	    filterValidTypes(include?: string | string[], exclude?: string | string[]): GenericObjectType;
+	    filterValidTypes(exclude?: string | string[]): GenericObjectType;
 	}
 	export interface Provinces {
 	    fsaToProvinces(fsa: string): GenericObjectType;
@@ -79,10 +79,17 @@ declare module GeoSearch
 	    LatLon: LatLon;
 	    bbox: number[];
 	}
+	export interface LatLongResult {
+	    latlong: string;
+	    desc: string;
+	    LatLon: LatLon;
+	    bbox: number[];
+	}
 	export type LocateResponseList = LocateResponse[];
 	export type NameResultList = NameResult[];
 	export type NTSResultList = NTSResult[];
-	export type queryFeatureResults = FSAResult | NTSResult;
+	export type LatLongResultList = LatLongResult[];
+	export type queryFeatureResults = FSAResult | NTSResult | LatLongResult;
 	export function isFSAResult(result: queryFeatureResults): result is FSAResult;
 	export function isNTSResult(result: queryFeatureResults): result is NTSResult;
 
@@ -119,11 +126,13 @@ declare module GeoSearch
 	    suggestions: defs.NTSResultList;
 	    results: defs.NameResultList;
 	    onComplete: Promise<this>;
+	    latLong: any;
+	    isLatLong: boolean;
 	    constructor(config: defs.MainConfig, query?: string);
 	    private getUrl;
 	    normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList;
 	    search(restrict?: number[]): Promise<defs.NameResultList>;
-	    nameByLatLon(lat: number, lon: number, restrict?: number[]): Promise<defs.NameResultList>;
+	    nameByLatLon(lat: number, lon: number, restrict?: number[]): any;
 	    locateByQuery(altQuery?: string): Promise<defs.LocateResponseList>;
 	    jsonRequest(url: string): Promise<{}>;
 	}
@@ -155,6 +164,9 @@ declare module GeoSearch
 	export class FSAQuery extends Query {
 	    constructor(config: defs.MainConfig, query: string);
 	    formatLocationResult(): Promise<defs.FSAResult | undefined>;
+	}
+	export class LatLongQuery extends Query {
+	    constructor(config: defs.MainConfig, query: string, type: string);
 	}
 
 	import * as defs from './definitions';

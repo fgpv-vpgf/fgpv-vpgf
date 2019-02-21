@@ -17,20 +17,15 @@ class Types {
         });
     }
 
-    filterValidTypes(include?: string | string[], exclude?: string | string[]): defs.GenericObjectType {
+    filterValidTypes(exclude?: string | string[]): defs.GenericObjectType {
         if (this.filterComplete) {
             return this.validTypes;
         }
 
-        include = typeof include === 'string' ? [include] : include;
         exclude = typeof exclude === 'string' ? [exclude] : exclude;
-        const setExclusion = include || exclude ? (include && include.length > 0) || (exclude && exclude.length) : undefined;
-    
-        if (setExclusion) {
-            const typeSet = Object.keys(this.validTypes);
-            const keySet = include || exclude || [];
-            const invalidKeys = [...typeSet].filter(x => !setExclusion === (keySet.indexOf(x) !== -1));
-            for (const key of invalidKeys) {
+
+        if (exclude && exclude.length > 0) {
+            for (const key of exclude) {
                 delete this.validTypes[key];
             }
         }
