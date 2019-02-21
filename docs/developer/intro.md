@@ -4,17 +4,17 @@ nav: dev
 
 # A guide for developers
 
-This guide is intended for web developers who are interested in using the RAMP API to modify or develop new functionality for the RAMP viewer and for map authors who want to customize RAMP or the host page for their own needs. 
+This guide is intended for web developers who are interested in using the RAMP API to modify or develop new functionality for the RAMP viewer and for map authors who want to customize RAMP or the host page for their own needs.
 
-This guide will first outline any required or optional knowledge you should have before getting started. After that we'll cover some **basic RAMP concepts** you should know, introduce the **RAMP API** and the concept of **Plugins**. We'll finish this introduction with a look at the various UI components and their names. We recommend you read this entire page so that you'll have a basic understanding of the major parts of RAMP and how to continue reading these docs on more advanced topics that pertain to your interests and project requirements. 
+This guide will first outline any required or optional knowledge you should have before getting started. After that we'll cover some **basic RAMP concepts** you should know, introduce the **RAMP API** and the concept of **Plugins**. We'll finish this introduction with a look at the various UI components and their names. We recommend you read this entire page so that you'll have a basic understanding of the major parts of RAMP and how to continue reading these docs on more advanced topics that pertain to your interests and project requirements.
 
 ## Knowledge needed
 
-This guide assumes you have a moderate to advanced level of **JavaScript** experience and have worked with **HTML** and **CSS**. 
+This guide assumes you have a moderate to advanced level of **JavaScript** experience and have worked with **HTML** and **CSS**.
 
-You'll also benefit with basic knowledge of **jQuery** and **RxJS**. 
+You'll also benefit with basic knowledge of **jQuery** and **RxJS**.
 
-> It's ok if you've never heard of RxJS - it's a type of event system the RAMP API uses. The only RxJS concept you need to know is **subscribing to observables** (see link below). 
+> It's ok if you've never heard of RxJS - it's a type of event system the RAMP API uses. The only RxJS concept you need to know is **subscribing to observables** (see link below).
 
 Finally, the RAMP API, plugins, and the technical documentation are all written in **TypeScript** - a superset of typed JavaScript that compiles to plain JavaScript. While you don't have to use TypeScript yourself, it helps to be able to read TypeScript code when looking at examples and referencing our plugin repo code.
 
@@ -42,15 +42,39 @@ The host pages RAMP element(s) can define an `rv-config` property which contains
 A schema file is available in our GitHub repo (https://github.com/fgpv-vpgf/fgpv-vpgf/blob/master/schema.json). Be sure to select the correct branch/tag in GitHub for the version of RAMP you'll be using. You can use this file as a general reference for all available options or to be fed into an automated schema validator tool.
 
 
-## API introduction
+## API
 
-TODO: [Documentation: API Introduction #3277](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3277)
+The RAMP API can be used to retrieve data from and interact with RAMP. It can be used on the host page for simple interations such as toggling a layer's visibility.
+It can also be used within a plugin to group together more complicated interactions if what you are implementing is similar to a feature.
+
+The API can be accessed using `window.RZ`.
+
+There are four main sections to the API:
+
+1. Basic Map Operations<br/>
+Set extent, bounds, fullscreen, etc.
+
+2. Legend<br/>
+Watch and control the RAMP instance's legend.
+
+3. Layers & Geometry<br/>
+Watch, and control layers and geometry within RAMP.
+
+4. Panels<br/>
+Watch, control, and create panels within RAMP.
+
+As an example let's hide all the layers on the map using the legend API.
+```js
+// Get the map instance; We're assuming we want to effect the first map on the page
+const mapInstance = RZ.mapInstance[0];
+mapInstance.ui.configLegend.hideAll()
+```
 
 ## Plugins
 
-A plugin is like a "container" for your custom JavaScript and RAMP API calls that when executed either modify, replace, or add a feature to RAMP. When a plugin is loaded by RAMP, the plugin is given a copy of the RAMP API, the plugin config (if defined in the main RAMP config), as well as the complete RAMP config. It also takes care of the timing between when a plugin script has loaded on a page to when the RAMP API is actually ready to be called. 
+A plugin is like a "container" for your custom JavaScript and RAMP API calls that when executed either modify, replace, or add a feature to RAMP. When a plugin is loaded by RAMP, the plugin is given a copy of the RAMP API, the plugin config (if defined in the main RAMP config), as well as the complete RAMP config. It also takes care of the timing between when a plugin script has loaded on a page to when the RAMP API is actually ready to be called.
 
-A plugin is simply a JavaScript object assigned to a variable on the browsers `window`. 
+A plugin is simply a JavaScript object assigned to a variable on the browsers `window`.
 
 ```js
 // myPlugin.js
@@ -71,7 +95,7 @@ Typically a plugin resides in a JavaScript file. In our example above the code i
 ...
 ```
 
-You could also place the plugin code directly in a script tag on the host page. 
+You could also place the plugin code directly in a script tag on the host page.
 
 You then tell RAMP about your plugin on a property of the map element named `rv-plugins`.
 
