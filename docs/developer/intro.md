@@ -107,4 +107,10 @@ TODO: [Need to have a UI component breakdown with terminology #972](https://gith
 
 ## Legacy API
 
-TODO: [Documentation: Legacy API Notes #3280](https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3280)
+**The legacy API is deprecated. It will be removed in the next major release.**
+
+The legacy API is now included via a js file, `legacy-api.js` included in new RAMP builds. The API is still accessible through `window.RV`.
+
+Plugins can use the legacy API through the reference `this._RZ`. This is available on the plugin instance after `init` is called.
+
+To see what is available for use and what has alternatives on the new API please see the [legacy API documentation](/developer/legacy_api)
