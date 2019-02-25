@@ -126,8 +126,7 @@ declare module GeoSearch
 	    suggestions: defs.NTSResultList;
 	    results: defs.NameResultList;
 	    onComplete: Promise<this>;
-	    latLong: any;
-	    isLatLong: boolean;
+	    latLongResult: any;
 	    constructor(config: defs.MainConfig, query?: string);
 	    private getUrl;
 	    normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList;
