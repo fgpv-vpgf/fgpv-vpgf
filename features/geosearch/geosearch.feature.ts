@@ -109,6 +109,8 @@ class GeoSearchUI {
                         }
                     }];
                 }
+            } else if (q.latLongResult !== undefined) {
+                featureResult = [q.latLongResult]
             }
             let queryResult = q.results.map((item: any) => ({
                 name: item.name,
