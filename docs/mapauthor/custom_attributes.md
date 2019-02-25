@@ -26,9 +26,6 @@ The following attributes are defined on the application's DOM node (e.g. `<div i
 **rv-keys** (example: `data-rv-keys='["Airports"]'`)
 > An array of string representing keys to be retrieved from the RCS
 
-**rv-restore-bookmark** (example: `data-rv-restore-bookmark="bookmark"`)
-> Appearantly, some attributes prefer an air of mistery surrounding them
-
 **rv-wait** (example: `data-rv-wait="true"`)
 > Required if the viewer accepts a bookmark. The viewer then waits for either a url bookmark or until it confirms no bookmark is present.
 
