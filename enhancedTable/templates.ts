@@ -3,7 +3,7 @@ export const SEARCH_TEMPLATE = `
     <input
         ng-model="ctrl.searchText"
         ng-keyup="ctrl.updatedSearchText()"
-        placeholder="{{ 't.search.placeholder' | translate }}" />
+        placeholder="{{ 't.search.placeholder' | translate }}"/>
     <md-icon ng-if="ctrl.searchText.length > 2" ng-click="ctrl.clearSearch()" md-svg-src="navigation:close"></md-icon>
     <md-icon ng-if="ctrl.searchText.length <= 2" md-svg-src="action:search">
         <md-tooltip>{{ 't.search.placeholder' | translate }}</md-tooltip>
@@ -20,7 +20,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
         class="md-icon-button black rv-button-24"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
-        ng-disabled="ctrl.noActiveColumnFilters()">
+        ng-disabled="ctrl.noActiveFilters()">
         <md-tooltip>{{ 't.table.filter.clear' | translate }}</md-tooltip>
         <md-icon md-svg-src="community:filter-remove"></md-icon>
     </md-button>
@@ -28,7 +28,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
 `;
 
 export const APPLY_TO_MAP_TEMPLATE = `
-<div>
+<div class="table-control">
     <md-button
         ng-controller="ApplyToMapCtrl as ctrl"
         aria-label="{{ 't.table.filter.apply' | translate }}"
@@ -63,8 +63,8 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 </md-menu-bar>
 `;
 
-export const MENU_TEMPLATE = (printEnabled: boolean) => {
-    let menuTemplate = `<md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
+export const MENU_TEMPLATE = `
+<md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
@@ -87,7 +87,7 @@ export const MENU_TEMPLATE = (printEnabled: boolean) => {
                 {{ 't.menu.filter.show' | translate }}
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
-            <md-menu-item ng-if='${printEnabled}'>
+            <md-menu-item ng-if='ctrl.printEnabled'>
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 't.menu.print' | translate }}
@@ -99,12 +99,9 @@ export const MENU_TEMPLATE = (printEnabled: boolean) => {
                     {{ 't.menu.export' | translate }}
                 </md-button>
             </md-menu-item>
-            </md-menu-content>
-        </md-menu>
-    </md-menu-bar>`;
-
-    return menuTemplate;
-}
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>`;
 
 export const MOBILE_MENU_BTN_TEMPLATE = `
 <div class="mobile-table-control">
@@ -120,8 +117,9 @@ export const MOBILE_MENU_TEMPLATE = `
 <div class="mobile-table-control mobile-table-menu">
     <div ng-if="visible" class="panel-controls">
         <span ng-if="searchEnabled">${SEARCH_TEMPLATE}</span>
-        ${CLEAR_FILTERS_TEMPLATE}
         ${COLUMN_VISIBILITY_MENU_TEMPLATE}
+        ${CLEAR_FILTERS_TEMPLATE}
+        ${APPLY_TO_MAP_TEMPLATE}
         ${MENU_TEMPLATE}
     </div>
 </div>`;
@@ -211,7 +209,7 @@ export const SELECTOR_FILTER_TEMPLATE = (value, isStatic) => {
 
 export const PRINT_TABLE = (title, cols, rws) => {
 
-    // make headers with the column names of the currentlyu displayed columns
+    // make headers with the column names of the currently displayed columns
     let headers = ``;
     const columnNames = Object.keys(cols).map(column => cols[column]);
     columnNames.forEach(columnName => {

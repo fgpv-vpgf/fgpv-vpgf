@@ -229,7 +229,7 @@ export class PanelManager {
     get header(): any[] {
         this.angularHeader();
 
-        const menuBtn = new this.panel.container(MENU_TEMPLATE(this.configManager.printEnabled));
+        const menuBtn = new this.panel.container(MENU_TEMPLATE);
 
         const closeBtn = new this.panel.button('X');
 
@@ -261,8 +261,14 @@ export class PanelManager {
             this.searchText = that.searchText;
             this.updatedSearchText = function () {
                 that.searchText = this.searchText;
-                that.tableOptions.api.setQuickFilter(this.searchText);
-                that.panelRowsManager.quickFilterText = this.searchText;
+                // don't filter unless there are at least 3 characters
+                if (this.searchText.length > 2) {
+                    that.tableOptions.api.setQuickFilter(this.searchText);
+                    that.panelRowsManager.quickFilterText = this.searchText;
+                } else {
+                    that.tableOptions.api.setQuickFilter('');
+                    that.panelRowsManager.quickFilterText = '';
+                }
                 that.tableOptions.api.selectAllFiltered();
                 that.panelStatusManager.getFilterStatus();
                 that.tableOptions.api.deselectAllFiltered();
@@ -273,6 +279,8 @@ export class PanelManager {
                 this.updatedSearchText();
                 that.panelStatusManager.getFilterStatus();
             };
+
+            that.clearGlobalSearch = this.clearSearch.bind(this);
         });
 
         this.mapApi.agControllerRegister('MenuCtrl', function () {
@@ -280,6 +288,7 @@ export class PanelManager {
             this.maximized = that.maximized ? 'true' : 'false';
             this.showFilter = !!that.tableOptions.floatingFilter;
             this.filterByExtent = that.panelStateManager.filterByExtent;
+            this.printEnabled = that.configManager.printEnabled;
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
@@ -339,14 +348,14 @@ export class PanelManager {
                 });
 
                 newFilterModel = newFilterModel !== {} ? newFilterModel : null;
-
+                that.clearGlobalSearch();
                 that.tableOptions.api.setFilterModel(newFilterModel);
             };
 
             // determine if there are any active column filters
             // returns true if there are no active column filters, false otherwise
             // this determines if Clear Filters button is disabled (when true) or enabled (when false)
-            this.noActiveColumnFilters = function () {
+            this.noActiveFilters = function () {
                 const columns = Object.keys(that.tableOptions.api.getFilterModel());
                 let noActiveFilters = true;
 
@@ -359,7 +368,7 @@ export class PanelManager {
                 });
 
                 // if column filters don't exist or are static, clearFilters button is disabled
-                return noActiveFilters;
+                return noActiveFilters && !that.searchText;
             }
         });
 
@@ -522,6 +531,7 @@ export interface PanelManager {
     hiddenColumns: any;
     columnMenuCtrl: any;
     notVisible: any;
+    clearGlobalSearch: Function;
 }
 
 interface EnhancedJQuery extends JQuery {
