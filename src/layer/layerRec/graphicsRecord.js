@@ -109,6 +109,11 @@ class GraphicsRecord extends root.Root {
         // TODO do we need an ELSE case here?
     }
 
+    // use of the following property is unsupported by ramp team.
+    // it is provided for plugin developers who want to write advanced geo functions
+    // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+    get esriLayer () { return this._layer; }
+
     /**
      * Attach record event handlers to common layer events
      *
