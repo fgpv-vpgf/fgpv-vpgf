@@ -16,7 +16,7 @@ The core component of the application is the Map and it consists of the basemap,
 
 The Map itself acts at the outer container for the whole application where no part of the UI can be rendered beyond this boundary - the `Outer shell`. The host pages is responsible for deciding on the size of the application container and can constrain or modify it as will.
 
-All the feature and components of the UI - excluding the map and visualized data - are rendered inside the `Inner shell`, a container located inside the `Outer shell`. The `Inner shell` can also be manipulated by the host page for the purposes of creating map which seem to extend beyond active area of the page to which all the functionality is confined. The earlier designs of the Climate Portal applicate made use of this feature.
+All the feature and components of the UI - excluding the map and visualized data - are rendered inside the `Inner shell`, a container located inside the `Outer shell`. The `Inner shell` can also be manipulated by the host page for the purposes of creating map which seem to extend beyond active area of the page to which all the functionality is confined. The earlier designs of the Climate Portal application made use of this feature.
 
 ![](https://i.imgur.com/8d19RnC.png)
 
@@ -62,7 +62,7 @@ The purpose of the North indicator is easily learnable as it's clear that indica
 
 ### 2.3. Overview map
 
-The overview map provides glanceable information on where the main map is zoom in. The Overview map can be collapsed by the user.
+The overview map provides glanceable information on where the main map is situated. The Overview map can be collapsed by the user.
 
 ![](https://i.imgur.com/21TsgqS.png)
 
@@ -78,7 +78,7 @@ By default, the tooltip shows a symbology icon along with the value of a feature
 
 ### 2.5. Map navigation cluster
 
-The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the whole Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#4-geo-search), [Side menu](#3-side-menu), [Layers panel](#5-layers-panel), [Basemap selector](#34-basemap-selector), [Full screen toggle](#36-full-screen-toggle), and [Help](#310-help-information). 
+The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the entirety of Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#4-geo-search), [Side menu](#3-side-menu), [Layers panel](#5-layers-panel), [Basemap selector](#34-basemap-selector), [Full screen toggle](#36-full-screen-toggle), and [Help](#310-help-information). 
 
 The default configuration includes just the Full screen toggle, geo-location, Home extent, and Help controls. All other controls duplicate functionality of the [Main application bar](#21-main-application-bar) and can be used if the Main application bar is hidden.
 
@@ -91,6 +91,8 @@ All controls in the Map navigation cluster can be independently hidden (expect f
 The optional basemap attribution and logo of the currently selected basemap are displayed in the lower left corner. Each basemap can be provided with a custom attribution logo or text through the config.
 
 There is no additional customization for this component, but the host page can forcefully hide and replace it with a custom implementation.
+
+For legal ramifications of removing the attribution text read the following: https://developers.arcgis.com/terms/attribution/
 
 ![](https://i.imgur.com/utLhJE8.png)
 
@@ -118,7 +120,7 @@ An optional application title can be displayed underneath the application logo o
 
 ### 3.3. Layers panel
 
-This menu option closes the side menu and toggles the [Layers panel](#5-layers-panel). A checkmark icon on the right side is displayed if the [Layers panel] is already open.
+This menu option closes the side menu and toggles the [Layers panel](#5-layers-panel). A checkmark icon on the right side is displayed if the [Layers panel](#5-layers-panel) is already open.
 
 ### 3.4. Basemap selector
 
@@ -148,7 +150,7 @@ The basemap description toggles between displaying the basemap preview image and
 
 #### 3.4.6. Basemap description
 
-Display the basemap description text set in the config. if the text is long, the basemap element will expand vertically to accommodate the entire description.
+Display the basemap description text set in the config. If the text is long, the basemap element will expand vertically to accommodate the entire description.
 
 ### 3.5. Geo search
 
@@ -193,7 +195,7 @@ After the export image is generated, the user needs to click the `Download` butt
 
 In some cases, the export image cannot be downloaded because of the CORS policies. In such cases, the application with display the following notice to the user:
 
-![](https://camo.githubusercontent.com/fce58931b39d43589fbcdba353903643dde8624b/68747470733a2f2f692e696d6775722e636f6d2f494d7a6a6330422e706e67)
+![](https://i.imgur.com/4eNRD2n.png)
 
 Modern browsers (IE11 is not a modern browser) allow to save canvas images as PNG files.
 
@@ -214,6 +216,8 @@ The north arrow is placed below the map on the right side and it's pointing to t
 The Map export legend contains all the symbology (including nested symbology of Dynamic layers) of layers currently visible on the map. If the symbology list is long, it will be broken and wrapped in a number of columns to minimize the size of the export image .
 
 #### 3.7.9 Export footer text
+
+The Map export footer text is placed after the map and legend images. It can be used for providing descriptions of the map and data layers, legal disclaimers or some other information. 
 
 #### 3.7.10 Export timestamp
 
@@ -283,7 +287,9 @@ This is a link to the main [fgpv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf) r
 
 ## 4. Geo search
 
-This component allows the user to search for places in Canada using [Geogratis services](http://geogratis.gc.ca/). When activated, it replaces the [Main application bar](#21-main-application-bar) with an input field for search keywords and closes the main and secondary panels. The search results are displayed directly below the Geo search bar.
+The functionality for this component is provided by [RAMP/geosearch](https://github.com/RAMP-PCAR/geosearch) plugin which uses [Geogratis services](http://geogratis.gc.ca/). It's possible to provide a different implementation of this plugin which can make use of any other search services.
+
+This component allows the user to search for places in Canada. When activated, it replaces the [Main application bar](#21-main-application-bar) with an input field for search keywords and closes the main and secondary panels. The search results are displayed directly below the Geo search bar.
 
 ![](https://i.imgur.com/K0sS609.png)
 
@@ -349,7 +355,9 @@ The legend comes in two flavours - **structured** and **autogenerated**.
 
 The **Structured** legend lets the config author define the ordering of legend blocks, their names, specify custom [Symbology stacks](#57-layer-symbology-single), put things into regular groups or [Visibility sets](#515-layer-visibility-set), hide layers from the legend, and have a single legend block controlling several layers. Lots of power options, plenty of opportunities to break up the config. All this should be used for thematic maps (i.e. maps that tell a certain story with the data).
 
-The **Autogenerated** legend is simple - it takes the layer list and turns it into a legend, one to one correspondence (one regular legend block per one layer).
+The **Autogenerated** legend is simple - it takes the layer list and turns it into a legend, one to one correspondence (one regular legend block per one layer). 
+
+**Note:** The config uses the term `autopopulate` when indicating the type of legend in an application.
 
 It should be pointed out the **autogenerated** legend - after it was generated during the config parse - is technically a **structured** legend. It uses a subset of elements which can be used in the **structured** legend.
 
@@ -363,14 +371,13 @@ The only notable difference between the two is ability to reorder and layers in 
 
 ![img](https://camo.githubusercontent.com/bad30d44ab651f4ed6a89d7bca0b028a61b29a72/68747470733a2f2f692e696d6775722e636f6d2f494f5a415067492e706e67)
 
-| Supported Services| Supported File Types
+| Supported Services| Supported File Types|
 | ------------- |:-------------:|
-| OGC WFS       |CSV  |
+| OGC WFS v3       |CSV  |
 | OGC WMS       |GeoJSON  |
 | ESRI Feature Layer |Zipped ShapeFile|
-| ESRI Dynamic Layer (Feature Layer Child)| |
-| ESRI Dynamic Layer (Raster Layer Child)  |  |
- ESRI Tile Layer|  |
+| ESRI Dynamic Layer| |
+| ESRI Tile Layer|  |
 | ESRI Image Server|  |
 
 
@@ -430,10 +437,10 @@ This step works the same for both file and service based layers.
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
 | OGC WFS       |&#10004;  | &#10004;| &#10004;| &#10004;|:x:|:x:|
 | OGC WMS       |&#10004;  | :x:|:x:|:x:| &#10004;|:x:|
-| ESRI Feature Layer |&#10004;  | &#10004;| &#10004;|:x:|:x:|:x:
+| ESRI Feature Layer |&#10004;  | &#10004;| &#10004;|:x:|:x:|:x: |
 | ESRI Dynamic Layer |:x:  | :x:|:x:|:x:|&#10004;|&#10004;|
- ESRI Tile Layer| :x: | :x: | :x: | :x: | :x: | :x: | 
-| ESRI Image Server| :x: |:x: | :x: | :x: | :x: | :x: | 
+| ESRI Tile Layer| :x: | :x: | :x: | :x: | :x: | :x: |
+| ESRI Image Server| :x: |:x: | :x: | :x: | :x: | :x: |
 
 
 #### 5.1.5. Click the 'Continue' button to insert the layer into the map and closes the Add Layer menu.
@@ -492,7 +499,7 @@ Each [Layer node](#54-layer-node) has a set of layer flags displayed underneath 
 
 - **Bounding box**: indicates if the layer's bounding box is shown on the map
 - **Viewable data**: indicates if the layer has data which can be viewed in a table by clicking on the body of the node
-- **Feature layer**: indicates this is a Feature or WFS layer (also shows a number of features in the tooltip)
+- **Feature layer**: indicates this is a Feature, WFS layer and file-based layers added through the config (also shows a number of features in the tooltip)
 - **User-added layer**: indicates this layer has been added by the user at runtime
 - **Dynamic layer**: indicates this is a Dynamic layer (also shows a number of features in the tooltip)
 - **Raster layer**: indicates this is a Tile or WMS layer
@@ -507,11 +514,11 @@ Layer symbology consisting of a single element is a special case of the [Layer s
 
 #### 5.7.1 Symbology stack toggle
 
-The invisible toggle is placed on top of the collapsed symbology stack. When clicked, it will expand the stack and display the solo item of the stack underneath the layer name. At this point the toggle is rendered visible as a "close" icon. When click, it collapses the symbology stack back.
+The collapsed symbology stack acts as a toggle. When clicked, it will expand the stack and display the solo item of the stack underneath the layer name. At this point the toggle is rendered visible as a "close" icon. When clicked, it collapses the symbology stack back.
 
 #### 5.7.2 Symbology stack
 
-A layer's symbology is a collection of image-labels pairs explaining features available in the layer. Internally, it's referred to as a "symbology stack" with the "stack" bit describing its vertical orientation when rendered in the UI.
+A layer's symbology is a collection of image-label pairs explaining features available in the layer. Internally, it's referred to as a "symbology stack" with the "stack" bit describing its vertical orientation when rendered in the UI.
 
 Two style options are available for symbology stacks:
 
@@ -544,7 +551,7 @@ Not all options shown below might be available on all layers.
 
 - **Metadata**: opens the [Layer metadata](#519-layer-metadata-panel) panel
 - **Settings**: opens the [Layer settings](#518-layer-settings-panel) panel
-- **Datatable**: open the [Enhanced table](#6-enhanced-table) panel and displays layer data.
+- **Datatable**: open the [Table panel](#6-enhanced-table) panel and displays layer data.
 - **Legend**: expands layers's symbology stack
 - **Zoom to Layer Boundary**: zooms the map to the layer boundary
 - **Reload**: reloads the layer by removing it from the map and adding it back (will also reload any linked layer nodes)
@@ -621,7 +628,7 @@ Layers can only be reordered in the __autogenerated__ legend but only inside the
 
 ![](https://i.imgur.com/Ii4LYyf.png)
 
-When reordering, the, the section of the legend where the layer cannot be moved will be de-highlighted.
+When reordering, the section of the legend where the layer cannot be moved will be de-highlighted.
 
 ![](https://i.imgur.com/4ffCQWS.gif)
 
@@ -750,7 +757,7 @@ Date filters allow the user to filter row records by making sure that the rows' 
 - filter will also work with only one of `date min` or `date max` fields filled out
 
 #### 6.5.4. Selector Filter
-![selector filter](https://user-images.githubusercontent.com/25359812/52878909-d2b5df00-312b-11e9-9d65-44eb295df9be.png)
+![selector filter](https://i.imgur.com/Iv2GObN.png)
 
 Selector filters allow the user to filter row records by making sure that the rows'data at that column fall into one of the categories specified by the dropdown selector GUI (shown on the right).
 
@@ -789,8 +796,8 @@ Applies the table filters to the map, so that only layer features that are displ
     - this option is disabled by default 
     - it is the map author's responsibility to enable it in the config
 - **Export:** Exports table data to CSV
- 
- 
+
+
 ** **Note:** Not available in mobile view because table will take up whole height and width of the map by default
 
 #### 6.6.6.  Close table 
@@ -799,7 +806,7 @@ Closes the table.
 
 ### 6.7. Column Reorder
 
-Clicking the right arrow on a column, makes it swap places with the column to the right of it. Clicking the left arrow, makes it swap places with the column to the left of it. 
+Clicking the right arrow on a column makes it swap places with the column to the right of it. Clicking the left arrow makes it swap places with the column to the left of it. 
 
 The right arrow is disabled for columns that are at the right end of the table, and the left arrow is disabled for columns that are at the left end of the table. 
 
@@ -820,7 +827,7 @@ Click on the column name to sort columns.
 
 ## 7. Details panel
 
-The Details panel lists features the user clicked on (identify results). When the user clicks anywhere on the map, all layers queryable layers are checked for features at the click point. Based on the identify mode, an identify marker is added to the map and the Details panel is open to show the results.
+The Details panel lists features the user clicked on (identify results). When the user clicks anywhere on the map, all queryable layers are checked for features at the click point. Based on the identify mode, an identify marker is added to the map and the Details panel is open to show the results.
 
 ![](https://i.imgur.com/J7GC0zi.png)
 
