@@ -3754,3 +3754,10 @@ md-datepicker > div {
 .md-open-menu-container {
   max-height: 90%; }
 
+.rv-table-search input {
+  flex-basis: 163px;
+  min-width: 0px; }
+
+.rv-table-search md-icon {
+  top: 5px !important; }
+
