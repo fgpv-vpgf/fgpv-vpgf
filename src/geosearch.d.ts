@@ -127,6 +127,7 @@ declare module GeoSearch
 	    results: defs.NameResultList;
 	    onComplete: Promise<this>;
 	    latLongResult: any;
+	    scale: any;
 	    constructor(config: defs.MainConfig, query?: string);
 	    private getUrl;
 	    normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList;

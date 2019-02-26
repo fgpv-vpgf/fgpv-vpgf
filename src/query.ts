@@ -5,6 +5,7 @@ export function make(config: defs.MainConfig, query: string): Query {
     const latLngRegDMS = /^[-+]?([0-8]?\d|90)\s*([0-5]?\d)\s*([0-5]?\d)\s*[,|;\s]\s*[-+]?(\d{2}|1[0-7]\d|180)\s*([0-5]?\d)\s*([0-5]?\d)[*]$/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
     const ntsReg = /^\d{2,3}[A-P]/;
+    const scaleReg = /^[1][:]\d{1,3}[ ]*\d{1,3}[ ]*\d{1,3}[*]$/; // from 1:100 to 1:100 000 000
 
     if (fsaReg.test(query)) {
         // FSA test
@@ -27,6 +28,16 @@ export function make(config: defs.MainConfig, query: string): Query {
             return q;
         });
         return q;
+    } else if (scaleReg.test(query)) {
+        // scale search
+        const q = new Query(config, query);
+        const typeCode = 'SCALE';
+        q.onComplete = q.search().then(results => {
+
+            q.scale = [{ name: query.slice(0, -1), type: { name: q.config.types.validTypes[typeCode], code: typeCode } }];
+            return q;
+        });
+        return q;
     } else {
         // possible street address search (not supported) or contains special characters
         const q = new Query(config, query);
@@ -43,6 +54,7 @@ export class Query {
     results: defs.NameResultList = [];
     onComplete: Promise<this>;
     latLongResult: any;
+    scale: any;
 
     constructor(config: defs.MainConfig, query?: string) {
         this.query = query;
@@ -249,14 +261,14 @@ export class LatLongQuery extends Query {
 
         // apply buffer to create bbox from point coordinates
         const buff = 0.015; //degrees
-        const boundingBox = [coords[0] - buff, coords[1] - buff, coords[0] + buff, coords[1] + buff];
+        const boundingBox = [coords[1] - buff, coords[0] - buff, coords[1] + buff, coords[0] + buff];
 
         // prep the lat/long result that needs to be generated along with name based results
         this.latLongResult = {
             name: `${coords[0]},${coords[1]}`,
             location: {
-                latitude: coords[1],
-                longitude: coords[0]
+                latitude: coords[0],
+                longitude: coords[1]
             },
             type: { name: 'Latitude/Longitude', code: 'COORD' },
             position: [coords[0], coords[1]],

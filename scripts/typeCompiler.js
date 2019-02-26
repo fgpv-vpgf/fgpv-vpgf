@@ -4,12 +4,14 @@ const types = {
     "en": {
         FSA: "Forward Sortation Area",
         NTS: "National Topographic System",
-        COORD: "Latitude/Longitude"
+        COORD: "Latitude/Longitude",
+        SCALE: "Scale"
     },
     "fr": {
         FSA: "Région De Tri D'Acheminement",
         NTS: "Système National De Référence Cartographique",
-        COORD: "Latitude/Longitude"
+        COORD: "Latitude/Longitude",
+        SCALE: "Échelle"
     }
 };
 
