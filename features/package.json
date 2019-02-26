@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/fgpv-vpgf/fgpv-vpgf#readme",
   "dependencies": {
-    "rz-geosearch": "2.0.5"
+    "rz-geosearch": "2.0.7"
   }
 }
