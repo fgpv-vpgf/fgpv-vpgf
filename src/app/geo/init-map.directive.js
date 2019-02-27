@@ -1,5 +1,4 @@
 import Map from 'api/map';
-import { PanelElem } from 'api/panel';
 import { BasemapGroup } from 'api/ui';
 import gtm from '../tag-manager';
 import { ConfigLegend } from 'api/legend';
