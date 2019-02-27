@@ -421,6 +421,11 @@ export class BaseLayer {
         }
     }
 
+    // use of the following property is unsupported by ramp team.
+    // it is provided for plugin developers who want to write advanced geo functions
+    // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+    get esriLayer () { return this._viewerLayer.esriLayer; }
+
     // /** Exports the layer to a GeoJSON object.
     //  *
     //  * TODO: complete this function.
