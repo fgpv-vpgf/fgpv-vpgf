@@ -6,21 +6,21 @@
 import 'rz-geosearch';
 
 const CODE_TO_ABBR = {
-    10:"NL",
-    11:"PE",
-    12:"NS",
-    13:"NB",
-    24:"QC",
-    35:"ON",
-    46:"MB",
-    47:"SK",
-    48:"AB",
-    59:"BC",
-    60:"YU",
-    61:"NT",
-    62:"NU",
-    72:"UF",
-    73:"IW"
+    10: "NL",
+    11: "PE",
+    12: "NS",
+    13: "NB",
+    24: "QC",
+    35: "ON",
+    46: "MB",
+    47: "SK",
+    48: "AB",
+    59: "BC",
+    60: "YU",
+    61: "NT",
+    62: "NU",
+    72: "UF",
+    73: "IW"
 };
 
 /**
@@ -38,7 +38,7 @@ const CODE_TO_ABBR = {
  * }
  */
 class GeoSearchUI {
-    constructor(config={}) {
+    constructor(config = {}) {
         (<any>this)._geoSearhObj = new (<any>window).GeoSearch(config);
         (<any>this)._lang = (<any>config).language || 'en';
         (<any>this)._provinceList = [];
@@ -109,6 +109,10 @@ class GeoSearchUI {
                         }
                     }];
                 }
+            } else if (q.latLongResult !== undefined) {
+                featureResult = [q.latLongResult]
+            } else if (q.scale !== undefined) {
+                featureResult = q.scale;
             }
             let queryResult = q.results.map((item: any) => ({
                 name: item.name,

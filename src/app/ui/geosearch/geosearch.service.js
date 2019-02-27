@@ -16,7 +16,8 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
 
     events.$on(events.rvApiReady, () => {  // initialize geosearch feature
         let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
-        GSservice = new appInfo.features.geoSearch.GeoSearchUI({language});
+        let excludeTypes = configService.getSync.services.search.disabledSearches;
+        GSservice = new appInfo.features.geoSearch.GeoSearchUI({ language, excludeTypes });
     });
 
     const service = {
