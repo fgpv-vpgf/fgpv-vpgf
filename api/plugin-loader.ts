@@ -1,12 +1,15 @@
-import Table from '../features/table/table.feature';
 import EPSG from '../features/epsg/epsg.feature';
 import geoSearch from '../features/geosearch/geosearch.feature';
+import { TableBuilder } from '@fgpv/rv-plugins';
 
 import { FgpvConfigSchema } from 'api/schema';
 
+const AUTOLOAD_PLUGINS: any = {
+    'table': TableBuilder
+}
+
 const loadFeatures: any = {
     epsg: EPSG,
-    table: Table,
     geoSearch
 };
 
@@ -36,6 +39,21 @@ export default class Loader {
     loader() {
         const rvPluginAttr = this.mapElem.attr('rv-plugins');
         const pluginList = rvPluginAttr ? rvPluginAttr.split(',').map(x => x.trim()) : [];
+
+        Object.keys(AUTOLOAD_PLUGINS).forEach(pk => {
+            console.log(AUTOLOAD_PLUGINS);
+            const pI = pluginList.findIndex(p => p === pk || p === `no-${pk}`);
+            const pN = pluginList[pI];
+
+            if (!pN) {
+                const plugin = new AUTOLOAD_PLUGINS[pk]();
+                this.plugins.push(plugin);
+                console.warn(`The plugin ${pk} was loaded automatically. This functionality is being removed in the next major release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
+            } else if (pN === `no-${pk}`) {
+                pluginList.splice(pI, 1);
+            }
+        });
+
 
         pluginList
             .forEach((p: any) => {

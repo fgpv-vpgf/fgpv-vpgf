@@ -36,6 +36,7 @@
 @import "_effects.scss";
 @import "_lightbox.scss";
 @import "_failure-image.scss";
+@import "_enhancedTable.scss";
 
 @include core;
 @include loading;
@@ -71,3 +72,4 @@
 @include effects;
 @include lightbox;
 @include failure-image;
+@include enhancedTable;
