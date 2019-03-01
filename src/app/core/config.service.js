@@ -172,7 +172,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                             // if there is bookmark information for the rcs layer, tack it on so it can be processed
                             // after the typed config layer object is created
                             if (bookmarkInfo) {
-                                const bmMatch = bookmarkInfo.find(bml => bml.id === layer.id);
+                                // matches rcs.(layerid).(lang1) to rcs.(layerid).(lang2)
+                                const re = /^rcs\.(.*)\..*$/;
+                                const bmMatch = bookmarkInfo.find(bml => bml.id.match(re)[1] === layer.id.match(re)[1]);
                                 if (bmMatch) {
                                     layer.bookmarkData = bmMatch;
                                 }
