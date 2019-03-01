@@ -11,8 +11,30 @@ const query = require('./query.js');
 const shared = require('./shared.js');
 const symbology = require('./symbology.js');
 
+// interfaces with the dojo module loader, wraps everything in a promise.
+function makeDojoRequests(modules, window) {
+    return new Promise(function (resolve, reject) {
+
+        // NOTE: do not change the callback to an arrow function since we don't know if
+        // Dojo's require has any expectations of the scope within that function or
+        // does any odd metaprogramming
+        window.require(modules.map(mod => mod[0]), function () {
+            const esriBundle = {};
+
+            // iterate over arguments to avoid creating an ugly giant function call
+            // arguments is not an array so we do this the hard way
+            for (let i = 0; i < arguments.length; ++i) {
+                esriBundle[modules[i][1]] = arguments[i];
+            }
+            resolve(esriBundle);
+        });
+
+        window.require.on('error', () => reject());
+    });
+}
+
+// essentially sets up the main geoApi module object and initializes all the subcomponents
 function initAll(esriBundle, window) {
-    let debug = false;
     const api = {};
 
     api.layer = layer(esriBundle, api);
@@ -26,19 +48,22 @@ function initAll(esriBundle, window) {
     api.query = query(esriBundle);
     api.shared = shared(esriBundle);
     api.agol = agol(esriBundle);
-    api.debug = function () {
-        if (arguments.length === 1) {
-            debug = arguments[0] === true;
-        }
 
-        return debug;
-    };
-    api.esriBundle = function () {
-        if (debug) {
-            return esriBundle;
-        }
-        throw new Error('Must set debug to directly access the bundle');
-    };
+    // use of the following `esri` properties/functions are unsupported by ramp team.
+    // they are provided for plugin developers who want to write advanced geo functions
+    // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+
+    // access to the collection of ESRI API classes that geoApi loads for its own use
+    api.esriBundle = esriBundle;
+
+    // function to load ESRI API classes that geoApi does not auto-load.
+    // param `modules` is an array of arrays, the inner arrays are 2-element consisting
+    // of the official library path as the first element, and the property name in the
+    // result object to assign the class to.
+    // e.g. [['esri/tasks/FindTask', 'findTaskClass'], ['esri/geometry/mathUtils', 'mathUtils']]
+    // return value is object with properties containing the dojo classes defined in the param.
+    // e.g. { findTaskClass: <FindTask Dojo Class>, mathUtils: <mathUtils Dojo Class> }
+    api.esriLoadApiClasses = modules => makeDojoRequests(modules, window);
 
     return api;
 }
@@ -96,26 +121,6 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/tasks/PrintTemplate', 'PrintTemplate']
     ];
 
-    function makeDojoRequests() {
-        return new Promise(function (resolve, reject) {
-
-            // NOTE: do not change the callback to an arrow function since we don't know if
-            // Dojo's require has any expectations of the scope within that function or
-            // does any odd metaprogramming
-            window.require(esriDeps.map(deps => deps[0]), function () {
-                const esriBundle = {};
-
-                // iterate over arguments to avoid creating an ugly giant function call
-                // arguments is not an array so we do this the hard way
-                for (let i = 0; i < arguments.length; ++i) {
-                    esriBundle[esriDeps[i][1]] = arguments[i];
-                }
-                resolve(esriBundle);
-            });
-            window.require.on('error', reject);
-        });
-    }
-
     // the startup for this module is:
     // 1. add a script tag to load the API (this typically points to a custom ESRI build)
     // 2. load all the ESRI and Dojo dependencies `makeDojoRequests()`
@@ -139,5 +144,6 @@ module.exports = function (esriLoaderUrl, window) {
         oHead.appendChild(oScript);
         oScript.src = esriLoaderUrl; // '//ec.cloudapp.net/~aly/esri/dojo/dojo.js';
         console.log('made a promise');
-    }).then(makeDojoRequests).then(esriBundle => initAll(esriBundle, window));
+    }).then(() => makeDojoRequests(esriDeps, window))
+      .then(esriBundle => initAll(esriBundle, window));
 };

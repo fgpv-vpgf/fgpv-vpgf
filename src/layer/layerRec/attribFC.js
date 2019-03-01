@@ -651,7 +651,7 @@ class AttribFC extends basicFC.BasicFC {
                         // nothing else to filter, set the cache
                         cache = eProm;
                     }
-                } 
+                }
                 if (sql) {
                     // use our custom filter to find graphics that satisfy our sql
                     const oid = this.oidField;
