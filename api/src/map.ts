@@ -296,6 +296,11 @@ export class Map {
     get ui(): UI {
         return this.uiObj;
     }
+
+    // use of the following property is unsupported by ramp team.
+    // it is provided for plugin developers who want to write advanced geo functions
+    // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+    get esriMap () { return this.mapI.esriMap; }
 }
 
 //Map objects prototype
