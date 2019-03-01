@@ -35,14 +35,14 @@ export class Table {
 
     /**
      * Generates the HTML for the simple table and creates the panel header title.
-     * 
+     *
      * @param attrBundle attribute data
      */
     prep(attrBundle: AttrBundle) {
         const cols = `<thead><tr>${ Object.keys(attrBundle.attributes[0]).map((c: any) => {
             return `<th>${c}</th>`;
         }).join('') }</tr></thead>`;
-        
+
         const rows = `<tbody>${ attrBundle.attributes.map((rs: any) => {
             return `<tr>${ Object.values(rs).map((r: any) => {
                 return `<td>${r}</td>`;
@@ -51,12 +51,12 @@ export class Table {
 
         this.panel.tableContent.html(`<table class="table table-bordered">${cols} ${rows}</table>`);
 
-        if (this.panel.getControls().length > 1) {
-            this.panel.getControls().pop();
-        }
+        //if (this.panel.getControls().length > 1) {
+        //    this.panel.getControls().pop();
+        //}
 
-        this.panel.getControls().push(new this.panel.container(`<h2>Features: ${attrBundle.layer.name}</h2>`));
-        this.panel.setControls(this.panel.getControls());
+        //this.panel.getControls().push(new this.panel.container(`<h2>Features: ${attrBundle.layer.name}</h2>`));
+        //this.panel.setControls(this.panel.getControls());
 
         this.panel.open();
     }
@@ -74,7 +74,7 @@ interface AttrBundle {
 
 export default {
     feature: 'table',
-    
+
     init(mapApi: any) {
         new Table(mapApi);
     }

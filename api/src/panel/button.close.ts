@@ -1,4 +1,5 @@
-import { Panel, Button } from './';
+import { Panel } from '.';
+import Button from './button';
 
 export default class CloseButton extends Button {
 
@@ -6,13 +7,18 @@ export default class CloseButton extends Button {
         super.panel = panel;
 
         // close the panel when a user clicks on the button
-        $(panel.panelContents).on('click', `#${this.id}`, () => {
+        $(panel.element).on('click', `#${this.id}`, () => {
             panel.close();
         });
     }
 
-
-    constructor() {
+    constructor(panel?: Panel) {
         super(`<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`);
+
+        if (panel) {
+            this.panel = panel;
+        }
+
+        this.elem.addClass('md-icon-button primary md-button');
     }
 }
