@@ -169,7 +169,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
                     if (validField) {
                         aFC.nameField = validField.name;
                         if (!this.config.tooltipField) {    // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
-                            afc.tooltipField = validField.name
+                            aFC.tooltipField = validField.name
                         }
                     } else {
                         // give warning. impact is tooltips will have no text, details pane no header
