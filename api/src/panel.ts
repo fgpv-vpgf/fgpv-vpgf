@@ -125,6 +125,7 @@ export class Panel {
      * @param content   panel body content
      */
     setBody(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>) {
+        // Makes content into a PanelElem if it isn't one already
         const pElemContent = this.isPanelElem(content) ? content : new this.container(content);
         this.panelBody.removeClass('hidden');
         this.contentAttr = pElemContent;
@@ -206,7 +207,7 @@ export class PanelElem {
     setElement(element: string | HTMLElement | JQuery<HTMLElement>): void {
 
         this.elementAttr = $(element);
-        this.panel.map.$compile(this.elementAttr[0]);
+        this.panel.map.$compile(this.elementAttr[0]).$digest();
 
         //If element already has id attribute, set id to that id, otherwise set to randomly generated id
         if (this.elementAttr !== undefined && this.elementAttr.attr('id') !== undefined) {
@@ -276,7 +277,7 @@ class Btn extends PanelElem {
     set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
         contents = $((<any>contents));
 
-        this.panel.map.$compile(contents[0]);
+        this.panel.map.$compile(contents[0]).$digest();
         $(this.elementAttr.children('button')[0]).html(contents[0]);
     }
 
