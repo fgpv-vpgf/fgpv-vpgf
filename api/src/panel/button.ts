@@ -1,8 +1,9 @@
-import { Panel, Element } from './';
+import { Panel } from './';
+import Element from './element';
 
 export default class Button extends Element {
-    constructor(innerButton: string | HTMLElement | JQuery<HTMLElement>) {
-        super();
+    constructor(innerButton: string | HTMLElement | JQuery<HTMLElement>, panel?: Panel) {
+        super(undefined, panel);
         this.element = $(innerButton);
     }
 
@@ -13,6 +14,6 @@ export default class Button extends Element {
         const button = $(`<button class="" type="button">`);
         button.html(innerButton[0]);
 
-        super.element = button;
+        super.elem = button;
     }
 }

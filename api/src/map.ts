@@ -24,7 +24,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { LayerGroup, SimpleLayer } from 'api/layers';
-import { Panel, PanelElem } from 'api/panel';
+import { Panel } from 'api/panel';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -91,24 +91,12 @@ export class Map {
         return this.panelRegistryAttr;
     }
 
-    /**
-     * Creates a Panel on this Map instance.
-     * @param {string} id - the ID of the panel to be created
-     * @return {Panel} - the Panel that was created
-     */
-    createPanel(id: string, css?: any, body?: PanelElem | string | HTMLElement | JQuery<HTMLElement>): Panel {
-        let panel = new Panel(id, this);
-
-        if (css) {
-            panel.panelContents.css(css);
-        }
-
-        if (body) {
-            panel.setBody(body);
-        }
-
+    addPanel(panel: Panel) {
         this.panelRegistry.push(panel);
-        return panel;
+    }
+
+    makePanel(id: string) {
+        return new Panel(id, this);
     }
 
     /**
@@ -316,6 +304,8 @@ export interface Map {
     simpleLayerObj: SimpleLayer;
     panelRegistryAttr: Panel[];
     $compile: any;
+
+    Panel: Panel;
 }
 
 export default Map;
