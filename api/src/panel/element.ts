@@ -1,34 +1,42 @@
-import { Panel, BasePanel } from './';
+import { Panel } from '.';
+
+import BasePanel from './base.panel';
 
 export default class Element extends BasePanel {
     _element: JQuery<HTMLElement>;
 
     set panel(panel: Panel) {
         super.panel = panel;
-        panel.api.$compile(this.element[0]); // run through angular compiler now that we have api access
+        panel.api.$compile(this.elem[0]); // run through angular compiler now that we have api access
     }
 
     get id(): string {
-        return this.element.attr('id');
+        return this.elem.attr('id');
     }
 
-    get element(): JQuery<HTMLElement> {
+    get elem(): JQuery<HTMLElement> {
         return this._element;
     }
 
-    set element(element: JQuery<HTMLElement>) {
+    set elem(element: JQuery<HTMLElement>) {
         this._element = element;
-
-        this.element.attr('id', this.element.attr('id') || 'PanelElem' + Math.round(Math.random() * 10000).toString());
-        this.element.addClass("elem");
+        this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 10000).toString());
+        this.elem.addClass("elem");
 
         if (this.panel) {
-            this.panel.api.$compile(this.element[0]);
+            this.panel.api.$compile(this.elem[0]);
         }
     }
 
-    constructor(elementBody?: string | HTMLElement | JQuery<HTMLElement>) {
+    append(element: JQuery<HTMLElement>) {
+
+    }
+
+    constructor(elementBody?: string | HTMLElement | JQuery<HTMLElement>, panel?: Panel) {
         super();
-        this.element = $(elementBody || '');
+
+        if (elementBody) {
+            this.elem = $(elementBody);
+        }
     }
 }

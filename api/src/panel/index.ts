@@ -1,14 +1,14 @@
 import { Observable, Subject } from 'rxjs';
 import Button from './button';
+import CloseButton from './button.close';
+import ToggleButton from './button.toggle';
 import Element from './element';
 import Map from 'api/map';
+import Header from './header';
 
-export { default as Button } from './button';
-export { default as Element } from './element';
-export { default as BasePanel } from './base.panel';
+export { default as CloseButton } from './button.close';
 
 export class Panel {
-    _api: Map;
 
     set api(map: Map) {
         this._api = map;
@@ -24,7 +24,20 @@ export class Panel {
     open(): void {
         //fires opening observable
         this.openingSubject.next();
-        this.panelContents.removeClass('hidden');
+        this.element.removeClass('hidden');
+
+        const positionTypes = ['top', 'left', 'right', 'bottom'];
+
+        // checks if all position types are the same 0px - the default values.
+        const all0px = positionTypes.map(t => this.element.css(t)).every( (val, i, arr) => val === '0px' && val === arr[0] );
+
+        if (all0px) {
+            //TODO: SET CSS
+            //position: relative;
+            //margin: 10px auto;
+            //min-width: 250px;
+            //min-height: 250px;
+        }
     }
 
     /**
@@ -32,7 +45,7 @@ export class Panel {
     */
     close(): void {
         this.closingSubject.next();
-        this.panelContents.addClass('hidden');
+        this.element.addClass('hidden');
     }
 
     /**
@@ -41,30 +54,25 @@ export class Panel {
      * @param content   panel body content
      */
     isPanelElem(content: Element | string | HTMLElement | JQuery<HTMLElement>): content is Element {
-        return !!(<Element>content).element;
+        return !!(<Element>content).elem;
     }
 
-    /**
-     * Sets the panel body to the provided content.
-     *
-     * @param content   panel body content
-     */
-    setBody(content: Element | string | HTMLElement | JQuery<HTMLElement>) {
-        const pElemContent = this.isPanelElem(content) ? content : new Element(content);
-        this.panelBody.removeClass('hidden');
-        this.contentAttr = pElemContent;
-        //First empty existing content
-        this.panelBody.html('');
-        //then fill in new contents
-        this.panelBody.append(this.getBody());
-        return this;
+    set body(content: any) {
+        this.body.html( (new Element(content, this)).elem );
+        this.body.removeClass('hidden');
     }
 
-    /**
-     * Returns the panel body.
-     */
-    getBody() {
-        return this.contentAttr.element;
+    get body() {
+        return this._body;
+    }
+
+    get element() {
+        return this._element;
+    }
+
+    get header() {
+        this._header = this._header ? this._header : new Header(this);
+        return this._header;
     }
 
     /**
@@ -72,36 +80,14 @@ export class Panel {
     * @return {string} - the panel id
     */
     get id(): string {
-        return this._id;
+        return this.element.attr('id');
     }
 
     /**
      * Throw an error when attempting to set a panel id, should be set when a panel is created.
      */
     set id(id: string) {
-        throw new Error('API(panels): you cannot modify a panels id.');
-    }
-
-    /**
-    * Returns panel shell element
-    * @return {JQuery<HTMLElement>} - shell element that holds controls and content of panel
-    */
-    get element(): JQuery<HTMLElement> {
-        return this.panelContents;
-    }
-
-    position(topLeft: number[], bottomRight: number[], snapToMobile: boolean = false): void {
-        this.panelContents.css({
-            top: topLeft[1] + 'px',
-            left: topLeft[0] + 'px',
-            width: bottomRight[0] - topLeft[0] + 'px'
-        });
-
-        if (snapToMobile) {
-            this.panelContents.addClass('rv-panel-mobile-snap');
-        }
-
-        this.panelBody.css('height', bottomRight[1] - topLeft[1] + 'px');
+        throw new Error('API(panels): you cannot modify a panels id property.');
     }
 
     private _initRXJS(): void {
@@ -120,28 +106,28 @@ export class Panel {
         this.heightChanged = this.heightChangedSubject.asObservable();
     }
 
-    private _initElements(): void {
+    private _initElements(id: string): void {
         //create panel components as HTMLElements
-        this.panelContents = $(document.createElement("div"));
-        this.panelContents.addClass('panel-contents');
+        this._element = $(document.createElement("div"));
+        this.element.addClass('rv-content-pane layout-padding panel-contents');
 
-        this.panelControls = $(document.createElement("div"));
-        this.panelControls.addClass(['panel-controls', 'hidden']);
+        //this.panelControls = $(document.createElement("div"));
+        //this.panelControls.addClass(['panel-controls', 'hidden']);
 
-        this.panelBody = $(document.createElement("div"));
-        this.panelBody.addClass(['panel-body', 'hidden']);
+        this._body = $(document.createElement("div"));
+        this.body.addClass(['panel-body']);
 
-        this.panelContents.attr('id', this.id);
+        this.element.attr('id', id);
 
         //append panel controls/body to panel contents ("shell")
-        this.panelContents.append(this.panelControls);
-        this.panelContents.append(this.panelBody);
-        this.panelContents.addClass('hidden'); //hide panel before a call to open is made
+        //this.panelContents.append(this.panelControls);
+        this.element.append(this.body);
+        this.element.addClass('hidden'); //hide panel before a call to open is made
         //append panel contents ("shell") to document fragment
-        this.documentFragment = document.createDocumentFragment();
-        this.documentFragment.appendChild(this.panelContents[0]);
+        const documentFragment = document.createDocumentFragment();
+        documentFragment.appendChild(this.element[0]);
 
-        // $(this.mapObject.innerShell).append(this.documentFragment);
+        $(this.api.innerShell).append(documentFragment);
     }
 
     /**
@@ -149,32 +135,23 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string) {
-        this._id = id;
+    constructor(id: string, api?: Map) {
+        if (api) {
+            this.api = api;
+        }
 
         this._initRXJS();
-        this._initElements();
+        this._initElements(id);
     }
 }
 
 export interface Panel {
-
-    _id: string;
-
-    //Panel items
-    contentAttr: Element;
-    controlList: (Element)[];
+    _api: Map;
 
     //HTML parent Components
-    panelContents: JQuery<HTMLElement>;
-    panelControls: JQuery<HTMLElement>;
-    panelBody: JQuery<HTMLElement>;
-    documentFragment: DocumentFragment;
-
-    widthAttr: number | string | undefined;
-    heightAttr: number | string | undefined;
-
-    contentsHeight: number;
+    _element: JQuery<HTMLElement>;
+    _body: JQuery<HTMLElement>;
+    _header: Header;
 
     //subjects initialized for observables that are fired through method calls
     openingSubject: Subject<any>;
@@ -187,6 +164,16 @@ export interface Panel {
     opening: Observable<any>;
     closing: Observable<any>;
     positionChanged: Observable<[number, number]>; //top left, bottom right
-    widthChanged: Observable<number>
-    heightChanged: Observable<number>
+    widthChanged: Observable<number>;
+    heightChanged: Observable<number>;
+
+    CloseButton: typeof CloseButton;
+    ToggleButton: typeof ToggleButton;
+    Button: typeof Button;
+    Element: typeof Element;
 }
+
+Panel.prototype.CloseButton = CloseButton;
+Panel.prototype.ToggleButton = ToggleButton;
+Panel.prototype.Button = Button;
+Panel.prototype.Element = Element;

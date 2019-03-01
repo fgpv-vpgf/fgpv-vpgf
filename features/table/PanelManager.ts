@@ -8,14 +8,14 @@ export class PanelManager extends Panel {
     constructor(table: Table) {
         super(table.mapApi);
         this.tableContent = $(`<div></div>`);
-        this.panelContents.css({
+        this.element.css({
             top: '0px',
             left: '410px',
             right: '0px',
             bottom: '50%'
         });
-        this.setBody(this.tableContent);
-        this.panelBody.css({'overflow-x': 'scroll', padding: 'initial'});
+        // this.setBody(this.tableContent);
+        this.body.css({'overflow-x': 'scroll', padding: 'initial'});
 
         // const closeBtn = new this.button('X');
         // closeBtn.element.css('float', 'right');

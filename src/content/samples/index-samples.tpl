@@ -87,6 +87,32 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
+
+    <script>
+        class PanelTester {
+            init(api) {
+                this.api = api;
+                this.makePanels();
+            }
+
+            makePanels() {
+                const p = this.api.makePanel('M');
+                p.element.css({
+                    //top: '0px',
+                    //left: '410px',
+                    //bottom: '50%',
+                    width: '600px'
+                });
+                p.body = `<h2>Hello@!</h2><p>How are you?</p>`;
+                p.header.title = 'Test: This is a test panel';
+                p.header.closeButton;
+                p.open();
+            }
+        }
+
+        window.PanelTester = PanelTester;
+    </script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -198,6 +224,7 @@
 
     <div class="myMap" id="sample-map" is="rv-map" rz-gtm
         rv-config="config/config-sample-01.json"
+        rv-plugins="PanelTester"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
