@@ -359,7 +359,10 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
         setFieldsOptions(validationResult: ValidationResult): void {
             // TODO: need to explicitly set this in the config object on creation
             // TODO: this won't be needed after proper typed configs are made for the file-based layers
-            this.config.nameField = validationResult.smartDefaults.primary;
+            // if the nameField is already set once (through UI/config option), do not reset it to the default primary
+            if (!this.config.nameField) {
+                this.config.nameField = validationResult.smartDefaults.primary;
+            }
             this.fields = validationResult.fields;
 
             // number all the fields, so even fields with equal names can be distinguished by the md selector
