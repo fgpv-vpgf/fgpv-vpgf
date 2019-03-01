@@ -342,8 +342,15 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             this.latFields = validationResult.latFields;
             this.longFields = validationResult.longFields;
 
-            this.config.latfield = validationResult.smartDefaults.lat;
-            this.config.lonfield = validationResult.smartDefaults.long;
+            // if the latField is already set once (through UI/config option), do not reset it to the default latitude
+            if (!this.config.latfield) {
+                this.config.latfield = validationResult.smartDefaults.lat;
+            }
+
+            // if the lonfield is already set once (through UI/config option), do not reset it to the default longitude
+            if (!this.config.lonfield) {
+                this.config.lonfield = validationResult.smartDefaults.long;
+            }
         }
     }
 
