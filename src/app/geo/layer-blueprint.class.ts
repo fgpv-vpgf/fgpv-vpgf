@@ -521,7 +521,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
      * @class WFSServiceSource
      * @extends {mixins(BlueprintBase, ClientSideData)}
      */
-    class WFSServiceSource extends mixins(BlueprintBase, ClientSideData) {
+    class WFSServiceSource extends mixins(BlueprintBase, ClientSideData, FieldsOption) {
         _urlWrapper: UrlWrapper;
 
         constructor(rawConfig: any) {
@@ -560,12 +560,15 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
         /**
          * Validates WFS layer as GeoJSON. Default validation uses the service type, and there is no explicit validation function for WFS.
          *
-         * @returns {Promise<any>}
+         * @returns any
          * @memberof WFSServiceSource
          */
-        validate(): Promise<any> {
+        validate(): any {
             // WFS layer data is not encoded as a byte array, it's pure JSON
-            return super.validate(Geo.Service.Types.GeoJSON, false);
+            return super.validate(Geo.Service.Types.GeoJSON, false).then(validationResult => {
+                this.setFieldsOptions(validationResult);
+                return validationResult;
+            });
         }
 
         get layerFactory(): LayerFactory {
