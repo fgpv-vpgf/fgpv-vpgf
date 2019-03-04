@@ -1,6 +1,7 @@
 import EPSG from '../features/epsg/epsg.feature';
 import geoSearch from '../features/geosearch/geosearch.feature';
 import { TableBuilder } from '@fgpv/rv-plugins';
+import '@fgpv/rv-plugins/lib/enhancedTable/main.css';
 
 import { FgpvConfigSchema } from 'api/schema';
 
