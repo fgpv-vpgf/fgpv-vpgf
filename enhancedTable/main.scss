@@ -1,11 +1,13 @@
 // adjust the icons path
-$icons-path: '../node_modules/ag-grid-community/src/styles/material-icons/';
+$icons-path: '~ag-grid-community/src/styles/material-icons/';
 
 // Set the colors
 $primary-color: #607d8b;
 $accent-color: #00bcd4;
 
-// Import the ag-Grid material theme
+// Import the ag-grid styles
+@import 'ag-grid-community/dist/styles/ag-grid';
+// Import the ag-grid material theme
 @import 'ag-grid-community/src/styles/ag-theme-material';
 
 md-datepicker > div {

@@ -1,12 +1,10 @@
 import { Grid } from 'ag-grid-community';
 import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE, APPLY_TO_MAP_TEMPLATE } from './templates';
 import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import './main.scss';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
 import { removeAccessibilityListeners, initAccessibilityListeners } from './grid-accessibility';
-import { ConfigManager, ColumnConfigManager } from './config-manager';
+import { ColumnConfigManager } from './config-manager';
 import { PanelStateManager } from './panel-state-manager';
 import { PRINT_TABLE } from './templates'
 
@@ -357,18 +355,13 @@ export class PanelManager {
             // this determines if Clear Filters button is disabled (when true) or enabled (when false)
             this.noActiveFilters = function () {
                 const columns = Object.keys(that.tableOptions.api.getFilterModel());
-                let noActiveFilters = true;
-
-                columns.forEach(column => {
-                    const columnConfigManager = new ColumnConfigManager(that.configManager, column);
-                    if (!columnConfigManager.isFilterStatic) {
-                        // if there is a non static column fiter, the clearFilters button is disabled
-                        noActiveFilters = false;
-                    }
+                // if there is a non static column fiter, the clearFilters button is enabled
+                let noFilters = !columns.some((col) => {
+                    const columnConfigManager = new ColumnConfigManager(that.configManager, col);
+                    return !columnConfigManager.isFilterStatic;
                 });
-
                 // if column filters don't exist or are static, clearFilters button is disabled
-                return noActiveFilters && !that.searchText;
+                return noFilters && !that.searchText;
             }
         });
 
@@ -479,7 +472,8 @@ export class PanelManager {
                 .filter(element => element.headerName)
                 .map(element => {
                     return ({ id: element.field, title: element.headerName, visibility: !element.hide });
-                });
+                })
+                .sort((firstEl, secondEl) => firstEl['title'].localeCompare(secondEl['title']));
 
             // toggle column visibility
             this.toggleColumn = function (col) {
