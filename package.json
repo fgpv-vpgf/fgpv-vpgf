@@ -3,7 +3,7 @@
     "version": "0.0.5-1",
     "description": "Plugins for the RAMP viewer supported by the core team.",
     "scripts": {
-        "build": "webpack --config ./bin/build/webpack.config.js",
+        "build": "webpack --config ./bin/build/webpack.config.js && npm run prepublishOnly",
         "serve": "webpack-dev-server --progress --hot --config ./bin/build/webpack.config.js",
         "test": "tsc && intern",
         "sass": "bash ./compileSass.sh",
