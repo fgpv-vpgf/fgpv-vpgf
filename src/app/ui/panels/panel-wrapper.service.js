@@ -1,8 +1,8 @@
 /**
- * Version 3 of RAMP introduced a new panel framework available through the api. It allows the programmatic creation of panels, open / close functionality, 
- * content updates, and subscribing to panel events. Some legacy panels will take time to port to the new system. This wrapper service aims to provide a unified 
- * way to interact with both new and legacy panels through the api. 
- * 
+ * Version 3 of RAMP introduced a new panel framework available through the api. It allows the programmatic creation of panels, open / close functionality,
+ * content updates, and subscribing to panel events. Some legacy panels will take time to port to the new system. This wrapper service aims to provide a unified
+ * way to interact with both new and legacy panels through the api.
+ *
  * Legacy panels supported for v3:
  * details      - Identify / details results (part of main panel)
  * settings     - Layer setting (part of side panel)
@@ -11,7 +11,7 @@
  * geo          - Geosearch results (part of main panel)
  * file         - Import file based layer (part of main panel)
  * service      - Import service based layer (part of main panel)
- * 
+ *
  * We accomplish this by creating a new api panel then overload key methods like open/close
  */
 

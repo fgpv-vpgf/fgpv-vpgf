@@ -1,4 +1,4 @@
-import { Panel, CloseButton } from '.';
+import { Panel, CloseButton, ToggleButton } from '.';
 
 /**
  * The upper portion of a panel (optional) that contains:
@@ -10,6 +10,7 @@ import { Panel, CloseButton } from '.';
 export default class Header {
     _header: JQuery<HTMLElement>;
     _closeButton: CloseButton;
+    _toggleButton: ToggleButton;
     _panel: Panel;
 
     get panel() {
@@ -44,12 +45,24 @@ export default class Header {
         this._header.find('h3').first().removeClass('hidden').text(title);
     }
 
+    get hasCloseButton() {
+        return !!this._closeButton;
+    }
+
     get closeButton() {
         this._closeButton = this._closeButton ? this._closeButton : new CloseButton(this._panel);
         this._header.append(this._closeButton.elem);
 
         this.panel.api.$compile(this._header);
         return this._closeButton.elem;
+    }
+
+    get toggleButton() {
+        this._toggleButton = this._toggleButton ? this._toggleButton : new ToggleButton(this._panel);
+        this._header.append(this._toggleButton.elem);
+
+        this.panel.api.$compile(this._header);
+        return this._toggleButton.elem;
     }
 
     constructor(panel?: Panel) {

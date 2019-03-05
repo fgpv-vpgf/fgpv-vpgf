@@ -7,8 +7,43 @@ import Map from 'api/map';
 import Header from './header';
 
 export { default as CloseButton } from './button.close';
+export { default as ToggleButton } from './button.toggle';
 
 export class Panel {
+
+    private underlayRuleCheck(otherPanel: Panel) {
+        if (otherPanel.isDialog || otherPanel.isCloseable !== this.isCloseable || this.underlay) {
+            return;
+        }
+
+        const rect1 = this.element[0].getBoundingClientRect();
+        const rect2 = otherPanel.element[0].getBoundingClientRect();
+
+        const overlap = !(rect1.right < rect2.left ||
+            rect1.left > rect2.right ||
+            rect1.bottom < rect2.top ||
+            rect1.top > rect2.bottom);
+
+        if (overlap) {
+            this.close();
+        }
+    }
+
+    set underlay(keepOpenWhenOverlaid: boolean) {
+        this._underlay = keepOpenWhenOverlaid;
+    }
+
+    get underlay() {
+        return this._underlay;
+    }
+
+    set offscreen(keepOpenWhenOffscreen: boolean) {
+        this._offscreen = keepOpenWhenOffscreen;
+    }
+
+    get offscreen() {
+        return this._offscreen;
+    }
 
     set api(map: Map) {
         this._api = map;
@@ -19,33 +54,64 @@ export class Panel {
     }
 
     /**
+     * Returns true if the panel has a close button in its header. Dialog panels are always closeable.
+     */
+    get isCloseable() {
+        return this.isDialog || (!!this._header && this._header.hasCloseButton);
+    }
+
+    /**
+     * Returns true if the panel is a dialog.
+     */
+    get isDialog() {
+        // if all properties have default values (0px) we consider this a dialog (non user defined position)
+        return ['top', 'left', 'right', 'bottom']
+            .map(t => this.element.css(t))
+            .every( (val, i, arr) => val === '0px' && val === arr[0] );
+    }
+
+    private openDialog() {
+        this.element.wrap('<div class="dialog-container"></div>');
+        this.element.css({
+            left: '25%',
+            top: '25%'
+        });
+        this.header.closeButton;
+        this._element = this.element.parent();
+        this.element.prependTo($(this.api.innerShell).parent().parent());
+    }
+
+    private openStandard() {
+        if (this.element.is(':offscreen')) {
+            this.close(true);
+            throw new Error('API(panels): Failed to open panel as all or part of it would render off the screen.');
+        }
+
+        this.element.css({'z-index': this.isCloseable ? 14 : 10});
+    }
+
+    /**
     * Opens the panel on the map. (For the user to see)
     */
     open(): void {
-        //fires opening observable
-        this.openingSubject.next();
-        this.element.removeClass('hidden');
-
-        const positionTypes = ['top', 'left', 'right', 'bottom'];
-
-        // checks if all position types are the same 0px - the default values.
-        const all0px = positionTypes.map(t => this.element.css(t)).every( (val, i, arr) => val === '0px' && val === arr[0] );
-
-        if (all0px) {
-            //TODO: SET CSS
-            //position: relative;
-            //margin: 10px auto;
-            //min-width: 250px;
-            //min-height: 250px;
+        if (this.isDialog) {
+            this.openDialog();
+        } else {
+            this.openStandard();
         }
+
+        this.openingSubject.next(this);
     }
 
     /**
     * Closes the panel on the map. (For the user to see).
     */
-    close(): void {
-        this.closingSubject.next();
-        this.element.addClass('hidden');
+    close(silent: boolean = false): void {
+        if (!silent) {
+            this.closingSubject.next(this);
+        }
+
+        this.element.remove();
     }
 
     /**
@@ -58,8 +124,9 @@ export class Panel {
     }
 
     set body(content: any) {
-        this.body.html( (new Element(content, this)).elem );
-        this.body.removeClass('hidden');
+        const element = new Element(this, content);
+        this.body.html( element.elem );
+        element.panel = this;
     }
 
     get body() {
@@ -109,7 +176,7 @@ export class Panel {
     private _initElements(id: string): void {
         //create panel components as HTMLElements
         this._element = $(document.createElement("div"));
-        this.element.addClass('rv-content-pane layout-padding panel-contents');
+        this.element.addClass('rv-content-pane layout-padding panel-contents dialog');
 
         //this.panelControls = $(document.createElement("div"));
         //this.panelControls.addClass(['panel-controls', 'hidden']);
@@ -122,12 +189,28 @@ export class Panel {
         //append panel controls/body to panel contents ("shell")
         //this.panelContents.append(this.panelControls);
         this.element.append(this.body);
-        this.element.addClass('hidden'); //hide panel before a call to open is made
+        //this.element.addClass('hidden'); //hide panel before a call to open is made
         //append panel contents ("shell") to document fragment
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
         $(this.api.innerShell).append(documentFragment);
+
+        $( window ).resize(() => {
+            if (!this.offscreen && this.element.is(':offscreen')) {
+                this.close();
+            }
+
+            this.api.panels.forEach(p => this.underlayRuleCheck(p));
+        });
+
+        this.api.panelOpened.subscribe(otherPanel => {
+            if (this === otherPanel) {
+                return;
+            }
+
+            this.underlayRuleCheck(otherPanel);
+        });
     }
 
     /**
@@ -139,6 +222,9 @@ export class Panel {
         if (api) {
             this.api = api;
         }
+
+        this.underlay = true;
+        this.offscreen = false;
 
         this._initRXJS();
         this._initElements(id);
@@ -152,6 +238,8 @@ export interface Panel {
     _element: JQuery<HTMLElement>;
     _body: JQuery<HTMLElement>;
     _header: Header;
+    _underlay: boolean;
+    _offscreen: boolean;
 
     //subjects initialized for observables that are fired through method calls
     openingSubject: Subject<any>;
@@ -161,8 +249,8 @@ export interface Panel {
     heightChangedSubject: Subject<any>;
 
     //user accessible observables
-    opening: Observable<any>;
-    closing: Observable<any>;
+    opening: Observable<Panel>;
+    closing: Observable<Panel>;
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;

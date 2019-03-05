@@ -2,8 +2,8 @@ import { Panel } from './';
 import Element from './element';
 
 export default class Button extends Element {
-    constructor(innerButton: string | HTMLElement | JQuery<HTMLElement>, panel?: Panel) {
-        super(undefined, panel);
+    constructor(panel: Panel, innerButton: string | HTMLElement | JQuery<HTMLElement>) {
+        super(panel);
         this.element = $(innerButton);
     }
 
