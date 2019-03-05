@@ -59,7 +59,7 @@ $.getScript('../../../../rv-main.js', function () {
                 biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
                 postalCode: '94043'
             };
-            
+
             $scope.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY').split(' ').map(function(state) {
                 return {abbrev: state};
             });
@@ -77,11 +77,11 @@ $.getScript('../../../../rv-main.js', function () {
     RZ.mapAdded.subscribe(mapi => {
 
       //creating Panel + opening
-      let panel0 = mapi.createPanel('panel0');
+      let panel0 = mapi.newPanel('panel0');
       panel0.position([432, 0], [700, 500]);
 
       $(`<style>
-          .rv-medium #panel0 { 
+          .rv-medium #panel0 {
             width: 100% !important;
             height: 100% !important;
             top: -10px !important;
@@ -97,7 +97,7 @@ $.getScript('../../../../rv-main.js', function () {
           }
         </style>
       `).appendTo("head");
-      
+
       closeBtn = new panel0.button('X');
       closeBtn.element.css('float', 'right');
       closeBtn.element.on('click', function(evt) {
@@ -134,7 +134,7 @@ $.getScript('../../../../rv-main.js', function () {
       panel0.open();
 
       //creating Panel + opening
-      let panel1 = mapi.createPanel('panel1');
+      let panel1 = mapi.newPanel('panel1');
       panel1.position([710, 0], [1200, 500]);
 
       panel1.controls = [new panel1.button('X')];
@@ -144,57 +144,57 @@ $.getScript('../../../../rv-main.js', function () {
               <label>Title</label>
               <input ng-model="user.title">
             </md-input-container>
-      
+
             <md-input-container>
               <label>Email</label>
               <input ng-model="user.email" type="email">
             </md-input-container>
           </div>
 
-      
+
 
           <div>
             <form name="userForm">
-      
+
               <div layout-gt-xs="row">
                 <md-input-container class="md-block" flex-gt-xs>
                   <label>Company (Disabled)</label>
                   <input ng-model="user.company" disabled>
                 </md-input-container>
-      
+
                 <md-input-container>
                   <label>Enter date</label>
                   <md-datepicker ng-model="user.submissionDate"></md-datepicker>
                 </md-input-container>
               </div>
-      
+
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>First name</label>
                   <input ng-model="user.firstName">
                 </md-input-container>
-      
+
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>Long Last Name That Will Be Truncated And 3 Dots (Ellipsis) Will Appear At The End</label>
                   <input ng-model="theMax">
                 </md-input-container>
               </div>
-      
+
               <md-input-container class="md-block">
                 <label>Address</label>
                 <input ng-model="user.address">
               </md-input-container>
-      
+
               <md-input-container md-no-float class="md-block">
                 <input ng-model="user.address2" placeholder="Address 2">
               </md-input-container>
-      
+
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>City</label>
                   <input ng-model="user.city">
                 </md-input-container>
-      
+
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>State</label>
                   <md-select ng-model="user.state">
@@ -203,12 +203,12 @@ $.getScript('../../../../rv-main.js', function () {
                     </md-option>
                   </md-select>
                 </md-input-container>
-      
+
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>Postal Code</label>
                   <input name="postalCode" ng-model="user.postalCode" placeholder="12345"
                          required ng-pattern="/^[0-9]{5}$/" md-maxlength="5">
-      
+
                   <div ng-messages="userForm.postalCode.$error" role="alert" multiple>
                     <div ng-message="required" class="my-message">You must supply a postal code.</div>
                     <div ng-message="pattern" class="my-message">That doesn't look like a valid postal
@@ -220,15 +220,15 @@ $.getScript('../../../../rv-main.js', function () {
                   </div>
                 </md-input-container>
               </div>
-      
+
               <md-input-container class="md-block">
                 <label>Biography</label>
                 <textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus></textarea>
               </md-input-container>
-      
+
             </form>
           </div>
-      
+
       </div>`);
         panel1.open();
     });

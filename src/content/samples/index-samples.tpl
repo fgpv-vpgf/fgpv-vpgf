@@ -78,6 +78,38 @@
         .tool {
             width: 100%;
         }
+
+        .dialog-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.dialog-container:before {
+    content:"";
+    background: rgba(0, 0, 0, .8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+.dialog {
+    background: white;
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+
+}
+
     </style>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
@@ -92,22 +124,75 @@
     <script>
         class PanelTester {
             init(api) {
+                this.panelCount = 0;
                 this.api = api;
                 this.makePanels();
             }
 
-            makePanels() {
-                const p = this.api.makePanel('M');
+            makeCloseBtn(panel) {
+                if ($('#paneltester-chkclose').hasClass('md-checked')) {
+                    panel.header.closeButton;
+                }
+            }
+
+            panel() {
+                const p = this.api.newPanel('dialog-pnl-' + this.panelCount);
                 p.element.css({
-                    //top: '0px',
-                    //left: '410px',
-                    //bottom: '50%',
+                    top: 80 * (this.panelCount % 7) + 'px',
+                    left: 580 + this.panelCount * 80 + 'px',
+                    bottom: '50%',
+                    width: '400px'
+                });
+                p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
+                this.makeCloseBtn(p);
+                this.panelCount = this.panelCount + 1;
+                p.underlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
+                p.offscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+                p.open();
+            }
+
+            dialog() {
+                const p = this.api.newPanel('dialog-pnl');
+                p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
+                p.header.title = 'Dialog Title';
+                p.open();
+            }
+
+            makePanels() {
+                const p = this.api.newPanel('M');
+                p.element.css({
+                    top: '0px',
+                    left: '410px',
+                    bottom: '50%',
                     width: '600px'
                 });
-                p.body = `<h2>Hello@!</h2><p>How are you?</p>`;
-                p.header.title = 'Test: This is a test panel';
-                p.header.closeButton;
+                p.body = `
+                  <div class="hey">
+                    <md-button id="paneltester-btn1" class="md-raised md-primary">Open a dialog</md-button>
+                    <br>
+                    <md-button id="paneltester-btn2" class="md-raised md-primary">Open a panel</md-button>
+                    <br><br>
+                    <md-checkbox class="md-checked" id="paneltester-chkclose">Add a close button</md-checkbox>
+                    <br>
+                    <md-checkbox class="md-checked" id="paneltester-chkoffscreen">Panel closes when offscreen</md-checkbox>
+                    <br>
+                    <md-checkbox class="" id="paneltester-chkunderlay">Panel closes on overlay</md-checkbox>
+                    <br>
+                    <b>Note:</b> Checkbox options are not applicable to dialog panels.
+                  </div>
+                `;
+                p.header.title = 'Panel Tester';
+                p.header.toggleButton;
+                p.offscreen = true;
                 p.open();
+
+                $('#paneltester-btn1').on('click', () => {
+                    this.dialog();
+                });
+
+                $('#paneltester-btn2').on('click', () => {
+                    this.panel();
+                })
             }
         }
 

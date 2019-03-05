@@ -1,20 +1,4 @@
-/**
- *               __
- *              /    \
- *             | STOP |
- *              \ __ /
- *                ||
- *                ||
- *                ||
- *                ||
- *                ||
- *              ~~~~~~~
- * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- *
- * THIS API IS NOT SUPPORTED.
- */
-
-import { Observable, Subject, fromEvent } from 'rxjs';
+import { Observable, Subject, fromEvent, merge } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
 import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
 import $ from 'jquery';
@@ -51,8 +35,10 @@ export class Map {
         this.identifier = this.mapDiv.attr('id') || '';
         this.uiObj = new UI(this);
         this.layersObj = new LayerGroup(this);
-        this.panelRegistryAttr = [];
+        this._panels = [];
         this.layersObj = new LayerGroup(this);
+        this._panelOpened = new Subject();
+        this._panelClosed = new Subject();
 
         // config set implies viewer loading via API
         if (config) {
@@ -87,31 +73,37 @@ export class Map {
      * Returns the list of Panels on this map instance.
      * @return {Panel[]} - the list of Panels on this Map instance.
      */
-    get panelRegistry() {
-        return this.panelRegistryAttr;
+    get panels() {
+        return this._panels;
     }
 
-    addPanel(panel: Panel) {
-        this.panelRegistry.push(panel);
-    }
+    newPanel(id: string) {
 
-    makePanel(id: string) {
-        return new Panel(id, this);
-    }
-
-    /**
-     * Deletes a Panel on this Map instance.
-     * @param {string} id - the ID of the panel to be deleted
-     */
-    deletePanel(id: string) {
-        $("#" + id).remove();
-        for (let panel of this.panelRegistry) {
-            let index;
-            if (panel.id === id) {
-                index = this.panelRegistryAttr.indexOf(panel);
-                this.panelRegistryAttr.splice(index, 1);
-            }
+        if ($(`#${id}`).length > 1) {
+            throw new Error(`API(panels): a panel with id ${id} already exists.`);
         }
+
+        const panel = new Panel(id, this);
+
+        panel.opening.subscribe(p => {
+            this._panelOpened.next(p);
+        });
+
+        panel.closing.subscribe(p => {
+            this._panelClosed.next(p);
+        });
+
+        this.panels.push(panel);
+
+        return panel;
+    }
+
+    get panelOpened() {
+        return this._panelOpened.asObservable();
+    }
+
+    get panelClosed() {
+        return this._panelClosed.asObservable();
     }
 
     /** Once set, we know the map instance is ready. */
@@ -302,10 +294,13 @@ export interface Map {
     uiObj: UI;
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
-    panelRegistryAttr: Panel[];
     $compile: any;
 
     Panel: Panel;
+
+    _panels: Panel[];
+    _panelOpened: Subject<Panel>;
+    _panelClosed: Subject<Panel>;
 }
 
 export default Map;
