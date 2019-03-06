@@ -1,4 +1,4 @@
-import { Panel, CloseButton, ToggleButton } from '.';
+import { Panel, Element, CloseButton, ToggleButton } from '.';
 
 /**
  * The upper portion of a panel (optional) that contains:
@@ -7,14 +7,17 @@ import { Panel, CloseButton, ToggleButton } from '.';
  *
  * Note: only one header instance is allowed per panel.
  */
-export default class Header {
+export default class Header extends Element {
     _header: JQuery<HTMLElement>;
     _closeButton: CloseButton;
     _toggleButton: ToggleButton;
-    _panel: Panel;
 
-    get panel() {
-        return this._panel;
+    append(element: Element) {
+        this._header.append(element.elem);
+    }
+
+    prepend(element: Element) {
+        this._header.prepend(element.elem);
     }
 
     makeHeader() {
@@ -32,13 +35,6 @@ export default class Header {
     placeHeader() {
         this.makeHeader();
         this._panel.element.prepend(this._header);
-    }
-
-    set panel(panel: Panel) {
-        this._panel = panel;
-        if (!this._header) {
-            this.placeHeader();
-        }
     }
 
     set title(title: string) {
@@ -65,9 +61,8 @@ export default class Header {
         return this._toggleButton.elem;
     }
 
-    constructor(panel?: Panel) {
-        if (panel) {
-            this.panel = panel;
-        }
+    constructor(panel: Panel) {
+        super(panel);
+        this.placeHeader();
     }
 }

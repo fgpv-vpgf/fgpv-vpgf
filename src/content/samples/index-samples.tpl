@@ -79,37 +79,6 @@
             width: 100%;
         }
 
-        .dialog-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-.dialog-container:before {
-    content:"";
-    background: rgba(0, 0, 0, .8);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-}
-.dialog {
-    background: white;
-    position: absolute;
-    left: 25%;
-    top: 25%;
-    width: 50%;
-    height: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-
-}
-
     </style>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
@@ -184,6 +153,17 @@
                 p.header.title = 'Panel Tester';
                 p.header.toggleButton;
                 p.offscreen = true;
+
+
+                // make a custom button
+                const customBtn = new p.Button('Custom Btn');
+                customBtn.$.on('click', function() {
+                    window.alert('You clicked the custom button!');
+                });
+
+                p.header.append(customBtn);
+
+
                 p.open();
 
                 $('#paneltester-btn1').on('click', () => {

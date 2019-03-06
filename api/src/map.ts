@@ -79,7 +79,7 @@ export class Map {
 
     newPanel(id: string) {
 
-        if ($(`#${id}`).length > 1) {
+        if ($(`#${id}`).length === 1) {
             throw new Error(`API(panels): a panel with id ${id} already exists.`);
         }
 
@@ -321,4 +321,3 @@ function initObservables(this: Map) {
     this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt, this)));
     this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
 }
-
