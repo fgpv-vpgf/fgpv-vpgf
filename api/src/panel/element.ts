@@ -25,6 +25,10 @@ export default class Element {
         return this._element;
     }
 
+    get $(): JQuery<HTMLElement> {
+        return this._element;
+    }
+
     set elem(element: JQuery<HTMLElement>) {
 
         if (this._element) {

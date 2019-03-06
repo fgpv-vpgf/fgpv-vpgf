@@ -6,7 +6,8 @@ export default class ToggleButton extends Button {
 
     constructor(panel: Panel) {
         super(panel, `<md-icon md-svg-src="content:remove"></md-icon>`);
-        this.elem.addClass('md-icon-button primary md-button');
+        this.elem.addClass('md-icon-button');
+        this.elem.removeClass('md-raised');
 
         this.elem.on('click', () => {
             // if user wants to expand panel
