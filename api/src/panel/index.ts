@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import Button from './button';
 import CloseButton from './button.close';
 import ToggleButton from './button.toggle';
@@ -6,26 +6,77 @@ import Element from './element';
 import Map from 'api/map';
 import Header from './header';
 
+export { default as Element } from './element';
 export { default as CloseButton } from './button.close';
 export { default as ToggleButton } from './button.toggle';
 
+/**
+ *
+ *
+ * ## Types
+ *
+ * ### Persistent
+ *
+ * ### Closeable
+ *
+ * ### Dialog
+ *
+ *
+ *
+ * ## Underlay Rules
+ *
+ * ### Open
+ *
+ * ### Close
+ *
+ * ## Offscreen
+ *
+ * `offscreen` true allows panel to be offscreen (false by default) in all cases.
+ *
+ * Checked when:
+ * - Viewport changes
+ * - Panel style changes
+ * - Panel is opening
+ *
+
+ */
 export class Panel {
 
-    private underlayRuleCheck(otherPanel: Panel) {
-        if (otherPanel.isDialog || otherPanel.isCloseable !== this.isCloseable || this.underlay) {
-            return;
-        }
+    /**
+     * Returns a [[Button]] class bound to this panel instance.
+     */
+    get Button() {
+        return Button.bind(null, this);
+    }
 
-        const rect1 = this.element[0].getBoundingClientRect();
-        const rect2 = otherPanel.element[0].getBoundingClientRect();
+    /**
+     * Returns a [[CloseButton]] class bound to this panel instance.
+     */
+    get CloseButton() {
+        return CloseButton.bind(null, this);
+    }
 
-        const overlap = !(rect1.right < rect2.left ||
-            rect1.left > rect2.right ||
-            rect1.bottom < rect2.top ||
-            rect1.top > rect2.bottom);
+    /**
+     * Returns a [[ToggleButton]] class bound to this panel instance.
+     */
+    get ToggleButton() {
+        return ToggleButton.bind(null, this);
+    }
 
-        if (overlap) {
-            this.close();
+    /**
+     * Returns an [[Element]] class bound to this panel instance.
+     */
+    get Element() {
+        return Element.bind(null, this);
+    }
+
+    private offScreenRuleCheck(errorMsg?: string) {
+        if (!this.offscreen && this.element.is(':offscreen')) {
+            this.close(true);
+
+            if (errorMsg) {
+                throw new Error(`API(panels): ${errorMsg}`);
+            }
         }
     }
 
@@ -70,24 +121,11 @@ export class Panel {
             .every( (val, i, arr) => val === '0px' && val === arr[0] );
     }
 
-    private openDialog() {
-        this.element.wrap('<div class="dialog-container"></div>');
-        this.element.css({
-            left: '25%',
-            top: '25%'
-        });
-        this.header.closeButton;
-        this._element = this.element.parent();
-        this.element.prependTo($(this.api.innerShell).parent().parent());
-    }
-
-    private openStandard() {
-        if (this.element.is(':offscreen')) {
-            this.close(true);
-            throw new Error('API(panels): Failed to open panel as all or part of it would render off the screen.');
-        }
-
-        this.element.css({'z-index': this.isCloseable ? 14 : 10});
+    /**
+     * Returns true if the panel container takes up the entire viewport.
+     */
+    get isFullScreen() {
+        return this.element && window.innerWidth <= 480 && (<any>this.element).width() === window.innerWidth && (<any>this.element).height() === window.innerHeight;
     }
 
     /**
@@ -100,27 +138,33 @@ export class Panel {
             this.openStandard();
         }
 
+        // watch for 'style' property changes on a panels element and perform underlay rule checks + offscreen checks.
+        this._observer = new MutationObserver(mutations => {
+            mutations.forEach(mutationRecord => {
+                if (mutationRecord.type == 'attributes') {
+                    this.api.panels.forEach(p => p.underlayRuleCheck(this));
+                    this.offScreenRuleCheck('Panel position was moved offscreen.');
+                }
+            });
+        });
+        this._observer.observe(this.element[0], { attributes : true, attributeFilter : ['style'] });
+
         this.openingSubject.next(this);
     }
 
     /**
-    * Closes the panel on the map. (For the user to see).
+    * Closes the panel permanently. Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
     */
     close(silent: boolean = false): void {
         if (!silent) {
             this.closingSubject.next(this);
         }
 
-        this.element.remove();
-    }
+        this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
+        this.element.remove(); // remove element from the DOM
+        this._observer.disconnect(); // disconnect the mutation observer
+        this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
 
-    /**
-     * Determines if the content passed is a typeof PanelElem.
-     *
-     * @param content   panel body content
-     */
-    isPanelElem(content: Element | string | HTMLElement | JQuery<HTMLElement>): content is Element {
-        return !!(<Element>content).elem;
     }
 
     set body(content: any) {
@@ -157,15 +201,16 @@ export class Panel {
         throw new Error('API(panels): you cannot modify a panels id property.');
     }
 
+    /**
+     * Initialize the various Subjects and Observables.
+     */
     private _initRXJS(): void {
-        // init the various subjects
         this.openingSubject = new Subject();
         this.closingSubject = new Subject();
         this.positionChangedSubject = new Subject();
         this.widthChangedSubject = new Subject();
         this.heightChangedSubject = new Subject();
 
-        // turn subjects into observables
         this.opening = this.openingSubject.asObservable();
         this.closing = this.closingSubject.asObservable();
         this.positionChanged = this.positionChangedSubject.asObservable();
@@ -173,44 +218,80 @@ export class Panel {
         this.heightChanged = this.heightChangedSubject.asObservable();
     }
 
+    /**
+     * Creates the various panel elements, styling, and DOM operations for placing the panel on the page.
+     *
+     * @param id A unique ID for the panel (and the DOM)
+     */
     private _initElements(id: string): void {
-        //create panel components as HTMLElements
         this._element = $(document.createElement("div"));
         this.element.addClass('rv-content-pane layout-padding panel-contents dialog');
-
-        //this.panelControls = $(document.createElement("div"));
-        //this.panelControls.addClass(['panel-controls', 'hidden']);
 
         this._body = $(document.createElement("div"));
         this.body.addClass(['panel-body']);
 
         this.element.attr('id', id);
-
-        //append panel controls/body to panel contents ("shell")
-        //this.panelContents.append(this.panelControls);
         this.element.append(this.body);
-        //this.element.addClass('hidden'); //hide panel before a call to open is made
-        //append panel contents ("shell") to document fragment
+        this.element.css({'display': 'none'});
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
         $(this.api.innerShell).append(documentFragment);
+    }
 
-        $( window ).resize(() => {
-            if (!this.offscreen && this.element.is(':offscreen')) {
-                this.close();
-            }
+     /**
+     * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
+     *
+     * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
+     *
+     * @param otherPanel The overlaying panel instance
+     */
+    private underlayRuleCheck(otherPanel: Panel) {
+        if (
+            otherPanel === this || // cannot overlay oneself
+            otherPanel.isDialog ||
+            this.underlay || this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
+            this.isFullScreen) {
+            return;
+        }
 
-            this.api.panels.forEach(p => this.underlayRuleCheck(p));
+        const rect1 = this.element[0].getBoundingClientRect();
+        const rect2 = otherPanel.element[0].getBoundingClientRect();
+
+        const overlap = !(rect1.right < rect2.left ||
+            rect1.left > rect2.right ||
+            rect1.bottom < rect2.top ||
+            rect1.top > rect2.bottom);
+
+        if (overlap) {
+            this.close();
+        }
+    }
+
+    /**
+     * Opens dialog panels.
+     */
+    private openDialog() {
+        this.element.wrap('<div class="dialog-container"></div>');
+        this.element.css({
+            left: '25%',
+            top: '25%'
         });
+        this.header.closeButton;
+        this.element.css({'display': ''});
+        this._element = this.element.parent();
+        this.element.prependTo($(this.api.innerShell).parent().parent());
+    }
 
-        this.api.panelOpened.subscribe(otherPanel => {
-            if (this === otherPanel) {
-                return;
-            }
+    /**
+     * Opens closeable & persistent panels.
+     */
+    private openStandard() {
+        this.element.css({'z-index': this.isCloseable ? 14 : 10});
+        this.element.css({'display': ''});
 
-            this.underlayRuleCheck(otherPanel);
-        });
+        // this check must occur AFTER the element is placed in the DOM AND is visible.
+        this.offScreenRuleCheck('Failed to open panel as all or part of it would render off the screen.');
     }
 
     /**
@@ -228,6 +309,20 @@ export class Panel {
 
         this._initRXJS();
         this._initElements(id);
+
+        $( window ).resize(() => {
+            this.offScreenRuleCheck();
+
+            this.api.panels.forEach(p => this.underlayRuleCheck(p));
+        });
+
+        this._openPanelSubscriber = this.api.panelOpened.subscribe(otherPanel => {
+            if (this === otherPanel) {
+                return;
+            }
+
+            this.underlayRuleCheck(otherPanel);
+        });
     }
 }
 
@@ -240,6 +335,8 @@ export interface Panel {
     _header: Header;
     _underlay: boolean;
     _offscreen: boolean;
+    _observer: MutationObserver;
+    _openPanelSubscriber: Subscription;
 
     //subjects initialized for observables that are fired through method calls
     openingSubject: Subject<any>;
@@ -254,14 +351,4 @@ export interface Panel {
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;
-
-    CloseButton: typeof CloseButton;
-    ToggleButton: typeof ToggleButton;
-    Button: typeof Button;
-    Element: typeof Element;
 }
-
-Panel.prototype.CloseButton = CloseButton;
-Panel.prototype.ToggleButton = ToggleButton;
-Panel.prototype.Button = Button;
-Panel.prototype.Element = Element;
