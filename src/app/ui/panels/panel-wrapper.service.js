@@ -64,14 +64,14 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
             }
 
             const panel = self[panelToWrapper[panelName]];
-            panel[open ? 'openingSubject' : 'closingSubject'].next();
+            panel[open ? 'openingSubject' : 'closingSubject'].next(panel);
         }
     });
 
     return {};
 
     function detailsPanelWrapper() {
-        self.detailPanel = self.mApi.createPanel('details');
+        self.detailPanel = self.mApi.newPanel('details');
 
         wrapper(self.detailPanel, 'close', () => {
             detailService.closeDetails();
@@ -83,7 +83,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function settingsPanelWrapper() {
-        self.settingsPanel = self.mApi.createPanel('settings');
+        self.settingsPanel = self.mApi.newPanel('settings');
 
         wrapper(self.settingsPanel, 'close', () => {
             stateManager.setActive({ sideSettings: false });
@@ -95,7 +95,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function metaPanelWrapper() {
-        self.metaPanel = self.mApi.createPanel('meta');
+        self.metaPanel = self.mApi.newPanel('meta');
 
         wrapper(self.metaPanel, 'close', () => {
             stateManager.setActive({ sideMetadata: false });
@@ -107,7 +107,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function tocPanelWrapper() {
-        self.tocPanel = self.mApi.createPanel('toc');
+        self.tocPanel = self.mApi.newPanel('toc');
 
         wrapper(self.tocPanel, 'close', () => {
             stateManager.setActive({ mainToc: false });
@@ -119,7 +119,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function geosearchPanelWrapper() {
-        self.geoPanel = self.mApi.createPanel('geo');
+        self.geoPanel = self.mApi.newPanel('geo');
 
         wrapper(self.geoPanel, 'close', () => {
             stateManager.setActive({ mainGeosearch: false });
@@ -131,7 +131,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function fileLoaderPanelWrapper() {
-        self.filePanel = self.mApi.createPanel('file');
+        self.filePanel = self.mApi.newPanel('file');
 
         wrapper(self.filePanel, 'close', () => {
             stateManager.setActive({ main: true, mainLoaderFile: false });
@@ -143,7 +143,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function serviceLoaderPanelWrapper() {
-        self.servicePanel = self.mApi.createPanel('service');
+        self.servicePanel = self.mApi.newPanel('service');
 
         wrapper(self.servicePanel, 'close', () => {
             stateManager.setActive({ main: true, mainLoaderService: false });

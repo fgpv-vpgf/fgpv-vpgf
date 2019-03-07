@@ -123,7 +123,11 @@ export default class Loader {
             .forEach(p => {
                 p._RV = legacy_api;
                 if (p.init) {
-                    p.init(api);
+                    try {
+                        p.init(api);
+                    } catch(err) {
+                        // TODO
+                    }
                 }
             });
     }
