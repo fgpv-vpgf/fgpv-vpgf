@@ -6,7 +6,7 @@ nav: dev
 
 The panels api allows you to watch, control, and create panels within the ramp viewer.
 
-Panels created through the api as well as default panels can be found in the `mapI.panelRegistry` array. 
+Panels created through the api as well as default panels can be found in the `mapI.panelRegistry` array.
 
 
 ## Default panels
@@ -37,10 +37,10 @@ const panelCSS = {
     padding: '0px 16px 16px 16px'
 };
 
-const myPanel = mapI.createPanel('panelName', panelCSS, '<div>Panel body HTML.</div>');
+const myPanel = mapI.newPanel('panelName', panelCSS, '<div>Panel body HTML.</div>');
 ```
 
-Only the first argument in `createPanel` is required (the ID of the panel). Panel CSS can also be set on `myPanel.panelContents`.
+Only the first argument in `newPanel` is required (the ID of the panel). Panel CSS can also be set on `myPanel.panelContents`.
 
 ```js
 myPanel.panelContents.css({
@@ -52,7 +52,7 @@ myPanel.panelContents.css({
 });
 ```
 
-See figure 1. above which shows the rough layout of this custom panel. 
+See figure 1. above which shows the rough layout of this custom panel.
 
 ## Body content
 The contents of a panel body can be set with the `setBody` method which accepts either an HTML `string`, an `HTMLElement`, or a `JQuery<HTMLElement>`.
@@ -88,7 +88,7 @@ const tocPanel = mapI.panelRegistry.find(p => p.id === 'toc');
 ```
 
 ## Controls
-Controls appear near the top of a panel and can include action buttons, a title, and custom elements. Controls are defined as part of an array passed to the `setControls` method. 
+Controls appear near the top of a panel and can include action buttons, a title, and custom elements. Controls are defined as part of an array passed to the `setControls` method.
 
 
 ```js
@@ -100,7 +100,7 @@ This adds two controls to the panels header - a close button and an HTML input b
 
 ## Watching a panel
 
-You can subscribe to the following streams available on a panel instance: 
+You can subscribe to the following streams available on a panel instance:
 
 | stream name     	| description                                                        	|
 |-----------------	|--------------------------------------------------------------------	|
