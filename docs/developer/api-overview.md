@@ -163,10 +163,10 @@ To find a panel, whether default or created through the API, we use the panel re
 const allPanels = mapInstance.panelRegistry;
 ```
 
-To create a panel we use the `createPanel` function.
+To create a panel we use the `newPanel` function.
 ```js
 // create a panel through the API
-const myPanel = mapInstance.createPanel('myPanel');
+const myPanel = mapInstance.newPanel('myPanel');
 ```
 Now let's add something to it.
 ```js

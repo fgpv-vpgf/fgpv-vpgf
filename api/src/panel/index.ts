@@ -41,7 +41,6 @@ export { default as ToggleButton } from './button.toggle';
 
  */
 export class Panel {
-
     /**
      * Returns a [[Button]] class bound to this panel instance.
      */
@@ -160,11 +159,14 @@ export class Panel {
             this.closingSubject.next(this);
         }
 
+        this.element.css({'display': 'none'});
+    }
+
+    destroy() {
         this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
         this.element.remove(); // remove element from the DOM
         this._observer.disconnect(); // disconnect the mutation observer
         this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
-
     }
 
     set body(content: any) {
@@ -250,7 +252,8 @@ export class Panel {
         if (
             otherPanel === this || // cannot overlay oneself
             otherPanel.isDialog ||
-            this.underlay || this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
+            this.underlay ||
+            this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
             this.isFullScreen) {
             return;
         }
@@ -299,10 +302,8 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api?: Map) {
-        if (api) {
-            this.api = api;
-        }
+    constructor(id: string, api: Map) {
+        this.api = api;
 
         this.underlay = true;
         this.offscreen = false;
@@ -312,15 +313,10 @@ export class Panel {
 
         $( window ).resize(() => {
             this.offScreenRuleCheck();
-
             this.api.panels.forEach(p => this.underlayRuleCheck(p));
         });
 
         this._openPanelSubscriber = this.api.panelOpened.subscribe(otherPanel => {
-            if (this === otherPanel) {
-                return;
-            }
-
             this.underlayRuleCheck(otherPanel);
         });
     }
