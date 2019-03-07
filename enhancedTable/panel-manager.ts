@@ -107,7 +107,7 @@ export class PanelManager {
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
                 let colApi = this.tableOptions.columnApi
-                let col = colApi.getDisplayedColAfter(colApi.getColumn('rvInteractive'));
+                let col = colApi.getDisplayedColAfter(colApi.getColumn('zoom'));
                 if (col !== (undefined || null) && col.sort === undefined) {
                     // set sort of first column to ascending by default if sort isn't specified
                     col.setSort("asc");
@@ -316,7 +316,7 @@ export class PanelManager {
             };
 
             // Sync filterByExtent
-            this.filterExtentToggled = function() {
+            this.filterExtentToggled = function () {
                 that.panelStateManager.filterByExtent = this.filterByExtent;
 
                 // On toggle, filter by extent or remove the extent filter
