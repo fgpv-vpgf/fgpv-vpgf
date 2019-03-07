@@ -314,8 +314,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
     function openParentPanel(panelToOpen, propagate) {
         let panel;
 
-        if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToOpen.name))) {
-            panel._opening.next(new PanelEvent(panelToOpen.name, $(`rv-panel[type="${panelToOpen.name}"]`)));
+        if (appInfo.mapi && (panel = appInfo.mapi.panels.find(p => p.id === panelToOpen.name))) {
+            panel.open();
         }
 
         const promiseResult = propagate ?
@@ -325,7 +325,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
 
         promiseResult.then(() => {
             if (panel) {
-                panel._opened.next(new PanelEvent(panelToOpen.name, $(`rv-panel[type="${panelToOpen.name}"]`)));
+                panel.open();
             }
         });
 
@@ -402,11 +402,9 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
 
     function closeParent(panelToClose, propagate) {
         let panel;
-        let panelEvent;
 
-        if (appInfo.mapi && (panel = appInfo.mapi.ui.panels.byId(panelToClose.name))) {
-            panelEvent = new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`));
-            panel._closing.next(panelEvent);
+        if (appInfo.mapi && (panel = appInfo.mapi.panels.find(p => p.id === panelToClose.name))) {
+            panel.close();
         }
 
         return setItemProperty(panelToClose.name, 'active', false)
@@ -417,7 +415,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                     true
             ).then(() => {
                 if (panel) {
-                    panel._closed.next(new PanelEvent(panelToClose.name, $(`rv-panel[type="${panelToClose.name}"]`)));
+                    panel.close();
                 }
             });
     }
