@@ -1,5 +1,5 @@
 import { Grid } from 'ag-grid-community';
-import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE, APPLY_TO_MAP_TEMPLATE } from './templates';
+import { SEARCH_TEMPLATE, MENU_TEMPLATE, CLEAR_FILTERS_TEMPLATE, COLUMN_VISIBILITY_MENU_TEMPLATE, MOBILE_MENU_TEMPLATE, MOBILE_MENU_BTN_TEMPLATE, RECORD_COUNT_TEMPLATE, APPLY_TO_MAP_TEMPLATE, TABLE_UPDATE_TEMPLATE } from './templates';
 import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
 import { PanelRowsManager } from './panel-rows-manager';
 import { PanelStatusManager } from './panel-status-manager';
@@ -31,6 +31,9 @@ export class PanelManager {
         this.panel.close = () => {
             removeAccessibilityListeners(this.panel.element[0], this.gridBody);
             this.panelRowsManager.destroyObservers();
+            if (this.toastInterval !== undefined) {
+                clearInterval(this.toastInterval);
+            }
             this.currentTableLayer = undefined;
             close();
         }
@@ -242,6 +245,8 @@ export class PanelManager {
 
         const mobileMenuBtn = new this.panel.container(MOBILE_MENU_BTN_TEMPLATE);
 
+        this.mapApi.$compile($(`<div ng-controller="ToastCtrl as ctrl"></div>`));
+
         if (this.configManager.globalSearchEnabled) {
             this.mobileMenuScope.searchEnabled = true;
             return [mobileMenuBtn, searchBar, columnVisibilityMenuBtn, clearFiltersBtn, applyToMapBtn, menuBtn, closeBtn]
@@ -254,8 +259,28 @@ export class PanelManager {
 
     angularHeader() {
         const that = this;
-        this.mapApi.agControllerRegister('SearchCtrl', function () {
+        this.mapApi.agControllerRegister('ToastCtrl', function ($scope, $mdToast, $rootElement) {
+            that.showToast = function () {
+                if ($rootElement.find('.table-toast').length === 0) {
+                    $mdToast.show({
+                        template: TABLE_UPDATE_TEMPLATE,
+                        parent: that.panel.element[0],
+                        position: 'bottom rv-flex-global',
+                        hideDelay: false,
+                        controller: 'ToastCtrl'
+                    });
+                }
+            };
 
+            $scope.reloadTable = () => {
+                that.reload(that.currentTableLayer);
+                $mdToast.hide();
+            };
+
+            $scope.closeToast = () => $mdToast.hide();
+        });
+
+        this.mapApi.agControllerRegister('SearchCtrl', function () {
             that.searchText = that.configManager.defaultGlobalSearch;
             this.searchText = that.searchText;
             this.updatedSearchText = function () {
@@ -527,6 +552,9 @@ export interface PanelManager {
     columnMenuCtrl: any;
     notVisible: any;
     clearGlobalSearch: Function;
+    reload: Function;
+    toastInterval: any;
+    showToast: Function;
 }
 
 interface EnhancedJQuery extends JQuery {

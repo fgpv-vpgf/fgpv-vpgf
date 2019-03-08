@@ -258,3 +258,10 @@ export const PRINT_TABLE = (title, cols, rws) => {
                 </div>
             </body>`;
 }
+
+export const TABLE_UPDATE_TEMPLATE =
+    `<md-toast class="table-toast">
+        <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
+        <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
+        <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
+    </md-toast>`;

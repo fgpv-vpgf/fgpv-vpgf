@@ -54,6 +54,9 @@ export interface PanelManager {
     columnMenuCtrl: any;
     notVisible: any;
     clearGlobalSearch: Function;
+    reload: Function;
+    toastInterval: any;
+    showToast: Function;
 }
 interface MobileMenuScope {
     visible: boolean;

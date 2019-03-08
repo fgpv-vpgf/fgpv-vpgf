@@ -18,11 +18,11 @@ export default class TableBuilder {
     init(mapApi: any) {
         this.mapApi = mapApi;
         this.panel = new PanelManager(mapApi);
+        this.panel.reload = this.reloadTable.bind(this)
 
         this.mapApi.layers.reload.subscribe((baseLayer: any, interval: boolean) => {
             if (!interval && baseLayer === this.panel.currentTableLayer) {
-                this.panel.close();
-                this.openTable(baseLayer);
+                this.reloadTable(baseLayer);
             }
         });
 
@@ -165,9 +165,21 @@ export default class TableBuilder {
                 rowData: attrBundle.attributes
             });
 
+            // Show toast on layer refresh is refresh interval is set
+            const refreshInterval = this.legendBlock.proxyWrapper.layerConfig.refreshInterval;
+            if (refreshInterval) {
+                this.panel.toastInterval = setInterval(() => {
+                    this.panel.showToast();
+                }, refreshInterval * 60000);
+            }
             this.panel.open(this.tableOptions, attrBundle.layer);
             this.tableApi = this.tableOptions.api;
         });
+    }
+
+    reloadTable(baseLayer) {
+        this.panel.close();
+        this.openTable(baseLayer);
     }
 }
 

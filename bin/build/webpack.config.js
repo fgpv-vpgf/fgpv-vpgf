@@ -11,6 +11,8 @@ const pluginList = {
     coordInfo: path.join(SOURCE_PATH, 'coordInfo')
 };
 
+const hasLoader = ['enhancedTable'];
+
 module.exports = function(env = {}) {
     const config = {
         mode: env.prod ? 'production' : 'development',
@@ -65,7 +67,11 @@ module.exports = function(env = {}) {
     };
 
     Object.keys(pluginList).forEach(plKey => {
-        config.entry[plKey] = path.join(pluginList[plKey], 'index.ts');
+        if (hasLoader.indexOf(plKey) > -1) {
+            config.entry[plKey] = path.join(pluginList[plKey], 'loader.js');
+        } else {
+            config.entry[plKey] = path.join(pluginList[plKey], 'index.ts');
+        }
 
         config.module.rules.push({
             test: /\.ts$/,

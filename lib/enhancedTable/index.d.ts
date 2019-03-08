@@ -7,6 +7,7 @@ export default class TableBuilder {
     init(mapApi: any): void;
     openTable(baseLayer: any): void;
     createTable(attrBundle: AttrBundle): void;
+    reloadTable(baseLayer: any): void;
 }
 interface AttrBundle {
     attributes: any[];
