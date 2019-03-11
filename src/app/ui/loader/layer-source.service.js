@@ -79,13 +79,31 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                     // if there are layers, it's a wms layer
                     return _parseAsWMS(serviceUrl, data);
                 }
+
+                // find out if supplied url follows wfs 3.0 format
+                // WFS urls will have the words 'collections' and 'items' in them with the collectionID separating them
+                // i.e: GET /collections/{collectionId}/items/{featureId}
+                // https://github.com/opengeospatial/WFS_FES#overview
+                const splitUrl = serviceUrl.split('/');
+                const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
+                const indexOfCollections = splitUrl.findIndex(item => item  === 'collections');
+
+                if (indexOfItems - 2 !== indexOfCollections) {
+                    const fakeServiceInfo = {
+                        serviceType: 'error'
+                    }
+                    // if this service is definitely not a wfs
+                    // parse as something else so that it errors out
+                    return _parseAsSomethingElse(fakeServiceInfo);
+                }
+
                 // test if it's a WFS
                 // make a quick request for a single feature and see what the prediction function says
                 const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
                 return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(serviceInfo => {
 
-                    // workaround in case predictUrl fails (assuming it is a WFS service)
                     if (serviceInfo.serviceType === Geo.Service.Types.Error) {
+                        //workaround in case predictUrl fails (assuming it is a WFS service)
                         let layerInfo = _parseAsWfs(serviceUrl);
 
                         const updatedServiceInfo = {
@@ -131,7 +149,6 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             const parsingPromise = matrix[serviceInfo.serviceType](serviceInfo).map(layerInfoBuilder =>
                 layerInfoBuilder(serviceUrl, serviceInfo)
             );
-
             return parsingPromise;
         }
 
