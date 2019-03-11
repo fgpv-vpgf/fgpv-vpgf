@@ -112,7 +112,7 @@ export class Panel {
 
     /**
      * Determines if the content passed is a typeof PanelElem.
-     * 
+     *
      * @param content   panel body content
      */
     isPanelElem(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>): content is PanelElem {
@@ -121,7 +121,7 @@ export class Panel {
 
     /**
      * Sets the panel body to the provided content.
-     * 
+     *
      * @param content   panel body content
      */
     setBody(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>) {
@@ -242,7 +242,7 @@ export class PanelElem {
 class Btn extends PanelElem {
     constructor(scope: Panel, type?: string) {
         const buttonType = type === 'X' ? 'contentPane.aria.close' : 'toggle'; // TODO: add translation for toggle
-        super(scope, `<div><md-button class="btn md-icon-button black rv-button-24" aria-label="{{ '${buttonType}' | translate }}"></md-button></div>`);
+        super(scope, `<div><md-button class="btn md-icon-button black" aria-label="{{ '${buttonType}' | translate }}"></md-button></div>`);
         // close button
         if (type === 'X') {
             this.contents = `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`;
