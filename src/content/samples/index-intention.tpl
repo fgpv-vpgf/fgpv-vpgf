@@ -11,11 +11,10 @@
             height: 100%;
         }
     </style>
-    <script src="./plugins/enhancedTable/enhancedTable.js"></script>
     <link rel="stylesheet" href="./plugins/enhancedTable/enhancedTable.css" />
 
     <script src="./features/epsg.js"></script>
-    
+
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -24,17 +23,17 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
 
 <body>
     <div class="myMap" id="feature-map" is="rv-map"
-        rv-config="config/config-sample-56.json"
+        rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
-        rv-wait="true"
         rv-restore-bookmark="bookmark"
-        rv-plugins="customEPSG, enhancedTable">
+        rv-plugins="enhancedTable">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -100,6 +99,7 @@
             RV.getMap('feature-map').initialBookmark(bookmark);
         }
     </script>
+    <script src="./plugins/enhancedTable/enhancedTable.js"></script>
 </body>
 
 </html>
