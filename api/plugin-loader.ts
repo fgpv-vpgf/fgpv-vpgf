@@ -9,9 +9,10 @@ const AUTOLOAD_PLUGINS: any = {
     'table': TableBuilder
 }
 
-const loadFeatures: any = {
+let loadFeatures: any = {
     epsg: EPSG,
-    geoSearch
+    geoSearch,
+    table: TableBuilder
 };
 
 // Each map instance will make a Loader instance
@@ -41,21 +42,6 @@ export default class Loader {
         const rvPluginAttr = this.mapElem.attr('rv-plugins');
         const pluginList = rvPluginAttr ? rvPluginAttr.split(',').map(x => x.trim()) : [];
 
-        Object.keys(AUTOLOAD_PLUGINS).forEach(pk => {
-            console.log(AUTOLOAD_PLUGINS);
-            const pI = pluginList.findIndex(p => p === pk || p === `no-${pk}`);
-            const pN = pluginList[pI];
-
-            if (!pN) {
-                const plugin = new AUTOLOAD_PLUGINS[pk]();
-                this.plugins.push(plugin);
-                console.warn(`The plugin ${pk} was loaded automatically. This functionality is being removed in the next major release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
-            } else if (pN === `no-${pk}`) {
-                pluginList.splice(pI, 1);
-            }
-        });
-
-
         pluginList
             .forEach((p: any) => {
                 const plugin = this.initialize((<any>window)[p]);
@@ -75,6 +61,18 @@ export default class Loader {
                     this.plugins.push(plugin);
                 }
             });
+
+        Object.keys(AUTOLOAD_PLUGINS).forEach(pk => {
+            const pI = pluginList.findIndex(p => p === pk || p === `no-${pk}`);
+            const pN = pluginList[pI];
+
+            if (!pN && loadFeatures[pk]) {
+                console.warn(`The plugin ${pk} was loaded automatically. This functionality is being removed in the next major release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
+            } else if (pN === `no-${pk}`) {
+                delete loadFeatures[pk];
+                pluginList.splice(pI, 1);
+            }
+        });
 
         // Load remaining features that have not been replaced.
         Object
