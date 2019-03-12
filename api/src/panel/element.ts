@@ -8,7 +8,7 @@ export default class Element {
         this._panel = panel;
 
         if (this.elem && !this.elem.hasClass('ng-scope')) {
-            panel.api.$compile(this.elem[0]); // run through angular compiler now that we have api access
+            panel.api.$compile(this.elem[0]).$digest(); // run through angular compiler now that we have api access
         }
     }
 
@@ -17,7 +17,6 @@ export default class Element {
     }
 
     get id(): string {
-        console.error(this.elem, this._element, this);
         return this.elem.attr('id');
     }
 
@@ -41,7 +40,7 @@ export default class Element {
         this.elem.addClass("elem");
 
         if (this.panel) {
-            this.panel.api.$compile(this.elem[0]);
+            this.panel.api.$compile(this.elem[0]).$digest();
         }
     }
 
