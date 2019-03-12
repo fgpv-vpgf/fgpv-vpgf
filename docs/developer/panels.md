@@ -6,62 +6,145 @@ nav: dev
 
 The panels api allows you to watch, control, and create panels within the ramp viewer.
 
-Panels created through the api as well as default panels can be found in the `mapI.panelRegistry` array.
+Panels created through the api as well as default panels can be found in the `mapI.panels` array.
 
+## Types
 
-## Default panels
-Default panels are created by the viewer and are a core part of the user experience. The following table lists all default panels and their available actions:
+There are three different types of panels, you get to choose which one works best for your use case:
 
-| id       	| description                            	| openable 	| closeable 	|
-|----------	|----------------------------------------	|----------	|-----------	|
-| details  	| Information about an identify request. 	| No       	| Yes       	|
-| settings 	| Settings for the selected layer.       	| No       	| Yes       	|
-| meta     	| Layer metadata, if available.          	| No       	| Yes       	|
-| toc      	| The main legend.                       	| Yes      	| Yes       	|
-| geo      	| The search functionality.              	| Yes      	| Yes       	|
-| file     	| Import a file based layer.             	| Yes      	| Yes       	|
-| service  	| Import a service based layer.          	| Yes      	| Yes       	|
+1. Dialog - Opens over all other panels and disables all interaction with the viewer (via a transparent backdrop).
+2. Closeable - Has a close button in its header, opens over **persistent** panels and under a dialog.
+3. Persistent - Has no close button in its header, opens under all other panel types.
 
-<p align="center">
-  ![](assets/images/api/panel-intro.png)Figure 1.
-</p>
+In general **dialog panels** are best for getting the immediate attention of a user - either to act on the information provided in the panel, or to input information required by you.
 
+A **persistent panel** is great for relaying a constant stream of information to the user, such as providing geographic coordinates of a clicked map point. It is also the perfect spot for interactive map controls like a time slider (for
+time enabled layers).
+
+A **closeable panel** is the most common panel type. It has a wide range of uses, and allows the user to close it when not needed. A good use case is for displaying intermittent data such as an identify click result.
 
 ## Creating a panel
-```js
-const panelCSS = {
-    top: '0px',
-    left: '410px',
-    right: '0px',
-    bottom: '50%',
-    padding: '0px 16px 16px 16px'
-};
 
-const myPanel = mapI.newPanel('panelName', panelCSS, '<div>Panel body HTML.</div>');
+First we'll create a new panel instance:
+
+```js
+var myPanel = mapI.newPanel('uniquePanelID');
 ```
 
-Only the first argument in `newPanel` is required (the ID of the panel). Panel CSS can also be set on `myPanel.panelContents`.
+### Adding content
+
+Next we add some content:
 
 ```js
-myPanel.panelContents.css({
-    top: '0px',
-    left: '410px',
-    right: '0px',
-    bottom: '50%',
-    padding: '0px 16px 16px 16px'
+myPanel.body = '<div><h3>Hello!</h3><md-button id="mypanel-btn1" class="md-raised md-primary">Click me!</md-button></div>';
+```
+
+<p class="warning">
+  The panel body must only have one top level parent. In the example above the `h3` and `md-button` elements are wrapped in a
+  `div` element. This is a limitation of the angular compiler.
+</p>
+
+## Voila!
+
+If we do nothing else and run `myPanel.open()` you'll be greeted to a **dialog** panel.
+
+## Persistent panel
+
+The reason our panel is a dialog panel is because we didn't define a position for it. Since RAMP doesn't know
+where we'd like our panel to appear, or how wide/tall it should be, it opens it as a standard sized **dialog** panel.
+
+Let's set a position for our panel then proceed to open it:
+
+```js
+myPanel.element.css({
+  top: '0px',
+  left: '410px',
+  bottom: '50%',
+  width: '600px'
+});
+
+myPanel.open();
+```
+
+Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of
+`top`, `bottom`, `left`, or `right` css properties turns a panel from a dialog type to a persistent or closeable type.
+
+## Closeable panel
+
+There's one last thing we need to do if we'd like to make our panel closeable by the user:
+
+```js
+var closeBtn = myPanel.header.closeButton;
+```
+
+That's it! `closeBtn` is a `JQuery<HTMLElement>` type, which means you can also listen for custom events:
+
+```js
+closeBtn.on('click', function() {
+  // ... do something with the click
 });
 ```
 
-See figure 1. above which shows the rough layout of this custom panel.
+Note: The panel is closed automatically when the close button is clicked, so you don't have to add that logic manually.
 
-## Body content
-The contents of a panel body can be set with the `setBody` method which accepts either an HTML `string`, an `HTMLElement`, or a `JQuery<HTMLElement>`.
+## Toggleable panel
+
+To add a toggle button (hide/show panel body) to the header add this:
 
 ```js
-myPanel.setBody('<div>Panel content. . .</div>');
+var toggleBtn = myPanel.header.toggleButton;
 ```
 
-The content is normalized to a `JQuery<HTMLElement>` and gets **compiled with Angular**. This allows you to use angular materials (https://material.angularjs.org/latest/) natively, or define and use your own angular controller.
+## Custom header buttons
+
+Of course you can also define your own header controls:
+
+```js
+const customBtn = new myPanel.Button('Custom Btn');
+
+customBtn.$.on('click', function() {
+    window.alert('You clicked the custom button!');
+});
+
+myPanel.header.append(customBtn);
+```
+
+Instead of `append` you can also `prepend`.
+
+<p class="tip">
+  Don't forget the `$` (or `element`) after `customBtn`! That's how you access the `JQuery<HTMLElement>` instead of the
+  panel button class instance.
+</p>
+
+## Header title
+
+To display a title in the panel header simply do: `myPanel.header.title = 'Some Title';`
+
+## Keep panel open on offscreen
+
+If your panel ever renders partially or fully outside the viewport, the default behaviour is to close the panel -
+**regardless of panel type**. This can happen either immediately when a panel is opened (its position is outside the viewer)
+or when a user resizes their window.
+
+You can disable this so that your panel is always open with:
+
+```js
+myPanel.offscreen = true;
+```
+
+## Close panel on overlay
+
+It's possible the spot you've chosen for your panel conflicts with another panel which may or may not be open (or even created)
+when you go to open your panel. The default behaviour is to keep your panel open when another panel renders either partially or
+fully over yours.
+
+To change this default behaviour:
+
+```js
+myPanel.underlay = false;
+```
+
+
 
 ### Custom Angular directives
 You can define and use your own Angular controllers in two steps:
@@ -74,51 +157,43 @@ You can define and use your own Angular controllers in two steps:
     ```
 2. Use it in your content
    ```js
-   myPanel.setBody('<div ng-controller="MyPanelCtrl as ctrl">My HTML content</div>');
+   myPanel.body = '<div ng-controller="MyPanelCtrl as ctrl">My HTML content</div>';
    ```
 
 More information: https://angularjs.org/
 
 ## Finding by ID
 
-You can find a panel with a given id by iterating through the `mapI.panelRegistry` array.
+You can find a panel with a given id by iterating through the `mapI.panels` array.
 
 ```js
-const tocPanel = mapI.panelRegistry.find(p => p.id === 'toc');
+const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
 ```
 
-## Controls
-Controls appear near the top of a panel and can include action buttons, a title, and custom elements. Controls are defined as part of an array passed to the `setControls` method.
-
-
-```js
-myPanel.setControls('X', '<input type="text" name="searchbar">');
-```
-
-This adds two controls to the panels header - a close button and an HTML input box. The `X` is a special case along with `T` that creates a close and toggle button respectively.
 
 
 ## Watching a panel
 
-You can subscribe to the following streams available on a panel instance:
-
-| stream name     	| description                                                        	|
-|-----------------	|--------------------------------------------------------------------	|
-| opening         	| The panel is becoming visible.                                     	|
-| closing         	| The panel is becoming invisible.                                   	|
-| positionChanged 	| The position of the panel relative to the ramp viewer has changed. 	|
-| widthChanged    	| The width of the panel has changed.                                	|
-| heightChanged   	| The height of the panel has changed.                               	|
+You can subscribe to an individual panels opening and closing observable events:
 
 ```js
 myPanel.opening.subscribe(function() {
     console.log('My panel is opening.');
 };
+
+myPanel.closing.subscribe(function() {
+    console.log('My panel is closing.');
+};
 ```
 
-## Open / Close
+You can also subscribe to all panels opening and closing observable events:
 
 ```js
-myPanel.open();
-myPanel.close();
+mapI.panelOpened.subscribe(function(panel) {
+    console.log(`A panel with ID ${panel.id} is opening.`);
+};
+
+mapI.panelClosed.subscribe(function(panel) {
+    console.log(`A panel with ID ${panel.id} is closing.`);
+};
 ```

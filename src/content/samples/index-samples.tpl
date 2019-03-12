@@ -136,7 +136,7 @@
                     width: '600px'
                 });
                 p.body = `
-                  <div class="hey">
+                  <div>
                     <md-button id="paneltester-btn1" class="md-raised md-primary">Open a dialog</md-button>
                     <br>
                     <md-button id="paneltester-btn2" class="md-raised md-primary">Open a panel</md-button>
