@@ -11,34 +11,45 @@ export { default as CloseButton } from './button.close';
 export { default as ToggleButton } from './button.toggle';
 
 /**
- *
+ * This is the "main" panel file which defines the Panel class.
  *
  * ## Types
  *
- * ### Persistent
+ * A panel is one of three possible types:
  *
- * ### Closeable
+ * 1. Dialog - Opens over all other panels and disables all interaction with the viewer (via a transparent backdrop).
+ * 2. Closeable - Has a close button in its header, opens over **persistent** panels and under a dialog.
+ * 3. Persistent - Has no close button in its header, opens under all other panel types.
  *
- * ### Dialog
+ * **Note:** A dialog panel is always **closeable**.
  *
+ * A panel type is **inferred** automatically by the API based on two conditions:
  *
+ * 1. If the panel has no set position when it is opened it is a **dialog**.
+ * 2. Otherwise it is **closeable** when the close button is present in its header, or **persistent** if not present.
  *
- * ## Underlay Rules
+ *  ## Automatic collision handling
  *
- * ### Open
+ * When a **closeable** or **persistent** panel is open and another **closeable** or **persistent** panel is opened, the viewport size changes,
+ * or a panel elements **style** property is altered, a check is run to determine if any panel is overlapping another and if so one of two things can happen:
  *
- * ### Close
+ * 1. The panel below the other can remain open (default behaviour)
+ * 2. The panel below can chose to close by setting the `underlay` property on the panel instance to `false`.
  *
- * ## Offscreen
+ * Since **persistent** panels always render below **closeable** panels, a **persistent** panel can never trigger a **closeable** panel to close.
  *
- * `offscreen` true allows panel to be offscreen (false by default) in all cases.
+ * ### Offscreen
  *
- * Checked when:
- * - Viewport changes
- * - Panel style changes
- * - Panel is opening
+ * When a **closeable** or **persistent** panel is opened, the viewport is resized, or a panel elements **style** property is altered such that
+ * any part of it is rendered outside the viewport then an error is thrown and the panel is closed. This default behaviour can be disabled by setting
+ * the `offscreen` property of the panel instance to `true`.
  *
-
+ * ## Implementation
+ *
+ * All panels have a main `element` property. A `MutationObserver` watches for changes to the **style** property and executes the underlay and offscreen rule checks.
+ * When a panel is opened all panels run their underlay rule checks with that panel to determine if they are affected by it.
+ * Lastly, when the viewport size changes it executes the underlay and offscreen rule checks.
+ *
  */
 export class Panel {
     /**

@@ -1,6 +1,9 @@
 import { Panel } from './';
 import Element from './element';
 
+/**
+ * The button class handles wrapping the supplied content into a button element.
+ */
 export default class Button extends Element {
     constructor(panel: Panel, innerButton: string | HTMLElement | JQuery<HTMLElement>) {
         super(panel);
