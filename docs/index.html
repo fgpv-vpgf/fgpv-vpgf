@@ -25,7 +25,8 @@
                         { title: 'UI Overview', path: 'ui-overview' },
                         { title: 'Developer Guide', path: '/developer/intro' },
                         { title: 'Map authoring guide', path: '/mapauthor/intro' },
-                        { title: 'Contributing to RAMP', path: '/contribute/getting_started' }
+                        { title: 'Contributing to RAMP', path: '/contribute/getting_started' },
+                        { title: 'Technical Docs', path: '/technical/architecture'}
                     ],
                     author: [
                         { title: 'Home', path: '/' },
@@ -45,7 +46,6 @@
                                 { type: 'sep' },
                                 { type: 'label', title: 'UI Components' },
                                 { title: 'Panels', path: '/developer/panels' },
-                                { title: 'Legend', path: '/developer/panels' },
                                 { type: 'sep' },
                                 { type: 'label', title: 'Layers' }
                             ]
@@ -61,6 +61,12 @@
                         { title: 'How to contribute', path: '/contribute/contributing_guide' },
                         { title: 'Technical JSDocs', path: `${url}contribute/jsDocs/` },
                         { title: 'Release Tutorial', path: '/contribute/release_tutorial' }
+                    ],
+                    technical: [
+                        { title: 'Home', path: '/' },
+                        { title: 'Architecture Overview', path: '/technical/architecture' },
+                        { title: 'Interactive Schema', path: 'https://fgpv-vpgf.github.io/schema-to-docs/' },
+                        { title: 'Technical JSDocs', path: `${url}contribute/jsDocs/` }
                     ]
                 },
                 plugins: [docuteEmojify(), evanyou()],
