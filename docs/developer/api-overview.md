@@ -185,3 +185,57 @@ Finally, we can open our panel!
 ```js
 myPanel.open();
 ```
+
+## Advanced Use of the Mapping API
+
+Whenever possible, we recommend using the supported API commands listed above and in the [technical documentation](api/developer/). However we realize there will be scenarios where a page script or [plugin](developer/plugins) will need to utililize the underlying map API in a manner that is not currently supported by the RAMP API, and cannot wait for a change request in support of the use-case to go through the official channels. To facilitate this, we have exposed some unofficial properties to allow access to the mapping API (currently, [ESRI Javascript API v3](https://developers.arcgis.com/javascript/3/)).
+
+Please exercise caution when using these properties. For example, directly manipulating the map could cause the RAMP application to become out-of-synch with the map state. Also, when upgrading to a later version of RAMP, please do adequate testing on any components directly using the ESRI API to ensure compatibililty has not been broken.
+
+### Accessing the Map Object
+
+To access the underlying [ESRI map object](https://developers.arcgis.com/javascript/3/jsapi/map-amd.html) for a given map, use the `esriMap` property on the API Map object.
+
+Example: change the [fade on zoom](https://developers.arcgis.com/javascript/3/jsapi/map-amd.html#fadeonzoom) setting of the map.
+
+```js
+let myMap = RZ.mapById('myMap');
+myMap.esriMap.fadeOnZoom = false;
+```
+
+### Accessing the Layer Object
+
+To access the underlying [ESRI layer object](https://developers.arcgis.com/javascript/3/jsapi/layer-amd.html) for a given map, use the `esriLayer` property on the API Layer object.
+
+Example: turn off [mouse events](https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#disablemouseevents) of a Feature Layer.
+
+```js
+let myMap = RZ.mapById('myMap');
+let myFeatureLayer = myMap.layers.getLayersById('myFeatureLayer')[0];
+myFeatureLayer.esriLayer.disableMouseEvents();
+```
+
+### Accessing Map API Classes
+
+To use any of the [DOJO Classes](https://developers.arcgis.com/javascript/3/jsapi/), the following approaches can be used via the `GAPI` reference.
+
+The `esriBundle` property provides access to all the classes that the RAMP core is using. This will save you from having to execute a dedicated module load command. The property returns an object whos properties contiain classes or utility modules.
+
+Example: creating an ESRI API Colour object.
+
+```js
+let myColour = new RZ.GAPI.esriBundle.Colour([25, 240, 70]);
+```
+
+The `esriLoadApiClasses()` method will load a class that does not exist in the `esriBundle`. The input parameter is an array of arrays; the inner arrays contain two strings - the name path of the module in the ESRI API, and the name of the property the module should be placed on in the return value. The function returns a promise that resolves with the results object.
+
+Example: loading a class and a utility module.
+
+```js
+let myBundlePromise = RZ.GAPI.esriLoadApiClasses([['esri/tasks/FindTask', 'findTaskClass'],
+                                                 ['esri/kernel', 'kernel']]);
+myBundlePromise.then(myBundle => {
+    let myFind = new myBundle.findTaskClass();
+    let myVersion = myBundle.kernel.version;
+});
+```
