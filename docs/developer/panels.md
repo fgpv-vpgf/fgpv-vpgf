@@ -4,26 +4,20 @@ nav: dev
 
 # Panels
 
-The panels api allows you to watch, control, and create panels within the ramp viewer.
-
-Panels created through the api as well as default panels can be found in the `mapI.panels` array.
+The **panels** API allows you to **create**, **control**, and **watch** panels within the RAMP viewer. Any content not a part of the visual map is in a panel.
 
 ## Types
 
-There are three different types of panels, you get to choose which one works best for your use case:
+There are three different types of panel:
 
-1. Dialog - Opens over all other panels and disables all interaction with the viewer (via a transparent backdrop).
-2. Closeable - Has a close button in its header, opens over **persistent** panels and under a dialog.
-3. Persistent - Has no close button in its header, opens under all other panel types.
+1. **Dialog** - Opens over all other panels and disables all interaction with the viewer (via a transparent backdrop).
+   > these are best for getting the immediate attention of a user - either to act on the information provided in the panel, or to input information required by you.
+2. **Closeable** - Has a close button in its header, opens over **persistent** panels and under a dialog.
+   > this is the most common panel type. It has a wide range of uses, and allows the user to close it when not needed. A good use case is for displaying intermittent data such as an identify click result.
+3. **Persistent** - Has no close button in its header, opens under all other panel types.
+   > great for relaying a constant stream of information to the user, such as providing geographic coordinates of a clicked map point. It is also the perfect spot for interactive    map controls like a time slider (for time enabled layers).
 
-In general **dialog panels** are best for getting the immediate attention of a user - either to act on the information provided in the panel, or to input information required by you.
-
-A **persistent panel** is great for relaying a constant stream of information to the user, such as providing geographic coordinates of a clicked map point. It is also the perfect spot for interactive map controls like a time slider (for
-time enabled layers).
-
-A **closeable panel** is the most common panel type. It has a wide range of uses, and allows the user to close it when not needed. A good use case is for displaying intermittent data such as an identify click result.
-
-## Creating a panel
+## Create
 
 First we'll create a new panel instance:
 
@@ -40,15 +34,15 @@ myPanel.body = '<div><h3>Hello!</h3><md-button id="mypanel-btn1" class="md-raise
 ```
 
 <p class="warning">
-  The panel body must only have one top level parent. In the example above the `h3` and `md-button` elements are wrapped in a
-  `div` element. This is a limitation of the angular compiler.
+  The panel body must only have one top level element. In the example above the `h3` and `md-button` elements are wrapped in a
+  `div` element. This is required by the angular compiler to properly render multiple directives (like `md-button`) in a given element.
 </p>
 
-## Voila!
+### Open
 
 If we do nothing else and run `myPanel.open()` you'll be greeted to a **dialog** panel.
 
-## Persistent panel
+### Persistent
 
 The reason our panel is a dialog panel is because we didn't define a position for it. Since RAMP doesn't know
 where we'd like our panel to appear, or how wide/tall it should be, it opens it as a standard sized **dialog** panel.
@@ -69,7 +63,7 @@ myPanel.open();
 Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of
 `top`, `bottom`, `left`, or `right` css properties turns a panel from a dialog type to a persistent or closeable type.
 
-## Closeable panel
+### Closeable
 
 There's one last thing we need to do if we'd like to make our panel closeable by the user:
 
@@ -87,7 +81,7 @@ closeBtn.on('click', function() {
 
 Note: The panel is closed automatically when the close button is clicked, so you don't have to add that logic manually.
 
-## Toggleable panel
+### Toggleable
 
 To add a toggle button (hide/show panel body) to the header add this:
 
@@ -95,7 +89,9 @@ To add a toggle button (hide/show panel body) to the header add this:
 var toggleBtn = myPanel.header.toggleButton;
 ```
 
-## Custom header buttons
+## Control
+
+### Custom header buttons
 
 Of course you can also define your own header controls:
 
@@ -116,11 +112,11 @@ Instead of `append` you can also `prepend`.
   panel button class instance.
 </p>
 
-## Header title
+### Header title
 
 To display a title in the panel header simply do: `myPanel.header.title = 'Some Title';`
 
-## Keep panel open on offscreen
+### Keep panel open on offscreen
 
 If your panel ever renders partially or fully outside the viewport, the default behaviour is to close the panel -
 **regardless of panel type**. This can happen either immediately when a panel is opened (its position is outside the viewer)
@@ -132,7 +128,7 @@ You can disable this so that your panel is always open with:
 myPanel.offscreen = true;
 ```
 
-## Close panel on overlay
+### Close panel on overlay
 
 It's possible the spot you've chosen for your panel conflicts with another panel which may or may not be open (or even created)
 when you go to open your panel. The default behaviour is to keep your panel open when another panel renders either partially or
@@ -143,8 +139,6 @@ To change this default behaviour:
 ```js
 myPanel.underlay = false;
 ```
-
-
 
 ### Custom Angular directives
 You can define and use your own Angular controllers in two steps:
@@ -162,7 +156,7 @@ You can define and use your own Angular controllers in two steps:
 
 More information: https://angularjs.org/
 
-## Finding by ID
+### Finding by ID
 
 You can find a panel with a given id by iterating through the `mapI.panels` array.
 
@@ -172,7 +166,7 @@ const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
 
 
 
-## Watching a panel
+## Watch
 
 You can subscribe to an individual panels opening and closing observable events:
 
