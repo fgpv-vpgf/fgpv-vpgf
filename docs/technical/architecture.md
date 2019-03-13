@@ -72,12 +72,12 @@ It is written in JS ES6.
 
 ## Library Comparison Chart
 
-| Library       | Location         | Framework     | Flavour    | Owner |
-|---------------|------------------|---------------|------------|-------|
-| RAMP Core     | Github fgpv-vpgf | Angular 1.7.5 | JS ES6     | RAMP  |
-| RAMP API      | Github fgpv-vpgf |               | TypeScript | RAMP  |
-| GeoAPI        | Github geoApi    |               | JS ES6     | RAMP  |
-| ESRI JS API   | js.arcgis.com    | DOJO          | JS         | ESRI  |
-| Plugins       | Github plugins   |               | TypeScript | RAMP  |
-| External Libs | npm              |               | JS         | Node  |
-| Build Tool    | Github fgpv-vpgf | Webpack       | JSON       | RAMP  |
+| Library       | Location                                                                   | Framework                               | Flavour    | Owner                      |
+|---------------|----------------------------------------------------------------------------|-----------------------------------------|------------|----------------------------|
+| RAMP Core     | [Github fgpv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf/tree/master/src) | [Angular 1.7.5](https://angularjs.org/) | JS ES6     | RAMP                       |
+| RAMP API      | [Github fgpv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf/tree/master/api) |                                         | TypeScript | RAMP                       |
+| GeoAPI        | [Github geoApi](https://github.com/fgpv-vpgf/geoApi)                       |                                         | JS ES6     | RAMP                       |
+| ESRI JS API   | [js.arcgis.com](https://developers.arcgis.com/javascript/3/)               | [DOJO](https://dojotoolkit.org/)        | JS         | [ESRI](https://esri.ca)    |
+| Plugins       | [Github plugins](https://github.com/fgpv-vpgf/plugins)                     |                                         | TypeScript | RAMP                       |
+| External Libs | [npm](https://www.npmjs.com/)                                              |                                         | JS         | [Node](https://nodejs.org) |
+| Build Tool    | [Github fgpv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf)                 | [Webpack](https://webpack.js.org/)      | JSON       | RAMP                       |
