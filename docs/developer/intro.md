@@ -67,7 +67,7 @@ As an example let's hide all the layers on the map using the legend API.
 ```js
 // Get the map instance; We're assuming we want to effect the first map on the page
 const mapInstance = RZ.mapInstance[0];
-mapInstance.ui.configLegend.hideAll()
+mapInstance.ui.configLegend.hideAll();
 ```
 
 ## Plugins
