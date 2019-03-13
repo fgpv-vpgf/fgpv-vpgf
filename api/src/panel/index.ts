@@ -121,6 +121,10 @@ export class Panel {
         return this.isDialog || (!!this._header && this._header.hasCloseButton);
     }
 
+    get isClosed() {
+        return this.element.css('display') === 'none';
+    }
+
     /**
      * Returns true if the panel is a dialog.
      */
@@ -166,6 +170,10 @@ export class Panel {
     * Closes the panel permanently. Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
     */
     close(silent: boolean = false): void {
+        if (this.isClosed) {
+            return;
+        }
+
         if (!silent) {
             this.closingSubject.next(this);
         }
