@@ -438,11 +438,11 @@ export class PanelManager {
                             return `UPPER(${col}) IN (${colFilter.filter.toUpperCase()})`;
                         } else {
                             let val = colFilter.filter.replace(/'/g, /''/);
-                            if (that.configManager.lazyFilterEnabled) {
-                                const filterVal = `*${val}`;
-                                val = filterVal.split(" ").join("*");
-                            }
                             if (val !== '') {
+                                if (that.configManager.lazyFilterEnabled) {
+                                    const filterVal = `*${val}`;
+                                    val = filterVal.split(" ").join("*");
+                                }
                                 return `UPPER(${col}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`;
                             }
                         }
