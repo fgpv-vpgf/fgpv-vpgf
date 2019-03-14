@@ -514,18 +514,19 @@ export class LegendItem extends BaseItem {
 
     /**
      * Toggles the Symbologies for LegendItems of type legendNode with toggle-able symbology items (in a symbology stack).
-     * @param names - List of strings matching the name of the symbologies to toggle
+     * @param indices - List of indices of the symbologies to toggle
      * @example
      * ```js
-     * item.toggleSymbologies(['Natural Gas', 'Biomass']);
+     * item.toggleSymbologies([1, 4]);
      * ```
      */
-    toggleSymbologies(names: Array<string>): void {
+    toggleSymbologies(indices: Array<number>): void {
         if (this._availableControls.includes(AvailableControls.Symbology)) {
-            names.forEach(name => {
+            indices.forEach(index => {
                 // toggle only if the symbology item has toggle button
-                if (this._legendBlock.symbologyStack.toggleList[name]) {
-                    this._legendBlock.symbologyStack.onToggleClick(name);
+                const toggle = this._legendBlock.symbologyStack.stack[index].toggle;
+                if (toggle) {
+                    this._legendBlock.symbologyStack.onToggleClick(toggle);
                 }
             });
         }

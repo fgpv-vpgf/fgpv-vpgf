@@ -109,7 +109,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
-        self.toggleList = {};
+        self.toggleList = [];
 
         let layerRecord;
 
@@ -139,7 +139,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
                 if (!self.stackToggled) {
                     const query = val ? '' : '1=2';
-                    const keys = Object.keys(self.toggleList);
                     if (self.block.proxyWrapper.isActiveState) {
                         // layer is loaded, apply stuff now
                         //only update if currently selected...otherwise causes all sorts of race conditions
@@ -147,7 +146,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         // TODO once things are working, move these two statements to a function and call in both locations.
                         applySymbolFilter(query);
 
-                        keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                        self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
                     } else {
                         // layer not yet loaded, wait until it is then apply stuff
                         const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
@@ -156,7 +155,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 // TODO ensure this is race condition no longer exists in new filter structure
                                 applySymbolFilter(query);
 
-                                keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                                self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
                                 self.stackToggled = false;
                                 proxyLoaded();
                             }
@@ -168,8 +167,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         // triggerFilter is suppressed when toggles are being synchronized/initialized.  avoids sending off multiple filter updates
-        self.onToggleClick = (name, triggerFilter = true) => {
-            self.toggleList[name].click();
+        self.onToggleClick = (toggle, triggerFilter = true) => {
+            toggle.click();
 
             let defClause;
 
@@ -181,8 +180,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 defClause = '1=2';
             } else {
                 //otherwise proceed with joining geoApi definitionClauses
-                defClause = Object.keys(self.toggleList)
-                    .map(key => self.toggleList[key].query)
+                defClause = self.toggleList
+                    .map(toggle => toggle.query)
                     .filter(q => q !== null)
                     .join(' OR ');
             }
@@ -306,13 +305,14 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         self.symbology.stack.forEach(s => {
                             if (s.definitionClause) {
                                 // If the symbol doesn't have a query it shouldn't be a toggle symbol
-                                self.toggleList[s.name] = new ToggleSymbol(s);
+                                const toggle = new ToggleSymbol(s);
+                                s.toggle = toggle;
+                                self.toggleList.push(toggle);
 
                                 // toggle list gets generated each time block is reloaded, make sure check boxes and definition queries actually match the toggle list
-                                const keys = Object.keys(self.toggleList);
-                                keys.forEach(key => {
-                                    if (self.toggleList[key].isSelected !== self.block.visibility) {
-                                        self.onToggleClick(key, false);
+                                self.toggleList.forEach((toggle) => {
+                                    if (toggle.isSelected !== self.block.visibility) {
+                                        self.onToggleClick(toggle, false);
                                     }
                                 });
                             }
@@ -840,7 +840,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
          * @param {number} value
          */
         function updateContainerWidth(value) {
-            if (self.isExpanded && Object.keys(self.toggleList).length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) {
+            if (self.isExpanded && self.toggleList.length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) {
                 self.symbologyWidth = value;
                 scope.$applyAsync();
             }
