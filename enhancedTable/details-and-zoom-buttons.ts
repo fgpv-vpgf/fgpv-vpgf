@@ -82,7 +82,6 @@ export class DetailsAndZoomButtons {
             this.zoomToFeature = function (oid) {
                 const map = that.mapApi.mapI;
                 //set appropriate offset for point before zooming
-                (that.panelManager.maximized || that.panelManager.isMobile()) ? that.mapApi.mapI.externalPanel($('#enhancedTable')) : that.mapApi.mapI.externalPanel(undefined);
                 let offset = (that.panelManager.maximized || that.panelManager.isMobile()) ? { x: 0, y: 0 } : { x: 0.10416666666666667, y: 0.24464094319399785 };
                 map.zoomToFeature(proxy, oid, offset);
             };
