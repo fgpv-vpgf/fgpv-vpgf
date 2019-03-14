@@ -34,7 +34,7 @@ export { default as ToggleButton } from './button.toggle';
  * or a panel elements **style** property is altered, a check is run to determine if any panel is overlapping another and if so one of two things can happen:
  *
  * 1. The panel below the other can remain open (default behaviour)
- * 2. The panel below can chose to close by setting the `underlay` property on the panel instance to `false`.
+ * 2. The panel below can chose to close by setting the `allowUnderlay` property on the panel instance to `false`.
  *
  * Since **persistent** panels always render below **closeable** panels, a **persistent** panel can never trigger a **closeable** panel to close.
  *
@@ -42,7 +42,7 @@ export { default as ToggleButton } from './button.toggle';
  *
  * When a **closeable** or **persistent** panel is opened, the viewport is resized, or a panel elements **style** property is altered such that
  * any part of it is rendered outside the viewport then an error is thrown and the panel is closed. This default behaviour can be disabled by setting
- * the `offscreen` property of the panel instance to `true`.
+ * the `allowOffscreen` property of the panel instance to `true`.
  *
  * ## Implementation
  *
@@ -81,7 +81,7 @@ export class Panel {
     }
 
     private offScreenRuleCheck(errorMsg?: string) {
-        if (!this.offscreen && this.element.is(':offscreen')) {
+        if (!this.allowOffscreen && this.element.is(':offscreen')) {
             this.close(true);
 
             if (errorMsg) {
@@ -90,24 +90,24 @@ export class Panel {
         }
     }
 
-    set underlay(keepOpenWhenOverlaid: boolean) {
-        this._underlay = keepOpenWhenOverlaid;
+    set allowUnderlay(allow: boolean) {
+        this._underlay = allow;
     }
 
-    get underlay() {
+    get allowUnderlay() {
         return this._underlay;
     }
 
-    set offscreen(keepOpenWhenOffscreen: boolean) {
-        this._offscreen = keepOpenWhenOffscreen;
+    set allowOffscreen(allow: boolean) {
+        this._offscreen = allow;
     }
 
-    get offscreen() {
+    get allowOffscreen() {
         return this._offscreen;
     }
 
-    set api(map: Map) {
-        this._api = map;
+    set api(api: Map) {
+        this._api = api;
     }
 
     get api() {
@@ -139,7 +139,7 @@ export class Panel {
      * Returns true if the panel container takes up the entire viewport.
      */
     get isFullScreen() {
-        return this.element && window.innerWidth <= 480 && (<any>this.element).width() === window.innerWidth && (<any>this.element).height() === window.innerHeight;
+        return this.element && (<any>this.element).width() === window.innerWidth && (<any>this.element).height() === window.innerHeight;
     }
 
     /**
@@ -167,7 +167,7 @@ export class Panel {
     }
 
     /**
-    * Closes the panel permanently. Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
+    * Closes the panel permanently.
     */
     close(silent: boolean = false): void {
         if (this.isClosed) {
@@ -181,6 +181,9 @@ export class Panel {
         this.element.css({'display': 'none'});
     }
 
+    /**
+     * Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
+     */
     destroy() {
         this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
         this.element.remove(); // remove element from the DOM
@@ -191,7 +194,6 @@ export class Panel {
     set body(content: any) {
         const element = new Element(this, content);
         this.body.html( element.elem );
-        element.panel = this;
     }
 
     get body() {
@@ -213,13 +215,6 @@ export class Panel {
     */
     get id(): string {
         return this.element.attr('id');
-    }
-
-    /**
-     * Throw an error when attempting to set a panel id, should be set when a panel is created.
-     */
-    set id(id: string) {
-        throw new Error('API(panels): you cannot modify a panels id property.');
     }
 
     /**
@@ -261,17 +256,17 @@ export class Panel {
     }
 
      /**
-     * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
-     *
-     * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
-     *
-     * @param otherPanel The overlaying panel instance
-     */
+      * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
+      *
+      * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
+      *
+      * @param otherPanel The overlaying panel instance
+      */
     private underlayRuleCheck(otherPanel: Panel) {
         if (
             otherPanel === this || // cannot overlay oneself
             otherPanel.isDialog ||
-            this.underlay ||
+            this.allowUnderlay ||
             this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
             this.isFullScreen) {
             return;
@@ -324,8 +319,8 @@ export class Panel {
     constructor(id: string, api: Map) {
         this.api = api;
 
-        this.underlay = true;
-        this.offscreen = false;
+        this.allowUnderlay = true;
+        this.allowOffscreen = false;
 
         this._initRXJS();
         this._initElements(id);

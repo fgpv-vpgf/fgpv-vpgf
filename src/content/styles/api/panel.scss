@@ -97,7 +97,6 @@
 }
 .panel-body {
     padding: 5px 18px;
-    border-top: lightgrey solid 1px;
     height: calc(100% - 46px); // 100% minus the headers
 
     &.ag-theme-material {
