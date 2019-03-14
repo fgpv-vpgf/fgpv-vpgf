@@ -3719,18 +3719,24 @@ md-datepicker > div {
   margin: 0 !important;
   width: 18px !important;
   height: 18px !important;
-  min-height: 0; }
+  min-height: 0;
+  border-radius: 0 !important; }
+  .reorder-button .md-ripple {
+    border-radius: 0 !important; }
 
-.record-count {
-  padding: 0px 12px 0px 18px;
+.rv-record-count {
   margin: 0;
   overflow: hidden; }
 
-.table-title {
+.title-container {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 75%; }
+
+.table-title {
+  margin: 0;
+  max-width: 100%; }
 
 .table-control {
   display: inherit; }
@@ -3751,6 +3757,11 @@ md-datepicker > div {
 .rv-small .mobile-table-control .table-control {
   display: flex !important; }
 
+.md-icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important; }
+
 .md-open-menu-container {
   max-height: 90%; }
 
@@ -3759,4 +3770,7 @@ md-datepicker > div {
   min-width: 0px; }
 
 .rv-table-search md-icon {
-  top: 5px !important; }
+  margin: auto 8px auto 8px; }
+
+.rv-table-search .rv-button-divider {
+  margin: auto 10px auto 10px; }

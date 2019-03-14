@@ -30,19 +30,28 @@ md-datepicker > div {
     width: 18px !important;
     height: 18px !important;
     min-height: 0;
+    border-radius: 0 !important;
+
+    .md-ripple {
+        border-radius: 0 !important;
+    }
 }
 
-.record-count {
-    padding: 0px 12px 0px 18px;
+.rv-record-count {
     margin: 0;
     overflow: hidden;
 }
 
-.table-title {
+.title-container {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 75%;
+}
+
+.table-title {
+    margin: 0;
+    max-width: 100%;
 }
 
 .table-control {
@@ -74,6 +83,12 @@ md-datepicker > div {
     }
 }
 
+.md-icon-button {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+}
+
 .md-open-menu-container {
     max-height: 90%;
 }
@@ -86,6 +101,10 @@ md-datepicker > div {
     }
 
     md-icon {
-        top: 5px !important;
+        margin: auto 8px auto 8px;
+    }
+
+    .rv-button-divider {
+        margin: auto 10px auto 10px;
     }
 }

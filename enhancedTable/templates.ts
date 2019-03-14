@@ -1,15 +1,17 @@
 export const SEARCH_TEMPLATE = `
-<md-input-container ng-controller="SearchCtrl as ctrl" md-no-float class="rv-table-search md-block table-control">
-    <input
-        ng-model="ctrl.searchText"
-        ng-keyup="ctrl.updatedSearchText()"
-        placeholder="{{ 't.search.placeholder' | translate }}"/>
+<div ng-controller="SearchCtrl as ctrl" class="rv-table-search table-control">
+    <md-input-container md-no-float class="rv-table-search table-control">
+        <input
+            ng-model="ctrl.searchText"
+            ng-keyup="ctrl.updatedSearchText()"
+            placeholder="{{ 't.search.placeholder' | translate }}"/>
+    </md-input-container>
     <md-icon ng-if="ctrl.searchText.length > 2" ng-click="ctrl.clearSearch()" md-svg-src="navigation:close"></md-icon>
     <md-icon ng-if="ctrl.searchText.length <= 2" md-svg-src="action:search">
         <md-tooltip>{{ 't.search.placeholder' | translate }}</md-tooltip>
     </md-icon>
-</md-input-container>
-<span class="rv-table-divider"></span>
+    <span class="rv-button-divider"></span>
+</div>
 `;
 
 export const CLEAR_FILTERS_TEMPLATE = `
@@ -17,7 +19,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
     <md-button
         ng-controller="ClearFiltersCtrl as ctrl"
         aria-label="{{ 't.table.filter.clear' | translate }}"
-        class="md-icon-button black rv-button-24"
+        class="md-icon-button black"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
         ng-disabled="ctrl.noActiveFilters()">
@@ -32,7 +34,7 @@ export const APPLY_TO_MAP_TEMPLATE = `
     <md-button
         ng-controller="ApplyToMapCtrl as ctrl"
         aria-label="{{ 't.table.filter.apply' | translate }}"
-        class="md-icon-button black rv-button-24"
+        class="md-icon-button black"
         ng-click="ctrl.applyToMap()"
         ng-disabled="!ctrl.filtersChanged()">
         <md-tooltip>{{ 't.table.filter.apply' | translate }}</md-tooltip>
@@ -46,7 +48,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
-            class="md-icon-button black rv-button-24"
+            class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
             <md-tooltip>{{ 't.table.hideColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
@@ -68,7 +70,7 @@ export const MENU_TEMPLATE = `
     <md-menu md-position-mode="target-right target">
         <md-button
             aria-label="Menu"
-            class="md-icon-button black rv-button-24"
+            class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
         </md-button>
@@ -107,7 +109,7 @@ export const MOBILE_MENU_BTN_TEMPLATE = `
 <div class="mobile-table-control">
     <md-button
         ng-controller="MobileMenuCtrl as ctrl"
-        class="md-icon-button black rv-button-24"
+        class="md-icon-button black"
         ng-click="ctrl.toggleMenu()">
         <md-icon md-svg-src="navigation:more_vert"></md-icon>
     </md-button>
@@ -125,20 +127,20 @@ export const MOBILE_MENU_TEMPLATE = `
 </div>`;
 
 export const RECORD_COUNT_TEMPLATE = `
-<p class="record-count">
+<p class="rv-record-count">
     <span class="scrollRecords">{{ scrollRecords }}</span> of
     <span class="filterRecords">{{ filterRecords }}</span>
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-details' aria-label="{{ 't.detailsAndZoom.details' | translate }}">
         <md-icon md-svg-src="action:description" aria-hidden='false' class='ng-scope' role='img'>
             <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.details' | translate }}</md-tooltip>
         </md-icon>
     </button>`;
 
 export const ZOOM_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})'  md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-zoom' aria-label="{{ 't.detailsAndZoom.zoom' | translate }}">
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})'  md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-zoom' aria-label="{{ 't.detailsAndZoom.zoom' | translate }}">
         <md-icon md-svg-src="action:zoom_in" aria-hidden='false'>
             <md-tooltip  md-direction="top">{{ 't.detailsAndZoom.zoom' | translate }}</md-tooltip>
         </md-icon>
@@ -181,14 +183,14 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div>
-    <md-button md-no-ink class="custom-header-label">${displayName}</md-button>
+    <md-button class="custom-header-label">${displayName}</md-button>
     <md-icon ng-if="sortAsc" md-svg-icon="navigation:arrow_upward"></md-icon>
     <md-icon ng-if="sortDesc" md-svg-icon="navigation:arrow_downward"></md-icon>
     <div class="reorder-icons">
-        <md-button class="reorder-button md-icon-button move-left" md-no-ink ng-disabled="min">
+        <md-button class="reorder-button md-icon-button move-left" ng-disabled="min">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_left"></md-icon>
         </md-button>
-        <md-button class="reorder-button md-icon-button move-right" md-no-ink ng-disabled="max">
+        <md-button class="reorder-button md-icon-button move-right" ng-disabled="max">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_right"></md-icon>
         </md-button>
     </div>
@@ -252,8 +254,8 @@ export const PRINT_TABLE = (title, cols, rws) => {
                 </style>
             </head>
             <body class ='dt-print-view'>
-                <div>
-                    <h1 class="md-title table-title" style='padding:8px;'>Features: ${title}</h1>
+                <div class="title-container">
+                    <h1 class="md-title" style='padding:8px;'>Features: ${title}</h1>
                     <table>${columns}${rows}</table>
                 </div>
             </body>`;
