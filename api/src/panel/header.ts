@@ -9,56 +9,100 @@ import { Panel, Element, CloseButton, ToggleButton } from '.';
  */
 export default class Header extends Element {
     _header: JQuery<HTMLElement>;
+    _controls: JQuery<HTMLElement>;
     _closeButton: CloseButton;
     _toggleButton: ToggleButton;
 
-    append(element: Element) {
-        this._header.append(element.elem);
+    /**
+     * Appends the provided element to the end of the controls section in the header. The controls section is to the right of the title.
+     *
+     * @param element the element to append to the header
+     */
+    append(element: Element | string | HTMLElement | JQuery<HTMLElement>) {
+        this._controls.append((<Element>element).elem ? (<any>element).elem : $((<any>element)));
     }
 
+    /**
+     * Prepends the provided element to the front of the controls section in the header. The controls section is to the right of the title.
+     *
+     * @param element the element to prepend to the header
+     */
     prepend(element: Element) {
-        this._header.prepend(element.elem);
+        this._controls.prepend((<Element>element).elem ? (<any>element).elem : $((<any>element)));
     }
 
-    makeHeader() {
-        this._header = $(document.createElement('div'));
-        this._header.addClass('rv-header');
-        this._header.html(`
-          <div class="rv-header-content layout-column" layout="column">
-            <h3 class="md-title hidden"></h3>
-          </div>
-
-          <span flex="" class="rv-spacer flex"></span>
-        `);
+    /**
+     * Returns the element which stores all controls.
+     */
+    get controls() {
+        return this._controls;
     }
 
-    placeHeader() {
-        this.makeHeader();
-        this._panel.element.prepend(this._header);
-    }
-
+    /**
+     * Sets the panel title.
+     */
     set title(title: string) {
-        this._header.find('h3').first().removeClass('hidden').text(title);
+        this._header.find('header > h3').first().css('display', '').text(title);
     }
 
+    /**
+     * Sets the panel subtitle.
+     */
+    set subtitle(subtitle: string) {
+        this._header.find('header > p').first().css('display', '').text(subtitle);
+    }
+
+    /**
+     * Returns true iff the panel has a close button that was created through `panel.header.closeButton`.
+     */
     get hasCloseButton() {
         return !!this._closeButton;
     }
 
+    /**
+     * Adds a close button to the header controls.
+     */
     get closeButton() {
-        this._closeButton = this._closeButton ? this._closeButton : new CloseButton(this._panel);
-        this._header.append(this._closeButton.elem);
+        if (!this._closeButton) {
+            this._closeButton = new CloseButton(this._panel);
+            this.append(this._closeButton.elem);
+        }
 
-        this.panel.api.$compile(this._header);
         return this._closeButton.elem;
     }
 
+    /**
+     * Adds a toggle button to the header controls.
+     */
     get toggleButton() {
-        this._toggleButton = this._toggleButton ? this._toggleButton : new ToggleButton(this._panel);
-        this._header.append(this._toggleButton.elem);
+        if (!this._toggleButton) {
+            this._toggleButton = new ToggleButton(this._panel);
+            this.append(this._toggleButton.elem);
+        }
 
-        this.panel.api.$compile(this._header);
         return this._toggleButton.elem;
+    }
+
+    private makeHeader() {
+        this._header = $(document.createElement('div'));
+        this._controls = $('<span></span>');
+        this._header.addClass('rv-header');
+        this._header.html(`
+          <div class="rv-header-content layout-column" layout="column">
+            <header>
+                <h3 class="md-title" style="display:none;"></h3>
+                <p class="tagline" style="display:none;"></p>
+            </header>
+          </div>
+
+          <span flex="" class="rv-spacer flex"></span>
+        `);
+        this._header.append(this._controls);
+    }
+
+    private placeHeader() {
+        this.makeHeader();
+        this._panel.element.prepend(this._header);
     }
 
     constructor(panel: Panel) {

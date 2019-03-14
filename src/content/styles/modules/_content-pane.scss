@@ -22,6 +22,14 @@
 
             .rv-header-content {
                 overflow: hidden;
+
+                header {
+                    line-height: 10px;
+                }
+
+                p.tagline {
+                    margin: 0;
+                }
             }
 
             @include include-size(rv-lt-lg) {

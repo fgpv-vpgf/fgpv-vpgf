@@ -4,7 +4,7 @@ import Button from './button';
 export default class CloseButton extends Button {
 
     constructor(panel: Panel) {
-        super(panel, `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`);
+        super(panel, `<md-icon md-svg-src="navigation:close"></md-icon>`, `{{ 'api.panel.close' | translate }}`);
         this.elem.addClass('md-icon-button');
         this.elem.removeClass('md-raised');
 
