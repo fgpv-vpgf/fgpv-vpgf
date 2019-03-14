@@ -15,7 +15,7 @@ There are three different types of panel:
 2. **Closeable** - Has a close button in its header, opens over **persistent** panels and under a dialog.
    > this is the most common panel type. It has a wide range of uses, and allows the user to close it when not needed. A good use case is for displaying intermittent data such as an identify click result.
 3. **Persistent** - Has no close button in its header, opens under all other panel types.
-   > great for relaying a constant stream of information to the user, such as providing geographic coordinates of a clicked map point. It is also the perfect spot for interactive    map controls like a time slider (for time enabled layers).
+   > great for relaying a constant stream of information to the user, such as providing geographic coordinates of a clicked map point. It is also the perfect spot for interactive map controls like a time slider (for time enabled layers).
 
 ## Create
 
@@ -34,8 +34,9 @@ myPanel.body = '<div><h3>Hello!</h3><md-button id="mypanel-btn1" class="md-raise
 ```
 
 <p class="warning">
-  The panel body must only have one top level element. In the example above the `h3` and `md-button` elements are wrapped in a
-  `div` element. This is required by the angular compiler to properly render multiple directives (like `md-button`) in a given element.
+  The panel body must only have one top level element. In the example above the `h3` and `md-button` elements are wrapped in a `div` element. This is required by the angular compiler to properly render multiple directives (like `md-button`) in a given element.
+
+  To learn more about the Angular v1.7.5 compiler please see: https://docs.angularjs.org/api/ng/service/$compile (very bottom of page)
 </p>
 
 ### Open
@@ -44,8 +45,7 @@ If we do nothing else and run `myPanel.open()` you'll be greeted to a **dialog**
 
 ### Persistent
 
-The reason our panel is a dialog panel is because we didn't define a position for it. Since RAMP doesn't know
-where we'd like our panel to appear, or how wide/tall it should be, it opens it as a standard sized **dialog** panel.
+The reason our panel is a dialog panel is because we didn't define a position for it. Since RAMP doesn't know where we'd like our panel to appear, or how wide/tall it should be, it opens it as a standard sized **dialog** panel.
 
 Let's set a position for our panel then proceed to open it:
 
@@ -60,8 +60,7 @@ myPanel.element.css({
 myPanel.open();
 ```
 
-Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of
-`top`, `bottom`, `left`, or `right` css properties turns a panel from a dialog type to a persistent or closeable type.
+Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of `top`, `bottom`, `left`, or `right` css properties turns a panel from a dialog type to a persistent or closeable type.
 
 ### Closeable
 
@@ -108,8 +107,7 @@ myPanel.header.append(customBtn);
 Instead of `append` you can also `prepend`.
 
 <p class="tip">
-  Don't forget the `$` (or `element`) after `customBtn`! That's how you access the `JQuery<HTMLElement>` instead of the
-  panel button class instance.
+  Don't forget the `$` (or `element`) after `customBtn`! That's how you access the `JQuery<HTMLElement>` instead of the panel button class instance.
 </p>
 
 ### Header title
@@ -118,26 +116,22 @@ To display a title in the panel header simply do: `myPanel.header.title = 'Some 
 
 ### Keep panel open on offscreen
 
-If your panel ever renders partially or fully outside the viewport, the default behaviour is to close the panel -
-**regardless of panel type**. This can happen either immediately when a panel is opened (its position is outside the viewer)
-or when a user resizes their window.
+If your panel ever renders partially or fully outside the viewport, the default behaviour is to close the panel - **regardless of panel type**. This can happen either immediately when a panel is opened (its position is outside the viewer) or when a user resizes their window.
 
 You can disable this so that your panel is always open with:
 
 ```js
-myPanel.offscreen = true;
+myPanel.allowOffscreen = true;
 ```
 
 ### Close panel on overlay
 
-It's possible the spot you've chosen for your panel conflicts with another panel which may or may not be open (or even created)
-when you go to open your panel. The default behaviour is to keep your panel open when another panel renders either partially or
-fully over yours.
+It's possible the spot you've chosen for your panel conflicts with another panel which may or may not be open (or even created) when you go to open your panel. The default behaviour is to keep your panel open when another panel renders either partially or fully over yours.
 
 To change this default behaviour:
 
 ```js
-myPanel.underlay = false;
+myPanel.allowUnderlay = false;
 ```
 
 ### Custom Angular directives
@@ -163,8 +157,6 @@ You can find a panel with a given id by iterating through the `mapI.panels` arra
 ```js
 const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
 ```
-
-
 
 ## Watch
 

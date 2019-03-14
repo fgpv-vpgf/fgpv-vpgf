@@ -126,7 +126,7 @@ export default class Loader {
                     try {
                         p.init(api);
                     } catch(err) {
-                        // TODO
+                        console.warn(`Plugin failed to initialize.`, err);
                     }
                 }
             });

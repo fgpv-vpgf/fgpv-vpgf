@@ -23,8 +23,8 @@
         p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
         this.makeCloseBtn(p);
         this.panelCount = this.panelCount + 1;
-        p.underlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
-        p.offscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+        p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
+        p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
         p.open();
     }
 
@@ -60,8 +60,9 @@
           </div>
         `;
         p.header.title = 'Panel Tester';
+        p.header.subtitle = 'This is a subtitle.';
         p.header.toggleButton;
-        p.offscreen = true;
+        p.allowOffscreen = true;
 
 
         // make a custom button
@@ -133,8 +134,8 @@ function () {
       p.body = "<h2>Hello!</h2><p>I'm a dialog</p>";
       this.makeCloseBtn(p);
       this.panelCount = this.panelCount + 1;
-      p.underlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
-      p.offscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+      p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
+      p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
       p.open();
     }
   }, {
@@ -160,8 +161,9 @@ function () {
       });
       p.body = "\n          <div>\n            <md-button id=\"paneltester-btn1\" class=\"md-raised md-primary\">Open a dialog</md-button>\n            <br>\n            <md-button id=\"paneltester-btn2\" class=\"md-raised md-primary\">Open a panel</md-button>\n            <br><br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkclose\">Add a close button</md-checkbox>\n            <br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkoffscreen\">Panel closes when offscreen</md-checkbox>\n            <br>\n            <md-checkbox class=\"\" id=\"paneltester-chkunderlay\">Panel closes on overlay</md-checkbox>\n            <br>\n            <b>Note:</b> Checkbox options are not applicable to dialog panels.\n          </div>\n        ";
       p.header.title = 'Panel Tester';
+      p.header.subtitle = 'This is a subtitle.';
       p.header.toggleButton;
-      p.offscreen = true; // make a custom button
+      p.allowOffscreen = true; // make a custom button
 
       var customBtn = new p.Button('Custom Btn');
       customBtn.$.on('click', function () {

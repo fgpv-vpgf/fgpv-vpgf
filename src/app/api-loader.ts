@@ -58,9 +58,9 @@ RZInstance.mapAdded.subscribe(mapInstance => {
 (<any>jQuery).expr.filters.offscreen = function(el: any) {
     var rect = el.getBoundingClientRect();
     return (
-             (rect.left + rect.width) > window.innerWidth ||
+             (rect.left + rect.width) > (<any>jQuery('rv-shell').first().width()) ||
              (rect.left + rect.width) < 0 ||
-             (rect.top + rect.height) > window.innerHeight ||
+             (rect.top + rect.height) > (<any>jQuery('rv-shell').first().height()) ||
              (rect.top + rect.height) < 0
            );
   };

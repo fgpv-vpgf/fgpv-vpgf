@@ -77,10 +77,15 @@ export class Map {
         return this._panels;
     }
 
+    /**
+     * Creates a new panel with the ID provided.
+     *
+     * @param id a unique id for the panel element
+     */
     newPanel(id: string) {
 
-        if ($(`#${id}`).length === 1) {
-            throw new Error(`API(panels): a panel with id ${id} already exists.`);
+        if ($(`#${id}`).length >= 1) {
+            throw new Error(`API(panels): an element with ID ${id} already exists. A panel ID must be unique to the page.`);
         }
 
         const panel = new Panel(id, this);
@@ -98,10 +103,16 @@ export class Map {
         return panel;
     }
 
+    /**
+     * Emits the corresponding panel instance whenever a panel is opened.
+     */
     get panelOpened() {
         return this._panelOpened.asObservable();
     }
 
+    /**
+     * Emits the corresponding panel instance whenever a panel is closed.
+     */
     get panelClosed() {
         return this._panelClosed.asObservable();
     }
