@@ -51,9 +51,9 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
             <md-tooltip>{{ 't.table.hideColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
-        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense">
+        <md-menu-content class="rv-menu rv-dense">
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
-                <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }} " md-prevent-menu-close="md-prevent-menu-close">
+                <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }}" md-prevent-menu-close="md-prevent-menu-close">
                     <span style='overflow-wrap:normal'>{{col.title}}</span>
                     <md-icon md-svg-icon="action:done" ng-if="col.visibility"></md-icon>
                 </md-button>
@@ -72,7 +72,7 @@ export const MENU_TEMPLATE = `
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
         </md-button>
-        <md-menu-content rv-trap-focus="{{::ctrl.appID}}" class="rv-menu rv-dense">
+        <md-menu-content class="rv-menu rv-dense">
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" rv-right-icon="none">
                 {{ 't.menu.split' | translate }}
             </md-menu-item>
