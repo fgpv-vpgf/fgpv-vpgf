@@ -8,7 +8,7 @@ import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
 import { LayerGroup, SimpleLayer } from 'api/layers';
-import { Panel } from 'api/panel';
+import { Panel, ClosingResponse } from 'api/panel';
 
 /**
  * Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.
@@ -311,7 +311,7 @@ export interface Map {
 
     _panels: Panel[];
     _panelOpened: Subject<Panel>;
-    _panelClosed: Subject<Panel>;
+    _panelClosed: Subject<ClosingResponse>;
 }
 
 export default Map;

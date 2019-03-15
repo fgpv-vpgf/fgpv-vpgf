@@ -9,7 +9,7 @@ export default class ToggleButton extends Button {
     }
 
     constructor(panel: Panel) {
-        super(panel, `<md-icon md-svg-src="navigation:expand_more"></md-icon>`, `{{ 'api.panel.toggle' | translate }}`);
+        super(panel, `<md-icon md-svg-src="navigation:expand_less"></md-icon>`, `{{ 'api.panel.toggle' | translate }}`);
         this.elem
             .addClass('md-icon-button')
             .removeClass('md-raised');
@@ -18,10 +18,10 @@ export default class ToggleButton extends Button {
             // if user wants to expand panel
             if (this._isOpen) {
                 panel.element.css('height', '49px');
-                this.element = '<md-icon md-svg-src="navigation:expand_less"></md-icon>';
+                this.element = '<md-icon md-svg-src="navigation:expand_more"></md-icon>';
             } else {
                 panel.element.css('height', '');
-                this.element = '<md-icon md-svg-src="navigation:expand_more"></md-icon>';
+                this.element = '<md-icon md-svg-src="navigation:expand_less"></md-icon>';
             }
 
             this._isOpen = !this._isOpen;

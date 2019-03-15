@@ -1,4 +1,4 @@
-import { Panel } from '.';
+import { Panel, CLOSING_CODES } from '.';
 import Button from './button';
 
 export default class CloseButton extends Button {
@@ -10,7 +10,7 @@ export default class CloseButton extends Button {
 
         // close the panel when a user clicks on the button
         this.elem.on('click', () => {
-            panel.close();
+            panel.close(true, {closingCode: CLOSING_CODES.CLOSEBTN});
         });
     }
 }

@@ -158,6 +158,10 @@ You can find a panel with a given id by iterating through the `mapI.panels` arra
 const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
 ```
 
+### Closing & destroying
+
+You can close a panel with `myPanel.close();`. Once a panel is closed it is destroyed - meaning it cannot be opened again. This is done to maximize the performance for RAMP when panels are no longer in use. You can disable this by passing `false` as the first parameter to the close method: `myPanel.close(false);`. You can also disable this by setting `myPanel.keepAlive = true`.
+
 ## Watch
 
 You can subscribe to an individual panels opening and closing observable events:
@@ -179,7 +183,33 @@ mapI.panelOpened.subscribe(function(panel) {
     console.log(`A panel with ID ${panel.id} is opening.`);
 };
 
-mapI.panelClosed.subscribe(function(panel) {
-    console.log(`A panel with ID ${panel.id} is closing.`);
+mapI.panelClosed.subscribe(function(response) {
+    console.log(`A panel with ID ${response.panel.id} is closing.`);
 };
 ```
+
+### Closing response
+
+When a panel is **opened** subscribers are given the opening panel instance. When a panel is **closed** however, it might not always be clear as to why. It could be that the user resized their window, and now your panel is offscreen. It could be that another panel opened over your panel. You may want to intervene in certain situations or handle the closing differently. For these reasons, closing subscribers will receive an object with the following interface:
+
+```ts
+  interface ClosingResponse {
+    code: CLOSING_CODES;
+    panel: Panel;
+    otherPanel?: Panel;
+}
+```
+
+The following are valid `CLOSING_CODES`:
+
+```ts
+enum CLOSING_CODES {
+    OFFSCREEN = 'offscreen',
+    OVERLAID = 'overlaid',
+    CLOSEBTN = 'closebtn',
+    CLICKEDOUTSIDE = 'clickedoutside',
+    OTHER = 'other'
+};
+```
+
+The `panel` property is the closing panel instance. The `otherPanel`, if defined, is another panel instance that is responsible for your panel closing. It is defined when the error code is `overlaid`, providing the overlaying panel instance. It may also be defined for `other` code.
