@@ -392,14 +392,18 @@ export class PanelManager {
             // returns true if there are no active column filters, false otherwise
             // this determines if Clear Filters button is disabled (when true) or enabled (when false)
             this.noActiveFilters = function () {
-                const columns = Object.keys(that.tableOptions.api.getFilterModel());
-                // if there is a non static column fiter, the clearFilters button is enabled
-                let noFilters = !columns.some((col) => {
-                    const columnConfigManager = new ColumnConfigManager(that.configManager, col);
-                    return !columnConfigManager.isFilterStatic;
-                });
-                // if column filters don't exist or are static, clearFilters button is disabled
-                return noFilters && !that.searchText;
+                if (that.tableOptions.api !== undefined) {
+                    const columns = Object.keys(that.tableOptions.api.getFilterModel());
+                    // if there is a non static column fiter, the clearFilters button is enabled
+                    let noFilters = !columns.some((col) => {
+                        const columnConfigManager = new ColumnConfigManager(that.configManager, col);
+                        return !columnConfigManager.isFilterStatic;
+                    });
+                    // if column filters don't exist or are static, clearFilters button is disabled
+                    return noFilters && !that.searchText;
+                } else {
+                    return true;
+                }
             }
         });
 
