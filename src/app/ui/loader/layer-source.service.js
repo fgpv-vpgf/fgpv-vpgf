@@ -80,30 +80,12 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                     return _parseAsWMS(serviceUrl, data);
                 }
 
-                // find out if supplied url follows wfs 3.0 format
-                // WFS urls will have the words 'collections' and 'items' in them with the collectionID separating them
-                // i.e: GET /collections/{collectionId}/items/{featureId}
-                // https://github.com/opengeospatial/WFS_FES#overview
-                const splitUrl = serviceUrl.split('/');
-                const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
-                const indexOfCollections = splitUrl.findIndex(item => item  === 'collections');
-
-                if (indexOfItems - 2 !== indexOfCollections) {
-                    const fakeServiceInfo = {
-                        serviceType: 'error'
-                    }
-                    // if this service is definitely not a wfs
-                    // parse as something else so that it errors out
-                    return _parseAsSomethingElse(fakeServiceInfo);
-                }
-
                 // test if it's a WFS
                 // make a quick request for a single feature and see what the prediction function says
                 const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
                 return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(serviceInfo => {
-
                     if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                        //workaround in case predictUrl fails (assuming it is a WFS service)
+                        // workaround in case predictUrl fails
                         let layerInfo = _parseAsWfs(serviceUrl);
 
                         const updatedServiceInfo = {
@@ -113,11 +95,11 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                             rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
                         }
 
-                        return _parseAsSomethingElse(updatedServiceInfo);
+                        return _parseAsSomethingElse(updatedServiceInfo, serviceUrl);
                     }
                     // if service is identified as WFS, parse as WFS
                     else if (serviceInfo.serviceType === Geo.Service.Types.WFS) {
-                        return _parseAsSomethingElse(serviceInfo);
+                        return _parseAsSomethingElse(serviceInfo, serviceUrl);
                     }
                     return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
                 });
@@ -134,10 +116,23 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
          * @function _parseAsSomethingElse
          * @private
          * @param {Object} serviceInfo info object from geoApi prediction function
+         * @param {Object} sUrl the service url to load
          * @return {Promise} a promsie resolving with an array of at least one LayerBlueprint objects
          */
-        function _parseAsSomethingElse(serviceInfo) {
-            if (serviceInfo.serviceType === geoServiceTypes.Error) {
+        function _parseAsSomethingElse(serviceInfo, sUrl) {
+            let isFakeWFS = false;
+            if (sUrl) {
+                // find out if supplied url follows wfs 3.0 format if it's supposed to be wfs
+                // WFS urls will have the words 'collections' and 'items' in them with the collectionID separating them
+                // i.e: GET /collections/{collectionId}/items/{featureId}
+                // https://github.com/opengeospatial/WFS_FES#overview
+                const splitUrl = sUrl.split('/');
+                const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
+                const indexOfCollections = splitUrl.findIndex(item => item  === 'collections');
+                isFakeWFS = serviceInfo.serviceType === Geo.Service.Types.WFS && indexOfItems - 2 !== indexOfCollections
+            }
+
+            if (serviceInfo.serviceType === geoServiceTypes.Error || isFakeWFS) {
                 // this is not a service URL;
                 // in some cases, if URL is not a service URL, dojo script used to interogate the address
                 // will throw a page-level error which cannot be caught; in such cases, it's not clear to the user what has happened;
