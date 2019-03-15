@@ -601,7 +601,7 @@ export class ConfigLayer extends BaseLayer {
             })
 
             this._layerProxy._source._layerPackage.layerData.then((value: any) => {
-                const fields = value.fields;
+                const fields = value.fields || [];
                 for (let field of fields) {
                     // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
                     this.attributeHeaders[field.name] = {
