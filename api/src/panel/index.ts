@@ -3,7 +3,7 @@ import Button from './button';
 import CloseButton from './button.close';
 import ToggleButton from './button.toggle';
 import Element from './element';
-import Map from 'api/map';
+import { Map as ViewerAPI } from 'api/map';
 import Header from './header';
 
 export { default as Element } from './element';
@@ -80,16 +80,6 @@ export class Panel {
         return Element.bind(null, this);
     }
 
-    private offScreenRuleCheck(errorMsg?: string) {
-        if (!this.allowOffscreen && this.element.is(':offscreen')) {
-            this.close(true);
-
-            if (errorMsg) {
-                throw new Error(`API(panels): ${errorMsg}`);
-            }
-        }
-    }
-
     set allowUnderlay(allow: boolean) {
         this._underlay = allow;
     }
@@ -106,12 +96,20 @@ export class Panel {
         return this._offscreen;
     }
 
-    set api(api: Map) {
+    set api(api: ViewerAPI) {
         this._api = api;
     }
 
     get api() {
         return this._api;
+    }
+
+    set keepAlive(alive: boolean) {
+        this._keepAlive = alive;
+    }
+
+    get keepAlive() {
+        return this._keepAlive;
     }
 
     /**
@@ -167,28 +165,42 @@ export class Panel {
     }
 
     /**
-    * Closes the panel permanently.
-    */
-    close(silent: boolean = false): void {
+     * Closes the panel and removes it from the dom.
+     * By default, calling close also destroys it meaning it can no longer be used. To prevent panel destruction set `destroy` to `false`.
+     *
+     * @param destroy true to destroy the panel
+     * @param opts closing option:
+     *      - silent: when true, do not emit a closing event
+     *      - closingCode: a code indicating why the panel was closed
+     *      - otherPanel: sometimes a panel causes another to be closed, provided for context
+     */
+    close(destroy: boolean = true, opts?: {silent?: boolean, closingCode?: CLOSING_CODES, otherPanel?: Panel}): void {
+        opts = opts ? opts : {silent: false};
+
         if (this.isClosed) {
             return;
         }
 
-        if (!silent) {
-            this.closingSubject.next(this);
+        if (!opts.silent) {
+            const closingResponse: ClosingResponse = {
+                code: opts.closingCode ? opts.closingCode : CLOSING_CODES.OTHER,
+                panel: this
+            };
+
+            if (opts.otherPanel) {
+                closingResponse.otherPanel = opts.otherPanel;
+            }
+
+            this.closingSubject.next(closingResponse);
         }
 
-        this.element.css({'display': 'none'});
-    }
-
-    /**
-     * Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
-     */
-    destroy() {
-        this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
-        this.element.remove(); // remove element from the DOM
-        this._observer.disconnect(); // disconnect the mutation observer
-        this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
+        try {
+            if (destroy && !this.keepAlive) {
+                this.destroy();
+            }
+        } catch(err) {
+            // Do nothing
+        }
     }
 
     set body(content: any) {
@@ -215,6 +227,27 @@ export class Panel {
     */
     get id(): string {
         return this.element.attr('id');
+    }
+
+    private offScreenRuleCheck(errorMsg?: string) {
+        if (!this.allowOffscreen && this.element.is(':offscreen')) {
+            this.close(true, {closingCode: CLOSING_CODES.OFFSCREEN});
+
+            if (errorMsg) {
+                throw new Error(`API(panels): ${errorMsg}`);
+            }
+        }
+    }
+
+    /**
+     * Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
+     */
+    private destroy() {
+        this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
+        this.element.remove(); // remove element from the DOM
+        this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
+        this.element.off('click');
+        this._observer.disconnect(); // disconnect the mutation observer
     }
 
     /**
@@ -281,7 +314,7 @@ export class Panel {
             rect1.top > rect2.bottom);
 
         if (overlap) {
-            this.close();
+            this.close(true, {closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
         }
     }
 
@@ -298,6 +331,13 @@ export class Panel {
         this.element.css({'display': ''});
         this._element = this.element.parent();
         this.element.prependTo($(this.api.innerShell).parent().parent());
+
+        // close the dialog when clicking on the backdrop
+        this.element.on('click', evt => {
+            if ($(evt.target).is(this.element)) {
+                this.close(true, {closingCode: CLOSING_CODES.CLICKEDOUTSIDE});
+            }
+        });
     }
 
     /**
@@ -316,7 +356,7 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api: Map) {
+    constructor(id: string, api: ViewerAPI) {
         this.api = api;
 
         this.allowUnderlay = true;
@@ -337,7 +377,8 @@ export class Panel {
 }
 
 export interface Panel {
-    _api: Map;
+    _api: ViewerAPI;
+    _keepAlive: boolean;
 
     //HTML parent Components
     _element: JQuery<HTMLElement>;
@@ -349,16 +390,30 @@ export interface Panel {
     _openPanelSubscriber: Subscription;
 
     //subjects initialized for observables that are fired through method calls
-    openingSubject: Subject<any>;
-    closingSubject: Subject<any>;
+    openingSubject: Subject<Panel>;
+    closingSubject: Subject<ClosingResponse>;
     positionChangedSubject: Subject<any>;
     widthChangedSubject: Subject<any>;
     heightChangedSubject: Subject<any>;
 
     //user accessible observables
     opening: Observable<Panel>;
-    closing: Observable<Panel>;
+    closing: Observable<ClosingResponse>;
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;
+}
+
+export enum CLOSING_CODES {
+    OFFSCREEN = 'offscreen',
+    OVERLAID = 'overlaid',
+    CLOSEBTN = 'closebtn',
+    CLICKEDOUTSIDE = 'clickedoutside',
+    OTHER = 'other'
+};
+
+export interface ClosingResponse {
+    code: CLOSING_CODES;
+    panel: Panel;
+    otherPanel?: Panel;
 }
