@@ -523,12 +523,36 @@ export class LegendItem extends BaseItem {
     toggleSymbologies(indices: Array<number>): void {
         if (this._availableControls.includes(AvailableControls.Symbology)) {
             indices.forEach(index => {
+                // check if index is valid
+                if (index < 0 || index >= this._legendBlock.symbologyStack.stack.length) {
+                    return;
+                }
                 // toggle only if the symbology item has toggle button
                 const toggle = this._legendBlock.symbologyStack.stack[index].toggle;
                 if (toggle) {
                     this._legendBlock.symbologyStack.onToggleClick(toggle);
                 }
             });
+        }
+    }
+
+    /**
+     * Toggles a symbology for a legendNode with toggle-able symbology items
+     * @param index Index of the symbology to toggle
+     */
+    toggleSymbology(index: number): void {
+        this.toggleSymbologies([index]);
+    }
+
+    /**
+     * The names of the symbologies in order
+     */
+    get symbologyNames(): string[] | undefined {
+        if (this.type === LegendTypes.Node || this._legendBlock.infoType === 'unboundLayer') {
+            return this._legendBlock.symbologyStack.stack.map((symbol: any) => symbol.name);
+        } else {
+            // no symbology
+            return undefined;
         }
     }
 
