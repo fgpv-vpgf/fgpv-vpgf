@@ -80,9 +80,9 @@ export class Panel {
         return this.controlList;
     }
 
-    setControls(elems: (PanelElem | Btn | string | HTMLElement | JQuery<HTMLElement>)[]) {
+    setControls(elems: (PanelElem | Btn | string | HTMLElement | JQuery<HTMLElement>)[], digest = false) {
         this.panelControls.removeClass('hidden');
-        this.controlList = elems.map(e => this.isPanelElem(e) ? e : new this.container(e));
+        this.controlList = elems.map(e => this.isPanelElem(e) ? e : new this.container(e, digest));
 
         //First empty existing controls
         this.panelControls.html('');
@@ -123,10 +123,11 @@ export class Panel {
      * Sets the panel body to the provided content.
      *
      * @param content   panel body content
+     * @param digest if true, initiates digest cycle when compiled
      */
-    setBody(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>) {
+    setBody(content: PanelElem | string | HTMLElement | JQuery<HTMLElement>, digest: boolean = false) {
         // Makes content into a PanelElem if it isn't one already
-        const pElemContent = this.isPanelElem(content) ? content : new this.container(content);
+        const pElemContent = this.isPanelElem(content) ? content : new this.container(content, digest);
         this.panelBody.removeClass('hidden');
         this.contentAttr = pElemContent;
         //First empty existing content
@@ -184,10 +185,10 @@ export class PanelElem {
     * @constructor
     * @param {string | HTMLElement | JQuery<HTMLElement>} [element] - element to be set as PanelElem (strings assumed to be titles)
     *                                                               - not to be specified for Btns    */
-    constructor(panel: Panel, element?: string | HTMLElement | JQuery<HTMLElement>) {
+    constructor(panel: Panel, element?: string | HTMLElement | JQuery<HTMLElement>, digest = false) {
         this.panel = panel;
         if (element)
-            this.setElement(element);
+            this.setElement(element, digest);
     }
 
     set title(title: string) {
@@ -202,12 +203,19 @@ export class PanelElem {
     * Helper method, sets PanelElem object
     * @param {(string | HTMLElement | JQuery<HTMLElement>)} [element] - element to be set as PanelElem
     *                                                                 - parameter should always be set if directly accessing PanelElem class (not from Btn)
+    * @param {boolean} digest - initiates digest cycle if true
     * @throws {Exception} - cannot have multiple top level elements.
     */
-    setElement(element: string | HTMLElement | JQuery<HTMLElement>): void {
+    setElement(element: string | HTMLElement | JQuery<HTMLElement>, digest = false): void {
 
         this.elementAttr = $(element);
-        this.panel.map.$compile(this.elementAttr[0]).$digest();
+
+        if (digest === true) {
+            this.panel.map.$compile(this.elementAttr[0]).$digest();
+        } else {
+            this.panel.map.$compile(this.elementAttr[0]);
+        }
+
 
         //If element already has id attribute, set id to that id, otherwise set to randomly generated id
         if (this.elementAttr !== undefined && this.elementAttr.attr('id') !== undefined) {
@@ -240,27 +248,27 @@ export class PanelElem {
 }
 
 class Btn extends PanelElem {
-    constructor(scope: Panel, type?: string) {
+    constructor(scope: Panel, type?: string, digest = false) {
         const buttonType = type === 'X' ? 'contentPane.aria.close' : 'toggle'; // TODO: add translation for toggle
-        super(scope, `<div><md-button class="btn md-icon-button black" aria-label="{{ '${buttonType}' | translate }}"></md-button></div>`);
+        super(scope, `<div><md-button class="btn md-icon-button black" aria-label="{{ '${buttonType}' | translate }}"></md-button></div>`, digest);
         // close button
         if (type === 'X') {
-            this.contents = `<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`;
+            this.setContents(`<md-icon md-svg-src="navigation:close"><md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip></md-icon>`, digest);
             $(this.panel.panelContents).on('click', '#' + this.id, () => {
                 this.panel.close();
             });
         }
         //toggle button
         else if (type === 'T') {
-            this.contents = '<md-icon md-svg-src="content:remove"></md-icon>';
+            this.setContents('<md-icon md-svg-src="content:remove"></md-icon>', digest);
             $(this.panel.panelContents).on('click', '#' + this.id, () => {
                 // if user wants to expand panel
                 if (this.panel.panelBody.css('display') === 'none') {
                     this.panel.panelBody.css('display', 'block');
-                    this.contents = '<md-icon md-svg-src="content:remove"></md-icon>'; // update icon
+                    this.setContents('<md-icon md-svg-src="content:remove"></md-icon>', digest); // update icon
                 } else {
                     this.panel.panelBody.css('display', 'none');
-                    this.contents = '<md-icon md-svg-src="content:add"></md-icon>'; // update icon
+                    this.setContents('<md-icon md-svg-src="content:add"></md-icon>', digest); // update icon
                 }
             });
 
@@ -273,11 +281,17 @@ class Btn extends PanelElem {
     /**
     * Sets an icon for the Btn
     * @param {SVG} svg - the icon to be set for the Btn
+    * @param {boolean} digest - initiates digest cycle if true
     */
-    set contents(contents: string | Node | HTMLElement | JQuery<HTMLElement>) {
+    setContents(contents: string | Node | HTMLElement | JQuery<HTMLElement>, digest = false) {
         contents = $((<any>contents));
 
-        this.panel.map.$compile(contents[0]).$digest();
+        if (digest === true) {
+            this.panel.map.$compile(contents[0]).$digest();
+        } else {
+            this.panel.map.$compile(contents[0]);
+        }
+
         $(this.elementAttr.children('button')[0]).html(contents[0]);
     }
 
