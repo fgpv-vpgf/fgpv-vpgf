@@ -514,20 +514,45 @@ export class LegendItem extends BaseItem {
 
     /**
      * Toggles the Symbologies for LegendItems of type legendNode with toggle-able symbology items (in a symbology stack).
-     * @param names - List of strings matching the name of the symbologies to toggle
+     * @param indices - List of indices of the symbologies to toggle
      * @example
      * ```js
-     * item.toggleSymbologies(['Natural Gas', 'Biomass']);
+     * item.toggleSymbologies([1, 4]);
      * ```
      */
-    toggleSymbologies(names: Array<string>): void {
+    toggleSymbologies(indices: Array<number>): void {
         if (this._availableControls.includes(AvailableControls.Symbology)) {
-            names.forEach(name => {
+            indices.forEach(index => {
+                // check if index is valid
+                if (index < 0 || index >= this._legendBlock.symbologyStack.stack.length) {
+                    return;
+                }
                 // toggle only if the symbology item has toggle button
-                if (this._legendBlock.symbologyStack.toggleList[name]) {
-                    this._legendBlock.symbologyStack.onToggleClick(name);
+                const toggle = this._legendBlock.symbologyStack.stack[index].toggle;
+                if (toggle) {
+                    this._legendBlock.symbologyStack.onToggleClick(toggle);
                 }
             });
+        }
+    }
+
+    /**
+     * Toggles a symbology for a legendNode with toggle-able symbology items
+     * @param index Index of the symbology to toggle
+     */
+    toggleSymbology(index: number): void {
+        this.toggleSymbologies([index]);
+    }
+
+    /**
+     * The names of the symbologies in order
+     */
+    get symbologyNames(): string[] | undefined {
+        if (this.type === LegendTypes.Node || this._legendBlock.infoType === 'unboundLayer') {
+            return this._legendBlock.symbologyStack.stack.map((symbol: any) => symbol.name);
+        } else {
+            // no symbology
+            return undefined;
         }
     }
 

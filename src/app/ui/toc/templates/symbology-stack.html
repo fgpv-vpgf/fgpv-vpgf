@@ -20,14 +20,14 @@
 
         <md-button
             class="md-icon-button rv-icon-20 toggle-button data-test-symbol-toggle-button"
-            ng-click="self.onToggleClick(symbol.name)"
-            ng-if="self.toggleList[symbol.name]"
-            aria-pressed = "{{ self.toggleList[symbol.name].isSelected }}"
-            aria-label="{{ (self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.on' | translate)) ||
-                (!self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.off' | translate)) }}">
-            <md-icon md-svg-src="{{self.toggleList[symbol.name].icon}}"></md-icon>
-            <md-tooltip md-direction="top">{{ (self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.on' | translate)) ||
-                (!self.toggleList[symbol.name].isSelected && ('toc.aria.visibility.off' | translate)) }}</md-tooltip>
+            ng-click="self.onToggleClick(symbol.toggle)"
+            ng-if="symbol.toggle"
+            aria-pressed = "{{symbol.toggle.isSelected }}"
+            aria-label="{{ (symbol.toggle.isSelected && ('toc.aria.visibility.on' | translate)) ||
+                (!symbol.toggle.isSelected && ('toc.aria.visibility.off' | translate)) }}">
+            <md-icon md-svg-src="{{symbol.toggle.icon}}"></md-icon>
+            <md-tooltip md-direction="top">{{ (symbol.toggle.isSelected && ('toc.aria.visibility.on' | translate)) ||
+                (!symbol.toggle.isSelected && ('toc.aria.visibility.off' | translate)) }}</md-tooltip>
         </md-button>
     </div>
 
