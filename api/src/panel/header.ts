@@ -47,7 +47,11 @@ export default class Header extends Element {
             .css('display', '')
             .text(`{{ '${title}' | translate }}`);
 
-        this.panel.api.$compile(titleElem[0]);
+        try {
+            this.panel.api.$compile(titleElem[0]).$digest();
+        } catch {
+            this.panel.api.$compile(titleElem[0]);
+        }
     }
 
     /**
@@ -59,7 +63,12 @@ export default class Header extends Element {
             .css('display', '')
             .text(`{{ '${subtitle}' | translate }}`);
 
-        this.panel.api.$compile(subtitleElem[0]);
+        try {
+            this.panel.api.$compile(subtitleElem[0]).$digest();
+        } catch {
+            this.panel.api.$compile(subtitleElem[0]);
+        }
+
     }
 
     /**
