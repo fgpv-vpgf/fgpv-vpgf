@@ -398,7 +398,7 @@ function layerRegistryFactory(
         layerRecord.addStateListener(_onLayerRecordInitialLoad);
         layerRecord.addAttribListener(_onLayerAttribDownload);
 
-        if(layerRecord.addFilterListener !== undefined){
+        if (layerRecord.addFilterListener !== undefined) {
             // not possible to addFilterListener for tile records, wms records and image records
             // tile records, wms records and image records don't support datatables so they don't need this listener
             layerRecord.addFilterListener(_onLayerFilterChange);
