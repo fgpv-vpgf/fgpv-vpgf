@@ -1012,7 +1012,7 @@ function LegendBlockFactory(
             return this.proxyWrapper.queryUrl;
         }
 
-        setLoadingPanel(loadingPanel){
+        setLoadingPanel(loadingPanel) {
             this.loadingPanel = loadingPanel;
         }
 
@@ -1041,15 +1041,18 @@ function LegendBlockFactory(
             let updateValue = 0; // randomized update value
 
             this._derivedLoadedFeatureCount = 0;
-            this.loadingPanel.open();
+            if (this.loadingPanel !== undefined) {
+                this.loadingPanel.open();
+            }
 
             const stopInterval = common.$interval(() => {
                 updateCount = chunkLoadTime / updateDelta;
                 maximumUpdateValue = (chunkSize / updateCount) * 2;
                 updateValue = Math.random() * maximumUpdateValue;
                 this._derivedLoadedFeatureCount += updateValue;
-                console.log(this._derivedLoadedFeatureCount);
-                this.loadingPanel.prepareBody();
+                if (this.loadingPanel !== undefined) {
+                    this.loadingPanel.prepareBody();
+                }
 
                 timeSinceChunkLoad += updateDelta;
 
@@ -1077,8 +1080,9 @@ function LegendBlockFactory(
                         this._derivedLoadedFeatureCount,
                         this._proxyWrapper.loadedFeatureCount
                     );
-                    this.loadingPanel.prepareBody();
-
+                    if (this.loadingPanel !== undefined) {
+                        this.loadingPanel.prepareBody();
+                    }
                     // if the estimate overshoots the total feature count, set it to the total feature count
                     // if the estimate is somehow less than 0, set it to 0
                     // this is to prevent the value display to be in the negatives or higher than the total amount required to load
@@ -1087,10 +1091,14 @@ function LegendBlockFactory(
                     } else if (this._derivedLoadedFeatureCount < 0) {
                         this._derivedLoadedFeatureCount = 0;
                     }
-                    this.loadingPanel.prepareBody();
+                    if (this.loadingPanel !== undefined) {
+                        this.loadingPanel.prepareBody();
+                    }
                 }
             }, updateDelta);
-            this.loadingPanel.prepareBody();
+            if (this.loadingPanel !== undefined) {
+                this.loadingPanel.prepareBody();
+            }
             return stopInterval;
         }
 
