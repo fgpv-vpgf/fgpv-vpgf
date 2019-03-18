@@ -379,7 +379,7 @@ function LegendElementFactory(
         }
 
         _debouncedAction = debounceService.registerDebounce(() => {
-            tocService.toggleLayerTablePanel(this.block);
+            configService.getSync.map.legendBlocks.blockConfig._tableToggled.next(this.block);
         }, 300);
     }
 

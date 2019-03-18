@@ -1012,6 +1012,10 @@ function LegendBlockFactory(
             return this.proxyWrapper.queryUrl;
         }
 
+        setLoadingPanel(loadingPanel){
+            this.loadingPanel = loadingPanel;
+        }
+
         get formattedData() {
             if (this._stopFeatureCountInterval === null) {
                 this._stopFeatureCountInterval = this._predictLoadedFeatureCount(this);
@@ -1037,12 +1041,15 @@ function LegendBlockFactory(
             let updateValue = 0; // randomized update value
 
             this._derivedLoadedFeatureCount = 0;
+            this.loadingPanel.open();
 
             const stopInterval = common.$interval(() => {
                 updateCount = chunkLoadTime / updateDelta;
                 maximumUpdateValue = (chunkSize / updateCount) * 2;
                 updateValue = Math.random() * maximumUpdateValue;
                 this._derivedLoadedFeatureCount += updateValue;
+                console.log(this._derivedLoadedFeatureCount);
+                this.loadingPanel.prepareBody();
 
                 timeSinceChunkLoad += updateDelta;
 
@@ -1070,6 +1077,7 @@ function LegendBlockFactory(
                         this._derivedLoadedFeatureCount,
                         this._proxyWrapper.loadedFeatureCount
                     );
+                    this.loadingPanel.prepareBody();
 
                     // if the estimate overshoots the total feature count, set it to the total feature count
                     // if the estimate is somehow less than 0, set it to 0
@@ -1079,9 +1087,10 @@ function LegendBlockFactory(
                     } else if (this._derivedLoadedFeatureCount < 0) {
                         this._derivedLoadedFeatureCount = 0;
                     }
+                    this.loadingPanel.prepareBody();
                 }
             }, updateDelta);
-
+            this.loadingPanel.prepareBody();
             return stopInterval;
         }
 
