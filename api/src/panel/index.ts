@@ -175,7 +175,7 @@ export class Panel {
             });
 
         });
-        this._observer.observe(this.element[0], { attributes : true, attributeFilter : ['style'] });
+        this._observer.observe(this.element[0], { attributes: true, attributeFilter: ['style'] });
 
         this.openingSubject.next(this);
     }
@@ -191,7 +191,7 @@ export class Panel {
      *      - otherPanel: sometimes a panel causes another to be closed, provided for context
      */
     close(opts?: ClosingOpts): void {
-        opts = opts ? opts : {destroy: false, silent: false};
+        opts = opts ? opts : { destroy: false, silent: false };
 
         if (this.isClosed) {
             return;
@@ -221,7 +221,7 @@ export class Panel {
             if (opts.destroy) {
                 this.destroy();
             }
-        } catch(err) {
+        } catch (err) {
             // Do nothing
         }
     }
@@ -242,7 +242,7 @@ export class Panel {
 
     set body(content: any) {
         const element = new Element(this, content);
-        this.body.html( element.elem );
+        this.body.html(element.elem);
     }
 
     get body() {
@@ -268,7 +268,7 @@ export class Panel {
 
     private offScreenRuleCheck(errorMsg?: string) {
         if (!this.isDialog && !this.allowOffscreen && this.element.is(':offscreen')) {
-            this.close({closingCode: CLOSING_CODES.OFFSCREEN});
+            this.close({ closingCode: CLOSING_CODES.OFFSCREEN });
 
             if (errorMsg) {
                 throw new Error(`API(panels): ${errorMsg}`);
@@ -382,7 +382,7 @@ export class Panel {
         // close the dialog when clicking on the backdrop
         this.element.on('click', evt => {
             if ($(evt.target).is(this.element)) {
-                this.close({closingCode: CLOSING_CODES.CLICKEDOUTSIDE});
+                this.close({ closingCode: CLOSING_CODES.CLICKEDOUTSIDE });
             }
         });
     }
@@ -415,7 +415,7 @@ export class Panel {
         this._initRXJS();
         this._initElements(id);
 
-        $( window ).resize(() => {
+        $(window).resize(() => {
             this.offScreenRuleCheck();
             this.api.panels.all.forEach(p => this.underlayRuleCheck(p));
         });
@@ -429,7 +429,7 @@ export class Panel {
 export interface Panel {
     _api: ViewerAPI;
     _style: {
-        [index:string]: string | undefined;
+        [index: string]: string | undefined;
         top?: string;
         bottom?: string;
         left?: string;

@@ -10,7 +10,7 @@ export default class CloseButton extends Button {
 
         // close the panel when a user clicks on the button
         this.elem.on('click', () => {
-            panel.close({closingCode: CLOSING_CODES.CLOSEBTN});
+            panel.close({ closingCode: CLOSING_CODES.CLOSEBTN });
         });
     }
 }

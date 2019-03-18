@@ -421,9 +421,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 };
             });
 
-        // fire table toggle observavle so table extensions can open
-        mApi.ui.configLegend._legendStructure._root._tableToggled.next(legendBlock);
-
         // TODO: determine if any of the other code in here is still needed
         // stateManager
         //     .setActive({
