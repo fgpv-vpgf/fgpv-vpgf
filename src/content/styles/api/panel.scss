@@ -5,17 +5,21 @@
 }
 
 .dialog-container {
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+
+    .rv-content-pane {
+        left: 25%;
+        top: 25%;
+    }
 }
 
 .dialog-container:before {
     content:"";
     background: rgba(0, 0, 0, .8);
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;

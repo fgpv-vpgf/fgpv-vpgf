@@ -42,14 +42,24 @@ export default class Header extends Element {
      * Sets the panel title.
      */
     set title(title: string) {
-        this._header.find('header > h3').first().css('display', '').text(title);
+        const titleElem = this._header.find('header > h3').first();
+        titleElem
+            .css('display', '')
+            .text(title);
+
+        this.panel.api.$compile(titleElem[0]).$digest();
     }
 
     /**
      * Sets the panel subtitle.
      */
     set subtitle(subtitle: string) {
-        this._header.find('header > p').first().css('display', '').text(subtitle);
+        const subtitleElem = this._header.find('header > p').first();
+        subtitleElem
+            .css('display', '')
+            .text(subtitle);
+
+        this.panel.api.$compile(subtitleElem[0]).$digest();
     }
 
     /**

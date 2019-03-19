@@ -17,7 +17,7 @@
         p.element.css({
             top: 80 * (this.panelCount % 7) + 'px',
             left: 580 + this.panelCount * 80 + 'px',
-            bottom: '50%',
+            height: '375px',
             width: '400px'
         });
         p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
@@ -29,11 +29,11 @@
     }
 
     dialog() {
+        this.panelCountDialog = this.panelCountDialog + 1;
         const p = this.api.newPanel(`dialog-pnl-${this.panelCountDialog}`);
         p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
         p.header.title = 'Dialog Title';
         p.open();
-        this.panelCountDialog = this.panelCountDialog + 1;
     }
 
     _makePanel() {
@@ -128,7 +128,7 @@ function () {
       p.element.css({
         top: 80 * (this.panelCount % 7) + 'px',
         left: 580 + this.panelCount * 80 + 'px',
-        bottom: '50%',
+        height: '375px',
         width: '400px'
       });
       p.body = "<h2>Hello!</h2><p>I'm a dialog</p>";
@@ -141,11 +141,11 @@ function () {
   }, {
     key: "dialog",
     value: function dialog() {
+      this.panelCountDialog = this.panelCountDialog + 1;
       var p = this.api.newPanel("dialog-pnl-".concat(this.panelCountDialog));
       p.body = "<h2>Hello!</h2><p>I'm a dialog</p>";
       p.header.title = 'Dialog Title';
       p.open();
-      this.panelCountDialog = this.panelCountDialog + 1;
     }
   }, {
     key: "_makePanel",

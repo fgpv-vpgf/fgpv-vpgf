@@ -48,7 +48,7 @@ export default class Element {
             this._element = element;
         }
 
-        this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 10000).toString());
+        this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 100000000).toString());
         this.elem.addClass("elem");
 
         if (this.panel) {

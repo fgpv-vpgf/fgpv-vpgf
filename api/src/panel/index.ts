@@ -127,24 +127,26 @@ export class Panel {
      * Returns true if the panel is a dialog.
      */
     get isDialog() {
-        // if all properties have default values (0px) we consider this a dialog (non user defined position)
-        return ['top', 'left', 'right', 'bottom']
-            .map(t => this.element.css(t))
-            .every( (val, i, arr) => val === '0px' && val === arr[0] );
+        return this.element.hasClass('dialog-container');
     }
 
     /**
      * Returns true if the panel container takes up the entire viewport.
      */
     get isFullScreen() {
-        return this.element && (<any>this.element).width() === window.innerWidth && (<any>this.element).height() === window.innerHeight;
+        return this.element && (<any>this.element).width() === this.api.innerShell.clientWidth && (<any>this.element).height() === this.api.innerShell.clientHeight;
     }
 
     /**
     * Opens the panel on the map. (For the user to see)
     */
     open(): void {
-        if (this.isDialog) {
+        // if all style properties have empty values we consider this a dialog (no user defined position)
+        const positionWHNotSet = ['top', 'left', 'right', 'bottom', 'width', 'height']
+            .map(t => this.element[0].style[<any>t])
+            .every( (val, i, arr) => val === '' && val === arr[0] );
+
+        if (positionWHNotSet) {
             this.openDialog();
         } else {
             this.openStandard();
@@ -154,10 +156,24 @@ export class Panel {
         this._observer = new MutationObserver(mutations => {
             mutations.forEach(mutationRecord => {
                 if (mutationRecord.type == 'attributes') {
-                    this.api.panels.forEach(p => p.underlayRuleCheck(this));
-                    this.offScreenRuleCheck('Panel position was moved offscreen.');
+                    // scan the attribute change to style to see if anything we care about changed, otherwise ignore. Performance optimization.
+                    const changedCSS = ['top', 'left', 'right', 'bottom', 'width', 'height'].filter(t => {
+                        const styleValue = this.element.css(t);
+                        if (styleValue !== this._style[t]) {
+                            this._style[t] = styleValue;
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+
+                    if (changedCSS.length > 0) {
+                        this.api.panels.forEach(p => p.underlayRuleCheck(this));
+                        this.offScreenRuleCheck('Panel position was moved offscreen.');
+                    }
                 }
             });
+
         });
         this._observer.observe(this.element[0], { attributes : true, attributeFilter : ['style'] });
 
@@ -168,18 +184,25 @@ export class Panel {
      * Closes the panel and removes it from the dom.
      * By default, calling close also destroys it meaning it can no longer be used. To prevent panel destruction set `destroy` to `false`.
      *
-     * @param destroy true to destroy the panel
      * @param opts closing option:
+     *      - destroy: true to destroy the panel
      *      - silent: when true, do not emit a closing event
      *      - closingCode: a code indicating why the panel was closed
      *      - otherPanel: sometimes a panel causes another to be closed, provided for context
      */
-    close(destroy: boolean = true, opts?: {silent?: boolean, closingCode?: CLOSING_CODES, otherPanel?: Panel}): void {
-        opts = opts ? opts : {silent: false};
+    close(opts?: ClosingOpts): void {
+        opts = opts ? opts : {destroy: false, silent: false};
 
         if (this.isClosed) {
             return;
         }
+
+        try {
+            this._observer.disconnect(); // disconnect the mutation observer
+        } catch {
+            // nothing to do, observer is already disconnected.
+        }
+        this.element.css('display', 'none');
 
         if (!opts.silent) {
             const closingResponse: ClosingResponse = {
@@ -195,7 +218,7 @@ export class Panel {
         }
 
         try {
-            if (destroy && !this.keepAlive) {
+            if (opts.destroy && !this.keepAlive) {
                 this.destroy();
             }
         } catch(err) {
@@ -230,8 +253,8 @@ export class Panel {
     }
 
     private offScreenRuleCheck(errorMsg?: string) {
-        if (!this.allowOffscreen && this.element.is(':offscreen')) {
-            this.close(true, {closingCode: CLOSING_CODES.OFFSCREEN});
+        if (!this.isDialog && !this.allowOffscreen && this.element.is(':offscreen')) {
+            this.close({closingCode: CLOSING_CODES.OFFSCREEN});
 
             if (errorMsg) {
                 throw new Error(`API(panels): ${errorMsg}`);
@@ -274,7 +297,7 @@ export class Panel {
      */
     private _initElements(id: string): void {
         this._element = $(document.createElement("div"));
-        this.element.addClass('rv-content-pane layout-padding panel-contents dialog');
+        this.element.addClass('rv-content-pane layout-padding panel-contents');
 
         this._body = $(document.createElement("div"));
         this.body.addClass(['panel-body']);
@@ -314,7 +337,7 @@ export class Panel {
             rect1.top > rect2.bottom);
 
         if (overlap) {
-            this.close(true, {closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
+            this.close({closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
         }
     }
 
@@ -322,20 +345,27 @@ export class Panel {
      * Opens dialog panels.
      */
     private openDialog() {
+        this.element.addClass('dialog');
         this.element.wrap('<div class="dialog-container"></div>');
-        this.element.css({
-            left: '25%',
-            top: '25%'
-        });
+
         this.header.closeButton;
         this.element.css({'display': ''});
         this._element = this.element.parent();
         this.element.prependTo($(this.api.innerShell).parent().parent());
 
+        // position so backdrop only blocks the inner shell portion of the page.
+        const innerShellDimensions = this.api.innerShell.getBoundingClientRect();
+        this.element.css({
+            top: innerShellDimensions.top,
+            left: innerShellDimensions.left,
+            bottom: innerShellDimensions.bottom,
+            right: innerShellDimensions.right
+        });
+
         // close the dialog when clicking on the backdrop
         this.element.on('click', evt => {
             if ($(evt.target).is(this.element)) {
-                this.close(true, {closingCode: CLOSING_CODES.CLICKEDOUTSIDE});
+                this.close({closingCode: CLOSING_CODES.CLICKEDOUTSIDE});
             }
         });
     }
@@ -362,6 +392,7 @@ export class Panel {
         this.allowUnderlay = true;
         this.allowOffscreen = false;
 
+        this._style = {};
         this._initRXJS();
         this._initElements(id);
 
@@ -379,6 +410,15 @@ export class Panel {
 export interface Panel {
     _api: ViewerAPI;
     _keepAlive: boolean;
+    _style: {
+        [index:string]: string | undefined;
+        top?: string;
+        bottom?: string;
+        left?: string;
+        right?: string;
+        width?: string;
+        height?: string;
+    };
 
     //HTML parent Components
     _element: JQuery<HTMLElement>;
@@ -416,4 +456,11 @@ export interface ClosingResponse {
     code: CLOSING_CODES;
     panel: Panel;
     otherPanel?: Panel;
+}
+
+interface ClosingOpts {
+    destroy?: boolean,
+    silent?: boolean,
+    closingCode?: CLOSING_CODES,
+    otherPanel?: Panel
 }

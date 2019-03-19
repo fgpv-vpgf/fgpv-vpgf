@@ -137,7 +137,7 @@ export default class Loader {
             .concat(Object.values(this.features))
             .forEach(p => {
                 if (p.translations) {
-                    translationService(p.translations);
+                    translationService(p.translations, p._name);
                 }
             });
     }
