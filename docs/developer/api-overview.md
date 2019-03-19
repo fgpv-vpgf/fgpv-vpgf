@@ -205,7 +205,7 @@ myMap.esriMap.fadeOnZoom = false;
 
 ### Accessing the Layer Object
 
-To access the underlying [ESRI layer object](https://developers.arcgis.com/javascript/3/jsapi/layer-amd.html) for a given map, use the `esriLayer` property on the API Layer object.
+To access the underlying [ESRI layer object](https://developers.arcgis.com/javascript/3/jsapi/layer-amd.html) for a given layer, use the `esriLayer` property on the API Layer object.
 
 Example: turn off [mouse events](https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#disablemouseevents) of a Feature Layer.
 

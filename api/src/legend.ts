@@ -592,7 +592,7 @@ export class LegendGroup extends BaseItem {
      * Sets the legend groups viewer map instance and legend block instance.
      * @param mapInstance The mapInstance that this LegendGroup is for
      * @param itemBlock The LegendBlock that this LegendGroup represents
-    */
+     */
     constructor(mapInstance: any, legendBlock: any) {
         super(mapInstance);
 
