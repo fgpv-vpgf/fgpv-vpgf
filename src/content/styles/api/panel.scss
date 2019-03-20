@@ -3,6 +3,40 @@
     max-height: 100%;
     vertical-align: middle;
 }
+
+.dialog-container {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .rv-content-pane {
+        left: 25%;
+        top: 25%;
+    }
+}
+
+.dialog-container:before {
+    content:"";
+    background: rgba(0, 0, 0, .8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.dialog {
+    background: white;
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    z-index: 1000;
+}
+
 .panel-contents {
     background-color: #ffffff;
     box-shadow: $whiteframe-shadow-1dp;
@@ -26,7 +60,7 @@
         }
     }
 
-    &.rv-panel-mobile-snap {
+    &.mobile-fullscreen {
         @include include-size(rv-sm) {
             width: 100% !important;
             height: 100% !important;
@@ -67,7 +101,6 @@
 }
 .panel-body {
     padding: 5px 18px;
-    border-top: lightgrey solid 1px;
     height: calc(100% - 46px); // 100% minus the headers
 
     &.ag-theme-material {

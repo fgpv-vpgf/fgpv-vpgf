@@ -2,7 +2,7 @@
 nav: dev
 ---
 
-Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible. 
+Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible.
 
 ## The basics
 
@@ -84,7 +84,7 @@ Our plugin will now load and work when the viewer is opened in a browser!
 
 ### Legacy API
 
-You have access to the legacy API from within a plugin as soon as the `init` method is called. You can access the legacy api in a plugin with `this._RV`. Be sure to read the [legacy api docs](/developer/legacy_api) for more information, limitations, and best practices. 
+You have access to the legacy API from within a plugin as soon as the `init` method is called. You can access the legacy api in a plugin with `this._RV`. Be sure to read the [legacy api docs](/developer/legacy_api) for more information, limitations, and best practices.
 
 ### Configuration
 
@@ -136,7 +136,7 @@ Plugins usually add features to the RAMP viewer. They can however also **replace
 1. additional API methods and/or properies available through the ramp api
 2. optional or required special properties and methods which are invoked by ramp when certain conditions are met
 
-A list of replaceable features and any special requirements can be found further on in this guide. 
+A list of replaceable features and any special requirements can be found further on in this guide.
 
 Here we have a plugin which replaces how ramp handles projection definition lookups:
 
@@ -194,13 +194,13 @@ Note that the language qualifiers `en-CA` and `fr-CA` should match the `rv-langs
 Now in the plugin HTML we can replace all text with our translations:
 
 ```html
-<h2>{{ 't.search.placeholder' | translate }}</h2>
+<h2>{{ 'plugins.MyPlugin.search.placeholder' | translate }}</h2>
 <div>
-    {{ 't.menu.split' | translate }}
+    {{ 'plugins.MyPlugin.menu.split' | translate }}
 </div>
 ```
 
-The double curly braces are part of AngularJS, though you don't need to know it to use translations. Just replace the parts after `t.` to match what's inside your translation object.
+The double curly braces are part of AngularJS, though you don't need to know it to use translations. Just replace the parts after `plugins.MyPlugin.` to match what's inside your translation object.
 
 ### angular
 

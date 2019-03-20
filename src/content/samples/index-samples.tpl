@@ -78,6 +78,7 @@
         .tool {
             width: 100%;
         }
+
     </style>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
@@ -87,6 +88,9 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
+
+    <script src="plugins/panels.js"></script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -198,6 +202,7 @@
 
     <div class="myMap" id="sample-map" is="rv-map" rz-gtm
         rv-config="config/config-sample-01.json"
+        rv-plugins="PanelTester"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">

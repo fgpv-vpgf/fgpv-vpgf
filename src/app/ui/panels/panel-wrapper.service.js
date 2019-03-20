@@ -1,8 +1,8 @@
 /**
- * Version 3 of RAMP introduced a new panel framework available through the api. It allows the programmatic creation of panels, open / close functionality, 
- * content updates, and subscribing to panel events. Some legacy panels will take time to port to the new system. This wrapper service aims to provide a unified 
- * way to interact with both new and legacy panels through the api. 
- * 
+ * Version 3 of RAMP introduced a new panel framework available through the api. It allows the programmatic creation of panels, open / close functionality,
+ * content updates, and subscribing to panel events. Some legacy panels will take time to port to the new system. This wrapper service aims to provide a unified
+ * way to interact with both new and legacy panels through the api.
+ *
  * Legacy panels supported for v3:
  * details      - Identify / details results (part of main panel)
  * settings     - Layer setting (part of side panel)
@@ -11,7 +11,7 @@
  * geo          - Geosearch results (part of main panel)
  * file         - Import file based layer (part of main panel)
  * service      - Import service based layer (part of main panel)
- * 
+ *
  * We accomplish this by creating a new api panel then overload key methods like open/close
  */
 
@@ -64,14 +64,14 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
             }
 
             const panel = self[panelToWrapper[panelName]];
-            panel[open ? 'openingSubject' : 'closingSubject'].next();
+            panel[open ? 'openingSubject' : 'closingSubject'].next(panel);
         }
     });
 
     return {};
 
     function detailsPanelWrapper() {
-        self.detailPanel = self.mApi.createPanel('details');
+        self.detailPanel = self.mApi.newPanel('details');
 
         wrapper(self.detailPanel, 'close', () => {
             detailService.closeDetails();
@@ -83,7 +83,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function settingsPanelWrapper() {
-        self.settingsPanel = self.mApi.createPanel('settings');
+        self.settingsPanel = self.mApi.newPanel('settings');
 
         wrapper(self.settingsPanel, 'close', () => {
             stateManager.setActive({ sideSettings: false });
@@ -95,7 +95,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function metaPanelWrapper() {
-        self.metaPanel = self.mApi.createPanel('meta');
+        self.metaPanel = self.mApi.newPanel('meta');
 
         wrapper(self.metaPanel, 'close', () => {
             stateManager.setActive({ sideMetadata: false });
@@ -107,7 +107,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function tocPanelWrapper() {
-        self.tocPanel = self.mApi.createPanel('toc');
+        self.tocPanel = self.mApi.newPanel('toc');
 
         wrapper(self.tocPanel, 'close', () => {
             stateManager.setActive({ mainToc: false });
@@ -119,7 +119,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function geosearchPanelWrapper() {
-        self.geoPanel = self.mApi.createPanel('geo');
+        self.geoPanel = self.mApi.newPanel('geo');
 
         wrapper(self.geoPanel, 'close', () => {
             stateManager.setActive({ mainGeosearch: false });
@@ -131,7 +131,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function fileLoaderPanelWrapper() {
-        self.filePanel = self.mApi.createPanel('file');
+        self.filePanel = self.mApi.newPanel('file');
 
         wrapper(self.filePanel, 'close', () => {
             stateManager.setActive({ main: true, mainLoaderFile: false });
@@ -143,7 +143,7 @@ function panelWrapperService(events, detailService, $rootScope, stateManager) {
     }
 
     function serviceLoaderPanelWrapper() {
-        self.servicePanel = self.mApi.createPanel('service');
+        self.servicePanel = self.mApi.newPanel('service');
 
         wrapper(self.servicePanel, 'close', () => {
             stateManager.setActive({ main: true, mainLoaderService: false });

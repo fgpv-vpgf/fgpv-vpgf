@@ -123,7 +123,11 @@ export default class Loader {
             .forEach(p => {
                 p._RV = legacy_api;
                 if (p.init) {
-                    p.init(api);
+                    try {
+                        p.init(api);
+                    } catch(err) {
+                        console.warn(`Plugin failed to initialize.`, err);
+                    }
                 }
             });
     }
@@ -133,7 +137,7 @@ export default class Loader {
             .concat(Object.values(this.features))
             .forEach(p => {
                 if (p.translations) {
-                    translationService(p.translations);
+                    translationService(p.translations, p._name);
                 }
             });
     }
