@@ -45,17 +45,10 @@ export class PanelManager {
         this.panel.panelControls.after(mobileMenuTemplate);
     }
 
-    // recursively find and set the legend block for the layer
-    setLegendBlock(legendEntriesList: any) {
-        legendEntriesList.forEach(entry => {
-            if (entry.proxyWrapper !== undefined && this.currentTableLayer._layerProxy === entry.proxyWrapper.proxy) {
-                this.legendBlock = entry;
-            }
-            else if (entry.children || entry.entries) {
-                this.setLegendBlock(entry.children || entry.entries);
-            }
-        });
+    setLegendBlock(block) {
+        this.legendBlock = block;
     }
+
 
     open(tableOptions: any, layer: any) {
         if (this.currentTableLayer === layer) {
@@ -77,7 +70,6 @@ export class PanelManager {
 
             // set legend block / layer that the panel corresponds to
             this.currentTableLayer = layer;
-            this.setLegendBlock(this.currentTableLayer._mapInstance.legendBlocks.entries);
             this.panelRowsManager = new PanelRowsManager(this);
             // set header / controls for panel
             let controls = this.header;

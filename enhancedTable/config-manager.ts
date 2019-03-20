@@ -13,15 +13,7 @@ export class ConfigManager {
         this.attributeHeaders = baseLayer.attributeHeaders;
         this.attributeArray = baseLayer._attributeArray;
         this.columnConfigs = {};
-
-        if (baseLayer.layerIndex) {
-            // if baseLayer is a dynamic layer, table config corresponds to the one on layerEntry not baseLayer
-            let layer = baseLayer._mapInstance.layers.find(layer => layer.id === baseLayer.id);
-            let layerEntry = layer.layerEntries.find(entry => entry.index === baseLayer.layerIndex);
-            this.tableConfig = (layerEntry.table !== undefined) ? layerEntry.table : baseLayer.table;
-        } else {
-            this.tableConfig = baseLayer.table;
-        }
+        this.tableConfig = baseLayer.table;
         this.searchEnabled = this.tableConfig.search && this.tableConfig.search.enabled;
         this.tableInit();
     }

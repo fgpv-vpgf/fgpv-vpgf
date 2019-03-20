@@ -40,6 +40,7 @@ export default class TableBuilder {
                 }
                 if (layer) {
                     this.legendBlock = legendBlock;
+                    this.panel.setLegendBlock(legendBlock);
                     this.openTable(layer);
                 }
             }
