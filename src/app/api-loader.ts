@@ -59,6 +59,7 @@ RZInstance.mapAdded.subscribe(mapInstance => {
     const elem = <any>jQuery(el);
     const position = elem.position();
     const rvShell = <any>jQuery('rv-shell').first();
+
     return (
         (position.left + <any>elem.width()) > (rvShell.width()) ||
         (position.left + <any>elem.width()) < 0 ||
