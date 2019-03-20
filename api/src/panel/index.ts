@@ -104,14 +104,6 @@ export class Panel {
         return this._api;
     }
 
-    set keepAlive(alive: boolean) {
-        this._keepAlive = alive;
-    }
-
-    get keepAlive() {
-        return this._keepAlive;
-    }
-
     /**
      * Returns true if the panel has a close button in its header. Dialog panels are always closeable.
      */
@@ -218,7 +210,7 @@ export class Panel {
         }
 
         try {
-            if (opts.destroy && !this.keepAlive) {
+            if (opts.destroy) {
                 this.destroy();
             }
         } catch(err) {
@@ -409,7 +401,6 @@ export class Panel {
 
 export interface Panel {
     _api: ViewerAPI;
-    _keepAlive: boolean;
     _style: {
         [index:string]: string | undefined;
         top?: string;

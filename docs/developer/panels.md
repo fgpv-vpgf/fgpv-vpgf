@@ -60,7 +60,7 @@ myPanel.element.css({
 myPanel.open();
 ```
 
-Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of `top`, `bottom`, `left`, or `right` css properties turns a panel from a dialog type to a persistent or closeable type.
+Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of `top`, `bottom`, `left`, `right`, `width`, or `height` css properties turns a panel from a dialog type to a persistent or closeable type.
 
 ### Closeable
 
@@ -112,7 +112,7 @@ Instead of `append` you can also `prepend`.
 
 ### Header title
 
-To display a title in the panel header simply do: `myPanel.header.title = 'Some Title';`
+To display a title in the panel header simply do: `myPanel.header.title = 'Some Title';`. You can also use translated text with `myPanel.header.title = '{{ 'plugins.myPluginName.panelTitle' | translate }}';`
 
 ### Keep panel open on offscreen
 
@@ -160,7 +160,7 @@ const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
 
 ### Closing & destroying
 
-You can close a panel with `myPanel.close();`. Once a panel is closed it is destroyed - meaning it cannot be opened again. This is done to maximize the performance for RAMP when panels are no longer in use. You can disable this by passing `false` as the first parameter to the close method: `myPanel.close(false);`. You can also disable this by setting `myPanel.keepAlive = true`.
+You can close a panel with `myPanel.close();`. If you don't plan on re-opening the panel, you should also call `myPanel.destroy();` which removes the panel from the dom, the panel list, and helps keep the ramp viewer performant. Once a panel is destroyed it cannot be opened again.
 
 ## Watch
 
