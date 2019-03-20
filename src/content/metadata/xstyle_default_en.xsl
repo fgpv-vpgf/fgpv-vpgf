@@ -66,7 +66,7 @@
           <xsl:value-of select="//gmd:pointOfContact//gmd:positionName/gco:CharacterString/text()" />
         </p>
         <p>
-          <a href="mailto:{//gmd:pointOfContact//gmd:electronicMailAddress}?Subject={//gmd:identificationInfo//gmd:title/gco:CharacterString/text()}">
+          <a href="mailto:{//gmd:pointOfContact//gmd:electronicMailAddress/gco:CharacterString/text()}?Subject={//gmd:identificationInfo//gmd:title/gco:CharacterString/text()}">
             <xsl:value-of select="//gmd:pointOfContact//gmd:electronicMailAddress" />
           </a>
         </p>
