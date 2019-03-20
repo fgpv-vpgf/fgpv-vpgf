@@ -79,7 +79,7 @@ class AreasOfInterest {
         let closeBtn = new this.panel.button('X');
         closeBtn.element.css('float', 'right');
         this.panel.setControls([
-            `<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 't.title' | translate }}</h2>`,
+            `<h2 style="font-weight: normal;display:inline;vertical-align:middle">{{ 'plugins.areasOfInterest.title' | translate }}</h2>`,
             closeBtn
         ]);
         this.panel.setBody(bodyElement);

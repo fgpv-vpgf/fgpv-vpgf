@@ -4207,18 +4207,25 @@ md-datepicker > div {
   margin: 0 !important;
   width: 18px !important;
   height: 18px !important;
-  min-height: 0; }
+  min-height: 0;
+  border-radius: 0 !important; }
 
-.record-count {
-  padding: 0px 12px 0px 18px;
+.reorder-button .md-ripple {
+  border-radius: 0 !important; }
+
+.rv-record-count {
   margin: 0;
   overflow: hidden; }
 
-.table-title {
+.title-container {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 75%; }
+
+.table-title {
+  margin: 0;
+  max-width: 100%; }
 
 .table-control {
   display: inherit; }
@@ -4240,6 +4247,11 @@ md-datepicker > div {
 .rv-small .mobile-table-control .table-control {
   display: flex !important; }
 
+.md-icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important; }
+
 .md-open-menu-container {
   max-height: 90%; }
 
@@ -4248,7 +4260,10 @@ md-datepicker > div {
   min-width: 0px; }
 
 .rv-table-search md-icon {
-  top: 5px !important; }
+  margin: auto 8px auto 8px; }
+
+.rv-table-search .rv-button-divider {
+  margin: auto 10px auto 10px; }
 
 /*!
  * Angular Material Design
@@ -22083,6 +22098,10 @@ Obviously you need some kind of rules and criteria:
       padding: 0 6px 0 16px; }
       [is=rv-map] .rv-content-pane .rv-header .rv-header-content, .fgpv .rv-content-pane .rv-header .rv-header-content {
         overflow: hidden; }
+        [is=rv-map] .rv-content-pane .rv-header .rv-header-content header, .fgpv .rv-content-pane .rv-header .rv-header-content header {
+          line-height: 10px; }
+        [is=rv-map] .rv-content-pane .rv-header .rv-header-content p.tagline, .fgpv .rv-content-pane .rv-header .rv-header-content p.tagline {
+          margin: 0; }
       .rv-small[is=rv-map] .rv-content-pane .rv-header, .rv-small.fgpv .rv-content-pane .rv-header,
       .rv-medium[is=rv-map] .rv-content-pane .rv-header, .rv-medium.fgpv .rv-content-pane .rv-header {
         padding-left: 50px; }
@@ -24911,6 +24930,31 @@ Obviously you need some kind of rules and criteria:
     max-width: 100%;
     max-height: 100%;
     vertical-align: middle; }
+  [is=rv-map] .dialog-container, .fgpv .dialog-container {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
+    [is=rv-map] .dialog-container .rv-content-pane, .fgpv .dialog-container .rv-content-pane {
+      left: 25%;
+      top: 25%; }
+  [is=rv-map] .dialog-container:before, .fgpv .dialog-container:before {
+    content: "";
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0; }
+  [is=rv-map] .dialog, .fgpv .dialog {
+    background: white;
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    z-index: 1000; }
   [is=rv-map] .panel-contents, .fgpv .panel-contents {
     background-color: #ffffff;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
@@ -24929,7 +24973,7 @@ Obviously you need some kind of rules and criteria:
       [is=rv-map] .panel-contents .rv-button-24 [md-icon], .fgpv .panel-contents .rv-button-24 [md-icon] {
         max-height: 24px;
         max-width: 24px; }
-    .rv-small[is=rv-map] .panel-contents.rv-panel-mobile-snap, .rv-small.fgpv .panel-contents.rv-panel-mobile-snap {
+    .rv-small[is=rv-map] .panel-contents.mobile-fullscreen, .rv-small.fgpv .panel-contents.mobile-fullscreen {
       width: 100% !important;
       height: 100% !important;
       margin: 0px;
@@ -24956,7 +25000,6 @@ Obviously you need some kind of rules and criteria:
     border-bottom: lightgrey solid 1px; }
   [is=rv-map] .panel-body, .fgpv .panel-body {
     padding: 5px 18px;
-    border-top: lightgrey solid 1px;
     height: calc(100% - 46px); }
     [is=rv-map] .panel-body.ag-theme-material, .fgpv .panel-body.ag-theme-material {
       border-top: initial;

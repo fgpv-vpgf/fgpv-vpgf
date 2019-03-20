@@ -5,9 +5,9 @@ export const noPic = `
                         <div style="position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100%">
                             <div style="max-height: 50px; max-width: 350px; text-align: center;"></div>
                             <div class="rv-basemap-footer">
-                                <span>{{ 't.areaTitles.{areaIndex}' | translate }}</span>
+                                <span>{{ 'plugins.areasOfInterest.areaTitles.{areaIndex}' | translate }}</span>
                             </div>
-                        
+
                             <button class="rv-body-button rv-button-square md-button" type="button"></button>
                         </div>
                     </li>
@@ -17,9 +17,9 @@ export const hasPic = `
                         <li class="rv-basemap-list-item" style="height: 175px;">
                             <div style="position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100%">
                                 <div style="max-height: 175px; max-width: 350px; text-align: center;"><img alt="" src="{imgSrc}" /></div><div class="rv-basemap-footer">
-                                    <span style="text-overflow:ellipses">{{ 't.areaTitles.{areaIndex}' | translate }}</span>
+                                    <span style="text-overflow:ellipses">{{ 'plugins.areasOfInterest.areaTitles.{areaIndex}' | translate }}</span>
                                 </div>
-                                
+
                                 <button class="rv-body-button rv-button-square md-button" type="button"></button>
                             </div>
                         </li>
