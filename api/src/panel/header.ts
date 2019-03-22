@@ -95,7 +95,7 @@ export default class Header extends Element {
 
     private makeHeader() {
         this._header = $(document.createElement('div'));
-        this._controls = $('<span></span>');
+        this._controls = $('<span class="rv-header-controls"></span>');
         this._header.addClass('rv-header');
         this._header.html(`
           <div class="rv-header-content layout-column" layout="column">

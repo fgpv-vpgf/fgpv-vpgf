@@ -32,6 +32,13 @@
                 }
             }
 
+            .rv-header-controls {
+                display: flex;
+                align-items: center;
+                height: 48px;
+                padding: 0px 12px 0px 16px;
+            }
+
             @include include-size(rv-lt-lg) {
                 padding-left: 50px;
 
