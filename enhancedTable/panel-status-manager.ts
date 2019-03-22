@@ -44,9 +44,9 @@ export class PanelStatusManager {
             this.panelManager.legendBlock.filter = false; // clear filter flag if all rows shown
         }
 
-        if (this.panelManager.panel.panelControls.find('.filterRecords')[0]) {
-            this.panelManager.panel.panelControls.find('.filterRecords')[0].innerHTML = text;
-        }
+        // if (this.panelManager.panel.panelControls.find('.filterRecords')[0]) {
+        //     this.panelManager.panel.panelControls.find('.filterRecords')[0].innerHTML = text;
+        // }
         this.getScrollRange();
         this.panelManager.recordCountScope.filterRecords = text;
         return text;
@@ -79,9 +79,9 @@ export class PanelStatusManager {
         else {
             rowRange = this.panelManager.maximized ? '1 - 15' : '1 - 5';
         }
-        if (this.panelManager.panel.panelControls.find('.scrollRecords')[0]) {
-            this.panelManager.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
-        }
+        // if (this.panelManager.panel.panelControls.find('.scrollRecords')[0]) {
+        //     this.panelManager.panel.panelControls.find('.scrollRecords')[0].innerHTML = rowRange;
+        // }
         this.panelManager.recordCountScope.scrollRecords = rowRange;
         return rowRange;
     }

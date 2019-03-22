@@ -76,7 +76,6 @@ export default class TableBuilder {
     }
 
     createTable(attrBundle: AttrBundle) {
-        const panel = this.panel.panel;
         let cols: Array<any> = [];
         attrBundle.layer._layerProxy.formattedAttributes.then(a => {
             Object.keys(a.rows[0]).forEach(columnName => {
@@ -158,7 +157,7 @@ export default class TableBuilder {
                     }
 
                     // symbols and interactive columns are set up for every table
-                    setUpSymbolsAndInteractive(columnName, colDef, cols, panel);
+                    setUpSymbolsAndInteractive(columnName, colDef, cols, this.mapApi);
                 }
             });
             (<any>Object).assign(this.tableOptions, {
@@ -185,7 +184,7 @@ export default class TableBuilder {
 }
 
 /* Helper function to set up symbols and interactive columns*/
-function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, panel: any) {
+function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, mapApi: any) {
     if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
         // symbols and interactive columns don't have options for sort, filter and have default widths
         colDef.suppressSorting = true;
@@ -209,25 +208,27 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             let zoomDef = (<any>Object).assign({}, colDef);
             zoomDef.field = 'zoom';
             zoomDef.cellRenderer = function (params) {
-                var eSpan = new panel.container(ZOOM_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
+                var eSpan = $(ZOOM_TEMPLATE(params.data.OBJECTID));
+                mapApi.$compile(eSpan);
                 params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter') {
                         eSpan.click();
                     }
                 });
                 params.eGridCell.style.padding = 0;
-                return eSpan;
+                return eSpan[0];
             };
             cols.splice(0, 0, zoomDef);
             colDef.cellRenderer = function (params) {
-                var eSpan = new panel.container(DETAILS_TEMPLATE(params.data.OBJECTID)).elementAttr[0];
+                var eSpan = $(DETAILS_TEMPLATE(params.data.OBJECTID));
+                mapApi.$compile(eSpan);
                 params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter') {
                         eSpan.click();
                     }
                 });
                 params.eGridCell.style.padding = 0;
-                return eSpan;
+                return eSpan[0];
             };
         }
         cols.splice(0, 0, colDef);
@@ -252,6 +253,7 @@ interface AttrBundle {
 export default interface TableBuilder {
     feature: string;
     id: string;
+    _name: string;
     mapApi: any;
     tableOptions: GridOptions;
     tableApi: GridApi;
@@ -312,6 +314,7 @@ TableBuilder.prototype.tableOptions = {
 };
 
 TableBuilder.prototype.id = 'fancyTable';
+TableBuilder.prototype._name = 'enhancedTable';
 
 TableBuilder.prototype.translations = {
     'en-CA': {

@@ -18,17 +18,24 @@ export class PanelManager {
     constructor(mapApi: any) {
         this.notVisible = {}
         this.mapApi = mapApi;
-        this.tableContent = $(`<div rv-focus-exempt></div>`);
-        this.panel = this.mapApi.createPanel('enhancedTable');
-        this.setSize();
-        this.panel.panelBody.addClass('ag-theme-material');
-        this.panel.setBody(this.tableContent);
-        this.panel.element[0].setAttribute('type', 'table');
-        this.panel.element[0].classList.add('default');
 
-        // Enhance panel's close function so panel close button destroys table properly
-        let close = this.panel.close.bind(this.panel);
-        this.panel.close = () => {
+        this.panel = this.mapApi.newPanel('enhancedTable');
+        this.panel.body = `<div rv-focus-exempt></div>`;
+        this.panel.element.addClass('ag-theme-material mobile-fullscreen');
+        this.panel.element.css({
+            top: '0px',
+            left: '410px'
+        });
+        this.panel.allowUnderlay = false;
+
+        const close = this.panel.header.closeButton;
+        close.removeClass('primary');
+        close.addClass('black md-ink-ripple');
+
+        this.setSize();
+
+        // destory the table properly whenver the panel is closed
+        this.panel.closing.subscribe(response => {
             removeAccessibilityListeners(this.panel.element[0], this.gridBody);
             this.panelRowsManager.destroyObservers();
             if (this.toastInterval !== undefined) {
@@ -36,13 +43,7 @@ export class PanelManager {
             }
             this.currentTableLayer = undefined;
             this.mapApi.mapI.externalPanel(undefined);
-            close();
-        }
-
-        // add mobile menu to the dom
-        let mobileMenuTemplate = $(MOBILE_MENU_TEMPLATE)[0];
-        this.mobileMenuScope = this.mapApi.$compile(mobileMenuTemplate);
-        this.panel.panelControls.after(mobileMenuTemplate);
+        });
     }
 
     setLegendBlock(block) {
@@ -62,6 +63,7 @@ export class PanelManager {
 
             // set filter change flag to true
             this.tableOptions.onFilterChanged = (event) => {
+                this.sizeColumnsToFitIfNeeded();
                 this.filtersChanged = true;
             }
 
@@ -71,46 +73,32 @@ export class PanelManager {
             // set legend block / layer that the panel corresponds to
             this.currentTableLayer = layer;
             this.panelRowsManager = new PanelRowsManager(this);
+
+            // get mobile menu template and scope
+            let mobileMenuTemplate = $(MOBILE_MENU_TEMPLATE)[0];
+            this.mobileMenuScope = this.mapApi.$compile(mobileMenuTemplate);
+
             // set header / controls for panel
-            let controls = this.header;
-            controls = [
-                `<div class="title-container"><h3 class="md-title table-title">Features: ${this.configManager.title}</h3></div>`,
-                '<span style="flex: 1;"></span>',
-                ...controls
-            ];
-            this.panel.setControls(controls);
+            this.makeHeader();
+            this.panel.header.title = `Features: ${this.configManager.title}`;
 
             // Add the scroll record count
             let recordCountTemplate = $(RECORD_COUNT_TEMPLATE);
             this.recordCountScope = this.mapApi.$compile(recordCountTemplate);
-            $('.title-container')[0].append(recordCountTemplate[0]);
-
-            // set css for panel
-            this.panel.panelContents.css({
-                margin: 0,
-                padding: '0 8px 8px'
-            });
-            this.panel.panelBody.css({
-                padding: 0,
-                height: 'calc(100% - 47px)'
-            });
-            this.panel.panelControls.css({
-                display: 'flex',
-                'align-items': 'center',
-                height: '48px',
-                padding: '0px 12px 0px 16px',
-                'border-bottom': '1px solid lightgray',
-                margin: '0 -8px 1px -8px'
-            });
-            this.tableContent.empty();
+            this.panel.element.find('.rv-record-count').remove(); // remove old count if there
+            this.panel.element.find('header').append(recordCountTemplate[0]);
 
             //create details and zoom buttons, open the panel and display proper filter values
             new DetailsAndZoomButtons(this);
-            new Grid(this.tableContent[0], tableOptions);
+            this.panel.body.empty();
+            new Grid(this.panel.body[0], tableOptions);
             this.configManager.setDefaultGlobalSearchFilter();
             this.panel.open();
             this.panelStatusManager.getScrollRange();
             this.panelRowsManager.initObservers();
+
+            // add movile menu to grid body above grid
+            this.panel.body.prepend(mobileMenuTemplate);
 
             this.tableOptions.onGridReady = () => {
                 this.autoSizeToMaxWidth();
@@ -180,10 +168,10 @@ export class PanelManager {
 
     setSize() {
         if (this.maximized) {
-            this.panel.element[0].classList.add('full');
+            this.panel.element.css({bottom: '0'});
             this.mapApi.mapI.externalPanel($('#enhancedTable'));
         } else {
-            this.panel.element[0].classList.remove('full');
+            this.panel.element.css({bottom: '50%'});
             this.mapApi.mapI.externalPanel(undefined);
         }
     }
@@ -232,33 +220,26 @@ export class PanelManager {
         return this._id;
     }
 
-    get header(): any[] {
+    makeHeader() {
         this.angularHeader();
 
-        const menuBtn = new this.panel.container(MENU_TEMPLATE);
+        const header = this.panel.header;
 
-        const closeBtn = new this.panel.button('X');
-
-        const searchBar = new this.panel.container(SEARCH_TEMPLATE);
-
-        const clearFiltersBtn = new this.panel.container(CLEAR_FILTERS_TEMPLATE);
-
-        const applyToMapBtn = new this.panel.container(APPLY_TO_MAP_TEMPLATE);
-
-        const columnVisibilityMenuBtn = new this.panel.container(COLUMN_VISIBILITY_MENU_TEMPLATE);
-
-        const mobileMenuBtn = new this.panel.container(MOBILE_MENU_BTN_TEMPLATE);
-
-        this.mapApi.$compile($(`<div ng-controller="ToastCtrl as ctrl"></div>`));
-
+        // remove old controls
+        header.controls.find('.table-control').remove();
+        header.controls.find('.mobile-table-control').not('.mobile-table-menu').remove();
+        // add table controls
+        header.prepend(this.compileTemplate(MOBILE_MENU_BTN_TEMPLATE));
+        header.prepend(this.compileTemplate(MENU_TEMPLATE));
+        header.prepend(this.compileTemplate(COLUMN_VISIBILITY_MENU_TEMPLATE));
+        header.prepend(this.compileTemplate(APPLY_TO_MAP_TEMPLATE));
+        header.prepend(this.compileTemplate(CLEAR_FILTERS_TEMPLATE));
         if (this.configManager.globalSearchEnabled) {
             this.mobileMenuScope.searchEnabled = true;
-            return [mobileMenuBtn, searchBar, columnVisibilityMenuBtn, clearFiltersBtn, applyToMapBtn, menuBtn, closeBtn]
+            header.prepend(this.compileTemplate(SEARCH_TEMPLATE));
         }
-        else {
-            this.mobileMenuScope.searchEnabled = false;
-            return [mobileMenuBtn, columnVisibilityMenuBtn, clearFiltersBtn, applyToMapBtn, menuBtn, closeBtn];
-        }
+
+        this.mapApi.$compile($(`<div ng-controller="ToastCtrl as ctrl"></div>`));
     }
 
     angularHeader() {
@@ -534,12 +515,17 @@ export class PanelManager {
             };
         });
     }
+
+    compileTemplate(template): JQuery<HTMLElement> {
+        let temp = $(template);
+        this.mapApi.$compile(temp)
+        return temp;
+    }
 }
 
 export interface PanelManager {
     panel: any;
     mapApi: any;
-    tableContent: JQuery<HTMLElement>;
     _id: string;
     currentTableLayer: any;
     maximized: boolean;

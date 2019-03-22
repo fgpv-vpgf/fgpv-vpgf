@@ -16,6 +16,7 @@ interface AttrBundle {
 export default interface TableBuilder {
     feature: string;
     id: string;
+    _name: string;
     mapApi: any;
     tableOptions: GridOptions;
     tableApi: GridApi;

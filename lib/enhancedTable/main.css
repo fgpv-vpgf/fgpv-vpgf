@@ -3704,6 +3704,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     margin-right: -2px;
     padding-right: 1px; }
 
+.panel-body {
+  padding: 0 8px 8px !important; }
+
 md-datepicker > div {
   border-bottom: none !important; }
 
@@ -3756,6 +3759,11 @@ md-datepicker > div {
 
 .rv-small .mobile-table-control .table-control {
   display: flex !important; }
+
+.mobile-table-menu {
+  display: flex;
+  align-items: center;
+  padding: 0px 12px 0px 16px; }
 
 .md-icon-button {
   width: 40px !important;

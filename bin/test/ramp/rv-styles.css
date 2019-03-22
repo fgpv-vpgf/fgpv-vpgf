@@ -22102,6 +22102,11 @@ Obviously you need some kind of rules and criteria:
           line-height: 10px; }
         [is=rv-map] .rv-content-pane .rv-header .rv-header-content p.tagline, .fgpv .rv-content-pane .rv-header .rv-header-content p.tagline {
           margin: 0; }
+      [is=rv-map] .rv-content-pane .rv-header .rv-header-controls, .fgpv .rv-content-pane .rv-header .rv-header-controls {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        padding: 0px 12px 0px 16px; }
       .rv-small[is=rv-map] .rv-content-pane .rv-header, .rv-small.fgpv .rv-content-pane .rv-header,
       .rv-medium[is=rv-map] .rv-content-pane .rv-header, .rv-medium.fgpv .rv-content-pane .rv-header {
         padding-left: 50px; }

@@ -10,6 +10,10 @@ $accent-color: #00bcd4;
 // Import the ag-grid material theme
 @import 'ag-grid-community/src/styles/ag-theme-material';
 
+.panel-body {
+    padding: 0 8px 8px !important;
+}
+
 md-datepicker > div {
     // override this so ag-grid wont add a border to the div
     border-bottom: none !important;
@@ -81,6 +85,12 @@ md-datepicker > div {
     .mobile-table-control .table-control {
         display: flex !important;
     }
+}
+
+.mobile-table-menu {
+    display: flex;
+    align-items: center;
+    padding: 0px 12px 0px 16px;
 }
 
 .md-icon-button {

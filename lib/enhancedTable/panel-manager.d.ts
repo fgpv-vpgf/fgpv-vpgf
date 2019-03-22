@@ -8,7 +8,7 @@ import { PanelStateManager } from './panel-state-manager';
  */
 export declare class PanelManager {
     constructor(mapApi: any);
-    setLegendBlock(legendEntriesList: any): void;
+    setLegendBlock(block: any): void;
     open(tableOptions: any, layer: any): void;
     close(): void;
     onBtnExport(): void;
@@ -27,13 +27,13 @@ export declare class PanelManager {
      */
     sizeColumnsToFitIfNeeded(): void;
     readonly id: string;
-    readonly header: any[];
+    makeHeader(): void;
     angularHeader(): void;
+    compileTemplate(template: any): JQuery<HTMLElement>;
 }
 export interface PanelManager {
     panel: any;
     mapApi: any;
-    tableContent: JQuery<HTMLElement>;
     _id: string;
     currentTableLayer: any;
     maximized: boolean;
