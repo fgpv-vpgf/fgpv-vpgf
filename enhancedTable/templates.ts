@@ -267,3 +267,17 @@ export const TABLE_UPDATE_TEMPLATE =
         <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
         <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
     </md-toast>`;
+
+export const TABLE_LOADING_TEMPLATE = (legendEntry) =>
+    // hhite match parent
+    `<div class="rv-table-splash" style="position:inherit">
+        <div class="rv-splash-count">
+            <span class="rv-splash-count-current">${Math.floor(legendEntry.loadedFeatureCount)}</span>
+                <svg class="rv-splash-count-slash" height="50" width="25">
+                    <line x1="0" y1="50" x2="25" y2="0"></line>
+                </svg>
+            <span class="rv-splash-count-total">${legendEntry.featureCount}</span>
+        </div>
+        <span class="rv-splash-message md-caption">{{ ${Math.floor(legendEntry.loadedFeatureCount)} < ${legendEntry.featureCount} ? 'table.splash.loadingdata' : 'table.splash.buildingtable' | translate }} </span>
+        <md-progress-linear class="rv-progress-top" md-mode="indeterminate" ng-show="true"></md-progress-linear>
+    </div>`;

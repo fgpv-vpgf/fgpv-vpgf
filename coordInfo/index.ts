@@ -178,7 +178,8 @@ class CoordInfo {
         }
 
         if (!this.panel) {
-            this.panel = this.api.newPanel('coord-info');
+            // make sure both header and body have a digest cycle run on them
+            this.panel = this.api.newPanel('coord-info', true, true);
             this.panel.keepAlive = true;
             this.panel.element.css({
                 bottom: '0em',

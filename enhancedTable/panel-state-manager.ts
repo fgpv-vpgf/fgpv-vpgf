@@ -10,11 +10,13 @@ import { PanelManager } from './panel-manager';
  */
 export class PanelStateManager {
 
-    constructor(baseLayer: any) {
+    constructor(baseLayer: any, legendBlock: any) {
         this.baseLayer = baseLayer;
         this.isMaximized = baseLayer.table.maximize || false;
         this.filterByExtent = false;
         this.columnFilters = {};
+        this.open = true;
+        this.storedBlock = legendBlock;
     }
 
     getColumnFilter(colDefField: any): any {
@@ -33,6 +35,18 @@ export class PanelStateManager {
         return this.isMaximized;
     }
 
+    set isOpen(isOpen: boolean) {
+        this.open = isOpen;
+    }
+
+    get isOpen(): boolean {
+        return this.open;
+    }
+
+    get legendBlock(): any {
+        return this.storedBlock;
+    }
+
 }
 
 export interface PanelStateManager {
@@ -41,4 +55,6 @@ export interface PanelStateManager {
     filterByExtent: boolean;
     rows: any;
     columnFilters: any;
+    open: boolean;
+    storedBlock: any;
 }

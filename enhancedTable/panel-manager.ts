@@ -18,7 +18,6 @@ export class PanelManager {
     constructor(mapApi: any) {
         this.notVisible = {}
         this.mapApi = mapApi;
-
         this.panel = this.mapApi.newPanel('enhancedTable');
         this.panel.body = `<div rv-focus-exempt></div>`;
         this.panel.element.addClass('ag-theme-material mobile-fullscreen');
@@ -28,15 +27,16 @@ export class PanelManager {
         });
         this.panel.allowUnderlay = false;
 
-        const close = this.panel.header.closeButton;
+        const close = this.panel.header.getCloseButton();;
         close.removeClass('primary');
         close.addClass('black md-ink-ripple');
-
         this.setSize();
-
-        // destory the table properly whenver the panel is closed
+        //destroy the table properly whenever the panel is closed
         this.panel.closing.subscribe(response => {
-            removeAccessibilityListeners(this.panel.element[0], this.gridBody);
+            if (this.gridBody !== undefined) {
+                removeAccessibilityListeners(this.panel.element[0], this.gridBody);
+            }
+            this.panelStateManager.isOpen = false;
             this.panelRowsManager.destroyObservers();
             if (this.toastInterval !== undefined) {
                 clearInterval(this.toastInterval);
@@ -50,8 +50,7 @@ export class PanelManager {
         this.legendBlock = block;
     }
 
-
-    open(tableOptions: any, layer: any) {
+    open(tableOptions: any, layer: any, tableBuilder: any) {
         if (this.currentTableLayer === layer) {
             this.close();
         } else {
@@ -80,7 +79,7 @@ export class PanelManager {
 
             // set header / controls for panel
             this.makeHeader();
-            this.panel.header.title = `Features: ${this.configManager.title}`;
+            this.panel.header.setTitle(`{{ 'filter.title' | translate }} ${this.configManager.title}`);
 
             // Add the scroll record count
             let recordCountTemplate = $(RECORD_COUNT_TEMPLATE);
@@ -93,48 +92,63 @@ export class PanelManager {
             this.panel.body.empty();
             new Grid(this.panel.body[0], tableOptions);
             this.configManager.setDefaultGlobalSearchFilter();
-            this.panel.open();
+
             this.panelStatusManager.getScrollRange();
             this.panelRowsManager.initObservers();
 
-            // add movile menu to grid body above grid
+            // add mobile menu to grid body above grid
             this.panel.body.prepend(mobileMenuTemplate);
 
             this.tableOptions.onGridReady = () => {
-                this.autoSizeToMaxWidth();
-                this.sizeColumnsToFitIfNeeded();
                 let colApi = this.tableOptions.columnApi
                 let col = colApi.getDisplayedColAfter(colApi.getColumn('zoom'));
                 if (col !== (undefined || null) && col.sort === undefined) {
                     // set sort of first column to ascending by default if sort isn't specified
                     col.setSort("asc");
                 }
+
+                // Set up grid panel accessibility
+                // Link clicked legend element to the opened table
+                const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
+                (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
+
+                // Set up grid <-> filter accessibility
+                this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
+                this.gridBody.tabIndex = 0; // make grid container tabable
+                initAccessibilityListeners(this.panel.element[0], this.gridBody, this.tableOptions);
+
+                this.panelStatusManager.getFilterStatus();
+                this.tableOptions.columnDefs.forEach(column => {
+                    if (column.floatingFilterComponentParams.defaultValue !== undefined && this.notVisible[column.field] === true) {
+                        // we temporarily showed some hidden columns with default values (so that table would get filtered properly)
+                        // now toggle them to hidden to respect config specifications
+                        let matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
+                        this.columnMenuCtrl.toggleColumn(matchingCol);
+                    }
+                });
+
+                // stop loading panel from opening, if we are about to open enhancedTable
+                clearTimeout(tableBuilder.loadingTimeout);
+
+                if (!tableBuilder.loadingPanel.hidden) {
+                    //if loading panel was opened, make sure it stays on for at least 400 ms
+                    setTimeout(() => {
+                        tableBuilder.deleteLoaderPanel();
+                    }, 400);
+                } else {
+                    tableBuilder.deleteLoaderPanel();
+                }
+                this.panel.open();
+                this.autoSizeToMaxWidth();
+                this.sizeColumnsToFitIfNeeded();
             };
-
-            // Set up grid panel accessibility
-            // Link clicked legend element to the opened table
-            const sourceEl = $(document).find(`[legend-block-id="${this.legendBlock.id}"] button`).filter(':visible').first();
-            (<EnhancedJQuery><unknown>$(sourceEl)).link($(document).find(`#enhancedTable`));
-
-            // Set up grid <-> filter accessibility
-            this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
-            this.gridBody.tabIndex = 0; // make grid container tabable
-            initAccessibilityListeners(this.panel.element[0], this.gridBody, this.tableOptions);
         }
 
-        this.panelStatusManager.getFilterStatus();
 
-        this.tableOptions.columnDefs.forEach(column => {
-            if (column.floatingFilterComponentParams.defaultValue !== undefined && this.notVisible[column.field] === true) {
-                // we temporarily showed some hidden columns with default values (so that table would get filtered properly)
-                // now toggle them to hidden to respect config specifications
-                let matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
-                this.columnMenuCtrl.toggleColumn(matchingCol);
-            }
-        });
     }
 
     close() {
+        this.panelStateManager.isOpen = false;
         this.panel.close();
     }
 
@@ -168,10 +182,10 @@ export class PanelManager {
 
     setSize() {
         if (this.maximized) {
-            this.panel.element.css({bottom: '0'});
+            this.panel.element.css({ bottom: '0' });
             this.mapApi.mapI.externalPanel($('#enhancedTable'));
         } else {
-            this.panel.element.css({bottom: '50%'});
+            this.panel.element.css({ bottom: '50%' });
             this.mapApi.mapI.externalPanel(undefined);
         }
     }

@@ -7,10 +7,12 @@
  *      - whether table maximized is in maximized or split view
  */
 export declare class PanelStateManager {
-    constructor(baseLayer: any);
+    constructor(baseLayer: any, legendBlock: any);
     getColumnFilter(colDefField: any): any;
     setColumnFilter(colDefField: any, filterValue: any): void;
     maximized: boolean;
+    isOpen: boolean;
+    readonly legendBlock: any;
 }
 export interface PanelStateManager {
     baseLayer: any;
@@ -18,4 +20,6 @@ export interface PanelStateManager {
     filterByExtent: boolean;
     rows: any;
     columnFilters: any;
+    open: boolean;
+    storedBlock: any;
 }

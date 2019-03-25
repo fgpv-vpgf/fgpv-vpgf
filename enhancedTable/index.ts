@@ -6,6 +6,7 @@ import { ConfigManager, ColumnConfigManager } from './config-manager';
 import { setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
 import { PanelStateManager } from './panel-state-manager';
+import { PanelLoader } from './panel-loader';
 
 const NUMBER_TYPES = ['esriFieldTypeOID', 'esriFieldTypeDouble', 'esriFieldTypeInteger'];
 const DATE_TYPE = 'esriFieldTypeDate';
@@ -17,6 +18,7 @@ export default class TableBuilder {
 
     init(mapApi: any) {
         this.mapApi = mapApi;
+
         this.panel = new PanelManager(mapApi);
         this.panel.reload = this.reloadTable.bind(this)
 
@@ -28,29 +30,74 @@ export default class TableBuilder {
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend._legendStructure._root._tableToggled.subscribe(legendBlock => {
-            if (legendBlock.blockType === 'node') {
-                // make sure the item clicked is a node, and not group or other
-                let layer;
-                if (legendBlock.parentLayerType === 'esriDynamic') {
-                    layer = this.mapApi.layers.allLayers.find(function (l) {
-                        return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
-                    });
-                } else {
-                    layer = this.mapApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+            if (this.panel.panelStateManager !== undefined) {
+                // switch state of whether the table is open or not
+                this.panel.panelStateManager.isOpen = !this.panel.panelStateManager.isOpen;
+            }
+            if (this.panel.panelStateManager === undefined ||
+                this.panel.panelStateManager.isOpen === true ||
+                legendBlock !== this.panel.panelStateManager.legendBlock) {
+                // if table has never been created, was closed until now, or you are opening a different table
+                // go through loading + opening steps
+                if (this.panel.panelStateManager !== undefined && legendBlock !== this.panel.panelStateManager.legendBlock) {
+                    // make sure to close table if its been opened before
+                    this.panel.close();
                 }
-                if (layer) {
-                    this.legendBlock = legendBlock;
-                    this.panel.setLegendBlock(legendBlock);
-                    this.openTable(layer);
-                }
+                // creates a 'loader' panel to be opened if data hasn't loaded after 200ms
+                this.deleteLoaderPanel();
+                this.loadingPanel = new PanelLoader(this.mapApi, legendBlock);
+                this.loadingTimeout = setTimeout(() => {
+                    legendBlock.loadingPanel = this.loadingPanel;
+                    legendBlock.formattedData;
+                }, 200);
+
+                this.findMatchingLayer(legendBlock);
+            } else {
+                this.panel.close();
             }
         });
     }
 
+    findMatchingLayer(legendBlock: any) {
+        if (legendBlock.blockType === 'node') {
+            // make sure the item clicked is a node, and not group or other
+            let layer;
+            if (legendBlock.parentLayerType === 'esriDynamic') {
+                layer = this.mapApi.layers.allLayers.find(function (l) {
+                    return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
+                });
+            } else {
+                layer = this.mapApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+            }
+
+
+            if (layer) {
+                // if layer was created unsubscribe to layer added observable
+                // create + open the enhancedTable
+                this.legendBlock = legendBlock;
+                this.panel.setLegendBlock(legendBlock)
+                if (this.layerAdded !== undefined) {
+                    this.layerAdded.unsubscribe()
+                }
+                this.loadingPanel.setSize(layer.table.maximize); //make sure loading panel is maximized/minimized according to config
+                this.openTable(layer);
+            } else {
+                // if layer was not created, subscribe to layer added observable
+                this.layerAdded = this.mapApi.layers.layerAdded.subscribe(layer => {
+                    if (layer.id === legendBlock.layerRecordId) {
+                        // if matching layer is found, call this function again so that enhancedTable can be created
+                        this.findMatchingLayer(legendBlock);
+                    }
+                });
+            }
+        }
+    }
+
     openTable(baseLayer) {
+
         if (baseLayer.panelStateManager === undefined) {
             // if no PanelStateManager exists for this BaseLayer, create a new one
-            baseLayer.panelStateManager = new PanelStateManager(baseLayer);
+            baseLayer.panelStateManager = new PanelStateManager(baseLayer, this.legendBlock);
         }
         this.panel.panelStateManager = baseLayer.panelStateManager;
 
@@ -59,21 +106,35 @@ export default class TableBuilder {
         if (attrs.length === 0) {
             // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
             this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                if (attrs.attributes[0]) {
+
+                if (attrs.attributes.length > 0) {
                     this.configManager = new ConfigManager(baseLayer, this.panel);
                     this.panel.configManager = this.configManager;
                     this.createTable(attrs);
+                } else {
+                    this.openTable(baseLayer)
                 }
             });
         } else {
             this.configManager = new ConfigManager(baseLayer, this.panel);
             this.panel.configManager = this.configManager;
+
             this.createTable({
                 attributes: attrs,
                 layer: baseLayer
             });
         }
     }
+
+    deleteLoaderPanel() {
+        if ($('#enhancedTableLoader') !== undefined) {
+            $('#enhancedTableLoader').remove();
+            let loaderPanel = this.mapApi.panels.find(panel => panel.id === 'enhancedTableLoader');
+            let loaderPanelIndex = this.mapApi.panels.indexOf(loaderPanel);
+            this.mapApi.panels.splice(loaderPanelIndex, 1);
+        }
+    }
+
 
     createTable(attrBundle: AttrBundle) {
         let cols: Array<any> = [];
@@ -172,7 +233,8 @@ export default class TableBuilder {
                     this.panel.showToast();
                 }, refreshInterval * 60000);
             }
-            this.panel.open(this.tableOptions, attrBundle.layer);
+
+            this.panel.open(this.tableOptions, attrBundle.layer, this);
             this.tableApi = this.tableOptions.api;
         });
     }
@@ -261,6 +323,9 @@ export default interface TableBuilder {
     translations: any;
     configManager: ConfigManager;
     legendBlock: any;
+    loadingPanel: PanelLoader;
+    loadingTimeout: any;
+    layerAdded: any;
 }
 
 interface ColumnDefinition {
