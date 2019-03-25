@@ -4,6 +4,7 @@
         left: 0px;
         width: 400px;
         z-index: 11 !important;
+        margin-right:0!important;
 
         @include include-size(rv-sm) {
             top: 49px;
