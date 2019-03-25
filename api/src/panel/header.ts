@@ -12,6 +12,7 @@ export default class Header extends Element {
     _controls: JQuery<HTMLElement>;
     _closeButton: CloseButton;
     _toggleButton: ToggleButton;
+    _title: string;
 
     /**
      * Appends the provided element to the end of the controls section in the header. The controls section is to the right of the title.
@@ -42,12 +43,20 @@ export default class Header extends Element {
      * Sets the panel title.
      */
     set title(title: string) {
+        this._title = title;
         const titleElem = this._header.find('header > h3').first();
         titleElem
             .css('display', '')
             .text(title);
+        try {
+            this.panel.api.$compile(titleElem[0]).$digest();
+        } catch {
+            this.panel.api.$compile(titleElem[0]);
+        }
+    }
 
-        this.panel.api.$compile(titleElem[0]).$digest();
+    get title(): string {
+        return this._title;
     }
 
     /**

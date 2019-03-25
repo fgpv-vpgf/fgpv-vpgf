@@ -144,8 +144,8 @@ export class Panel {
     /**
     * Opens the panel on the map. (For the user to see)
     */
-    open(): void {
-        if (this.isDialog) {
+    open(forceDialog?: boolean): void {
+        if (this.isDialog || forceDialog === true) {
             this.openDialog();
         } else {
             this.openStandard();

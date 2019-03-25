@@ -73,8 +73,8 @@ import './mapnav/mapnav.directive.js';
 import './mapnav/mapnav.service.js';
 
 import './metadata/metadata-content.directive.js';
-import './metadata/metadata-expand.directive.js';
 import './metadata/metadata-panel.directive.js';
+import './metadata/metadata.run.ts';
 
 import './panels/content-pane.directive.js';
 import './panels/panel.directive.js';
