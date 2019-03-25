@@ -1,10 +1,11 @@
 import Map from 'api/map';
-import { Panel } from './panel';
+import { Panel, CLOSING_CODES } from './panel';
 import { Subject } from 'rxjs';
 
 export class PanelRegistry {
     private _mapI: Map;
     private _panels: Panel[] = [];
+    private _reopenList: Panel[] = [];
     private _panelOpening = new Subject();
     private _panelClosing = new Subject();
 
@@ -15,6 +16,14 @@ export class PanelRegistry {
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
+
+        $( window ).resize(() => {
+            this.reopenOverlay();
+        });
+    }
+
+    reopenOverlay() {
+        this._reopenList.forEach(p => p.reopen());
     }
 
     _init() {
@@ -42,6 +51,10 @@ export class PanelRegistry {
         return this._panels;
     }
 
+    get opened() {
+        return this.all.filter(p => p.isOpen);
+    }
+
     /**
      * Creates a new panel with the ID provided.
      *
@@ -57,10 +70,26 @@ export class PanelRegistry {
 
         panel.opening.subscribe(p => {
             this._panelOpening.next(p);
+
+            const alreadyInList = this._reopenList.findIndex(x => x === panel);
+            if (alreadyInList > -1) {
+                this._reopenList.splice(alreadyInList, 1);
+            }
         });
 
         panel.closing.subscribe(p => {
             this._panelClosing.next(p);
+
+            const alreadyInList = this._reopenList.findIndex(x => x === panel);
+            if (alreadyInList > -1) {
+                this._reopenList.splice(alreadyInList, 1);
+            }
+
+            this.reopenOverlay();
+
+            if (panel.reopenAfterOverlay && p.code === CLOSING_CODES.OVERLAID) {
+                this._reopenList.unshift(panel);
+            }
         });
 
         this._panels.push(panel);
