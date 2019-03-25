@@ -38,7 +38,7 @@ function rvAppbar(referenceService) {
 }
 
 function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService,
-    configService) {
+    configService, events) {
     'ngInject';
 
     const self = this;
@@ -55,6 +55,10 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
     configService.onEveryConfigLoad(cfg =>
         (self.config = cfg));
 
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        self._mApi = api;
+    });
+
     function toggleDetails() {
         stateManager.setActive({ side: false }, 'mainDetails');
     }
@@ -62,7 +66,7 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
     function toggleTocBuilder() {
         // debounce the toggle toc button to avoid wierd behaviour
         return debounceService.registerDebounce(() => {
-            stateManager.setActive({ side: false }, 'mainToc');
+            self._mApi.panels.legend.toggle();
         }, 300);
     }
 }

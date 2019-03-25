@@ -52,7 +52,11 @@ export default class Element {
         this.elem.addClass("elem");
 
         if (this.panel) {
-            this.panel.api.$compile(this.elem[0]).$digest();
+            try {
+                this.panel.api.$compile(this.elem[0]).$digest();
+            } catch {
+                this.panel.api.$compile(this.elem[0]);
+            }
         }
     }
 

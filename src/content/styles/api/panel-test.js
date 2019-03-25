@@ -77,7 +77,7 @@ $.getScript('../../../../rv-main.js', function () {
     RZ.mapAdded.subscribe(mapi => {
 
       //creating Panel + opening
-      let panel0 = mapi.newPanel('panel0');
+      let panel0 = mapi.panels.create('panel0');
       panel0.position([432, 0], [700, 500]);
 
       $(`<style>
@@ -134,7 +134,7 @@ $.getScript('../../../../rv-main.js', function () {
       panel0.open();
 
       //creating Panel + opening
-      let panel1 = mapi.newPanel('panel1');
+      let panel1 = mapi.panels.create('panel1');
       panel1.position([710, 0], [1200, 500]);
 
       panel1.controls = [new panel1.button('X')];

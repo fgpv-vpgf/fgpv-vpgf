@@ -7,6 +7,7 @@ import * as geo from 'api/geometry';
 import { seeder } from 'app/app-seed';
 import { FgpvConfigSchema as ViewerConfigSchema } from 'api/schema';
 import { UI } from 'api/ui';
+import { PanelRegistry } from 'api/panel-registry';
 import { LayerGroup, SimpleLayer } from 'api/layers';
 import { Panel, ClosingResponse } from 'api/panel';
 
@@ -35,10 +36,10 @@ export class Map {
         this.identifier = this.mapDiv.attr('id') || '';
         this.uiObj = new UI(this);
         this.layersObj = new LayerGroup(this);
-        this._panels = [];
         this.layersObj = new LayerGroup(this);
-        this._panelOpened = new Subject();
-        this._panelClosed = new Subject();
+
+        this.panelRegistryObj = new PanelRegistry(this);
+        this.panelRegistryObj._init();
 
         // config set implies viewer loading via API
         if (config) {
@@ -67,54 +68,6 @@ export class Map {
         let mapDiv = <HTMLElement>document.getElementById(this.identifier);
         let innerShell = mapDiv.getElementsByClassName('rv-inner-shell')[0];
         return <HTMLElement>innerShell;
-    }
-
-    /**
-     * Returns the list of Panels on this map instance.
-     * @return {Panel[]} - the list of Panels on this Map instance.
-     */
-    get panels() {
-        return this._panels;
-    }
-
-    /**
-     * Creates a new panel with the ID provided.
-     *
-     * @param id a unique id for the panel element
-     */
-    newPanel(id: string) {
-
-        if ($(`#${id}`).length >= 1) {
-            throw new Error(`API(panels): an element with ID ${id} already exists. A panel ID must be unique to the page.`);
-        }
-
-        const panel = new Panel(id, this);
-
-        panel.opening.subscribe(p => {
-            this._panelOpened.next(p);
-        });
-
-        panel.closing.subscribe(p => {
-            this._panelClosed.next(p);
-        });
-
-        this.panels.push(panel);
-
-        return panel;
-    }
-
-    /**
-     * Emits the corresponding panel instance whenever a panel is opened.
-     */
-    get panelOpened() {
-        return this._panelOpened.asObservable();
-    }
-
-    /**
-     * Emits the corresponding panel instance whenever a panel is closed.
-     */
-    get panelClosed() {
-        return this._panelClosed.asObservable();
     }
 
     /** Once set, we know the map instance is ready. */
@@ -288,6 +241,10 @@ export class Map {
         return this.uiObj;
     }
 
+    get panels(): PanelRegistry {
+        return this.panelRegistryObj
+    }
+
     // use of the following property is unsupported by ramp team.
     // it is provided for plugin developers who want to write advanced geo functions
     // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
@@ -303,6 +260,7 @@ export interface Map {
     extentChanged: Observable<any>; // add this to avoid issues with projection changes see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
     filterChanged: Observable<any>;
     uiObj: UI;
+    panelRegistryObj: PanelRegistry;
     layersObj: LayerGroup;
     simpleLayerObj: SimpleLayer;
     $compile: any;

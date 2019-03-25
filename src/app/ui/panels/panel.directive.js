@@ -1,5 +1,3 @@
-import './panel-wrapper.service';
-
 const templateUrls = {
     main: require('./main-panel.html'),
     side: require('./side-panel.html')
@@ -20,7 +18,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(referenceService, stateManager, debounceService, panelWrapperService) {
+function rvPanel(referenceService, stateManager, debounceService) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {

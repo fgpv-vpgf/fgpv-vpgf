@@ -135,7 +135,7 @@ export class Panel {
     open(): void {
         // if all style properties have empty values we consider this a dialog (no user defined position)
         const positionWHNotSet = ['top', 'left', 'right', 'bottom', 'width', 'height']
-            .map(t => this.element[0].style[<any>t])
+            .map(t => this.element.css(t))
             .every( (val, i, arr) => val === '' && val === arr[0] );
 
         if (positionWHNotSet) {
@@ -160,7 +160,7 @@ export class Panel {
                     });
 
                     if (changedCSS.length > 0) {
-                        this.api.panels.forEach(p => p.underlayRuleCheck(this));
+                        this.api.panels.all.forEach(p => p.underlayRuleCheck(this));
                         this.offScreenRuleCheck('Panel position was moved offscreen.');
                     }
                 }
@@ -218,6 +218,14 @@ export class Panel {
         }
     }
 
+    toggle() {
+        if (this.isClosed) {
+            this.open();
+        } else {
+            this.close({'destroy': false});
+        }
+    }
+
     set body(content: any) {
         const element = new Element(this, content);
         this.body.html( element.elem );
@@ -258,7 +266,7 @@ export class Panel {
      * Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
      */
     private destroy() {
-        this.api.panels.splice(this.api.panels.findIndex(p => p === this), 1); // remove this panel from the API
+        this.api.panels.all.splice(this.api.panels.all.findIndex(p => p === this), 1); // remove this panel from the API
         this.element.remove(); // remove element from the DOM
         this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
         this.element.off('click');
@@ -390,10 +398,10 @@ export class Panel {
 
         $( window ).resize(() => {
             this.offScreenRuleCheck();
-            this.api.panels.forEach(p => this.underlayRuleCheck(p));
+            this.api.panels.all.forEach(p => this.underlayRuleCheck(p));
         });
 
-        this._openPanelSubscriber = this.api.panelOpened.subscribe(otherPanel => {
+        this._openPanelSubscriber = this.api.panels.opening.subscribe((otherPanel: Panel) => {
             this.underlayRuleCheck(otherPanel);
         });
     }

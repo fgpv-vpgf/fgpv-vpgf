@@ -56,12 +56,11 @@ RZInstance.mapAdded.subscribe(mapInstance => {
 });
 
 (<any>jQuery).expr.filters.offscreen = function(el: any) {
-    const rect = el.getBoundingClientRect();
     const rvShell = <any>jQuery('rv-shell').first();
     return (
-             (rect.left + rect.width) > (rvShell.width()) ||
-             (rect.left + rect.width) < 0 ||
-             (rect.top + rect.height) > (rvShell.height()) ||
-             (rect.top + rect.height) < 0
+             (el.offsetLeft + el.offsetWidth) > (rvShell.offsetWidth) ||
+             (el.offsetLeft + el.offsetWidth) < (rvShell.offsetTop) ||
+             (el.offsetTop + el.offsetHeight) > (rvShell.offsetHeight) ||
+             (el.offsetTop + el.offsetHeight) < (rvShell.offsetLeft)
            );
   };

@@ -104,6 +104,8 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
             // allows plugins to register components on the angular instance, usually to provide angular material support
             apiMap.agControllerRegister = $controllerProvider.register;
 
+            events.$broadcast(events.rvApiPreMapAdded, apiMap);
+
             events.$broadcast(events.rvApiMapAdded, apiMap);
             gtm(apiMap);
             api.mapAdded.next(apiMap);

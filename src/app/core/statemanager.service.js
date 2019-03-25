@@ -1,4 +1,5 @@
 import { PanelEvent } from 'api/events';
+import { Subject } from 'rxjs';
 
 /**
  * @module stateManager
@@ -18,14 +19,12 @@ import { PanelEvent } from 'api/events';
  *
  * Only `active` and `morph` state properties are animated (animation can be skipped which is indicated by the `activeSkip` and `morphSkip` flags) and need to be set through `setActive` and `setMorph` functions accordingly; these properties can be bound and watched directly though. Everything else on the `state` object can be set, bound, and watched directly.
  */
-angular
-    .module('app.core')
-    .factory('stateManager', stateManager);
+angular.module('app.core').factory('stateManager', stateManager);
 
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
-function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement,
-    referenceService, appInfo, events) {
+function stateManager($q, $rootScope, displayManager, initialState, initialDisplay, $rootElement, referenceService, appInfo, events) {
+    const panelState = new Subject();
 
     const service = {
         addState,
@@ -38,7 +37,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         state: angular.copy(initialState),
         display: angular.copy(initialDisplay),
         setCloseCallback,
-        panelDimension
+        panelDimension,
+        panelState
     };
 
     const fulfillStore = {}; // keeping references to promise fulfill functions
@@ -100,7 +100,6 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      */
     function setActive(...items) {
         if (items.length > 0) {
-
             let one = items.shift(); // get first item
             let oneTargetValue;
 
@@ -113,6 +112,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                 oneTargetValue = one[oneName];
                 one = getItem(oneName);
             }
+
+            one.item.active = oneTargetValue;
 
             if (oneTargetValue) {
                 return openPanel(one).then(() => setActive(...items));
@@ -158,9 +159,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return  {Promise}   resolves when a panel has finished its closing animation
      */
     function closePanelFromHistory() {
-        const promise = service.panelHistory.length > 0 ?
-            closePanel(getItem(service.panelHistory.pop())) :
-            $q.resolve();
+        const promise = service.panelHistory.length > 0 ? closePanel(getItem(service.panelHistory.pop())) : $q.resolve();
 
         return promise;
     }
@@ -177,8 +176,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         const fromPanel = getItem(fromPanelName);
         const toPanel = getItem(toPanelName);
 
-        return closePanel(fromPanel, false)
-            .then(() => openPanel(toPanel, false));
+        return closePanel(fromPanel, false).then(() => openPanel(toPanel, false));
     }
 
     /* PRIVATE HELPERS */
@@ -207,7 +205,6 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             }
 
             if (item[property] !== value) {
-
                 // check if fulfill function exists from before exist and resolve it
                 if (fulfillStore[fulfillKey]) {
                     fulfillStore[fulfillKey]();
@@ -226,19 +223,18 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
                 // resolve immediately skipping event broadcasting since nothing really changed
                 fulfill(true);
             }
-        })
-            .then(skipEvent => {
-                if (!skipEvent) {
-                    // emit event on the rootscope when change is complete
-                    $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
+        }).then(skipEvent => {
+            if (!skipEvent) {
+                // emit event on the rootscope when change is complete
+                $rootScope.$broadcast('stateChangeComplete', itemName, property, value, skip);
 
-                    // record history of `active` changes only
-                    if (property === 'morph') {
-                        return;
-                    }
+                // record history of `active` changes only
+                if (property === 'morph') {
+                    return;
                 }
-                return;
-            });
+            }
+            return;
+        });
     }
 
     /**
@@ -314,14 +310,13 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
     function openParentPanel(panelToOpen, propagate) {
         let panel;
 
-        if (appInfo.mapi && (panel = appInfo.mapi.panels.find(p => p.id === panelToOpen.name))) {
+        if (appInfo.mapi && (panel = appInfo.mapi.panels.getById(panelToOpen.name))) {
             panel.open();
         }
 
-        const promiseResult = propagate ?
-            openPanel(getChildren(panelToOpen.name)[0], false)
-                .then(() => openPanel(panelToOpen, false)) :
-            setItemProperty(panelToOpen.name, 'active', true);
+        const promiseResult = propagate
+            ? openPanel(getChildren(panelToOpen.name)[0], false).then(() => openPanel(panelToOpen, false))
+            : setItemProperty(panelToOpen.name, 'active', true);
 
         promiseResult.then(() => {
             if (panel) {
@@ -380,13 +375,18 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return {Promise}  resolves to undefined when all panel animations have completed
      */
     function openPanel(panelToOpen, propagate = true) {
+        if (appInfo.mapi && (panelToOpen.name === 'mainToc' || panelToOpen.name === 'sideSettings')) {
+            appInfo.mapi.panels.getById(panelToOpen.name).open();
+            return $q.resolve();
+        }
+
         events.$broadcast('panelOpening', panelToOpen.name);
 
         // TODO: mobile layout hack to be removed when details panel is
         // moved into its own parent panel
         if (panelToOpen.name === 'mainDetails') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 14);
-        // prevent main panel from overlapping details panel in small/medium layouts
+            // prevent main panel from overlapping details panel in small/medium layouts
         } else if (panelToOpen.name === 'table') {
             $rootElement.find('rv-panel[type="main"]').css('z-index', 12);
         } else if (panelToOpen.name === 'sideMetadata') {
@@ -395,25 +395,24 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
             $rootElement.find('rv-settings button.rv-close').rvFocus({ delay: 400 });
         }
 
-        return typeof panelToOpen.item.parent === 'undefined' ?
-            openParentPanel(panelToOpen, propagate) :
-            openChildPanel(panelToOpen, propagate);
+        return typeof panelToOpen.item.parent === 'undefined'
+            ? openParentPanel(panelToOpen, propagate)
+            : openChildPanel(panelToOpen, propagate);
     }
 
     function closeParent(panelToClose, propagate) {
         let panel;
 
-        if (appInfo.mapi && (panel = appInfo.mapi.panels.find(p => p.id === panelToClose.name))) {
+        if (appInfo.mapi && (panel = appInfo.mapi.panels.getById(panelToClose.name))) {
             panel.close();
         }
 
         return setItemProperty(panelToClose.name, 'active', false)
             .then(() =>
                 // wait for all child transition promises to resolve
-                propagate ?
-                    $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) :
-                    true
-            ).then(() => {
+                propagate ? $q.all(getChildren(panelToClose.name).map(child => closePanel(child, false))) : true
+            )
+            .then(() => {
                 if (panel) {
                     panel.close();
                 }
@@ -438,7 +437,10 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return  {Promise}   resolves when panel animation has completed
      */
     function closePanel(panelToClose, propagate = true) {
-        let animationPromise;
+        if (appInfo.mapi && (panelToClose.name === 'mainToc' || panelToClose.name === 'sideSettings')) {
+            appInfo.mapi.panels.getById(panelToClose.name).close();
+            return $q.resolve();
+        }
 
         events.$broadcast('panelClosing', panelToClose.name);
 
@@ -455,7 +457,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         // closing parent panel
         if (typeof panelToClose.item.parent === 'undefined') {
             return closeParent(panelToClose, propagate);
-        // closing child panel
+            // closing child panel
         } else {
             return closeChild(panelToClose, propagate);
         }
