@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 /**
  * Handles the coordination of panels.
- * 
+ *
  * Used to get a list of panels (all, opened, closed), to create panels, etc.
  */
 export class PanelRegistry {

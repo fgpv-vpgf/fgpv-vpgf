@@ -109,8 +109,8 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
             }
             let animationPromise = $q.resolve();
 
+            display.data = null; // clear data so the newly opened panel doesn't have any content
             if (panel.isClosed) { // panel is not open; open it
-                display.data = null; // clear data so the newly opened panel doesn't have any content
                 panel.open();
             }
 
