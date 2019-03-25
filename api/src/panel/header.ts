@@ -12,6 +12,7 @@ export default class Header extends Element {
     _controls: JQuery<HTMLElement>;
     _closeButton: CloseButton;
     _toggleButton: ToggleButton;
+    _elements: any;
 
     /**
      * Appends the provided element to the end of the controls section in the header. The controls section is to the right of the title.
@@ -48,6 +49,8 @@ export default class Header extends Element {
             .css('display', '')
             .text(titleText);
 
+        this._elements.title = titleElem;
+
         try {
             this.panel.api.$compile(titleElem[0]).$digest();
         } catch {
@@ -64,6 +67,8 @@ export default class Header extends Element {
         subtitleElem
             .css('display', '')
             .text(subtitleText);
+
+        this._elements.subtitle = subtitle;
 
         try {
             this.panel.api.$compile(subtitleElem[0]).$digest();
@@ -104,9 +109,14 @@ export default class Header extends Element {
         return this._toggleButton.elem;
     }
 
+    get elements(): any {
+        return this._elements;
+    }
+
     private makeHeader() {
         this._header = $(document.createElement('div'));
         this._controls = $('<span class="rv-header-controls"></span>');
+        this._elements.controls = this._controls;
         this._header.addClass('rv-header');
         this._header.html(`
           <div class="rv-header-content layout-column" layout="column">
@@ -128,6 +138,7 @@ export default class Header extends Element {
 
     constructor(panel: Panel) {
         super(panel);
+        this._elements = {};
         this.placeHeader();
     }
 }
