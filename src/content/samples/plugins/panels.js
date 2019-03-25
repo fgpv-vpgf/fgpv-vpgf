@@ -25,6 +25,8 @@
         this.panelCount = this.panelCount + 1;
         p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
         p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+        p.reopenAfterOverlay = $('#paneltester-chkoverlay').hasClass('md-checked');
+
         p.open();
     }
 
@@ -54,7 +56,9 @@
             <br>
             <md-checkbox class="md-checked" id="paneltester-chkoffscreen">Panel closes when offscreen</md-checkbox>
             <br>
-            <md-checkbox class="" id="paneltester-chkunderlay">Panel closes on overlay</md-checkbox>
+            <md-checkbox class="md-checked" id="paneltester-chkunderlay">Panel closes on overlay</md-checkbox>
+            <br>
+            <md-checkbox class="md-checked" id="paneltester-chkoverlay">Panel reopens after overlay</md-checkbox>
             <br>
             <b>Note:</b> Checkbox options are not applicable to dialog panels.
           </div>
@@ -136,6 +140,7 @@ function () {
       this.panelCount = this.panelCount + 1;
       p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
       p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+      p.reopenAfterOverlay = $('#paneltester-chkoverlay').hasClass('md-checked');
       p.open();
     }
   }, {
@@ -159,7 +164,7 @@ function () {
         bottom: '50%',
         width: '600px'
       });
-      p.body = "\n          <div>\n            <md-button id=\"paneltester-btn1\" class=\"md-raised md-primary\">Open a dialog</md-button>\n            <br>\n            <md-button id=\"paneltester-btn2\" class=\"md-raised md-primary\">Open a panel</md-button>\n            <br><br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkclose\">Add a close button</md-checkbox>\n            <br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkoffscreen\">Panel closes when offscreen</md-checkbox>\n            <br>\n            <md-checkbox class=\"\" id=\"paneltester-chkunderlay\">Panel closes on overlay</md-checkbox>\n            <br>\n            <b>Note:</b> Checkbox options are not applicable to dialog panels.\n          </div>\n        ";
+      p.body = "\n          <div>\n            <md-button id=\"paneltester-btn1\" class=\"md-raised md-primary\">Open a dialog</md-button>\n            <br>\n            <md-button id=\"paneltester-btn2\" class=\"md-raised md-primary\">Open a panel</md-button>\n            <br><br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkclose\">Add a close button</md-checkbox>\n            <br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkoffscreen\">Panel closes when offscreen</md-checkbox>\n            <br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkunderlay\">Panel closes on overlay</md-checkbox>\n            <br>\n            <md-checkbox class=\"md-checked\" id=\"paneltester-chkoverlay\">Panel reopens after overlay</md-checkbox>\n            <br>\n            <b>Note:</b> Checkbox options are not applicable to dialog panels.\n          </div>\n        ";
       p.header.title = 'Panel Tester';
       p.header.subtitle = 'This is a subtitle.';
       p.header.toggleButton;
