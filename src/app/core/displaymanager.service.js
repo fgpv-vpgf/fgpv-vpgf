@@ -93,6 +93,9 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
 
             panel.close();
         } else {
+            if (panel.isOpen) {
+                panel.close();
+            }
             // cancel previous data retrieval timeout
             $timeout.cancel(display.loadingTimeout);
             if (delay === 0) {

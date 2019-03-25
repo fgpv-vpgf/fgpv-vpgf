@@ -73,15 +73,15 @@ import './mapnav/mapnav.directive.js';
 import './mapnav/mapnav.service.js';
 
 import './metadata/metadata-content.directive.js';
-import './metadata/metadata-expand.directive.js';
 import './metadata/metadata-panel.directive.js';
+import './metadata/metadata.run.js';
 
 import './panels/content-pane.directive.js';
 import './panels/panel.directive.js';
 
 import './settings/settings-content.directive.js';
 import './settings/settings.directive.js';
-import './settings/settings.run.ts';
+import './settings/settings.run.js';
 
 import './sidenav/menulink.directive.js';
 import './sidenav/sidenav.directive.js';
