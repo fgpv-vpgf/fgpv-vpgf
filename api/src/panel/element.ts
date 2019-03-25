@@ -8,6 +8,7 @@ import { Panel } from '.';
 export default class Element {
     _element: JQuery<HTMLElement>;
     _panel: Panel;
+    _digest: boolean;
 
     /**
      * Returns the panel instance this element is bound to.
@@ -51,13 +52,20 @@ export default class Element {
         this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 100000000).toString());
         this.elem.addClass("elem");
 
-        if (this.panel) {
+        if (this.panel && this.digest === true) {
             this.panel.api.$compile(this.elem[0]).$digest();
+        } else if (this.panel) {
+            this.panel.api.$compile(this.elem[0]);
         }
     }
 
-    constructor(panel: Panel, elementBody?: string | HTMLElement | JQuery<HTMLElement>) {
+    get digest(): boolean {
+        return this._digest;
+    }
+
+    constructor(panel: Panel, digest: boolean, elementBody?: string | HTMLElement | JQuery<HTMLElement>) {
         this._panel = panel;
+        this._digest = digest;
 
         if (elementBody) {
             this.elem = $(elementBody);

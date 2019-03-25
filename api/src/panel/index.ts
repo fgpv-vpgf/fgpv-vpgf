@@ -136,7 +136,7 @@ export class Panel {
         // if all style properties have empty values we consider this a dialog (no user defined position)
         const positionWHNotSet = ['top', 'left', 'right', 'bottom', 'width', 'height']
             .map(t => this.element[0].style[<any>t])
-            .every( (val, i, arr) => val === '' && val === arr[0] );
+            .every((val, i, arr) => val === '' && val === arr[0]);
 
         if (positionWHNotSet) {
             this.openDialog();
@@ -167,7 +167,7 @@ export class Panel {
             });
 
         });
-        this._observer.observe(this.element[0], { attributes : true, attributeFilter : ['style'] });
+        this._observer.observe(this.element[0], { attributes: true, attributeFilter: ['style'] });
 
         this.openingSubject.next(this);
     }
@@ -183,7 +183,7 @@ export class Panel {
      *      - otherPanel: sometimes a panel causes another to be closed, provided for context
      */
     close(opts?: ClosingOpts): void {
-        opts = opts ? opts : {destroy: false, silent: false};
+        opts = opts ? opts : { destroy: false, silent: false };
 
         if (this.isClosed) {
             return;
@@ -213,14 +213,14 @@ export class Panel {
             if (opts.destroy) {
                 this.destroy();
             }
-        } catch(err) {
+        } catch (err) {
             // Do nothing
         }
     }
 
     set body(content: any) {
-        const element = new Element(this, content);
-        this.body.html( element.elem );
+        const element = new Element(this, this.bodyDigest, content);
+        this.body.html(element.elem);
     }
 
     get body() {
@@ -232,7 +232,7 @@ export class Panel {
     }
 
     get header() {
-        this._header = this._header ? this._header : new Header(this);
+        this._header = this._header ? this._header : new Header(this, this.headDigest);
         return this._header;
     }
 
@@ -246,7 +246,7 @@ export class Panel {
 
     private offScreenRuleCheck(errorMsg?: string) {
         if (!this.isDialog && !this.allowOffscreen && this.element.is(':offscreen')) {
-            this.close({closingCode: CLOSING_CODES.OFFSCREEN});
+            this.close({ closingCode: CLOSING_CODES.OFFSCREEN });
 
             if (errorMsg) {
                 throw new Error(`API(panels): ${errorMsg}`);
@@ -296,20 +296,20 @@ export class Panel {
 
         this.element.attr('id', id);
         this.element.append(this.body);
-        this.element.css({'display': 'none'});
+        this.element.css({ 'display': 'none' });
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
         $(this.api.innerShell).append(documentFragment);
     }
 
-     /**
-      * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
-      *
-      * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
-      *
-      * @param otherPanel The overlaying panel instance
-      */
+    /**
+     * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
+     *
+     * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
+     *
+     * @param otherPanel The overlaying panel instance
+     */
     private underlayRuleCheck(otherPanel: Panel) {
         if (
             otherPanel === this || // cannot overlay oneself
@@ -329,7 +329,7 @@ export class Panel {
             rect1.top > rect2.bottom);
 
         if (overlap) {
-            this.close({closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
+            this.close({ closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel });
         }
     }
 
@@ -340,8 +340,8 @@ export class Panel {
         this.element.addClass('dialog');
         this.element.wrap('<div class="dialog-container"></div>');
 
-        this.header.closeButton;
-        this.element.css({'display': ''});
+        this.header.getCloseButton();
+        this.element.css({ 'display': '' });
         this._element = this.element.parent();
         this.element.prependTo($(this.api.innerShell).parent().parent());
 
@@ -357,17 +357,25 @@ export class Panel {
         // close the dialog when clicking on the backdrop
         this.element.on('click', evt => {
             if ($(evt.target).is(this.element)) {
-                this.close({closingCode: CLOSING_CODES.CLICKEDOUTSIDE});
+                this.close({ closingCode: CLOSING_CODES.CLICKEDOUTSIDE });
             }
         });
+    }
+
+    get headDigest(): boolean {
+        return this._headerDigest;
+    }
+
+    get bodyDigest(): boolean {
+        return this._bodyDigest;
     }
 
     /**
      * Opens closeable & persistent panels.
      */
     private openStandard() {
-        this.element.css({'z-index': this.isCloseable ? 14 : 10});
-        this.element.css({'display': ''});
+        this.element.css({ 'z-index': this.isCloseable ? 14 : 10 });
+        this.element.css({ 'display': '' });
 
         // this check must occur AFTER the element is placed in the DOM AND is visible.
         this.offScreenRuleCheck('Failed to open panel as all or part of it would render off the screen.');
@@ -378,8 +386,10 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api: ViewerAPI) {
+    constructor(id: string, api: ViewerAPI, headerDigest: boolean = false, bodyDigest: boolean = false) {
         this.api = api;
+        this._headerDigest = headerDigest;
+        this._bodyDigest = bodyDigest;
 
         this.allowUnderlay = true;
         this.allowOffscreen = false;
@@ -388,7 +398,7 @@ export class Panel {
         this._initRXJS();
         this._initElements(id);
 
-        $( window ).resize(() => {
+        $(window).resize(() => {
             this.offScreenRuleCheck();
             this.api.panels.forEach(p => this.underlayRuleCheck(p));
         });
@@ -402,7 +412,7 @@ export class Panel {
 export interface Panel {
     _api: ViewerAPI;
     _style: {
-        [index:string]: string | undefined;
+        [index: string]: string | undefined;
         top?: string;
         bottom?: string;
         left?: string;
@@ -433,6 +443,9 @@ export interface Panel {
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;
+
+    _headerDigest: boolean;
+    _bodyDigest: boolean;
 }
 
 export enum CLOSING_CODES {

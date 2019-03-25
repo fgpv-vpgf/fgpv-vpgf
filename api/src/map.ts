@@ -82,13 +82,13 @@ export class Map {
      *
      * @param id a unique id for the panel element
      */
-    newPanel(id: string) {
+    newPanel(id: string, headerDigest: boolean = false, bodyDigest: boolean = false) {
 
         if ($(`#${id}`).length >= 1) {
             throw new Error(`API(panels): an element with ID ${id} already exists. A panel ID must be unique to the page.`);
         }
 
-        const panel = new Panel(id, this);
+        const panel = new Panel(id, this, headerDigest, bodyDigest);
 
         panel.opening.subscribe(p => {
             this._panelOpened.next(p);
