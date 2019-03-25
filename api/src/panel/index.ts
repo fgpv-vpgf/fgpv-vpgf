@@ -96,6 +96,14 @@ export class Panel {
         return this._offscreen;
     }
 
+    set reopenAfterOverlay(reopen: boolean) {
+        this._reopenAfterOverlay = reopen;
+    }
+
+    get reopenAfterOverlay() {
+        return this._reopenAfterOverlay;
+    }
+
     set api(api: ViewerAPI) {
         this._api = api;
     }
@@ -112,7 +120,11 @@ export class Panel {
     }
 
     get isClosed() {
-        return this.element.css('display') === 'none';
+        return this.element.css('visibility') === 'hidden';
+    }
+
+    get isOpen() {
+        return !this.isClosed;
     }
 
     /**
@@ -162,6 +174,7 @@ export class Panel {
                     if (changedCSS.length > 0) {
                         this.api.panels.all.forEach(p => p.underlayRuleCheck(this));
                         this.offScreenRuleCheck('Panel position was moved offscreen.');
+                        this.api.panels.reopenOverlay();
                     }
                 }
             });
@@ -194,7 +207,7 @@ export class Panel {
         } catch {
             // nothing to do, observer is already disconnected.
         }
-        this.element.css('display', 'none');
+        this.element.css('visibility', 'hidden');
 
         if (!opts.silent) {
             const closingResponse: ClosingResponse = {
@@ -223,6 +236,12 @@ export class Panel {
             this.open();
         } else {
             this.close({'destroy': false});
+        }
+    }
+
+    reopen() {
+        if (!this.api.panels.opened.find(p => this.underlayRuleCheck(p, false))) {
+            this.open();
         }
     }
 
@@ -304,28 +323,29 @@ export class Panel {
 
         this.element.attr('id', id);
         this.element.append(this.body);
-        this.element.css({ 'display': 'none' });
+        this.element.css({'visibility': 'hidden'});
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
         $(this.api.innerShell).append(documentFragment);
     }
 
-    /**
-     * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
-     *
-     * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
-     *
-     * @param otherPanel The overlaying panel instance
-     */
-    private underlayRuleCheck(otherPanel: Panel) {
+     /**
+      * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
+      *
+      * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
+      *
+      * @param otherPanel The overlaying panel instance
+      */
+    private underlayRuleCheck(otherPanel: Panel, close = true) {
         if (
             otherPanel === this || // cannot overlay oneself
             otherPanel.isDialog ||
+            otherPanel.isClosed ||
             this.allowUnderlay ||
             this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
             this.isFullScreen) {
-            return;
+            return false;
         }
 
         const rect1 = this.element[0].getBoundingClientRect();
@@ -336,9 +356,11 @@ export class Panel {
             rect1.bottom < rect2.top ||
             rect1.top > rect2.bottom);
 
-        if (overlap) {
-            this.close({ closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel });
+        if (overlap && close) {
+            this.close({closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
         }
+
+        return overlap;
     }
 
     /**
@@ -348,8 +370,8 @@ export class Panel {
         this.element.addClass('dialog');
         this.element.wrap('<div class="dialog-container"></div>');
 
-        this.header.getCloseButton();
-        this.element.css({ 'display': '' });
+        this.header.closeButton;
+        this.element.css({'visibility': ''});
         this._element = this.element.parent();
         this.element.prependTo($(this.api.innerShell).parent().parent());
 
@@ -382,8 +404,8 @@ export class Panel {
      * Opens closeable & persistent panels.
      */
     private openStandard() {
-        this.element.css({ 'z-index': this.isCloseable ? 14 : 10 });
-        this.element.css({ 'display': '' });
+        this.element.css({'z-index': this.isCloseable ? 14 : 10});
+        this.element.css({'visibility': ''});
 
         // this check must occur AFTER the element is placed in the DOM AND is visible.
         this.offScreenRuleCheck('Failed to open panel as all or part of it would render off the screen.');
@@ -401,6 +423,7 @@ export class Panel {
 
         this.allowUnderlay = true;
         this.allowOffscreen = false;
+        this.reopenAfterOverlay = false;
 
         this._style = {};
         this._initRXJS();
@@ -428,6 +451,7 @@ export interface Panel {
         width?: string;
         height?: string;
     };
+    _reopenAfterOverlay: boolean;
 
     //HTML parent Components
     _element: JQuery<HTMLElement>;
