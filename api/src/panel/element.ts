@@ -52,10 +52,12 @@ export default class Element {
         this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 100000000).toString());
         this.elem.addClass("elem");
 
-        if (this.panel && this.digest === true) {
-            this.panel.api.$compile(this.elem[0]).$digest();
-        } else if (this.panel) {
-            this.panel.api.$compile(this.elem[0]);
+        if (this.panel) {
+            try {
+                this.panel.api.$compile(this.elem[0]).$digest();
+            } catch {
+                this.panel.api.$compile(this.elem[0]);
+            }
         }
     }
 

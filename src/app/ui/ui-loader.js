@@ -81,6 +81,7 @@ import './panels/panel.directive.js';
 
 import './settings/settings-content.directive.js';
 import './settings/settings.directive.js';
+import './settings/settings.run.ts';
 
 import './sidenav/menulink.directive.js';
 import './sidenav/sidenav.directive.js';

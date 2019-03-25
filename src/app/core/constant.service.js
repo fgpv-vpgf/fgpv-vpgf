@@ -83,6 +83,7 @@ function events($rootScope) {
 
         // fired when mApi is ready but before plugins are executed
         rvApiPrePlugin: 'rvApiPrePlugin',
+        rvApiPreMapAdded: 'rvApiPreMapAdded',
         rvApiMapAdded: 'rvApiMapAdded',
         rvApiLayerAdded: 'rvApiLayerAdded'
     };

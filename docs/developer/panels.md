@@ -22,7 +22,7 @@ There are three different types of panel:
 First we'll create a new panel instance:
 
 ```js
-var myPanel = mapI.newPanel('uniquePanelID');
+var myPanel = mapI.panels.create('uniquePanelID');
 ```
 
 ### Adding content

@@ -13,7 +13,7 @@
     }
 
     panel() {
-        const p = this.api.newPanel('standard-pnl-' + this.panelCount);
+        const p = this.api.panels.create('standard-pnl-' + this.panelCount);
         p.element.css({
             top: 80 * (this.panelCount % 7) + 'px',
             left: 580 + this.panelCount * 80 + 'px',
@@ -30,14 +30,14 @@
 
     dialog() {
         this.panelCountDialog = this.panelCountDialog + 1;
-        const p = this.api.newPanel(`dialog-pnl-${this.panelCountDialog}`);
+        const p = this.api.panels.create(`dialog-pnl-${this.panelCountDialog}`);
         p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
         p.header.title = 'Dialog Title';
         p.open();
     }
 
     _makePanel() {
-        const p = this.api.newPanel('M');
+        const p = this.api.panels.create('M');
         p.element.css({
             top: '0px',
             left: '410px',
@@ -124,7 +124,7 @@ function () {
   }, {
     key: "panel",
     value: function panel() {
-      var p = this.api.newPanel('standard-pnl-' + this.panelCount);
+      var p = this.api.panels.create('standard-pnl-' + this.panelCount);
       p.element.css({
         top: 80 * (this.panelCount % 7) + 'px',
         left: 580 + this.panelCount * 80 + 'px',
@@ -142,7 +142,7 @@ function () {
     key: "dialog",
     value: function dialog() {
       this.panelCountDialog = this.panelCountDialog + 1;
-      var p = this.api.newPanel("dialog-pnl-".concat(this.panelCountDialog));
+      var p = this.api.panels.create("dialog-pnl-".concat(this.panelCountDialog));
       p.body = "<h2>Hello!</h2><p>I'm a dialog</p>";
       p.header.title = 'Dialog Title';
       p.open();
@@ -152,7 +152,7 @@ function () {
     value: function _makePanel() {
       var _this = this;
 
-      var p = this.api.newPanel('M');
+      var p = this.api.panels.create('M');
       p.element.css({
         top: '0px',
         left: '410px',

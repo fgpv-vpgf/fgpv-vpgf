@@ -33,13 +33,15 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
 
     function link(scope, el) {
 
-        // open legend panel if option is set in config for current viewport
-        configService.onEveryConfigLoad(config => {
-            if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
-                stateManager.setActive({ side: false }, 'mainToc');
-            }
-            scope.self.config = config;
-        });
+        events.$on(events.rvApiMapAdded, (_, api) => {
+            // open legend panel if option is set in config for current viewport
+            configService.onEveryConfigLoad(config => {
+                if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
+                    api.panels.legend.open();
+                }
+                scope.self.config = config;
+            });
+        })
 
         referenceService.panels.shell = el;
 

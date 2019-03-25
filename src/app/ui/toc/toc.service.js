@@ -14,6 +14,7 @@ angular
 function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
     geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
 
+    let panel;
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
@@ -52,8 +53,14 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
     let errorToast;
 
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        api.panels.legend.body = $('<rv-toc></rv-toc>');
+    });
+
     let mApi = null;
-    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        mApi = api;
+    });
 
     // set state change watches on metadata, settings and table panel
     watchPanelState('sideMetadata', 'metadata');
