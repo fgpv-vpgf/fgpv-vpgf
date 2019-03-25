@@ -1,4 +1,3 @@
-const templateUrl = require('./settings.html');
 const SETTINGS_CONTENT_PANEL = '.rv-settings-content-panel';
 
 /**
@@ -23,7 +22,6 @@ angular
 function rvSettings($compile) {
     const directive = {
         restrict: 'E',
-        templateUrl,
         scope: {},
         link,
         controller: Controller,
@@ -60,6 +58,5 @@ function rvSettings($compile) {
 function Controller(stateManager) {
     'ngInject';
     const self = this;
-
     self.display = stateManager.display.settings;
 }
