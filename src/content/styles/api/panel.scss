@@ -37,6 +37,37 @@
     z-index: 1000;
 }
 
+ #sideMetadata, #sideSettings {
+     @include include-size(rv-sm) {
+       left: 0px!important;
+       top: 0px!important;
+       width: 100%!important;
+       height:100%!important;
+       z-index: 100!important;
+       visibility: visible;
+       margin: 0!important;
+    }
+
+    @include include-size(rv-md) {
+       left: 10px!important;
+       top: 10px!important;
+       height:660px!important;
+       width: 400px!important;
+       z-index: 100!important;
+       visibility: visible;
+       opacity: 50%;
+       margin: 0!important;
+    }
+}
+
+#expandMetadata{
+    width: 70%;
+    height: 80%;
+    overflow: auto;
+    left: 15%;
+    top: 10%;
+}
+
 .panel-contents {
     background-color: #ffffff;
     box-shadow: $whiteframe-shadow-1dp;
