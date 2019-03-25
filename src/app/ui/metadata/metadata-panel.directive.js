@@ -1,5 +1,3 @@
-const templateUrl = require('./metadata-panel.html');
-
 /**
  * @module rvMetadataPanel
  * @memberof app.ui
@@ -22,7 +20,6 @@ angular
 function rvMetadataPanel(referenceService) {
     const directive = {
         restrict: 'E',
-        templateUrl,
         scope: {},
         link: link,
         controller: Controller,

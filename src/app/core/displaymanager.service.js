@@ -109,11 +109,6 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
             }
             let animationPromise = $q.resolve();
 
-            if (panel.isClosed) { // panel is not open; open it
-                display.data = null; // clear data so the newly opened panel doesn't have any content
-                panel.open();
-            }
-
             // whenever a panel is opened (or updated) create a focus link between the element which triggered the
             // panel change to the first focusable element in the panel.
             animationPromise.then(() => {
@@ -131,10 +126,21 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
                     const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
                     setDisplay(panelName, requestId, data, isLoaded);
+
+                    if (panel.isClosed) {
+                        // once display is set, reopen panel
+                        panel.open();
+                    }
                 })
                 .catch(err => {
                     $timeout.cancel(display.loadingTimeout);
                     display.isLoading = false;
+                    display.data = null;
+
+                    if (panel.isClosed) {
+                        // if display wasn't able to be built, open with error
+                        panel.open();
+                    }
                     throw err;
                 });
         }

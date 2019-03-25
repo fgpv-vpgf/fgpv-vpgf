@@ -153,6 +153,7 @@ export class Panel {
     * Opens the panel on the map. (For the user to see)
     */
     open(): void {
+
         if (this.isDialog) {
             this.openDialog();
         } else {
@@ -201,10 +202,6 @@ export class Panel {
     close(opts?: ClosingOpts): void {
         opts = opts ? opts : { destroy: false, silent: false };
 
-        if (this.isClosed) {
-            return;
-        }
-
         try {
             this._observer.disconnect(); // disconnect the mutation observer
         } catch {
@@ -238,7 +235,7 @@ export class Panel {
         if (this.isClosed) {
             this.open();
         } else {
-            this.close({'destroy': false});
+            this.close({ 'destroy': false });
         }
     }
 
@@ -326,20 +323,20 @@ export class Panel {
 
         this.element.attr('id', id);
         this.element.append(this.body);
-        this.element.css({'visibility': 'hidden'});
+        this.element.css({ 'visibility': 'hidden' });
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
         $(this.api.innerShell).append(documentFragment);
     }
 
-     /**
-      * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
-      *
-      * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
-      *
-      * @param otherPanel The overlaying panel instance
-      */
+    /**
+     * Executes the underlay rule logic which determines if the panel should remain open when another panel opens, or when the viewport size changes.
+     *
+     * When the viewport size changes, panels with a percentage based width/height and/or position can end up overlaying neighboring panels.
+     *
+     * @param otherPanel The overlaying panel instance
+     */
     private underlayRuleCheck(otherPanel: Panel, close = true) {
         if (
             otherPanel === this || // cannot overlay oneself
@@ -360,7 +357,7 @@ export class Panel {
             rect1.top > rect2.bottom);
 
         if (overlap && close) {
-            this.close({closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel});
+            this.close({ closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel });
         }
 
         return overlap;
@@ -374,7 +371,7 @@ export class Panel {
         this.element.wrap('<div class="dialog-container"></div>');
 
         this.header.closeButton;
-        this.element.css({'visibility': ''});
+        this.element.css({ 'visibility': '' });
         this._element = this.element.parent();
         this.element.prependTo($(this.api.innerShell).parent().parent());
 
@@ -399,8 +396,8 @@ export class Panel {
      * Opens closeable & persistent panels.
      */
     private openStandard() {
-        this.element.css({'z-index': this.isCloseable ? 14 : 10});
-        this.element.css({'visibility': ''});
+        this.element.css({ 'z-index': this.isCloseable ? 14 : 10 });
+        this.element.css({ 'visibility': '' });
 
         // this check must occur AFTER the element is placed in the DOM AND is visible.
         this.offScreenRuleCheck('Failed to open panel as all or part of it would render off the screen.');

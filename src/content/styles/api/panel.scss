@@ -37,6 +37,65 @@
     z-index: 1000;
 }
 
+ #sideMetadata, #sideSettings {
+
+    .rv-header-controls{
+        padding: 0 0 0 0;
+    }
+     @include include-size(rv-sm) {
+       left: 0px!important;
+       top: 0px!important;
+       width: 100%!important;
+       height:100%!important;
+       z-index: 100!important;
+       visibility: visible;
+       margin: 0!important;
+    }
+
+    @include include-size(rv-md) {
+       left: 0px!important;
+       top: 0px!important;
+       height:auto;
+       width: 400px!important;
+       z-index: 100!important;
+       visibility: visible;
+       margin: 10px!important;
+    }
+
+    .rv-header {
+         padding-left: 10px;
+
+        .md-title {
+            max-width: auto;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: block;
+            white-space: nowrap;
+        }
+    }
+
+    .panel-body {
+        overflow: auto;
+    }
+
+    padding: 0!important;
+    margin-left:0!important;
+    top: 0px;
+    left: 411px;
+    width: 350px;
+}
+
+#expandMetadata{
+    width: 70%;
+    height: 80%;
+    overflow: auto;
+    left: 15%;
+    top: 10%;
+    .rv-header {
+         padding-left: 10px;
+    }
+}
+
 .panel-contents {
     background-color: #ffffff;
     box-shadow: $whiteframe-shadow-1dp;
