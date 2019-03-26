@@ -13,7 +13,7 @@ angular
     .module('app.core')
     .factory('displayManager', displayManager);
 
-function displayManager($timeout, $q, $rootElement, configService, events) {
+function displayManager($timeout, $q, $rootElement, configService, events, appInfo) {
     const service = {
         toggleDisplayPanel,
         clearDisplayPanel
@@ -77,6 +77,7 @@ function displayManager($timeout, $q, $rootElement, configService, events) {
     function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
         const state = stateManager.state[panelName];
         const displayName = state.display;
+        const panel = appInfo.mapi.panels.getById(panelName);
 
         if (typeof displayName === 'undefined') {
             return $q.reject(); // display for this panel is not defined, exit
@@ -86,11 +87,11 @@ function displayManager($timeout, $q, $rootElement, configService, events) {
         const requestId = ++requestIdCounter;
         // if specified panel is open ...
         // and the requester id is not undefined or matches to the previous requester id ...
-        if (state.active &&
+        if (panel.isOpen &&
             typeof requester.id !== 'undefined' &&
             display.requester.id === requester.id) {
 
-            return stateManager.setActive(panelName);
+            panel.close();
         } else {
             // cancel previous data retrieval timeout
             $timeout.cancel(display.loadingTimeout);
@@ -108,9 +109,9 @@ function displayManager($timeout, $q, $rootElement, configService, events) {
             }
             let animationPromise = $q.resolve();
 
-            if (!state.active) { // panel is not open; open it
+            if (panel.isClosed) { // panel is not open; open it
                 display.data = null; // clear data so the newly opened panel doesn't have any content
-                animationPromise = stateManager.setActive(panelName);
+                panel.open();
             }
 
             // whenever a panel is opened (or updated) create a focus link between the element which triggered the
