@@ -24,8 +24,8 @@ export default class Button extends Element {
         this.elemSet = true;
     }
 
-    constructor(panel: Panel, digest: boolean, innerButton?: string | HTMLElement | JQuery<HTMLElement>, tooltip?: string) {
-        super(panel, digest);
+    constructor(panel: Panel, innerButton?: string | HTMLElement | JQuery<HTMLElement>, tooltip?: string) {
+        super(panel);
 
         this._btnElem = $(`<button class="primary md-button md-raised" type="button">`);
 

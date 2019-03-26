@@ -41,15 +41,15 @@ export default class Header extends Element {
     /**
      * Sets the panel title.
      */
-    setTitle(title: string, digest: boolean = false) {
+    setTitle(title: string) {
         const titleElem = this._header.find('header > h3').first();
         titleElem
             .css('display', '')
             .text(title);
 
-        if (digest === true) {
+        try {
             this.panel.api.$compile(titleElem[0]).$digest();
-        } else {
+        } catch {
             this.panel.api.$compile(titleElem[0]);
         }
     }
@@ -57,15 +57,15 @@ export default class Header extends Element {
     /**
      * Sets the panel subtitle.
      */
-    setSubtitle(subtitle: string, digest: boolean = false) {
+    setSubtitle(subtitle: string) {
         const subtitleElem = this._header.find('header > p').first();
         subtitleElem
             .css('display', '')
             .text(subtitle);
 
-        if (digest === true) {
+        try {
             this.panel.api.$compile(subtitleElem[0]).$digest();
-        } else {
+        } catch {
             this.panel.api.$compile(subtitleElem[0]);
         }
 
@@ -81,9 +81,9 @@ export default class Header extends Element {
     /**
      * Adds a close button to the header controls.
      */
-    getCloseButton(digest: boolean = false) {
+    getCloseButton() {
         if (!this._closeButton) {
-            this._closeButton = new CloseButton(this._panel, digest );
+            this._closeButton = new CloseButton(this._panel);
             this.append(this._closeButton.elem);
         }
 
@@ -93,9 +93,9 @@ export default class Header extends Element {
     /**
      * Adds a toggle button to the header controls.
      */
-    getToggleButton(digest: boolean = false) {
+    getToggleButton() {
         if (!this._toggleButton) {
-            this._toggleButton = new ToggleButton(this._panel, digest);
+            this._toggleButton = new ToggleButton(this._panel);
             this.append(this._toggleButton.elem);
         }
 
@@ -124,8 +124,8 @@ export default class Header extends Element {
         this._panel.element.prepend(this._header);
     }
 
-    constructor(panel: Panel, digest: boolean = false) {
-        super(panel, digest);
+    constructor(panel: Panel) {
+        super(panel);
         this.placeHeader();
     }
 }

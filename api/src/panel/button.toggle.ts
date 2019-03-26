@@ -8,8 +8,8 @@ export default class ToggleButton extends Button {
         return (<any>this.panel.element).height() >= 50;
     }
 
-    constructor(panel: Panel, digest: boolean) {
-        super(panel, digest, `<md-icon md-svg-src="navigation:expand_less"></md-icon>`, `{{ 'api.panel.toggle' | translate }}`);
+    constructor(panel: Panel) {
+        super(panel, `<md-icon md-svg-src="navigation:expand_less"></md-icon>`, `{{ 'api.panel.toggle' | translate }}`);
         this.elem
             .addClass('md-icon-button')
             .removeClass('md-raised');

@@ -61,13 +61,8 @@ export default class Element {
         }
     }
 
-    get digest(): boolean {
-        return this._digest;
-    }
-
-    constructor(panel: Panel, digest: boolean, elementBody?: string | HTMLElement | JQuery<HTMLElement>) {
+    constructor(panel: Panel, elementBody?: string | HTMLElement | JQuery<HTMLElement>) {
         this._panel = panel;
-        this._digest = digest;
 
         if (elementBody) {
             this.elem = $(elementBody);
