@@ -131,7 +131,7 @@ export class Panel {
      * Returns true if the panel is a dialog.
      */
     get isDialog() {
-        return this.element.hasClass('dialog-container');
+        return this._isDialog;
     }
 
     /**
@@ -145,12 +145,7 @@ export class Panel {
     * Opens the panel on the map. (For the user to see)
     */
     open(): void {
-        // if all style properties have empty values we consider this a dialog (no user defined position)
-        const positionWHNotSet = ['top', 'left', 'right', 'bottom', 'width', 'height']
-            .map(t => this.element.css(t))
-            .every( (val, i, arr) => val === '' && val === arr[0] );
-
-        if (positionWHNotSet) {
+        if (this.isDialog) {
             this.openDialog();
         } else {
             this.openStandard();
@@ -408,12 +403,13 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api: ViewerAPI) {
+    constructor(id: string, api: ViewerAPI, dialog: boolean = false) {
         this.api = api;
 
         this.allowUnderlay = true;
         this.allowOffscreen = false;
         this.reopenAfterOverlay = false;
+        this._isDialog = dialog;
 
         this._style = {};
         this._initRXJS();
@@ -442,6 +438,7 @@ export interface Panel {
         height?: string;
     };
     _reopenAfterOverlay: boolean;
+    _isDialog: boolean;
 
     //HTML parent Components
     _element: JQuery<HTMLElement>;
