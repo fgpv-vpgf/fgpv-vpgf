@@ -463,7 +463,7 @@ class AttribFC extends basicFC.BasicFC {
                     };
 
                     if (needWebGeom) {
-                        reqParam.content.outSR = opts.map.spatialReference;
+                        reqParam.content.outSR = JSON.stringify(opts.map.spatialReference);
                         if (nonPoint) {
                             reqParam.content.maxAllowableOffset = lod.resolution;
                         }
