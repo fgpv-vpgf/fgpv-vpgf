@@ -1,5 +1,5 @@
 import Map from 'api/map';
-import { Panel, CLOSING_CODES } from './panel';
+import { Panel, CLOSING_CODES, PanelTypes } from './panel';
 import { Subject } from 'rxjs';
 
 /**
@@ -13,6 +13,8 @@ export class PanelRegistry {
     private _reopenList: Panel[] = [];
     private _panelOpening = new Subject();
     private _panelClosing = new Subject();
+
+    PANEL_TYPES = PanelTypes;
 
     legend: Panel;
     details: Panel;
@@ -66,13 +68,13 @@ export class PanelRegistry {
      * @param id a unique id for the panel element
      * @param isDialog set to true if panel should be a dialog
      */
-    create(id: string, isDialog: boolean = false) {
+    create(id: string, panelType: PanelTypes = PanelTypes.Panel) {
 
         if ($(`#${id}`).length >= 1) {
             throw new Error(`API(panels): an element with ID ${id} already exists. A panel ID must be unique to the page.`);
         }
 
-        const panel = new Panel(id, this._mapI, isDialog);
+        const panel = new Panel(id, this._mapI, panelType);
 
         panel.opening.subscribe(p => {
             this._panelOpening.next(p);

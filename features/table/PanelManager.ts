@@ -1,12 +1,12 @@
 import { Table } from './table.feature';
-import { Panel } from 'api/panel';
+import { Panel, PanelTypes } from 'api/panel';
 
 /**
  * Handles the creation and logic of generic panel setup, positioning, and styling.
  */
 export class PanelManager extends Panel {
     constructor(table: Table) {
-        super('tblID', table.mapApi);
+        super('tblID', table.mapApi, PanelTypes.Panel);
         this.tableContent = $(`<div></div>`);
         this.element.css({
             top: '0px',
