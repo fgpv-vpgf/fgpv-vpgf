@@ -1,7 +1,3 @@
----
-nav: author
----
-
 # A guide for map authors
 
 This guide is intended for those who are looking to use the RAMP viewer for their webpage or project.
@@ -345,7 +341,7 @@ The first thing we'll need to do is to download a copy of the viewer's code. Vis
 
 To load the viewer on a webpage, a few things are required on the host page:
 
-- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. Our recommended option is a call to polyfill.io:
+- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. One option is to use a call to polyfill.io; it is a simple way to get polyfills, but makes your site dependent on the service being functional.
 
   ```html
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>

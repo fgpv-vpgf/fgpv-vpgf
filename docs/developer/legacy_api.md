@@ -1,8 +1,3 @@
----
-nav: dev
-
----
-
 # Legacy API (deprecated)
 
 **The legacy API is deprecated. It will be removed in the next major release.**

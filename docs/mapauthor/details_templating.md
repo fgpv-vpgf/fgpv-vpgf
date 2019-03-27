@@ -1,7 +1,3 @@
----
-nav: author
----
-
 # Details Templating
 
 The viewer allows you to display identify/details results with a custom template.

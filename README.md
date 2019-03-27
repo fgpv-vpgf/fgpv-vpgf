@@ -1,27 +1,35 @@
-### [V3 Documentation](https://ramp-docs.fgpv-vpgf.com/v3-doc-1024/#/) is in progress!
+### [V3 Documentation](https://docs.fgpv.org/fgpv-vpgf/fgpv-vpgf/v3/#/) is in progress!
 
 
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 [![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 
 [![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)
 [![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
 
-# Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
+# RAMP2
 
-## Description
+The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, WCAG 2.0 AA compliant common viewer platform for the Government of Canada.
 
-The Reusable Accessible Mapping Platform, RAMP ( aka the Federal Geospatial Platform Visualiser, FGPV) is a web mapping application. It is designed to be usable in any webpage and maintains WCAG 2.0 AA accessibility.
+For more information on this project, please see one of the sections below:
 
-- [Highly configurable](https://fgpv-vpgf.github.io/schema-to-docs/)
-- User added layers, both services and files
-- Exportable and sharable maps
+* [Usage](#usage)
+* [Building the Project](#building-the-project)
+* [Support](#support)
+
+Also, please visit the [Documentation Site](https://docs.fgpv.org/fgpv-vpgf/fgpv-vpgf/v3.0.0/#/home) for additional content on:
+
+* [Map Author Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/mapauthor/intro)
+* [Contributing to the RAMP Project](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started)
+* [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
+* [Developer Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/developer/intro)
+* [Technical Documentation](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/technical/architecture)
 
 ## Usage
 
 ### Quick guide
+
 We'll go through the simplest way to use RAMP, for more information see the [map author guide](#map-author-guide)
 
 First, grab the most recent release from the [github releases](https://github.com/fgpv-vpgf/fgpv-vpgf/releases)
@@ -49,27 +57,6 @@ A map should now load on your page. Theres much more you can do with RAMP, a goo
 
 ### [Some samples](http://fgpv.cloudapp.net/demo/develop/dev/samples/index-samples.html)
 
-## [Documentation](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/)
-
-
-### [Developer Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/developer/intro)
-
-This guide goes over things such as the API, working with plugins, datatables, the technical documentation and covers the deprecated legacy API.
-
-It is intended for developers looking to use the API to customize RAMP and how it interacts with the host page.
-
-### [Map Author Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/mapauthor/intro)
-
-This guide goes over everything needed to get RAMP running on a page. It also goes through the process of writing a config file, and some extra info about using RAMP in your project.
-
-It is intended for anyone looking to add RAMP to their webpage or project.
-
-### [Contributing to RAMP](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started)
-
-This guide goes over the project environment, and outlines our processes for contributing code.
-
-It is intended for JavaScript developers who want to contribute to the code base.
-
 ## Building the project
 
 Requirements:
@@ -84,8 +71,6 @@ Running a local build:
 4. Run `npm run serve` to build and launch a dev server
 
 We use a fork and pull model for contributions, see our [contributing guidelines](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started) for more details.
-
-### [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
 
 ### Generating Local Builds
 
