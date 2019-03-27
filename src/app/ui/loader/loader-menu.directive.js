@@ -38,20 +38,17 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     self.openFileLoader = openFileLoader;
     self.openServiceLoader = openServiceLoader;
 
-    /***/
+    // Initialize loader panels
+    let mApi = appInfo.mapi;
+    mApi.panels.fileLoader.body = $('<rv-loader-file class="rv-plug-fade"></rv-loader-file>');
+    mApi.panels.serviceLoader.body = $('<rv-loader-service class="rv-plug-fade"></rv-loader-service>');
 
     function openFileLoader() {
-        // TODO: hack
-        stateManager.setActive({
-            mainLoaderFile: true
-        }).then(() => { setFocus('rv-loader-file'); });
+        mApi.panels.fileLoader.open();
     }
 
     function openServiceLoader() {
-        // TODO: hack
-        stateManager.setActive({
-            mainLoaderService: true
-        }).then(() => { setFocus('rv-loader-service'); });
+        mApi.panels.serviceLoader.open();
     }
 
     /**
