@@ -7,6 +7,7 @@ export function make(config: defs.MainConfig, query: string): Query {
     const ntsReg = /^\d{2,3}[A-P]/;
     const scaleReg = /^[1][:]\d{1,3}[ ]*\d{1,3}[ ]*\d{1,3}[*]$/; // from 1:100 to 1:100 000 000
 
+    query = query.slice(0, -1);
     if (fsaReg.test(query)) {
         // FSA test
         return new FSAQuery(config, query);
@@ -16,10 +17,10 @@ export function make(config: defs.MainConfig, query: string): Query {
         return new NTSQuery(config, query);
     } else if (latLngRegDD.test(query)) {
         // Lat/Long Decimal Degrees test
-        return new LatLongQuery(config, query.slice(0, -1), 'dd');
+        return new LatLongQuery(config, query, 'dd');
     } else if (latLngRegDMS.test(query)) {
         // Lat/Long Degree Minute Second test
-        return new LatLongQuery(config, query.slice(0, -1), 'dms')
+        return new LatLongQuery(config, query, 'dms')
     } else if (/^[A-Za-z]/.test(query)) {
         // name based search
         const q = new Query(config, query);
@@ -32,9 +33,9 @@ export function make(config: defs.MainConfig, query: string): Query {
         // scale search
         const q = new Query(config, query);
         const typeCode = 'SCALE';
-        q.onComplete = q.search().then(results => {
+        q.onComplete = q.search().then(_ => {
 
-            q.scale = [{ name: query.slice(0, -1), type: { name: q.config.types.validTypes[typeCode], code: typeCode } }];
+            q.scale = [{ name: query, type: { name: q.config.types.validTypes[typeCode], code: typeCode } }];
             return q;
         });
         return q;
@@ -153,7 +154,7 @@ export class NTSQuery extends Query {
 
     constructor(config: defs.MainConfig, query: string) {
         // front pad 0 if NTS starts with two digits
-        query = !parseInt(query[2]) ? '0' + query : query;
+        query = isNaN(parseInt(query[2])) ? '0' + query : query;
         super(config, query);
         this.unitName = query;
         this.onComplete = new Promise((resolve, reject) => {
@@ -161,7 +162,7 @@ export class NTSQuery extends Query {
                 // query check added since it can be null but will never be in this case (make TS happy)
                 if (lr.length > 0 && this.query) {
                     const allSheets = this.locateToResult(lr);
-                    this.unit = allSheets.splice(allSheets.findIndex(x => x.nts === this.query), 1)[0];
+                    this.unit = allSheets[0];
                     this.mapSheets = allSheets;
 
                     this.featureResults = this.unit;
