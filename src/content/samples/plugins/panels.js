@@ -32,7 +32,7 @@
 
     dialog() {
         this.panelCountDialog = this.panelCountDialog + 1;
-        const p = this.api.panels.create(`dialog-pnl-${this.panelCountDialog}`, true);
+        const p = this.api.panels.create(`dialog-pnl-${this.panelCountDialog}`, this.api.panels.PANEL_TYPES.Dialog);
         p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
         p.header.title = 'Dialog Title';
         p.open();
@@ -147,7 +147,7 @@ function () {
     key: "dialog",
     value: function dialog() {
       this.panelCountDialog = this.panelCountDialog + 1;
-      var p = this.api.panels.create("dialog-pnl-".concat(this.panelCountDialog), true);
+      var p = this.api.panels.create("dialog-pnl-".concat(this.panelCountDialog), this.api.panels.PANEL_TYPES.Dialog);
       p.body = "<h2>Hello!</h2><p>I'm a dialog</p>";
       p.header.title = 'Dialog Title';
       p.open();

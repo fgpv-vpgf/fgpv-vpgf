@@ -403,13 +403,13 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api: ViewerAPI, dialog: boolean = false) {
+    constructor(id: string, api: ViewerAPI, panelType: PanelTypes) {
         this.api = api;
 
         this.allowUnderlay = true;
         this.allowOffscreen = false;
         this.reopenAfterOverlay = false;
-        this._isDialog = dialog;
+        this._isDialog = (panelType === PanelTypes.Dialog);
 
         this._style = {};
         this._initRXJS();
@@ -476,6 +476,11 @@ export interface ClosingResponse {
     code: CLOSING_CODES;
     panel: Panel;
     otherPanel?: Panel;
+}
+
+export enum PanelTypes {
+    Panel,
+    Dialog
 }
 
 interface ClosingOpts {
