@@ -11,7 +11,7 @@ describe('The query router', () => {
     });
 
     describe('returns an NTS query class', () => {
-        it("when given a partial NTS query", () => {
+        xit("when given a partial NTS query", () => {
             expect(query('064D')).toEqual(jasmine.any(Q.NTSQuery));
         });
 
@@ -21,7 +21,7 @@ describe('The query router', () => {
     });
 
     describe('returns an FSA query class', () => {
-        it("when given a valid FSA", () => {
+        xit("when given a valid FSA", () => {
             expect(query('L5L')).toEqual(jasmine.any(Q.FSAQuery));
         });
 
