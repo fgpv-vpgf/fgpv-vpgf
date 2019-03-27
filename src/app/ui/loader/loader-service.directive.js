@@ -26,7 +26,7 @@ function rvLoaderService() {
     return directive;
 }
 
-function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyNames, layerSource, legendService) {
+function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyNames, layerSource, legendService, appInfo) {
     'ngInject';
     const self = this;
 
@@ -389,6 +389,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
         self.layerBlueprint = null;
         stepper.reset().start();
         stateManager.setActive('mainToc');
+        appInfo.mapi.panels.serviceLoader.close({'destroy': false});
 
         // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
         $timeout(() => {

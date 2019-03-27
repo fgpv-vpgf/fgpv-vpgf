@@ -20,6 +20,8 @@ export class PanelRegistry {
     details: Panel;
     settings: Panel;
     metadata: Panel;
+    fileLoader: Panel;
+    serviceLoader: Panel;
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
@@ -39,6 +41,8 @@ export class PanelRegistry {
         this.details = this.create('mainDetails');
         this.settings = this.create('sideSettings');
         this.metadata = this.create('sideMetadata');
+        this.fileLoader = this.create('fileLoader');
+        this.serviceLoader = this.create('serviceLoader');
     }
 
     /**
