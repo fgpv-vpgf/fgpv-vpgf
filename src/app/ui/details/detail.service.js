@@ -13,13 +13,33 @@ angular.module('app.ui').factory('detailService', detailService);
 const parserFunctions = [];
 const templates = [];
 
-function detailService($mdDialog, stateManager, mapService, referenceService) {
+function detailService($mdDialog, stateManager, mapService, referenceService, events) {
     const service = {
         expandPanel,
         closeDetails,
         getParser,
         getTemplate
     };
+
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        api.panels.details.body = $('<rv-details></rv-details>');
+
+        const expandBtn = new api.panels.details.Button(`<md-icon md-svg-src="action:open_in_new"></md-icon>`);
+        expandBtn.$
+            .addClass('md-icon-button')
+            .removeClass('md-raised')
+            .on('click', () => { expandPanel(); });
+        api.panels.details.header.append(expandBtn);
+
+        const btn = api.panels.details.header.closeButton;
+        btn.on('click', () => { closeDetails(); });
+
+        api.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+    });
+
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        service.mApi = api;
+    });
 
     return service;
 

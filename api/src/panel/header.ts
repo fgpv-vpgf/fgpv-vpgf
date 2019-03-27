@@ -45,9 +45,9 @@ export default class Header extends Element {
         const titleElem = this._header.find('header > h3').first();
         titleElem
             .css('display', '')
-            .text(title);
+            .text(`{{ '${title}' | translate }}`);
 
-        this.panel.api.$compile(titleElem[0]).$digest();
+        this.panel.api.$compile(titleElem[0]);
     }
 
     /**
@@ -57,9 +57,9 @@ export default class Header extends Element {
         const subtitleElem = this._header.find('header > p').first();
         subtitleElem
             .css('display', '')
-            .text(subtitle);
+            .text(`{{ '${subtitle}' | translate }}`);
 
-        this.panel.api.$compile(subtitleElem[0]).$digest();
+        this.panel.api.$compile(subtitleElem[0]);
     }
 
     /**

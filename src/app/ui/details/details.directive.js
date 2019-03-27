@@ -106,6 +106,9 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 });
             }
 
+            detailService.mApi.panels.details.open();
+            detailService.mApi.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+
             // wrap symbology returned by the proxy into a symbology stack object
             newValue.forEach(item =>
                 (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));

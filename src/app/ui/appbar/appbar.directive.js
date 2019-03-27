@@ -60,7 +60,7 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
     });
 
     function toggleDetails() {
-        stateManager.setActive({ side: false }, 'mainDetails');
+        self._mApi.panels.details.toggle();
     }
 
     function toggleTocBuilder() {
