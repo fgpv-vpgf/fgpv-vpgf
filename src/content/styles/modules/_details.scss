@@ -49,14 +49,18 @@
         }
     }
 
+    #mainDetails {
+        top: 49px;
+        width: 400px;
+    }
+
     .rv-details {
         flex-direction: column;
         display: flex;
-        top: 49px;
+        top: 0;
         bottom: 0;
         right: 0;
         left: 0;
-        width: 400px;
 
         .rv-subheader {
             padding-right: rem(2.5);
