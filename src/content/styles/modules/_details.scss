@@ -49,10 +49,14 @@
         }
     }
 
+    #mainDetails {
+        top: 49px;
+        width: 400px;
+    }
+
     .rv-details {
         flex-direction: column;
         display: flex;
-        position: absolute;
         top: 0;
         bottom: 0;
         right: 0;
