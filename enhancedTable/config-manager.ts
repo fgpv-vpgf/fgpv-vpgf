@@ -125,9 +125,9 @@ export class ColumnConfigManager {
     }
 
     /**
-    * Initializes column width according to specifications in the config on table creation
-    * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
-    */
+     * Initializes column width according to specifications in the config on table creation
+     * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
+     */
     get width(): any {
         return (this.column !== undefined) ? this.column.width : undefined;
     }
@@ -165,9 +165,9 @@ export class ColumnConfigManager {
     }
 
     /**
-    * Returns whether filter is static
-    * Set up on table create
-    */
+     * Returns whether filter is static
+     * Set up on table create
+     */
     get isFilterStatic(): boolean {
         if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.static === undefined)) {
             return this.column.filter.static;

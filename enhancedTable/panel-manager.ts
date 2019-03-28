@@ -198,7 +198,7 @@ export class PanelManager {
      * Auto size all columns but check the max width
      * Note: Need a custom function here since setting maxWidth prevents
      *       `sizeColumnsToFit()` from filling the entire panel width
-    */
+     */
     autoSizeToMaxWidth(columns?: Array<any>) {
         const maxWidth = 400;
         columns = columns ? columns : this.tableOptions.columnApi.getAllColumns();

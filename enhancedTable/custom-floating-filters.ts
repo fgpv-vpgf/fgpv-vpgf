@@ -174,8 +174,8 @@ function getDateString(value) {
 }
 
 /**
-* Floating filter component enhanced for Static Text Filters
-*/
+ * Floating filter component enhanced for Static Text Filters
+ */
 export class TextFloatingFilter {
 
     init(params) {
@@ -195,10 +195,10 @@ export class TextFloatingFilter {
     };
 
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     preLoadedValue(): void {
         const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
         if (reloadedVal !== undefined) {
@@ -235,9 +235,9 @@ export class TextFloatingFilter {
 }
 
 /**
-* Floating filter component enhanced for number
-* Has separate min and max input boxes
-*/
+ * Floating filter component enhanced for number
+ * Has separate min and max input boxes
+ */
 export class NumberFloatingFilter {
 
     init(params: any) {
@@ -261,10 +261,10 @@ export class NumberFloatingFilter {
     }
 
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     get preLoadedValue(): any {
         const reloadedMinVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' min');
         const reloadedMaxVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field + ' max');
@@ -471,8 +471,8 @@ export class DateFloatingFilter {
 }
 
 /**
-* Floating filter component enhanced for Static Text Filters
-*/
+ * Floating filter component enhanced for Static Text Filters
+ */
 export class SelectorFloatingFilter {
 
     init(params: any) {
@@ -517,10 +517,10 @@ export class SelectorFloatingFilter {
     }
 
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     preLoadedValue(): void {
         const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field) === null ? '' :
             this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);

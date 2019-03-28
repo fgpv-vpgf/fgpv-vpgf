@@ -12,9 +12,9 @@ export class PanelRowsManager {
     }
 
     /**
-    * Table is set up according to layer visibiltiy on open
-    * Observers are set up in case of change to layer visibility or symbol visibility
-    */
+     * Table is set up according to layer visibiltiy on open
+     * Observers are set up in case of change to layer visibility or symbol visibility
+     */
     initObservers() {
         this.legendBlock = this.panelManager.legendBlock;
         this.currentTableLayer = this.panelManager.currentTableLayer;
@@ -52,17 +52,17 @@ export class PanelRowsManager {
     }
 
     /**
-    * Destroy observers when table is closed
-    */
+     * Destroy observers when table is closed
+     */
     destroyObservers() {
         this.layerVisibilityObserver.unsubscribe();
         this.mapFilterChangedObserver.unsubscribe();
     }
 
     /**
-    * Helper method to initTableRowVisibility
-    * Sets table filters based on table visibility on open
-    */
+     * Helper method to initTableRowVisibility
+     * Sets table filters based on table visibility on open
+     */
     initialFilterSettings() {
         if (!this.currentTableLayer.visibility) {
             // if  layer is invisible, table needs to show zero entries
@@ -105,9 +105,9 @@ export class PanelRowsManager {
     }
 
     /**
-    * Helper method to multiple methods
-    * Tricks ag-grid into updating filter status by selecting all filtered rows
-    */
+     * Helper method to multiple methods
+     * Tricks ag-grid into updating filter status by selecting all filtered rows
+     */
     updateGridFilters() {
         this.tableOptions.api.onFilterChanged();
     }
