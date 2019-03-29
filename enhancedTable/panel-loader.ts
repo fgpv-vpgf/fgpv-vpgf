@@ -8,7 +8,7 @@ export class PanelLoader {
     constructor(mapApi: any, legendBlock) {
         this.mapApi = mapApi;
         this.legendBlock = legendBlock;
-        this.panel = this.mapApi.newPanel('enhancedTableLoader');
+        this.panel = this.mapApi.panels.create('enhancedTableLoader');
         this.panel.element.css({
             top: '0px',
             left: '410px'
@@ -28,8 +28,8 @@ export class PanelLoader {
     }
 
     prepareHeader() {
-        this.panel.header.setTitle(this.legendBlock.name);
-        this.panel.header.getCloseButton();
+        this.panel.header.title = this.legendBlock.name;
+        this.panel.header.closeButton;
     }
 
     open() {
@@ -44,7 +44,6 @@ export class PanelLoader {
 
     close() {
         this.panel.close();
-        this.mapApi.deletePanel('enhancedTableLoader')
     }
 }
 

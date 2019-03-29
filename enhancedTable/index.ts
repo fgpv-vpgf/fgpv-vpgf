@@ -127,11 +127,11 @@ export default class TableBuilder {
     }
 
     deleteLoaderPanel() {
+        if (this.loadingPanel) {
+            this.loadingPanel.close();
+        }
         if ($('#enhancedTableLoader') !== undefined) {
             $('#enhancedTableLoader').remove();
-            let loaderPanel = this.mapApi.panels.find(panel => panel.id === 'enhancedTableLoader');
-            let loaderPanelIndex = this.mapApi.panels.indexOf(loaderPanel);
-            this.mapApi.panels.splice(loaderPanelIndex, 1);
         }
     }
 

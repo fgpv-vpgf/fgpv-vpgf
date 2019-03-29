@@ -4192,6 +4192,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   margin-right: -2px;
   padding-right: 1px; }
 
+.panel-body {
+  padding: 0 8px 8px !important; }
+
 md-datepicker > div {
   border-bottom: none !important; }
 
@@ -4246,6 +4249,11 @@ md-datepicker > div {
 
 .rv-small .mobile-table-control .table-control {
   display: flex !important; }
+
+.mobile-table-menu {
+  display: flex;
+  align-items: center;
+  padding: 0px 12px 0px 16px; }
 
 .md-icon-button {
   width: 40px !important;
@@ -22453,6 +22461,16 @@ Obviously you need some kind of rules and criteria:
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis; }
+  [is=rv-map] #mainToc, .fgpv #mainToc {
+    top: 49px;
+    left: 0px;
+    width: 400px;
+    z-index: 11 !important; }
+    .rv-small[is=rv-map] #mainToc, .rv-small.fgpv #mainToc {
+      top: 49px;
+      left: 0px;
+      margin: 0;
+      width: 100%; }
   [is=rv-map] rv-toc .rv-content-pane .rv-content, .fgpv rv-toc .rv-content-pane .rv-content {
     padding: 0; }
   [is=rv-map] .rv-toc, .fgpv .rv-toc {
@@ -23012,10 +23030,12 @@ Obviously you need some kind of rules and criteria:
       height: initial;
       max-height: none;
       position: absolute; }
+  [is=rv-map] #mainDetails, .fgpv #mainDetails {
+    top: 49px;
+    width: 400px; }
   [is=rv-map] .rv-details, .fgpv .rv-details {
     flex-direction: column;
     display: flex;
-    position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
@@ -23584,6 +23604,16 @@ Obviously you need some kind of rules and criteria:
       right: 8px;
       left: 8px;
       background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(207, 216, 220, 0.3)); }
+  [is=rv-map] #fileLoader, [is=rv-map] #serviceLoader, .fgpv #fileLoader, .fgpv #serviceLoader {
+    top: 49px;
+    left: 0px;
+    width: 400px;
+    z-index: 11 !important; }
+    .rv-small[is=rv-map] #fileLoader, .rv-small[is=rv-map] #serviceLoader, .rv-small.fgpv #fileLoader, .rv-small.fgpv #serviceLoader {
+      top: 49px;
+      left: 0px;
+      margin: 0;
+      width: 100%; }
   [is=rv-map] .rv-loader-file rv-stepper-item:first-of-type .rv-stepper-item-container:before, [is=rv-map] .rv-loader-service rv-stepper-item:first-of-type .rv-stepper-item-container:before, .fgpv .rv-loader-file rv-stepper-item:first-of-type .rv-stepper-item-container:before, .fgpv .rv-loader-service rv-stepper-item:first-of-type .rv-stepper-item-container:before {
     display: none; }
   [is=rv-map] .rv-loader-file rv-stepper-item:last-of-type .rv-stepper-item-container:after, [is=rv-map] .rv-loader-service rv-stepper-item:last-of-type .rv-stepper-item-container:after, .fgpv .rv-loader-file rv-stepper-item:last-of-type .rv-stepper-item-container:after, .fgpv .rv-loader-service rv-stepper-item:last-of-type .rv-stepper-item-container:after {

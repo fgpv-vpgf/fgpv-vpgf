@@ -18,8 +18,8 @@ export class PanelManager {
     constructor(mapApi: any) {
         this.notVisible = {}
         this.mapApi = mapApi;
-        this.panel = this.mapApi.newPanel('enhancedTable');
-        this.panel.body = `<div rv-focus-exempt></div>`;
+        this.panel = this.mapApi.panels.create('enhancedTable');
+        this.panel.body = $(`<div rv-focus-exempt></div>`);
         this.panel.element.addClass('ag-theme-material mobile-fullscreen');
         this.panel.element.css({
             top: '0px',
@@ -27,7 +27,7 @@ export class PanelManager {
         });
         this.panel.allowUnderlay = false;
 
-        const close = this.panel.header.getCloseButton();;
+        const close = this.panel.header.closeButton;
         close.removeClass('primary');
         close.addClass('black md-ink-ripple');
         this.setSize();
@@ -79,7 +79,7 @@ export class PanelManager {
 
             // set header / controls for panel
             this.makeHeader();
-            this.panel.header.setTitle(`{{ 'filter.title' | translate }} ${this.configManager.title}`);
+            this.panel.header.title = `{{ 'filter.title' | translate }} ${this.configManager.title}`;
 
             // Add the scroll record count
             let recordCountTemplate = $(RECORD_COUNT_TEMPLATE);
