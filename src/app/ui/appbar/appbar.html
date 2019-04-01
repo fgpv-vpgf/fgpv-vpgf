@@ -1,7 +1,7 @@
 <div class="main-appbar rv-whiteframe-z2"
     ng-if="self.config.ui.appBar.enabled"
     ng-class="{ 'rv-appbar-collapsed': !self.stateManager.state.main.active && self.config.ui.appBar.sideMenuOnly }"
-    ng-show="!self.stateManager.state.mainGeosearch.active">
+    ng-show="self.geosearchService.mApi.panels.geoSearch.isClosed">
 
     <md-button
         ng-if="self.config.ui.appBar.sideMenu"
@@ -80,4 +80,4 @@
     </md-button>
 </div>
 
-<rv-geosearch-bar ng-if="self.stateManager.state.mainGeosearch.active"></rv-geosearch-bar>
+<rv-geosearch-bar ng-if="self.geosearchService.mApi.panels.geoSearch.isOpen"></rv-geosearch-bar>

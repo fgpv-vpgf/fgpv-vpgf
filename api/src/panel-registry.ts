@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 /**
  * Handles the coordination of panels.
- * 
+ *
  * Used to get a list of panels (all, opened, closed), to create panels, etc.
  */
 export class PanelRegistry {
@@ -22,6 +22,7 @@ export class PanelRegistry {
     metadata: Panel;
     fileLoader: Panel;
     serviceLoader: Panel;
+    geoSearch: Panel;
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
@@ -43,6 +44,7 @@ export class PanelRegistry {
         this.metadata = this.create('sideMetadata');
         this.fileLoader = this.create('fileLoader');
         this.serviceLoader = this.create('serviceLoader');
+        this.geoSearch = this.create('mainGeosearch');
     }
 
     /**
