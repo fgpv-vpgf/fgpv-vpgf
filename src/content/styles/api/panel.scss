@@ -161,6 +161,7 @@
 .panel-body {
     padding: 5px 18px;
     height: calc(100% - 46px); // 100% minus the headers
+    overflow-y: scroll;
 
     &.ag-theme-material {
         border-top: initial;

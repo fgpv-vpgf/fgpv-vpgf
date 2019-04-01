@@ -40,15 +40,35 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
 
     // Initialize loader panels
     let mApi = appInfo.mapi;
-    mApi.panels.fileLoader.body = $('<rv-loader-file class="rv-plug-fade"></rv-loader-file>');
-    mApi.panels.serviceLoader.body = $('<rv-loader-service class="rv-plug-fade"></rv-loader-service>');
+    mApi.panels.fileLoader.body = $('<rv-loader-file></rv-loader-file>');
+    mApi.panels.serviceLoader.body = $('<rv-loader-service></rv-loader-service>');
+    // When legend toggles back open, close the loaders
+    mApi.panels.legend.opening.subscribe(() => {
+        mApi.panels.fileLoader.close();
+        mApi.panels.serviceLoader.close();
+    });
+
+    mApi.panels.fileLoader.opening.subscribe(() => {
+        mApi.mapI.setAppbarTitle(mApi.panels.fileLoader, 'import.file.title');
+    });
+    mApi.panels.fileLoader.closing.subscribe(() => {
+        mApi.mapI.releaseAppbarTitle(mApi.panels.fileLoader);
+    });
+    mApi.panels.serviceLoader.opening.subscribe(() => {
+        mApi.mapI.setAppbarTitle(mApi.panels.serviceLoader, 'import.service.title');
+    });
+    mApi.panels.serviceLoader.closing.subscribe(() => {
+        mApi.mapI.releaseAppbarTitle(mApi.panels.serviceLoader);
+    });
 
     function openFileLoader() {
         mApi.panels.fileLoader.open();
+        setFocus('#fileLoader');
     }
 
     function openServiceLoader() {
         mApi.panels.serviceLoader.open();
+        setFocus('#serviceLoader');
     }
 
     /**
