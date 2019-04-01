@@ -31,6 +31,7 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
         get map() { return configService.getSync.map.instance; }
 
         destroyMap() {
+            this._pluginLoader.destroyer();
             mapService.destroyMap();
 
             return this;
