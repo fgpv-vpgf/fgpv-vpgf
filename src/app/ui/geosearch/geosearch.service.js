@@ -53,15 +53,21 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         runningRequestCount: 0 // used to track the latest query and discard results from previous ones if they resolve after an older query
     };
 
-    // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
-    $rootScope.$watch(() => stateManager.state.mainGeosearch.active, newValue => {
-        if (!newValue) {
-            // this will properly hide geosearch content
-            onClose();
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        service.mApi = api;
+        api.panels.geoSearch.body = $('<rv-geosearch></rv-geosearch>');
+        api.panels.geoSearch.isCloseable = true;
 
-            // emit close to directive
-            $rootScope.$emit(events.rvGeosearchClose);
-        }
+        // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
+        $rootScope.$watch(() => api.panels.geoSearch.isClosed, newValue => {
+            if (!newValue) {
+                // this will properly hide geosearch content
+                onClose();
+
+                // emit close to directive
+                $rootScope.$emit(events.rvGeosearchClose);
+            }
+        });
     });
 
     return service;
@@ -75,13 +81,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      */
     function toggleBuilder() {
         return debounceService.registerDebounce(() => {
-            ref.mainPanel.addClass('geosearch');
-
-            // skip animation on the main panel when switching to and from geosearch content
-            stateManager.state.main.activeSkip = true;
-            stateManager.state.main.activeSkipOverride = true;
-
-            stateManager.setActive({ side: false }, 'mainGeosearch');
+            service.mApi.panels.geoSearch.toggle();
         });
     }
 
@@ -136,6 +136,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
             service.searchResults = [];
             service.isLoading = false;
             service.isResultsVisible = false;
+            service.mApi.panels.geoSearch.element.css({opacity: 0, 'pointer-events': 'none', bottom: 0});
 
             return $q.resolve();
         }
@@ -148,6 +149,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
             // hide loading indicator
             service.isLoading = false;
             service.isResultsVisible = true;
+            service.mApi.panels.geoSearch.element.css({opacity: 1, 'pointer-events': '', bottom: ''});
             service.serviceError = false;
 
             // discard any old results

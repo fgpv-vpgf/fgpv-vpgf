@@ -116,7 +116,15 @@ export class Panel {
      * Returns true if the panel has a close button in its header. Dialog panels are always closeable.
      */
     get isCloseable() {
-        return this.isDialog || (!!this._header && this._header.hasCloseButton);
+        return this.isDialog || this._isCloseable || (!!this._header && this._header.hasCloseButton);
+    }
+
+    /**
+     * Manually flag a panel as closeable when there is an alternative way to close the panel through
+     * the UI.
+     */
+    set isCloseable(closeable: boolean) {
+        this._isCloseable = closeable;
     }
 
     get isClosed() {
@@ -439,6 +447,7 @@ export interface Panel {
     };
     _reopenAfterOverlay: boolean;
     _isDialog: boolean;
+    _isCloseable: boolean;
 
     //HTML parent Components
     _element: JQuery<HTMLElement>;
