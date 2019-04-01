@@ -1,93 +1,97 @@
 /* class PanelTester {
-    init(api) {
-        this.panelCount = 0;
-        this.panelCountDialog = 0;
-        this.api = api;
-        this._makePanel();
-    }
+  init(api) {
+      this.panelCount = 0;
+      this.panelCountDialog = 0;
+      this.api = api;
+      this._makePanel();
+  }
 
-    makeCloseBtn(panel) {
-        if ($('#paneltester-chkclose').hasClass('md-checked')) {
-            panel.header.closeButton;
-        }
-    }
+  destroy() {
+    console.warn('Panel Tester Plugin: destroy was called');
+  }
 
-    panel() {
-        const p = this.api.panels.create('standard-pnl-' + this.panelCount);
-        p.element.css({
-            top: 80 * (this.panelCount % 7) + 'px',
-            left: 580 + this.panelCount * 80 + 'px',
-            height: '375px',
-            width: '400px'
-        });
-        p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
-        this.makeCloseBtn(p);
-        this.panelCount = this.panelCount + 1;
-        p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
-        p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
-        p.reopenAfterOverlay = $('#paneltester-chkoverlay').hasClass('md-checked');
+  makeCloseBtn(panel) {
+      if ($('#paneltester-chkclose').hasClass('md-checked')) {
+          panel.header.closeButton;
+      }
+  }
 
-        p.open();
-    }
+  panel() {
+      const p = this.api.panels.create('standard-pnl-' + this.panelCount);
+      p.element.css({
+          top: 80 * (this.panelCount % 7) + 'px',
+          left: 580 + this.panelCount * 80 + 'px',
+          height: '375px',
+          width: '400px'
+      });
+      p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
+      this.makeCloseBtn(p);
+      this.panelCount = this.panelCount + 1;
+      p.allowUnderlay = !$('#paneltester-chkunderlay').hasClass('md-checked');
+      p.allowOffscreen = !$('#paneltester-chkoffscreen').hasClass('md-checked');
+      p.reopenAfterOverlay = $('#paneltester-chkoverlay').hasClass('md-checked');
 
-    dialog() {
-        this.panelCountDialog = this.panelCountDialog + 1;
-        const p = this.api.panels.create(`dialog-pnl-${this.panelCountDialog}`, this.api.panels.PANEL_TYPES.Dialog);
-        p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
-        p.header.title = 'Dialog Title';
-        p.open();
-    }
+      p.open();
+  }
 
-    _makePanel() {
-        const p = this.api.panels.create('M');
-        p.element.css({
-            top: '0px',
-            left: '410px',
-            bottom: '50%',
-            width: '600px'
-        });
-        p.body = `
-          <div>
-            <md-button id="paneltester-btn1" class="md-raised md-primary">Open a dialog</md-button>
-            <br>
-            <md-button id="paneltester-btn2" class="md-raised md-primary">Open a panel</md-button>
-            <br><br>
-            <md-checkbox class="md-checked" id="paneltester-chkclose">Add a close button</md-checkbox>
-            <br>
-            <md-checkbox class="md-checked" id="paneltester-chkoffscreen">Panel closes when offscreen</md-checkbox>
-            <br>
-            <md-checkbox class="md-checked" id="paneltester-chkunderlay">Panel closes on overlay</md-checkbox>
-            <br>
-            <md-checkbox class="md-checked" id="paneltester-chkoverlay">Panel reopens after overlay</md-checkbox>
-            <br>
-            <b>Note:</b> Checkbox options are not applicable to dialog panels.
-          </div>
-        `;
-        p.header.title = 'Panel Tester';
-        p.header.subtitle = 'This is a subtitle.';
-        p.header.toggleButton;
-        p.allowOffscreen = true;
+  dialog() {
+      this.panelCountDialog = this.panelCountDialog + 1;
+      const p = this.api.panels.create(`dialog-pnl-${this.panelCountDialog}`, this.api.panels.PANEL_TYPES.Dialog);
+      p.body = `<h2>Hello!</h2><p>I'm a dialog</p>`;
+      p.header.title = 'Dialog Title';
+      p.open();
+  }
 
-
-        // make a custom button
-        const customBtn = new p.Button('Custom Btn');
-        customBtn.$.on('click', function() {
-            window.alert('You clicked the custom button!');
-        });
-
-        p.header.append(customBtn);
+  _makePanel() {
+      const p = this.api.panels.create('M');
+      p.element.css({
+          top: '0px',
+          left: '410px',
+          bottom: '50%',
+          width: '600px'
+      });
+      p.body = `
+        <div>
+          <md-button id="paneltester-btn1" class="md-raised md-primary">Open a dialog</md-button>
+          <br>
+          <md-button id="paneltester-btn2" class="md-raised md-primary">Open a panel</md-button>
+          <br><br>
+          <md-checkbox class="md-checked" id="paneltester-chkclose">Add a close button</md-checkbox>
+          <br>
+          <md-checkbox class="md-checked" id="paneltester-chkoffscreen">Panel closes when offscreen</md-checkbox>
+          <br>
+          <md-checkbox class="md-checked" id="paneltester-chkunderlay">Panel closes on overlay</md-checkbox>
+          <br>
+          <md-checkbox class="md-checked" id="paneltester-chkoverlay">Panel reopens after overlay</md-checkbox>
+          <br>
+          <b>Note:</b> Checkbox options are not applicable to dialog panels.
+        </div>
+      `;
+      p.header.title = 'Panel Tester';
+      p.header.subtitle = 'This is a subtitle.';
+      p.header.toggleButton;
+      p.allowOffscreen = true;
 
 
-        p.open();
+      // make a custom button
+      const customBtn = new p.Button('Custom Btn');
+      customBtn.$.on('click', function() {
+          window.alert('You clicked the custom button!');
+      });
 
-        $('#paneltester-btn1').on('click', () => {
-            this.dialog();
-        });
+      p.header.append(customBtn);
 
-        $('#paneltester-btn2').on('click', () => {
-            this.panel();
-        })
-    }
+
+      p.open();
+
+      $('#paneltester-btn1').on('click', () => {
+          this.dialog();
+      });
+
+      $('#paneltester-btn2').on('click', () => {
+          this.panel();
+      })
+  }
 }
 
 window.PanelTester = PanelTester; */
@@ -117,6 +121,11 @@ function () {
       this.api = api;
 
       this._makePanel();
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      console.warn('destroy was called');
     }
   }, {
     key: "makeCloseBtn",

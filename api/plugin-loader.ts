@@ -35,6 +35,15 @@ export default class Loader {
     }
 
     /**
+     * Calls each plugins `destroy` method, if defined.
+     */
+    destroyer() {
+        this.plugins.concat(
+            Object.keys(this.features).map(key => this.features[key])
+        ).forEach(p => p.destroy && p.destroy());
+    }
+
+    /**
      * Plugins are strictly loaded from the `rv-plugins` map element property.
      * We expect the string value, possibly comma-separated, to be present on the global window object which points to the plugin.
      */
