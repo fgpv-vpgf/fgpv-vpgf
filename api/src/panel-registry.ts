@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 
 /**
  * Handles the coordination of panels.
- * 
+ *
  * Used to get a list of panels (all, opened, closed), to create panels, etc.
  */
 export class PanelRegistry {
@@ -22,6 +22,7 @@ export class PanelRegistry {
     metadata: Panel;
     fileLoader: Panel;
     serviceLoader: Panel;
+    geoSearch: Panel;
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
@@ -37,12 +38,13 @@ export class PanelRegistry {
 
     _init() {
         // create the core panels
-        this.legend = this.create('mainToc');
-        this.details = this.create('mainDetails');
-        this.settings = this.create('sideSettings');
-        this.metadata = this.create('sideMetadata');
-        this.fileLoader = this.create('fileLoader');
-        this.serviceLoader = this.create('serviceLoader');
+        this.legend = this.getById('mainToc') ? <Panel>this.getById('mainToc') : this.create('mainToc');
+        this.details = this.getById('mainDetails') ? <Panel>this.getById('mainDetails') : this.create('mainDetails');
+        this.settings = this.getById('sideSettings') ? <Panel>this.getById('sideSettings') : this.create('sideSettings');
+        this.metadata = this.getById('sideMetadata') ? <Panel>this.getById('sideMetadata') : this.create('sideMetadata');
+        this.fileLoader = this.getById('fileLoader') ? <Panel>this.getById('fileLoader') : this.create('fileLoader');
+        this.serviceLoader = this.getById('serviceLoader') ? <Panel>this.getById('serviceLoader') : this.create('serviceLoader');
+        this.geoSearch = this.getById('mainGeosearch') ? <Panel>this.getById('mainGeosearch') : this.create('mainGeosearch');
     }
 
     /**

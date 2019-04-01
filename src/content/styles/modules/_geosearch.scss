@@ -46,6 +46,21 @@ $result-item-height-touch: rem(4.8);
         }
     }
 
+    #mainGeosearch {
+        width: 400px;
+        top: 65px;
+        opacity: 0;
+
+        .panel-body {
+            padding: 0 !important;
+            height: 100%;
+
+            .rv-geosearch-content {
+                margin: 0;
+            }
+        }
+    }
+
     rv-geosearch {
         max-height: 100%;
 
