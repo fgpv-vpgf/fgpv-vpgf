@@ -35,6 +35,13 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         btn.on('click', () => { closeDetails(); });
 
         api.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+
+        api.panels.details.opening.subscribe( () => {
+            api.mapI.setAppbarTitle(api.panels.details, 'appbar.tooltip.pointInfo');
+        });
+        api.panels.details.closing.subscribe(() => {
+            api.mapI.releaseAppbarTitle(api.panels.details);
+        })
     });
 
     events.$on(events.rvApiMapAdded, (_, api) => {

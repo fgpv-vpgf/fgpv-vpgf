@@ -511,7 +511,6 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         // reset the loader after closing the panel
         self.layerBlueprint = null;
         stepper.reset().start();
-        stateManager.setActive('mainToc');
         appInfo.mapi.panels.fileLoader.close({'destroy': false});
 
         // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
