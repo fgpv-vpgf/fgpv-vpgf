@@ -54,6 +54,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     let errorToast;
 
     events.$on(events.rvApiPreMapAdded, (_, api) => {
+        api.panels.legend.allowUnderlay = false;
+        api.panels.legend.reopenAfterOverlay = true;
         api.panels.legend.body = $('<rv-toc></rv-toc>');
     });
 
