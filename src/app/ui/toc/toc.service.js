@@ -154,7 +154,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             const panel = panelSwitch[openPanel.name].panel;
             stateManager.setActive({ [panel]: false });
         } else {    // open panel not being reloaded, close any open panel
-            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+            stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
         }
 
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
@@ -183,8 +183,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 // return the first legend block and open the panel for that one instead (they are identical though)
                 legendBlock = block
                     .walk(entry =>
-                        (node.parentLayerType ===  Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
-                        entry.layerRecordId === node.layerRecordId) ?
+                        (node.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
+                            entry.layerRecordId === node.layerRecordId) ?
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
@@ -259,8 +259,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         if (showToast) {
             // promise resolves with 'ok' when user clicks 'undo'
             $mdToast.show(undoToast)
-            .then(response =>
-                response === 'ok' ? _restoreLegendBlock() : resolve());
+                .then(response =>
+                    response === 'ok' ? _restoreLegendBlock() : resolve());
         } else {
             resolve();
         }
@@ -350,6 +350,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @param  {LegendBlock} legendBlock legendBlock object whose settings should be opened.
      */
     function toggleSettings(legendBlock) {
+        let settings = configService.getLang() === 'en-CA' ? 'Settings' : 'Paramètres';
+        mApi.panels.settings.header.title = `${settings}: ${legendBlock.name}`;
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name
@@ -359,9 +361,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             table: false
         };
 
-        stateManager
-            .setActive(panelToClose)
-            .then(() => stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester));
+
+        // send to display manager method
+        stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester);
     }
 
     /**
@@ -459,6 +461,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      */
     function toggleMetadata(legendBlock, value = true) {
 
+        let metadataPanel = mApi.panels.metadata;
+        let metadata = configService.getLang() === 'en-CA' ? 'Metadata' : 'Métadonnées';
+        metadataPanel.header.title = `${metadata}: ${legendBlock.name}`;
+
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name
@@ -478,9 +484,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
                 service.validMetadata = true;
                 referenceService.panes.metadata.find('md-toast').remove();      // remove any lingering toast message from before
-
+                legendBlock.metadataPackage = metadataPackage;
                 resolve(metadataPackage);
-
             }).catch(error => {
                 service.validMetadata = false;
                 referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
@@ -495,10 +500,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             });
         });
 
-        stateManager
-            .setActive(panelToClose)
-            .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
-
+        // send to display manager method
+        stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester);
     }
 
     /**

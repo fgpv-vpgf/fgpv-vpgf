@@ -176,7 +176,12 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
         const fromPanel = getItem(fromPanelName);
         const toPanel = getItem(toPanelName);
 
-        return closePanel(fromPanel, false).then(() => openPanel(toPanel, false));
+        if (fromPanelName !== 'sideSettings' &&
+            fromPanelName !== 'sideMetadata' &&
+            toPanelName !== 'sideSettings' &&
+            toPanelName !== 'sideMetadata') {
+            return closePanel(fromPanel, false).then(() => openPanel(toPanel, false));
+        }
     }
 
     /* PRIVATE HELPERS */
@@ -375,7 +380,8 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return {Promise}  resolves to undefined when all panel animations have completed
      */
     function openPanel(panelToOpen, propagate = true) {
-        if (appInfo.mapi && (panelToOpen.name === 'mainToc' || panelToOpen.name === 'sideSettings')) {
+
+        if (appInfo.mapi && (panelToOpen.name === 'mainToc')) {
             appInfo.mapi.panels.getById(panelToOpen.name).open();
             return $q.resolve();
         }
@@ -437,7 +443,7 @@ function stateManager($q, $rootScope, displayManager, initialState, initialDispl
      * @return  {Promise}   resolves when panel animation has completed
      */
     function closePanel(panelToClose, propagate = true) {
-        if (appInfo.mapi && (panelToClose.name === 'mainToc' || panelToClose.name === 'sideSettings')) {
+        if (appInfo.mapi && (panelToClose.name === 'mainToc')) {
             appInfo.mapi.panels.getById(panelToClose.name).close();
             return $q.resolve();
         }
