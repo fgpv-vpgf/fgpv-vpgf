@@ -15,7 +15,7 @@
  */
 
 import { Observable, Subject } from 'rxjs';
-
+import { layerTypes } from './layers';
 /**
  * All legend types must be derived from this class. Not intended to be instantiated on its own.
  * Provides the core API functionality for both `SimpleLegend` and `ConfigLegend`
@@ -59,6 +59,7 @@ class BaseLegend {
         this._configSnippets = configSnippets;
         this._children = [];
         this._click = new Subject();
+        this._dataTableToggled = new Subject();
     }
 
     /**
@@ -127,6 +128,14 @@ class BaseLegend {
      */
     get click(): Observable<LegendItem | LegendGroup> {
         return this._click.asObservable();
+    }
+
+    /**
+     * Emits whenever a datatable is toggled.
+     * @event dataTableToggled
+     */
+    get dataTableToggled(): any {
+        return this._dataTableToggled.asObservable();
     }
 
 }
@@ -451,7 +460,7 @@ class BaseItem {
      * Does nothing if "reload" is not.part of `BaseItem's` `_availableControls`.
      */
     reload(): void {
-        if (this._availableControls.includes(AvailableControls.Reload)) {
+        if (this._availableControls.includes(AvailableControls.Reload) ) {
             this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
         }
     }
@@ -461,7 +470,7 @@ class BaseItem {
      * Does nothing if "metadata" is not.part of `BaseItem's` `_availableControls`.
      */
     toggleMetadata(): void {
-        if (this._availableControls.includes(AvailableControls.Metadata)) {
+        if (this._controlAvailable(AvailableControls.Metadata)) {
             this._mapInstance.instance.toggleMetadata(this._legendBlock);
         }
     }
@@ -471,7 +480,7 @@ class BaseItem {
      * Does nothing if "settings" is not.part of `BaseItem's` `_availableControls`.
      */
     toggleSettings(): void {
-        if (this._availableControls.includes(AvailableControls.Settings)) {
+        if (this._controlAvailable(AvailableControls.Settings)) {
             this._mapInstance.instance.toggleSettings(this._legendBlock);
         }
     }
@@ -481,9 +490,17 @@ class BaseItem {
      * Does nothing if "data" is not.part of `BaseItem's` `_availableControls`.
      */
     toggleDataTable(): any {
-        if (this._availableControls.includes(AvailableControls.Data)) {
+        if (this._controlAvailable(AvailableControls.Data) && this._legendBlock.layerType === layerTypes.ESRI_FEATURE) {
             this._mapInstance.instance.toggleDataTable(this._legendBlock);
         }
+    }
+
+    /**
+     * Check if a control is available for the legend item
+     * @param control name of the control
+     */
+    _controlAvailable(control: AvailableControls) {
+        return this._legendBlock.state !== 'rv-error' && this._availableControls.includes(control) && !this._legendBlock.isControlDisabled(control);
     }
 }
 
