@@ -32,6 +32,10 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
 
         destroyMap() {
             this._pluginLoader.destroyer();
+            appInfo.mapi.panels.all.slice(0).forEach(panel => {
+                panel.destroy();
+            });
+
             mapService.destroyMap();
 
             return this;
