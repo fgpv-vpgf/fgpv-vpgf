@@ -1505,7 +1505,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._hidden = entryGroupSource.hidden === true;
 
             this._walk = ref.walkFunction.bind(this);
-            this._tableToggled = new Subject();
         }
 
         get name () { return this._name; }
@@ -1514,10 +1513,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get disabledControls () { return this._disabledControls; }
         get userDisabledControls () { return this._userDisabledControls; }
         get expanded () { return this._expanded; }
-
-        get tableToggled() {
-            return this._tableToggled.asObservable();
-        }
 
         /**
          * Specifies if the legend group should be hidden from the UI.
