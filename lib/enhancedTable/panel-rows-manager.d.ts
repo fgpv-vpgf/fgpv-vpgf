@@ -6,18 +6,18 @@
 export declare class PanelRowsManager {
     constructor(panelManager: any);
     /**
-    * Table is set up according to layer visibiltiy on open
-    * Observers are set up in case of change to layer visibility or symbol visibility
-    */
+     * Table is set up according to layer visibiltiy on open
+     * Observers are set up in case of change to layer visibility or symbol visibility
+     */
     initObservers(): void;
     /**
-    * Destroy observers when table is closed
-    */
+     * Destroy observers when table is closed
+     */
     destroyObservers(): void;
     /**
-    * Helper method to initTableRowVisibility
-    * Sets table filters based on table visibility on open
-    */
+     * Helper method to initTableRowVisibility
+     * Sets table filters based on table visibility on open
+     */
     initialFilterSettings(): void;
     /**
      * Helper method to initObservers
@@ -25,9 +25,9 @@ export declare class PanelRowsManager {
      */
     initTableRowVisibility(): void;
     /**
-    * Helper method to multiple methods
-    * Tricks ag-grid into updating filter status by selecting all filtered rows
-    */
+     * Helper method to multiple methods
+     * Tricks ag-grid into updating filter status by selecting all filtered rows
+     */
     updateGridFilters(): void;
     /** Filter by extent if enabled */
     filterByExtent(extent: any): void;

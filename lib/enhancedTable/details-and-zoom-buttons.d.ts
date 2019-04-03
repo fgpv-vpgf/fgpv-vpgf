@@ -12,4 +12,5 @@ export interface DetailsAndZoomButtons {
     mapApi: any;
     legendBlock: any;
     currentTableLayer: any;
+    oidField: any;
 }

@@ -10,6 +10,7 @@ export class DetailsAndZoomButtons {
         this.mapApi = panelManager.mapApi;
         this.legendBlock = panelManager.legendBlock;
         this.currentTableLayer = panelManager.currentTableLayer;
+        this.oidField = panelManager.currentTableLayer._layerProxy.oidField;
         this.setDetailsAndZoomButtons();
     }
 
@@ -18,12 +19,11 @@ export class DetailsAndZoomButtons {
         const that = this;
         this.mapApi.agControllerRegister('DetailsAndZoomCtrl', function () {
             let proxy = that.legendBlock.proxyWrapper.proxy;
-
             // opens the details panel corresponding to the row where the details button is found
             this.openDetails = function (oid) {
                 let data = proxy.attribs.then(function (attribs) {
                     const attributes = attribs.features.find(attrib => {
-                        if (attrib.attributes.OBJECTID === oid) {
+                        if (attrib.attributes[that.oidField] === oid) {
                             return attrib.attributes;
                         }
                     }).attributes;
@@ -94,4 +94,5 @@ export interface DetailsAndZoomButtons {
     mapApi: any;
     legendBlock: any;
     currentTableLayer: any;
+    oidField: any;
 }

@@ -7,15 +7,15 @@ export declare function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilt
 /**Sets up a selector floating filter accounting for static types and default values*/
 export declare function setUpSelectorFilter(colDef: any, isItStatic: boolean, defaultValue: any, gridOptions: any, mapApi: any, panelStateManager: any): void;
 /**
-* Floating filter component enhanced for Static Text Filters
-*/
+ * Floating filter component enhanced for Static Text Filters
+ */
 export declare class TextFloatingFilter {
     init(params: any): void;
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     preLoadedValue(): void;
     /** Helper function to determine filter model */
     getModel(): any;
@@ -24,16 +24,16 @@ export declare class TextFloatingFilter {
     onParentModelChanged(parentModel: any): void;
 }
 /**
-* Floating filter component enhanced for number
-* Has separate min and max input boxes
-*/
+ * Floating filter component enhanced for number
+ * Has separate min and max input boxes
+ */
 export declare class NumberFloatingFilter {
     init(params: any): void;
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     readonly preLoadedValue: any;
     /** Update filter nimimum */
     onMinInputBoxChanged(): void;
@@ -63,15 +63,15 @@ export declare class DateFloatingFilter {
     getGui(): HTMLElement;
 }
 /**
-* Floating filter component enhanced for Static Text Filters
-*/
+ * Floating filter component enhanced for Static Text Filters
+ */
 export declare class SelectorFloatingFilter {
     init(params: any): void;
     /**
-    * Helper function to init
-    * Determines if preloaded value exists.
-    * If so fills col filter from either panelStateManager or default value from config
-    */
+     * Helper function to init
+     * Determines if preloaded value exists.
+     * If so fills col filter from either panelStateManager or default value from config
+     */
     preLoadedValue(): void;
     /** Helper function to determine filter model */
     getModel(): any;

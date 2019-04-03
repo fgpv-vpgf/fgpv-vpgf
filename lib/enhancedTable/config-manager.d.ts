@@ -57,9 +57,9 @@ export declare class ConfigManager {
 export declare class ColumnConfigManager {
     constructor(configManager: ConfigManager, column: any);
     /**
-    * Initializes column width according to specifications in the config on table creation
-    * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
-    */
+     * Initializes column width according to specifications in the config on table creation
+     * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
+     */
     readonly width: any;
     /**
      * Initializes column sorts according to specifications in the config on table creation
@@ -78,9 +78,9 @@ export declare class ColumnConfigManager {
      */
     readonly isSelector: boolean;
     /**
-    * Returns whether filter is static
-    * Set up on table create
-    */
+     * Returns whether filter is static
+     * Set up on table create
+     */
     readonly isFilterStatic: boolean;
     /**
      * Returns the column filter value that is seen on tabl open.

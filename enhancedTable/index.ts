@@ -138,7 +138,9 @@ export default class TableBuilder {
 
     createTable(attrBundle: AttrBundle) {
         let cols: Array<any> = [];
-        attrBundle.layer._layerProxy.formattedAttributes.then(a => {
+        const layerProxy = attrBundle.layer._layerProxy;
+
+        layerProxy.formattedAttributes.then(a => {
             Object.keys(a.rows[0]).forEach(columnName => {
                 if (
                     columnName === 'rvSymbol' ||
@@ -218,7 +220,7 @@ export default class TableBuilder {
                     }
 
                     // symbols and interactive columns are set up for every table
-                    setUpSymbolsAndInteractive(columnName, colDef, cols, this.mapApi);
+                    setUpSymbolsAndInteractive(columnName, colDef, cols, this.mapApi, layerProxy);
                 }
             });
             (<any>Object).assign(this.tableOptions, {
@@ -246,7 +248,7 @@ export default class TableBuilder {
 }
 
 /* Helper function to set up symbols and interactive columns*/
-function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, mapApi: any) {
+function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, mapApi: any, layerProxy: any) {
     if (columnName === 'rvSymbol' || columnName === 'rvInteractive') {
         // symbols and interactive columns don't have options for sort, filter and have default widths
         colDef.suppressSorting = true;
@@ -270,7 +272,7 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             let zoomDef = (<any>Object).assign({}, colDef);
             zoomDef.field = 'zoom';
             zoomDef.cellRenderer = function (params) {
-                var eSpan = $(ZOOM_TEMPLATE(params.data.OBJECTID));
+                var eSpan = $(ZOOM_TEMPLATE(params.data[layerProxy.oidField]));
                 mapApi.$compile(eSpan);
                 params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter') {
@@ -282,7 +284,7 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             };
             cols.splice(0, 0, zoomDef);
             colDef.cellRenderer = function (params) {
-                var eSpan = $(DETAILS_TEMPLATE(params.data.OBJECTID));
+                var eSpan = $(DETAILS_TEMPLATE(params.data[layerProxy.oidField]));
                 mapApi.$compile(eSpan);
                 params.eGridCell.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter') {

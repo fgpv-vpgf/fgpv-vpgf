@@ -20,7 +20,7 @@ export declare class PanelManager {
      * Auto size all columns but check the max width
      * Note: Need a custom function here since setting maxWidth prevents
      *       `sizeColumnsToFit()` from filling the entire panel width
-    */
+     */
     autoSizeToMaxWidth(columns?: Array<any>): void;
     /**
      * Check if columns don't take up entire grid width. If not size the columns to fit.
