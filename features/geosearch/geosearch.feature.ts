@@ -43,6 +43,7 @@ class GeoSearchUI {
         (<any>this)._lang = (<any>config).language || 'en';
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
+        (<any>this)._excludedTypes = (<any>config).excludeTypes || [];
     }
 
     get lang() { return (<any>this)._lang; }
@@ -73,8 +74,10 @@ class GeoSearchUI {
     query(q: string) {
         return (<any>this)._geoSearhObj.query(q.toUpperCase()).onComplete.then((q: any) => {
             let featureResult: any[] = [];
+
+            // need to ensure that any disabled types are not included in our results output (add constants later if required)
             if (q.featureResults) { // it is a feature query
-                if (q.featureResults.fsa) { // FSA query
+                if (q.featureResults.fsa && !(<any>this)._excludedTypes.includes("FSA")) { // FSA query
                     const bboxRange = 0.02;
                     featureResult = [{
                         name: q.featureResults.fsa,
@@ -94,7 +97,7 @@ class GeoSearchUI {
                             province: this.findProvinceObj(q.featureResults.province)
                         }
                     }];
-                } else if (q.featureResults.nts) {  // NTS query
+                } else if (q.featureResults.nts && !(<any>this)._excludedTypes.includes("NTS")) {  // NTS query
                     featureResult = [{
                         name: q.featureResults.nts,
                         bbox: q.featureResults.bbox,
@@ -109,9 +112,9 @@ class GeoSearchUI {
                         }
                     }];
                 }
-            } else if (q.latLongResult !== undefined) {
+            } else if (q.latLongResult !== undefined && !(<any>this)._excludedTypes.includes("COORD")) {
                 featureResult = [q.latLongResult]
-            } else if (q.scale !== undefined) {
+            } else if (q.scale !== undefined && !(<any>this)._excludedTypes.includes("SCALE")) {
                 featureResult = q.scale;
             }
             let queryResult = q.results.map((item: any) => ({
@@ -162,10 +165,12 @@ class GeoSearchUI {
         let typeList = [];
         let rawTypes = (<any>this)._geoSearhObj.config.types.allTypes;
         for (let type in rawTypes) {
-            typeList.push({
-                code: type,
-                name: rawTypes[type]
-            });
+            if (!(<any>this)._excludedTypes.includes(type)) {
+                typeList.push({
+                    code: type,
+                    name: rawTypes[type]
+                });
+            }
         }
         this.typeList = typeList;
         return this.typeList;
