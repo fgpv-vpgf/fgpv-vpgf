@@ -3704,6 +3704,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     margin-right: -2px;
     padding-right: 1px; }
 
+.panel-body {
+  padding: 0 8px 8px !important; }
+
 md-datepicker > div {
   border-bottom: none !important; }
 
@@ -3719,9 +3722,12 @@ md-datepicker > div {
   margin: 0 !important;
   width: 18px !important;
   height: 18px !important;
-  min-height: 0; }
+  min-height: 0;
+  border-radius: 0 !important; }
+  .reorder-button .md-ripple {
+    border-radius: 0 !important; }
 
-.record-count {
+.rv-record-count {
   margin: 0;
   overflow: hidden; }
 
@@ -3732,7 +3738,8 @@ md-datepicker > div {
   max-width: 75%; }
 
 .table-title {
-  margin: 0; }
+  margin: 0;
+  max-width: 100%; }
 
 .table-control {
   display: inherit; }
@@ -3752,6 +3759,11 @@ md-datepicker > div {
 
 .rv-small .mobile-table-control .table-control {
   display: flex !important; }
+
+.mobile-table-menu {
+  display: flex;
+  align-items: center;
+  padding: 0px 12px 0px 16px; }
 
 .md-icon-button {
   width: 40px !important;

@@ -20,7 +20,7 @@ import { BaseGeometry } from 'api/geometry';
 import Map from 'api/map';
 import { RV } from './index';
 
-const layerTypes = {
+export const layerTypes = {
     ESRI_GRAPHICS: 'esriGraphics',
     ESRI_DYNAMIC: 'esriDynamic',
     ESRI_FEATURE: 'esriFeature',
