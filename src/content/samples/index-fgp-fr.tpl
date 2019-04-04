@@ -344,7 +344,7 @@
             text-shadow: none;
         }
     </style>
-
+    <script src="plugins/panels.js"></script>
 </head>
 
 <body vocab="http://schema.org/" typeof="WebPage">
