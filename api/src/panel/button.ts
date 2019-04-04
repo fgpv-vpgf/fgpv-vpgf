@@ -16,18 +16,19 @@ export default class Button extends Element {
     set element(innerButton: string | HTMLElement | JQuery<HTMLElement>) {
         if (!this.elemSet) {
             this._btnElem[0].insertAdjacentHTML("beforeend", (<any>innerButton).prevObject ? (<any>innerButton).first().html() : (<any>innerButton));
+            super.elem = this._btnElem;
+            this.elemSet = true;
         } else {
-            this._btnElem.html(<any>innerButton);
+            let innerButtonElem = $(innerButton);
+            this.panel.api.$compile(innerButtonElem);
+            this._btnElem.html(innerButtonElem[0]);
         }
-
-        super.elem = this._btnElem;
-        this.elemSet = true;
     }
 
     constructor(panel: Panel, innerButton?: string | HTMLElement | JQuery<HTMLElement>, tooltip?: string) {
         super(panel);
 
-        this._btnElem = $(`<button class="primary md-button md-raised" type="button">`);
+        this._btnElem = $(`<md-button class="primary md-button md-raised" type="button">`);
 
         if (tooltip) {
             this._btnElem[0].insertAdjacentHTML("afterbegin", `<md-tooltip>${tooltip}</md-tooltip>`);

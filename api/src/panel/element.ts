@@ -52,9 +52,9 @@ export default class Element {
 
         if (this.panel) {
             try {
-                this.panel.api.$compile(this.elem[0]).$digest();
+                this.panel.api.$compile(this.elem).$digest();
             } catch {
-                this.panel.api.$compile(this.elem[0]);
+                // if digest fails do nothing since the template is already compiled
             }
         }
     }

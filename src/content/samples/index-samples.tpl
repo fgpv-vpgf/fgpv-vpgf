@@ -89,8 +89,6 @@
         <% } %>
     <% } %>
 
-
-    <script src="plugins/panels.js"></script>
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->

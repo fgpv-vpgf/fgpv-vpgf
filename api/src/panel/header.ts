@@ -54,7 +54,7 @@ export default class Header extends Element {
         try {
             this.panel.api.$compile(titleElem[0]).$digest();
         } catch {
-            this.panel.api.$compile(titleElem[0]);
+            // if digest fails do nothing since the template is already compiled
         }
     }
 
@@ -73,7 +73,7 @@ export default class Header extends Element {
         try {
             this.panel.api.$compile(subtitleElem[0]).$digest();
         } catch {
-            this.panel.api.$compile(subtitleElem[0]);
+            // if digest fails do nothing since the template is already compiled
         }
 
     }
