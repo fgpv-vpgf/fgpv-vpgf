@@ -29,7 +29,7 @@ export default class TableBuilder {
         });
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
-        this.mapApi.ui.configLegend._legendStructure._root._tableToggled.subscribe(legendBlock => {
+        this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {
             if (this.panel.panelStateManager !== undefined) {
                 // switch state of whether the table is open or not
                 this.panel.panelStateManager.isOpen = !this.panel.panelStateManager.isOpen;

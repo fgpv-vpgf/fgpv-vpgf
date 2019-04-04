@@ -21995,6 +21995,15 @@ Obviously you need some kind of rules and criteria:
     [is=rv-map] .rv-geosearch-bar md-icon[md-svg-src="action:search"], .fgpv .rv-geosearch-bar md-icon[md-svg-src="action:search"] {
       color: #607D8B;
       margin: 8px; }
+  [is=rv-map] #mainGeosearch, .fgpv #mainGeosearch {
+    width: 400px;
+    top: 65px;
+    opacity: 0; }
+    [is=rv-map] #mainGeosearch .panel-body, .fgpv #mainGeosearch .panel-body {
+      padding: 0 !important;
+      height: 100%; }
+      [is=rv-map] #mainGeosearch .panel-body .rv-geosearch-content, .fgpv #mainGeosearch .panel-body .rv-geosearch-content {
+        margin: 0; }
   [is=rv-map] rv-geosearch, .fgpv rv-geosearch {
     max-height: 100%;
     display: flex; }
@@ -23835,8 +23844,10 @@ Obviously you need some kind of rules and criteria:
         opacity: 1; }
       .rv-keyboard[is=rv-map] rv-shell .rv-esri-map:focus ~ .rv-inner-shell, .rv-keyboard.fgpv rv-shell .rv-esri-map:focus ~ .rv-inner-shell {
         bottom: calc(1em + 8px); }
-  [is=rv-map] div.metadata-view h5.md-title, .fgpv div.metadata-view h5.md-title {
-    margin: 0; }
+  [is=rv-map] div.metadata-view, .fgpv div.metadata-view {
+    padding-top: 20px !important; }
+    [is=rv-map] div.metadata-view h5.md-title, .fgpv div.metadata-view h5.md-title {
+      margin: 0; }
   [is=rv-map] md-icon, .fgpv md-icon {
     min-width: 0;
     min-height: 0; }
@@ -24129,12 +24140,14 @@ Obviously you need some kind of rules and criteria:
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    position: absolute;
+    position: inherit;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    padding: 0 5%; }
+    padding: 0 5%;
+    height: 100%;
+    padding-top: 50px; }
     [is=rv-map] rv-failure-image .rv-fail-before, .fgpv rv-failure-image .rv-fail-before {
       flex: 1; }
     [is=rv-map] rv-failure-image .rv-fail-after, .fgpv rv-failure-image .rv-fail-after {
@@ -24990,6 +25003,48 @@ Obviously you need some kind of rules and criteria:
     width: 50%;
     height: 50%;
     z-index: 1000; }
+  [is=rv-map] #sideMetadata, [is=rv-map] #sideSettings, .fgpv #sideMetadata, .fgpv #sideSettings {
+    padding: 0 !important;
+    margin-left: 0 !important;
+    top: 0px;
+    left: 411px;
+    width: 350px; }
+    [is=rv-map] #sideMetadata .rv-header-controls, [is=rv-map] #sideSettings .rv-header-controls, .fgpv #sideMetadata .rv-header-controls, .fgpv #sideSettings .rv-header-controls {
+      padding: 0 0 0 0; }
+    .rv-small[is=rv-map] #sideMetadata, .rv-small[is=rv-map] #sideSettings, .rv-small.fgpv #sideMetadata, .rv-small.fgpv #sideSettings {
+      left: 0px !important;
+      top: 0px !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 100 !important;
+      visibility: visible;
+      margin: 0 !important; }
+    .rv-medium[is=rv-map] #sideMetadata, .rv-medium[is=rv-map] #sideSettings, .rv-medium.fgpv #sideMetadata, .rv-medium.fgpv #sideSettings {
+      left: 0px !important;
+      top: 0px !important;
+      height: auto;
+      width: 400px !important;
+      z-index: 100 !important;
+      visibility: visible;
+      margin: 10px !important; }
+    [is=rv-map] #sideMetadata .rv-header, [is=rv-map] #sideSettings .rv-header, .fgpv #sideMetadata .rv-header, .fgpv #sideSettings .rv-header {
+      padding-left: 10px; }
+      [is=rv-map] #sideMetadata .rv-header .md-title, [is=rv-map] #sideSettings .rv-header .md-title, .fgpv #sideMetadata .rv-header .md-title, .fgpv #sideSettings .rv-header .md-title {
+        max-width: auto;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+        white-space: nowrap; }
+    [is=rv-map] #sideMetadata .panel-body, [is=rv-map] #sideSettings .panel-body, .fgpv #sideMetadata .panel-body, .fgpv #sideSettings .panel-body {
+      overflow: auto; }
+  [is=rv-map] #expandMetadata, .fgpv #expandMetadata {
+    width: 70%;
+    height: 80%;
+    overflow: auto;
+    left: 15%;
+    top: 10%; }
+    [is=rv-map] #expandMetadata .rv-header, .fgpv #expandMetadata .rv-header {
+      padding-left: 10px; }
   [is=rv-map] .panel-contents, .fgpv .panel-contents {
     background-color: #ffffff;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
