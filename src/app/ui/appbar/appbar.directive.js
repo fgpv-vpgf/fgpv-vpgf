@@ -56,22 +56,36 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
     configService.onEveryConfigLoad(cfg =>
         (self.config = cfg));
 
-    let requester;
+    let requesterStack = [];
     events.$on(events.rvApiPreMapAdded, (_, api) => {
-        configService.getSync.map.instance.setAppbarTitle = (panel, title) => {
-            requester = panel;
-            self.title = $translate.instant(title);
+        configService.getSync.map.instance.setAppbarTitle = (requester, title) => {
+            // push change onto stack
+            requesterStack.unshift({ requester, title });
+            updateTitle(title);
         }
-        configService.getSync.map.instance.releaseAppbarTitle = (panel) => {
-            if (requester === panel) {
-                self.title = '';
+        configService.getSync.map.instance.releaseAppbarTitle = requester => {
+            // if this requester made the last change then clear the title
+            if (requesterStack[0] && requesterStack[0].requester === requester) {
+                updateTitle('');
+            }
+
+            // remove anything from this requester from the stack
+            requesterStack = requesterStack.filter(oldRequester => oldRequester.requester !== requester);
+
+            // if theres something left on the stack update the title
+            if (requesterStack.length > 0) {
+                updateTitle(requesterStack[0].title);
             }
         }
         self.panelRegistry = api.panels;
     });
 
+    function updateTitle(title) {
+        self.title = $translate.instant(title);
+    }
+
     function toggleDetails() {
-        self._mApi.panels.details.toggle();
+        self.panelRegistry.details.toggle();
     }
 
     function toggleTocBuilder() {
