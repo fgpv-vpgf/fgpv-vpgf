@@ -23,6 +23,8 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
 
     events.$on(events.rvApiPreMapAdded, (_, api) => {
         api.panels.details.body = $('<rv-details></rv-details>');
+        api.panels.details.reopenAfterOverlay = true;
+        api.panels.details.allowUnderlay = false;
 
         const expandBtn = new api.panels.details.Button(`<md-icon md-svg-src="action:open_in_new"></md-icon>`);
         expandBtn.$
@@ -37,11 +39,11 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         api.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
 
         api.panels.details.opening.subscribe( () => {
-            api.mapI.setAppbarTitle(api.panels.details, 'appbar.tooltip.pointInfo');
+            api.panels.details.appBar.title = 'appbar.tooltip.pointInfo';
         });
-        api.panels.details.closing.subscribe(() => {
-            api.mapI.releaseAppbarTitle(api.panels.details);
-        })
+        api.panels.legend.opening.subscribe( () => {
+            api.panels.details.close();
+        });
     });
 
     events.$on(events.rvApiMapAdded, (_, api) => {

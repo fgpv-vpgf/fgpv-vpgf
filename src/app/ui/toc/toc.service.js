@@ -118,14 +118,12 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     return service;
 
     function panelSetup() {
-        mApi.panels.legend.body = $('<rv-toc></rv-toc>');
-        mApi.panels.legend.reopenAfterOverlay = true;
-        mApi.panels.legend.allowUnderlay = false;
-        mApi.panels.legend.opening.subscribe(() => {
-            mApi.mapI.setAppbarTitle(mApi.panels.legend, 'appbar.tooltip.layers');
-        });
-        mApi.panels.legend.closing.subscribe(() => {
-            mApi.mapI.releaseAppbarTitle(mApi.panels.legend);
+        panel = mApi.panels.legend;
+        panel.body = $('<rv-toc></rv-toc>');
+        panel.reopenAfterOverlay = true;
+        panel.allowUnderlay = false;
+        panel.opening.subscribe(() => {
+            panel.appBar.title = 'appbar.tooltip.layers';
         });
     }
 
