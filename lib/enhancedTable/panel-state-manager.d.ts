@@ -22,4 +22,5 @@ export interface PanelStateManager {
     columnFilters: any;
     open: boolean;
     storedBlock: any;
+    columnState: any;
 }

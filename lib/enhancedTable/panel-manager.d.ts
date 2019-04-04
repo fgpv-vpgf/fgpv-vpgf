@@ -8,6 +8,7 @@ import { PanelStateManager } from './panel-state-manager';
  */
 export declare class PanelManager {
     constructor(mapApi: any);
+    panelStateManager: PanelStateManager;
     setLegendBlock(block: any): void;
     open(tableOptions: any, layer: any, tableBuilder: any): void;
     close(): void;
@@ -26,6 +27,10 @@ export declare class PanelManager {
      * Check if columns don't take up entire grid width. If not size the columns to fit.
      */
     sizeColumnsToFitIfNeeded(): void;
+    /**
+     * Updates the column visibility list used for the columnVisibility control
+     */
+    updateColumnVisibility(): void;
     readonly id: string;
     makeHeader(): void;
     angularHeader(): void;
@@ -46,7 +51,7 @@ export interface PanelManager {
     configManager: any;
     mobileMenuScope: MobileMenuScope;
     recordCountScope: RecordCountScope;
-    panelStateManager: PanelStateManager;
+    _panelStateManager: PanelStateManager;
     searchText: string;
     filterByExtent: boolean;
     filtersChanged: boolean;
