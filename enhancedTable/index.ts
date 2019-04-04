@@ -20,7 +20,7 @@ export default class TableBuilder {
         this.mapApi = mapApi;
 
         this.panel = new PanelManager(mapApi);
-        this.panel.reload = this.reloadTable.bind(this)
+        this.panel.reload = this.reloadTable.bind(this);
 
         this.mapApi.layers.reload.subscribe((baseLayer: any, interval: boolean) => {
             if (!interval && baseLayer === this.panel.currentTableLayer) {
@@ -34,9 +34,11 @@ export default class TableBuilder {
                 // switch state of whether the table is open or not
                 this.panel.panelStateManager.isOpen = !this.panel.panelStateManager.isOpen;
             }
-            if (this.panel.panelStateManager === undefined ||
+            if (
+                this.panel.panelStateManager === undefined ||
                 this.panel.panelStateManager.isOpen === true ||
-                legendBlock !== this.panel.panelStateManager.legendBlock) {
+                legendBlock !== this.panel.panelStateManager.legendBlock
+            ) {
                 // if table has never been created, was closed until now, or you are opening a different table
                 // go through loading + opening steps
                 if (this.panel.panelStateManager !== undefined && legendBlock !== this.panel.panelStateManager.legendBlock) {
@@ -63,21 +65,20 @@ export default class TableBuilder {
             // make sure the item clicked is a node, and not group or other
             let layer;
             if (legendBlock.parentLayerType === 'esriDynamic') {
-                layer = this.mapApi.layers.allLayers.find(function (l) {
+                layer = this.mapApi.layers.allLayers.find(function(l) {
                     return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
                 });
             } else {
                 layer = this.mapApi.layers.getLayersById(legendBlock.layerRecordId)[0];
             }
 
-
             if (layer) {
                 // if layer was created unsubscribe to layer added observable
                 // create + open the enhancedTable
                 this.legendBlock = legendBlock;
-                this.panel.setLegendBlock(legendBlock)
+                this.panel.setLegendBlock(legendBlock);
                 if (this.layerAdded !== undefined) {
-                    this.layerAdded.unsubscribe()
+                    this.layerAdded.unsubscribe();
                 }
                 this.loadingPanel.setSize(layer.table.maximize); //make sure loading panel is maximized/minimized according to config
                 this.openTable(layer);
@@ -94,7 +95,6 @@ export default class TableBuilder {
     }
 
     openTable(baseLayer) {
-
         if (baseLayer.panelStateManager === undefined) {
             // if no PanelStateManager exists for this BaseLayer, create a new one
             baseLayer.panelStateManager = new PanelStateManager(baseLayer, this.legendBlock);
@@ -106,13 +106,12 @@ export default class TableBuilder {
         if (attrs.length === 0) {
             // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
             this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-
                 if (attrs.attributes.length > 0) {
                     this.configManager = new ConfigManager(baseLayer, this.panel);
                     this.panel.configManager = this.configManager;
                     this.createTable(attrs);
                 } else {
-                    this.openTable(baseLayer)
+                    this.openTable(baseLayer);
                 }
             });
         } else {
@@ -134,7 +133,6 @@ export default class TableBuilder {
             $('#enhancedTableLoader').remove();
         }
     }
-
 
     createTable(attrBundle: AttrBundle) {
         let cols: Array<any> = [];
@@ -171,12 +169,16 @@ export default class TableBuilder {
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
-                        hide: this.configManager.filteredAttributes.length === 0 || column.value !== undefined ? false : column.column ? !column.column.visible : undefined
+                        hide:
+                            this.configManager.filteredAttributes.length === 0 || column.value !== undefined
+                                ? false
+                                : column.column
+                                ? !column.column.visible
+                                : undefined
                     };
 
-                    this.panel.notVisible[colDef.field] = this.configManager.filteredAttributes.length === 0 ?
-                        false : column.column ?
-                            !column.column.visible : undefined;
+                    this.panel.notVisible[colDef.field] =
+                        this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined;
 
                     // set up floating filters and column header
                     const fieldInfo = a.fields.find(field => field.name === columnName);
@@ -258,10 +260,10 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
         if (columnName === 'rvSymbol') {
             colDef.maxWidth = 82;
             // set svg symbol for the symbol column
-            colDef.cellRenderer = function (cell) {
+            colDef.cellRenderer = function(cell) {
                 return cell.value;
             };
-            colDef.cellStyle = function (cell) {
+            colDef.cellStyle = function(cell) {
                 return {
                     paddingTop: '7px'
                 };
@@ -271,10 +273,10 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             // sets details and zoom buttons for the row
             let zoomDef = (<any>Object).assign({}, colDef);
             zoomDef.field = 'zoom';
-            zoomDef.cellRenderer = function (params) {
+            zoomDef.cellRenderer = function(params) {
                 var eSpan = $(ZOOM_TEMPLATE(params.data[layerProxy.oidField]));
                 mapApi.$compile(eSpan);
-                params.eGridCell.addEventListener('keydown', function (e) {
+                params.eGridCell.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         eSpan.click();
                     }
@@ -283,10 +285,10 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
                 return eSpan[0];
             };
             cols.splice(0, 0, zoomDef);
-            colDef.cellRenderer = function (params) {
+            colDef.cellRenderer = function(params) {
                 var eSpan = $(DETAILS_TEMPLATE(params.data[layerProxy.oidField]));
                 mapApi.$compile(eSpan);
-                params.eGridCell.addEventListener('keydown', function (e) {
+                params.eGridCell.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         eSpan.click();
                     }
@@ -337,7 +339,7 @@ interface ColumnDefinition {
     maxWidth?: number;
     width?: number;
     field: string;
-    headerComponent?: { new(): CustomHeader };
+    headerComponent?: { new (): CustomHeader };
     headerComponentParams?: HeaderComponentParams;
     filter: string;
     filterParams?: any;
