@@ -288,11 +288,11 @@ export class Panel {
      * Handles the graceful destruction of a panel instance by unhooking from various observers/streams/DOM/APIs etc.
      */
     private destroy() {
+        this.close();
         this.api.panels.all.splice(this.api.panels.all.findIndex(p => p === this), 1); // remove this panel from the API
         this.element.remove(); // remove element from the DOM
         this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
         this.element.off('click');
-        this._observer.disconnect(); // disconnect the mutation observer
     }
 
     /**
