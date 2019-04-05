@@ -438,17 +438,18 @@ class BaseItem {
 
     /**
      * Removes element from legend and removes layer if it's the last reference to it.
-     * Does nothing if "remove" is not.part of `BaseItem's` s`_availableControls`.
+     * Does nothing if "remove" is not part of `BaseItem's` s`_availableControls`.
+     * The only exception is if it is of type 'legendInfo' in which case removing is possible without it being an available control.
      */
     remove(): void {
-        if (this._availableControls.includes(AvailableControls.Remove)) {
+        if (this._availableControls.includes(AvailableControls.Remove) || this.type === LegendTypes.Info) {
             this._mapInstance.instance.removeAPILegendBlock(this._legendBlock);
         }
     }
 
     /**
      * Reloads element in legend
-     * Does nothing if "reload" is not.part of `BaseItem's` `_availableControls`.
+     * Does nothing if "reload" is not part of `BaseItem's` `_availableControls`.
      */
     reload(): void {
         if (this._availableControls.includes(AvailableControls.Reload)) {
@@ -458,7 +459,7 @@ class BaseItem {
 
     /**
      * Toggles metadata panel to open/close for the BaseItem
-     * Does nothing if "metadata" is not.part of `BaseItem's` `_availableControls`.
+     * Does nothing if "metadata" is not part of `BaseItem's` `_availableControls`.
      */
     toggleMetadata(): void {
         if (this._availableControls.includes(AvailableControls.Metadata)) {
@@ -468,7 +469,7 @@ class BaseItem {
 
     /**
      * Toggles settings panel to open/close type for the BaseItem
-     * Does nothing if "settings" is not.part of `BaseItem's` `_availableControls`.
+     * Does nothing if "settings" is not part of `BaseItem's` `_availableControls`.
      */
     toggleSettings(): void {
         if (this._availableControls.includes(AvailableControls.Settings)) {
@@ -478,7 +479,7 @@ class BaseItem {
 
     /**
      * Toggles data table panel to open/close for the BaseItem
-     * Does nothing if "data" is not.part of `BaseItem's` `_availableControls`.
+     * Does nothing if "data" is not part of `BaseItem's` `_availableControls`.
      */
     toggleDataTable(): any {
         if (this._availableControls.includes(AvailableControls.Data)) {
