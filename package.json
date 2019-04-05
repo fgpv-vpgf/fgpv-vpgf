@@ -1,6 +1,6 @@
 {
     "name": "@fgpv/rv-plugins",
-    "version": "0.0.5-1",
+    "version": "0.0.15",
     "description": "Plugins for the RAMP viewer supported by the core team.",
     "scripts": {
         "build": "webpack --config ./bin/build/webpack.config.js && npm run prepublishOnly",
@@ -12,7 +12,8 @@
     },
     "files": [
         "lib/**/*",
-        "plugins/**/*"
+        "plugins/**/*",
+        "dist/**/*"
     ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
