@@ -211,6 +211,7 @@ export class Panel {
             // nothing to do, observer is already disconnected.
         }
         this.element.css('visibility', 'hidden');
+        this.api.mapI.releaseAppbarTitle(this);
 
         if (!opts.silent) {
             const closingResponse: ClosingResponse = {
@@ -354,10 +355,10 @@ export class Panel {
         const rect1 = this.element[0].getBoundingClientRect();
         const rect2 = otherPanel.element[0].getBoundingClientRect();
 
-        const overlap = !(rect1.right < rect2.left ||
-            rect1.left > rect2.right ||
-            rect1.bottom < rect2.top ||
-            rect1.top > rect2.bottom);
+        const overlap = !(rect1.right <= rect2.left ||
+            rect1.left >= rect2.right ||
+            rect1.bottom <= rect2.top ||
+            rect1.top >= rect2.bottom);
 
         if (overlap && close) {
             this.close({ closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel });
@@ -413,6 +414,8 @@ export class Panel {
      */
     constructor(id: string, api: ViewerAPI, panelType: PanelTypes) {
         this.api = api;
+
+        this.appBar = new appBar(this);
 
         this.allowUnderlay = true;
         this.allowOffscreen = false;
@@ -471,6 +474,22 @@ export interface Panel {
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;
+
+    appBar: appBar;
+}
+
+class appBar {
+    set title(title: string) {
+        this.panel.api.mapI.setAppbarTitle(this.panel, title);
+    }
+
+    constructor(panel: Panel) {
+        this.panel = panel;
+    }
+}
+
+interface appBar {
+    panel: Panel;
 }
 
 export enum CLOSING_CODES {

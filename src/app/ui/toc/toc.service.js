@@ -53,15 +53,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
     let errorToast;
 
-    events.$on(events.rvApiPreMapAdded, (_, api) => {
-        api.panels.legend.allowUnderlay = false;
-        api.panels.legend.reopenAfterOverlay = true;
-        api.panels.legend.body = $('<rv-toc></rv-toc>');
-    });
-
     let mApi = null;
-    events.$on(events.rvApiMapAdded, (_, api) => {
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
         mApi = api;
+        panelSetup();
     });
 
     // set state change watches on metadata, settings and table panel
@@ -121,6 +116,16 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     });
 
     return service;
+
+    function panelSetup() {
+        panel = mApi.panels.legend;
+        panel.body = $('<rv-toc></rv-toc>');
+        panel.reopenAfterOverlay = true;
+        panel.allowUnderlay = false;
+        panel.opening.subscribe(() => {
+            panel.appBar.title = 'appbar.tooltip.layers';
+        });
+    }
 
     /**
      * This will reload the layer records referenced by the specified legend block and all other legend blocks attached to that record;

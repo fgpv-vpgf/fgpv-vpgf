@@ -38,7 +38,7 @@ function rvAppbar(referenceService) {
 }
 
 function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService,
-    configService, events) {
+    configService, events, $translate) {
     'ngInject';
 
     const self = this;
@@ -49,24 +49,49 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
     self.toggleToc = toggleTocBuilder();
     self.openBasemapSelector = basemapService.open;
     self.toggleGeosearch = geosearchService.toggle;
+    self.title = '';
 
     self.geosearchService = geosearchService;
 
     configService.onEveryConfigLoad(cfg =>
         (self.config = cfg));
 
-    events.$on(events.rvApiMapAdded, (_, api) => {
-        self._mApi = api;
+    let requesterStack = [];
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        configService.getSync.map.instance.setAppbarTitle = (requester, title) => {
+            // push change onto stack
+            requesterStack.unshift({ requester, title });
+            updateTitle(title);
+        }
+        configService.getSync.map.instance.releaseAppbarTitle = requester => {
+            // if this requester made the last change then clear the title
+            if (requesterStack[0] && requesterStack[0].requester === requester) {
+                updateTitle('');
+            }
+
+            // remove anything from this requester from the stack
+            requesterStack = requesterStack.filter(oldRequester => oldRequester.requester !== requester);
+
+            // if theres something left on the stack update the title
+            if (requesterStack.length > 0) {
+                updateTitle(requesterStack[0].title);
+            }
+        }
+        self.panelRegistry = api.panels;
     });
 
+    function updateTitle(title) {
+        self.title = $translate.instant(title);
+    }
+
     function toggleDetails() {
-        self._mApi.panels.details.toggle();
+        self.panelRegistry.details.toggle();
     }
 
     function toggleTocBuilder() {
         // debounce the toggle toc button to avoid wierd behaviour
         return debounceService.registerDebounce(() => {
-            self._mApi.panels.legend.toggle();
+            self.panelRegistry.legend.toggle();
         }, 300);
     }
 }
