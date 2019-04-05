@@ -179,16 +179,17 @@ class CoordInfo {
 
         if (!this.panel) {
             // make sure both header and body have a digest cycle run on them
-            this.panel = this.api.newPanel('coord-info', true, true);
-            this.panel.keepAlive = true;
+            this.panel = this.api.panels.create('coord-info');
+
             this.panel.element.css({
                 bottom: '0em',
                 width: '400px'
             });
+
             this.panel.element.addClass('mobile-fullscreen');
 
             let closeBtn = this.panel.header.closeButton;
-            this.panel.header.title = `{{ 'plugins.coordInfo.coordButtonLabel' | translate }}`;
+            this.panel.header.title = `plugins.coordInfo.coordButtonLabel`;
         } else {
             this.panel.close();
         }
@@ -253,7 +254,8 @@ class CoordInfo {
         /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
         const magnetic = decli.components.D !== null ? `${decli.components.D}${String.fromCharCode(176)}` : '---';
         const annChange = decli.annual_change.dD !== null ? decli.annual_change.dD : '---';
-        const compass = decli.compass !== 'useless' ? '' : CoordInfo.prototype.translations[lang].plugin.coordInfo.magCompassOut;
+        const compass =
+            decli.compass !== 'useless' ? '' : CoordInfo.prototype.translations[lang].plugin.coordInfo.magCompassOut;
 
         return { magnetic, annChange, compass };
     }
