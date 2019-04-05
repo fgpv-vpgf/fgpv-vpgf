@@ -11,7 +11,8 @@
         "postversion": "git push upstream v%npm_package_version%"
     },
     "files": [
-        "lib/**/*"
+        "lib/**/*",
+        "plugins/**/*"
     ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
