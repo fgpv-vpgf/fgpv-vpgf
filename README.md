@@ -6,9 +6,21 @@ Plugins for [RAMP](https://github.com/fgpv-vpgf/fgpv-vpgf) supported by the core
 
 https://docs.fgpv.org/fgpv-vpgf/plugins/
 
+## Local Development
+
+1. Run `npm link path/to/plugins/folder` from within your RAMP folder.
+2. When you're done making changes to plugins, run `npm run build` from within the plugins repo.
+3. Start the RAMP dev server by running `npm run serve` from within the RAMP repo.
+
+Repeat steps 2 & 3 whenever you've made changes to plugin code, then reload the page.
+
+All plugin samples can be found at **http://localhost:6001/samples/plugins** while the RAMP dev server is running.
+
+You can unlink at any time `npm unlink @fgpv/rv-plugins`
+
 ## Publishing a release
 
-`npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease]` will create a version commit and tag then push the tag `upstream` for pushlishing to npm.
+`npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease]` will create a version commit and tag then push the tag `upstream` for publishing to npm.
 
 ## Build distribution files
 
@@ -16,11 +28,11 @@ https://docs.fgpv.org/fgpv-vpgf/plugins/
 
 ## RAMP viewer code
 
-Samples and automated testing use the ramp viewer code found in `bin/test/ramp`. 
+Samples and automated testing use the ramp viewer code found in `bin/test/ramp`.
 
 ## Contributing
 
-This project uses the fork and pull model. Once forked, run `npm i` from the project root directory to setup for first time use. 
+This project uses the fork and pull model. Once forked, run `npm i` from the project root directory to setup for first time use.
 
 ### Running locally
 
