@@ -11,6 +11,7 @@ const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const WebpackShellPlugin    = require('webpack-shell-plugin');
 
 const babelPresets = {
     presets: ['env', 'stage-2'],
@@ -102,6 +103,10 @@ module.exports = function (env) {
         plugins: [
             new MiniCssExtractPlugin({
                 filename: "rv-styles.css"
+            }),
+
+            new WebpackShellPlugin({
+                onBuildStart: ['bash scripts/pluginSamples.sh']
             }),
 
             new CopyWebpackPlugin([{
