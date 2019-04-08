@@ -52,6 +52,10 @@
     #mainDetails {
         top: 49px;
         width: 400px;
+
+        .rv-header.rv-has-layer-list {
+            margin-left: 49px;
+        }
     }
 
     .rv-details {
