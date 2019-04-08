@@ -59,8 +59,8 @@ $result-item-height-touch: rem(4.8);
         .panel-body {
             padding: 0 !important;
             height: 100%;
-            bottom: initial;
-            overflow-y: unset !important;
+            bottom: auto;
+            overflow-y: visible !important;
 
             .rv-geosearch-content {
                 margin: 0;

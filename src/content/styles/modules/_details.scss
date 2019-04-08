@@ -61,10 +61,11 @@
     .rv-details {
         flex-direction: column;
         display: flex;
-        top: 0;
+        top: 49px;
         bottom: 0;
         right: 0;
         left: 0;
+        position: absolute;
 
         .rv-subheader {
             padding-right: rem(2.5);
@@ -133,7 +134,7 @@
             position: absolute;
             background: white;
             left: 0;
-            top: 0;
+            top: -49px;
             bottom: - rem(0.8);
             border-right: solid 1px $divider-color-light;
             overflow: hidden;
