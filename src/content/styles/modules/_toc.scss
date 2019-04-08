@@ -12,7 +12,6 @@ $layer-item-height-touch: rem(7.2);
         top: 49px;
         left: 0px;
         width: 400px;
-        z-index: 11!important;
 
         @include include-size(rv-sm) {
             top: 49px;
