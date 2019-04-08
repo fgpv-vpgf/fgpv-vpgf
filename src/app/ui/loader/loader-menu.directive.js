@@ -49,16 +49,10 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     });
 
     mApi.panels.fileLoader.opening.subscribe(() => {
-        mApi.mapI.setAppbarTitle(mApi.panels.fileLoader, 'import.file.title');
-    });
-    mApi.panels.fileLoader.closing.subscribe(() => {
-        mApi.mapI.releaseAppbarTitle(mApi.panels.fileLoader);
+        mApi.panels.fileLoader.appBar.title = 'import.file.title';
     });
     mApi.panels.serviceLoader.opening.subscribe(() => {
-        mApi.mapI.setAppbarTitle(mApi.panels.serviceLoader, 'import.service.title');
-    });
-    mApi.panels.serviceLoader.closing.subscribe(() => {
-        mApi.mapI.releaseAppbarTitle(mApi.panels.serviceLoader);
+        mApi.panels.serviceLoader.appBar.title = 'import.service.title';
     });
 
     function openFileLoader() {
