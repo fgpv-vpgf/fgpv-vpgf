@@ -4233,6 +4233,11 @@ md-datepicker > div {
 .table-control {
   display: inherit; }
 
+.table-control .md-icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important; }
+
 .mobile-table-control {
   display: none; }
 
@@ -4254,11 +4259,6 @@ md-datepicker > div {
   display: flex;
   align-items: center;
   padding: 0px 12px 0px 16px; }
-
-.md-icon-button {
-  width: 40px !important;
-  height: 40px !important;
-  margin: 0 !important; }
 
 .md-open-menu-container {
   max-height: 90%; }

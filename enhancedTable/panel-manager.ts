@@ -58,7 +58,7 @@ export class PanelManager {
 
     set panelStateManager(newPanelStateManager: PanelStateManager) {
         // store the column state before replacing the state manager
-        if (this._panelStateManager) {
+        if (this._panelStateManager && this.tableOptions) {
             this._panelStateManager.columnState = this.tableOptions.columnApi.getColumnState();
         }
         this._panelStateManager = newPanelStateManager;
@@ -118,7 +118,6 @@ export class PanelManager {
             if (this.panelStateManager.columnState) {
                 this.tableOptions.columnApi.setColumnState(this.panelStateManager.columnState);
             }
-            this.panel.open();
             this.panelStatusManager.getScrollRange();
             this.panelRowsManager.initObservers();
 
@@ -162,8 +161,7 @@ export class PanelManager {
 
                 // stop loading panel from opening, if we are about to open enhancedTable
                 clearTimeout(tableBuilder.loadingTimeout);
-
-                if (!tableBuilder.loadingPanel.hidden) {
+                if (tableBuilder.loadingPanel.isOpen) {
                     //if loading panel was opened, make sure it stays on for at least 400 ms
                     setTimeout(() => {
                         tableBuilder.deleteLoaderPanel();

@@ -30,21 +30,8 @@ export default class TableBuilder {
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {
-            if (this.panel.panelStateManager !== undefined) {
-                // switch state of whether the table is open or not
-                this.panel.panelStateManager.isOpen = !this.panel.panelStateManager.isOpen;
-            }
-            if (
-                this.panel.panelStateManager === undefined ||
-                this.panel.panelStateManager.isOpen === true ||
-                legendBlock !== this.panel.panelStateManager.legendBlock
-            ) {
-                // if table has never been created, was closed until now, or you are opening a different table
-                // go through loading + opening steps
-                if (this.panel.panelStateManager !== undefined && legendBlock !== this.panel.panelStateManager.legendBlock) {
-                    // make sure to close table if its been opened before
-                    this.panel.close();
-                }
+            // Open the table if its closed, never been created or this is a different legend block
+            if (this.panel.panel.isClosed || !this.panel.panelStateManager || this.panel.panelStateManager.legendBlock !== legendBlock) {
                 // creates a 'loader' panel to be opened if data hasn't loaded after 200ms
                 this.deleteLoaderPanel();
                 this.loadingPanel = new PanelLoader(this.mapApi, legendBlock);
@@ -128,6 +115,9 @@ export default class TableBuilder {
     deleteLoaderPanel() {
         if (this.loadingPanel) {
             this.loadingPanel.close();
+            if (this.legendBlock.loadingPanel) {
+                this.legendBlock.loadingPanel = undefined;
+            }
         }
         if ($('#enhancedTableLoader') !== undefined) {
             $('#enhancedTableLoader').remove();
