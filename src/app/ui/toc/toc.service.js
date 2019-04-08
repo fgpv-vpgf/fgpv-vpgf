@@ -11,8 +11,7 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
-    geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
+function tocService($q, $rootScope, $mdToast, $translate, referenceService, stateManager, geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
 
     let panel;
     const service = {
@@ -32,7 +31,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     };
 
     const ref = {
-        selecteLegendBlockLog: {}
+        selectedLegendBlockLog: {}
     };
 
     // name mapping between true panel names and their short names
@@ -57,12 +56,16 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     events.$on(events.rvApiPreMapAdded, (_, api) => {
         mApi = api;
         panelSetup();
+        watcherSetup();
+
+        panelSwitch.metadata.panel = mApi.panels.metadata;
+        panelSwitch.settings.panel = mApi.panels.settings;
     });
 
     // set state change watches on metadata, settings and table panel
-    watchPanelState('sideMetadata', 'metadata');
-    watchPanelState('sideSettings', 'settings');
-    watchPanelState('tableFulldata', 'table');
+    watchPanelState('metadata');
+    watchPanelState('settings');
+    watchPanelState('table');
 
     events.$on(events.rvMapLoaded, () => {
         // wire in a hook to any map for removing a layer. this makes it available on the API
@@ -122,8 +125,18 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         panel.body = $('<rv-toc></rv-toc>');
         panel.reopenAfterOverlay = true;
         panel.allowUnderlay = false;
+        panel.isCloseable = true;
         panel.opening.subscribe(() => {
             panel.appBar.title = 'appbar.tooltip.layers';
+        });
+    }
+
+    function watcherSetup() {
+        mApi.panels.settings.closing.subscribe(() => {
+            stateManager.clearDisplayPanel('sideSettings');
+        });
+        mApi.panels.metadata.closing.subscribe(() => {
+            stateManager.clearDisplayPanel('sideMetadata');
         });
     }
 
@@ -157,9 +170,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
         if (openPanel) {
             const panel = panelSwitch[openPanel.name].panel;
-            stateManager.setActive({ [panel]: false });
+            panel.close();
         } else {    // open panel not being reloaded, close any open panel
-            stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
+            mApi.panels.settings.close();
+            mApi.panels.metadata.close();
         }
 
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
@@ -171,7 +185,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                     .filter(a => a)[0];
 
                 if (findBlock) {        // open panel not reloaded, close any open panel
-                    stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
+                    mApi.panels.settings.close();
+                    mApi.panels.metadata.close();
                     return;
                 }
 
@@ -248,7 +263,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         }
 
         if (openPanelName) {
-            stateManager.setActive({ [panelSwitch[openPanelName.name].panel]: false });
+            panelSwitch[openPanelName.name].panel.close();
         }
 
         // let the layer know that the block has been deselected due to removal
@@ -362,11 +377,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             name: legendBlock.name
         };
 
-        const panelToClose = {
-            table: false
-        };
-
-
         // send to display manager method
         stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester);
     }
@@ -392,10 +402,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name
-        };
-
-        const panelToClose = {
-            table: false
         };
 
         const dataPromise = $q((resolve, reject) => {
@@ -435,14 +441,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @param  {String} panelName    name of the panel to watch as specified in the stateManager
      * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'table')
      */
-    function watchPanelState(panelName, displayName) {
-        // clear display on metadata, settings, and table panels when closed
-        $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
-            if (property === 'active' && name === panelName && value === false) {
-                stateManager.clearDisplayPanel(panelName);
-            }
-        });
-
+    function watchPanelState(displayName) {
         $rootScope.$watch(() => stateManager.display[displayName].requester, (newRequester, oldRequester) => {
             if (newRequester !== null) {
                 // deselect layer from the old requester if layer ids don't match
@@ -480,7 +479,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         // toc entry is considered selected if its metadata, settings, or data panel is opened;
         // when switching between panels (opening metadata when settings is already open), events may happen out of order
         // to ensure a toc entry is not deselected untimely, keep count of open/close events
-        ref.selecteLegendBlockLog[id] = (ref.selecteLegendBlockLog[id] || 0) + (value ? 1 : -1);
-        block.isSelected = ref.selecteLegendBlockLog[id] > 0;
+        ref.selectedLegendBlockLog[id] = (ref.selectedLegendBlockLog[id] || 0) + (value ? 1 : -1);
+        block.isSelected = ref.selectedLegendBlockLog[id] > 0;
     }
 }
