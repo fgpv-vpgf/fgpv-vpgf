@@ -57,16 +57,15 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         service.mApi = api;
         api.panels.geoSearch.body = $('<rv-geosearch></rv-geosearch>');
         api.panels.geoSearch.isCloseable = true;
+        api.panels.geoSearch.allowUnderlay = false;
 
         // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
-        $rootScope.$watch(() => api.panels.geoSearch.isClosed, newValue => {
-            if (!newValue) {
-                // this will properly hide geosearch content
-                onClose();
+        api.panels.geoSearch.closing.subscribe(() => {
+            // this will properly hide geosearch content
+            onClose();
 
-                // emit close to directive
-                $rootScope.$emit(events.rvGeosearchClose);
-            }
+            // emit close to directive
+            $rootScope.$emit(events.rvGeosearchClose);
         });
     });
 
@@ -94,31 +93,6 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     function onClose() {
         // because search value is cleared on esc, reset it to make permanent when we close geosearch
         service.searchValue = service.searchValuePerm;
-
-        // stateManager is a mess; it needs to be refactored; this won't happen.
-
-        // check if another panel was open before opening geosearch
-        // if table is open, toggle mainToc otherwise the last panel
-        // if not, only close geosearch
-        const panels = stateManager.panelHistory;
-        if (panels.length > 0) {
-            stateManager.state.main.activeSkipOverride = false;
-
-            const toPanel = panels.reverse().find(item =>
-                item === 'mainToc' || item === 'mainDetails');
-
-            if (toPanel) {
-                stateManager.setActive({ [toPanel]: true });
-            }
-        } else {
-            stateManager.setActive({ main: false })
-                .then(() => {
-                    stateManager.state.main.activeSkipOverride = false;
-                });
-        }
-
-        // remove class to set back "main panel goes to bottom"
-        ref.mainPanel.removeClass('geosearch');
     }
 
     /**

@@ -336,12 +336,6 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
         let currentMode = stateManager.state.table.morph;
         let index = (views.indexOf(currentMode) + 1) % 4;
 
-        // Make sure the table panel is open
-        stateManager.setActive({
-            side: false
-        }, {
-                tableFulldata: true
-            });
         stateManager.setMode('table', views[index]);
     }
 

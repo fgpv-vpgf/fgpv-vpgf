@@ -45,7 +45,7 @@
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
-        ng-show="self.stateManager.state.mainToc.active">
+        ng-show="self.panelRegistry.legend.isOpen">
         <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:map"></md-icon>
     </md-button>
@@ -58,7 +58,7 @@
         aria-label="{{ 'appbar.aria.pointInfo' | translate }}"
         class="md-icon-button primary"
         rv-help="details-button"
-        ng-class="{ selected: self.stateManager.state.mainDetails.active }"
+        ng-class="{ selected: self.panelRegistry.details.isOpen }"
         ng-click="self.toggleDetails()"
         ng-show="self.stateManager.display.details.requestId">
         <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
@@ -70,7 +70,7 @@
         aria-label="{{ 'appbar.aria.layers' | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
-        ng-class="{ selected: self.stateManager.state.mainToc.active }"
+        ng-class="{ selected: self.panelRegistry.legend.isOpen }"
         ng-click="self.toggleToc()">
         <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>

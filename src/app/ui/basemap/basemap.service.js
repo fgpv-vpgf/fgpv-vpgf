@@ -50,7 +50,7 @@ function basemapService($rootElement, $mdSidenav, $q) {
          * @private
          */
         function setOtherChromeOpacity(opacity) {
-            $rootElement.find(`rv-panel, rv-appbar`).css('opacity', opacity);
+            $rootElement.find(`.panel-contents, rv-appbar`).css('opacity', opacity);
             $rootElement.find(`.rv-esri-map .layersDiv > *:not(:first)`).css('opacity', opacity);
         }
     }

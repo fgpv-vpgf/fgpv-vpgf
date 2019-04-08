@@ -17,8 +17,8 @@ angular
  * @private
  * @return {object} service object
  */
-function mapNavigationService(stateManager, geoService, $rootScope, locateService, debounceService,
-    helpService, basemapService, events, fullScreenService, geosearchService, sideNavigationService) {
+function mapNavigationService(stateManager, geoService, locateService, debounceService,
+    helpService, basemapService, fullScreenService, geosearchService, sideNavigationService, appInfo) {
 
     const service = {
         controls: {}
@@ -52,7 +52,7 @@ function mapNavigationService(stateManager, geoService, $rootScope, locateServic
             icon: 'maps:layers',
             tooltip: 'appbar.tooltip.layers',
             action: debounceService.registerDebounce(() => {
-                stateManager.setActive({ side: false }, 'mainToc');
+                appInfo.mapi.panels.legend.toggle();
             })
         },
         sideMenu: {

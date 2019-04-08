@@ -41,9 +41,6 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         api.panels.details.opening.subscribe( () => {
             api.panels.details.appBar.title = 'appbar.tooltip.pointInfo';
         });
-        api.panels.legend.opening.subscribe( () => {
-            api.panels.details.close();
-        });
     });
 
     events.$on(events.rvApiMapAdded, (_, api) => {
@@ -85,12 +82,6 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
 
         // remove highlighted features and the haze when the details panel is closed
         mapService.clearHighlight(false);
-
-        if (stateManager.panelHistory.find(x => x === 'mainToc')) {
-            stateManager.togglePanel('mainDetails', 'mainToc');
-        } else {
-            stateManager.setActive({ mainDetails: false });
-        }
     }
 
     function getParser(layerId, parserUrl) {
