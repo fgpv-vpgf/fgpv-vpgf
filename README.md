@@ -18,13 +18,13 @@ For more information on this project, please see one of the sections below:
 * [Building the Project](#building-the-project)
 * [Support](#support)
 
-Also, please visit the [Documentation Site](https://docs.fgpv.org/fgpv-vpgf/fgpv-vpgf/v3.0.0/#/home) for additional content on:
+Also, please visit the [Documentation Site](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/home) for additional content on:
 
-* [Map Author Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/mapauthor/intro)
-* [Contributing to the RAMP Project](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started)
+* [Map Author Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/mapauthor/intro)
+* [Contributing to the RAMP Project](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started)
 * [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
-* [Developer Guide](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/developer/intro)
-* [Technical Documentation](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/technical/architecture)
+* [Developer Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/intro)
+* [Technical Documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/technical/architecture)
 
 ## Usage
 
@@ -70,7 +70,7 @@ Running a local build:
 3. Run `npm install` to install dependencies
 4. Run `npm run serve` to build and launch a dev server
 
-We use a fork and pull model for contributions, see our [contributing guidelines](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started) for more details.
+We use a fork and pull model for contributions, see our [contributing guidelines](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started) for more details.
 
 ### Generating Local Builds
 
@@ -131,4 +131,4 @@ Plugins: https://github.com/fgpv-vpgf/plugins
 
 GeoSearch: https://github.com/ramp-pcar/geosearch
 
-If you need help contributing, make sure to give the [contribution docs](https://ramp-docs.fgpv-vpgf.com/v3.0.0/#/contribute/getting_started) a read. If you still have questions let us know.
+If you need help contributing, make sure to give the [contribution docs](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started) a read. If you still have questions let us know.
