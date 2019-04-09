@@ -42,6 +42,10 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     let mApi = appInfo.mapi;
     mApi.panels.fileLoader.body = $('<rv-loader-file></rv-loader-file>');
     mApi.panels.serviceLoader.body = $('<rv-loader-service></rv-loader-service>');
+    mApi.panels.fileLoader.isCloseable = true;
+    mApi.panels.serviceLoader.isCloseable = true;
+    mApi.panels.fileLoader.allowUnderlay = false;
+    mApi.panels.serviceLoader.allowUnderlay = false;
     // When legend toggles back open, close the loaders
     mApi.panels.legend.opening.subscribe(() => {
         mApi.panels.fileLoader.close();
@@ -49,16 +53,10 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     });
 
     mApi.panels.fileLoader.opening.subscribe(() => {
-        mApi.mapI.setAppbarTitle(mApi.panels.fileLoader, 'import.file.title');
-    });
-    mApi.panels.fileLoader.closing.subscribe(() => {
-        mApi.mapI.releaseAppbarTitle(mApi.panels.fileLoader);
+        mApi.panels.fileLoader.appBar.title = 'import.file.title';
     });
     mApi.panels.serviceLoader.opening.subscribe(() => {
-        mApi.mapI.setAppbarTitle(mApi.panels.serviceLoader, 'import.service.title');
-    });
-    mApi.panels.serviceLoader.closing.subscribe(() => {
-        mApi.mapI.releaseAppbarTitle(mApi.panels.serviceLoader);
+        mApi.panels.serviceLoader.appBar.title = 'import.service.title';
     });
 
     function openFileLoader() {

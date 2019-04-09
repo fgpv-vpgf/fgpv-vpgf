@@ -41,9 +41,8 @@ angular
     .factory('sideNavigationService', sideNavigationService);
 
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootElement, configService, stateManager,
-    basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, geosearchService, $mdDateLocale, events) {
+function sideNavigationService($mdSidenav, $rootElement, configService, basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
+    translations, $mdDialog, geosearchService, $mdDateLocale, events, appInfo) {
 
     const service = {
         open,
@@ -60,10 +59,10 @@ function sideNavigationService($mdSidenav, $rootElement, configService, stateMan
             type: 'link',
             label: 'appbar.tooltip.layers',
             icon: 'maps:layers',
-            isChecked: () => stateManager.state.mainToc.active,
+            isChecked: () => appInfo.mapi && appInfo.mapi.panels.legend.isOpen,
             action: () => {
                 service.close();
-                stateManager.setActive('mainToc');
+                appInfo.mapi.panels.legend.toggle();
             }
         },
         basemap: {

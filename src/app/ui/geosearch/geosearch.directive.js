@@ -39,7 +39,7 @@ function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope
                 const debounceUpdateMaxHeight = debounceService.registerDebounce(newDimensions =>
                     geosearchContentNode.css('max-height', newDimensions.height - 10), 175, false, true); // 10 accounts for top margin :()
 
-                referenceService.onResize(referenceService.panels.main, debounceUpdateMaxHeight);
+                referenceService.onResize(appInfo.mapi.panels.geoSearch.element, debounceUpdateMaxHeight);
             }
 
             // force focus on open geosearch because sometimes it is lost
