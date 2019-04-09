@@ -42,7 +42,7 @@ export default class Header extends Element {
     /**
      * Sets the panel title.
      */
-    setTitle(title: string) {
+    set title(title: string) {
         const titleElem = this._header.find('header > h3').first();
         const titleText = /{{/.test(title) ? title : `{{ '${title}' | translate }}`;
         titleElem
@@ -61,7 +61,7 @@ export default class Header extends Element {
     /**
      * Sets the panel subtitle.
      */
-    setSubtitle(subtitle: string) {
+    set subtitle(subtitle: string) {
         const subtitleElem = this._header.find('header > p').first();
         const subtitleText = /{{/.test(subtitle) ? subtitle : `{{ '${subtitle}' | translate }}`;
         subtitleElem
@@ -88,7 +88,7 @@ export default class Header extends Element {
     /**
      * Adds a close button to the header controls.
      */
-    getCloseButton() {
+    get closeButton() {
         if (!this._closeButton) {
             this._closeButton = new CloseButton(this._panel);
             this.append(this._closeButton.elem);
@@ -100,7 +100,7 @@ export default class Header extends Element {
     /**
      * Adds a toggle button to the header controls.
      */
-    getToggleButton() {
+    get toggleButton() {
         if (!this._toggleButton) {
             this._toggleButton = new ToggleButton(this._panel);
             this.append(this._toggleButton.elem);
