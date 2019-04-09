@@ -42,6 +42,10 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     let mApi = appInfo.mapi;
     mApi.panels.fileLoader.body = $('<rv-loader-file></rv-loader-file>');
     mApi.panels.serviceLoader.body = $('<rv-loader-service></rv-loader-service>');
+    mApi.panels.fileLoader.isCloseable = true;
+    mApi.panels.serviceLoader.isCloseable = true;
+    mApi.panels.fileLoader.allowUnderlay = false;
+    mApi.panels.serviceLoader.allowUnderlay = false;
     // When legend toggles back open, close the loaders
     mApi.panels.legend.opening.subscribe(() => {
         mApi.panels.fileLoader.close();
