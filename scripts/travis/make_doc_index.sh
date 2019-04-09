@@ -2,11 +2,11 @@ HEADER="
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FGPV-VPGF Docs</title>
+  <title>RAMP Docs</title>
   <meta name=\"viewport\" content=\"initial-scale=1\" />
 </head>
 <body>
-  <h1>FGPV-VPGF Versions</h1>
+  <h1>Versions</h1>
 "
 FOOTER="
 </body>
@@ -14,7 +14,7 @@ FOOTER="
 "
 
 makeLi () {
-  echo "$2<li><a href=\"$1/\">$1</a> [<a href=\"$1/api/\">API DOCS</a>]</li>"
+  echo "$2<li><a href=\"$1\">$1</a></li>"
 }
 
 makeUl () {
