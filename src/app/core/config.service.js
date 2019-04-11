@@ -122,9 +122,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @param {Array}  keys          array of RCS keys (String) to be added
          * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          */
-        setRcsKeys (keys, bookmarkInfo) { 
+        setRcsKeys (keys, bookmarkInfo) {
             this._rcsKeys = keys;
-            this.processRCS(bookmarkInfo); 
+            this.processRCS(bookmarkInfo);
         }
 
         /**
@@ -349,8 +349,8 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             }
 
             // TODO v3: change this
-            window.RZ.gapiPromise = geoapi(dojoUrl, window);
-            window.RZ.gapiPromise.then(() => {
+            window.RAMP.gapiPromise = geoapi(dojoUrl, window);
+            window.RAMP.gapiPromise.then(() => {
                 gapiService.init();
                 gapiService.isReady.then(() => {
                     _loadingState = States.LOADED;
@@ -370,7 +370,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         }
 
         // TODO: consider alternate to appending '-CA' if language code has a length of two. 'es' should be 'es-ES' but now
-        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end. 
+        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end.
         languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
             .map(l => l.length === 2 ? l + '-CA' : l)
             .filter(l => l);

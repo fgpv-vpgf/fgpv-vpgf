@@ -48,7 +48,7 @@ export class XY {
 
     /** Returns a projection Point */
     projectToPoint(targetProjection: number) {
-        const proj = (<any>window).RZ.GAPI.proj;
+        const proj = (<any>window).RAMP.GAPI.proj;
 
         let zoomPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
         return proj.Point(zoomPoint[0], zoomPoint[1], {wkid: targetProjection});
@@ -56,7 +56,7 @@ export class XY {
 
     /** Returns a projection Point */
     projectFromPoint(sourceProjection: number, x?: number, y?: number) {
-        const proj = (<any>window).RZ.GAPI.proj;
+        const proj = (<any>window).RAMP.GAPI.proj;
 
         let point = proj.localProjectPoint(sourceProjection, 4326, [this.x || x, this.y || y]);
         return proj.Point(point[0], point[1], {wkid: sourceProjection});
@@ -108,11 +108,11 @@ export class XY {
  * @example #### Check if two `XYBounds` intersect
  *
  * ```js
- * const ne = new RV.GEO.XY(150, 65);
- * const sw = new RV.GEO.XY(100, 30);
+ * const ne = new RAMP.GEO.XY(150, 65);
+ * const sw = new RAMP.GEO.XY(100, 30);
  *
- * const b1 = new RV.GEO.XYBounds(ne, sw);
- * const b2 = new RV.GEO.XYBounds([170, 35], [90, -60]); // an [x, y] tuple works too
+ * const b1 = new RAMP.GEO.XYBounds(ne, sw);
+ * const b2 = new RAMP.GEO.XYBounds([170, 35], [90, -60]); // an [x, y] tuple works too
  *
  * console.log(b1.intersects(b2)); // true
  * ```
@@ -126,7 +126,7 @@ export class XYBounds {
 
     constructor(northEast: XY | XYLiteral | Extent, southWest?: XY | XYLiteral | undefined) {
         if (isExtent(northEast)) {
-            const xy = (<any>window).RZ.GAPI.proj.localProjectExtent(northEast, 4326);
+            const xy = (<any>window).RAMP.GAPI.proj.localProjectExtent(northEast, 4326);
             this.northEast = new XY(xy.x1, xy.y1);
             this.southWest = new XY(xy.x0, xy.y0);
         } else {
@@ -157,7 +157,7 @@ export class XYBounds {
             ymin: this.northEast.y,
             spatialReference: { wkid: 4326 }
         };
-        return (<any>window).RZ.GAPI.Map.getExtentFromJson(extentObj);
+        return (<any>window).RAMP.GAPI.Map.getExtentFromJson(extentObj);
     }
 
     /** Returns true if the given XY point is contained within this boundary. */
@@ -195,10 +195,10 @@ export class XYBounds {
  * @example Create hovertips using different settings and add to points
  *
  * ```js
- * var hoverA = new RZ.GEO.Hover(0, 'my annotation', { position: 'right' });
+ * var hoverA = new RAMP.GEO.Hover(0, 'my annotation', { position: 'right' });
  * pointA.hover = hoverA;
  *
- * var hoverB = new RZ.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, position: 'left' });
+ * var hoverB = new RAMP.GEO.Hover(1, '<a href="https://www.w3schools.com/html/">Visit our HTML tutorial</a>', { keepOpen: true, position: 'left' });
  * pointB.hover = hoverB;
  * ```
  */
@@ -349,15 +349,15 @@ export class BaseGeometry {
  *
  * ```js
  * // image / data URL as icon
- * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
  *
  * // svg path as icon
- * var pointB = new RZ.GEO.Point(1, [79, 32], {icon: 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801'});
+ * var pointB = new RAMP.GEO.Point(1, [79, 32], {icon: 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801'});
  *
  * // default icon
- * var pointC = new RZ.GEO.Point(2, [79, 43]);
+ * var pointC = new RAMP.GEO.Point(2, [79, 43]);
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry([pointA, pointB, pointC]);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry([pointA, pointB, pointC]);
  * ```
  */
 export class Point extends BaseGeometry {
@@ -422,13 +422,13 @@ export class Point extends BaseGeometry {
  * ```js
  * // same icon options as Point
  *
- * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
- * var pointB = new RZ.GEO.Point(1, [79, 32]);
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RAMP.GEO.Point(1, [79, 32]);
  *
  * // any existing point icons are ignored and the same icon (taken from multipoint) is used for all points
- * var multipointA = new RZ.GEO.MultiPoint(10, [pointA, pointB, [79, 43], [-79, 32]]);
+ * var multipointA = new RAMP.GEO.MultiPoint(10, [pointA, pointB, [79, 43], [-79, 32]]);
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry(multipointA);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry(multipointA);
  * ```
  */
 export class MultiPoint extends BaseGeometry {
@@ -510,11 +510,11 @@ export class MultiPoint extends BaseGeometry {
  * @example Create a linestring and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
- * var pointB = new RZ.GEO.Point(1, [79, 32]);
- * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RAMP.GEO.Point(1, [79, 32]);
+ * var lineA = new RAMP.GEO.LineString(100, [pointA, pointB]);
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry(lineA);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry(lineA);
  * ```
  */
 export class LineString extends MultiPoint {
@@ -547,12 +547,12 @@ export class LineString extends MultiPoint {
  * @example Create a multilinestring and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
- * var pointB = new RZ.GEO.Point(1, [79, 32]);
- * var lineA = new RZ.GEO.LineString(100, [pointA, pointB]);
- * var multilineA = new RZ.GEO.MultiLineString(1000, [lineA, [[-70, 45], [-70, 57], [-55, 57], [-55, 45]], [[-10, 45], [-10, 57], [-20, 57], [-20, 45]]]);
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43], {icon: 'https://image.flaticon.com/icons/svg/17/17799.svg'});
+ * var pointB = new RAMP.GEO.Point(1, [79, 32]);
+ * var lineA = new RAMP.GEO.LineString(100, [pointA, pointB]);
+ * var multilineA = new RAMP.GEO.MultiLineString(1000, [lineA, [[-70, 45], [-70, 57], [-55, 57], [-55, 45]], [[-10, 45], [-10, 57], [-20, 57], [-20, 45]]]);
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry(multilineA);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry(multilineA);
  * ```
  */
 export class MultiLineString extends BaseGeometry {
@@ -630,15 +630,15 @@ export class MultiLineString extends BaseGeometry {
  * @example Create polygons using different styles and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, [-49, 70]);
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43]);
+ * var pointB = new RAMP.GEO.Point(1, [-49, 70]);
  *
  * // default settings - only the outline ring, no fill for polygon
- * var polygonA = new RZ.GEO.Polygon(10000, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
+ * var polygonA = new RAMP.GEO.Polygon(10000, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
  * // custom settings - just the fill for the polygon, no outline ring
- * var polygonB = new RZ.GEO.Polygon(10001, [[-10, 45], [-10, 57], [-20, 57], [-20, 45]], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
+ * var polygonB = new RAMP.GEO.Polygon(10001, [[-10, 45], [-10, 57], [-20, 57], [-20, 45]], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry([polygonA, polygonB]);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry([polygonA, polygonB]);
  * ```
  */
 export class Polygon extends BaseGeometry {
@@ -779,19 +779,19 @@ export class Polygon extends BaseGeometry {
  * @example Create a multipolygon and add to map
  *
  * ```js
- * var pointA = new RZ.GEO.Point(0, [-79, 43]);
- * var pointB = new RZ.GEO.Point(1, [-49, 70]);
+ * var pointA = new RAMP.GEO.Point(0, [-79, 43]);
+ * var pointB = new RAMP.GEO.Point(1, [-49, 70]);
  *
  * // default settings - only the outline ring, no fill for polygon
- * var polygonA = new RZ.GEO.Polygon(100, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
+ * var polygonA = new RAMP.GEO.Polygon(100, [[pointA, [-79, 70], pointB, [-49, 43]], [[-70, 45], [-70, 57], [-55, 57], [-55, 45]]]);
  * // custom settings - just the fill for the polygon, no outline ring
- * var polygonB = new RZ.GEO.Polygon(101, [], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
+ * var polygonB = new RAMP.GEO.Polygon(101, [], { outlineWidth: 0, fillColor: '#000000', fillOpacity: 1 });
  *
  * var linearRingC = new polygonB.LinearRing([[-10, 45], [-10, 57], [-20, 57], [-20, 45]]);
  * polygonB.addLinearRings([linearRingC]);
- * var multiPolygonA = new RZ.GEO.MultiPolygon(1000, [polygonA, polygonB]);
+ * var multiPolygonA = new RAMP.GEO.MultiPolygon(1000, [polygonA, polygonB]);
  *
- * RZ.mapById('<mapID>').simpleLayer.addGeometry(multiPolygonA);
+ * RAMP.mapById('<mapID>').simpleLayer.addGeometry(multiPolygonA);
  * ```
  */
 export class MultiPolygon extends BaseGeometry {

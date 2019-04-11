@@ -151,7 +151,7 @@ class BaseLegend {
  *
  * @example
  * ```js
- * let configLegend = RZ.mapInstances[0].ui.configLegend; // access configLegend using the map API
+ * let configLegend = RAMP.mapInstances[0].ui.configLegend; // access configLegend using the map API
  * ```
  *<br>
  *<h2>Example Usecases for Legend API:</h2>

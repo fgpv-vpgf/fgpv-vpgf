@@ -60,7 +60,7 @@ export class MouseEvent {
  * @example #### Subscribe to feature list
  *
  * ```js
- * RZ.mapInstances[0].click.subscribe(a => {
+ * RAMP.mapInstances[0].click.subscribe(a => {
  *     a.features.subscribe(featureList => {...});
  * });
  * ```

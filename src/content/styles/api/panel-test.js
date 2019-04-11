@@ -71,10 +71,10 @@ $.getScript('../../../../rv-main.js', function () {
     `);
 
     //this is the mapInstance
-    new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
+    new RAMP.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 
     //once map is added
-    RZ.mapAdded.subscribe(mapi => {
+    RAMP.mapAdded.subscribe(mapi => {
 
       //creating Panel + opening
       let panel0 = mapi.panels.create('panel0');

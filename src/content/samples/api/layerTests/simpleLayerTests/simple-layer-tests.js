@@ -1,7 +1,7 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RZ.mapAdded.subscribe(mapi => {
+    RAMP.mapAdded.subscribe(mapi => {
 
         //SETUP:
         //add simpleLayer
@@ -9,12 +9,12 @@ $.getScript('../../../../rv-main.js', function () {
         // set the config layer to a constant for ease of use
         const simpleLayer = mapi.layers.getLayersById('simpleLayer')[0];
         //svg path as icon
-        const SVG = new RZ.GEO.Point(0, [-85, 59], {icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Purple_star_unboxed.svg/120px-Purple_star_unboxed.svg'});
+        const SVG = new RAMP.GEO.Point(0, [-85, 59], {icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Purple_star_unboxed.svg/120px-Purple_star_unboxed.svg'});
         //jpg as icon
-        const JPG = new RZ.GEO.Point(1, [-89, 59], {icon: 'http://www.oneworldkids.net/Star%20orange%20copy.jpg'});
+        const JPG = new RAMP.GEO.Point(1, [-89, 59], {icon: 'http://www.oneworldkids.net/Star%20orange%20copy.jpg'});
         //default icons
-        const DEF1 = new RZ.GEO.Point(2, [-80, 59]);
-        const DEF2 = new RZ.GEO.Point(3, [-85, 57]);
+        const DEF1 = new RAMP.GEO.Point(2, [-80, 59]);
+        const DEF2 = new RAMP.GEO.Point(3, [-85, 57]);
 
         let svgRem = false;
         let defRem = false
@@ -215,5 +215,5 @@ $.getScript('../../../../rv-main.js', function () {
         <div id="fgpmap" style="height:700px; width:75%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>
     `);
 
-    const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
+    const mapInstance = new RAMP.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 });

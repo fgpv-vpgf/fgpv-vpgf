@@ -1,6 +1,6 @@
 # Panel API Tests:
 
-- testing can be done using `panel-test.js`. Tests can be performed in the `RZ.mapAdded.subscribe` function or in the console if need be.
+- testing can be done using `panel-test.js`. Tests can be performed in the `RAMP.mapAdded.subscribe` function or in the console if need be.
 
 ### Creating and Opening the Panel:
 
@@ -8,7 +8,7 @@
 - For demo purposes, I have subscribed to all of the observables in this API which you can see fire in the console (uncomment method in panel.ts).
     ```javascript
 
-    let panel1 = RZ.mapInstances[0].createPanel('panel1');
+    let panel1 = RAMP.mapInstances[0].createPanel('panel1');
     panel1.id;
     ```
 
@@ -117,10 +117,10 @@
     - Hint: first refresh page to clear the previous setup.
 
     ```javascript
-    let panel1 = RZ.mapInstances[0].createPanel('panel1');
+    let panel1 = RAMP.mapInstances[0].createPanel('panel1');
     panel1.setPosition(70, 111);
     panel1.open();
-    let panel2 = RZ.mapInstances[0].createPanel('panel2');
+    let panel2 = RAMP.mapInstances[0].createPanel('panel2');
     panel2.setPosition(28, 69);
     panel2.open();
     ```
@@ -129,7 +129,7 @@
 
     ```javascript
 
-    let panelRegistry = RZ.mapInstances[0].panelRegistry;
+    let panelRegistry = RAMP.mapInstances[0].panelRegistry;
     panel1.constructor.availableSpaces(panelRegistry, 2,3); //checking dimensions for specific map instance, static
     ```
 
@@ -137,7 +137,7 @@
 
     - No height, width or position set (calculations based on 1x1 panel):
         ```javascript
-        let panel3 = RZ.mapInstances[0].createPanel('panel3');
+        let panel3 = RAMP.mapInstances[0].createPanel('panel3');
         panel3.availableSpaces();
         ````
 
@@ -166,7 +166,7 @@
 - ***Setup***
     - Hint: first refresh page to clear the previous setup.
     ```javascript
-    let panel1 = RZ.mapInstances[0].createPanel('panel1');
+    let panel1 = RAMP.mapInstances[0].createPanel('panel1');
     panel1.setPosition(30, 155);
     panel1.open();
     ```
@@ -203,8 +203,8 @@
 - ***Setup:***
     - Hint: first refresh page to clear the previous setup.
     ```javascript
-    let panel1 = RZ.mapInstances[0].createPanel('panel1');
-    let panel2 = RZ.mapInstances[0].createPanel('panel2');
+    let panel1 = RAMP.mapInstances[0].createPanel('panel1');
+    let panel2 = RAMP.mapInstances[0].createPanel('panel2');
 
     panel1.setPosition(20, 105);
     panel2.setPosition(20, 85);
@@ -255,7 +255,7 @@
 
     - Opening/closing a panel before position is set:
         ```javascript
-        let panel4 = RZ.mapInstances[0].createPanel('panel4');
+        let panel4 = RAMP.mapInstances[0].createPanel('panel4');
         panel4.open();
         panel4.close();
 
