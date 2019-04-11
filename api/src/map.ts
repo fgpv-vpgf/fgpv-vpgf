@@ -45,8 +45,8 @@ export class Map {
         if (config) {
             // type guard for cases where config object is given, store on window for config.service to find
             if (isConfigSchema(config)) {
-                (<any>window)[`rzConfig${this.identifier}`] = config;
-                this.mapDiv.attr('rv-config', `rzConfig${this.identifier}`);
+                (<any>window)[`rampConfig${this.identifier}`] = config;
+                this.mapDiv.attr('rv-config', `rampConfig${this.identifier}`);
             } else {
                 this.mapDiv.attr('rv-config', config);
             }
@@ -89,7 +89,7 @@ export class Map {
     setBounds(bounds: geo.XYBounds | geo.Extent, propagate: boolean = true): void {
         if (geo.isExtent(bounds)) {
             if (bounds.spatialReference.wkid !== 4326) {
-                const weirdExtent = (<any>window).RZ.GAPI.proj.localProjectExtent(bounds, 4326);
+                const weirdExtent = (<any>window).RAMP.GAPI.proj.localProjectExtent(bounds, 4326);
 
                 this.boundsObj = new geo.XYBounds([weirdExtent.x1, weirdExtent.y1], [weirdExtent.x0, weirdExtent.y0]);
             }
@@ -110,7 +110,7 @@ export class Map {
     }
 
     set extent(extent: any) {
-        this.mapI.setExtent((<any>window).RZ.GAPI.Map.getExtentFromJson(extent));
+        this.mapI.setExtent((<any>window).RAMP.GAPI.Map.getExtentFromJson(extent));
     }
 
     /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */

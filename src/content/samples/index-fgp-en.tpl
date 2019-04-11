@@ -542,7 +542,7 @@
 
     <script>
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RZ.mapAdded.subscribe(function (mapi) {
+        RAMP.mapAdded.subscribe(function (mapi) {
             backToCart.setCatalogueUrl('fgpmap', baseUrl);
         })
 

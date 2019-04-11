@@ -19,10 +19,10 @@ if (!document.createTouch && (<any>window).Touch) {
 }
 
 // Google tag manager loading
-// opt-in by setting rz-gtm on any map html element.
+// opt-in by setting ramp-gtm on any map html element.
 let gtmEnabled = false;
 domNodes.each((i, node) => {
-    gtmEnabled = (node.getAttribute('rz-gtm') !== null) || gtmEnabled;
+    gtmEnabled = (node.getAttribute('ramp-gtm') !== null) || gtmEnabled;
 });
 if (gtmEnabled) {
     (<any>window).dataLayer = (<any>window).dataLayer ? (<any>window).dataLayer : [];

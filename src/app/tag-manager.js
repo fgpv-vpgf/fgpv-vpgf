@@ -1,6 +1,6 @@
 import { skip } from 'rxjs/internal/operators/skip';
 
-const dataLayer = window.RZ.gtmDL;
+const dataLayer = window.RAMP.gtmDL;
 
 export default function(api) {
     if (!dataLayer) {

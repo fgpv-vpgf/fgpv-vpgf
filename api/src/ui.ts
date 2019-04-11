@@ -360,7 +360,7 @@ export class BasemapGroup {
  * @example #### Using an anchor point to remove context map
  *
  * ```js
- * RZ.mapInstances[0].ui.anchors.CONTEXT_MAP.remove();
+ * RAMP.mapInstances[0].ui.anchors.CONTEXT_MAP.remove();
  * ```
  */
 export class UI {
