@@ -9,5 +9,5 @@
  */
 angular
     .module('app.core')
-    .constant('api', window.RZ)
+    .constant('api', window.RAMP)
     .constant('LEGACY_API', {});

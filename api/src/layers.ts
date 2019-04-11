@@ -651,7 +651,7 @@ export class ConfigLayer extends BaseLayer {
  * @example #### Draw a point for a SimpleLayer<br><br>
  *
  * ```js
- * const pointGeo = new RZ.GEO.Point('myPoint', 'www.someImage.com/abc.svg', [81, 79 ]);
+ * const pointGeo = new RAMP.GEO.Point('myPoint', 'www.someImage.com/abc.svg', [81, 79 ]);
  * mySimpleLayer.addGeometry(pointGeo);
  * ```
  */
@@ -856,7 +856,7 @@ export class SimpleLayer extends BaseLayer {
  *   "url": "http://example.com/MapServer/URL"
  * };
  *
- * const myConfigLayer = RZ.mapById('<mapID>').layers.addLayer(layerJSON);
+ * const myConfigLayer = RAMP.mapById('<mapID>').layers.addLayer(layerJSON);
  * ```
  */
 export class LayerGroup {
@@ -1085,7 +1085,7 @@ export class LayerGroup {
      * @example <br><br>
      *
      * ```js
-     * const listOfConfigLayers = mapInstance.layers.getLayersByType(RZ.LAYERS.ConfigLayer);
+     * const listOfConfigLayers = mapInstance.layers.getLayersByType(RAMP.LAYERS.ConfigLayer);
      * ```
      */
     getLayersByType(type: ConfigLayer | SimpleLayer): Array<BaseLayer> {

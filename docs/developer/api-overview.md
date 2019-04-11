@@ -10,31 +10,31 @@ You should also have a basic understanding of **observables** which are used to 
 
 ## How to access the API
 
-The API can be accessed via the global variable `window.RZ`.
+The API can be accessed via the global variable `window.RAMP`.
 ```js
-let myMap = RZ.mapById('myMap');
+let myMap = RAMP.mapById('myMap');
 ```
 
-This variable is available as soon as the ramp viewer library (.js file) has loaded on the host page. The easiest way to know `window.RZ` is ready is to write your code in the form of a [plugin](developer/plugins). For this guide however we'll assume the ramp viewer library has finished loading before our sample code gets executed.
+This variable is available as soon as the ramp viewer library (.js file) has loaded on the host page. The easiest way to know `window.RAMP` is ready is to write your code in the form of a [plugin](developer/plugins). For this guide however we'll assume the ramp viewer library has finished loading before our sample code gets executed.
 
 ## Accessing a map instance
 
-You can't do anything exciting without first finding the map instance you'd like to interact with. Since there can be multiple ramp viewers on the same page most API functionality is on a **map instance**. `RZ.mapInstances` is an array of such API map instances, one instance per ramp viewer you have on the page (typically just one). If your host page only has one ramp viewer then it's easy - `RZ.mapInstances[0]`. If there are multiple ramp instances on a page you can use the `RZ.mapById` function to find a particular one.
+You can't do anything exciting without first finding the map instance you'd like to interact with. Since there can be multiple ramp viewers on the same page most API functionality is on a **map instance**. `RAMP.mapInstances` is an array of such API map instances, one instance per ramp viewer you have on the page (typically just one). If your host page only has one ramp viewer then it's easy - `RAMP.mapInstances[0]`. If there are multiple ramp instances on a page you can use the `RAMP.mapById` function to find a particular one.
 
 ```js
 // get the first map instance on the page
-const firstMap = RZ.mapInstances[0];
+const firstMap = RAMP.mapInstances[0];
 
 // get the nth map named 'myMap'
-const myMap = RZ.mapById('myMap');
+const myMap = RAMP.mapById('myMap');
 ```
 
-You can subscribe to the `RZ.mapAdded` observable which will emit an API map instance as soon as its created.
+You can subscribe to the `RAMP.mapAdded` observable which will emit an API map instance as soon as its created.
 
 ## Map instances
 As mentioned above each RAMP instance will have a `mapInstance` on the API. Let's take the first instance and store it for our examples.
 ```js
-const mapInstance = RZ.mapInstances[0];
+const mapInstance = RAMP.mapInstances[0];
 ```
 Map instances have the following features:
 
@@ -145,7 +145,7 @@ There are also `multi` versions of each which are, as the name suggests, a singl
 Let's try adding a point to the map. There is a default simple layer on the map upon initialization that can be accessed at `mapInstance.simpleLayer`. We will use this for our example but it's always a good idea to create your own simple layer if you plan on adding complex geometry.
 ```js
 // create a point, we'll use an svg path for the icon
-var examplePoint = new RZ.GEO.Point(1, [79, 32], {icon: 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801'});
+var examplePoint = new RAMP.GEO.Point(1, [79, 32], {icon: 'M24.0,2.199C11.9595,2.199,2.199,11.9595,2.199,24.0c0.0,12.0405,9.7605,21.801,21.801'});
 // add the point to the simple layer
 mapInstance.simpleLayer.addGeometry(examplePoint);
 ```
@@ -195,7 +195,7 @@ To access the underlying [ESRI map object](https://developers.arcgis.com/javascr
 Example: change the [fade on zoom](https://developers.arcgis.com/javascript/3/jsapi/map-amd.html#fadeonzoom) setting of the map.
 
 ```js
-let myMap = RZ.mapById('myMap');
+let myMap = RAMP.mapById('myMap');
 myMap.esriMap.fadeOnZoom = false;
 ```
 
@@ -206,7 +206,7 @@ To access the underlying [ESRI layer object](https://developers.arcgis.com/javas
 Example: turn off [mouse events](https://developers.arcgis.com/javascript/3/jsapi/featurelayer-amd.html#disablemouseevents) of a Feature Layer.
 
 ```js
-let myMap = RZ.mapById('myMap');
+let myMap = RAMP.mapById('myMap');
 let myFeatureLayer = myMap.layers.getLayersById('myFeatureLayer')[0];
 myFeatureLayer.esriLayer.disableMouseEvents();
 ```
@@ -220,7 +220,7 @@ The `esriBundle` property provides access to all the classes that the RAMP core 
 Example: creating an ESRI API Colour object.
 
 ```js
-let myColour = new RZ.GAPI.esriBundle.Colour([25, 240, 70]);
+let myColour = new RAMP.GAPI.esriBundle.Colour([25, 240, 70]);
 ```
 
 The `esriLoadApiClasses()` method will load a class that does not exist in the `esriBundle`. The input parameter is an array of arrays; the inner arrays contain two strings - the name path of the module in the ESRI API, and the name of the property the module should be placed on in the return value. The function returns a promise that resolves with the results object.
@@ -228,7 +228,7 @@ The `esriLoadApiClasses()` method will load a class that does not exist in the `
 Example: loading a class and a utility module.
 
 ```js
-let myBundlePromise = RZ.GAPI.esriLoadApiClasses([['esri/tasks/FindTask', 'findTaskClass'],
+let myBundlePromise = RAMP.GAPI.esriLoadApiClasses([['esri/tasks/FindTask', 'findTaskClass'],
                                                  ['esri/kernel', 'kernel']]);
 myBundlePromise.then(myBundle => {
     let myFind = new myBundle.findTaskClass();

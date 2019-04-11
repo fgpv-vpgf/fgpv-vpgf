@@ -30,7 +30,7 @@ function gapi($q) {
     function init() {
         // wait for `gapiPromise` from the global registry to resolve
         // TODO v3: change this
-        service.isReady = window.RZ.gapiPromise
+        service.isReady = window.RAMP.gapiPromise
             .then(gapi => {
                 service.gapi = gapi;
                 return $q.resolve(null);

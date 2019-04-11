@@ -25,7 +25,7 @@ There are two options to choose from for legends; `structured` which allows for 
 
 #### Structured
 
-Structured legends allow you to specify the order and grouping of layers, as well as add text/images in `infoSections`. This allows for extra information and theming. 
+Structured legends allow you to specify the order and grouping of layers, as well as add text/images in `infoSections`. This allows for extra information and theming.
 
 Structured legends are a good choice if you want to give users more description of what they are seeing on the map, or force a certain layer ordering.
 
@@ -335,7 +335,7 @@ Here is an example of a basemap config snippet;
 ```
 
 
-## Adding the viewer to a page 
+## Adding the viewer to a page
 
 The first thing we'll need to do is to download a copy of the viewer's code. Visit https://github.com/fgpv-vpgf/fgpv-vpgf/releases/ and download a zip or tgz copy of the code from the latest release. Unpack this file to a location so that the files within are accessible to your host page.
 
@@ -359,7 +359,7 @@ To load the viewer on a webpage, a few things are required on the host page:
 
 - A css tag that loads `rv-styles.css`, somewhere near the end of the `head`.
 
-- One or more HTML elements having the property `is="rv-map"`. An alternative to this is a call to the RAMP API's `new RZ.Map()` constructor. More details:
+- One or more HTML elements having the property `is="rv-map"`. An alternative to this is a call to the RAMP API's `new RAMP.Map()` constructor. More details:
 
 ### 1. Classic element
 
@@ -379,24 +379,24 @@ To load the viewer on a webpage, a few things are required on the host page:
 
 - On the page, include an element with an `id` to act as an anchor. e.g. `<div id="app"></div>`
 
-- In a script tag, or JavaScript file, call `new RZ.Map(<anchor>, <path to your config file>);`
+- In a script tag, or JavaScript file, call `new RAMP.Map(<anchor>, <path to your config file>);`
 
-  - If you have no config file call `new RZ.Map(<anchor>);`
+  - If you have no config file call `new RAMP.Map(<anchor>);`
   - The anchor can be found using `document.getElementById(<id of the anchor>)`
 
 - Example
 
   ```javascript
-  new RZ.Map(document.getElementById('app'), './rv-config.json');
+  new RAMP.Map(document.getElementById('app'), './rv-config.json');
   ```
 
-  
+
 
 ## Tips, Tricks, Issues & Known Limitations
 
 Legends and layers can be loaded in and out, but full configs are harder to reload RAMP with. Destroying and recreating the RAMP instance using the API can be helpful if you want to swap between different full configuration files.
 
-With 3.0 there are some legacy API (`RV`) features that aren't yet present on the new API (`RZ`). It should be noted however that the legacy API (`RV`) is deprecated and should only be used if there is no equivalent present on `RZ` yet.
+With 3.0 there are some legacy API (`RV`) features that aren't yet present on the new API (`RAMP`). It should be noted however that the legacy API (`RV`) is deprecated and should only be used if there is no equivalent present on `RAMP` yet.
 
 If your page will be served over HTTPS you should specify all endpoints, and load all scripts from outside sources using HTTPS and not HTTP. For instance the call to polyfill.io in the earlier example is HTTPS.
 

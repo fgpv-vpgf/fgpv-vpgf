@@ -2,7 +2,7 @@
 
 **The legacy API is deprecated. It will be removed in the next major release.**
 
-While the new API is accessible through `window.RZ`, the legacy API continues to be supported until it is fully replaced. Access to the legacy API continues through `window.RV`.
+While the new API is accessible through `window.RAMP`, the legacy API continues to be supported until it is fully replaced. Access to the legacy API continues through `window.RV`.
 
 ## How to use the legacy API on a page
 
@@ -19,16 +19,16 @@ RV.getMap('sample-map').getBookmark().then(function(bookmark) {
 </script>
 ```
 
-You should include the `legacy-api.js` file before `rv-main.js` (the main ramp viewer file) and before trying to access the `RV`global variable for the first time.
+You should include the `legacy-api.js` file before `rv-main.js` (the main ramp viewer file) and before trying to access the `RV` global variable for the first time.
 
 ## How to use the legacy API in a plugin
 
-After a plugin's init method is called, the plugin gets a reference to the legacy API on `_RZ`. This reference calls non-proxied versions of the methods, so they return their actual value and aren't a promise.
+After a plugin's init method is called, the plugin gets a reference to the legacy API on `_RV`. This reference calls non-proxied versions of the methods, so they return their actual value and aren't a promise.
 
 ```
 init(api) {
-	this.api = api; // this is the new 'RZ' api
-	var lang = this._RZ.getCurrentLang();
+	this.api = api; // this is the new 'RAMP' api
+	var lang = this._RV.getCurrentLang();
 }
 ```
 
@@ -113,7 +113,7 @@ click: Observable<MapClickEvent>;
 ```
 This migration is a little tricky, instead of passing the handler to the function you `subscribe` to the click observable.
 ```ts
-window.RZ.mapInstances[0].click.subscribe((clickEvent) => { console.log(clickEvent)});
+window.RAMP.mapInstances[0].click.subscribe((clickEvent) => { console.log(clickEvent)});
 ```
 
 -------------------

@@ -27,15 +27,15 @@ class MapInstance {
     }
 
     /**
-     * Adds a legacy api call to a queue which gets executed when ramp is ready to receive them. 
-     * 
+     * Adds a legacy api call to a queue which gets executed when ramp is ready to receive them.
+     *
      * @param {string} action       legacy api function name to be queued
      * @param {number} priority     the order in which this queued call will be executed, higher numbers go first
      * @param {...any} args         legacy api function parameters
      */
     queue(action: string, priority: number, ...args: any[]) {
         if (!this.deprecatedWarning) {
-            console.error('This api is deprecated and will be removed in a future release. Please use the new api located at window.RZ');
+            console.error('This api is deprecated and will be removed in a future release. Please use the new api located at window.RAMP');
             this.deprecatedWarning = true;
         }
 

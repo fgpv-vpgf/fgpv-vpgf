@@ -1,7 +1,7 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RZ.mapAdded.subscribe(mapi => {
+    RAMP.mapAdded.subscribe(mapi => {
 
         //SETUP
         //set the layer group to a constant for ease of use
@@ -72,7 +72,7 @@ $.getScript('../../../../rv-main.js', function () {
             //getLayersByType test
             $("#LayersByType").click(function () {
                 //if this evaluates to true, layerGroup.getLayersByType works
-                if (layerGroup.getLayersByType(RZ.LAYERS.ConfigLayer).length > 0) {
+                if (layerGroup.getLayersByType(RAMP.LAYERS.ConfigLayer).length > 0) {
                     $("#LayersByType").css('background-color', 'lightgreen');
                 }
                 else {
@@ -97,5 +97,5 @@ $.getScript('../../../../rv-main.js', function () {
         <div id="fgpmap" style="height:600px; width:85%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
     `);
 
-    const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
+    const mapInstance = new RAMP.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 });
