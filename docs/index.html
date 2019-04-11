@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-        <title>./docs</title>
+        <title>RAMP2 Documentation</title>
         <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css" />
     </head>
     <body>
@@ -21,53 +21,54 @@
                 landing: 'landing.html',
                 nav: {
                     default: [
-                        { title: 'Home', path: '/' },
-                        { title: 'UI Overview', path: 'ui-overview' },
-                        { title: 'Developer Guide', path: '/developer/intro' },
-                        { title: 'Map authoring guide', path: '/mapauthor/intro' },
-                        { title: 'Contributing to RAMP', path: '/contribute/getting_started' },
-                        { title: 'Technical Docs', path: '/technical/architecture'},
-                        { title: 'Migration guide V2 -> V3', path: '/migration'}
-                    ],
-                    author: [
-                        { title: 'Home', path: '/' },
-                        { title: 'Introduction', path: '/mapauthor/intro' },
-                        { title: 'Custom Attributes', path: '/mapauthor/custom_attributes' },
-                        { title: 'Details Templating', path: '/mapauthor/details_templating' },
-                        { title: 'WCAG Compliance', path: '/mapauthor/wcag_compliance' }
-                    ],
-                    dev: [
-                        { title: 'Home', path: '/' },
-                        { title: 'Introduction', path: '/developer/intro' },
+                        { title: 'Home', path: '/home' },
+                        { title: 'Overview', path: '/ui-overview' },
                         {
-                            title: 'API',
+                            title: 'Developer',
                             type: 'dropdown',
                             items: [
+                                { type: 'label', title: 'Guides' },
+                                { title: 'Introduction', path: '/developer/intro' },
+                                { title: 'Contributing', path: '/contribute/getting_started' },
+                                { title: 'Plugins', path: '/developer/plugins' },
+                                { type: 'sep' },
+                                { type: 'label', title: 'API' },
                                 { title: 'Overview', path: '/developer/api-overview' },
-                                { type: 'sep' },
-                                { type: 'label', title: 'UI Components' },
                                 { title: 'Panels', path: '/developer/panels' },
+                                { title: 'Legacy API', path: '/developer/legacy_api' },
                                 { type: 'sep' },
-                                { type: 'label', title: 'Layers' }
+                                { type: 'label', title: 'Technical Documentation' },
+                                { title: 'Architecture Overview', path: '/technical/architecture' },
+                                { title: 'Bookmark Format', path: '/developer/bookmark_formats' },
+                                { title: 'Interactive Schema', path: 'https://fgpv-vpgf.github.io/schema-to-docs/' },
+                                { title: 'Annotated Source Code', path: `${url}developer/api_tech_docs` },
+                                { title: 'GeoAPI Annotated Source Code', path: 'http://fgpv-vpgf.github.io/geoApi/v3.0.0/'}
                             ]
                         },
-                        { title: 'Legacy API', path: '/developer/legacy_api' },
-                        { title: 'Plugins', path: '/developer/plugins' },
-                        { title: 'Datatables', path: '/developer/datatables' },
-                        { title: 'Technical Documentation', path: `${url}developer/api_tech_docs` }
-                    ],
-                    contribute: [
-                        { title: 'Home', path: '/' },
-                        { title: 'Getting started', path: '/contribute/getting_started' },
-                        { title: 'How to contribute', path: '/contribute/contributing_guide' },
-                        { title: 'Technical JSDocs', path: `${url}contribute/jsDocs/` },
-                        { title: 'Release Tutorial', path: '/contribute/release_tutorial' }
-                    ],
-                    technical: [
-                        { title: 'Home', path: '/' },
-                        { title: 'Architecture Overview', path: '/technical/architecture' },
-                        { title: 'Interactive Schema', path: 'https://fgpv-vpgf.github.io/schema-to-docs/' },
-                        { title: 'Technical JSDocs', path: `${url}contribute/jsDocs/` }
+                        {
+                            title: 'Map Author',
+                            type: 'dropdown',
+                            items: [
+                                { title: 'Introduction', path: '/mapauthor/intro' },
+                                { title: 'Custom Attributes', path: '/mapauthor/custom_attributes' },
+                                { title: 'Details Templating', path: '/mapauthor/details_templating' },
+                                { title: 'WCAG Compliance', path: '/mapauthor/wcag_compliance' },
+                                { title: 'RAMP Configuration Service', path: '/mapauthor/rcs' },
+                                { title: 'Cross Origin Considerations', path: '/mapauthor/proxy' },
+                                { title: 'Migration guide V2 -> V3', path: '/mapauthor/migration'}
+                            ]
+                        },
+                        {
+                            title: 'Plugins',
+                            type: 'dropdown',
+                            items: [
+                                { title: 'Enhanced Datatable', path: '/developer/datatables' },
+                                { title: 'Geosearch', path: 'https://geosearch-docs.fgpv-vpgf.com/v2.0.3/#/' }
+                            ]
+                        },
+                        { title: 'Samples', path: '/samples' },
+
+
                     ]
                 },
                 plugins: [docuteEmojify(), evanyou()],

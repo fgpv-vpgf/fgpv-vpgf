@@ -1,7 +1,3 @@
----
-nav: technical
----
-
 # High Level Architecture Summary
 
 <p align="center">

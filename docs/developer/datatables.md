@@ -1,7 +1,3 @@
----
-nav: dev
----
-
 # Datatables
 
 Datatables come in two flavours, *simple* and *enhanced*.

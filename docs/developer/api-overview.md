@@ -1,7 +1,3 @@
----
-nav: dev
----
-
 # Overview
 
 This guide is intended for users comfortable with JavaScript and geo mapping. It covers the top level API structure and provides sample code throughout.

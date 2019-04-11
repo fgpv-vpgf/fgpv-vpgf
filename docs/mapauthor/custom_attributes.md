@@ -1,10 +1,6 @@
----
-nav: author
----
-
 # Custom Attributes
 
-The following attributes are defined on the application's DOM node (e.g. `<div is="rv-map"></div>`).
+The following attributes are defined on the application's DOM node (e.g. `<div is="rv-map"></div>`). They allow a map author to set app-level configurations for the application the DOM node represents.
 
 **rv-langs** (example: `data-rv-langs='["en-CA", "fr-CA"]'`)
 > An array of strings containing language codes which are available for configuration
@@ -20,7 +16,7 @@ The following attributes are defined on the application's DOM node (e.g. `<div i
   (example: `data-rv-config='{ ... }'`)
 > Set the attribute as a single line JSON object. NOTE: Must have single quotation around the object
 
-**rv-service-endpoint** (example: `data-rv-service-endpoint="http://section917.cloudapp.net:8000/"`)
+**rv-service-endpoint** (example: `data-rv-service-endpoint="http://myserver.com/rcs/"`)
 > A URL pointing to an RCS instance
 
 **rv-keys** (example: `data-rv-keys='["Airports"]'`)

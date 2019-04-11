@@ -1,7 +1,3 @@
----
-nav: dev
----
-
 # Panels
 
 The **panels** API allows you to **create**, **control**, and **watch** panels within the RAMP viewer. Any content not a part of the visual map is in a panel.

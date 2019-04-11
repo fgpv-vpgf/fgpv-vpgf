@@ -1,8 +1,54 @@
----
-nav: dev
----
-
 Plugins add or modify functionality in RAMP in a variety of ways. The RAMP API is the primary method of interacting with the viewer, but is not the only way. Plugins are free to manipulate the DOM with jQuery, make use of the built-in support for Angular and Angular Materials or import their own libraries for use. Since plugins have few restrictions and a flexible architecture, almost anything is possible.
+
+## High Level Overview
+
+A plugin is simply a JavaScript object assigned to a variable on the browsers `window`.
+
+```js
+// myPlugin.js
+window.myPlugin = {
+    init: function(api) {
+        // do stuff with the RAMP API
+    }
+};
+```
+
+Typically a plugin resides in a JavaScript file. In our example above the code is in a file named `myPlugin.js`. The file name isn't important, just make sure to include the script on the host page in the **head** section of the html:
+
+```html
+...
+<head>
+  <script src="myPlugin.js" />
+</head>
+...
+```
+
+You could also place the plugin code directly in a script tag on the host page.
+
+You then tell RAMP about your plugin on a property of the map element named `rv-plugins`.
+
+```html
+<div is="rv-map" rv-plugins="myPlugin"></div>
+```
+
+This tells RAMP to look for an object `window.myPlugin`. `rv-plugins` can be a comma separated list of multiple plugins.
+
+Let's take another look at the above plugin example, this time with an additional method:
+
+```js
+// myPlugin.js
+window.myPlugin = {
+    preInit: function(pluginConfig, rampConfig) {
+        // this is called by RAMP when it has started to load but is not yet ready
+    },
+
+    init: function(rampAPI) {
+        // this is called by RAMP when it has finished loading and the RAMP api is ready
+    }
+};
+```
+
+Our plugin receives its config (if defined in the ramp config) and the complete RAMP config in the `preInit` method. The plugin then receives the RAMP API in a subsequent call to its `init` method. Once RAMP has called our plugins `init` method and provided the RAMP API the rest is up to you!
 
 ## The basics
 
@@ -305,9 +351,3 @@ interface Types {
     name: string
 }
 ```
-
-### table
-
-The default simple data table for displaying layer attribute data.
-
-There are no required or optional methods/properties.

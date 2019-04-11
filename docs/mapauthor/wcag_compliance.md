@@ -1,3 +1,5 @@
+# WCAG Compliance
+
 RAMP2 is WCAG 2.0 "AA" Compliant. Since we have no control over the content outside of the RAMP2 viewer, it is important for the host page to maintain this WCAG compliance. Below is a list of host page responsibilities to maintain WCAG 2.0 "AA" Compliant.
 
 ### "Skip to Content" Link

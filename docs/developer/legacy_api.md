@@ -1,8 +1,3 @@
----
-nav: dev
-
----
-
 # Legacy API (deprecated)
 
 **The legacy API is deprecated. It will be removed in the next major release.**
@@ -43,9 +38,9 @@ init(api) {
 
 `registerPlugin` and `openDialogInfo` have been removed and are no longer available.
 
-See [registering a plugin](https://ramp-docs.fgpv-vpgf.com/docs-0208/#/developer/plugins?id=register) for help migrating to the new plugin system. Note that you can continue to access the legacy API (`RV`) even when it's loaded through the new plugin system.
+See [registering a plugin](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/plugins?id=register) for help migrating to the new plugin system. Note that you can continue to access the legacy API (`RV`) even when it's loaded through the new plugin system.
 
-See [opening and closing panels](https://ramp-docs.fgpv-vpgf.com/docs-0208/#/developer/panels?id=open-close) for help with controlling panels.
+See [opening and closing panels](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/panels?id=open-close) for help with controlling panels.
 
 ## Available Methods and Alternatives
 
