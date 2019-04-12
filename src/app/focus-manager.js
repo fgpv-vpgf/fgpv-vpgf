@@ -1,8 +1,11 @@
+import { InternalsFocusManager } from './internals-focus-manager'
 /* global RV, jQuery */
 // eslint-disable-next-line max-statements
 
 // delay in milliseconds from time focus is lost to when action is taken
 const focusoutDelay = 200;
+let ifm;
+
 // all the possible states a viewer can be in - only one at any given time
 const statuses = {
     NONE: undefined,
@@ -324,9 +327,10 @@ function lastVisibleHistoryElement() {
  * @param   {Object}    element   the element to check if it is focusable
  * @return  {Boolean}   true if the element is focusable, false otherwise
  */
+// eslint-disable-next-line complexity
 function elemIsFocusable(index, element) {
     const el = $(element);
-
+    prepEnhancedTable(el);
     return el.is(':visible') &&
         !el.is(':hidden') &&
         el.css('visibility') !== 'hidden' &&
@@ -336,6 +340,36 @@ function elemIsFocusable(index, element) {
         !el.parents().hasClass('md-leave-add') &&
         !el.is('[nofocus]');
 }
+
+function prepEnhancedTable(el) {
+    // prep enhancedTable body
+    // TODO: move elsewhere
+    if (el.parents().hasClass('ag-root-wrapper')) {
+        const panelBody = $('.ag-root-wrapper').parents('.panel-body');
+        panelBody.find('.ag-header-row').each((index, row) => {
+            if (row.childElementCount > 0) {
+                $(row).addClass('list').removeClass('item');
+            }
+        });
+
+        panelBody.find('.ag-body-container').addClass('list disabled-arrows');
+
+        panelBody.find('.ag-header-cell').each((index, cell) => {
+            if ($(cell).children(':not(span, .ag-cell-label-container, .ag-floating-filter-body)').length > 0) {
+                $(cell).addClass('item');
+                $(cell).attr('tabindex', -1);
+            }
+        });
+
+        panelBody.find('.ag-cell').each((index, cell) => {
+            $(cell).addClass('item');
+        });
+
+    }
+
+}
+
+
 
 /**
  * Finds a link (created by the createLink function)
@@ -374,14 +408,68 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
             return shiftFocus(forward);
         }
     } else {
-        const focusSearch = focusableSearch($(document.activeElement), forward);
+        let focusSearch = focusableSearch($(document.activeElement), forward);
+        let isIfm = initInternalFocusManager(focusSearch);
+
+        if (isIfm === ifm) {
+            return false;
+        }
+
         if (focusSearch.length === 0) {
             return false;
         }
+
         focusSearch.rvFocus();
     }
-
     return true;
+}
+
+function initInternalFocusManager(focusSearch) {
+    if (focusSearch.hasClass('list') || focusSearch.parents().hasClass('list')) {
+        // for element of type list:
+        // override FocusManager temporarily with InternalsFocusManager
+        // InternalsFocusManager manages accessible list navigation
+        const list = focusSearch.hasClass('list') ? focusSearch : focusSearch.parents('.list');
+        if (ifm !== undefined) {
+            ifm.focusOut();
+            ifm = undefined;
+        }
+        lastVisibleHistoryElement().attr('tabindex', -1);
+        ifm = new InternalsFocusManager(list);
+        ifm.returnToFM.subscribe(list => {
+            linkToNextIfm(list);
+        });
+        return ifm;
+    }
+    return focusSearch;
+}
+
+function linkToNextIfm(list) {
+    //  TODO: find a better way to do this
+    // this is hard coded because FM has a hard time detecting next element
+    // once it gets overriden by InternalFocusManager
+    // but needs to be generalized in the future because enhancedTable won't be the only element with .list class
+    let index;
+
+    if (list.backtab === true) {
+        index = $('.list').index(list.list) - 1;
+    } else {
+        index = $('.list').index(list.list) + 1;
+    }
+
+    if ($('.list')[index] !== undefined) {
+        // if there is another list item either tab or backtab to it
+        initInternalFocusManager($($('.list')[index]));
+    } else if (list.backtab === true) {
+        // if we are at the top list item, backtab to the close button
+        document.activeElement.blur();
+        const index = $('.rv-header-controls').find('button').length - 1;
+        $('.rv-header-controls').find('button')[index].rvFocus();
+    } else {
+        // if we are at the bottom list item, tab to the zoom button
+        document.activeElement.blur();
+        $('.rv-mapnav-content').find('button')[0].rvFocus();
+    }
 }
 
 /**
@@ -393,7 +481,33 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
  */
 function onMouseDown(event) {
     const evtTarget = $(event.target);
+
     const viewer = viewerGroup.contains(evtTarget); // check if the viewer was clicked
+
+    if (evtTarget.parents().hasClass('list')) {
+        const list = $(evtTarget.parents('.list'));
+        if (ifm === undefined || list[0].classList !== ifm.list[0].classList) {
+            // if internal focus manager does not exist
+            // or if currently clicked item is on a different list
+            // create a new internal focus manager and focus the item
+            // all subsequent clicks use the onClick method in the InternalsFocusManager class
+            if (ifm !== undefined) {
+                ifm.focusOut();
+                ifm = undefined;
+            }
+            ifm = new InternalsFocusManager(list);
+            ifm.returnToFM.subscribe(list => {
+                linkToNextIfm(list);
+            });
+            ifm.focusedItem = evtTarget;
+            ifm.focusItem();
+        }
+        return;
+    } else if (ifm !== undefined) {
+        // clear the focused item and list if there is a click elsewhere on the viewer
+        ifm.focusOut();
+        ifm = undefined;
+    }
 
     // fixes issue where md-backdrop is briefly created outside the viewer, and on click makes the waiting dialog appear
     // ignoring the click when it happens on an md-backdrop
@@ -420,7 +534,6 @@ function onMouseDown(event) {
         .closest('.rv-esri-map, ' + focusSelector)
         .rvFocus();
 }
-
 /**
  * Displays focus management dialog instructions and sets status to waiting when focus moves to
  * the viewer while state is inactive.
@@ -736,16 +849,9 @@ const bodyObserver = new MutationObserver(mutations => {
                  * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
                  */
                 const angularMenu = $(node).first().find('md-menu-content');
-                const firstChild = angularMenu.children[0];
-                const firstFocusableChild = angularMenu.find(focusSelector)[0];
-
                 if (angularMenu.length > 0 && angularMenu.find(focusSelector).length === 0) {
                     angularMenu.attr('tabindex', '-1');
                     angularMenu.rvFocus();
-                } else if (firstChild !== firstFocusableChild) {
-                    // if the first child is not focusable (the case with disable first item(s)) focus
-                    // on the next focusable child in the menu
-                    firstFocusableChild.rvFocus();
                 }
             });
         });
