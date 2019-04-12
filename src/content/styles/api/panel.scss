@@ -17,7 +17,7 @@
 }
 
 .dialog-container:before {
-    content:"";
+    content: "";
     background: rgba(0, 0, 0, .8);
     position: absolute;
     top: 0;
@@ -37,33 +37,35 @@
     z-index: 1000;
 }
 
- #sideMetadata, #sideSettings {
+#sideMetadata,
+#sideSettings {
 
-    .rv-header-controls{
+    .rv-header-controls {
         padding: 0 0 0 0;
     }
-     @include include-size(rv-sm) {
-       left: 0px!important;
-       top: 0px!important;
-       width: 100%!important;
-       height:100%!important;
-       z-index: 100!important;
-       visibility: visible;
-       margin: 0!important;
+
+    @include include-size(rv-sm) {
+        left: 0px !important;
+        top: 0px !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 100 !important;
+        visibility: visible;
+        margin: 0 !important;
     }
 
     @include include-size(rv-md) {
-       left: 0px!important;
-       top: 0px!important;
-       height:auto;
-       width: 400px!important;
-       z-index: 100!important;
-       visibility: visible;
-       margin: 10px!important;
+        left: 0px !important;
+        top: 0px !important;
+        height: auto;
+        width: 400px !important;
+        z-index: 100 !important;
+        visibility: visible;
+        margin: 10px !important;
     }
 
     .rv-header {
-         padding-left: 10px;
+        padding-left: 10px;
 
         .md-title {
             max-width: auto;
@@ -78,21 +80,22 @@
         overflow: auto;
     }
 
-    padding: 0!important;
-    margin-left:0!important;
+    padding: 0 !important;
+    margin-left:0 !important;
     top: 0px;
     left: 411px;
     width: 350px;
 }
 
-#expandMetadata{
+#expandMetadata {
     width: 70%;
     height: 80%;
     overflow: auto;
     left: 15%;
     top: 10%;
+
     .rv-header {
-         padding-left: 10px;
+        padding-left: 10px;
     }
 }
 
@@ -129,6 +132,7 @@
         }
     }
 }
+
 .panel-controls {
     padding: 4px 12px 4px 18px;
     height: 48px;
@@ -142,7 +146,7 @@
     md-input-container {
         margin: inherit;
 
-        > md-icon {
+        >md-icon {
             top: auto;
         }
     }
@@ -151,13 +155,15 @@
         position: absolute;
         top: -5px;
         font-weight: normal;
-        display:inline;
+        display: inline;
         vertical-align: middle;
     }
 }
-.separator{
+
+.separator {
     border-bottom: lightgrey solid 1px;
 }
+
 .panel-body {
     padding: 5px 18px;
     height: calc(100% - 46px); // 100% minus the headers
@@ -168,12 +174,39 @@
         margin: -1px;
         padding: inherit;
 
-        > div:first-child {
+        >div:first-child {
             height: 100%;
         }
     }
+
+    .list {
+        width: 100%;
+        height: 100%;
+
+        &:focus {
+            outline: 0 !important;
+        }
+
+        .item {
+            &:focus {
+                outline: 0 !important;
+            }
+
+            &.focused {
+                background-color: #fafafafa !important;
+                border: 1px solid #607d8b;
+                outline: initial;
+            }
+        }
+
+        &.element-focused {
+            border: 1px rgba(5, 141, 232, 0.8) solid;
+            outline: initial;
+        }
+    }
 }
-.btn{
+
+.btn {
     width: 36px;
     height: 26px;
     margin: 2px;
@@ -183,13 +216,13 @@
     vertical-align: middle;
 }
 
-.text-btn{
+.text-btn {
     width: 36px;
     height: 26px;
     margin: 2px;
     padding: 2px;
     background-color: white;
-    border: 2px solid  slategrey;
+    border: 2px solid slategrey;
     outline: none;
     color: slategrey;
     overflow: hidden;
@@ -200,7 +233,7 @@
 
 .text-btn:hover {
     background-color: darkslategray;
-    border: 2px solid  darkslategray;
+    border: 2px solid darkslategray;
     color: white;
     outline: none;
 }
@@ -211,20 +244,23 @@
     outline: none;
 }
 
-.txt{
+.txt {
     width: 20%;
     height: 20%;
 }
-.hidden{
+
+.hidden {
     visibility: hidden;
 }
-.divider{
+
+.divider {
     border-left: 1px solid rgb(146, 167, 187);
     height: 36px;
     margin-left: 10px;
     padding-bottom: 0px;
 }
-.z  {
+
+.z {
     display: inline-block;
     padding: 5px;
 }
