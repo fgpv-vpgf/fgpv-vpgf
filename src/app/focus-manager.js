@@ -1,8 +1,14 @@
+import {
+    InternalsFocusManager
+} from './internals-focus-manager'
 /* global RV, jQuery */
 // eslint-disable-next-line max-statements
 
 // delay in milliseconds from time focus is lost to when action is taken
 const focusoutDelay = 200;
+let ifm;
+let enhancedTablePrepped = false;
+
 // all the possible states a viewer can be in - only one at any given time
 const statuses = {
     NONE: undefined,
@@ -52,6 +58,8 @@ let restoreFromHistory = false;
 let ignoreFocusLoss = false;
 
 const jQwindow = $(window);
+
+let keyCode;
 
 /**
  * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
@@ -324,9 +332,16 @@ function lastVisibleHistoryElement() {
  * @param   {Object}    element   the element to check if it is focusable
  * @return  {Boolean}   true if the element is focusable, false otherwise
  */
+// eslint-disable-next-line complexity
 function elemIsFocusable(index, element) {
     const el = $(element);
+    const map = getMapInstance();
 
+    // prep list on enhancedTable
+    if (el.parents('#enhancedTable')[0] !== undefined && map !== undefined) {
+        const enhancedTable = map.panelRegistryObj.getById('enhancedTable');
+        enhancedTable.listInit.next();
+    }
     return el.is(':visible') &&
         !el.is(':hidden') &&
         el.css('visibility') !== 'hidden' &&
@@ -336,6 +351,7 @@ function elemIsFocusable(index, element) {
         !el.parents().hasClass('md-leave-add') &&
         !el.is('[nofocus]');
 }
+
 
 /**
  * Finds a link (created by the createLink function)
@@ -350,6 +366,17 @@ function hasLink(forward) {
     return linkedList.find(link => histElem.is(link.getDestinationElement(!forward)));
 }
 
+
+function getMapInstance() {
+    let currentMapInstance;
+    window.RAMP.mapInstances.forEach(mapI => {
+        if ($('#' + mapI.id).has(document.activeElement)[0] !== undefined) {
+            currentMapInstance = mapI;
+        }
+    });
+    return currentMapInstance;
+}
+
 /**
  * Determines the element to set focus on.
  *
@@ -361,10 +388,43 @@ function hasLink(forward) {
  */
 function shiftFocus(forward = true, onlyUseHistory = false) {
     const link = hasLink(forward);
+
+    // if the enhancedTable is open and  focused on zoom button, and back tabbing
+    // go to the last list in the enhancedTable
+    if (document.activeElement === $('.rv-mapnav-content').find('button')[0] && !forward &&
+        getMapInstance() !== undefined && !getMapInstance().panelRegistryObj.getById('enhancedTable').isClosed) {
+        const list = $('#enhancedTable').find('.list')[2];
+        initInternalFocusManager($(list));
+        return;
+    }
+
+    // TODO: find a better way to do this after FM refactor
+    // sometimes FM tries to steal focus from IFM
+    // (we know this is the case if .item did not get unhighlighted or if a grid cell is in focus)
+    // focus back to previously focused IFM item
+    if ($('.highlighted')[0] !== undefined) {
+        // create a fake keydown event and trigger it on IFM
+        let e = $.Event('keydown');
+        // Problem is always with left reorder button
+        // so refocus on it unless disabled
+        if (!$('.highlighted').find('.move-left')[0].disabled) {
+            $('.highlighted').find('.move-left')[0].origfocus();
+        } else {
+            $('.highlighted').find('.move-right')[0].origfocus();
+        }
+        e.keyCode = keyCode;
+        ifm.list.trigger(e);
+        return true;
+    } else if ($('.ag-cell-focus')[0] !== undefined) {
+        // refocus previously focused cell
+        $('.ag-cell-focus')[0].origfocus();
+        return;
+    }
+
     if (onlyUseHistory) {
         lastVisibleHistoryElement().rvFocus();
 
-    } else if (link && link[0][0] !== link[1][0]) {     // check that the link created is not the element with itself
+    } else if (link && link[0][0] !== link[1][0]) { // check that the link created is not the element with itself
         // goto target if focusable
         if (link.getDestinationElement(forward).is(elemIsFocusable)) {
             link.getDestinationElement(forward).rvFocus();
@@ -374,14 +434,68 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
             return shiftFocus(forward);
         }
     } else {
-        const focusSearch = focusableSearch($(document.activeElement), forward);
+        let focusSearch = focusableSearch($(document.activeElement), forward);
+        let isIfm = initInternalFocusManager(focusSearch);
+
+        if (isIfm === ifm) {
+            return false;
+        }
+
         if (focusSearch.length === 0) {
             return false;
         }
+
         focusSearch.rvFocus();
     }
-
     return true;
+}
+
+function initInternalFocusManager(focusSearch) {
+    if (focusSearch.hasClass('list') || focusSearch.parents().hasClass('list')) {
+        // for element of type list:
+        // override FocusManager temporarily with InternalsFocusManager
+        // InternalsFocusManager manages accessible list navigation
+        const list = focusSearch.hasClass('list') ? focusSearch : focusSearch.parents('.list');
+        if (ifm !== undefined) {
+            ifm.focusOut();
+            ifm = undefined;
+        }
+        lastVisibleHistoryElement().attr('tabindex', -1);
+        ifm = new InternalsFocusManager(list);
+        ifm.returnToFM.subscribe(list => {
+            linkToNextIfm(list);
+        });
+        return ifm;
+    }
+    return focusSearch;
+}
+
+function linkToNextIfm(list) {
+    //  TODO: find a better way to do this
+    // this is hard coded because FM has a hard time detecting next element
+    // once it gets overriden by InternalFocusManager
+    // but needs to be generalized in the future because enhancedTable won't be the only element with .list class
+    let index;
+    if (list.backtab === true) {
+        index = $('.list').index(list.list) - 1;
+    } else {
+        index = $('.list').index(list.list) + 1;
+    }
+
+    if ($('.list')[index] !== undefined) {
+        // if there is another list item either tab or backtab to it
+        // bring first item into view on tab
+        initInternalFocusManager($($('.list')[index]));
+    } else if (list.backtab === true) {
+        // if we are at the top list item, backtab to the close button
+        document.activeElement.blur();
+        const index = $('.rv-header-controls').find('button').length - 1;
+        $('.rv-header-controls').find('button')[index].rvFocus();
+    } else {
+        // if we are at the bottom list item, tab to the zoom button
+        document.activeElement.blur();
+        $('.rv-mapnav-content').find('button')[0].rvFocus();
+    }
 }
 
 /**
@@ -392,8 +506,44 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
  * @param {Object} event - the onMouseDown event object
  */
 function onMouseDown(event) {
+
     const evtTarget = $(event.target);
+
     const viewer = viewerGroup.contains(evtTarget); // check if the viewer was clicked
+
+    if (evtTarget.parents().hasClass('item') || evtTarget.hasClass('item')) {
+        const list = $(evtTarget.parents('.list'));
+        //const item = evtTarget.hasClass('item') ? evtTarget : evtTarget.parents('.item');
+        if (ifm === undefined || list[0].classList !== ifm.list[0].classList) {
+            // if internal focus manager does not exist
+            // or if currently clicked item is on a different list
+            // create a new internal focus manager and focus the item
+            // all subsequent clicks use the onClick method in the InternalsFocusManager class
+            if (ifm !== undefined) {
+                ifm.focusOut();
+                ifm = undefined;
+            }
+            ifm = new InternalsFocusManager(list, true);
+            ifm.returnToFM.subscribe(list => {
+                linkToNextIfm(list);
+            });
+
+            if (!evtTarget.parents().hasClass('disabled-arrows')) {
+                if (evtTarget.hasClass('item')) {
+                    ifm.highlightedItem = evtTarget;
+                    ifm.highlightItem();
+                } else if (evtTarget.parents('.item') !== undefined) {
+                    ifm.highlightedItem = $(evtTarget.parents('.item'));
+                    ifm.highlightItem();
+                }
+            }
+        }
+        return;
+    } else if (ifm !== undefined) {
+        // clear the focused item and list if there is a click elsewhere on the viewer
+        ifm.focusOut();
+        ifm = undefined;
+    }
 
     // fixes issue where md-backdrop is briefly created outside the viewer, and on click makes the waiting dialog appear
     // ignoring the click when it happens on an md-backdrop
@@ -420,7 +570,6 @@ function onMouseDown(event) {
         .closest('.rv-esri-map, ' + focusSelector)
         .rvFocus();
 }
-
 /**
  * Displays focus management dialog instructions and sets status to waiting when focus moves to
  * the viewer while state is inactive.
@@ -443,15 +592,15 @@ function onFocusin(event) {
 
     viewer.setDialogAction(() =>
         viewer.mdDialog
-            .show({
-                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                disableParentScroll: false,
-                parent: viewer.rootElement.find('rv-shell'),
-                focusOnOpen: false
-            })
-            .then(() => viewer.clearTabindex()));
+        .show({
+            contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
+            clickOutsideToClose: false,
+            escapeToClose: false,
+            disableParentScroll: false,
+            parent: viewer.rootElement.find('rv-shell'),
+            focusOnOpen: false
+        })
+        .then(() => viewer.clearTabindex()));
 }
 
 /**
@@ -463,6 +612,9 @@ function onFocusin(event) {
  */
 // eslint-disable-next-line complexity
 function onKeydown(event) {
+
+    keyCode = event.keyCode;
+
     /*jshint maxcomplexity:12 */
     const viewerActive = viewerGroup.status(statuses.ACTIVE);
     const viewerWaiting = viewerGroup.status(statuses.WAITING);
@@ -471,12 +623,20 @@ function onKeydown(event) {
     const isExempt = exemptElem.length > 0;
     keys[event.which] = true;
 
+
     if (viewerActive && !isExempt) {
         // set viewer inactive but allow tab action to be handled by the browser
         if (event.which === 9 && keys[27]) { // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
 
-        } else if (event.which === 9) { // tab keydown only
+        } else if (event.which === 9 ||
+            ((event.which === 37 || event.which === 39 || event.which === 13) &&
+                ($('.highlighted')[0] !== undefined || $('.ag-cell-focus')[0] !== undefined))) {
+            // tab keydown only
+            // or hackily activate shiftFocus for left/right arrows and enter
+            // (when there is still highlighted item)
+            // until we fully get rid of focus manager
+
             ignoreFocusLoss = false;
             const shiftState = shiftFocus(!event.shiftKey, restoreFromHistory);
             // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
@@ -682,7 +842,9 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
     if (isAllowedInitFocus || isAllowedByTabIndex || isAllowedByExemption) {
         // must process via rvFocus so that FM is aware of the change, and can add it to the history.
         // otherwise calling origfocus bypasses FM, which makes it think focus is being lost and tries to recover
-        el[0].rvFocus({ exempt: true }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
+        el[0].rvFocus({
+            exempt: true
+        }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
 
     } else if (viewerGroup.trapped(el)) {
         console.warn('focusManager', `*rvFocus* must be used to set focus ` +
@@ -736,19 +898,15 @@ const bodyObserver = new MutationObserver(mutations => {
                  * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
                  */
                 const angularMenu = $(node).first().find('md-menu-content');
-                const firstChild = angularMenu.children[0];
-                const firstFocusableChild = angularMenu.find(focusSelector)[0];
-
                 if (angularMenu.length > 0 && angularMenu.find(focusSelector).length === 0) {
                     angularMenu.attr('tabindex', '-1');
                     angularMenu.rvFocus();
-                } else if (firstChild !== firstFocusableChild) {
-                    // if the first child is not focusable (the case with disable first item(s)) focus
-                    // on the next focusable child in the menu
-                    firstFocusableChild.rvFocus();
                 }
             });
         });
 });
 
-bodyObserver.observe(document.body, { attributes: false, childList: true });
+bodyObserver.observe(document.body, {
+    attributes: false,
+    childList: true
+});

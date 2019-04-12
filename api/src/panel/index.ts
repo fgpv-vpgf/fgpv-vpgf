@@ -305,12 +305,14 @@ export class Panel {
         this.positionChangedSubject = new Subject();
         this.widthChangedSubject = new Subject();
         this.heightChangedSubject = new Subject();
+        this.listInit = new Subject();
 
         this.opening = this.openingSubject.asObservable();
         this.closing = this.closingSubject.asObservable();
         this.positionChanged = this.positionChangedSubject.asObservable();
         this.widthChanged = this.widthChangedSubject.asObservable();
         this.heightChanged = this.heightChangedSubject.asObservable();
+        this.populateList = this.listInit.asObservable();
     }
 
     /**
@@ -467,6 +469,7 @@ export interface Panel {
     positionChangedSubject: Subject<any>;
     widthChangedSubject: Subject<any>;
     heightChangedSubject: Subject<any>;
+    listInit: Subject<any>;
 
     //user accessible observables
     opening: Observable<Panel>;
@@ -474,6 +477,7 @@ export interface Panel {
     positionChanged: Observable<[number, number]>; //top left, bottom right
     widthChanged: Observable<number>;
     heightChanged: Observable<number>;
+    populateList: Observable<any>;
 
     appBar: appBar;
 }
