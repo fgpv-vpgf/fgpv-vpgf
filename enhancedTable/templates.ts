@@ -133,7 +133,7 @@ export const RECORD_COUNT_TEMPLATE = `
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 rv-button-24 md-button ng-scope enhanced-table-details' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}">
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-details' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}">
         <md-icon md-svg-src="action:description" aria-hidden='false' class='ng-scope' role='img'>
             <md-tooltip  md-direction="top">{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}</md-tooltip>
         </md-icon>
