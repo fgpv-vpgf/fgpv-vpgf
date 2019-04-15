@@ -523,21 +523,16 @@ function esriMap(esriBundle, geoApi) {
         //      preventing us from zooming to lods that have no tiles)
         get lods () { return this._map.__tileInfo.lods; }
 
+        // use of the following property is unsupported by ramp team.
+        // it is provided for plugin developers who want to write advanced geo functions
+        // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+        get esriMap () { return this._map; }
+
     }
 
     return Map;
 }
 
-/**
-  * The `MapManager` module exports an object with the following properties:
-  * - `Extent` esri/geometry type
-  * - `Map` esri/map type
-  * - `OverviewMap` esri/dijit/OverviewMap type
-  * - `Scalebar` sri/dijit/Scalebar type
-  * - `getExtentFromSetting function to create an ESRI Extent object from extent setting JSON object.
-  * - `setupMap` function that interates over config settings and apply logic for any items present.
-  * - `setProxy` function to set proxy service URL to avoid same origin issues
-  */
-
-// mapManager module, provides function to setup a map
+// provides a wrapper class for a map control.
+// this file in particular wraps an esri map
 module.exports = (esriBundle, geoApi) => esriMap(esriBundle, geoApi);

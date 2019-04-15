@@ -156,7 +156,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @returns {String} 'wms' since WMS based layer
      */
     dataSource () {
-        return 'wms'
+        return shared.dataSources.WMS;
     }
 }
 
