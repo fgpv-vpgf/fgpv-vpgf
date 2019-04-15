@@ -301,8 +301,8 @@ export class PanelManager {
 
     angularHeader() {
         const that = this;
-        this.mapApi.agControllerRegister('ToastCtrl', function($scope, $mdToast, $rootElement) {
-            that.showToast = function() {
+        this.mapApi.agControllerRegister('ToastCtrl', ['$scope', '$mdToast', '$rootElement', function ($scope, $mdToast, $rootElement) {
+            that.showToast = function () {
                 if ($rootElement.find('.table-toast').length === 0) {
                     $mdToast.show({
                         template: TABLE_UPDATE_TEMPLATE,
@@ -320,12 +320,12 @@ export class PanelManager {
             };
 
             $scope.closeToast = () => $mdToast.hide();
-        });
+        }]);
 
-        this.mapApi.agControllerRegister('SearchCtrl', function() {
+        this.mapApi.agControllerRegister('SearchCtrl', function () {
             that.searchText = that.configManager.defaultGlobalSearch;
             this.searchText = that.searchText ? that.searchText : '';
-            this.updatedSearchText = function() {
+            this.updatedSearchText = function () {
                 that.searchText = this.searchText;
                 // don't filter unless there are at least 3 characters
                 if (this.searchText.length > 2) {
@@ -339,7 +339,7 @@ export class PanelManager {
                 that.panelStatusManager.getFilterStatus();
                 that.tableOptions.api.deselectAllFiltered();
             };
-            this.clearSearch = function() {
+            this.clearSearch = function () {
                 that.searchText = '';
                 this.searchText = that.searchText;
                 this.updatedSearchText();
@@ -349,7 +349,7 @@ export class PanelManager {
             that.clearGlobalSearch = this.clearSearch.bind(this);
         });
 
-        this.mapApi.agControllerRegister('MenuCtrl', function() {
+        this.mapApi.agControllerRegister('MenuCtrl', function () {
             this.appID = that.mapApi.id;
             this.maximized = that.maximized ? 'true' : 'false';
             this.showFilter = !!that.tableOptions.floatingFilter;
@@ -358,7 +358,7 @@ export class PanelManager {
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
-            this.setSize = function(value) {
+            this.setSize = function (value) {
                 that.panelStateManager.maximized = value === 'true' ? true : false;
                 !that.maximized ? that.mapApi.mapI.externalPanel(undefined) : that.mapApi.mapI.externalPanel($('#enhancedTable'));
                 that.maximized = value === 'true' ? true : false;
@@ -367,23 +367,23 @@ export class PanelManager {
             };
 
             // print button has been clicked
-            this.print = function() {
+            this.print = function () {
                 that.onBtnPrint();
             };
 
             // export button has been clicked
-            this.export = function() {
+            this.export = function () {
                 that.onBtnExport();
             };
 
             // Hide filters button has been clicked
-            this.toggleFilters = function() {
+            this.toggleFilters = function () {
                 that.tableOptions.floatingFilter = this.showFilter;
                 that.tableOptions.api.refreshHeader();
             };
 
             // Sync filterByExtent
-            this.filterExtentToggled = function() {
+            this.filterExtentToggled = function () {
                 that.panelStateManager.filterByExtent = this.filterByExtent;
 
                 // On toggle, filter by extent or remove the extent filter
@@ -395,9 +395,9 @@ export class PanelManager {
             };
         });
 
-        this.mapApi.agControllerRegister('ClearFiltersCtrl', function() {
+        this.mapApi.agControllerRegister('ClearFiltersCtrl', function () {
             // clear all column filters
-            this.clearFilters = function() {
+            this.clearFilters = function () {
                 const columns = Object.keys(that.tableOptions.api.getFilterModel());
                 let newFilterModel = {};
 
@@ -420,7 +420,7 @@ export class PanelManager {
             // determine if there are any active column filters
             // returns true if there are no active column filters, false otherwise
             // this determines if Clear Filters button is disabled (when true) or enabled (when false)
-            this.noActiveFilters = function() {
+            this.noActiveFilters = function () {
                 if (that.tableOptions.api !== undefined) {
                     const columns = Object.keys(that.tableOptions.api.getFilterModel());
                     // if there is a non static column fiter, the clearFilters button is enabled
@@ -436,14 +436,14 @@ export class PanelManager {
             };
         });
 
-        this.mapApi.agControllerRegister('ApplyToMapCtrl', function() {
+        this.mapApi.agControllerRegister('ApplyToMapCtrl', function () {
             // returns true if a filter has been changed since the last
-            this.filtersChanged = function() {
+            this.filtersChanged = function () {
                 return that.filtersChanged;
             };
 
             // apply filters to map
-            this.applyToMap = function() {
+            this.applyToMap = function () {
                 const filter = that.legendBlock.proxyWrapper.filterState;
                 filter.setSql(filter.coreFilterTypes.GRID, getFiltersQuery());
                 that.filtersChanged = false;
@@ -547,7 +547,7 @@ export class PanelManager {
             }
         });
 
-        this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function() {
+        this.mapApi.agControllerRegister('ColumnVisibilityMenuCtrl', function () {
             that.columnMenuCtrl = this;
             this.columns = that.tableOptions.columnDefs;
             this.columnVisibilities = this.columns
@@ -558,7 +558,7 @@ export class PanelManager {
                 .sort((firstEl, secondEl) => firstEl['title'].localeCompare(secondEl['title']));
 
             // toggle column visibility
-            this.toggleColumn = function(col) {
+            this.toggleColumn = function (col) {
                 const column = that.tableOptions.columnApi.getColumn(col.id);
 
                 col.visibility = !column.visible;
@@ -575,11 +575,11 @@ export class PanelManager {
             };
         });
 
-        this.mapApi.agControllerRegister('MobileMenuCtrl', function() {
+        this.mapApi.agControllerRegister('MobileMenuCtrl', function () {
             that.mobileMenuScope.visible = false;
             that.mobileMenuScope.sizeDisabled = true;
 
-            this.toggleMenu = function() {
+            this.toggleMenu = function () {
                 that.mobileMenuScope.visible = !that.mobileMenuScope.visible;
             };
         });
