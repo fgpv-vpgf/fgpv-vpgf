@@ -9,4 +9,5 @@
  */
 angular
     .module('app.core')
-    .constant('globalRegistry', window.RV);
+    .constant('api', window.RAMP)
+    .constant('LEGACY_API', {});

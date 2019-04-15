@@ -1,9 +1,6 @@
-const RV = ((<any>window).RV = (<any>window).RV ? (<any>window).RV : {});
-
 const domNodes = $('[is=rv-map]');
 const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
 
-const nIdList: Array<string> = (RV._nodeIdList = []);
 const nodeList: Array<Node> = [];
 
 // Adds support for document.createTouch (deprecated and dropped on chrome 68+) where the browser supports window.Touch.
@@ -22,10 +19,10 @@ if (!document.createTouch && (<any>window).Touch) {
 }
 
 // Google tag manager loading
-// opt-in by setting rz-gtm on any map html element.
+// opt-in by setting ramp-gtm on any map html element.
 let gtmEnabled = false;
 domNodes.each((i, node) => {
-    gtmEnabled = (node.getAttribute('rz-gtm') !== null) || gtmEnabled;
+    gtmEnabled = (node.getAttribute('ramp-gtm') !== null) || gtmEnabled;
 });
 if (gtmEnabled) {
     (<any>window).dataLayer = (<any>window).dataLayer ? (<any>window).dataLayer : [];
@@ -58,7 +55,6 @@ domNodes.each((i, node) => {
     }
 
     nodeList.push(node);
-    nIdList.push(appId);
 });
 
 export const nodes = nodeList;

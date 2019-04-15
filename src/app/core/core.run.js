@@ -12,7 +12,7 @@ angular
  *
  * The `runBlock` triggers config and locale file loading, sets language of the app.
  */
-function runBlock($rootScope, $rootElement, globalRegistry, reloadService, events, configService, appInfo) {
+function runBlock($rootScope, $rootElement, reloadService, events, configService, appInfo, LEGACY_API) {
 
     // initialize config service
     configService.initialize();
@@ -33,15 +33,20 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
     function readyDelay() {
         const waitAttr = $rootElement.attr('rv-wait');
 
-        preLoadApiBlock();
-
+        // this is done before preLoadApiBlock because of a race condition
+        // bookmarkBlocking must be flagged before the API is created
+        // if initialBookmark is called before the flag is set it will throw out the bookmark and freeze startup
         if (typeof waitAttr !== 'undefined') {
             reloadService.bookmarkBlocking = true;
             const deRegister = $rootScope.$on(events.rvBookmarkInit, () => {
                 $rootScope.$broadcast(events.rvReady);
                 deRegister(); // de-register `rvBookmarkInit` listener to prevent broadcasting `rvReady` in the future
             });
-        } else {
+        }
+
+        preLoadApiBlock();
+
+        if (typeof waitAttr === 'undefined') {
             $rootScope.$broadcast(events.rvReady);
         }
     }
@@ -59,9 +64,13 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
             start
         };
 
-        if (globalRegistry.getMap(appInfo.id)) {
-            globalRegistry.getMap(appInfo.id)._registerPreLoadApi(preMapService);
+        if (window.RV && window.RV.getMap) {
+            const legacyAPI = window.RV.getMap(appInfo.id);
+            Object.assign(legacyAPI.legacyFunctions, preMapService);
+            legacyAPI.runQueue();
         }
+
+        Object.assign(LEGACY_API, preMapService);
 
         /******************/
 
@@ -93,9 +102,7 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
                 reloadService.loadWithExtraKeys(bookmark, keys);
                 sessionStorage.removeItem(appInfo.id);
             } else {
-                if (globalRegistry.getMap(appInfo.id)) {
-                    globalRegistry.getMap(appInfo.id).loadRcsLayers(keys);
-                }
+                LEGACY_API.loadRcsLayers(keys);
                 start();
             }
         }
@@ -137,8 +144,8 @@ function runBlock($rootScope, $rootElement, globalRegistry, reloadService, event
  *
  * `apiBlock` sets up language and RCS calls for the global API
  */
-function apiBlock($rootScope, globalRegistry, geoService, configService, events,
-    bookmarkService, gapiService, reloadService, appInfo, stateManager, detailService, pluginService, mapToolService, $mdSidenav) {
+function apiBlock($rootScope, geoService, configService, events,
+    bookmarkService, gapiService, reloadService, appInfo, stateManager, detailService, mapToolService, $mdSidenav, LEGACY_API) {
 
     const service = {
         setLanguage,
@@ -151,9 +158,6 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         useBookmark,
         getRcsLayerIDs: () => geoService.getRcsLayerIDs(),
         appInfo,
-        registerPlugin: function () {
-            pluginService.register(...arguments, this);
-        },
         northArrow: mapToolService.northArrow,
         mapCoordinates: mapToolService.mapCoordinates,
         getMapClickInfo: mapToolService.getMapClickInfo,
@@ -161,24 +165,15 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
         setMapCursor,
         projectGeometry,
         toggleSideNav: val => { $mdSidenav('left')[val](); },
-        openDialogInfo: options => pluginService.openDialogInfo(options),
         reInitialize: bookmark => reloadService.reloadConfig(bookmark),
         getConfig
     };
 
-    // Attaches a promise to the appRegistry which resolves with apiService
-    if (globalRegistry.getMap(appInfo.id)) {
-        $rootScope.$on(events.rvApiReady, () => {
-            globalRegistry.getMap(appInfo.id)._registerMap(service); // this enables the main API
-            globalRegistry.getMap(appInfo.id)._applicationLoaded(service); // this triggers once
-            console.log('apiBlock', `registered viewer with id *${appInfo.id}*`);
-        });
-
-        $rootScope.$on(events.rvApiHalt, () => {
-
-            globalRegistry.getMap(appInfo.id)._deregisterMap();
-        });
+    if (window.RV && window.RV.getMap) {
+        Object.assign(window.RV.getMap(appInfo.id).legacyFunctions, service);
     }
+
+    Object.assign(LEGACY_API, service);
 
     /**
      * Sets the translation language and reloads the map
@@ -326,9 +321,4 @@ function apiBlock($rootScope, globalRegistry, geoService, configService, events,
 function debugBlock($rootElement, appInfo, geoService) {
     // store app id in a value
     appInfo.id = $rootElement.attr('id');
-
-    // expose guts for debug purposes
-    angular.extend(window.RV.debug[appInfo.id] || {}, {
-        geoService
-    });
 }

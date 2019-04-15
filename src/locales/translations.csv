@@ -404,3 +404,5 @@ Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,1
 Export size selector,export.size.selector,Size Selector,1,Sélecteur de taille,1
 ,lightbox.tooltip.next,Next,1,Prochain,1
 ,lightbox.tooltip.previous,Previous,1,Précédent,1
+,api.panel.toggle,Toggle Panel,1,Basculer le panneau,0
+,api.panel.close,Close Panel,1,Fermer le panneau,0

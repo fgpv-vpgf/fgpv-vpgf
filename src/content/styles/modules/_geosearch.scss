@@ -46,10 +46,33 @@ $result-item-height-touch: rem(4.8);
         }
     }
 
+    #mainGeosearch {
+        width: 400px;
+        top: 65px;
+        opacity: 0;
+        box-shadow: none !important;
+        bottom: 0;
+        background: none;
+        overflow: initial !important;
+        pointer-events: none;
+
+        .panel-body {
+            padding: 0 !important;
+            height: 100%;
+            bottom: auto;
+            overflow-y: visible !important;
+
+            .rv-geosearch-content {
+                margin: 0;
+            }
+        }
+    }
+
     rv-geosearch {
         max-height: 100%;
-
+        box-shadow: $whiteframe-shadow-1dp;
         display: flex;
+        pointer-events: all;
 
         .rv-geosearch-content {
             background-color: white;

@@ -19,7 +19,8 @@ function mapServiceFactory(
     events,
     $translate,
     errorService,
-    $http
+    $http,
+    debounceService
 ) {
     const service = {
         destroyMap,
@@ -39,8 +40,29 @@ function mapServiceFactory(
         checkForBadZoom
     };
 
+    let externalOffset;
+    let timeout;
+    let externalPanel;
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+    const triggerFilterChanged = debounceService.registerDebounce((fcParam) => { events.$broadcast(events.rvFilterChanged, fcParam) }, 500, false);
+
+    // wire in a hook to zoom to feature
+    // this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.zoomToFeature = (proxy, oid, offset) => {
+            externalOffset = offset;
+            service.zoomToFeature(proxy, oid);
+        };
+
+        configService.getSync.map.instance.externalOffset = (offset) => {
+            externalOffset = offset;
+        };
+
+        configService.getSync.map.instance.externalPanel = (panel) => {
+            externalPanel = panel;
+        };
+    });
 
     let fakeFileLayer = null;
     let firstBasemapFlag = true;
@@ -378,6 +400,7 @@ function mapServiceFactory(
                         .catch(() => _initMap()); // promise rejected due to server issues, so initialize map
                 }
             },
+            // eslint-disable-next-line max-statements
             'extent-change': data => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
                 if (angular.isObject(data.delta) && (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
@@ -396,6 +419,21 @@ function mapServiceFactory(
                 }
 
                 events.$broadcast(events.rvExtentChange, data);
+
+                // TODO design consideration.
+                //      perhaps we abandon the concept of an "extent filter" event and things
+                //      just react to the rvExtentChange and adjust filters accordingly.
+                //      most other filter change events are layer specific.
+                //      second alternate is to wire up a callback to the geoApi map class to trigger
+                //      filter events, so it's more analogous to how layer-level filter events
+                //      get raised.
+                const fcParam = {
+                    filterType: 'extent',
+                    extent: data.extent
+                };
+
+                triggerFilterChanged(fcParam);
+
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {
@@ -492,12 +530,14 @@ function mapServiceFactory(
      * @return {Promise} a promise resolving after map completes extent change
      */
     function zoomToFeature(proxy, oid) {
-        const offset = referenceService.mainPanelsOffset;
+        const offset = (externalOffset !== undefined) ? externalOffset : referenceService.mainPanelsOffset;
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
         if (offset.x > peekFactor || offset.y > peekFactor) {
             offset.x = offset.y = 0;
             referenceService.peekAtMap();
+        } else if (externalPanel !== undefined) {
+            referenceService.peekAtMap(externalPanel);
         }
 
         const map = configService.getSync.map.instance;
@@ -532,7 +572,7 @@ function mapServiceFactory(
             // promise resolves with 'ok' when user clicks 'undo'
             errorService
                 .display(toast)
-                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {}));
+                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => { }));
         }
     }
 }

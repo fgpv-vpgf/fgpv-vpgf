@@ -13,7 +13,7 @@ angular
 function translationService($q, translations, $translate) {
     const translationData = translations;
 
-    return options => {
+    return (options, pluginName) => {
         // default custom loader implementation returns a promise which resolves with language translation data
         if (options.action === 'loader') {
             return $q(resolve => {
@@ -22,12 +22,13 @@ function translationService($q, translations, $translate) {
 
         // add translations to existing languages
         } else {
-            Object.keys(options).forEach(key => {
-                if (translationData[key]) {
-                    if (!translationData[key].plugin) {
-                        translationData[key].plugin = {};
+            Object.keys(options).forEach(lang => {
+                if (translationData[lang]) {
+                    if (!translationData[lang].plugins) {
+                        translationData[lang].plugins = {};
                     }
-                    Object.assign(translationData[key].plugin, options[key].plugin);
+                    translationData[lang].plugins[pluginName] = {};
+                    Object.assign(translationData[lang].plugins[pluginName], options[lang]);
                     $translate.refresh();
                 }
             });

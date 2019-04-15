@@ -62,7 +62,7 @@ class Viewer {
      * @param   {Object}    rootElem - jQuery or HTML element node of the angular viewer, equivalent to $rootElement
      * @param   {Object}    mdDialog  - angular material $mdDialg object reference
      */
-    constructor (rootElem, mdDialog, isFullscreen) {
+    constructor(rootElem, mdDialog, isFullscreen) {
         this.rootElement = $(rootElem);
         this.id = this.rootElement.attr('id');
         this.status = statuses.INACTIVE;
@@ -87,12 +87,12 @@ class Viewer {
      * @param   {Function}  dialogCallback       a function to be invoked when $mdDialog is ready (must return a promise)
      * @param   {Boolean}   doNotQueue  internal method use for recursion, do not set
      */
-    setDialogAction (dialogCallback, doNotQueue = false) {
+    setDialogAction(dialogCallback, doNotQueue = false) {
         if (this._mdDialogLock && !doNotQueue) {
             // indicates dialog animation in progress, will resolve at a later time from queue
             this._mdDialogChain.push(dialogCallback);
 
-        // no animation in progress implies an empty queue, start resolving dialogCallback
+            // no animation in progress implies an empty queue, start resolving dialogCallback
         } else {
             this._mdDialogLock = true;
             // Starting animation callback
@@ -115,7 +115,7 @@ class Viewer {
      * @param   {String}    status - a value from `statuses` object
      * @return  {Object}    Viewer
      */
-    setStatus (status) {
+    setStatus(status) {
         // hide the focus manager dialog
         if (this.mdDialog && this.status === statuses.WAITING) {
             this.setDialogAction(this.mdDialog.hide);
@@ -134,7 +134,7 @@ class Viewer {
      * @param   {Object}    el      jQuery element object to check if contained in this viewer
      * @return  {Object}    this viewer instance if contained, undefined otherwise
      */
-    contains (el) {
+    contains(el) {
         const container = el.closest(`[rv-focus-member="${this.id}"]`);
         return container.length > 0 || this.trapped(el) ? this : undefined;
     }
@@ -145,7 +145,7 @@ class Viewer {
      * @param   {Boolean}   strict  whether the element must strictly be a direct child of the viewers focus trap
      * @return  {Object}    this viewer instance if contained, undefined otherwise
      */
-    trapped (el, strict = false) {
+    trapped(el, strict = false) {
         const trap = el.closest(`[rv-trap-focus="${this.id}"]`);
         return (strict && trap.is(this.rootElement)) || (!strict && trap.length > 0) ? this : undefined;
     }
@@ -156,7 +156,7 @@ class Viewer {
      * solves an issue where focus cannot be manually set to the browsers url bar, which in turn causes
      * focus to be trapped inside the document body.
      */
-    clearTabindex () {
+    clearTabindex() {
         this.rootElement
             .find(focusSelector)
             .not('.rv-esri-map')
@@ -170,7 +170,7 @@ class Viewer {
  * Stores, searches, and sets state on all the various possible Viewer instances
  */
 class ViewerGroup {
-    constructor () {
+    constructor() {
         this.viewerList = [];
     }
 
@@ -178,7 +178,7 @@ class ViewerGroup {
      * Adds a new Viewer instance for focus to be tracked on
      * @param   {Object}    viewerObj - an instance of Viewer
      */
-    add (viewerObj) {
+    add(viewerObj) {
         this.viewerList.push(viewerObj);
     }
 
@@ -187,7 +187,7 @@ class ViewerGroup {
      * @param   {Object}    el - jQuery element object to check if contained in any viewer
      * @return  {Object}    Viewer instance which contains the element, or undefined if not contained
      */
-    contains (el) {
+    contains(el) {
         return this.viewerList.find(v => v.contains(el));
     }
 
@@ -196,7 +196,7 @@ class ViewerGroup {
      * @param   {Object}    el - jQuery element object to check if contained in any viewer
      * @return  {Object}    Viewer instance which contains the element, or undefined if not contained
      */
-    trapped (el) {
+    trapped(el) {
         return this.viewerList.find(v => v.trapped(el));
     }
 
@@ -205,21 +205,21 @@ class ViewerGroup {
      * @param   {Object}    status - a value from `statuses` object
      * @return  {Object}    Viewer instance in the given state
      */
-    status (status) {
+    status(status) {
         return this.viewerList.find(v => v.status === status);
     }
 
     /**
      * Sets the status of all viewers to inactive
      */
-    deactivate () {
+    deactivate() {
         this.viewerList.forEach(v => v.setStatus(statuses.INACTIVE));
     }
 }
 
 const viewerGroup = new ViewerGroup();
 
-RV.focusManager = {
+window.RAMP.focusManager = {
     addViewer
 };
 
@@ -268,7 +268,7 @@ function focusableSearch(element, forward, gotoEnd = false) {
             // breaking here knowing that lastElementSet is very first/last focusable
             if (gotoEnd) {
                 return forward ? lastElementSet.last() : lastElementSet.first();
-            // no elements have been found, so lets find the first/last focusable in focus trap to loop to
+                // no elements have been found, so lets find the first/last focusable in focus trap to loop to
             } else {
                 // we've reached a focus trap but haven't found an element to set focus on
                 // this wraps focus such that if the current direction is forward and we're currently on the
@@ -368,7 +368,7 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
         // goto target if focusable
         if (link.getDestinationElement(forward).is(elemIsFocusable)) {
             link.getDestinationElement(forward).rvFocus();
-        // otherwise remove link if not focusable
+            // otherwise remove link if not focusable
         } else {
             linkedList.splice(linkedList.indexOf(link), 1);
             return shiftFocus(forward);
@@ -467,9 +467,11 @@ function onKeydown(event) {
     const viewerActive = viewerGroup.status(statuses.ACTIVE);
     const viewerWaiting = viewerGroup.status(statuses.WAITING);
     const hasFocus = $(document.activeElement);
+    const exemptElem = hasFocus.closest('[rv-focus-exempt]');
+    const isExempt = exemptElem.length > 0;
     keys[event.which] = true;
 
-    if (viewerActive) {
+    if (viewerActive && !isExempt) {
         // set viewer inactive but allow tab action to be handled by the browser
         if (event.which === 9 && keys[27]) { // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
@@ -483,7 +485,7 @@ function onKeydown(event) {
             event.preventDefault(shiftState || !viewerActive.trapped(hasFocus, true));
             restoreFromHistory = false;
 
-        // allow arrow key movement (up, down) on menu items. preventDefault not needed as arrow keys are not handled by the browser
+            // allow arrow key movement (up, down) on menu items. preventDefault not needed as arrow keys are not handled by the browser
         } else if (event.which === 38 || event.which === 40) {
             const isMenuItem = hasFocus.closest('md-menu-content').length > 0;
             if (isMenuItem) {
@@ -546,7 +548,7 @@ function onFocusout(event) {
 }
 
 // for consistency angular should use the status object when trying to infer a status string
-RV.focusStatusTypes = statuses;
+window.RAMP.focusStatusTypes = statuses;
 
 $(document)
     .on('keydown', onKeydown)
@@ -633,7 +635,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
         viewerGroup
             .contains(jqueryElem)
             .setStatus(statuses.ACTIVE);
-    } catch(e) {
+    } catch (e) {
         elem.origfocus(); // browser implementation
     }
 
@@ -734,9 +736,16 @@ const bodyObserver = new MutationObserver(mutations => {
                  * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
                  */
                 const angularMenu = $(node).first().find('md-menu-content');
+                const firstChild = angularMenu.children[0];
+                const firstFocusableChild = angularMenu.find(focusSelector)[0];
+
                 if (angularMenu.length > 0 && angularMenu.find(focusSelector).length === 0) {
                     angularMenu.attr('tabindex', '-1');
                     angularMenu.rvFocus();
+                } else if (firstChild !== firstFocusableChild) {
+                    // if the first child is not focusable (the case with disable first item(s)) focus
+                    // on the next focusable child in the menu
+                    firstFocusableChild.rvFocus();
                 }
             });
         });

@@ -116,7 +116,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
 
         // set an empty animation object in the event a method is called prior
         // to a scroll animation being created
-        let scrollAnimation = { pause: () => {}, isActive: () => false };
+        let scrollAnimation = { pause: () => { }, isActive: () => false };
 
         // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
         // this will highlight invalid drop target
@@ -127,7 +127,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
             const scrollElem = source.closest('md-content');
             directiveElement.on('mousemove touchmove', event => {
 
-                const pageY = event.pageY ? event.pageY :  event.originalEvent.touches[0].clientY;
+                const pageY = event.pageY ? event.pageY : event.originalEvent.touches[0].clientY;
 
                 // scroll animation is linear
                 let scrollDuration;
@@ -142,18 +142,20 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
                             { scrollTo: { y: 0 }, ease: 'Linear.easeNone' });
                     }
 
-                // scrolling downwards
+                    // scrolling downwards
                 } else if (scrollElem.height() - pageY <= 0) {
                     if (!scrollAnimation.isActive()) {
                         scrollDuration = (scrollElem[0].scrollHeight -
                             scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
 
                         scrollAnimation = animationService.to(scrollElem, scrollDuration,
-                            { scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
-                                ease: 'Linear.easeNone' });
+                            {
+                                scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
+                                ease: 'Linear.easeNone'
+                            });
                     }
 
-                // stop scrolling
+                    // stop scrolling
                 } else {
                     scrollAnimation.pause();
                 }
@@ -273,7 +275,12 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
                     if (currentSubLayer.table) {        // if table exists, we need to reaply the definition query every time on reload
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
-                        proxy.setDefinitionQuery(currentSubLayer.initialFilteredQuery);
+                        // this will mimick as if the grid had applied its filter goodness.
+                        if (proxy.filter !== undefined) {
+                            // not all sublayers will have a filter
+                            // some sub-layers are dynamic groups and have sub-sub layers so check that proxy.filter !== undefined
+                            proxy.filter.setSql(proxy.filter.coreFilterTypes.GRID, currentSubLayer.initialFilteredQuery);
+                        }
                     }
                 });
             }
@@ -329,12 +336,6 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
         let currentMode = stateManager.state.table.morph;
         let index = (views.indexOf(currentMode) + 1) % 4;
 
-        // Make sure the table panel is open
-        stateManager.setActive({
-            side: false
-        }, {
-            tableFulldata: true
-        });
         stateManager.setMode('table', views[index]);
     }
 

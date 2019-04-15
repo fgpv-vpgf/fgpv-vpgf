@@ -11,9 +11,9 @@ angular
     .module('app.ui')
     .factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, referenceService, common, stateManager, graphicsService,
-    geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
+function tocService($q, $rootScope, $mdToast, $translate, referenceService, stateManager, geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
 
+    let panel;
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
@@ -31,7 +31,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
     };
 
     const ref = {
-        selecteLegendBlockLog: {}
+        selectedLegendBlockLog: {}
     };
 
     // name mapping between true panel names and their short names
@@ -52,13 +52,23 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
     let errorToast;
 
-    // set state change watches on metadata, settings and table panel
-    watchPanelState('sideMetadata', 'metadata');
-    watchPanelState('sideSettings', 'settings');
-    watchPanelState('tableFulldata', 'table');
+    let mApi = null;
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        mApi = api;
+        panelSetup();
+        watcherSetup();
 
-    // wire in a hook to any map for removing a layer. this makes it available on the API
+        panelSwitch.metadata.panel = mApi.panels.metadata;
+        panelSwitch.settings.panel = mApi.panels.settings;
+    });
+
+    // set state change watches on metadata, settings and table panel
+    watchPanelState('metadata');
+    watchPanelState('settings');
+    watchPanelState('table');
+
     events.$on(events.rvMapLoaded, () => {
+        // wire in a hook to any map for removing a layer. this makes it available on the API
         configService.getSync.map.instance.removeApiLayer = (id, index, showToast = false) => {
             const legendBlocks = configService.getSync.map.legendBlocks;
             let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
@@ -81,9 +91,54 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 layerRegistry.removeLayerRecord(id);
             }
         }
+
+        //wire in a hook to any map for removing a layer using the given LegendBlock
+        configService.getSync.map.instance.removeAPILegendBlock = (legendBlock) => {
+            service.removeLayer(legendBlock, false);
+        };
+
+        //wire in a hook to any map for reloading a layer using the given LegendBlock
+        configService.getSync.map.instance.reloadAPILegendBlock = (legendBlock) => {
+            service.reloadLayer(legendBlock);
+        };
+
+        //wire in a hook to any map for toggling Metadata for any given legendBlock
+        configService.getSync.map.instance.toggleMetadata = (legendBlock) => {
+            service.toggleMetadata(legendBlock);
+        }
+
+        //wire in a hook to any map for toggling settings for any given legendBlock
+        configService.getSync.map.instance.toggleSettings = (legendBlock) => {
+            service.toggleSettings(legendBlock);
+        }
+
+        // wire in a hook to any map for toggling settings for any given legendBlock
+        configService.getSync.map.instance.toggleDataTable = (legendBlock) => {
+            service.toggleLayerTablePanel(legendBlock);
+        }
     });
 
     return service;
+
+    function panelSetup() {
+        panel = mApi.panels.legend;
+        panel.body = $('<rv-toc></rv-toc>');
+        panel.reopenAfterOverlay = true;
+        panel.allowUnderlay = false;
+        panel.isCloseable = true;
+        panel.opening.subscribe(() => {
+            panel.appBar.title = 'appbar.tooltip.layers';
+        });
+    }
+
+    function watcherSetup() {
+        mApi.panels.settings.closing.subscribe(() => {
+            stateManager.clearDisplayPanel('sideSettings');
+        });
+        mApi.panels.metadata.closing.subscribe(() => {
+            stateManager.clearDisplayPanel('sideMetadata');
+        });
+    }
 
     /**
      * This will reload the layer records referenced by the specified legend block and all other legend blocks attached to that record;
@@ -94,7 +149,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @function reloadLayer
      * @param {LegendBlock} legendBlock legend block to be reloaded
      */
-    function reloadLayer(legendBlock) {
+    function reloadLayer(legendBlock, interval = false) {
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
         const layerRecord = configService.getSync.map.layerRecords.find(item =>
             item.config.id === legendBlock.layerRecordId);
@@ -115,9 +170,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
         if (openPanel) {
             const panel = panelSwitch[openPanel.name].panel;
-            stateManager.setActive({ [panel]: false });
+            panel.close();
         } else {    // open panel not being reloaded, close any open panel
-            stateManager.setActive({ tableFulldata: false } , { sideMetadata: false }, { sideSettings: false });
+            mApi.panels.settings.close();
+            mApi.panels.metadata.close();
         }
 
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
@@ -129,7 +185,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                     .filter(a => a)[0];
 
                 if (findBlock) {        // open panel not reloaded, close any open panel
-                    stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
+                    mApi.panels.settings.close();
+                    mApi.panels.metadata.close();
                     return;
                 }
 
@@ -146,8 +203,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 // return the first legend block and open the panel for that one instead (they are identical though)
                 legendBlock = block
                     .walk(entry =>
-                        (node.parentLayerType ===  Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
-                        entry.layerRecordId === node.layerRecordId) ?
+                        (node.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
+                            entry.layerRecordId === node.layerRecordId) ?
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
@@ -158,6 +215,19 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
                 } else if (openPanel.name === 'metadata') {
                     toggleMetadata(legendBlock);
                 }
+            }
+
+            // fire layer reloaded observable if layer can be found
+            let layer;
+            if (legendBlock.parentLayerType === 'esriDynamic') {
+                layer = mApi.layers.allLayers.find(function (l) {
+                    return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
+                });
+            } else {
+                layer = mApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+            }
+            if (layer) {
+                mApi.layers._reload.next(layer, interval);
             }
         }, (layerName) => {
             console.error('Failed to reload layer:', layerName);
@@ -193,7 +263,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         }
 
         if (openPanelName) {
-            stateManager.setActive({ [panelSwitch[openPanelName.name].panel]: false });
+            panelSwitch[openPanelName.name].panel.close();
         }
 
         // let the layer know that the block has been deselected due to removal
@@ -209,8 +279,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         if (showToast) {
             // promise resolves with 'ok' when user clicks 'undo'
             $mdToast.show(undoToast)
-            .then(response =>
-                response === 'ok' ? _restoreLegendBlock() : resolve());
+                .then(response =>
+                    response === 'ok' ? _restoreLegendBlock() : resolve());
         } else {
             resolve();
         }
@@ -300,204 +370,19 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @param  {LegendBlock} legendBlock legendBlock object whose settings should be opened.
      */
     function toggleSettings(legendBlock) {
+        let settings = configService.getLang() === 'en-CA' ? 'Settings' : 'Paramètres';
+        mApi.panels.settings.header.title = `${settings}: ${legendBlock.name}`;
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name
         };
 
-        const panelToClose = {
-            table: false
-        };
-
-        stateManager
-            .setActive(panelToClose)
-            .then(() => stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester));
+        // send to display manager method
+        stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester);
     }
-
-    /**
-     * Opens table panel with data from the provided layer object (debounce).
-     *
-     * @function toggleLayerTablePanel
-     * @param  {Object} entry legend block object whose data should be displayed.
-     * @private
-     */
-    function debToggleLayerTablePanel(entry) {
-        const requester = {
-            id: entry.id,
-            name: entry.name,
-            layerId: (entry.master ? entry.master : entry).id,
-            legendEntry: entry
-        };
-
-        const layerRecord = geoService.layers[requester.layerId];
-        const dataPromise = layerRecord.getAttributes(entry.featureIdx)
-            .then(attributes => {
-                const rvSymbolColumnName = 'rvSymbol';
-
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
-                // add symbol as the first column
-                // check if the symbol column already exists
-                if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-                    attributes.rows.forEach(row => {
-                        // reset href to solve problem in Safari with svg not rendered
-                        row.rvSymbol =
-                            graphicsService.setSvgHref(geoService.retrieveSymbol(row, attributes.renderer));
-                        row.rvInteractive = '';
-                    });
-
-                    // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because table will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
-                    attributes.columns.unshift({
-                        data: 'rvInteractive',
-                        title: '',
-                        orderable: false,
-                        render: '',
-                        width: '40px' // for datatables
-                    });
-
-                    // add a column for symbols
-                    attributes.columns.unshift({
-                        data: rvSymbolColumnName,
-                        title: '',
-                        orderable: false,
-                        render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px' // for datatables
-                    });
-                }
-
-                return {
-                    data: attributes,
-                    isLoaded: false
-                };
-            });
-
-        stateManager.setActive({
-            other: false
-        });
-        stateManager
-            .setActive({
-                side: false
-            })
-            .then(() => {
-                if (errorToast) {
-                    errorService.remove();
-                }
-                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
-            })
-            .catch(() => {
-                errorToast = errorService.display($translate.instant('toc.error.resource.loadfailed'),
-                    referenceService.panes.filter);
-            });
-    }
-
 
     function toggleLayerTablePanel(legendBlock) {
-        const requester = {
-            id: legendBlock.id,
-            name: legendBlock.name,
-            error: false,
-            layerId: legendBlock.id, //(entry.master ? entry.master : entry).id,
-            legendEntry: legendBlock
-        };
-
-        // const layerRecord = geoService.layers[requester.layerId];
-        const dataPromise = legendBlock.formattedData
-            .then(attributes => common.$timeout(() => attributes), 1000)
-            .then(attributes => {
-                const rvSymbolColumnName = 'rvSymbol';
-
-                // TODO: formatLayerAttributes function should figure out icon and store it in the attribute bundle
-                // ideally, this should go into the `formatAttributes` function in layer-record.class, but we are trying to keep as loosely bound as possible to be moved later to geoApi and this uses geoService.retrieveSymbol
-                // add symbol as the first column
-                // check if the symbol column already exists
-                if (!attributes.columns.find(({ data }) => data === rvSymbolColumnName)) {
-
-                    attributes.rows.forEach(row => {
-                        legendBlock.getSymbol(row).then(symbol => { row.rvSymbol = symbol; });
-                        row.rvInteractive = '';
-                    });
-
-                    // add filters attributes needed by every columns
-                    attributes.columns.forEach(columns => {
-                        columns.name = columns.data; // add name so we can get column from datatables (https://datatables.net/reference/type/column-selector)
-                        columns.display = true;
-                        columns.sort = 'none'; // can be none, asc or desc (values use by datatable)
-                        columns.filter = { };
-                        columns.width = '';
-                        columns.init = false;
-                        columns.position = -1; // use to synchronize columns when reorder
-                    });
-
-                    // add a column for interactive actions (detail and zoom)
-                    // do not add it inside an existing field because filters will not work properly and because of https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1631
-                    attributes.columns.unshift({
-                        data: 'rvInteractive',
-                        title: '',
-                        orderable: false,
-                        render: '',
-                        width: '40px', // for datatables
-                        position: 1, // for datatables
-                        className: 'rv-filter-noexport' // do not show when datatble export or print
-                    });
-
-                    // add a column for symbols
-                    attributes.columns.unshift({
-                        data: rvSymbolColumnName,
-                        title: '',
-                        orderable: false,
-                        render: data => `<div class="rv-wrapper rv-symbol">${data}</div>`,
-                        width: '20px', // for datatables
-                        position: 0, // for datatables
-                        className: 'rv-filter-noexport' // do not show when datatble export or print
-
-                    });
-                }
-
-                // add filters informations (use by filters to keep info on table so it persist when we change table)
-                if (typeof attributes.filter === 'undefined') {
-                    attributes.filter =  {
-                        globalSearch: '',
-                        isApplied: true,
-                        isActive: false,
-                        isMapFiltered: false,
-                        isInit: false,
-                        isOpen: true
-                    };
-                }
-
-                return {
-                    data: attributes,
-                    isLoaded: false
-                };
-            });
-
-        stateManager.setActive({
-            other: false
-        });
-        stateManager
-            .setActive({
-                side: false
-            })
-            .then(() => {
-                if (errorToast) {
-                    errorService.remove();
-                }
-                return stateManager.toggleDisplayPanel('tableFulldata', dataPromise, requester, 0);
-            })
-            .catch(error => {
-                // do not show error message if loading was aborted
-                if (error.message === 'ABORTED') {
-                    return ;
-                }
-
-                requester.error = true; // this will hide the table loading splash
-
-                errorToast = errorService.display({
-                    textContent: $translate.instant('toc.error.resource.loadfailed'),
-                    parent: referenceService.panes.filter
-                });
-            });
+        mApi.ui.configLegend._dataTableToggled.next(legendBlock);
     }
 
     /**
@@ -510,13 +395,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      */
     function toggleMetadata(legendBlock, value = true) {
 
+        let metadataPanel = mApi.panels.metadata;
+        let metadata = configService.getLang() === 'en-CA' ? 'Metadata' : 'Métadonnées';
+        metadataPanel.header.title = `${metadata}: ${legendBlock.name}`;
+
         const requester = {
             id: legendBlock.id,
             name: legendBlock.name
-        };
-
-        const panelToClose = {
-            table: false
         };
 
         const dataPromise = $q((resolve, reject) => {
@@ -529,9 +414,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
 
                 service.validMetadata = true;
                 referenceService.panes.metadata.find('md-toast').remove();      // remove any lingering toast message from before
-
+                legendBlock.metadataPackage = metadataPackage;
                 resolve(metadataPackage);
-
             }).catch(error => {
                 service.validMetadata = false;
                 referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
@@ -546,10 +430,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
             });
         });
 
-        stateManager
-            .setActive(panelToClose)
-            .then(() => stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester));
-
+        // send to display manager method
+        stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester);
     }
 
     /**
@@ -559,14 +441,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
      * @param  {String} panelName    name of the panel to watch as specified in the stateManager
      * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'table')
      */
-    function watchPanelState(panelName, displayName) {
-        // clear display on metadata, settings, and table panels when closed
-        $rootScope.$on('stateChangeComplete', (event, name, property, value) => {
-            if (property === 'active' && name === panelName && value === false) {
-                stateManager.clearDisplayPanel(panelName);
-            }
-        });
-
+    function watchPanelState(displayName) {
         $rootScope.$watch(() => stateManager.display[displayName].requester, (newRequester, oldRequester) => {
             if (newRequester !== null) {
                 // deselect layer from the old requester if layer ids don't match
@@ -604,7 +479,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, comm
         // toc entry is considered selected if its metadata, settings, or data panel is opened;
         // when switching between panels (opening metadata when settings is already open), events may happen out of order
         // to ensure a toc entry is not deselected untimely, keep count of open/close events
-        ref.selecteLegendBlockLog[id] = (ref.selecteLegendBlockLog[id] || 0) + (value ? 1 : -1);
-        block.isSelected = ref.selecteLegendBlockLog[id] > 0;
+        ref.selectedLegendBlockLog[id] = (ref.selectedLegendBlockLog[id] || 0) + (value ? 1 : -1);
+        block.isSelected = ref.selectedLegendBlockLog[id] > 0;
     }
 }

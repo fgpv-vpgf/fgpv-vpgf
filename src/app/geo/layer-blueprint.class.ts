@@ -267,10 +267,8 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
          * @memberof BlueprintBase
          */
         _setConfig(rawConfig: any, ConfigClass: new (config: any) => void): void {
-
-            const epsg = appInfo.plugins.find((x: any) => x.intention === 'epsg');
             this.config = new ConfigClass(rawConfig);
-            this.config.epsgLookup = epsg.lookup;
+            this.config.epsgLookup = appInfo.features.epsg.lookup;
 
             // if there was a bookmark with enhancements for this layer, apply them.
             if (rawConfig.bookmarkData) {
@@ -344,8 +342,15 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             this.latFields = validationResult.latFields;
             this.longFields = validationResult.longFields;
 
-            this.config.latfield = validationResult.smartDefaults.lat;
-            this.config.lonfield = validationResult.smartDefaults.long;
+            // if the latField is already set once (through UI/config option), do not reset it to the default latitude
+            if (!this.config.latfield) {
+                this.config.latfield = validationResult.smartDefaults.lat;
+            }
+
+            // if the lonfield is already set once (through UI/config option), do not reset it to the default longitude
+            if (!this.config.lonfield) {
+                this.config.lonfield = validationResult.smartDefaults.long;
+            }
         }
     }
 
@@ -361,7 +366,10 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
         setFieldsOptions(validationResult: ValidationResult): void {
             // TODO: need to explicitly set this in the config object on creation
             // TODO: this won't be needed after proper typed configs are made for the file-based layers
-            this.config.nameField = validationResult.smartDefaults.primary;
+            // if the nameField is already set once (through UI/config option), do not reset it to the default primary
+            if (!this.config.nameField) {
+                this.config.nameField = validationResult.smartDefaults.primary;
+            }
             this.fields = validationResult.fields;
 
             // number all the fields, so even fields with equal names can be distinguished by the md selector
@@ -513,7 +521,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
      * @class WFSServiceSource
      * @extends {mixins(BlueprintBase, ClientSideData)}
      */
-    class WFSServiceSource extends mixins(BlueprintBase, ClientSideData) {
+    class WFSServiceSource extends mixins(BlueprintBase, ClientSideData, FieldsOption) {
         _urlWrapper: UrlWrapper;
 
         constructor(rawConfig: any) {
@@ -552,12 +560,15 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
         /**
          * Validates WFS layer as GeoJSON. Default validation uses the service type, and there is no explicit validation function for WFS.
          *
-         * @returns {Promise<any>}
+         * @returns any
          * @memberof WFSServiceSource
          */
-        validate(): Promise<any> {
+        validate(): any {
             // WFS layer data is not encoded as a byte array, it's pure JSON
-            return super.validate(Geo.Service.Types.GeoJSON, false);
+            return super.validate(Geo.Service.Types.GeoJSON, false).then(validationResult => {
+                this.setFieldsOptions(validationResult);
+                return validationResult;
+            });
         }
 
         get layerFactory(): LayerFactory {

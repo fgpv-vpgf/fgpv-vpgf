@@ -6,7 +6,7 @@ import * as $ from "jquery";
 
 const mapInstances: Array<Map> = [];
 
-class RZ {
+class RAMP {
     /**
      * Emits an instance of the map class whenever a new map is added to the viewer.
      * */
@@ -38,14 +38,14 @@ class RZ {
     }
 }
 
-const RZInstance = new RZ();
+const RAMPInstance = new RAMP();
 interface EnhancedWindow extends Window {
-    RZ: RZ
+    RAMP: RAMP
 };
 
-(<EnhancedWindow>window).RZ = (<EnhancedWindow>window).RZ ? (<EnhancedWindow>window).RZ : RZInstance;
+(<EnhancedWindow>window).RAMP = (<EnhancedWindow>window).RAMP ? (<EnhancedWindow>window).RAMP : RAMPInstance;
 
-RZInstance.mapAdded.subscribe(mapInstance => {
+RAMPInstance.mapAdded.subscribe(mapInstance => {
     let index: number = mapInstances.findIndex(map => map.id === mapInstance.id);
 
     if (index !== -1) {
@@ -54,3 +54,16 @@ RZInstance.mapAdded.subscribe(mapInstance => {
         mapInstances.push(mapInstance);
     }
 });
+
+(<any>jQuery).expr.filters.offscreen = function(el: any) {
+    const elem = <any>jQuery(el);
+    const position = elem.position();
+    const rvShell = <any>jQuery('rv-shell').first();
+
+    return (
+        (position.left + <any>elem.width()) > (rvShell.width()) ||
+        (position.left + <any>elem.width()) < 0 ||
+        (position.top + <any>elem.height()) > (rvShell.height()) ||
+        (position.top + <any>elem.height()) < 0
+           );
+  };

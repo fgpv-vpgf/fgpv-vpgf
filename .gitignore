@@ -14,8 +14,9 @@ report/
 typings/
 tsd.json
 .vagrant/
-docs/developer/jsDocs
-docs/api/developer
+docs/contribute/jsDocs
+docs/developer/api_tech_docs
+src/content/samples/plugins/**/*
 .vscode/
 .material-cache/
 angular_material/

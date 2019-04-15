@@ -1,4 +1,17 @@
 @mixin loader {
+    #fileLoader, #serviceLoader {
+        top: 49px;
+        left: 0px;
+        width: 400px;
+
+        @include include-size(rv-sm) {
+            top: 49px;
+            left: 0px;
+            margin: 0;
+            width: 100%;
+        }
+    }
+
     .rv-loader {
         &-file,
         &-service {

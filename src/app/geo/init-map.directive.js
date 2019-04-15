@@ -1,6 +1,7 @@
 import Map from 'api/map';
 import { BasemapGroup } from 'api/ui';
 import gtm from '../tag-manager';
+import { ConfigLegend } from 'api/legend';
 
 /**
  * @restrict A
@@ -13,24 +14,12 @@ import gtm from '../tag-manager';
  *
  * This directive also contains the keyboard navigation logic.
  */
-angular.module('app.geo').directive('rvInitMap', rvInitMap);
+angular
+    .module('app.geo')
+    .directive('rvInitMap', rvInitMap);
 
-function rvInitMap(
-    $rootScope,
-    ConfigObject,
-    configService,
-    geoService,
-    events,
-    referenceService,
-    $rootElement,
-    $interval,
-    globalRegistry,
-    identifyService,
-    appInfo,
-    gapiService,
-    $mdDialog,
-    keyNames
-) {
+function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval, identifyService, api, appInfo, gapiService, $mdDialog, keyNames, $compile, $controllerProvider) {
+
     // key codes that are currently active
     let keyMap = [];
     // interval which runs animation logic
@@ -56,7 +45,6 @@ function rvInitMap(
 
         $rootScope.$on(events.rvMapLoaded, (_, i) => {
             mapInstance = i;
-            const api = window.RZ;
 
             mapInstance.disableKeyboardNavigation();
 
@@ -90,39 +78,38 @@ function rvInitMap(
 
             // API related initialization ------------------
             api.GAPI = api.GAPI ? api.GAPI : gapiService.gapi;
+            api.isIE11 = appInfo.isIE11;
             const apiMap = new Map($rootElement);
             apiMap.fgpMap = mapInstance;
             apiMap._legendStructure = configService.getSync.map.legend;
+            const mapConfig = configService.getSync.map;
+            apiMap.ui.configLegend = new ConfigLegend(mapConfig, mapConfig.legend);
             appInfo.mapi = apiMap;
 
             apiMap.ui._basemaps = new BasemapGroup(configService.getSync.map);
 
             // Required for FM to function properly
-            globalRegistry.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
+            api.focusManager.addViewer($rootElement, $mdDialog, configService.getSync.ui.fullscreen);
             $rootElement.attr('rv-trap-focus', $rootElement.attr('id'));
 
             events.$broadcast(events.rvApiPrePlugin, apiMap);
-            loadExtensions(apiMap);
+
+            // allows plugins to compile angular templates through the API
+            apiMap.$compile = function(html, useIsolatedScope = true) {
+                const scope = $rootScope.$new(useIsolatedScope);
+                $compile(html)(scope);
+                return scope;
+            }
+
+            // allows plugins to register components on the angular instance, usually to provide angular material support
+            apiMap.agControllerRegister = $controllerProvider.register;
+
+            events.$broadcast(events.rvApiPreMapAdded, apiMap);
+
             events.$broadcast(events.rvApiMapAdded, apiMap);
             gtm(apiMap);
             api.mapAdded.next(apiMap);
         });
-
-        /**
-         * Fetches any `rv-extensions` scripts and evals them with the api map instance scoped in.
-
-         * @param {Object} apiMap the api map instance
-         */
-        function loadExtensions(apiMap) {
-            const rvextensions = $rootElement.attr('rv-extensions');
-            const extensionList = rvextensions ? rvextensions.split(',') : [];
-
-            extensionList.forEach(url => {
-                $.ajax({ method: 'GET', dataType: 'text', url }).then(data =>
-                    eval(`(function(mapInstance) { ${data} })(apiMap);`)
-                );
-            });
-        }
 
         /**
          * Track mousedown events on the map that start map pan.
@@ -257,7 +244,7 @@ function rvInitMap(
                 case keyNames.ENTER:
                     // prevent identify if focus manager is in a waiting state since ENTER key is used to activate the focus manager.
                     // Also disable if SHIFT key is depressed so identify is not triggered on leaving focus manager
-                    if ($rootElement.attr('rv-focus-status') === globalRegistry.focusStatusTypes.ACTIVE) {
+                    if ($rootElement.attr('rv-focus-status') === api.focusStatusTypes.ACTIVE) {
                         event.mapPoint = mapPntCntr;
                         event.screenPoint = mapScrnCntr;
                         identifyService.identify(event);

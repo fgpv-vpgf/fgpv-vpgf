@@ -41,9 +41,8 @@ angular
     .factory('sideNavigationService', sideNavigationService);
 
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configService, stateManager,
-    basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, pluginService, geosearchService, appInfo, $mdDateLocale, events) {
+function sideNavigationService($mdSidenav, $rootElement, configService, basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
+    translations, $mdDialog, geosearchService, $mdDateLocale, events, appInfo) {
 
     const service = {
         open,
@@ -60,10 +59,10 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
             type: 'link',
             label: 'appbar.tooltip.layers',
             icon: 'maps:layers',
-            isChecked: () => stateManager.state.mainToc.active,
+            isChecked: () => appInfo.mapi && appInfo.mapi.panels.legend.isOpen,
             action: () => {
                 service.close();
-                stateManager.setActive('mainToc');
+                appInfo.mapi.panels.legend.toggle();
             }
         },
         basemap: {
@@ -169,28 +168,40 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         }
     };
 
+    events.$on(events.rvApiMapAdded, () => {
+        // When the map is reloaded (language switch, projection switch)
+        // Plugins are initialized again so clear out old plugin buttons
+        if (service.controls.plugins.children.length > 0) {
+            service.controls.plugins.children = [];
+        }
+    })
+
     events.$on(events.rvApiPrePlugin, (_, mApi) => {
         mApi.changeLanguage = reloadService.loadNewLang;
+
+        configService.getSync.map.instance.addPluginButton = (label, action) => {
+            // first plugin created should add the plugin group
+            if (service.controls.plugins.children.length === 0) {
+                SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
+            }
+
+            let mItem = {
+                type: 'link',
+                label,
+                action
+            }
+
+            mItem.isChecked = () => mItem.isActive;
+            service.controls.plugins.children.push(mItem);
+            return mItem;
+        };
     });
 
     init();
 
-    // TODO: is this affected by the config reload at all?
-    // Add any MenuItem plugins as they are created to the menu
-    pluginService.onCreate(globalRegistry.BasePlugins.MenuItem, mItem => {
-        // first plugin created should add the plugin group
-        if (service.controls.plugins.children.length === 0) {
-            SIDENAV_CONFIG_DEFAULT.items.push(['plugins']);
-        }
-
-        mItem.label = mItem.name;
-        mItem.isChecked = () => mItem.isActive;
-        service.controls.plugins.children.push(mItem);
-    });
-
     return service;
 
-    function ShareController(scope, $mdDialog, $rootElement, $http, configService) {
+    function ShareController(scope, $mdDialog, $rootElement, $http, configService, appInfo, LEGACY_API) {
         'ngInject';
         const self = this;
 
@@ -226,14 +237,11 @@ function sideNavigationService($mdSidenav, $rootElement, globalRegistry, configS
         * @function getLongLink
         */
         function getLongLink() {
-            if (typeof URLS.long === 'undefined' && globalRegistry.getMap(appInfo.id)) { // no cached url exists
+            if (typeof URLS.long === 'undefined') { // no cached url exists
                 // eslint-disable-next-line no-return-assign
-                globalRegistry.getMap($rootElement.attr('id')).getBookmark().then(bookmark => {
-                    URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(bookmark);
-                }).then(() => {
-                    selectURL();
-                });
-            } else { // cache exists
+                URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(LEGACY_API.getBookmark());
+                selectURL();
+            } else {
                 self.url = URLS.long;
                 selectURL();
             }

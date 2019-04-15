@@ -8,6 +8,18 @@ $layer-item-height-touch: rem(7.2);
 
 
 @mixin toc {
+    #mainToc {
+        top: 49px;
+        left: 0px;
+        width: 400px;
+
+        @include include-size(rv-sm) {
+            top: 49px;
+            left: 0px;
+            margin: 0;
+            width: 100%;
+        }
+    }
 
     rv-toc {
         // override default padding on the content

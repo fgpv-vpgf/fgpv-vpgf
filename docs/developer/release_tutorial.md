@@ -1,5 +1,7 @@
 # Release Tutorial
 
+(Note: this is not part of the published doc pages (i.e. no menu leads to it). But it is very useful to core team developers, so adding back after it was removed)
+
 Before you start this tutorial.  Please setup remotes `origin` and `upstream` that point to your forked repositories and original repositories respectively.
 
 ## geoApi Release

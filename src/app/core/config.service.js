@@ -1,5 +1,3 @@
-/* global RV */
-
 import schemaUpgrade from './schema-upgrade.service.js';
 import geoapi from 'geoApi';
 /**
@@ -124,9 +122,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @param {Array}  keys          array of RCS keys (String) to be added
          * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          */
-        setRcsKeys (keys, bookmarkInfo) { 
+        setRcsKeys (keys, bookmarkInfo) {
             this._rcsKeys = keys;
-            this.processRCS(bookmarkInfo); 
+            this.processRCS(bookmarkInfo);
         }
 
         /**
@@ -174,7 +172,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                             // if there is bookmark information for the rcs layer, tack it on so it can be processed
                             // after the typed config layer object is created
                             if (bookmarkInfo) {
-                                const bmMatch = bookmarkInfo.find(bml => bml.id === layer.id);
+                                // matches rcs.(layerid).(lang1) to rcs.(layerid).(lang2)
+                                const re = /^rcs\.(.*)\..*$/;
+                                const bmMatch = bookmarkInfo.find(bml => bml.id.match(re)[1] === layer.id.match(re)[1]);
                                 if (bmMatch) {
                                     layer.bookmarkData = bmMatch;
                                 }
@@ -342,13 +342,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
 
         // load first config, other configs will be loaded as needed
         configList[0].promise.then(config => {
+            let dojoUrl = (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.22/init.js';
             // initialize gapi and store a return promise
             if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== "") {
-                RV.dojoURL = config.services._esriLibUrl;
+                dojoUrl = config.services._esriLibUrl;
             }
-            RV.gapiPromise = geoapi(RV.dojoURL, window);
 
-            RV.gapiPromise.then(() => {
+            // TODO v3: change this
+            window.RAMP.gapiPromise = geoapi(dojoUrl, window);
+            window.RAMP.gapiPromise.then(() => {
                 gapiService.init();
                 gapiService.isReady.then(() => {
                     _loadingState = States.LOADED;
@@ -368,7 +370,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         }
 
         // TODO: consider alternate to appending '-CA' if language code has a length of two. 'es' should be 'es-ES' but now
-        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end. 
+        // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end.
         languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
             .map(l => l.length === 2 ? l + '-CA' : l)
             .filter(l => l);

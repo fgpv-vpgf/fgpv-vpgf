@@ -13,13 +13,39 @@ angular.module('app.ui').factory('detailService', detailService);
 const parserFunctions = [];
 const templates = [];
 
-function detailService($mdDialog, stateManager, mapService, referenceService) {
+function detailService($mdDialog, stateManager, mapService, referenceService, events) {
     const service = {
         expandPanel,
         closeDetails,
         getParser,
         getTemplate
     };
+
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        api.panels.details.body = $('<rv-details></rv-details>');
+        api.panels.details.reopenAfterOverlay = true;
+        api.panels.details.allowUnderlay = false;
+
+        const expandBtn = new api.panels.details.Button(`<md-icon md-svg-src="action:open_in_new"></md-icon>`);
+        expandBtn.$
+            .addClass('md-icon-button')
+            .removeClass('md-raised')
+            .on('click', () => { expandPanel(); });
+        api.panels.details.header.append(expandBtn);
+
+        const btn = api.panels.details.header.closeButton;
+        btn.on('click', () => { closeDetails(); });
+
+        api.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+
+        api.panels.details.opening.subscribe( () => {
+            api.panels.details.appBar.title = 'appbar.tooltip.pointInfo';
+        });
+    });
+
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        service.mApi = api;
+    });
 
     return service;
 
@@ -56,12 +82,6 @@ function detailService($mdDialog, stateManager, mapService, referenceService) {
 
         // remove highlighted features and the haze when the details panel is closed
         mapService.clearHighlight(false);
-
-        if (stateManager.panelHistory.find(x => x === 'mainToc')) {
-            stateManager.togglePanel('mainDetails', 'mainToc');
-        } else {
-            stateManager.setActive({ mainDetails: false });
-        }
     }
 
     function getParser(layerId, parserUrl) {

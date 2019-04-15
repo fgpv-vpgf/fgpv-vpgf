@@ -14,7 +14,7 @@
         "default": {
             "staticFiles": {
                 "include": [
-                    "./docs/static/images"
+                    "./docs/assets/images"
                 ]
             }
         }

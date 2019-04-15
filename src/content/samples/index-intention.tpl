@@ -11,6 +11,10 @@
             height: 100%;
         }
     </style>
+    <link rel="stylesheet" href="./plugins/enhancedTable/enhancedTable.css" />
+
+    <script src="./features/epsg.js"></script>
+
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -19,16 +23,17 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
 
 <body>
-    <div class="myMap" id="intention-map" is="rv-map"
-        rv-config="config/config-sample-56.json"
+    <div class="myMap" id="feature-map" is="rv-map"
+        rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
-        rv-wait="true"
-        rv-restore-bookmark="bookmark">
+        rv-restore-bookmark="bookmark"
+        rv-plugins="enhancedTable">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -58,12 +63,10 @@
             }
             return(false);
         }
-
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('intention-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-
+        RV.getMap('feature-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        RV.getMap('feature-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
         function bookmark(){
             return new Promise(function (resolve) {
                 var thing = getQueryVariable("rv");
@@ -71,7 +74,6 @@
                 resolve(thing);
             });
         }
-
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};
@@ -87,13 +89,14 @@
         if (keys) {
             // turn keys into an array, pass them to the map
             var keysArr = keys.split(',');
-            RV.getMap('intention-map').restoreSession(keysArr);
+            RV.getMap('feature-map').restoreSession(keysArr);
         } else {
             var bookmark = queryStr.rv;
             // console.log(bookmark);
-            RV.getMap('intention-map').initialBookmark(bookmark);
+            RV.getMap('feature-map').initialBookmark(bookmark);
         }
     </script>
+    <script src="./plugins/enhancedTable/enhancedTable.js"></script>
 </body>
 
 </html>

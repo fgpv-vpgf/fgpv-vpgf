@@ -4,22 +4,13 @@ and collates multiple hits per layer into one view
 
 WARNING be sure to change the detail content display logic in both blocks (single view and list view)
 -->
-<rv-content-pane
-    close-panel="self.closeDetails()"
-    static-content="true"
-    is-loading="self.display.isLoading"
-    hide-when-loading="self.display.data.length === 1 || !self.display.data">
-
+<div>
     <!-- TODO refactor file so that inner logic of both single case and multi case are in one spot, avoiding duplicate data  -->
     <!-- TODO move inner detail content generation elsewhere, then inject into this structure. Generating here involves a
          DOM operation for every element created -->
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
-
-        <rv-details-header
-            header-title="self.selectedItem.requester.proxy.name"
-            selected-item="self.selectedItem"></rv-details-header>
 
         <md-content class="rv-details-data rv-content"
             rv-detect-scrollbar
@@ -32,10 +23,6 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
-
-        <rv-details-header
-            header-title="self.selectedItem ? self.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult')"
-            selected-item="self.selectedItem"></rv-details-header>
 
         <!-- the detail content  -->
         <md-content class="rv-details-data rv-content"
@@ -50,5 +37,4 @@ WARNING be sure to change the detail content display logic in both blocks (singl
         <!-- the side selector  -->
         <rv-layer-list-slider class="rv-details-layer-list"></rv-layer-list-slider>
     </div>
-
-</rv-content-pane>
+</div>

@@ -1,7 +1,7 @@
 <div class="main-appbar rv-whiteframe-z2"
     ng-if="self.config.ui.appBar.enabled"
-    ng-class="{ 'rv-appbar-collapsed': !self.stateManager.state.main.active && self.config.ui.appBar.sideMenuOnly }"
-    ng-show="!self.stateManager.state.mainGeosearch.active">
+    ng-class="{ 'rv-appbar-collapsed': !(self.panelRegistry.legend.isOpen || self.panelRegistry.details.isOpen || self.panelRegistry.fileLoader.isOpen || self.panelRegistry.serviceLoader.isOpen) && self.config.ui.appBar.sideMenuOnly }"
+    ng-show="self.panelRegistry.geoSearch.isClosed">
 
     <md-button
         ng-if="self.config.ui.appBar.sideMenu"
@@ -18,17 +18,14 @@
 
     <div class="rv-appbar-title">
         <!-- ng-show="!self.stateManager.state.mainGeosearch.active"> -->
-        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainToc.active">appbar.tooltip.layers</h2>
-        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderFile.active">import.file.title</h2>
-        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainLoaderService.active">import.service.title</h2>
-        <h2 class="md-headline" translate ng-if="self.stateManager.state.mainDetails.active">appbar.tooltip.pointInfo</h2>
+        <h2 class="md-headline" translate ng-bind="self.title"></h2>
     </div>
 
     <md-button
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
-        ng-if="self.config.map.components.geoSearch.enabled && !self.geoSearch.externalApiError && self.config.ui.appBar.geoSearch">
+        ng-if="self.config.map.components.geoSearch.enabled && !self.geosearchService.externalApiError && self.config.ui.appBar.geoSearch">
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>
@@ -37,7 +34,7 @@
     <div
         class="md-icon-button primary rv-app-geosearch"
         disabled="disabled"
-        ng-if="self.geoSearch.externalApiError"
+        ng-if="self.geosearchService.externalApiError"
         aria-label="{{ 'appbar.aria.geosearch' | translate }}">
         <md-tooltip>{{ 'appbar.aria.geoApiError' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
@@ -48,7 +45,7 @@
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
-        ng-show="self.stateManager.state.mainToc.active">
+        ng-show="self.panelRegistry.legend.isOpen">
         <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:map"></md-icon>
     </md-button>
@@ -61,7 +58,7 @@
         aria-label="{{ 'appbar.aria.pointInfo' | translate }}"
         class="md-icon-button primary"
         rv-help="details-button"
-        ng-class="{ selected: self.stateManager.state.mainDetails.active }"
+        ng-class="{ selected: self.panelRegistry.details.isOpen }"
         ng-click="self.toggleDetails()"
         ng-show="self.stateManager.display.details.requestId">
         <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
@@ -73,22 +70,11 @@
         aria-label="{{ 'appbar.aria.layers' | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
-        ng-class="{ selected: self.stateManager.state.mainToc.active }"
+        ng-class="{ selected: self.panelRegistry.legend.isOpen }"
         ng-click="self.toggleToc()">
         <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>
-
-    <!-- hiding tools section for now; TODO: re-enable when we have tools -->
-    <!--md-button
-        aria-label="{{ 'appbar.aria.tools' | translate }}"
-        class="md-icon-button primary"
-        rv-help="tool-button"
-        ng-class="{ selected: self.stateManager.state.mainToolbox.active }"
-        ng-click="self.toggleToolbox()">
-        <md-tooltip>{{'appbar.tooltip.tools' | translate}}</md-tooltip>
-        <md-icon md-svg-src="content:create"></md-icon>
-    </md-button-->
 </div>
 
-<rv-geosearch-bar ng-if="self.stateManager.state.mainGeosearch.active"></rv-geosearch-bar>
+<rv-geosearch-bar ng-if="self.geosearchService.mApi.panels.geoSearch.isOpen"></rv-geosearch-bar>

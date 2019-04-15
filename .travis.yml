@@ -3,21 +3,47 @@ dist: trusty
 language: node_js
 node_js:
 - 8.11.1
-before_deploy:
-- openssl aes-256-cbc -K $encrypted_d1c9a4d041a1_key -iv $encrypted_d1c9a4d041a1_iv
-  -in ./scripts/travis/azure_docs.enc -out /tmp/docs_rsa -d
-- chmod 600 /tmp/docs_rsa
+
+before_script:
+- echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+script:
+- ./scripts/travis/build.sh
+
 cache:
   directories:
   - node_modules
-after_success:
-- source ./scripts/devdeploy.sh
+  - features/node_modules
+
 deploy:
-  provider: script
+- provider: script
   skip_cleanup: true
-  script: bash ./scripts/travis/builddocs.sh
+  script: bash ./scripts/travis/deploy-build-cloudapp.sh
   on:
-    tags: true
+    all_branches: true
+
+- provider: script
+  skip_cleanup: true
+  script: bash ./scripts/travis/docs.sh
+  on:
+    all_branches: true
+    repo: fgpv-vpgf/fgpv-vpgf
+    condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
+    condition: $mProc == dev
+
+- provider: pages
+  target_branch: gh-pages
+  local-dir: gh-page-files
+  skip-cleanup: true
+  github-token: "$GITHUB_TOKEN"
+  keep-history: true
+  on:
+    all_branches: true
+    repo: fgpv-vpgf/fgpv-vpgf
+    condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
+    condition: $mProc == dev
+
 notifications:
   webhooks:
     urls:

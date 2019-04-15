@@ -1,16 +1,63 @@
-# fgpv-vpgf
+### [V3 Documentation](https://docs.fgpv.org/fgpv-vpgf/fgpv-vpgf/v3/#/) is in progress!
+
 
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Code Climate](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/gpa.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 [![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
 
 [![Dependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf)
 [![devDependency Status](https://david-dm.org/fgpv-vpgf/fgpv-vpgf/dev-status.svg?style=flat-square)](https://david-dm.org/fgpv-vpgf/fgpv-vpgf#info=devDependencies)
 
-Federal Geospatial Platform Visualiser / Visualisateur pour la Plateforme géospatiale fédérale
+# RAMP2
 
-## Getting Started
+The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, WCAG 2.0 AA compliant common viewer platform for the Government of Canada.
+
+For more information on this project, please see one of the sections below:
+
+* [Usage](#usage)
+* [Building the Project](#building-the-project)
+* [Support](#support)
+
+Also, please visit the [Documentation Site](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/home) for additional content on:
+
+* [Map Author Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/mapauthor/intro)
+* [Contributing to the RAMP Project](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started)
+* [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
+* [Developer Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/intro)
+* [Technical Documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/technical/architecture)
+
+## Usage
+
+### Quick guide
+
+We'll go through the simplest way to use RAMP, for more information see the [map author guide](#map-author-guide)
+
+First, grab the most recent release from the [github releases](https://github.com/fgpv-vpgf/fgpv-vpgf/releases)
+Place the files `rv-main.js` and `rv-styles.css` within your webpage's folder structure. We usually put our JavaScript files under a `js` folder and our stylesheets under a `css` folder.
+
+Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the [map author guide](#map-author-guide)):
+1. Within `head`
+```html
+<link rel="stylesheet" href="../../../rv-styles.css" />
+```
+2. Near the end of the `body`
+```html
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
+<script src="/js/rv-main.js"></script>
+```
+
+Now that you have the required files on your page we should add the map element.
+
+```html
+<div is="rv-map" style="height: 100%; display:flex;" rv-langs='["en-CA", "fr-CA"]'></div>
+```
+
+A map should now load on your page. Theres much more you can do with RAMP, a good place to start (I'm mentioning it again!) is the [map author guide](#map-author-guide)
+
+### [Some samples](http://fgpv.cloudapp.net/demo/develop/dev/samples/index-samples.html)
+
+## Building the project
 
 Requirements:
 
@@ -18,14 +65,12 @@ Requirements:
 
 Running a local build:
 
-0. Checkout the repo
-0. Switch to the develop branch (master is for stable, released code)
-0. Run `npm install` to install dependencies
-0. Run `npm run serve` to build and launch a dev server
+1. Checkout the repo
+2. Switch to the develop branch (master is for stable, released code)
+3. Run `npm install` to install dependencies
+4. Run `npm run serve` to build and launch a dev server
 
-We use a fork and pull model for contributions, see our [contributing guidelines](https://github.com/fgpv-vpgf/fgpv-vpgf/blob/develop/CONTRIBUTING.md) for more details.
-
-### [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
+We use a fork and pull model for contributions, see our [contributing guidelines](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started) for more details.
 
 ### Generating Local Builds
 
@@ -70,3 +115,20 @@ To run these flags, prefix with `--` then `--env.` as in `npm run serve -- --env
 
 - `useMap`
     Creates full independent source maps files for `development` code only. Build time will increase.
+
+## Support
+
+### How we provide support
+- **Bugs:** If you have a bug to report you can open up an issue at https://github.com/fgpv-vpgf/fgpv-vpgf/issues by clicking the green button above the issue list
+- **Questions:** You can ask questions through github team discussions at https://github.com/orgs/fgpv-vpgf/teams
+
+### Repos
+RAMP (FGPV): https://github.com/fgpv-vpgf/fgpv-vpgf
+
+GeoAPI: https://github.com/fgpv-vpgf/geoApi
+
+Plugins: https://github.com/fgpv-vpgf/plugins
+
+GeoSearch: https://github.com/ramp-pcar/geosearch
+
+If you need help contributing, make sure to give the [contribution docs](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/contribute/getting_started) a read. If you still have questions let us know.

@@ -13,7 +13,7 @@ angular
     .module('app.geo')
     .factory('geoService', geoService);
 
-function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo) {
+function geoService($rootScope, $rootElement, events, mapService, layerRegistry, configService, bookmarkService, legendService, appInfo, translationService, LEGACY_API) {
 
     // TODO update how the layerOrder works with the UI
     // Make the property read only. All angular bindings will be a one-way binding to read the state of layerOrder
@@ -24,12 +24,18 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
 
         constructor () {
             this._isMapReady = false;
+            this._pluginLoader = false;
         }
 
         get isMapReady() { return this._isMapReady; }
         get map() { return configService.getSync.map.instance; }
 
         destroyMap() {
+            this._pluginLoader.destroyer();
+            appInfo.mapi.panels.all.slice(0).forEach(panel => {
+                panel.destroy();
+            });
+
             mapService.destroyMap();
 
             return this;
@@ -56,19 +62,28 @@ function geoService($rootScope, $rootElement, events, mapService, layerRegistry,
                     config.applyBookmark(bookmarkService.storedBookmark);
                 }
 
-                const pluginLoader = new PluginLoader(config, $rootElement);
-
-                pluginLoader.isReady.then(() => {
+                if (this._pluginLoader) {
+                    // TODO v3: Make optional plugin destroyer functionality
                     mapService.makeMap();
-                    appInfo.plugins = pluginLoader.pluginList;
                     legendService.constructLegend(config.map.layers, config.map.legend);
                     this._isMapReady = true;
                     $rootScope.$broadcast(events.rvApiReady);
-                });
+                } else {
+                    this._pluginLoader = new PluginLoader(config, $rootElement);
+                    this._pluginLoader.isReady.then(() => {
+                        this._pluginLoader.loadTranslations(translationService);
+                        mapService.makeMap();
+                        appInfo.features = this._pluginLoader.features;
+                        appInfo.plugins = this._pluginLoader.plugins;
+                        legendService.constructLegend(config.map.layers, config.map.legend);
+                        this._isMapReady = true;
+                        $rootScope.$broadcast(events.rvApiReady);
+                    });
 
-                events.$on(events.rvApiMapAdded, (_, mapi) => {
-                    pluginLoader.init(mapi);
-                });
+                    events.$on(events.rvApiMapAdded, (_, mapi) => {
+                        this._pluginLoader.init(mapi, LEGACY_API);
+                    });
+                }
 
                 events.$on(events.rvCfgUpdated, (evt, layers) => {
                     let orderdBookmarkIds = bookmarkService.getOrderdBookmarkIds();

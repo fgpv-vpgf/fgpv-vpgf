@@ -1,5 +1,5 @@
 import screenfull from 'screenfull';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { XY, XYBounds } from 'api/geometry';
 import RColor from 'rcolor';
 
@@ -577,6 +577,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 source.columns.map(columnsSource =>
                     (new ColumnNode(columnsSource))) :
                 [];
+            this._searchStrictMatch = source.searchStrictMatch || false
+            this._printEnabled = source.printEnabled || false;
         }
 
         get title () { return this._title; }
@@ -598,6 +600,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get applied () { return this._applied; }
         set applied (value) { this._applied = value; }
 
+        get searchStrictMatch () { return this._searchStrictMatch}
+
+        get printEnabled() { return this._printEnabled }
+
         get JSON () {
             return {
                 title: this.title,
@@ -605,7 +611,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 maximize: this.maximize,
                 search: this.search,
                 applyMap: this.applyMap,
-                columns: this.columns.JSON
+                columns: this.columns.JSON,
+                searchStrictMatch: this.searchStrictMatch,
+                printEnabled: this.printEnabled
             }
         }
     }
@@ -1586,6 +1594,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     class Legend {
         constructor (legendSource, layersSource) {
             this._type = legendSource.type;
+            this._reorderable = false;
 
             let rootChildren;
 
@@ -1641,7 +1650,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         addChild (child, position = 0) {
             this._root.children.splice(position, 0, child);
             if (mApi) {
-                mApi._legendStructure = this;
+                mApi.ui.configLegend._configSnippets = this._root.children;
             }
         }
 
@@ -1723,12 +1732,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 showInfo: this.showInfo,
                 enabled: this.enabled
             });
-        }
-    }
-
-    class AreaOfInterestComponent extends ComponentBase {
-        constructor (source) {
-            super(source);
         }
     }
 
@@ -1818,7 +1821,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._source = componentsSource;
 
             this._geoSearch = new GeoSearchComponent(componentsSource.geoSearch);
-            this._areaOfInterest = new AreaOfInterestComponent(componentsSource.areaOfInterest);
             this._mouseInfo = new MouseInfoComponent(componentsSource.mouseInfo);
             this._northArrow = new NorthArrowComponent(componentsSource.northArrow);
             this._overviewMap = new OverviewMapComponent(componentsSource.overviewMap);
@@ -1827,7 +1829,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
 
         get geoSearch () { return this._geoSearch; }
-        get areaOfInterest () { return this._areaOfInterest; }
         get mouseInfo () { return this._mouseInfo; }
         get northArrow () { return this._northArrow; }
         get overviewMap () { return this._overviewMap; }
@@ -1837,7 +1838,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return {
                 geoSearch: this.geoSearch.JSON,
-                areaOfInterest: this.areaOfInterest.JSON,
                 mouseInfo: this.mouseInfo.JSON,
                 northArrow: this.northArrow.JSON,
                 overviewMap: this.overviewMap.JSON,
@@ -2051,20 +2051,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     /**
-     * Intentions(internal extentions)
-     * @class Intentions
-     */
-    class Intentions {
-        constructor(source) {
-            if (!source || Object.keys(source).length === 0) {
-                this.epsg = 'default';
-            } else {
-                this.epsg = source.epsg;
-            }
-        }
-    }
-
-    /**
      * Typed representation of the `map` section of the config.
      * @class Map
      */
@@ -2152,7 +2138,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get layerBlueprints () {        return this._layerBlueprints; }
         get boundingBoxRecords () {     return this._boundingBoxRecords; }
         get legendBlocks () {           return this._legendBlocks; }
-        set legendBlocks (lb) {         this._legendBlocks = lb; }
+        set legendBlocks (lb) {         this._legendBlocks = lb; $rootScope.$applyAsync(); }
         get legendMappings () {         return this._legendMappings; }
 
         get highlightLayer () {         return this._highlightLayer; }
@@ -2180,12 +2166,24 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     events.$on(events.rvExtentChange, (_, d) => subscriber.next(extentToApi(d.extent)));
                 });
 
+                // add this to avoid issues with projection changes
+                // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
+                mapInstance.extentChanged = Observable.create(subscriber => {
+                    events.$on(events.rvExtentChange, (_, d) => subscriber.next(d.extent));
+                });
+
                 mapInstance.centerChanged = Observable.create(subscriber => {
                     events.$on(events.rvExtentChange, (_, d) => {
                         const centerXY = d.extent.getCenter();
 
                         subscriber.next(pointToApi(centerXY.x, centerXY.y));
                     });
+                });
+
+                mapInstance.filterChanged = Observable.create(subscriber => {
+                    events.$on(events.rvFilterChanged, (_, params) => {
+                        subscriber.next(params);
+                    })
                 });
             });
 
@@ -2623,14 +2621,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._version = configSource.version;
             this._language = configSource.language;
             this._languages = configSource.languages;
+            this._plugins = configSource.plugins;
 
             this._map = new Map(configSource.map);
             this._services = new Services(configSource.services);
             this._ui = new UI(configSource.ui);
-            this._intentions = new Intentions(configSource.intentions);
 
             // post parsing runtimechecks
             this.ui.legend._reorderable =
+                this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
+            this.map.legend._reorderable =
                 this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
 
             // set geoSearch.enable to false if it was false initialy or does not have all services
@@ -2717,11 +2717,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get version () { return this._version; }
         get language () { return this._language; }
         get languages () { return this._languages; }
+        get plugins () { return this._plugins; }
 
         get ui () { return this._ui; }
         get services () { return this._services; }
         get map () { return this._map; }
-        get intentions() { return this._intentions; }
 
         applyBookmark (value) {
             this.map.applyBookmark(value);

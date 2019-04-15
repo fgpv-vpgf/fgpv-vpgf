@@ -1,3 +1,5 @@
+import { LegendItem, LegendGroup } from 'api/legend';
+
 /**
  * @module legendService
  * @memberof app.geo
@@ -30,7 +32,11 @@ function legendServiceFactory(
     };
 
     let mApi = null;
-    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
+    let elementsForApi = [];
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        mApi = api;
+        elementsForApi.forEach(element => _addElementToApiLegend(element));
+    });
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
@@ -48,11 +54,8 @@ function legendServiceFactory(
                 const layer = service.addLayerDefinition(layerJSON, null, addToLegend);
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
-                    const deactivate = events.$on(events.rvApiLayerAdded, (_, layers) => {
-                        if (layers[0].id === layerJSON.id) {
-                            deactivate();
-                            resolve(layers);
-                        }
+                    events.$on(events.rvApiLayerAdded, (_, layers) => {
+                        resolve(layers);
                     });
                 });
             } else {
@@ -60,7 +63,7 @@ function legendServiceFactory(
             }
         };
 
-        configService.getSync.map.instance.setLegendConfig = legendStructure => {
+        configService.getSync.map.instance.setLegendConfig = (legendStructure) => {
             stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
 
             const apiLayers = mApi.layers.allLayers
@@ -71,8 +74,9 @@ function legendServiceFactory(
             const layers = apiLayers.concat(viewerLayers.filter(layer => apiLayers.indexOf(layer) < 0));
             const newLegend = new ConfigObject.legend.Legend(legendStructure, layers);
             service.constructLegend(layers, newLegend);
+
             configService.getSync.map._legend = newLegend;
-            mApi._legendStructure = newLegend;
+            layerRegistry.synchronizeLayerOrder();
             $rootScope.$applyAsync();
         };
     });
@@ -99,10 +103,11 @@ function legendServiceFactory(
         layerDefinitions.forEach(ld => {
             let index = layerBlueprintsCollection.findIndex(blueprint => blueprint.config.id === ld.id);
             const legendItem = legendStructure.root
-                .walk(entry =>
-                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
-                        ? entry
-                        : null
+                .walk(
+                    entry =>
+                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
+                            ? entry
+                            : null
                 )
                 .filter(a => a)[0];
 
@@ -126,6 +131,22 @@ function legendServiceFactory(
         const legendBlocks = _makeLegendBlock(legendStructure.root, layerBlueprintsCollection);
         mapConfig.legendBlocks = legendBlocks;
 
+        if (mApi) {
+            mApi.ui.configLegend._children = [];
+            mApi.ui.configLegend._sortGroup = [[], []];
+        }
+
+        legendBlocks.entries.filter(entry => !entry.hidden).forEach(entry => {
+            // after ConfigLegend created, check to see if a LegendGroup/Item already exists
+            // if so, update it (_initSettings) instead of creating a new instance
+            if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
+                let legendGroup = new LegendGroup(configService.getSync.map, entry);
+                _addElementToApiLegend(legendGroup);
+            } else { // it's a collapsed dynamic layer or a node/infoSection
+                let legendItem = new LegendItem(configService.getSync.map, entry);
+                _addElementToApiLegend(legendItem);
+            }
+        });
     }
 
     /**
@@ -211,6 +232,18 @@ function legendServiceFactory(
         // add the new legend block to the legend block (always to the root group)
         legendBlocks.addEntry(importedLegendBlock, position);
 
+        // after ConfigLegend created, check to see if a LegendGroup/Item already exists
+        // if so, update it (_initSettings) instead of creating a new instance
+        if (!importedLegendBlock.hidden) {
+            if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
+                let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
+                _addElementToApiLegend(legendGroup);
+            } else { // it's a collapsed dynamic layer or a node/infoSection
+                let legendItem = new LegendItem(configService.getSync.map, importedLegendBlock);
+                _addElementToApiLegend(legendItem);
+            }
+        }
+
         // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
         configService.getSync.map.legend.addChild(importedBlockConfig, position);
 
@@ -242,13 +275,14 @@ function legendServiceFactory(
             // need to find the actual legend block mapped to the legendBlock being reloaded and its parent container legendGroup
             const legendBlocks = configService.getSync.map.legendBlocks;
             const { legendBlock, legendBlockParent } = legendBlocks
-                .walk((entry, index, parentEntry) =>
-                    entry.id === legendBlockId
-                        ? {
-                              legendBlock: entry,
-                              legendBlockParent: parentEntry
-                          }
-                        : null
+                .walk(
+                    (entry, index, parentEntry) =>
+                        entry.id === legendBlockId
+                            ? {
+                                legendBlock: entry,
+                                legendBlockParent: parentEntry
+                            }
+                            : null
                 )
                 .filter(a => a !== null)[0];
 
@@ -264,6 +298,17 @@ function legendServiceFactory(
             legendBlockConfig.controlledIds.forEach(controlledId => reloadBoundLegendBlocks(controlledId));
 
             const reloadedLegendBlock = _makeLegendBlock(legendBlockConfig, layerBlueprintsCollection);
+
+            //if this is a collapsed dynamic group being reloaded, pop out its duplicate from the child array
+            if (reloadedLegendBlock.collapsed && reloadedLegendBlock.isDynamicRoot) {
+                mApi.ui.configLegend.children.pop();
+            }
+
+            //update the corresponding LegendItem in the Legend API
+            if (reloadedLegendBlock instanceof LegendBlock.Node) {
+                _updateApiReloadedBlock(reloadedLegendBlock);
+            }
+
             const index = legendBlockParent.removeEntry(legendBlock);
             const layerRecordPromise = layerRegistry.getLayerRecordPromise(legendBlockConfig.layerId);
 
@@ -333,8 +378,11 @@ function legendServiceFactory(
             .walk((entry, index, parentEntry) => (entry === legendBlock ? parentEntry : null))
             .filter(a => a !== null)[0];
 
-        // TODO: instead of removing the legend block form the selector, just hide it with some css
+        // TODO: instead of removing the legend block from the selector, just hide it with some css
         const index = legendBlockParent.removeEntry(legendBlock);
+        _removeElementFromApiLegend(legendBlock);
+
+        $rootScope.$applyAsync();
 
         return [_resolve, _reject];
 
@@ -372,7 +420,6 @@ function legendServiceFactory(
             _boundingBoxRemoval(legendBlock);
 
             // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
-            mApi._legendStructure = configService.getSync.map.legend;
         }
 
         /**
@@ -506,6 +553,12 @@ function legendServiceFactory(
                     _addChildBlock(item, legendBlockGroup);
                 });
 
+                if (legendBlockGroup.collapsed) {
+                    _updateApiReloadedBlock(legendBlockGroup.entries[0]);
+                }
+                else {
+                    _updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
+                }
                 legendBlockGroup.synchronizeControlledEntries();
             });
 
@@ -549,14 +602,25 @@ function legendServiceFactory(
              * @param {Object} item a tree item in the form of { layerEntry: <Number>, childs: [<Object>], proxyWrapper: { proxy: <Proxy>, layerConfig: <LayerNode> } }, `childs` and `proxyWrapper` are mutually exclusive
              * @param {LegendBlock.GROUP} parentLegendGroup parent LegendGroup block when the newly created child will be added
              */
+            // eslint-disable-next-line max-statements
             function _addChildBlock(item, parentLegendGroup) {
-                let legendBlock;
+                let legendBlock, apiLegendElement;
 
                 if (item.childs) {
                     const groupConfig = new ConfigObject.legend.EntryGroup(item.groupSource);
                     legendBlock = new LegendBlock.Group(groupConfig, rootProxyWrapper);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
                     legendBlock.metadataUrl = parentLegendGroup.metadataUrl; // store the provided metadataUrl on the parent group block
+
+                    if (!legendBlock.hidden) {
+                        if (!legendBlock.collapsed) {
+                            apiLegendElement = new LegendGroup(configService.getSync.map, legendBlock);
+                        } else {
+                            apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
+                        }
+
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
+                    }
 
                     item.childs.forEach(child => _addChildBlock(child, legendBlock));
                 } else {
@@ -566,15 +630,65 @@ function legendServiceFactory(
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
 
                     // show filter flag if there is a filter query being applied
+                    // TODO may want to update this to use proxyWrapper.filterState.isActive() method.
                     legendBlock.filter =
-                        item.proxyWrapper.layerConfig.initialFilteredQuery &&
-                        item.proxyWrapper.layerConfig.initialFilteredQuery !== '';
+                        (item.proxyWrapper.layerConfig.initialFilteredQuery !== undefined &&
+                            item.proxyWrapper.layerConfig.initialFilteredQuery !== '') ? true : false;
+
+                    if (!legendBlock.hidden) {
+                        apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
+                    }
                 }
 
                 if (legendBlock.metadataUrl === undefined) {
                     legendBlock.disabledControls.push('metadata');
                 }
                 parentLegendGroup.addEntry(legendBlock);
+
+                function _addChildItemToAPI(apiLegendElement, parentBlock) {
+                    let parentElement = _findParentElement(parentBlock);
+                    if (parentElement && parentElement.children) {
+                        apiLegendElement.visibilityChanged.subscribe(() => {
+                            const oldVisibility = parentElement.visibility;
+                            if (oldVisibility !== parentElement._legendBlock.visibility) {
+                                parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
+                            }
+                        });
+                        apiLegendElement.opacityChanged.subscribe(() => {
+                            const oldOpacity = parentElement.opacity;
+                            if (oldOpacity !== parentElement._legendBlock.opacity) {
+                                parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
+                            }
+                        });
+                        apiLegendElement.queryableChanged.subscribe(() => {
+                            const oldQueryable = parentElement.queryable;
+                            if (oldQueryable !== parentElement._legendBlock.query) {
+                                parentElement._queryableChanged.next(parentElement._legendBlock.query);
+                            }
+                        });
+
+                        _updateLegendElementSettings(apiLegendElement);
+                        parentElement._children.push(apiLegendElement);
+                    } else if (parentLegendGroup.collapsed) {
+
+                        let blockFound = false;
+                        mApi.ui.configLegend.children.forEach(child => {
+                            if (child._legendBlock.layerRecordId === apiLegendElement._legendBlock.layerRecordId) {
+                                child._initSettings(apiLegendElement._legendBlock);
+                                blockFound = true;
+                            }
+                            if (child.id === parentLegendGroup.id) {
+                                _removeElementFromApiLegend(child)
+                            }
+                        });
+
+                        // if this block was an additon and not a reload add element to legend API
+                        if (!blockFound) {
+                            _addElementToApiLegend(apiLegendElement);
+                        }
+                    }
+                }
             }
         }
 
@@ -789,7 +903,18 @@ function legendServiceFactory(
             node.layerRecordId = layerConfig.id;
 
             // show filter flag if there is a filter query being applied
-            node.filter = layerConfig.initialFilteredQuery && layerConfig.initialFilteredQuery !== '';
+            node.filter = false;
+
+            // TODO may want to update this to use proxyWrapper.filterState.isActive() method to check if filters are on.
+            if (layerConfig.table !== undefined && layerConfig.table.columns !== undefined) {
+                // check whether tableNode exists on layerConfig
+                // image layers, tile layers and wms layers are not going to have tableNodes
+                layerConfig.table.columns.forEach(column => {
+                    if (column.filter !== undefined && column.filter.value !== undefined) {
+                        node.filter = true;
+                    }
+                })
+            }
 
             legendMappings[layerConfig.id].push({
                 legendBlockId: node.id,
@@ -833,8 +958,20 @@ function legendServiceFactory(
          */
         function _makeSetBlock(blockConfig) {
             const set = new LegendBlock.Set(blockConfig);
+            let isSomethingTrue = false;
 
             blockConfig.exclusiveVisibility.forEach(childConfig => {
+                // check to see if there is more than one child of the set that has visibility set to true
+                // if so, turn all the others (except the first) to false to avoid problems with `proxyPromise` not yet resolved when updating set visibilities
+                const blueprint = layerBlueprints.find(blueprint => blueprint.config.id === childConfig.layerId);
+                if (blueprint && blueprint.config.state.visibility) {
+                    if (isSomethingTrue) {
+                        blueprint.config.state.visibility = false;
+                    } else {
+                        isSomethingTrue = true;
+                    }
+                }
+
                 const childBlock = _makeLegendBlock(childConfig, layerBlueprints);
 
                 set.addEntry(childBlock);
@@ -902,7 +1039,6 @@ function legendServiceFactory(
              * Flatten the tree of dynamic children and groups discarding all the group objects.
              *
              * @param {*} tree
-             * @returns
              */
             function _flattenTree(tree) {
                 const result = [].concat.apply(
@@ -993,6 +1129,153 @@ function legendServiceFactory(
             );
 
             return promise;
+        }
+    }
+
+    /**
+     * Get the parent of an item by id
+     *
+     * @function _getParentById
+     * @private
+     * @param {string} id the id for a LegendItem or LegendGroup to find the parent of
+     * @param {Array<LegendItem|LegendGroup>} elementList list of elements to look through
+     * @param {String|LegendGroup} parent parent item, passed in during recursion; defaults to 'root"'
+     */
+    function _getParentById(id, elementList = mApi.ui.configLegend.children, parent = 'root') {
+        for (let item of elementList) {
+            if (item.id === id) {
+                return parent;
+            } else if (item instanceof LegendGroup) {
+                let match = _getParentById(id, item.children, item);
+                if (match) {
+                    return match instanceof LegendGroup ? match : item;
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Push a new element to the list of elements for the map legend
+     *
+     * @function _addElementToApiLegend
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be added to map legend
+     */
+    function _addElementToApiLegend(legendElement) {
+        if (mApi) {
+            _updateLegendElementSettings(legendElement);
+
+            //push new element into children and sortgroup arrays
+            mApi.ui.configLegend.children.push(legendElement);
+            if (typeof legendElement._legendBlock.sortGroup !== 'undefined') {
+                mApi.ui.configLegend._sortGroup[legendElement._legendBlock.sortGroup].push(legendElement);
+            }
+        } else {
+            elementsForApi.push(legendElement);
+        }
+    }
+
+    /**
+     * Update the API elements opacity and visibility after the proxy promise has resolved
+     *
+     * @function _updateLegendElementSettings
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be have its settings updated
+     */
+    function _updateLegendElementSettings(legendElement) {
+        let wrapper;
+        if (legendElement._legendBlock.proxyWrapper) {
+            wrapper = legendElement._legendBlock.proxyWrapper;
+        } else if (legendElement._legendBlock._rootProxyWrapper) {
+            wrapper = legendElement._legendBlock._rootProxyWrapper;
+        }
+
+        if (wrapper) {
+            const initialSettings = wrapper.layerConfig.state;
+            wrapper.proxyPromise.then(() => {
+                legendElement.visibility = initialSettings.visibility;
+                legendElement.opacity = initialSettings.opacity;
+                legendElement.queryable = initialSettings.query;
+            });
+        }
+    }
+
+    /**
+     * Remove an existing element from the list of elements for the map legend
+     *
+     * @function _removeElementFromApiLegend
+     * @private
+     * @param {LegendItem|LegendGroup} legendElement an instance of an api legend item/group created that needs to be removed from map legend
+     */
+    function _removeElementFromApiLegend(legendBlock) {
+        const apiLegendBlock = legendBlock.collapsed ? legendBlock.entries[0] : legendBlock;
+        const legendElement = mApi.ui.configLegend.getById(apiLegendBlock.id);
+        const parent = _getParentById(apiLegendBlock.id);
+
+        if (parent === 'root') {
+            let index = mApi.ui.configLegend.children.indexOf(legendElement);
+            if (index > -1) {
+                mApi.ui.configLegend.children.splice(index, 1);
+                // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+            }
+            const sortGroup = legendBlock.collapsed ? 1 : legendElement._legendBlock.sortGroup;
+            if (typeof sortGroup !== 'undefined') {
+                let sortIndex = mApi.ui.configLegend._sortGroup[sortGroup].indexOf(legendElement);
+                if (sortIndex > -1) {
+                    mApi.ui.configLegend._sortGroup[sortGroup].splice(sortIndex, 1);
+                }
+            }
+        } else if (parent) {
+            let index = parent.children.indexOf(legendElement);
+            if (index > -1) {
+                parent.children.splice(index, 1);
+                // mapApi.ui.configLegend._itemRemoved.next(legendElement);
+            }
+        }
+    }
+
+    /**
+     * Updates the LegendItem/LegendGroup that has been reloaded
+     *
+     * @function _updateApiReloadedBlock
+     * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
+     */
+    function _updateApiReloadedBlock(reloadedBlock) {
+        // Only run when the parent is ready on the reloadedBlock
+        const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
+            layerRegistry.syncApiElementOrder();
+            parent = parent.collapsed ? parent.parent : parent;
+            const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
+            const parentElement = parent.blockConfig === configService.getSync.map.legend.root ?
+                mApi.ui.configLegend :
+                _findParentElement(parent);
+
+            if (index > -1 && parentElement) {
+                parentElement.children[index]._initSettings(reloadedBlock);
+            }
+
+            watchParent();
+        });
+    }
+
+    /**
+     * Find and return the element with given parentBlock in the Legend API
+     *
+     * @function _findParentElement
+     * @param {LegendGroup} parentBlock block of parent to find
+     * @param {Array<LegendItem | LegendGroup>} list list of elements to search through
+     * */
+    function _findParentElement(parentBlock, list = mApi.ui.configLegend.children) {
+        for (let element of list) {
+            if (element._legendBlock === parentBlock) {
+                return element;
+            } else if (element.children) {
+                const pElement = _findParentElement(parentBlock, element.children);
+                if (pElement) {
+                    return pElement;
+                }
+            }
         }
     }
 }

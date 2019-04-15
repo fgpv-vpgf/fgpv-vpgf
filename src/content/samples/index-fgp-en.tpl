@@ -7,6 +7,8 @@
     <link href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/assets/favicon.ico" rel="icon" type="image/x-icon">
     <link rel="stylesheet" href="http://wet-boew.github.io/themes-dist/GCWeb/GCWeb/css/theme.min.css">
 
+    <script src="./plugins/backToCart/backToCart.js"></script>
+
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[index] %>" crossorigin="<%= webpackConfig.output.crossOriginLoading %>"/>
@@ -452,7 +454,7 @@
                         <input type="text" id="bookmarkDisplay" style="width:100%;" />
                         <button onclick="testBackToCart()">backToCart</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='' data-rv-wait="true">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='' data-rv-wait="true" rv-plugins="backToCart">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -540,8 +542,10 @@
 
     <script>
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('fgpmap').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('fgpmap').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
+        RAMP.mapAdded.subscribe(function (mapi) {
+            backToCart.setCatalogueUrl('fgpmap', baseUrl);
+        })
+
         function queryStringToJSON(q) {
             var pairs = q.search.slice(1).split('&');
             var result = {};

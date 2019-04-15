@@ -58,7 +58,7 @@ angular
     .directive('rvSymbologyStack', rvSymbologyStack)
     .factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, stateManager, events, $interval, $timeout) {
+function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, $timeout) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -109,7 +109,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
-        self.toggleList = {};
+        self.toggleList = [];
 
         let layerRecord;
 
@@ -120,40 +120,42 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // do nothing
         }
 
-        // Helper function: apply definition to block so changes reflect on map and table
-        function setTableDefinition(fullDef, defClause) {
-            self.block.definitionQuery = fullDef;
-            self.block.symbDefinitionQuery = defClause;
-            events.$broadcast(events.rvSymbDefinitionQueryChanged);
+        // Helper function: apply definition to filter system
+        function applySymbolFilter(defClause) {
+
+            // TODO need a test for proxyWrapper?  it might not be ready yet?  might need a watch on 'loaded' if not ready
+            const fs = self.block.proxyWrapper.filterState;
+            if (fs !== undefined) {
+                // tile layers, image layers and wms layers will not have filter state defined
+                fs.setSql(fs.coreFilterTypes.SYMBOL, defClause);
+            }
         }
 
+        // wire up a listener on the visibility change of the legend block
         if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
+            // TODO update this code when issue 3152 is implemented
             self.block.visibilityChanged.subscribe(val => {
                 //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
                 if (!self.stackToggled) {
-                    const query = val ? undefined : '1=2';
-                    const keys = Object.keys(self.toggleList);
-                    if (self.block.proxyWrapper.state === 'rv-loaded') {
+                    const query = val ? '' : '1=2';
+                    if (self.block.proxyWrapper.isActiveState) {
+                        // layer is loaded, apply stuff now
                         //only update if currently selected...otherwise causes all sorts of race conditions
-                        if (self.block.isSelected) {
-                            setTableDefinition(query, query);
-                        } else {
-                            //update only map if not selected
-                            self.block.definitionQuery = query;
-                        }
-                        keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                        // TODO ensure this is race condition no longer exists in new filter structure
+                        // TODO once things are working, move these two statements to a function and call in both locations.
+                        applySymbolFilter(query);
+
+                        self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
                     } else {
+                        // layer not yet loaded, wait until it is then apply stuff
                         const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
                             if (state === 'rv-loaded') {
-                                //only update if currently selected...otherwise causes all sorts of race conditions
-                                if (self.block.isSelected) {
-                                    setTableDefinition(query, query);
-                                } else {
-                                    // update only map if not selected
-                                    self.block.definitionQuery = query;
-                                }
-                                keys.forEach(key => { if (self.toggleList[key].isSelected !== val) { self.onToggleClick(key, false); } });
+                                // only update if currently selected...otherwise causes all sorts of race conditions
+                                // TODO ensure this is race condition no longer exists in new filter structure
+                                applySymbolFilter(query);
+
+                                self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
                                 self.stackToggled = false;
                                 proxyLoaded();
                             }
@@ -164,68 +166,67 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             });
         }
 
-        // if the table is opened, set the table definition
-        if (self.block && self.block.selectedChanged) {
-            self.block.selectedChanged.subscribe(val => {
-                if (val) {
-                    let query;
-                    if (!self.block.visibility) {
-                        // if block is invisibile, table should have no entries
-                        query = '1=2';
-                    } else if (self.block.symbDefinitionQuery && self.block.symbDefinitionQuery !== '1=2') {
-                        // if symbDefinitionQuery is defined then set table to definition query
-                        // leaves out case where === '1=2' to account for a block that was just made visible
-                        query = self.block.symbDefinitionQuery;
-                    } else {
-                        // all entries will be visible
-                        query = undefined;
-                    }
-                    setTableDefinition(query, query);
-                }
-            });
-        }
-
-        self.onToggleClick = (name, setDefinitionQuery = true) => {
-            self.toggleList[name].click();
+        // triggerFilter is suppressed when toggles are being synchronized/initialized.  avoids sending off multiple filter updates
+        self.onToggleClick = (toggle, triggerFilter = true) => {
+            toggle.click();
 
             let defClause;
 
-            // when all symbols are checked, clearing the query is the same as trying to match all of them
             if (allSymbolsVisible()) {
-                defClause = undefined;
-                // when no symbols are checked, make a query that is never true so no symbols are shown
+                // when all symbols are checked, clearing the query is the same as trying to match all of them
+                defClause = '';
             } else if (noSymbolsVisible()) {
+                // when no symbols are checked, make a query that is never true so no symbols are shown
                 defClause = '1=2';
-                //otherwise proceed with joining geoApi definitionClauses
             } else {
-                defClause = Object.keys(self.toggleList)
-                    .map(key => self.toggleList[key].query)
+                //otherwise proceed with joining geoApi definitionClauses
+                defClause = self.toggleList
+                    .map(toggle => toggle.query)
                     .filter(q => q !== null)
                     .join(' OR ');
             }
 
-            // determine query definition based on symbology and table queries
-            let fullDef = self.block.tableDefinitionQuery
-                ? defClause
-                    ? `(${self.block.tableDefinitionQuery}) AND (${defClause})`
-                    : self.block.tableDefinitionQuery
-                : defClause;
+            if (triggerFilter) {
+                applySymbolFilter(defClause);
+                self.block._symbolVisibilityChanged.next();
 
-            // save `definitionClause` on layerRecord (do not delete important for accurate identify results)
-            layerRecord.definitionClause = defClause;
-
-            // apply to block so changes reflect on map
-            if (setDefinitionQuery) {
-                setTableDefinition(fullDef, defClause);
+                // Turn off layer if all symbols are unchecked
+                let noSymb = noSymbolsVisible();
+                if (noSymb) {
+                    self.block.visibility = false;
+                } else if (!noSymb && self.block.visibility === false) {
+                    self.stackToggled = true;
+                    self.block.visibility = true;
+                }
             }
 
-            if (noSymbolsVisible()) {
-                self.block.visibility = false;
-            } else if (self.block.visibility === false) {
-                self.stackToggled = true;
-                self.block.visibility = true;
+            // TODO this appears to handle a checkevent prior to layer loading, and will notify API observables that
+            //      the symbol visibility changed after the layer loads
+            //      confused why this only triggers if definition clause is undefined (now '');
+            //      that would indiicate we only trigger symbolVisibilitychanged when all are set to visible.  i think
+            //      we should be triggering visibility changes any time it changes.
+            //      might also want to wrap this inside the triggerFilter, to avoid calling it when
+            //      things are being setup.
+            //      need to consult API people on how to best call _symbolVisibilityChanged.next();
+            /*
+            if (defClause === '') {
+                if (self.block.validOIDs === undefined) {
+                    const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
+                        if (state === 'rv-loaded') {
+                            self.block._symbolVisibilityChanged.next();
+                            proxyLoaded();
+                        }
+                    });
+                }
             }
+            */
         };
+
+        //wire in a hook to the SymbologyStack item!
+        if (self.symbology) {
+            self.symbology.toggleList = self.toggleList;
+            self.symbology.onToggleClick = self.onToggleClick;
+        }
 
         const ref = {
             isReady: false,
@@ -289,13 +290,13 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
                 // A layer can have `toggleSymbology` set to false in the config, in which case we don't create checkboxes.
                 // If a dynamic is a raster layer the symbology toggles do nothing so they should be disabled
-                // TODO: Use a constant for 'esriRaster' - Geo.Service.Types is pretty much wrong and unused
+                // TODO check if we need to add file-based stuff here
                 if (
                     layerRecord &&
-                    (layerRecord.layerType === 'esriDynamic' || layerRecord.layerType === 'esriFeature') &&
+                    (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC || layerRecord.layerType === Geo.Layer.Types.ESRI_FEATURE) &&
                     layerRecord.config.toggleSymbology &&
                     self.symbology.stack.length > 1 &&
-                    self.symbology._proxy.layerType !== 'esriRaster'
+                    self.symbology._proxy.layerType !== Geo.Layer.Types.ESRI_RASTER
                 ) {
                     const drawPromises = self.symbology.stack.map(s => s.drawPromise);
 
@@ -304,14 +305,14 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         self.symbology.stack.forEach(s => {
                             if (s.definitionClause) {
                                 // If the symbol doesn't have a query it shouldn't be a toggle symbol
-                                self.toggleList[s.name] = new ToggleSymbol(s);
+                                const toggle = new ToggleSymbol(s);
+                                s.toggle = toggle;
+                                self.toggleList.push(toggle);
 
                                 // toggle list gets generated each time block is reloaded, make sure check boxes and definition queries actually match the toggle list
-                                const query = self.block.visibility ? undefined : '1=2';
-                                const keys = Object.keys(self.toggleList);
-                                keys.forEach(key => {
-                                    if (self.toggleList[key].isSelected !== self.block.visibility) {
-                                        self.onToggleClick(key, false);
+                                self.toggleList.forEach((toggle) => {
+                                    if (toggle.isSelected !== self.block.visibility) {
+                                        self.onToggleClick(toggle, false);
                                     }
                                 });
                             }
@@ -839,7 +840,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
          * @param {number} value
          */
         function updateContainerWidth(value) {
-            if (self.isExpanded && Object.keys(self.toggleList).length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) {
+            if (self.isExpanded && self.toggleList.length > 0 && ref.expandTimeline && !ref.expandTimeline.isActive()) {
                 self.symbologyWidth = value;
                 scope.$applyAsync();
             }
@@ -847,7 +848,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
     }
 }
 
-function symbologyStack($q, ConfigObject, gapiService) {
+function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
     class SymbologyStack {
         /**
          * Creates a new symbology stack. All parameters are options and if none is supplied, an empty stack will be created.
@@ -941,6 +942,7 @@ function symbologyStack($q, ConfigObject, gapiService) {
 
         set expanded(value) {
             this._expanded = value;
+            $rootScope.$applyAsync();
         }
     }
 

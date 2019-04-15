@@ -1,1 +1,0 @@
-mapInstance.doubleClick.subscribe(e => confirm('We detected a double click, but you may have just clicked twice slowly. Proceed anyways?'));

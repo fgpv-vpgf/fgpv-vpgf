@@ -582,7 +582,7 @@
             });
         }
         function help() {
-            const map = RZ.mapById('fgpmap');
+            const map = RAMP.mapById('fgpmap');
             map.help();
         }
     </script>

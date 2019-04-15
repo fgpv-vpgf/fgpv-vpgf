@@ -34,27 +34,20 @@ function rvTableDefaultMenu(layoutService) {
     }
 }
 
-function Controller($scope, stateManager, events, tableService, appInfo, $rootScope, referenceService) {
+function Controller($scope, stateManager, events, appInfo, $rootScope) {
     'ngInject';
     const self = this;
 
     self.setMode = setMode;
     self.tableMode = stateManager.state.table.morph;
-    self.applyFilter = tableService.setActive; // use by filter by extent
-    self.filter = tableService.filter;
-    self.showFilters = showFilters;
+    self.applyFilter = angular.noop; // use by filter by extent
+    self.filter = {};
     self.dataPrint = dataPrint;
     self.dataExportCSV = dataExportCSV;
     self.appID = appInfo.id;
 
     // check if filter size is modified from outside this directive and apply the filter mode. This can happen if config table wants the panel maximize on open.
     $rootScope.$watch(() => stateManager.state.table.morph, val => { self.tableMode = val });
-
-    function showFilters() {
-        stateManager.display.table.data.filter.isOpen = self.filter.isOpen; // set on layer so it will persist when we switch between layers
-        // always show filters if settings panel is open
-        referenceService.isFiltersVisible = tableService.isSettingOpen ? true : stateManager.display.table.data.filter.isOpen;
-    }
 
     function setMode(mode) {
         const requester = stateManager.display.table.requester;

@@ -21,6 +21,7 @@ const THROTTLE_TIMEOUT = 3000;
  */
 angular.module('app.geo').factory('layerRegistry', layerRegistryFactory);
 
+// eslint-disable-next-line max-statements
 function layerRegistryFactory(
     $rootScope,
     $filter,
@@ -48,6 +49,7 @@ function layerRegistryFactory(
         removeBoundingBoxRecord,
 
         synchronizeLayerOrder,
+        syncApiElementOrder,
         getRcsLayerIDs
     };
 
@@ -78,7 +80,7 @@ function layerRegistryFactory(
         map.instance.addLayer(layerRecord._layer);
 
         const simpleLayer = new SimpleLayer(layerRecord, map);
-        mapApi._simpleLayer = simpleLayer;
+        mapApi.simpleLayerObj = simpleLayer;
         _initializeLayerObservables(simpleLayer);
         _setHover(layerRecord, simpleLayer);
 
@@ -119,6 +121,27 @@ function layerRegistryFactory(
             configService.getSync.map.instance.removeLayer(layerRecord._layer);
             _removeLayerFromApiMap(layerRecord);
         };
+
+        configService.getSync.map.instance.synchronizeLayerOrder = () => {
+            synchronizeLayerOrder();
+        }
+    });
+
+    // listen for filter changes. inspect if they are relevant and apply to target layer if they are
+    events.$on(events.rvFilterChanged, (_, params) => {
+        // Don't react to extent filters. Layer is auto-filtered by extent just by being on the map.
+        if (params.filterType !== 'extent') {
+            // see if the layer exists and is active
+            const layerRecord = getLayerRecord(params.layerID);
+            if (layerRecord && layerRecord.isActiveState) {
+                // tell geoApi to have the layer apply its filter to itself on the map
+                if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
+                    layerRecord.applyFilterToLayer(params.layerIdx);
+                } else {
+                    layerRecord.applyFilterToLayer();
+                }
+            }
+        }
     });
 
     /**
@@ -267,6 +290,7 @@ function layerRegistryFactory(
 
         if (layerRecord.state === Geo.Layer.States.LOADED) {
             layerRecord.removeAttribListener(_onLayerAttribDownload);
+            layerRecord.removeFilterListener(_onLayerFilterChange);
         }
         _removeLayerFromApiMap(layerRecord);
 
@@ -373,6 +397,13 @@ function layerRegistryFactory(
         // normal situation
         layerRecord.addStateListener(_onLayerRecordInitialLoad);
         layerRecord.addAttribListener(_onLayerAttribDownload);
+
+        if (layerRecord.addFilterListener !== undefined) {
+            // not possible to addFilterListener for tile records, wms records and image records
+            // tile records, wms records and image records don't support datatables so they don't need this listener
+            layerRecord.addFilterListener(_onLayerFilterChange);
+        }
+
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount++;
 
@@ -478,7 +509,6 @@ function layerRegistryFactory(
                 break;
 
             case 'rv-loaded':
-                console.log('rv-loaded', layerRecord, state);
                 // clear up the error timeout delay if any
                 common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
 
@@ -602,6 +632,8 @@ function layerRegistryFactory(
             mapBody.reorderLayer(highlightLayer, featureStackLastIndex);
         }
 
+        syncApiElementOrder();
+
         /**
          * A helper function which synchronizes a single sort group of layers between the layer selector and internal layer stack.
          *
@@ -648,6 +680,27 @@ function layerRegistryFactory(
         }
     }
 
+    /**
+     * A helper function which synchronizes the order of the api elements
+     *
+     * @function syncApiElementOrder
+     * @private
+     */
+    function syncApiElementOrder() {
+        const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
+        const legendElements = mapApi.ui.configLegend.children;
+        let reorderedElements = [];
+        legendEntries.forEach((entry, index) => {
+            entry = entry.collapsed ? entry.entries[0] : entry;
+            if (entry !== legendElements[index]._legendBlock) {
+                const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
+                if (element) {
+                    reorderedElements.push(legendElements[index]);
+                    legendElements[index] = element;
+                }
+            }
+        });
+    }
     /**
      * // TODO: make a wrapper for the bounding box layer
      *
@@ -1034,7 +1087,6 @@ function layerRegistryFactory(
      * @param {LayerRecord} layerRecord a layerRecod whose id is used to trigger observable
      * @param {String} idx index of the layer whose attribtues were downloaded
      * @param {Object} attribs the attributes that were downloaded
-     * @private
      */
     function _onLayerAttribDownload(layerRecord, idx, attribs) {
         let configLayer;
@@ -1049,6 +1101,17 @@ function layerRegistryFactory(
         if (configLayer) {
             configLayer.fetchAttributes();
         }
+    }
+
+    /**
+     * Listens for filter changes on a layer, converts it to an angular event
+     *
+     * @function _onLayerFilterChange
+     * @private
+     * @param {Object} params event parameters from geoApi event
+     */
+    function _onLayerFilterChange(params) {
+       events.$broadcast(events.rvFilterChanged, params);
     }
 
     /**

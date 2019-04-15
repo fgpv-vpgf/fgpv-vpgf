@@ -36,10 +36,16 @@ function rvMetadataContent($rootScope, $compile, $translate, tocService) {
         // with rv-truncate directive.
         const maxTextLength = attr.maxTextLength > 0 ? attr.maxTextLength : 0;
         scope.$watch('self.display.data', metadataPackage => {
-            // abort if there is no document fragment or if we know the metadata is not valid and has thrown an error
-            if (!metadataPackage || !tocService.validMetadata) {
+
+            // clear previous metadata
+            el[0].innerHTML = "";
+
+            if (!metadataPackage) {
                 const image = '<rv-failure-image></rv-failure-image>';
-                el.append($compile(image)($rootScope.$new()));
+                if(!(el[0].childNodes[0] !== undefined && el[0].childNodes[0].localName === 'rv-failure-image')){
+                    // prevent double sad canadas
+                    el.append($compile(image)($rootScope.$new()));
+                }
                 return;
             }
 
@@ -76,6 +82,5 @@ function rvMetadataContent($rootScope, $compile, $translate, tocService) {
 function Controller(stateManager) {
     'ngInject';
     const self = this;
-
     self.display = stateManager.display.metadata;
 }

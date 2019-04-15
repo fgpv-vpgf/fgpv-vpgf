@@ -11,6 +11,7 @@ const WrapperPlugin         = require('wrapper-webpack-plugin');
 const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const WebpackShellPlugin    = require('webpack-shell-plugin');
 
 const babelPresets = {
     presets: ['env', 'stage-2'],
@@ -28,6 +29,7 @@ module.exports = function (env) {
 
     const config = {
         entry: {
+            'legacy-api': path.resolve(__dirname, 'src/legacy-api.ts'),
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js')
         },
 
@@ -64,7 +66,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.ts$/,
-                    include: [path.resolve(__dirname, 'intention'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app')],
+                    include: [path.resolve(__dirname, 'features'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/legacy-api.ts')],
                     use: [{
                         loader: 'babel-loader',
                         options: babelPresets
@@ -76,8 +78,7 @@ module.exports = function (env) {
                     test: /\.s?[ac]ss$/,
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
-                        {loader: 'css-loader', options: {
-                            minimize: env.prod}},
+                        {loader: 'css-loader'},
                             {
                                 loader: 'resolve-url-loader'
                               },
@@ -102,6 +103,10 @@ module.exports = function (env) {
         plugins: [
             new MiniCssExtractPlugin({
                 filename: "rv-styles.css"
+            }),
+
+            new WebpackShellPlugin({
+                onBuildStart: ['bash scripts/pluginSamples.sh']
             }),
 
             new CopyWebpackPlugin([{
@@ -137,14 +142,14 @@ module.exports = function (env) {
         ],
 
         resolve: {
-            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'intention/node_modules')],
+            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'features/node_modules')],
             alias: {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
                 jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
                 api: path.resolve(__dirname, 'api/src/'),
                 src: path.resolve(__dirname, 'src/'),
                 app: path.resolve(__dirname, 'src/app/'),
-                intention: path.resolve(__dirname, 'intention/')
+                features: path.resolve(__dirname, 'features/')
             },
             extensions: ['.ts', '.js', 'css', 'scss']
         },

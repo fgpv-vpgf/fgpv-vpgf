@@ -16,9 +16,12 @@ angular
         'app.ui',
         'app.layout'
     ])
-    .config(($compileProvider, $mdInkRippleProvider, $mdAriaProvider) => {
-        // to improve IE performance disable ripple effects globally and debug info
-        if (RV.isIE) {
+    .config(($mdInkRippleProvider, $provide, $controllerProvider) => {
+        $provide.value('$controllerProvider', $controllerProvider);
+        
+        // appInfo.isIE11 is not available before the application has run
+        if (!!window.MSInputMethodContext && !!document.documentMode) {
+            // to improve IE performance disable ripple effects globally and debug info
             $mdInkRippleProvider.disableInkRipple();
         }
     });

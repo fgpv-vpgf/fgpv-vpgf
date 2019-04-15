@@ -20,7 +20,7 @@ import { BaseGeometry } from 'api/geometry';
 import Map from 'api/map';
 import { RV } from './index';
 
-const layerTypes = {
+export const layerTypes = {
     ESRI_GRAPHICS: 'esriGraphics',
     ESRI_DYNAMIC: 'esriDynamic',
     ESRI_FEATURE: 'esriFeature',
@@ -155,7 +155,7 @@ export class BaseLayer {
     }
 
     /** Forces an attribute download. Function implementation in subclasses. */
-    fetchAttributes(): void {}
+    fetchAttributes(): void { }
 
     /** Sets the attribute object to value provided using the attributeKey. */
     setAttributes(attributeKey: number, value: Object): void;
@@ -421,6 +421,11 @@ export class BaseLayer {
         }
     }
 
+    // use of the following property is unsupported by ramp team.
+    // it is provided for plugin developers who want to write advanced geo functions
+    // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
+    get esriLayer () { return this._viewerLayer.esriLayer; }
+
     // /** Exports the layer to a GeoJSON object.
     //  *
     //  * TODO: complete this function.
@@ -453,6 +458,10 @@ export class ConfigLayer extends BaseLayer {
     _catalogueUrl: string;
     /** @ignore */
     _layerType: string;
+    /** @ignore */
+    _table: any;
+    /** @ignore */
+    attributeHeaders: any;
 
     /**
      * Requires a map instance where the layer is added and viewer layer record.
@@ -472,6 +481,7 @@ export class ConfigLayer extends BaseLayer {
         if (attribs) {
             attribs
                 .then((attrib: AttribObject) => {
+
                     // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
                     if (this._attributeArray.length > 0) {
                         return;
@@ -507,6 +517,11 @@ export class ConfigLayer extends BaseLayer {
     /** Returns the underlying layer type such as esriFeature, esriDynamic, and ogcWms. */
     get type(): string {
         return this._layerType;
+    }
+
+    /** Returns the table node that contains all table info for the layer */
+    get table(): any {
+        return this._table;
     }
 
     /** Returns the name of the key being used for the attributes OID field. */
@@ -570,17 +585,58 @@ export class ConfigLayer extends BaseLayer {
 
         this._layerType = layerRecord.config.layerType;
 
+        this.attributeHeaders = {};
+        let configHeaders: any = {};
+
+        //create column headings for dynamic layers
         if (this._layerType === layerTypes.ESRI_DYNAMIC) {
             this._layerIndex = layerIndex;
             this._layerProxy = layerRecord.getChildProxy(layerIndex);
-        } else {
+
+            //get any column titles supplied in the config
+            this._layerProxy._source._parent.initialConfig._layerEntries.forEach((layerEntry: any) => {
+                layerEntry._table._columns.forEach((column: any) => {
+                    configHeaders[column.data] = column.title;
+                })
+            })
+
+            this._layerProxy._source._layerPackage.layerData.then((value: any) => {
+                const fields = value.fields || [];
+                for (let field of fields) {
+                    // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
+                    this.attributeHeaders[field.name] = {
+                        'id': field.name,
+                        'name': configHeaders[field.name] || field.alias || field.name
+                    }
+                }
+            })
+        }
+        //create column headings for non-dynamic layers
+        else {
             this._layerProxy = layerRecord.getProxy();
+
+            //get any column titles supplied in the config
+            if (this._layerProxy._source.initialConfig.table !== undefined) {
+                this._layerProxy._source.initialConfig.table._columns.forEach((column: any) => {
+                    configHeaders[column.data] = column.title;
+                });
+
+                for (let field of this._layerProxy._source._layer.fields) {
+                    // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
+                    this.attributeHeaders[field.name] = {
+                        'id': field.name,
+                        'name': configHeaders[field.name] || field.alias || field.name
+                    }
+                }
+            }
+
         }
 
         this._viewerLayer = layerRecord;
         this._id = layerRecord.config.id;
         this._name = layerRecord.config.name;
         this._catalogueUrl = layerRecord.config.catalogueUrl || '';
+        this._table = layerRecord.config.table;
 
         this._opacity = this._layerProxy.opacity;
         this._visibility = this._layerProxy.visibility;
@@ -595,7 +651,7 @@ export class ConfigLayer extends BaseLayer {
  * @example #### Draw a point for a SimpleLayer<br><br>
  *
  * ```js
- * const pointGeo = new RZ.GEO.Point('myPoint', 'www.someImage.com/abc.svg', [81, 79 ]);
+ * const pointGeo = new RAMP.GEO.Point('myPoint', 'www.someImage.com/abc.svg', [81, 79 ]);
  * mySimpleLayer.addGeometry(pointGeo);
  * ```
  */
@@ -800,7 +856,7 @@ export class SimpleLayer extends BaseLayer {
  *   "url": "http://example.com/MapServer/URL"
  * };
  *
- * const myConfigLayer = RZ.mapById('<mapID>').layers.addLayer(layerJSON);
+ * const myConfigLayer = RAMP.mapById('<mapID>').layers.addLayer(layerJSON);
  * ```
  */
 export class LayerGroup {
@@ -825,6 +881,7 @@ export class LayerGroup {
     _attributesRemoved: Subject<LayerAndAttribs>;
 
     _click: Subject<BaseLayer>;
+    _reload: Subject<BaseLayer>;
 
     /** @ignore */
     _identify: Subject<any>;
@@ -841,6 +898,7 @@ export class LayerGroup {
         this._attributesRemoved = new Subject();
 
         this._click = new Subject();
+        this._reload = new Subject();
         this._identify = new Subject<any>();
     }
 
@@ -895,6 +953,14 @@ export class LayerGroup {
      */
     get click(): Observable<BaseLayer> {
         return this._click.asObservable();
+    }
+
+    /**
+     * Emits whenever a layer is reloaded.
+     * @event reload
+     */
+    get reload(): Observable<BaseLayer> {
+        return this._reload.asObservable();
     }
 
     /**
@@ -1019,7 +1085,7 @@ export class LayerGroup {
      * @example <br><br>
      *
      * ```js
-     * const listOfConfigLayers = mapInstance.layers.getLayersByType(RZ.LAYERS.ConfigLayer);
+     * const listOfConfigLayers = mapInstance.layers.getLayersByType(RAMP.LAYERS.ConfigLayer);
      * ```
      */
     getLayersByType(type: ConfigLayer | SimpleLayer): Array<BaseLayer> {

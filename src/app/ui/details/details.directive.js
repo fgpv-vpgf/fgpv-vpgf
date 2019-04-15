@@ -68,6 +68,9 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             return;
         }
 
+        if (item) {
+            detailService.mApi.panels.details.header.title = item.requester.proxy.name;
+        }
         self.selectedItem = item;
         self.selectedLayerProxy = item ? item.requester.proxy : null;
 
@@ -81,6 +84,12 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
+
+            if (newValue.length > 1) {
+                detailService.mApi.panels.details.header._header.addClass('rv-has-layer-list');
+            } else {
+                detailService.mApi.panels.details.header._header.removeClass('rv-has-layer-list');
+            }
 
             const previouslySelected = findPreviouslySelected(newValue);
             if (previouslySelected) {
@@ -105,6 +114,9 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                     selectItem(item);
                 });
             }
+
+            detailService.mApi.panels.details.open();
+            detailService.mApi.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
 
             // wrap symbology returned by the proxy into a symbology stack object
             newValue.forEach(item =>

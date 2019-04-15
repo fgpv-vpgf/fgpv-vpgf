@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+
+<body style="padding:20px;">
+    <h1> ConfigLegend Tests -
+        <span style="color:blue"> Children and Positioning Tests </span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:3
+        20%; height:700px; padding:10px; overflow-y:scroll; background-color:lightgrey; border:solid;" class="column">
+            <div style="padding:10px">
+                <p>
+                    <b>Test 1:</b> Output should match Layer Names on the legend.</p>
+                <button id="Children">Get Children</button>
+                <textarea id="ChildrenOut" rows="4" cols="50"></textarea>
+                <br>
+                <p>
+                    <b>Test 2:</b>
+                </p>
+                <ul>
+                    <li>The id of the returned property should be node_1.</li>
+                    <li>It should have a name matching something on the legend.</li>
+                </ul>
+                <button id="ByID">Get By ID</button>
+                <textarea id="ByIDOut" rows="4" cols="30"></textarea>
+                <br>
+                    <p>
+                        <b>Test 3:</b>
+                        <i>Natural Gas Pipeline</i> and
+                        <i>Electric Transmission Line</i> should switch places in the legend</p>
+                    <button id="Position">Update Layer Position</button>
+                    <br>
+                <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                    crossorigin="anonymous"></script>
+                <script src="children-tests.js"></script>
+            </div>
+        </div>
+</body>

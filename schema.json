@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "FGPV Config Schema",
+    "title": "Fgpv Config Schema",
     "type": "object",
     "version": 2.3,
     "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
@@ -475,6 +475,16 @@
                     "type": "array",
                     "items": { "$ref": "#/definitions/columnNode" },
                     "description": "Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled."
+                },
+                "searchStrictMatch": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect."
+                },
+                "printEnabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if print button is available on the datatable. Defaults to false."
                 }
             },
             "description": "Specifies how layers columns and global search are set",
@@ -530,7 +540,7 @@
                 "type": {
                     "type": "string",
                     "enum": [ "string", "number", "date", "selector" ],
-                    "description": "Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails."
+                    "description": "Specifies the filter type to use. Mainly used to change default text filters to selector filters if the user wishes."
                 },
                 "value": {
                     "type": "string",
@@ -886,23 +896,7 @@
                     }
                 },
                 "scaleBar": { "type": "object" },
-                "basemap": { "type": "object" },
-                "areaOfInterest": {
-                     "type": "object",
-                     "items": {
-                         "type": "object",
-                         "properties": {
-                            "title": { "type": "string" },
-                            "xmin": { "type": "number", "description": "The xmin coord value (lower left corner) in lat/long" },
-                            "ymin": { "type": "number", "description": "The ymin coord value (lower left corner) in lat/long" },
-                            "xmax": { "type": "number", "description": "The xmax coord value (upper right corner) in lat/long" },
-                            "ymax": { "type": "number", "description": "The ymax coord value (upper right corner) in lat/long" },
-                            "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the area of interest selector." }
-                        },
-                        "required": [ "title", "xmin", "ymin", "xmax", "ymax", "thumbnailUrl" ]
-                      },
-                    "default": []
-                }
+                "basemap": { "type": "object" }
             },
             "additionalProperties": false
         },
@@ -1104,19 +1098,6 @@
                 }
             },
             "required": [ "tileSchemas", "baseMaps" ]
-        },
-
-        "intentions": {
-            "type": "object",
-            "description": "Enable/Disable intentions or replace with your own implementation",
-            "properties": {
-                "epsg": {
-                    "description": "intention for EPSG Lookup",
-                    "type": "string",
-                    "default": "none"
-                }
-            },
-            "additionalProperties": false
         }
     },
 

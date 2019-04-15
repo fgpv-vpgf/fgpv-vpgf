@@ -50,15 +50,6 @@ import './export/export-size.class.js';
 import './export/export-sizes.service.js';
 import './export/export.service.js';
 
-import './table/table-default-menu.directive.js';
-import './table/table-default.directive.js';
-import './table/table-definition.directive.js';
-import './table/table-number-only.directive.js';
-import './table/table-search.directive.js';
-import './table/table-setting-cluster.directive.js';
-import './table/table-setting-panel.directive.js';
-import './table/table.service.js';
-
 import './geosearch/geosearch-bar.directive.js';
 import './geosearch/geosearch-bottom-filters.directive.js';
 import './geosearch/geosearch-filters.service.js';
@@ -82,14 +73,15 @@ import './mapnav/mapnav.directive.js';
 import './mapnav/mapnav.service.js';
 
 import './metadata/metadata-content.directive.js';
-import './metadata/metadata-expand.directive.js';
 import './metadata/metadata-panel.directive.js';
+import './metadata/metadata.run.js';
 
 import './panels/content-pane.directive.js';
 import './panels/panel.directive.js';
 
 import './settings/settings-content.directive.js';
 import './settings/settings.directive.js';
+import './settings/settings.run.js';
 
 import './sidenav/menulink.directive.js';
 import './sidenav/sidenav.directive.js';
@@ -105,8 +97,6 @@ import './toc/legend-flag.directive.js';
 import './toc/symbology-stack.directive.js';
 import './toc/toc.directive.js';
 import './toc/toc.service.js';
-
-import './toolbox/toolbox.directive.js';
 
 import './tooltip/tooltip.directive.js';
 import './tooltip/tooltip.service.js';

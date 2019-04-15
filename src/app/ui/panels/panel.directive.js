@@ -1,9 +1,5 @@
-import { Panel } from 'api/ui';
-
 const templateUrls = {
-    table: require('./table-panel.html'),
     main: require('./main-panel.html'),
-    other: require('./other-panel.html'),
     side: require('./side-panel.html')
 };
 
@@ -13,7 +9,7 @@ const templateUrls = {
  * @memberof app.ui
  * @description
  *
- * The `rvPanel` directive is reused by all the core panels of the viewer; main, side and table.
+ * The `rvPanel` directive is reused by all the core panels of the viewer; main, and side.
  *
  * HTML example:
  * <rv-panel type="main" close-button="false"></rv-panel>
@@ -22,7 +18,7 @@ angular
     .module('app.ui')
     .directive('rvPanel', rvPanel);
 
-function rvPanel(referenceService, stateManager, debounceService, events) {
+function rvPanel(referenceService, stateManager, debounceService) {
     const directive = {
         restrict: 'E',
         templateUrl: function (element, attr) {
@@ -55,16 +51,6 @@ function rvPanel(referenceService, stateManager, debounceService, events) {
         referenceService.panels[pName] = element;
 
         self.closePanel = self.closeButton !== 'false' ? closePanel() : undefined;
-
-        events.$on(events.rvApiMapAdded, (_, mapi) => {
-            const panelObj = new Panel(pName, element.find('> div').first());
-            panelObj.stateObservable.subscribe(open => {
-                stateManager.setActive({[pName]: open});
-                scope.$applyAsync();
-            });
-
-            mapi.ui.panels.add(panelObj);
-        });
 
         /**
          * Temporary function to close the panel.

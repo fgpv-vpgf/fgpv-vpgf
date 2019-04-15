@@ -174,6 +174,10 @@ function LegendBlockFactory(
             return this._lastState;
         }
 
+        get isActiveState() {
+            return this._proxy ? this._proxy.activeState : false;
+        }
+
         get name() {
             return this._proxy ? this._proxy.name : this._layerConfig.name;
         }
@@ -223,9 +227,14 @@ function LegendBlockFactory(
             this._proxyCheck();
             return this._proxy.queryUrl;
         }
-        get query() {
+        // TODO pick better name.  using filterState due to current collision with other config-based .filter getter
+        get filterState() {
             this._proxyCheck();
-            return this._proxy.query;
+            return this._proxy.filter;
+        }
+
+        get query() {
+            return this._proxy ? this._proxy.query : this._layerConfig.state.query;
         }
 
         get snapshot() {
@@ -298,24 +307,6 @@ function LegendBlockFactory(
             this._layerConfig.state.boundingBox = value;
         }
 
-        /**
-         * Set definition query to filter feature layer or dynamic layer
-         *
-         * @param {String} value the definition query to set
-         */
-        set definitionQuery(value) {
-            // the proxy has not resolved yet; retry when resolved;
-            if (!this._proxyCheck(() => (this.setDefinitionQuery = value))) {
-                return;
-            }
-            //only setDefinitionQuery once this._proxy has loaded
-            const proxyLoaded = $rootScope.$watch(() => this._proxy.state, (state, oldState) => {
-                if (state === 'rv-loaded') {
-                    this._proxy.setDefinitionQuery(value);
-                    proxyLoaded();
-                }
-            });
-        }
 
         /**
          * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
@@ -403,6 +394,9 @@ function LegendBlockFactory(
             return this._layerConfig.state.userAdded;
         }
 
+        // find whos calling this. determine if still relevant. attempt to port to new filter regime
+        // might want to use this.filterState.isActive() which returns boolean.
+        // See https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3263#issuecomment-460794432 for further analysis on this
         /**
          * Returns the value of the `filter` state flag.
          *
@@ -411,6 +405,7 @@ function LegendBlockFactory(
         get filter() {
             return this._layerConfig.filter;
         }
+
         set filter(value) {
             this._layerConfig.filter = value;
         }
@@ -688,7 +683,7 @@ function LegendBlockFactory(
             this._selectedChanged.next(value);
         }
 
-        get selectedChanged(){
+        get selectedChanged() {
             return this._selectedChanged.asObservable();
         }
 
@@ -729,6 +724,7 @@ function LegendBlockFactory(
 
             this._aggregateStates = ref.aggregateStates;
             this._visibilityChanged = new Subject();
+            this._symbolVisibilityChanged = new Subject();
 
             this._symbologyStack = new SymbologyStack(
                 this.proxyWrapper.proxyPromise,
@@ -760,6 +756,7 @@ function LegendBlockFactory(
                 }
             );
 
+            // TODO grid plugin should have better way of hiding rows if grid is invisible. should not be tied to symbology
             // applies visibility settings to grid
             if (!this.visibility) {
                 this.symbDefinitionQuery = '1=2';
@@ -888,15 +885,14 @@ function LegendBlockFactory(
             return this.proxyWrapper.visibility;
         }
         set visibility(value) {
-            if (value === this.visibility) {
-                return;
-            }
 
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
 
             this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.visibility = value));
+
+            updateLegendElementVisibility(this);
 
             // hide bounding box when the layer goes invisible
             if (!value) {
@@ -910,6 +906,10 @@ function LegendBlockFactory(
             return this._visibilityChanged.asObservable();
         }
 
+        get symbolVisibilityChanged() {
+            return this._symbolVisibilityChanged.asObservable();
+        }
+
         get opacity() {
             return this.proxyWrapper.opacity;
         }
@@ -919,6 +919,8 @@ function LegendBlockFactory(
             }
 
             this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.opacity = value));
+
+            updateLegendElementOpacity(this);
         }
 
         // since query is applied only on the main proxy wrapper, we don't need to do an extra check if this control is available; it will be checked in the proxy wrapper
@@ -927,15 +929,8 @@ function LegendBlockFactory(
         }
         set query(value) {
             this.proxyWrapper.query = value;
-        }
 
-        /**
-         * Set definition query to filter feature layer or dynamic layer
-         *
-         * @param {String} value the definition query to set
-         */
-        set definitionQuery(value) {
-            this.proxyWrapper.definitionQuery = value;
+            updateLegendElementQueryable(this);
         }
 
         get snapshot() {
@@ -1004,15 +999,21 @@ function LegendBlockFactory(
             return this.proxyWrapper.userAdded;
         }
 
+        // TODO find whos calling this. determine if still relevant. attempt to port to new filter regime
         get filter() {
             return this.proxyWrapper.filter;
         }
+
         set filter(value) {
             this.proxyWrapper.filter = value;
         }
 
         get queryUrl() {
             return this.proxyWrapper.queryUrl;
+        }
+
+        setLoadingPanel(loadingPanel) {
+            this.loadingPanel = loadingPanel;
         }
 
         get formattedData() {
@@ -1040,12 +1041,18 @@ function LegendBlockFactory(
             let updateValue = 0; // randomized update value
 
             this._derivedLoadedFeatureCount = 0;
+            if (this.loadingPanel !== undefined) {
+                this.loadingPanel.open();
+            }
 
             const stopInterval = common.$interval(() => {
                 updateCount = chunkLoadTime / updateDelta;
                 maximumUpdateValue = (chunkSize / updateCount) * 2;
                 updateValue = Math.random() * maximumUpdateValue;
                 this._derivedLoadedFeatureCount += updateValue;
+                if (this.loadingPanel !== undefined) {
+                    this.loadingPanel.prepareBody();
+                }
 
                 timeSinceChunkLoad += updateDelta;
 
@@ -1073,7 +1080,9 @@ function LegendBlockFactory(
                         this._derivedLoadedFeatureCount,
                         this._proxyWrapper.loadedFeatureCount
                     );
-
+                    if (this.loadingPanel !== undefined) {
+                        this.loadingPanel.prepareBody();
+                    }
                     // if the estimate overshoots the total feature count, set it to the total feature count
                     // if the estimate is somehow less than 0, set it to 0
                     // this is to prevent the value display to be in the negatives or higher than the total amount required to load
@@ -1082,9 +1091,14 @@ function LegendBlockFactory(
                     } else if (this._derivedLoadedFeatureCount < 0) {
                         this._derivedLoadedFeatureCount = 0;
                     }
+                    if (this.loadingPanel !== undefined) {
+                        this.loadingPanel.prepareBody();
+                    }
                 }
             }, updateDelta);
-
+            if (this.loadingPanel !== undefined) {
+                this.loadingPanel.prepareBody();
+            }
             return stopInterval;
         }
 
@@ -1369,6 +1383,8 @@ function LegendBlockFactory(
 
             this._activeEntries.forEach(entry => (entry.visibility = value));
 
+            updateLegendElementVisibility(this);
+
             return this;
         }
 
@@ -1388,6 +1404,8 @@ function LegendBlockFactory(
             }
 
             this._activeEntries.forEach(entry => (entry.query = value));
+
+            updateLegendElementQueryable(this);
 
             return this;
         }
@@ -1432,6 +1450,8 @@ function LegendBlockFactory(
 
             this._activeEntries.forEach(entry => (entry.opacity = value));
 
+            updateLegendElementOpacity(this);
+
             return this;
         }
 
@@ -1440,6 +1460,7 @@ function LegendBlockFactory(
         }
         set expanded(value = !this.expanded) {
             this._expanded = value;
+            $rootScope.$applyAsync();
         }
 
         get entries() {
@@ -1544,11 +1565,7 @@ function LegendBlockFactory(
                 this._selectedEntry = newlySelectedEntry;
             }
 
-            const isAllOff = this._activeEntries.every(entry => !entry.visibility);
-
-            if (isAllOff && this._selectedEntry) {
-                this._selectedEntry.visibility = false;
-            }
+            const anyVisible = this._activeEntries.some(entry => entry.visibility);
 
             // if this visiblity set is collapsed and has active entries,
             // hide all other entries except the selection one (or the first of active entreis if the selection is null)
@@ -1563,7 +1580,7 @@ function LegendBlockFactory(
                 });
             }
 
-            return this._selectedEntry === null ? false : this._selectedEntry.visibility;
+            return anyVisible;
         }
 
         set visibility(value) {
@@ -1576,6 +1593,8 @@ function LegendBlockFactory(
 
                 (this._selectedEntry || this._activeEntries[0]).visibility = true;
             }
+
+            updateLegendElementVisibility(this);
 
             return this;
         }
@@ -1648,6 +1667,54 @@ function LegendBlockFactory(
     };
 
     return service;
+
+    /**
+     * @function updateLegendElementVisibility
+     * @private
+     * @param {LegendBlock} block legend block where visibility is being updated
+     */
+    function updateLegendElementVisibility(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.visibility !== block.visibility) {
+                legendElement._visibilityChanged.next(block.visibility);
+            }
+        }
+    }
+
+    /**
+     * @function updateLegendElementOpacity
+     * @private
+     * @param {LegendBlock} block legend block where opacity is being updated
+     */
+    function updateLegendElementOpacity(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.opacity !== block.opacity) {
+                legendElement._opacityChanged.next(block.opacity);
+            }
+        }
+    }
+
+    /**
+     * @function updateLegendElementQueryable
+     * @private
+     * @param {LegendBlock} block legend block where queryable value is being updated
+     */
+    function updateLegendElementQueryable(block) {
+        let legendElement;
+
+        if (appInfo.mapi) {
+            legendElement = appInfo.mapi.ui.configLegend.getById(block.id);
+            if (legendElement && legendElement.queryable !== block.query) {
+                legendElement._queryableChanged.next(block.query);
+            }
+        }
+    }
 
     /**
      * Checks if the specified controls is visible in the UI.

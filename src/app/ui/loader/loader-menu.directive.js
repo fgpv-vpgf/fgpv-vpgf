@@ -38,20 +38,35 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
     self.openFileLoader = openFileLoader;
     self.openServiceLoader = openServiceLoader;
 
-    /***/
+    // Initialize loader panels
+    let mApi = appInfo.mapi;
+    mApi.panels.fileLoader.body = $('<rv-loader-file></rv-loader-file>');
+    mApi.panels.serviceLoader.body = $('<rv-loader-service></rv-loader-service>');
+    mApi.panels.fileLoader.isCloseable = true;
+    mApi.panels.serviceLoader.isCloseable = true;
+    mApi.panels.fileLoader.allowUnderlay = false;
+    mApi.panels.serviceLoader.allowUnderlay = false;
+    // When legend toggles back open, close the loaders
+    mApi.panels.legend.opening.subscribe(() => {
+        mApi.panels.fileLoader.close();
+        mApi.panels.serviceLoader.close();
+    });
+
+    mApi.panels.fileLoader.opening.subscribe(() => {
+        mApi.panels.fileLoader.appBar.title = 'import.file.title';
+    });
+    mApi.panels.serviceLoader.opening.subscribe(() => {
+        mApi.panels.serviceLoader.appBar.title = 'import.service.title';
+    });
 
     function openFileLoader() {
-        // TODO: hack
-        stateManager.setActive({
-            mainLoaderFile: true
-        }).then(() => { setFocus('rv-loader-file'); });
+        mApi.panels.fileLoader.open();
+        setFocus('#fileLoader');
     }
 
     function openServiceLoader() {
-        // TODO: hack
-        stateManager.setActive({
-            mainLoaderService: true
-        }).then(() => { setFocus('rv-loader-service'); });
+        mApi.panels.serviceLoader.open();
+        setFocus('#serviceLoader');
     }
 
     /**

@@ -74,7 +74,7 @@ div.sm-button {
     min-width: 65px;
 }
 
-rv-panel[type='table'] {
+div[type='table'] {
 
     @include include-size(rv-sm) {
         &.default, &.full, &.attached {
@@ -204,8 +204,7 @@ rv-panel[type='main'] {
         }
     }
 
-    rv-toc,
-    rv-toolbox {
+    rv-toc {
         @include content-plug;
     }
 }

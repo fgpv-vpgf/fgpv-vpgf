@@ -1,7 +1,3 @@
-/* global RV */
-
-import 'svg.textflow.js';
-
 const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 const RETRY_LIMIT = 3;
 
@@ -32,7 +28,8 @@ function exportGenerators(
     graphicsService,
     exportLegendService,
     geoService,
-    mapToolService
+    mapToolService,
+    appInfo
 ) {
     const service = {
         titleGenerator,
@@ -177,7 +174,7 @@ function exportGenerators(
 
         // force `cleanCanvas` on IE11, since it's not possible to right-click-save-as the resulting export image in IE11
         // the clean canvas toggle tells the generator whether or not to omit tainted images, cleanCanvas = true iff omit tainted images
-        const localGeneratorPromise = localGenerate(cleanCanvas || RV.isIE);
+        const localGeneratorPromise = localGenerate(cleanCanvas || appInfo.isIE11);
         let serverGeneratorPromise;
 
         // If exportMapUrl is set, then start the server generation process

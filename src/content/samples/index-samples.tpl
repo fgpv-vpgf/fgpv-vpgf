@@ -78,6 +78,7 @@
         .tool {
             width: 100%;
         }
+
     </style>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
@@ -87,6 +88,7 @@
             <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[index] %>" />
         <% } %>
     <% } %>
+
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -180,6 +182,8 @@
                 <option value="config/config-sample-83.json">83. Mystery config 2</option>
                 <option value="config/config-sample-84.json">84. Local Export + Tainted Images + cleanCanvas option</option>
                 <option value="config/config-sample-85.json">85. File based layers</option>
+                <option value="config/config-sample-86.json">86. API 2 blocks for a single layer</option>
+                <option value="config/config-sample-87.json">87. Enlarge correct symbology from stack</option>
             </select>
         </div>
 
@@ -194,7 +198,7 @@
 
     <button id="hideShow" class="chevron top fade" type="button"></button>
 
-    <div class="myMap" id="sample-map" is="rv-map" rz-gtm
+    <div class="myMap" id="sample-map" is="rv-map" ramp-gtm
         rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
@@ -239,9 +243,8 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
-        RV.getMap('sample-map').registerPlugin(RV.Plugins.AreaOfInterest, 'areaOfInterest');
+        // RV.getMap('sample-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
+        // RV.getMap('sample-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {

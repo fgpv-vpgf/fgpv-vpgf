@@ -13,11 +13,19 @@ angular
     .module('app.core')
     .factory('displayManager', displayManager);
 
-function displayManager($timeout, $q, $rootElement) {
+function displayManager($timeout, $q, $rootElement, configService, events, appInfo) {
     const service = {
         toggleDisplayPanel,
         clearDisplayPanel
     };
+
+    // wire in a hook to toggle details panel, this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.toggleDetailsPanel = (details) => {
+            service.toggleDisplayPanel('mainDetails', details, {}, 1);
+        };
+    });
+
     let stateManager;
     let requestIdCounter = 1;
 
@@ -69,6 +77,7 @@ function displayManager($timeout, $q, $rootElement) {
     function toggleDisplayPanel(panelName, dataPromise, requester = {}, delay = 100) {
         const state = stateManager.state[panelName];
         const displayName = state.display;
+        const panel = appInfo.mapi.panels.getById(panelName);
 
         if (typeof displayName === 'undefined') {
             return $q.reject(); // display for this panel is not defined, exit
@@ -78,11 +87,11 @@ function displayManager($timeout, $q, $rootElement) {
         const requestId = ++requestIdCounter;
         // if specified panel is open ...
         // and the requester id is not undefined or matches to the previous requester id ...
-        if (state.active &&
+        if (panel.isOpen &&
             typeof requester.id !== 'undefined' &&
             display.requester.id === requester.id) {
 
-            return stateManager.setActive(panelName);
+            panel.close();
         } else {
             // cancel previous data retrieval timeout
             $timeout.cancel(display.loadingTimeout);
@@ -99,11 +108,6 @@ function displayManager($timeout, $q, $rootElement) {
                 }, delay);
             }
             let animationPromise = $q.resolve();
-
-            if (!state.active) { // panel is not open; open it
-                display.data = null; // clear data so the newly opened panel doesn't have any content
-                animationPromise = stateManager.setActive(panelName);
-            }
 
             // whenever a panel is opened (or updated) create a focus link between the element which triggered the
             // panel change to the first focusable element in the panel.
@@ -122,10 +126,21 @@ function displayManager($timeout, $q, $rootElement) {
                     const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
                     setDisplay(panelName, requestId, data, isLoaded);
+
+                    if (panel.isClosed) {
+                        // once display is set, reopen panel
+                        panel.open();
+                    }
                 })
                 .catch(err => {
                     $timeout.cancel(display.loadingTimeout);
                     display.isLoading = false;
+                    display.data = null;
+
+                    if (panel.isClosed) {
+                        // if display wasn't able to be built, open with error
+                        panel.open();
+                    }
                     throw err;
                 });
         }

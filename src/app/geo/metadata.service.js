@@ -1,4 +1,5 @@
-import XSLT from 'XSLT/xstyle_default_i18n.xsl';
+import XSLT_en from 'XSLT/xstyle_default_en.xsl';
+import XSLT_fr from 'XSLT/xstyle_default_fr.xsl';
 
 /**
  * @module metadataService
@@ -7,12 +8,9 @@ import XSLT from 'XSLT/xstyle_default_i18n.xsl';
  * @description
  * Retrieves and parses metadata in the format exposed by the data catalogue (TODO link to the spec if available).
  */
-angular
-    .module('app.geo')
-    .factory('metadataService', metadataService);
+angular.module('app.geo').factory('metadataService', metadataService);
 
 function metadataService($q, $http, $translate) {
-
     const cache = {};
 
     const service = {
@@ -22,39 +20,37 @@ function metadataService($q, $http, $translate) {
     return service;
 
     /**
-    * Applies an XSLT to XML, XML is provided but the XSLT is stored in a string constant.
-    *
-    * @method loadFromURL
-    * @param {String} xmlUrl Location of the xml file
-    * @param {Array} params an array which never seems to be set and is never used
-    * @return {Promise} a promise resolving with an HTML fragment
-    */
+     * Applies an XSLT to XML, XML is provided but the XSLT is stored in a string constant.
+     *
+     * @method loadFromURL
+     * @param {String} xmlUrl Location of the xml file
+     * @param {Array} params an array which never seems to be set and is never used
+     * @return {Promise} a promise resolving with an HTML fragment
+     */
     function loadFromURL(xmlUrl, params) {
-        if (cache[xmlUrl]) {
-            return $q.resolve(cache[xmlUrl]);
-        }
+        let XSLT = $translate.use() === 'en-CA' ? XSLT_en : XSLT_fr;
+        XSLT = XSLT.replace(/\{\{([\w\.]+)\}\}/g, (_, tag) => $translate.instant(tag));
 
-        return loadXmlFile(xmlUrl)
-            .then(xmlData => applyXSLT(
-                xmlData,
-                XSLT.replace(/\{\{([\w\.]+)\}\}/g, (_, tag) => $translate.instant(tag)),
-                params))
-            .then(transformedXMLData => {
-                cache[xmlUrl] = transformedXMLData;
-                return transformedXMLData;
+        if (!cache[xmlUrl]) {
+            return loadXmlFile(xmlUrl).then(xmlData => {
+                cache[xmlUrl] = xmlData;
+                return applyXSLT(cache[xmlUrl], XSLT, params);
             });
+        } else {
+            return $q.resolve(applyXSLT(cache[xmlUrl], XSLT, params));
+        }
     }
 
     /**
-    * Transform XML using XSLT
-    * @function applyXSLT
-    * @private
-    * @param {string} xmlString text data of the XML document
-    * @param {string} xslString text data of the XSL document
-    * in IE)}
-    * @param {Array} params a list of paramters to apply to the transform
-    * @return {object} transformed document
-    */
+     * Transform XML using XSLT
+     * @function applyXSLT
+     * @private
+     * @param {string} xmlString text data of the XML document
+     * @param {string} xslString text data of the XSL document
+     * in IE)}
+     * @param {Array} params a list of paramters to apply to the transform
+     * @return {object} transformed document
+     */
     function applyXSLT(xmlString, xslString, params) {
         let output = null;
 
@@ -89,13 +85,14 @@ function metadataService($q, $http, $translate) {
     }
 
     /**
-    * Loads a file via XHR.  Nothing XML specific.
-    * @function loadXmlFile
-    * @param {String} url URL to the file
-    * @return {Promise} promise resolving with the text data of the file
-    */
+     * Loads a file via XHR.  Nothing XML specific.
+     * @function loadXmlFile
+     * @param {String} url URL to the file
+     * @return {Promise} promise resolving with the text data of the file
+     */
     function loadXmlFile(url) {
-        return $http.get(url)
+        return $http
+            .get(url)
             .then(response => response.data)
             .catch(error => {
                 console.error('Metadata XHR request failed.');

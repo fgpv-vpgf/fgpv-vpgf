@@ -9,7 +9,7 @@ angular
     .module('app.layout')
     .factory('referenceService', referenceService);
 
-function referenceService($rootElement, $rootScope) {
+function referenceService($rootElement, $rootScope, events, configService) {
 
     const ref = {
         onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
@@ -39,6 +39,14 @@ function referenceService($rootElement, $rootScope) {
         isFiltersVisible: false
     };
 
+    // wire in a hook to peek at map.
+    // this makes it available on the API
+    events.$on(events.rvMapLoaded, () => {
+        configService.getSync.map.instance.peekAtMap = (externalPanel = undefined) => {
+            service.peekAtMap(externalPanel);
+        };
+    });
+
     return service;
 
     /**
@@ -47,11 +55,16 @@ function referenceService($rootElement, $rootScope) {
      *
      * @function peekAtMap
      */
-    function peekAtMap() {
+    function peekAtMap(externalPanel = undefined) {
         // filter out the shell it's a container for everything
-        const filteredPanels = Object.entries(service.panels)
+        let filteredPanels = Object.entries(service.panels)
             .filter(( [name] ) => name !== 'shell')
             .map(([name, panel]) => panel);
+
+        if(externalPanel !== undefined){
+            // for external panels (for example from plugins) that need this functionality
+            filteredPanels.push(externalPanel);
+        }
 
         // convert panel of jQuery object into a jQuery array
         const jQuerywrappedPanels = angular.element(angular.element.map(filteredPanels, el => el.get() ));

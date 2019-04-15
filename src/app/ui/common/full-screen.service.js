@@ -88,8 +88,11 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         $rootElement.attr('style', `overflow: visible; z-index: ${FULL_SCREEN_Z_INDEX};`);
         shellNode.attr('style', `position: fixed; margin: 0; z-index: ${FULL_SCREEN_Z_INDEX};`);
         angular.element('body').addClass('rv-full-screen');
-        screenfull.toggle(body[0]);
-        onChange();
+
+        if (!screenfull.isFullscreen) {
+            screenfull.toggle(body[0]);
+            onChange();
+        }
     }
 
     /**
@@ -106,9 +109,13 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         $rootElement.attr('style', '');
         shellNode.attr('style', '');
         angular.element('body').removeClass('rv-full-screen');
-        screenfull.toggle(body[0]);
-        onChange();
+
+        if (screenfull.isFullscreen) {
+            screenfull.toggle(body[0]);
+            onChange();
+        }
     }
+
     /**
      * Call center map on change to or out of fullscreen
      *

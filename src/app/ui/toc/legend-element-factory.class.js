@@ -486,7 +486,7 @@ function LegendElementFactory(
 
         get clearAndReload() {
             this.action(0);
-            tocService.reloadLayer(this.block);
+            tocService.reloadLayer(this.block, true);
         }
 
         get value() {

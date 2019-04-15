@@ -1,7 +1,7 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RZ.mapAdded.subscribe(mapi => {
+    RAMP.mapAdded.subscribe(mapi => {
 
         //SETUP:
         // JSON snippet to be added as a ConfigLayer
@@ -204,5 +204,5 @@ $.getScript('../../../../rv-main.js', function () {
         <div id="fgpmap" style="height:700px; width:70%; margin-left:10px" class="column" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/""></div>
     `);
 
-    const mapInstance = new RZ.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
+    const mapInstance = new RAMP.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 });
