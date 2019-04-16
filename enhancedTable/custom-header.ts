@@ -20,12 +20,9 @@ export class CustomHeader {
         this.moveRightButton = this.eGui.querySelector('.move-right');
 
         // progress sort on header title click
-        this.headerButton.addEventListener('click', (event: MouseEvent) => {
-            this.agParams.progressSort(event.shiftKey);
-        });
-        this.headerButton.addEventListener('touchstart', (event: TouchEvent) => {
-            this.agParams.progressSort(event.shiftKey);
-        });
+        let progressSortListener = this.progressSort.bind(this);
+        this.headerButton.addEventListener('click', progressSortListener);
+        this.headerButton.addEventListener('touchstart', progressSortListener);
 
         // move column left or right on button click
         let moveLeftListener = this.moveLeft.bind(this);
@@ -41,6 +38,7 @@ export class CustomHeader {
         // disable first column going left or last column going right
         let onColumnReorderListener = this.onColumnReorder.bind(this);
         this.agParams.column.addEventListener('leftChanged', onColumnReorderListener);
+        this.agParams.tableOptions.api.addEventListener(`columnVisible`, onColumnReorderListener);
     }
 
     getGui(): HTMLElement {
@@ -48,17 +46,14 @@ export class CustomHeader {
     }
 
     destroy(): void {
+        let progressSortListener = this.progressSort.bind(this);
         let moveLeftListener = this.moveLeft.bind(this);
         let moveRightListener = this.moveRight.bind(this);
         let onSortChangedListener = this.onSortChanged.bind(this);
         let onColumnReorderListener = this.onColumnReorder.bind(this);
 
-        this.headerButton.removeEventListener('click', (event: MouseEvent) => {
-            this.agParams.progressSort(event.shiftKey);
-        });
-        this.headerButton.removeEventListener('touchstart', (event: TouchEvent) => {
-            this.agParams.progressSort(event.shiftKey);
-        });
+        this.headerButton.removeEventListener('click', progressSortListener);
+        this.headerButton.removeEventListener('touchstart', progressSortListener);
 
         this.moveLeftButton.removeEventListener('click', moveLeftListener);
         this.moveRightButton.removeEventListener('click', moveRightListener);
@@ -66,6 +61,7 @@ export class CustomHeader {
         this.moveRightButton.removeEventListener('touchstart', moveRightListener);
         this.agParams.column.removeEventListener('sortChanged', onSortChangedListener);
         this.agParams.column.removeEventListener('leftChanged', onColumnReorderListener);
+        this.agParams.tableOptions.api.removeEventListener(`columnVisible`, onColumnReorderListener);
     }
 
     /** Update sort indicator visibility */
@@ -88,6 +84,7 @@ export class CustomHeader {
         const allColumns = this.agParams.columnApi.getAllGridColumns();
         const index = allColumns.indexOf(columns[columns.indexOf(this.agParams.column) - 1]);
         this.agParams.columnApi.moveColumn(this.agParams.column, index);
+        this.scope.$apply();
     }
 
     /** Move column 1 position right */
@@ -96,6 +93,12 @@ export class CustomHeader {
         const allColumns = this.agParams.columnApi.getAllGridColumns();
         const index = allColumns.indexOf(columns[columns.indexOf(this.agParams.column) + 1]);
         this.agParams.columnApi.moveColumn(this.agParams.column, index);
+        this.scope.$apply();
+    }
+
+    progressSort(event) {
+        this.agParams.progressSort(event.shiftKey);
+        this.scope.$apply();
     }
 }
 

@@ -14,6 +14,7 @@ export declare class CustomHeader {
     moveLeft(): void;
     /** Move column 1 position right */
     moveRight(): void;
+    progressSort(event: any): void;
 }
 export interface CustomHeader {
     mapApi: any;

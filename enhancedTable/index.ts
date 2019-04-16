@@ -208,7 +208,7 @@ export default class TableBuilder {
                             }
                         }
 
-                        setUpHeaderComponent(colDef, this.mapApi);
+                        setUpHeaderComponent(colDef, this.mapApi, this.tableOptions);
                     }
 
                     // symbols and interactive columns are set up for every table
@@ -294,10 +294,11 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
 }
 
 /*Helper function to set up column headers*/
-function setUpHeaderComponent(colDef, mApi) {
+function setUpHeaderComponent(colDef, mApi, tableOptions) {
     colDef.headerComponent = CustomHeader;
     colDef.headerComponentParams = {
-        mapApi: mApi
+        mapApi: mApi,
+        tableOptions
     };
 }
 
@@ -347,6 +348,7 @@ interface ColumnDefinition {
 
 interface HeaderComponentParams {
     mapApi: any;
+    tableOptions: GridOptions;
 }
 
 interface FloatingFilterComponentParams {

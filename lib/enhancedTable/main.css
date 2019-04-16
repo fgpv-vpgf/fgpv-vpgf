@@ -3725,7 +3725,7 @@ md-datepicker > div {
   margin: 0 !important;
   width: 18px !important;
   height: 18px !important;
-  min-height: 0;
+  min-height: 0 !important;
   border-radius: 0 !important; }
   .reorder-button .md-ripple {
     border-radius: 0 !important; }
