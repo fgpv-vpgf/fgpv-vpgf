@@ -18,9 +18,13 @@ To continue to use the deprecated v2 API you'll need to add a script called **le
 ```
 
 <p class="warning">
-  The deprecated v2 API will be removed in the next minor release, so its a good idea to start using the new v3 API as soon as possible.
+  The deprecated v2 API will be removed in a future release, so its a good idea to start using the new v3 API as soon as possible.
   <br><br>
-  Visit the [new v3 API documentation](developer/api-overview)
+  Visit the [new v3 API documentation](/developer/api-overview)
+</p>
+
+<p class="tip">
+  Visit the [Legacy API](/developer/legacy_api?id=available-methods-and-alternatives) page to see what methods have been migrated and those that still only exist on the legacy API.
 </p>
 
 ## Plugins
