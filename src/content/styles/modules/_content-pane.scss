@@ -18,7 +18,7 @@
             height: auto; // 1px needed for a border
             min-height: $toolbar-height + 1px;
             align-items: center;
-            padding: 0 rem(0.6) 0 rem(1.6);
+            padding: 0 0 0 rem(1.6);
 
             .rv-header-content {
                 overflow: hidden;
@@ -36,7 +36,11 @@
                 display: flex;
                 align-items: center;
                 height: 48px;
-                padding: 0px 12px 0px 16px;
+                padding: 0px 10px 0px 16px;
+
+                .md-button {
+                    margin: 0;
+                }
             }
 
             @include include-size(rv-lt-lg) {
@@ -63,6 +67,10 @@
                 /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
                 align-items: center;
 
+                .md-button {
+                    margin-right: 10px;
+                }
+
                 // add not md-focused because if, it is overwritten and focus background-color is not applied
                 .md-button:not(.md-focused) {
                     background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
@@ -73,7 +81,6 @@
         .rv-content {
             flex: 1;
             padding: 8px;
-            margin-bottom: 8px;
             position: relative;
         }
 
