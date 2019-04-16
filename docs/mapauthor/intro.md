@@ -4,50 +4,91 @@ This guide is intended for those who are looking to use the RAMP viewer for thei
 
 ## Key Concepts
 
-### What is required to get a map running?
+Setting up a basic RAMP viewer in a website revolves around the following concepts
 
-#### Loading Scripts
+* Loading the necessary libraries and scripts
+* Providing a configuration file to tailor the viewer to your liking
+* Consuming sources of spatial data
 
-As a baseline the page must include `rv-styles.css`, `rv-main.js` , jQuery and the polyfills required for RAMP. This will be covered further in [Adding the viewer to a page](#adding-the-viewer-to-a-page).
+![](assets/images/simple_architecture.png)
 
-#### A RAMP instance
+Also see the [Helpful Links](#helpful-links) for more advanced topics, such as using plugins or the RAMP API.
 
-RAMP requires an element or API call to tell it where and how to instantiate itself. RAMP can be given a configuration file, and ID, a list of plugins (covered in the [plugin documentation](/developer/plugins)), a set of languages, and more. This will be covered further in [Adding the viewer to a page](#adding-the-viewer-to-a-page).
+## Loading Scripts
 
-#### A Config file (optional)
+As a baseline the page must include `rv-styles.css`, `rv-main.js` , jQuery and the polyfills required for RAMP. 
 
-RAMP is able to run without a config file, but in most cases you're going to want one. This is where you specify things like layers, legend, basemaps. This will be covered further in [Writing a RAMP config file](#writing-a-ramp-config-file).
+### Adding the viewer to a page
 
+The first thing we'll need to do is to download a copy of the viewer's code. Visit https://github.com/fgpv-vpgf/fgpv-vpgf/releases/ and download a zip or tgz copy of the code from the latest release. Unpack this file to a location so that the files within are accessible to your host page.
 
-### Legends
+To load the viewer on a webpage, a few things are required on the host page:
 
-There are two options to choose from for legends; `structured` which allows for a customizable themed user experience, and `autopopulate` which lends itself to multipurpose maps or user defined experiences
+- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. One option is to use a call to polyfill.io; it is a simple way to get polyfills, but makes your site dependent on the service being functional.
 
-#### Structured
+  ```html
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
+  ```
 
-Structured legends allow you to specify the order and grouping of layers, as well as add text/images in `infoSections`. This allows for extra information and theming.
+    - If you'd prefer to load polyfills from an alternate source then the following is a list of all required polyfills:
 
-Structured legends are a good choice if you want to give users more description of what they are seeing on the map, or force a certain layer ordering.
+     Array.isArray, Array.prototype.every, Array.prototype.filter, Array.prototype.forEach, Array.prototype.indexOf, Array.prototype.lastIndexOf, Array.prototype.map, Array.prototype.reduce, Array.prototype.reduceRight, Array.prototype.some, atob, CustomEvent, Date.now, Date.prototype.toISOString, Document, document.querySelector, document.visibilityState, DOMTokenList, Element, Element.prototype.classList, Element.prototype.cloneNode, Element.prototype.closest, Element.prototype.matches, Event, Event.DOMContentLoaded, Event.focusin, Event.hashchange, Function.prototype.bind, JSON, Object.assign, Object.create, Object.defineProperties, Object.defineProperty, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.keys, requestAnimationFrame, String.prototype.includes, String.prototype.trim, Window, XMLHttpRequest, ~html5-elements, Object.entries, Object.values, Array.prototype.find, Array.prototype.findIndex, Array.prototype.values, Array.prototype.includes, HTMLCanvasElement.prototype.toBlob, String.prototype.repeat, String.prototype.codePointAt, String.fromCodePoint, NodeList.prototype.@@iterator, Promise, Promise.prototype.finally
 
-Structured legends are a bad choice if you want to let users add layers or reorder existing layers, as this mode disables those functionalities.
+- A script tag which loads `rv-main.js`. This should be placed in the `body` section of the host page near the end. It should also be placed before any of the host page scripts that interact with the external API.
 
-#### Autopopulate
+- A script tag which loads JQuery. This should be placed in the `body` section of the host page, right above `rv-main.js`.
 
-Autopopulate legends allow for a simpler configuration process. As the name suggests RAMP automatically populates the legend based on the layers you specify. They also enable users to reorder layers.
+  - Note: This is to avoid conflicts with other software. Its possible something else on the page already loads/requires jQuery. Try loading only one copy of jQuery on the page.
 
-Autopopulate legends are a good choice if you have a multipurpose map on a site, or have no need for extra text/images in the legend.
+- A css tag that loads `rv-styles.css`, somewhere near the end of the `head`.
 
-Autopopulate legends are a bad choice if you don't want users to reorder existing layers, or you want extra descriptions and explanations in the legend.
+- One or more HTML elements having the property `is="rv-map"`. An alternative to this is a call to the RAMP API's `new RAMP.Map()` constructor. More details:
+
+#### 1. Classic element
+
+- On the page, include an element with the property `is="rv-map"`
+
+- If you have written a confuration file then you should add: `rv-config="<path to your config file>"` to the element
+
+- Example
+
+  ```html
+  <div id="my-map" is="rv-map" rv-config="rv-config.json"></div>
+  ```
+
+- There are also [other attributes](/mapauthor/custom_attributes) you can specify
+
+#### 2. API
+
+- On the page, include an element with an `id` to act as an anchor. e.g. `<div id="app"></div>`
+
+- In a script tag, or JavaScript file, call `new RAMP.Map(<anchor>, <path to your config file>);`
+
+  - If you have no config file call `new RAMP.Map(<anchor>);`
+  - The anchor can be found using `document.getElementById(<id of the anchor>)`
+
+- Example
+
+  ```javascript
+  new RAMP.Map(document.getElementById('app'), './rv-config.json');
+  ```
 
 ## Writing a RAMP config file
 
 The easiest way to know how to construct a certain part of the config file is to check the [schema](https://fgpv-vpgf.github.io/schema-to-docs/). For the purposes of this guide, we will go through some simple examples of parts of the config.
 
+Config elements related to loading map data are covered in the [Adding Spatial Data](#adding-spatial-data) section below.
+
 ### Legend
 
-If you haven't read it yet, take a look at the [legends](#legends) section above.
+There are two options to choose from for legends; `structured` which allows for a customizable themed user experience, and `autopopulate` which lends itself to multipurpose maps or user defined experiences
 
-Now that you understand the difference lets look at an example of each legend;
+* Structured legends allow you to specify the order and grouping of layers, as well as add text/images in `infoSections`. This allows for extra information and theming.
+* Structured legends are a good choice if you want to give users more description of what they are seeing on the map, or force a certain layer ordering.
+* Structured legends are a bad choice if you want to let users add layers or reorder existing layers, as this mode disables those functionalities.
+* Autopopulate legends allow for a simpler configuration process. As the name suggests RAMP automatically populates the legend based on the layers you specify. They also enable users to reorder layers.
+* Autopopulate legends are a good choice if you have a multipurpose map on a site, or have no need for extra text/images in the legend.
+* Autopopulate legends are a bad choice if you don't want users to reorder existing layers, or you want extra descriptions and explanations in the legend.
 
 #### 1. Structured
 
@@ -257,6 +298,7 @@ causes ramp to make the legend:
 ]
 ```
 
+## Adding Spatial Data
 
 ### Layers
 
@@ -334,64 +376,6 @@ Here is an example of a basemap config snippet;
 ]
 ```
 
-
-## Adding the viewer to a page
-
-The first thing we'll need to do is to download a copy of the viewer's code. Visit https://github.com/fgpv-vpgf/fgpv-vpgf/releases/ and download a zip or tgz copy of the code from the latest release. Unpack this file to a location so that the files within are accessible to your host page.
-
-To load the viewer on a webpage, a few things are required on the host page:
-
-- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. One option is to use a call to polyfill.io; it is a simple way to get polyfills, but makes your site dependent on the service being functional.
-
-  ```html
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
-  ```
-
-    - If you'd prefer to load polyfills from an alternate source then the following is a list of all required polyfills:
-
-     Array.isArray, Array.prototype.every, Array.prototype.filter, Array.prototype.forEach, Array.prototype.indexOf, Array.prototype.lastIndexOf, Array.prototype.map, Array.prototype.reduce, Array.prototype.reduceRight, Array.prototype.some, atob, CustomEvent, Date.now, Date.prototype.toISOString, Document, document.querySelector, document.visibilityState, DOMTokenList, Element, Element.prototype.classList, Element.prototype.cloneNode, Element.prototype.closest, Element.prototype.matches, Event, Event.DOMContentLoaded, Event.focusin, Event.hashchange, Function.prototype.bind, JSON, Object.assign, Object.create, Object.defineProperties, Object.defineProperty, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.keys, requestAnimationFrame, String.prototype.includes, String.prototype.trim, Window, XMLHttpRequest, ~html5-elements, Object.entries, Object.values, Array.prototype.find, Array.prototype.findIndex, Array.prototype.values, Array.prototype.includes, HTMLCanvasElement.prototype.toBlob, String.prototype.repeat, String.prototype.codePointAt, String.fromCodePoint, NodeList.prototype.@@iterator, Promise, Promise.prototype.finally
-
-- A script tag which loads `rv-main.js`. This should be placed in the `body` section of the host page near the end. It should also be placed before any of the host page scripts that interact with the external API.
-
-- A script tag which loads JQuery. This should be placed in the `body` section of the host page, right above `rv-main.js`.
-
-  - Note: This is to avoid conflicts with other software. Its possible something else on the page already loads/requires jQuery. Try loading only one copy of jQuery on the page.
-
-- A css tag that loads `rv-styles.css`, somewhere near the end of the `head`.
-
-- One or more HTML elements having the property `is="rv-map"`. An alternative to this is a call to the RAMP API's `new RAMP.Map()` constructor. More details:
-
-### 1. Classic element
-
-- On the page, include an element with the property `is="rv-map"`
-
-- If you have written a confuration file then you should add: `rv-config="<path to your config file>"` to the element
-
-- Example
-
-  ```html
-  <div id="my-map" is="rv-map" rv-config="rv-config.json"></div>
-  ```
-
-- There are also [other attributes](/mapauthor/custom_attributes) you can specify
-
-### 2. API
-
-- On the page, include an element with an `id` to act as an anchor. e.g. `<div id="app"></div>`
-
-- In a script tag, or JavaScript file, call `new RAMP.Map(<anchor>, <path to your config file>);`
-
-  - If you have no config file call `new RAMP.Map(<anchor>);`
-  - The anchor can be found using `document.getElementById(<id of the anchor>)`
-
-- Example
-
-  ```javascript
-  new RAMP.Map(document.getElementById('app'), './rv-config.json');
-  ```
-
-
-
 ## Tips, Tricks, Issues & Known Limitations
 
 Legends and layers can be loaded in and out, but full configs are harder to reload RAMP with. Destroying and recreating the RAMP instance using the API can be helpful if you want to swap between different full configuration files.
@@ -410,6 +394,6 @@ If your page will be served over HTTPS you should specify all endpoints, and loa
 
 [API](/developer/api-overview)
 
-[(THE DEPRECATED) Legacy API](/developer/legacy_api)
+[Legacy API (Deprecated)](/developer/legacy_api)
 
 [Plugins](/developer/plugins)
