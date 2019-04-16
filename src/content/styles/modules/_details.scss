@@ -29,6 +29,10 @@
         width: 70%;
         border-radius: 0;
 
+        .rv-details {
+            top: 0;
+        }
+
         @include include-size(rv-sm) {
             width: 100%;
             min-width: 100%;
