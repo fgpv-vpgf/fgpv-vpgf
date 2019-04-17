@@ -156,7 +156,7 @@ Panels are a core part of the viewer API and will probably be how you'd incorpor
 To find a panel, whether default or created through the API, we use the panel registry.
 ```js
 // get an array of all panels
-const allPanels = mapInstance.panelRegistry;
+const allPanels = mapInstance.panels.all;
 ```
 
 To create a panel we use the `panels.create` function.
@@ -166,7 +166,7 @@ const myPanel = mapInstance.panels.create('myPanel');
 ```
 Now let's add something to it.
 ```js
-myPanel.setBody('<div>Hello World!</div>');
+myPanel.body = '<div>Hello World!</div>';
 ```
 We also need to add some CSS so the panel knows where to go.
 ```js

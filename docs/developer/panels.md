@@ -37,11 +37,11 @@ myPanel.body = '<div><h3>Hello!</h3><md-button id="mypanel-btn1" class="md-raise
 
 ### Open
 
-If we do nothing else and run `myPanel.open()` you'll be greeted to a **dialog** panel.
+If we do nothing else and run `myPanel.open()` you'll be greeted with a very unstyled panel.
 
-### Persistent
+### Placing the panel
 
-The reason our panel is a dialog panel is because we didn't define a position for it. Since RAMP doesn't know where we'd like our panel to appear, or how wide/tall it should be, it opens it as a standard sized **dialog** panel.
+We need to set a position and size for our panel using CSS. We recommend using a stylesheet for this (a `.css` file) but if that is not possible then what we do in this demo will work.
 
 Let's set a position for our panel then proceed to open it:
 
@@ -56,9 +56,11 @@ myPanel.element.css({
 myPanel.open();
 ```
 
-Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels. Setting any one of `top`, `bottom`, `left`, `right`, `width`, or `height` css properties turns a panel from a dialog type to a persistent or closeable type.
+Now our panel appears next to the legend panel, taking up half the viewers height, and a width of 600 pixels.
 
-### Closeable
+### Closeable or Persistent
+
+The panel above is still a `persistent` panel, it will open under any closeable panels.
 
 There's one last thing we need to do if we'd like to make our panel closeable by the user:
 
@@ -110,6 +112,23 @@ Instead of `append` you can also `prepend`.
 
 To display a title in the panel header simply do: `myPanel.header.title = 'Some Title';`. You can also use translated text with `myPanel.header.title = '{{ 'plugins.myPluginName.panelTitle' | translate }}';`
 
+
+### AppBar title
+
+Panels have a function to control the appBar title, this is the same functionality the legend uses to display its title on the appBar.
+
+```
+myPanel.appBar.title = 'Hello world!';
+```
+
+This will set the title to `Hello world!` whenever that is called. If we want to have the appBar's title set whenever we open the panel we should enhance our code:
+
+```
+myPanel.opening.subscribe(function () {
+  myPanel.appBar.title = 'Hello world!';
+});
+```
+
 ### Keep panel open on offscreen
 
 If your panel ever renders partially or fully outside the viewport, the default behaviour is to close the panel - **regardless of panel type**. This can happen either immediately when a panel is opened (its position is outside the viewer) or when a user resizes their window.
@@ -139,6 +158,22 @@ You can define and use your own Angular controllers in two steps:
         // controller logic goes here. . .
     })
     ```
+
+    <p class="warning">
+    If you are minifying your code you should explicitly tell AngularJS your dependencies.
+    </br>
+    Instead of:
+    </br>
+    ```
+    mapI.agControllerRegister('MyPanelCtrl', function(customService, secondCustomService) {});
+    ```
+    </br>
+    you would write:
+    </br>
+    ```
+    mapI.agControllerRegister('MyPanelCtrl', ['customService', 'secondCustomService', function(customService, secondCustomService) {}]);
+    ```
+    </p>
 2. Use it in your content
    ```js
    myPanel.body = '<div ng-controller="MyPanelCtrl as ctrl">My HTML content</div>';
@@ -148,10 +183,10 @@ More information: https://angularjs.org/
 
 ### Finding by ID
 
-You can find a panel with a given id by iterating through the `mapI.panels` array.
+You can find a panel with a given id by using the `mapI.panels.getById` function.
 
 ```js
-const myPanel = mapI.panels.find(p => p.id === 'uniquePanelID');
+const myPanel = mapI.panels.getById('uniquePanelID');
 ```
 
 ### Closing & destroying
@@ -175,12 +210,12 @@ myPanel.closing.subscribe(function() {
 You can also subscribe to all panels opening and closing observable events:
 
 ```js
-mapI.panelOpened.subscribe(function(panel) {
+mapI.panels.panelOpening.subscribe(function(panel) {
     console.log(`A panel with ID ${panel.id} is opening.`);
 };
 
-mapI.panelClosed.subscribe(function(response) {
-    console.log(`A panel with ID ${response.panel.id} is closing.`);
+mapI.panels.panelClosing.subscribe(function(panel) {
+    console.log(`A panel with ID ${panel.id} is closing.`);
 };
 ```
 
