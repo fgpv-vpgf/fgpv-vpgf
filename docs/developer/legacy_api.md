@@ -1,6 +1,6 @@
 # Legacy API (deprecated)
 
-**The legacy API is deprecated. It will be removed in the next major release.**
+**The legacy API is deprecated. It will be removed in a future release.**
 
 While the new API is accessible through `window.RAMP`, the legacy API continues to be supported until it is fully replaced. Access to the legacy API continues through `window.RV`.
 

@@ -148,4 +148,4 @@ class MapInstance {
     }
 };
 
-console.warn('The RAMP viewers legacy API is deprecated and will be removed on the next major release.');
+console.warn('The RAMP viewers legacy API is deprecated and will be removed in a future release.');
