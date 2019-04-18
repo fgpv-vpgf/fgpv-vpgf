@@ -446,7 +446,7 @@
                 },
                 "description": {
                     "type": "string",
-                    "description": "Specifies the additional information to display in the setting panel to give more information about a table."
+                    "description": "Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table."
                 },
                 "maximize": {
                     "type": "boolean",
@@ -503,7 +503,7 @@
                 },
                 "description": {
                     "type": "string",
-                    "description": "Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing."
+                    "description": "Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing."
                 },
                 "visible": {
                     "type": "boolean",
