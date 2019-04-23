@@ -91,6 +91,15 @@
         .rv-progress-top {
             height: 3px;
         }
+
+        md-toast.md-rv-flex {
+            width: 100%;
+            padding: {
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+        }
     }
 
     @include subsection;

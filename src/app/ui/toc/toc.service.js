@@ -273,7 +273,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         const undoToast = $mdToast.simple()
             .textContent($translate.instant('toc.label.state.remove'))
             .action($translate.instant('toc.label.action.remove'))
-            .parent(referenceService.panes.toc)
+            .parent($('#mainToc'))
             .position('bottom rv-flex');
 
         if (showToast) {
@@ -284,8 +284,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         } else {
             resolve();
         }
-
-        console.log(stateManager.display);
 
         function _restoreLegendBlock() {
             reject();
