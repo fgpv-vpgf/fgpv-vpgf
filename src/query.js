@@ -328,8 +328,8 @@ class AqlLike extends AqlDiatomic {
         // TODO basic wildcard search for now. may need to handle escaping special characters
         //      can steal codes from https://stackoverflow.com/questions/1314045/emulating-sql-like-in-javascript
 
-        // convert % to *
-        pattern = pattern.replace(/%/g, '.*');
+        // convert % to *, and make pattern respect start and end of the string
+        pattern = `^${pattern.replace(/%/g, '.*')}$`;
 
         const result = RegExp(pattern).test(attVal);
         return this.hasNot ? !result : result;
