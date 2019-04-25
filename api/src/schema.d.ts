@@ -930,7 +930,7 @@ export interface FeatureLayerNode {
      */
     title?: string;
     /**
-     * Specifies the additional information to display in the setting panel to give more information about a table.
+     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
      */
     description?: string;
     /**
@@ -991,7 +991,7 @@ export interface ColumnNode {
    */
   title?: string;
   /**
-   * Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
+   * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
    */
   description?: string;
   /**
@@ -1097,7 +1097,7 @@ export interface FileLayerNode {
      */
     title?: string;
     /**
-     * Specifies the additional information to display in the setting panel to give more information about a table.
+     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
      */
     description?: string;
     /**
@@ -1204,7 +1204,7 @@ export interface WfsLayerNode {
      */
     title?: string;
     /**
-     * Specifies the additional information to display in the setting panel to give more information about a table.
+     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
      */
     description?: string;
     /**
@@ -1470,7 +1470,7 @@ export interface DynamicLayerEntryNode {
      */
     title?: string;
     /**
-     * Specifies the additional information to display in the setting panel to give more information about a table.
+     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
      */
     description?: string;
     /**
