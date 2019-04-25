@@ -13,7 +13,7 @@ angular
     .module('app.ui')
     .directive('rvExpandImage', rvExpandImage);
 
-function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templateCache, layoutService) {
+function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templateCache, layoutService, appInfo) {
     const directive = {
         restrict: 'A',
         link
@@ -45,7 +45,7 @@ function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templ
         // also get the natural width and height of the image
         const img = new Image();
         img.onload = function() {
-            newScope.self.canEnlarge = this.width + 50 > referenceService.panels.main.width();
+            newScope.self.canEnlarge = this.width + 50 > appInfo.mapi.panels.legend.element.width();
             width = Math.min(this.width + 50, shellNode.width() * 0.8);
             height = Math.min(this.height, shellNode.height() * 0.8);
         }
