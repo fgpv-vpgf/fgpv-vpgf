@@ -452,7 +452,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         );
                     })
                 ),
-                ref.containerWidth
+                ref.containerWidth - 28 // subtract symbol stack left offset
             );
 
             //permit ref to be ready only when all symbology images are properly loaded
