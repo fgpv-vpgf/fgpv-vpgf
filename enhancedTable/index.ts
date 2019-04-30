@@ -28,6 +28,12 @@ export default class TableBuilder {
             }
         });
 
+        this.mapApi.layers.layerRemoved.subscribe((baseLayer: any) => {
+            if (baseLayer === this.panel.currentTableLayer) {
+                this.panel.close();
+            }
+        })
+
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {
             // Open the table if its closed, never been created or this is a different legend block
