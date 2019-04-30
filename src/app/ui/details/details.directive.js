@@ -100,23 +100,24 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
-                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, item => {
-                    if (!item) {
-                        return;
-                    }
+                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, status => {
+                    if (status.firstResult) {
+                        deRegisterFirstResultWatch();
+                        // if the user alreayd selected an item, do not override the selection
+                        if (!self.selectedItem) {
+                            selectItem(status.firstResult);
+                        }
 
-                    deRegisterFirstResultWatch();
-                    // if the user alreayd selected an item, do not override the selection
-                    if (self.selectedItem) {
-                        return;
+                    } else if (!status.panelLoading) {
+                        // all searches found nothing
+                        detailService.mApi.panels.details.header.title = 'details.label.noresult';
+                        deRegisterFirstResultWatch();
                     }
-
-                    selectItem(item);
                 });
             }
 
             detailService.mApi.panels.details.open();
-            detailService.mApi.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+            detailService.mApi.panels.details.header.title = self.display.selectedItem ? self.display.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult');
 
             // wrap symbology returned by the proxy into a symbology stack object
             newValue.forEach(item =>
@@ -127,14 +128,17 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         }
 
         /**
-         * Checks if at least one fo the item received results.
+         * Checks if at least one fo the item received results, or if no results at all.
          *
          * @function _waitForFirstResult
          * @private
-         * @return {Boolean} `true` if at least one item received results
+         * @return {Object} data for a first item that has completed loading, and the status of the entire query
          */
         function _waitForFirstResult() {
-            return self.display.data.find(item => item.data.length > 0);
+            return {
+                firstResult: self.display.data.find(item => item.data.length > 0),
+                panelLoading: self.display.isLoading
+            };
         }
     });
 }
