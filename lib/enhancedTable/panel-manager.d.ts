@@ -10,6 +10,15 @@ export declare class PanelManager {
     constructor(mapApi: any);
     panelStateManager: PanelStateManager;
     setLegendBlock(block: any): void;
+    /**
+     * Keeps the scrollbar locked on certain keyboard and mouse movements.
+     * This is to prevent key events like tabbing moving the table's contents.
+     */
+    setListeners(): void;
+    /**
+     * Add the item and list classes when focus manager reaches the table.
+     */
+    prepListNavigation(): void;
     open(tableOptions: any, layer: any, tableBuilder: any): void;
     close(): void;
     onBtnExport(): void;

@@ -14,7 +14,7 @@ $accent-color: #00bcd4;
     padding: 0 8px 8px !important;
 }
 
-md-datepicker > div {
+md-datepicker>div {
     // override this so ag-grid wont add a border to the div
     border-bottom: none !important;
 }
@@ -29,7 +29,8 @@ md-datepicker > div {
     right: 0px;
 }
 
-.enhanced-table-details, .enhanced-table-zoom {
+.enhanced-table-details,
+.enhanced-table-zoom {
     margin: 0 !important;
 }
 
@@ -107,10 +108,11 @@ md-datepicker > div {
     max-height: 90%;
 }
 
-.rv-table-search  {
+.rv-table-search {
 
     input {
         flex-basis: 163px;
+        -ms-flex-preferred-size: 163px !important;
         min-width: 0px;
     }
 

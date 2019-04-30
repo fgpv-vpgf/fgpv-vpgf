@@ -3718,7 +3718,8 @@ md-datepicker > div {
   top: 0px;
   right: 0px; }
 
-.enhanced-table-details, .enhanced-table-zoom {
+.enhanced-table-details,
+.enhanced-table-zoom {
   margin: 0 !important; }
 
 .reorder-button {
@@ -3777,6 +3778,7 @@ md-datepicker > div {
 
 .rv-table-search input {
   flex-basis: 163px;
+  -ms-flex-preferred-size: 163px !important;
   min-width: 0px; }
 
 .rv-table-search md-icon {

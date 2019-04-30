@@ -29,6 +29,8 @@ export class PanelManager {
         this.notVisible = {};
         this.mapApi = mapApi;
         this.panel = this.mapApi.panels.create('enhancedTable');
+        this.setListeners();
+        this.prepListNavigation();
         this.panel.body = $(`<div rv-focus-exempt></div>`);
         this.panel.element.addClass('ag-theme-material mobile-fullscreen');
         this.panel.element.css({
@@ -53,6 +55,10 @@ export class PanelManager {
             }
             this.currentTableLayer = undefined;
             this.mapApi.mapI.externalPanel(undefined);
+
+            // if enhancedTable closes, set focus to close button
+            const mapNavContent = $('#' + mapApi.id).find('.rv-mapnav-content');
+            mapNavContent.find('button')[0].focus();
         });
     }
 
@@ -70,6 +76,86 @@ export class PanelManager {
 
     setLegendBlock(block) {
         this.legendBlock = block;
+    }
+
+    /**
+     * Keeps the scrollbar locked on certain keyboard and mouse movements.
+     * This is to prevent key events like tabbing moving the table's contents.
+     */
+    setListeners() {
+        const enhancedTable = this.panel._element;
+        const that = this;
+
+        enhancedTable.mouseover(() => {
+            $('.ag-body-viewport')[0].style.position = 'initial';
+        })
+
+        enhancedTable.mouseleave(() => {
+            $('.ag-body-viewport')[0].style.position = 'initial';
+        })
+
+        enhancedTable.on('keydown keyup', (event) => {
+            event.preventDefault();
+            const focusedList = $('.element-focused')[0];
+            const inList = $(document.activeElement).hasClass('list') || $(document.activeElement).parents().hasClass('list');
+            const focusedCell = that.tableOptions.api.getFocusedCell();
+
+            if (focusedList !== undefined && $(focusedList).hasClass('ag-body-container')) {
+                // if focused on grid body
+                if (event.keyCode === 9 && focusedCell === null) {
+                    // if first tab into grid body automatically focus on first cell
+                    that.tableOptions.api.setFocusedCell(0, 'rvSymbol');
+                } else if (focusedCell !== null && event.keyCode === 27) {
+                    // on esc key, clear focused cell
+                    that.tableOptions.api.clearFocusedCell();
+                }
+            } else {
+                that.tableOptions.api.clearFocusedCell();
+            }
+
+            if ((event.keyCode !== 9 && event.keyCode !== 27) || ($('.element-focused')[0] === undefined && inList)) {
+                // if you are not tabbing or you are tabbing within a list or you're not pressing the escape key
+                // set body to be scrollable
+                $('.ag-body-viewport')[0].style.position = 'initial';
+            } else {
+                // if you are tabbing between lists, body should be absolute
+                $('.ag-body-viewport')[0].style.position = 'absolute';
+            }
+        });
+    }
+
+    /**
+     * Add the item and list classes when focus manager reaches the table.
+     */
+    prepListNavigation() {
+
+        const panelBody = this.panel.body;
+
+        this.panel.populateList.subscribe(() => {
+
+            // add list class to both header rows
+            panelBody.find('.ag-header-row').each((index, row) => {
+                if (row.childElementCount > 0) {
+                    $(row).addClass('list');
+                }
+            });
+
+            // add list class to table body, make sure arrow navigation is disabled
+            panelBody.find('.ag-body-container').addClass('list disabled-arrows');
+
+            // add item class to header cells with content in it
+            panelBody.find('.ag-header-cell').each((index, cell) => {
+                if ($(cell).children(':not(span, .ag-cell-label-container, .ag-floating-filter-body)').length > 0) {
+                    $(cell).addClass('item');
+                    $(cell).attr('tabindex', -1);
+                }
+            });
+
+            // add item class to each table cell
+            panelBody.find('.ag-cell').each((index, cell) => {
+                $(cell).addClass('item');
+            });
+        })
     }
 
     open(tableOptions: any, layer: any, tableBuilder: any) {
