@@ -749,7 +749,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                 // set the rest of the entries to loading false
                 identifyResults.forEach(identifyResult => {
-                    if (hitIndexes.indexOf(identifyResult.requester.featureIdx) === -1) {
+                    if (hitIndexes.indexOf(identifyResult.requester.proxy.itemIndex) === -1) {
                         identifyResult.isLoading = false;
                     }
                 });
