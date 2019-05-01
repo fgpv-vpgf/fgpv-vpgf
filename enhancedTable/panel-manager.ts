@@ -45,20 +45,7 @@ export class PanelManager {
         this.setSize();
         //destroy the table properly whenever the panel is closed
         this.panel.closing.subscribe(response => {
-            if (this.gridBody !== undefined) {
-                removeAccessibilityListeners(this.panel.element[0], this.gridBody);
-            }
-            this.panelStateManager.isOpen = false;
-            this.panelRowsManager.destroyObservers();
-            if (this.toastInterval !== undefined) {
-                clearInterval(this.toastInterval);
-            }
-            this.currentTableLayer = undefined;
-            this.mapApi.mapI.externalPanel(undefined);
-
-            // if enhancedTable closes, set focus to close button
-            const mapNavContent = $('#' + mapApi.id).find('.rv-mapnav-content');
-            mapNavContent.find('button')[0].focus();
+            this.close();
         });
     }
 
@@ -204,6 +191,11 @@ export class PanelManager {
             if (this.panelStateManager.columnState) {
                 this.tableOptions.columnApi.setColumnState(this.panelStateManager.columnState);
             }
+            const sortModel = this.panelStateManager.sortModel;
+            if (sortModel !== undefined) {
+                this.tableOptions.api.setSortModel(sortModel);
+            }
+
             this.panelStatusManager.getScrollRange();
             this.panelRowsManager.initObservers();
 
@@ -263,8 +255,22 @@ export class PanelManager {
     }
 
     close() {
+        this.panelStateManager.sortModel = this.tableOptions.api.getSortModel();
+
+        if (this.gridBody !== undefined) {
+            removeAccessibilityListeners(this.panel.element[0], this.gridBody);
+        }
         this.panelStateManager.isOpen = false;
-        this.panel.close();
+        this.panelRowsManager.destroyObservers();
+        if (this.toastInterval !== undefined) {
+            clearInterval(this.toastInterval);
+        }
+        this.currentTableLayer = undefined;
+        this.mapApi.mapI.externalPanel(undefined);
+
+        // if enhancedTable closes, set focus to close button
+        const mapNavContent = $('#' + this.mapApi.id).find('.rv-mapnav-content');
+        mapNavContent.find('button')[0].focus();
     }
 
     onBtnExport() {

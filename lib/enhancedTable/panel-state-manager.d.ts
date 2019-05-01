@@ -4,12 +4,14 @@
  * States to save and reset:
  *      - displayed rows (on symbology and layer visibility updates)
  *      - column filters
+ *      - column sorts
  *      - whether table maximized is in maximized or split view
  */
 export declare class PanelStateManager {
     constructor(baseLayer: any, legendBlock: any);
-    getColumnFilter(colDefField: any): any;
-    setColumnFilter(colDefField: any, filterValue: any): void;
+    getColumnFilter(colDefField: string): any;
+    setColumnFilter(colDefField: string, filterValue: any): void;
+    sortModel: any;
     maximized: boolean;
     isOpen: boolean;
     readonly legendBlock: any;
@@ -21,6 +23,7 @@ export interface PanelStateManager {
     rows: any;
     columnFilters: any;
     open: boolean;
+    storedSortModel: any;
     storedBlock: any;
     columnState: any;
 }

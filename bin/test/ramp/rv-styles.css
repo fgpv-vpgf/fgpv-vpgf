@@ -4206,11 +4206,15 @@ md-datepicker > div {
   top: 0px;
   right: 0px; }
 
+.enhanced-table-details,
+.enhanced-table-zoom {
+  margin: 0 !important; }
+
 .reorder-button {
   margin: 0 !important;
   width: 18px !important;
   height: 18px !important;
-  min-height: 0;
+  min-height: 0 !important;
   border-radius: 0 !important; }
 
 .reorder-button .md-ripple {
@@ -4265,6 +4269,7 @@ md-datepicker > div {
 
 .rv-table-search input {
   flex-basis: 163px;
+  -ms-flex-preferred-size: 163px !important;
   min-width: 0px; }
 
 .rv-table-search md-icon {
@@ -21998,15 +22003,24 @@ Obviously you need some kind of rules and criteria:
   [is=rv-map] #mainGeosearch, .fgpv #mainGeosearch {
     width: 400px;
     top: 65px;
-    opacity: 0; }
+    opacity: 0;
+    box-shadow: none !important;
+    bottom: 0;
+    background: none;
+    overflow: initial !important;
+    pointer-events: none; }
     [is=rv-map] #mainGeosearch .panel-body, .fgpv #mainGeosearch .panel-body {
       padding: 0 !important;
-      height: 100%; }
+      height: 100%;
+      bottom: auto;
+      overflow-y: visible !important; }
       [is=rv-map] #mainGeosearch .panel-body .rv-geosearch-content, .fgpv #mainGeosearch .panel-body .rv-geosearch-content {
         margin: 0; }
   [is=rv-map] rv-geosearch, .fgpv rv-geosearch {
     max-height: 100%;
-    display: flex; }
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+    display: flex;
+    pointer-events: all; }
     [is=rv-map] rv-geosearch .rv-geosearch-content, .fgpv rv-geosearch .rv-geosearch-content {
       background-color: white;
       position: relative;
@@ -22112,7 +22126,7 @@ Obviously you need some kind of rules and criteria:
       height: auto;
       min-height: 49px;
       align-items: center;
-      padding: 0 6px 0 16px; }
+      padding: 0 0 0 16px; }
       [is=rv-map] .rv-content-pane .rv-header .rv-header-content, .fgpv .rv-content-pane .rv-header .rv-header-content {
         overflow: hidden; }
         [is=rv-map] .rv-content-pane .rv-header .rv-header-content header, .fgpv .rv-content-pane .rv-header .rv-header-content header {
@@ -22123,7 +22137,9 @@ Obviously you need some kind of rules and criteria:
         display: flex;
         align-items: center;
         height: 48px;
-        padding: 0px 12px 0px 16px; }
+        padding: 0px 10px 0px 16px; }
+        [is=rv-map] .rv-content-pane .rv-header .rv-header-controls .md-button, .fgpv .rv-content-pane .rv-header .rv-header-controls .md-button {
+          margin: 0; }
       .rv-small[is=rv-map] .rv-content-pane .rv-header, .rv-small.fgpv .rv-content-pane .rv-header,
       .rv-medium[is=rv-map] .rv-content-pane .rv-header, .rv-medium.fgpv .rv-content-pane .rv-header {
         padding-left: 50px; }
@@ -22159,17 +22175,23 @@ Obviously you need some kind of rules and criteria:
         right: 0;
         /*background: linear-gradient(to bottom, rgba(255,255,255,1) 30%,rgba(255,255,255,0.62) 60%, rgba(255,255,255,0) 100%);*/
         align-items: center; }
+        [is=rv-map] .rv-content-pane .rv-header-float .md-button, .fgpv .rv-content-pane .rv-header-float .md-button {
+          margin-right: 10px; }
         [is=rv-map] .rv-content-pane .rv-header-float .md-button:not(.md-focused), .fgpv .rv-content-pane .rv-header-float .md-button:not(.md-focused) {
           background: radial-gradient(ellipse at center, white 30%, rgba(255, 255, 255, 0.32) 100%); }
     [is=rv-map] .rv-content-pane .rv-content, .fgpv .rv-content-pane .rv-content {
       flex: 1;
       padding: 8px;
-      margin-bottom: 8px;
       position: relative; }
     [is=rv-map] .rv-content-pane .rv-footer, .fgpv .rv-content-pane .rv-footer {
       border-top: 1px solid #e0e0e0; }
     [is=rv-map] .rv-content-pane .rv-progress-top, .fgpv .rv-content-pane .rv-progress-top {
       height: 3px; }
+    [is=rv-map] .rv-content-pane md-toast.md-rv-flex, .fgpv .rv-content-pane md-toast.md-rv-flex {
+      width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 0; }
   [is=rv-map] .rv-subsection, .fgpv .rv-subsection {
     padding: 8px; }
     [is=rv-map] .rv-subsection .rv-subheader, .fgpv .rv-subsection .rv-subheader {
@@ -22473,8 +22495,7 @@ Obviously you need some kind of rules and criteria:
   [is=rv-map] #mainToc, .fgpv #mainToc {
     top: 49px;
     left: 0px;
-    width: 400px;
-    z-index: 11 !important; }
+    width: 400px; }
     .rv-small[is=rv-map] #mainToc, .rv-small.fgpv #mainToc {
       top: 49px;
       left: 0px;
@@ -23024,6 +23045,8 @@ Obviously you need some kind of rules and criteria:
     height: 80%;
     width: 70%;
     border-radius: 0; }
+    [is=rv-map] .rv-details-summary .rv-details, .fgpv .rv-details-summary .rv-details {
+      top: 0; }
     .rv-small[is=rv-map] .rv-details-summary, .rv-small.fgpv .rv-details-summary {
       width: 100%;
       min-width: 100%;
@@ -23042,13 +23065,16 @@ Obviously you need some kind of rules and criteria:
   [is=rv-map] #mainDetails, .fgpv #mainDetails {
     top: 49px;
     width: 400px; }
+    [is=rv-map] #mainDetails .rv-header.rv-has-layer-list, .fgpv #mainDetails .rv-header.rv-has-layer-list {
+      margin-left: 49px; }
   [is=rv-map] .rv-details, .fgpv .rv-details {
     flex-direction: column;
     display: flex;
-    top: 0;
+    top: 49px;
     bottom: 0;
     right: 0;
-    left: 0; }
+    left: 0;
+    position: absolute; }
     [is=rv-map] .rv-details .rv-subheader, .fgpv .rv-details .rv-subheader {
       padding-right: 25px; }
       [is=rv-map] .rv-details .rv-subheader .md-subhead, .fgpv .rv-details .rv-subheader .md-subhead {
@@ -23098,7 +23124,7 @@ Obviously you need some kind of rules and criteria:
       position: absolute;
       background: white;
       left: 0;
-      top: 0;
+      top: -49px;
       bottom: -8px;
       border-right: solid 1px #e0e0e0;
       overflow: hidden; }
@@ -23616,8 +23642,7 @@ Obviously you need some kind of rules and criteria:
   [is=rv-map] #fileLoader, [is=rv-map] #serviceLoader, .fgpv #fileLoader, .fgpv #serviceLoader {
     top: 49px;
     left: 0px;
-    width: 400px;
-    z-index: 11 !important; }
+    width: 400px; }
     .rv-small[is=rv-map] #fileLoader, .rv-small[is=rv-map] #serviceLoader, .rv-small.fgpv #fileLoader, .rv-small.fgpv #serviceLoader {
       top: 49px;
       left: 0px;
@@ -25003,13 +25028,17 @@ Obviously you need some kind of rules and criteria:
     width: 50%;
     height: 50%;
     z-index: 1000; }
-  [is=rv-map] #sideMetadata, [is=rv-map] #sideSettings, .fgpv #sideMetadata, .fgpv #sideSettings {
+  [is=rv-map] #sideMetadata,
+  [is=rv-map] #sideSettings, .fgpv #sideMetadata,
+  .fgpv #sideSettings {
     padding: 0 !important;
     margin-left: 0 !important;
     top: 0px;
     left: 411px;
     width: 350px; }
-    [is=rv-map] #sideMetadata .rv-header-controls, [is=rv-map] #sideSettings .rv-header-controls, .fgpv #sideMetadata .rv-header-controls, .fgpv #sideSettings .rv-header-controls {
+    [is=rv-map] #sideMetadata .rv-header-controls,
+    [is=rv-map] #sideSettings .rv-header-controls, .fgpv #sideMetadata .rv-header-controls,
+    .fgpv #sideSettings .rv-header-controls {
       padding: 0 0 0 0; }
     .rv-small[is=rv-map] #sideMetadata, .rv-small[is=rv-map] #sideSettings, .rv-small.fgpv #sideMetadata, .rv-small.fgpv #sideSettings {
       left: 0px !important;
@@ -25027,15 +25056,21 @@ Obviously you need some kind of rules and criteria:
       z-index: 100 !important;
       visibility: visible;
       margin: 10px !important; }
-    [is=rv-map] #sideMetadata .rv-header, [is=rv-map] #sideSettings .rv-header, .fgpv #sideMetadata .rv-header, .fgpv #sideSettings .rv-header {
+    [is=rv-map] #sideMetadata .rv-header,
+    [is=rv-map] #sideSettings .rv-header, .fgpv #sideMetadata .rv-header,
+    .fgpv #sideSettings .rv-header {
       padding-left: 10px; }
-      [is=rv-map] #sideMetadata .rv-header .md-title, [is=rv-map] #sideSettings .rv-header .md-title, .fgpv #sideMetadata .rv-header .md-title, .fgpv #sideSettings .rv-header .md-title {
+      [is=rv-map] #sideMetadata .rv-header .md-title,
+      [is=rv-map] #sideSettings .rv-header .md-title, .fgpv #sideMetadata .rv-header .md-title,
+      .fgpv #sideSettings .rv-header .md-title {
         max-width: auto;
         text-overflow: ellipsis;
         overflow: hidden;
         display: block;
         white-space: nowrap; }
-    [is=rv-map] #sideMetadata .panel-body, [is=rv-map] #sideSettings .panel-body, .fgpv #sideMetadata .panel-body, .fgpv #sideSettings .panel-body {
+    [is=rv-map] #sideMetadata .panel-body,
+    [is=rv-map] #sideSettings .panel-body, .fgpv #sideMetadata .panel-body,
+    .fgpv #sideSettings .panel-body {
       overflow: auto; }
   [is=rv-map] #expandMetadata, .fgpv #expandMetadata {
     width: 70%;
@@ -25090,13 +25125,33 @@ Obviously you need some kind of rules and criteria:
     border-bottom: lightgrey solid 1px; }
   [is=rv-map] .panel-body, .fgpv .panel-body {
     padding: 5px 18px;
-    height: calc(100% - 46px); }
+    height: calc(100% - 46px);
+    overflow-y: auto; }
     [is=rv-map] .panel-body.ag-theme-material, .fgpv .panel-body.ag-theme-material {
       border-top: initial;
       margin: -1px;
       padding: inherit; }
       [is=rv-map] .panel-body.ag-theme-material > div:first-child, .fgpv .panel-body.ag-theme-material > div:first-child {
         height: 100%; }
+    [is=rv-map] .panel-body .list, .fgpv .panel-body .list {
+      width: 100%;
+      height: 100%;
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+      border-top: 1px solid transparent; }
+      [is=rv-map] .panel-body .list:focus, .fgpv .panel-body .list:focus {
+        outline: 0 !important; }
+      [is=rv-map] .panel-body .list .item:not(.ag-cell), .fgpv .panel-body .list .item:not(.ag-cell) {
+        border: 1px solid transparent; }
+      [is=rv-map] .panel-body .list .item:focus, .fgpv .panel-body .list .item:focus {
+        outline: 0 !important; }
+      [is=rv-map] .panel-body .list .item.highlighted, .fgpv .panel-body .list .item.highlighted {
+        background-color: #fafafa;
+        border: 1px solid #607d8b;
+        outline: initial; }
+      [is=rv-map] .panel-body .list.element-focused, .fgpv .panel-body .list.element-focused {
+        border: 1px rgba(5, 141, 232, 0.8) solid;
+        outline: initial; }
   [is=rv-map] .btn, .fgpv .btn {
     width: 36px;
     height: 26px;
@@ -25111,7 +25166,7 @@ Obviously you need some kind of rules and criteria:
     margin: 2px;
     padding: 2px;
     background-color: white;
-    border: 2px solid  slategrey;
+    border: 2px solid slategrey;
     outline: none;
     color: slategrey;
     overflow: hidden;
@@ -25119,7 +25174,7 @@ Obviously you need some kind of rules and criteria:
     text-overflow: ellipsis; }
   [is=rv-map] .text-btn:hover, .fgpv .text-btn:hover {
     background-color: darkslategray;
-    border: 2px solid  darkslategray;
+    border: 2px solid darkslategray;
     color: white;
     outline: none; }
   [is=rv-map] .text-btn:click, .fgpv .text-btn:click {

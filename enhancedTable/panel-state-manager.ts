@@ -4,6 +4,7 @@
  * States to save and reset:
  *      - displayed rows (on symbology and layer visibility updates)
  *      - column filters
+ *      - column sorts
  *      - whether table maximized is in maximized or split view
  */
 export class PanelStateManager {
@@ -17,12 +18,20 @@ export class PanelStateManager {
         this.columnState = null;
     }
 
-    getColumnFilter(colDefField: any): any {
+    getColumnFilter(colDefField: string): any {
         return this.columnFilters[colDefField];
     }
 
-    setColumnFilter(colDefField, filterValue): void {
+    setColumnFilter(colDefField: string, filterValue: any): void {
         this.columnFilters[colDefField] = filterValue;
+    }
+
+    get sortModel(): any {
+        return this.storedSortModel;
+    }
+
+    set sortModel(sortModel: any) {
+        this.storedSortModel = sortModel;
     }
 
     set maximized(maximized: boolean) {
@@ -53,6 +62,7 @@ export interface PanelStateManager {
     rows: any;
     columnFilters: any;
     open: boolean;
+    storedSortModel: any;
     storedBlock: any;
     columnState: any;
 }
