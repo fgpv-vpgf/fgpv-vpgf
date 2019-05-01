@@ -14,10 +14,13 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
     const queryParams = {}; // params to apply on filter
     let GSservice; // geosearch service from the geosearch feature
 
-    events.$on(events.rvApiReady, () => {  // initialize geosearch feature
+    events.$on(events.rvApiReady, () => { // initialize geosearch feature
         let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
         let excludeTypes = configService.getSync.services.search.disabledSearches;
-        GSservice = new appInfo.features.geoSearch.GeoSearchUI({ language, excludeTypes });
+        GSservice = new appInfo.features.geoSearch.GeoSearchUI({
+            language,
+            excludeTypes
+        });
     });
 
     const service = {
@@ -110,7 +113,11 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
             service.searchResults = [];
             service.isLoading = false;
             service.isResultsVisible = false;
-            service.mApi.panels.geoSearch.element.css({opacity: 0, 'pointer-events': 'none', bottom: 0});
+            service.mApi.panels.geoSearch.element.css({
+                opacity: 0,
+                'pointer-events': 'none',
+                bottom: 0
+            });
 
             return $q.resolve();
         }
@@ -123,7 +130,11 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
             // hide loading indicator
             service.isLoading = false;
             service.isResultsVisible = true;
-            service.mApi.panels.geoSearch.element.css({opacity: 1, 'pointer-events': '', bottom: ''});
+            service.mApi.panels.geoSearch.element.css({
+                opacity: 1,
+                'pointer-events': '',
+                bottom: ''
+            });
             service.serviceError = false;
 
             // discard any old results
@@ -234,7 +245,9 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
             // use the extent to reproject because it use a densify object that keep
             // proportion and in the end good values for min and max. If we use points
             // the results are bad, especially in LCC
-            const projExtent = gapiService.gapi.proj.localProjectExtent(extent, { wkid: 4326 });
+            const projExtent = gapiService.gapi.proj.localProjectExtent(extent, {
+                wkid: 4326
+            });
 
             extent = [projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1].join(',');
         }
@@ -256,9 +269,26 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      */
     function getProvinces() {
         return new Promise(resolve => {
-            events.$on(events.rvApiReady, () => {
+
+            // add ... to the list to reset filter from the selection
+            const reset = {
+                code: -1,
+                abbr: '...',
+                name: '...'
+            };
+
+            GSservice.fetchProvinces().push(reset);
+
+
+            if (geoService.isMapReady) {
+                // isMapReady gets set to true only before the
+                // rvApiReady event is broadcasted, so this is a valid way to check
                 resolve(GSservice.fetchProvinces());
-            });
+            } else {
+                events.$on(events.rvApiReady, () => {
+                    resolve(GSservice.fetchProvinces());
+                });
+            }
         }, () => {
             service.externalApiError = true;
         });
@@ -276,9 +306,24 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      */
     function getTypes() {
         return new Promise(resolve => {
-            events.$on(events.rvApiReady, () => {
+
+            // add ... to the list to reset filter from the selection
+            const reset = {
+                code: -1,
+                name: '...'
+            };
+
+            GSservice.fetchTypes().push(reset);
+
+            if (geoService.isMapReady) {
+                // isMapReady gets set to true only before the
+                // rvApiReady event is broadcasted, so this is a valid way to check
                 resolve(GSservice.fetchTypes());
-            });
+            } else {
+                events.$on(events.rvApiReady, () => {
+                    resolve(GSservice.fetchTypes());
+                });
+            }
         }, () => {
             service.externalApiError = true;
         });
@@ -309,7 +354,9 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         const gapi = gapiService.gapi;
 
         // set extent from bbox
-        const latlongExtent = gapi.Map.Extent(...bbox, { wkid: 4326 });
+        const latlongExtent = gapi.Map.Extent(...bbox, {
+            wkid: 4326
+        });
 
         // reproject extent
         const projExtent = gapi.proj.localProjectExtent(
