@@ -4,7 +4,9 @@ for file in node_modules/@fgpv/rv-plugins/dist/**/*; do
     nosamplefile=${file//samples\//}
     DIR=$(dirname "src/content/samples/plugins${nosamplefile#node_modules/@fgpv/rv-plugins/dist}")
     mkdir -p "$DIR"
-    cp -r "./$file" "src/content/samples/plugins${nosamplefile#node_modules/@fgpv/rv-plugins/dist}"
+    if [[ -f $file ]]; then
+        cp -r "./$file" "src/content/samples/plugins${nosamplefile#node_modules/@fgpv/rv-plugins/dist}"
+    fi
     # Replace all /rv-main.js and /rv-styles.css with: ../../../../rv-main.js|rv-styles.css
     find "src/content/samples/plugins${nosamplefile#node_modules/@fgpv/rv-plugins/dist}" -name '*.html' | while read line; do
         sed -i -e "s+/rv-main.js+../../../../rv-main.js+g" "$line"
