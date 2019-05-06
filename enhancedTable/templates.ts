@@ -127,7 +127,7 @@ export const MOBILE_MENU_TEMPLATE = `
 </div>`;
 
 export const RECORD_COUNT_TEMPLATE = `
-<p class="rv-record-count">
+<p class="rv-record-count" title="{{ scrollRecords }} of {{ filterRecords }}" >
     <span class="scrollRecords">{{ scrollRecords }}</span> of
     <span class="filterRecords">{{ filterRecords }}</span>
 </p>`;
@@ -254,7 +254,7 @@ export const PRINT_TABLE = (title, cols, rws) => {
                 </style>
             </head>
             <body class ='dt-print-view'>
-                <div class="title-container">
+                <div>
                     <h1 class="md-title" style='padding:8px;'>Features: ${title}</h1>
                     <table>${columns}${rows}</table>
                 </div>

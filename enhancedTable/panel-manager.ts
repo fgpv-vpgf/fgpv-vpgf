@@ -175,6 +175,7 @@ export class PanelManager {
             // set header / controls for panel
             this.makeHeader();
             this.panel.header.title = `{{ 'filter.title' | translate }} ${this.configManager.title}`;
+            this.panel.header.elements.title[0].title = this.panel.header.elements.title[0].innerHTML;
 
             // Add the scroll record count
             let recordCountTemplate = $(RECORD_COUNT_TEMPLATE);

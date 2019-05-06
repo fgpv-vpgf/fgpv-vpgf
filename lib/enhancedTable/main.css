@@ -3732,18 +3732,13 @@ md-datepicker > div {
     border-radius: 0 !important; }
 
 .rv-record-count {
-  margin: 0;
-  overflow: hidden; }
-
-.title-container {
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 75%; }
+  width: 100%;
+  overflow: hidden; }
 
-.table-title {
-  margin: 0;
-  max-width: 100%; }
+.md-title {
+  display: block !important; }
 
 .table-control {
   display: inherit; }
