@@ -1,4 +1,4 @@
-$result-item-height: rem(4.0);
+$result-item-height: rem(4);
 
 $result-item-height-touch: rem(4.8);
 
@@ -40,7 +40,7 @@ $result-item-height-touch: rem(4.8);
         }
 
         // offset and color search icon
-        md-icon[md-svg-src="action:search"] {
+        md-icon[md-svg-src='action:search'] {
             color: $primary-color;
             margin: rem(0.8);
         }
@@ -55,6 +55,11 @@ $result-item-height-touch: rem(4.8);
         background: none;
         overflow: initial !important;
         pointer-events: none;
+
+        @include include-size(rv-sm) {
+            width: 100%;
+            margin: 0;
+        }
 
         .panel-body {
             padding: 0 !important;
@@ -78,7 +83,7 @@ $result-item-height-touch: rem(4.8);
             background-color: white;
 
             position: relative;
-            margin-top: rem(1.0);
+            margin-top: rem(1);
 
             display: flex;
             flex-direction: column;
@@ -86,7 +91,7 @@ $result-item-height-touch: rem(4.8);
             width: 100%;
 
             %geosearch-fixed-section {
-                height: rem(4.0);
+                height: rem(4);
                 display: flex;
                 align-items: center;
                 flex-shrink: 0;
@@ -95,7 +100,7 @@ $result-item-height-touch: rem(4.8);
             .rv-geosearch-top-filters {
                 @extend %geosearch-fixed-section;
 
-                padding: rem(0.4) rem(1.2) rem(0.4) rem(1.0 + 0.8); // rem(1.0 + 4.0 + 0.6);
+                padding: rem(0.4) rem(1.2) rem(0.4) rem(1 + 0.8); // rem(1.0 + 4.0 + 0.6);
 
                 md-input-container {
                     margin: 0 rem(0.4) 0 0;
@@ -108,14 +113,14 @@ $result-item-height-touch: rem(4.8);
 
                 .rv-geosearch-type-filter {
                     flex: 1;
-                    margin-right: rem(1.0);
+                    margin-right: rem(1);
                     min-width: rem(6.4);
                 }
             }
 
             .rv-geosearch-results {
                 overflow: auto;
-                padding: rem(1.0) 0;
+                padding: rem(1) 0;
 
                 .rv-no-results {
                     display: flex;
@@ -123,16 +128,16 @@ $result-item-height-touch: rem(4.8);
                     align-items: center;
 
                     md-icon {
-                       margin: 0 8px;
-                           flex-shrink: 0;
+                        margin: 0 8px;
+                        flex-shrink: 0;
                     }
 
                     span {
                         text-align: left;
-                            white-space: nowrap;
-                            margin-left: 2px;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
+                        white-space: nowrap;
+                        margin-left: 2px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
 
@@ -151,7 +156,7 @@ $result-item-height-touch: rem(4.8);
                             top: 0;
                             display: flex;
                             position: absolute;
-                            background-color:  $divider-color-light;
+                            background-color: $divider-color-light;
                             line-height: $result-item-height;
                             white-space: nowrap;
                             padding: 0 rem(2) 0 rem(2);
@@ -162,8 +167,11 @@ $result-item-height-touch: rem(4.8);
                         // Will not work in Safari because they can't have to empty
                         // If we set 'to' and change keyframe values in javascript page reload in Safari
                         @keyframes anim {
-                            from { left: 0%; }
-                            to { }
+                            from {
+                                left: 0%;
+                            }
+                            to {
+                            }
                         }
 
                         .rv-results-item-main {
@@ -208,7 +216,7 @@ $result-item-height-touch: rem(4.8);
             .rv-geosearch-bottom-filters {
                 @extend %geosearch-fixed-section;
 
-                padding: rem(0.4) rem(1.0) rem(0.4) rem(1.0 + 1.0);
+                padding: rem(0.4) rem(1) rem(0.4) rem(1 + 1);
 
                 md-checkbox {
                     margin: 0;

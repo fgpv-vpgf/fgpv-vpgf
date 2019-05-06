@@ -6,15 +6,26 @@
  * The `geosearchService` is responsible for opening and closing geosearch panel and for running queries.
  *
  */
-angular
-    .module('app.ui')
-    .factory('geosearchService', geosearchService);
+angular.module('app.ui').factory('geosearchService', geosearchService);
 
-function geosearchService($q, $rootScope, stateManager, referenceService, events, debounceService, mapService, geoService, gapiService, configService, appInfo) {
+function geosearchService(
+    $q,
+    $rootScope,
+    stateManager,
+    referenceService,
+    events,
+    debounceService,
+    mapService,
+    geoService,
+    gapiService,
+    configService,
+    appInfo
+) {
     const queryParams = {}; // params to apply on filter
     let GSservice; // geosearch service from the geosearch feature
 
-    events.$on(events.rvApiReady, () => { // initialize geosearch feature
+    events.$on(events.rvApiReady, () => {
+        // initialize geosearch feature
         let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
         let excludeTypes = configService.getSync.services.search.disabledSearches;
         GSservice = new appInfo.features.geoSearch.GeoSearchUI({
@@ -61,6 +72,7 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         api.panels.geoSearch.body = $('<rv-geosearch></rv-geosearch>');
         api.panels.geoSearch.isCloseable = true;
         api.panels.geoSearch.allowUnderlay = false;
+        api.panels.geoSearch.allowOffscreen = true;
 
         // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
         api.panels.geoSearch.closing.subscribe(() => {
@@ -109,7 +121,6 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
 
         // skip when the search value is not specified
         if (!service.searchValue) {
-
             service.searchResults = [];
             service.isLoading = false;
             service.isResultsVisible = false;
@@ -125,34 +136,36 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         // show loading indicator
         service.isLoading = true;
 
-        return GSservice.query(`${service.searchValue}*`).then(data => {
+        return GSservice.query(`${service.searchValue}*`).then(
+            data => {
+                // hide loading indicator
+                service.isLoading = false;
+                service.isResultsVisible = true;
+                service.mApi.panels.geoSearch.element.css({
+                    opacity: 1,
+                    'pointer-events': '',
+                    bottom: ''
+                });
+                service.serviceError = false;
 
-            // hide loading indicator
-            service.isLoading = false;
-            service.isResultsVisible = true;
-            service.mApi.panels.geoSearch.element.css({
-                opacity: 1,
-                'pointer-events': '',
-                bottom: ''
-            });
-            service.serviceError = false;
+                // discard any old results
+                if (requestCount === ref.runningRequestCount) {
+                    let filteredData = filter(data);
+                    service.searchResults = filteredData || [];
 
-            // discard any old results
-            if (requestCount === ref.runningRequestCount) {
-                let filteredData = filter(data);
-                service.searchResults = filteredData || [];
+                    service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+                }
 
-                service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+                // return data for optional processing further down the promise chain
+                return data;
+            },
+            _ => {
+                service.searchResults = [];
+                service.isLoading = false;
+                service.isResultsVisible = true;
+                service.serviceError = true;
             }
-
-            // return data for optional processing further down the promise chain
-            return data;
-        }, _ => {
-            service.searchResults = [];
-            service.isLoading = false;
-            service.isResultsVisible = true;
-            service.serviceError = true;
-        });
+        );
     }
 
     /**
@@ -178,8 +191,15 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      */
     function filter(data) {
         if (queryParams.extent) {
-            data = data.filter(r => !(r.bbox[0] > queryParams.extent[2] || r.bbox[2] < queryParams.extent[0] ||
-                r.bbox[3] < queryParams.extent[1] || r.bbox[1] > queryParams.extent[3]));
+            data = data.filter(
+                r =>
+                    !(
+                        r.bbox[0] > queryParams.extent[2] ||
+                        r.bbox[2] < queryParams.extent[0] ||
+                        r.bbox[3] < queryParams.extent[1] ||
+                        r.bbox[1] > queryParams.extent[3]
+                    )
+            );
         }
         if (queryParams.province) {
             data = data.filter(r => r.location.province.name === queryParams.province);
@@ -235,13 +255,16 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      * @param   {Object}    extent   mapObject extent object, or string value of either 'visible' or 'canada'
      */
     function setExtent(extent) {
-        if (extent === 'visible') { // get the viewers current extent
+        if (extent === 'visible') {
+            // get the viewers current extent
             extent = geoService.currentExtent;
-        } else if (extent === 'canada') { // get the full extent of Canada
+        } else if (extent === 'canada') {
+            // get the full extent of Canada
             extent = geoService.fullExtent;
         }
 
-        if (typeof extent === 'object') { // convert to lat/long geoName readable string
+        if (typeof extent === 'object') {
+            // convert to lat/long geoName readable string
             // use the extent to reproject because it use a densify object that keep
             // proportion and in the end good values for min and max. If we use points
             // the results are bad, especially in LCC
@@ -268,30 +291,31 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      *                          }
      */
     function getProvinces() {
-        return new Promise(resolve => {
+        return new Promise(
+            resolve => {
+                // add ... to the list to reset filter from the selection
+                const reset = {
+                    code: -1,
+                    abbr: '...',
+                    name: '...'
+                };
 
-            // add ... to the list to reset filter from the selection
-            const reset = {
-                code: -1,
-                abbr: '...',
-                name: '...'
-            };
+                GSservice.fetchProvinces().push(reset);
 
-            GSservice.fetchProvinces().push(reset);
-
-
-            if (geoService.isMapReady) {
-                // isMapReady gets set to true only before the
-                // rvApiReady event is broadcasted, so this is a valid way to check
-                resolve(GSservice.fetchProvinces());
-            } else {
-                events.$on(events.rvApiReady, () => {
+                if (geoService.isMapReady) {
+                    // isMapReady gets set to true only before the
+                    // rvApiReady event is broadcasted, so this is a valid way to check
                     resolve(GSservice.fetchProvinces());
-                });
+                } else {
+                    events.$on(events.rvApiReady, () => {
+                        resolve(GSservice.fetchProvinces());
+                    });
+                }
+            },
+            () => {
+                service.externalApiError = true;
             }
-        }, () => {
-            service.externalApiError = true;
-        });
+        );
     }
 
     /**
@@ -305,28 +329,30 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
      *                          }
      */
     function getTypes() {
-        return new Promise(resolve => {
+        return new Promise(
+            resolve => {
+                // add ... to the list to reset filter from the selection
+                const reset = {
+                    code: -1,
+                    name: '...'
+                };
 
-            // add ... to the list to reset filter from the selection
-            const reset = {
-                code: -1,
-                name: '...'
-            };
+                GSservice.fetchTypes().push(reset);
 
-            GSservice.fetchTypes().push(reset);
-
-            if (geoService.isMapReady) {
-                // isMapReady gets set to true only before the
-                // rvApiReady event is broadcasted, so this is a valid way to check
-                resolve(GSservice.fetchTypes());
-            } else {
-                events.$on(events.rvApiReady, () => {
+                if (geoService.isMapReady) {
+                    // isMapReady gets set to true only before the
+                    // rvApiReady event is broadcasted, so this is a valid way to check
                     resolve(GSservice.fetchTypes());
-                });
+                } else {
+                    events.$on(events.rvApiReady, () => {
+                        resolve(GSservice.fetchTypes());
+                    });
+                }
+            },
+            () => {
+                service.externalApiError = true;
             }
-        }, () => {
-            service.externalApiError = true;
-        });
+        );
     }
 
     /**
@@ -359,18 +385,18 @@ function geosearchService($q, $rootScope, stateManager, referenceService, events
         });
 
         // reproject extent
-        const projExtent = gapi.proj.localProjectExtent(
-            latlongExtent, mapSR);
+        const projExtent = gapi.proj.localProjectExtent(latlongExtent, mapSR);
 
         // set extent from reprojected values
-        const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0,
-            projExtent.x1, projExtent.y1, projExtent.sr);
+        const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1, projExtent.sr);
 
         // zoom to location (expand the bbox to include all the area)
         geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
             // get reprojected point and create point
-            const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid,
-                [parseFloat(position[0]), parseFloat(position[1])]);
+            const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid, [
+                parseFloat(position[0]),
+                parseFloat(position[1])
+            ]);
             const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
 
             // show pin on the map

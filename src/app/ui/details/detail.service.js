@@ -25,20 +25,28 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         api.panels.details.body = $('<rv-details></rv-details>');
         api.panels.details.reopenAfterOverlay = true;
         api.panels.details.allowUnderlay = false;
+        api.panels.details.allowOffscreen = true;
 
         const expandBtn = new api.panels.details.Button(`<md-icon md-svg-src="action:open_in_new"></md-icon>`);
-        expandBtn.$
-            .addClass('md-icon-button')
+        expandBtn.$.addClass('md-icon-button')
             .removeClass('md-raised')
-            .on('click', () => { expandPanel(); });
+            .on('click', () => {
+                expandPanel();
+            });
         api.panels.details.header.append(expandBtn);
 
         const btn = api.panels.details.header.closeButton;
-        btn.on('click', () => { closeDetails(); });
+        btn.on('click', () => {
+            closeDetails();
+        });
 
-        api.panels.details.header.title = stateManager.display.details.selectedItem ? stateManager.display.details.selectedItem.requester.proxy.name : (stateManager.display.details.isLoading ? 'details.label.searching' : 'details.label.noresult');
+        api.panels.details.header.title = stateManager.display.details.selectedItem
+            ? stateManager.display.details.selectedItem.requester.proxy.name
+            : stateManager.display.details.isLoading
+            ? 'details.label.searching'
+            : 'details.label.noresult';
 
-        api.panels.details.opening.subscribe( () => {
+        api.panels.details.opening.subscribe(() => {
             api.panels.details.appBar.title = 'appbar.tooltip.pointInfo';
         });
     });
@@ -101,7 +109,7 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
 
     function getTemplate(layerId, templatePath) {
         return new Promise(resolve => {
-            if(templates[layerId]) {
+            if (templates[layerId]) {
                 resolve(templates[layerId]);
             } else {
                 $.ajax({ method: 'GET', dataType: 'text', url: templatePath }).then(data => {
@@ -110,6 +118,6 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
                     resolve(data);
                 });
             }
-        })
+        });
     }
 }
