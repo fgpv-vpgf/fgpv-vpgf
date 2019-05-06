@@ -12,9 +12,4 @@ for dir in node_modules/@fgpv/rv-plugins/dist/*/; do
         sed -i -e "s+\"/rv-styles.css\"+\"../../../../rv-styles.css\"+g" "$line"
         sed -i -e "s+\"/legacy-api.js\"+\"../../../../legacy-api.js\"+g" "$line"
     done
-    #if [ ${file: -3} == ".js" ] || [ ${file: -4} == ".css" ]; then
-    #    DIR=$(dirname "build/plugins${file#node_modules/@fgpv/rv-plugins/dist}")
-    #    mkdir -p "$DIR"
-    #    cp -r "./$file" "build/plugins${file#node_modules/@fgpv/rv-plugins/dist}"
-    #fi
 done
