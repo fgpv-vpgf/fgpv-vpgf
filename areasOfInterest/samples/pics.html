@@ -5,8 +5,16 @@
         <meta content="width=device-width,initial-scale=1" name="viewport" />
         <link rel="stylesheet" href="/rv-styles.css" />
         <script src="../areasOfInterest.js"></script>
+        <style>
+            body {
+                padding: 20px !important;
+            }
+            #fgpmap {
+                height: 700px;
+            }
+        </style>
     </head>
-    <body style="padding:20px;">
+    <body>
         <h1>
             Federal Geospatial Platform Visualiser -
             <span style="color:blue">Areas of Interest Demo</span>
@@ -23,7 +31,6 @@
             id="fgpmap"
             is="rv-map"
             rv-config="aoi-config-pics.json"
-            style="height: 700px; display:flex;"
             rv-langs='["en-CA", "fr-CA"]'
             rv-service-endpoint="http://section917.cloudapp.net:8000/"
             rv-plugins="areasOfInterest"

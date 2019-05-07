@@ -72,71 +72,57 @@
         "legend": {
             "type": "structured",
             "root": {
-                "name": "root",
-                "children": [
-                    {
-                        "layerId": "somepowerplants"
-                    },
-                    {
-                        "name": "feature group",
-                        "children": [
-                            {
-                                "layerId": "powerplant100mw-electric"
-                            },
-                            {
-                                "layerId": "powerplant100mw-naturalGas"
-                            },
-                            {
-                                "layerId": "powerplant100mw-liquids"
-                            }
-                        ]
-                    }
-                ]
+              "name": "root",
+              "children": [
+                {
+                  "layerId": "powerplant-nuclear"
+                },
+                {
+                  "layerId": "powerplant-wind"
+                },
+                {
+                  "layerId": "powerplant-solar"
+                }
+              ]
             }
         },
         "layers": [
             {
-                "id": "somepowerplants",
-                "name": "Power Plants Proper Subset",
-                "layerType": "esriDynamic",
-                "layerEntries": [
-                    {
-                        "index": 17,
-                        "nameField": "OBJECTID",
-                        "name": "Custom name field (OBJECTID)"
-                    },
-                    {
-                        "index": 19,
-                        "nameField": "Address",
-                        "name": "Custom name field (Address)"
-                    },
-                    {
-                        "index": 21,
-                        "name": "Default name field (Facility)"
-                    }
-                ],
-                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+              "id": "powerplant-nuclear",
+              "name": "Power Plants, nuclear",
+              "layerType": "esriDynamic",
+              "metadataUrl": "http://donnees-data.intranet.ec.gc.ca:80/geonetwork/srv/eng/xml.metadata.get?uuid=917b8854-64a5-41d6-ad7f-d0a3c0c3cb29",
+              "layerEntries": [
+                {
+                  "index": 22,
+                  "table": {
+                    "title": "A custom title"
+                  }
+                }
+              ],
+              "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
             },
             {
-                "id": "powerplant100mw-electric",
-                "name": "Tooltip field (City) different from name field (OBJECTID)",
-                "nameField": "OBJECTID",
-                "tooltipField": "City",
-                "layerType": "esriFeature",
-                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+              "id": "powerplant-solar",
+              "name": "Power Plants, solar",
+              "layerType": "esriDynamic",
+              "layerEntries": [
+                {
+                  "index": 34
+                }
+              ],
+              "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
             },
             {
-                "id": "powerplant100mw-naturalGas",
-                "name": "Tooltip field same as name field (Period)",
-                "nameField": "Period",
-                "layerType": "esriFeature",
-                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
-            },
-            {
-                "id": "powerplant100mw-liquids",
-                "name": "Default tooltip and name field (Country)",
-                "layerType": "esriFeature",
-                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+              "id": "powerplant-wind",
+              "name": "Power Plants, wind",
+              "layerType": "esriDynamic",
+              "layerEntries": [
+                {
+                  "index": 27
+                }
+              ],
+              "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
             }
         ],
         "extentSets": [

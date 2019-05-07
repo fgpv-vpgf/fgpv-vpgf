@@ -29,7 +29,7 @@ class AreasOfInterest {
 
         AreasOfInterest.instances[this.api.id] = this;
 
-        const topElement = $('<ul style="overflow-y:auto;" class="rv-list rv-basemap-list"></ul>');
+        const topElement = $('<ul class="rv-list rv-basemap-list"></ul>');
 
         this.config.areas.forEach((area, i) => {
             let areaHTML = this.config.noPicture ? noPic : hasPic;
