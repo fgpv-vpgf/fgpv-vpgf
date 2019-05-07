@@ -14,8 +14,7 @@
 
         .rv-settings-divider {
             left: 0;
-            position: absolute;
-            width: 100%;
+            margin: 0 -16px;
 
             // this will hide any extra dividers left when a layer setting is hidden
             + .rv-settings-divider {
