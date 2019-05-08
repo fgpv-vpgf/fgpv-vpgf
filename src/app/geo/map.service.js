@@ -1,4 +1,6 @@
-import { IdentifyMode } from 'api/layers';
+import {
+    IdentifyMode
+} from 'api/layers';
 
 /**
  * @module mapService
@@ -45,7 +47,9 @@ function mapServiceFactory(
     let externalPanel;
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
-    const triggerFilterChanged = debounceService.registerDebounce((fcParam) => { events.$broadcast(events.rvFilterChanged, fcParam) }, 500, false);
+    const triggerFilterChanged = debounceService.registerDebounce((fcParam) => {
+        events.$broadcast(events.rvFilterChanged, fcParam)
+    }, 500, false);
 
     // wire in a hook to zoom to feature
     // this makes it available on the API
@@ -185,7 +189,10 @@ function mapServiceFactory(
      */
     function makeMap() {
         const gapi = gapiService.gapi;
-        const { map: mapConfig, services: servicesConfig } = configService.getSync;
+        const {
+            map: mapConfig,
+            services: servicesConfig
+        } = configService.getSync;
 
         // dom node to build the map on; need to be specified only the first time the map is created and stored for reuse;
         const mapNode = referenceService.mapNode;
@@ -214,13 +221,16 @@ function mapServiceFactory(
         // correct chain of commands being executed
         let fakeGeoJSON = {
             type: 'FeatureCollection',
-            features: [
-                {
-                    type: 'Feature',
-                    geometry: { type: 'Point', coordinates: [-100, 50] },
-                    properties: { key: 'value' }
+            features: [{
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-100, 50]
+                },
+                properties: {
+                    key: 'value'
                 }
-            ]
+            }]
         };
 
         // avoid private variable
@@ -302,8 +312,10 @@ function mapServiceFactory(
         // project bookmark point to the map's spatial reference
         const coords = gapiService.gapi.proj.localProjectPoint(
             sourceBasemap.default.spatialReference,
-            targetBasemap.default.spatialReference,
-            { x: extentCenter.x, y: extentCenter.y }
+            targetBasemap.default.spatialReference, {
+                x: extentCenter.x,
+                y: extentCenter.y
+            }
         );
 
         return {
@@ -328,13 +340,15 @@ function mapServiceFactory(
         // a flag indicating if a feature is being hover over
         let isFeatureMousedOver = false;
 
-        shellService.setLoadingFlag({ id: 'map-init' });
+        shellService.setLoadingFlag({
+            id: 'map-init'
+        });
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
             isFeatureMousedOver = value;
 
             // change mouse cursor to pointer if identify `Query` option is set
-            if (mApi.layers.identifyMode.includes(IdentifyMode.Query)) {
+            if (mApi.layers.identifyMode !== undefined && mApi.layers.identifyMode.includes(IdentifyMode.Query)) {
                 mapConfig.instance.setMapCursor(value ? 'pointer' : '');
             }
         });
@@ -437,7 +451,10 @@ function mapServiceFactory(
             },
             'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {
-                shellService.setLoadingFlag({ id: 'map-update', initDelay: 100 });
+                shellService.setLoadingFlag({
+                    id: 'map-update',
+                    initDelay: 100
+                });
             },
             'update-end': () => {
                 shellService.clearLoadingFlag('map-update', 300);
@@ -542,7 +559,11 @@ function mapServiceFactory(
 
         const map = configService.getSync.map.instance;
         const zoomPromise = proxy.zoomToGraphic(oid, map, offset).then(() => {
-            const graphiBundlePromise = proxy.fetchGraphic(oid, { map, geom: true, attribs: true });
+            const graphiBundlePromise = proxy.fetchGraphic(oid, {
+                map,
+                geom: true,
+                attribs: true
+            });
             service.addGraphicHighlight(graphiBundlePromise, true);
         });
 
@@ -572,7 +593,7 @@ function mapServiceFactory(
             // promise resolves with 'ok' when user clicks 'undo'
             errorService
                 .display(toast)
-                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => { }));
+                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {}));
         }
     }
 }
