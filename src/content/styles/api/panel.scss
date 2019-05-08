@@ -17,8 +17,8 @@
 }
 
 .dialog-container:before {
-    content: "";
-    background: rgba(0, 0, 0, .8);
+    content: '';
+    background: rgba(0, 0, 0, 0.8);
     position: absolute;
     top: 0;
     left: 0;
@@ -39,7 +39,6 @@
 
 #sideMetadata,
 #sideSettings {
-
     .rv-header-controls {
         padding: 0 0 0 0;
     }
@@ -81,7 +80,7 @@
     }
 
     padding: 0 !important;
-    margin-left:0 !important;
+    margin-left: 0 !important;
     top: 0px;
     left: 411px;
     width: 350px;
@@ -131,6 +130,16 @@
             left: 0px !important;
         }
     }
+
+    &.tablet-fullscreen {
+        @include include-size(rv-md) {
+            width: calc(100% - 20px) !important;
+            height: calc(100% - 20px) !important;
+            margin: 10px;
+            top: 0px !important;
+            left: 0px !important;
+        }
+    }
 }
 
 .panel-controls {
@@ -146,7 +155,7 @@
     md-input-container {
         margin: inherit;
 
-        >md-icon {
+        > md-icon {
             top: auto;
         }
     }
@@ -174,7 +183,7 @@
         margin: -1px;
         padding: inherit;
 
-        >div:first-child {
+        > div:first-child {
             height: 100%;
         }
     }
@@ -191,7 +200,6 @@
         }
 
         .item {
-
             &:not(.ag-cell) {
                 border: 1px solid transparent;
             }
@@ -237,7 +245,6 @@
     vertical-align: middle;
     text-overflow: ellipsis;
 }
-
 
 .text-btn:hover {
     background-color: darkslategray;
