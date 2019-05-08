@@ -506,7 +506,9 @@ export class PanelManager {
                 });
 
                 newFilterModel = newFilterModel !== {} ? newFilterModel : null;
-                that.clearGlobalSearch();
+                if (that.clearGlobalSearch !== undefined) {
+                    that.clearGlobalSearch();
+                }
                 that.tableOptions.api.setFilterModel(newFilterModel);
             };
 
@@ -530,15 +532,25 @@ export class PanelManager {
         });
 
         this.mapApi.agControllerRegister('ApplyToMapCtrl', function () {
-            // returns true if a filter has been changed since the last
+
+            let mapFilterQuery = "";
+
             this.filtersChanged = function () {
-                return that.filtersChanged;
+                if (that.filtersChanged) {
+                    // if filter is changed
+                    // check if filter changed is the same as one applied to map
+                    // if not, apply to map will be enabled
+                    // else it will be disabled
+                    return getFiltersQuery() !== mapFilterQuery;
+                }
+                return false;
             };
 
             // apply filters to map
             this.applyToMap = function () {
                 const filter = that.legendBlock.proxyWrapper.filterState;
-                filter.setSql(filter.coreFilterTypes.GRID, getFiltersQuery());
+                mapFilterQuery = getFiltersQuery();
+                filter.setSql(filter.coreFilterTypes.GRID, mapFilterQuery);
                 that.filtersChanged = false;
             };
 
