@@ -32,7 +32,7 @@ export class PanelManager {
         this.setListeners();
         this.prepListNavigation();
         this.panel.body = $(`<div rv-focus-exempt></div>`);
-        this.panel.element.addClass('ag-theme-material mobile-fullscreen');
+        this.panel.element.addClass('ag-theme-material mobile-fullscreen tablet-fullscreen');
         this.panel.element.css({
             top: '0px',
             left: '410px'
