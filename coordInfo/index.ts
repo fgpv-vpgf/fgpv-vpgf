@@ -14,6 +14,19 @@ class CoordInfo {
             CoordInfo.prototype.translations[this._RV.getCurrentLang()].coordButtonLabel,
             this.onMenuItemClick()
         );
+
+        // check to see if this init is due to projection change or language switch
+        const activeNode = this.api.mapDiv[0].getAttributeNode('coord-info-active');
+        if (activeNode !== null) {
+            this.api.layers.identifyMode = 'none';
+            // if coordinate info was active, turn it on again
+            if (this.panel !== undefined) {
+                // destroy old panel so that new one gets created
+                this.panel.close({ destroy: true });
+                this.panel = undefined;
+            }
+            this.toggleActive();
+        }
     }
 
     /**
@@ -29,17 +42,12 @@ class CoordInfo {
 
             // only set event if not already created
             if (typeof this.handler === 'undefined') {
-                this.handler = this.api.click.subscribe(clickEvent => this.clickHandler(clickEvent));
+                // activate coordInfo crosshairs, store current identify value
+                identifySetting = this.toggleActive();
 
-                // set cursor
-                this._RV.setMapCursor('crosshair');
-
-                // set active (checked) in the side menu
-                this.button.isActive = true;
-
-                // store current identify value and then disable in viewer
-                identifySetting = this.api.layers.identifyMode;
-                this.api.layers.identifyMode = 'none';
+                //set coord-info-active attr on map
+                const activeNode = document.createAttribute('coord-info-active');
+                this.api.mapDiv[0].setAttributeNode(activeNode);
             } else {
                 // remove the click handler and set the cursor
                 this.handler.unsubscribe();
@@ -48,11 +56,34 @@ class CoordInfo {
 
                 // set inactive (unchecked) in the side menu
                 this.button.isActive = false;
-
                 // reset identify value to stored value
                 this.api.layers.identifyMode = identifySetting;
+
+                //remove coord-info-active attr on map
+                const activeNode = this.api.mapDiv[0].getAttributeNode('coord-info-active');
+                this.api.mapDiv[0].removeAttributeNode(activeNode);
             }
         };
+    }
+
+    /**
+     * Helper method to init and toggleMenuItem on click.
+     * Activates coordInfo crosshairs and menu checkmark.
+     */
+    toggleActive() {
+        this.handler = this.api.click.subscribe(clickEvent => this.clickHandler(clickEvent));
+
+        // set active (checked) in the side menu
+        this.button.isActive = true;
+
+        // set cursor
+        this._RV.setMapCursor('crosshair');
+
+        // return current identify value and then disable in viewer
+        let identifySetting = this.api.layers.identifyMode;
+        this.api.layers.identifyMode = 'none';
+
+        return identifySetting;
     }
 
     /**
