@@ -174,7 +174,7 @@
       },
       {
         "id": "wms",
-        "name": "WMS Layer",
+        "name": "WMS Layer with a really long name",
         "layerType": "ogcWms",
         "disabledControls": [
           "styles"

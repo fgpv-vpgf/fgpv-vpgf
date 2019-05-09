@@ -41,6 +41,10 @@
 #sideSettings {
     .rv-header-controls {
         padding: 0 0 0 0;
+
+        button {
+            min-width: 40px;
+        }
     }
 
     @include include-size(rv-sm) {
