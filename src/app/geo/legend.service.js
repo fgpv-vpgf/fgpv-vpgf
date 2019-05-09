@@ -1213,6 +1213,8 @@ function legendServiceFactory(
         const legendElement = mApi.ui.configLegend.getById(apiLegendBlock.id);
         const parent = _getParentById(apiLegendBlock.id);
 
+        mApi.ui.configLegend._elementRemoved.next(legendBlock);
+
         if (parent === 'root') {
             let index = mApi.ui.configLegend.children.indexOf(legendElement);
             if (index > -1) {

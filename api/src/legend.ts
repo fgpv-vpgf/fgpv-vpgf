@@ -47,6 +47,8 @@ class BaseLegend {
     _click: Subject<LegendItem | LegendGroup>;
     /**@ignore **/
     _dataTableToggled: Subject<any>;
+    /**@ignore **/
+    _elementRemoved: Subject<LegendItem>;
 
     /**
      * Create a new legend instance that provides core functionality. Not to be used directly.
@@ -60,6 +62,7 @@ class BaseLegend {
         this._children = [];
         this._click = new Subject();
         this._dataTableToggled = new Subject();
+        this._elementRemoved = new Subject();
     }
 
     /**
@@ -136,6 +139,14 @@ class BaseLegend {
      */
     get dataTableToggled(): any {
         return this._dataTableToggled.asObservable();
+    }
+
+    /**
+     * Emits whenever an element is removed from the legend.
+     * @event elementRemoved
+     */
+    get elementRemoved(): Observable<LegendItem> {
+        return this._elementRemoved.asObservable();
     }
 
 }
