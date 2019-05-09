@@ -42,6 +42,11 @@ export declare class PanelManager {
     updateColumnVisibility(): void;
     readonly id: string;
     makeHeader(): void;
+    /**
+     * Forces tooltips to hide.
+     * Apply to map and clear filter tooltips are shown on click and mouseleave on IE/edge.
+     */
+    hideToolTips(): void;
     angularHeader(): void;
     compileTemplate(template: any): JQuery<HTMLElement>;
 }

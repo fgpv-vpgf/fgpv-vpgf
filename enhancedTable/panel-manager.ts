@@ -392,6 +392,16 @@ export class PanelManager {
         this.mapApi.$compile($(`<div ng-controller="ToastCtrl as ctrl"></div>`));
     }
 
+    /**
+     * Forces tooltips to hide.
+     * Apply to map and clear filter tooltips are shown on click and mouseleave on IE/edge.
+     */
+    hideToolTips() {
+        Array.from(document.getElementsByTagName('md-tooltip')).forEach(tooltip => {
+            tooltip.classList.remove('md-show');
+        });
+    }
+
     angularHeader() {
         const that = this;
         this.mapApi.agControllerRegister('ToastCtrl', ['$scope', '$mdToast', '$rootElement', function ($scope, $mdToast, $rootElement) {
@@ -491,6 +501,7 @@ export class PanelManager {
         this.mapApi.agControllerRegister('ClearFiltersCtrl', function () {
             // clear all column filters
             this.clearFilters = function () {
+                that.hideToolTips();
                 const columns = Object.keys(that.tableOptions.api.getFilterModel());
                 let newFilterModel = {};
 
@@ -552,6 +563,7 @@ export class PanelManager {
                 mapFilterQuery = getFiltersQuery();
                 filter.setSql(filter.coreFilterTypes.GRID, mapFilterQuery);
                 that.filtersChanged = false;
+                that.hideToolTips();
             };
 
             // get filter SQL qeury string
