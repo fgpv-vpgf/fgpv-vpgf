@@ -3,26 +3,21 @@ dist: trusty
 language: node_js
 node_js:
 - 8.11.1
-
 before_script:
 - echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-
 script:
-- ./scripts/travis/build.sh
-
+- "./scripts/travis/build.sh"
 cache:
   directories:
   - node_modules
   - features/node_modules
-
 deploy:
 - provider: script
   skip_cleanup: true
   script: bash ./scripts/travis/deploy-build-cloudapp.sh
   on:
     all_branches: true
-
 - provider: script
   skip_cleanup: true
   script: bash ./scripts/travis/docs.sh
@@ -31,7 +26,6 @@ deploy:
     repo: fgpv-vpgf/fgpv-vpgf
     condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
     condition: $mProc == dev
-
 - provider: pages
   target_branch: gh-pages
   local-dir: gh-page-files
@@ -43,7 +37,6 @@ deploy:
     repo: fgpv-vpgf/fgpv-vpgf
     condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
     condition: $mProc == dev
-
 notifications:
   webhooks:
     urls:
@@ -71,6 +64,8 @@ env:
   - secure: dHrFiQUyjskCRhU20MdRpVzbpM38vLD+SZXekuENXHAlaFMCWhsO5QnMGNOKVwOAGYJahjF165JwAm6+5OcTQdmQQGya/RtAT95S4t/FDOH1zvQzd13x2B1jBScJ4wBo3OZod0wAg5fbGyt6+pnlMMpp0jd4YiLDB6f538JKDt7QjyPO33+mxgheEDcf0gDZs6aQA8X9cyCl7x4lPcv4wYDvZaOoVnf0BN3sFGkqtRyoOawl62/zqfRsU0psz3gHbR7w822CysKkhUtkS805X25xolyBL9kROZzJTScPtKbQiTFbc8pzshoLMPwKy+++ZiQErv0o+QUiYhiEYKxa1u4/KSmMFeIV3WNk5fz6M0QN/VaJWjA4aE7cmbwwaGJTKQAUb6r0EjHezzWmpSuCNyB2Iwtkhwcub6wnpqvOb9O8exykH9zkz+J9OMPUJDYGQAYq+d3sMWacfLZy3CbDyUtZdz6wad7T/JX11n4svoBpwkfXwWqxxMP+Z92g6OtzBAxUCHcadSvR5XGKilW1yMLrZCDxxubJDDDGDuPp9tAgJbEMiy+bnopmfqOF1ugpV4JcwbwXaH2vzcXO6qD6ZkFzO1lkeCz22MLIWiTc8SCCqaNfeQXL88oixWY+ZymxHtdL3VPjkUKGyTfpckggKD7WBRA7mS/WUj7rZ3d0YsI=
   - secure: jmB42zTGbb8ReTKAJYuqPBA9rjA2/lPGlV+YtLszaz5uPwZgOrFs3yroPbqwgP9kZ5HNodogDaY49dez3HsKQSEdAvas9k7vUP/coVCiy2VKyA4BdK+1z+OtbqaPIHHxstlT1SL/eo7exwnpTMyGYSXm/oolb8Y/wMyj5VkVDVmT+z3HF5k9cE0c/C7diaK51Oj54Fjp9l5yAe6UnFLnUcIIQ1k+uDduJl58peqP0C1gVXyd+g0txncY/Q9DJf9LFLdH4Vvbv5IlGQCeHEZZrLoYHWNcnWy57o1FEdVNm7rad+7irB+FKmHO0RfEm1ddR3BP4BHOcWV1p5p7rQNjppaK9eyUyyg7kaFjxbET+f0VHEsWrLL84n+mKIAD7FVp9naGI1GaJ3lpTmCqu+7O6wbNyb2fJdEgf8EZR3NzMqIf0kHcmPPc/ZRf1qJLhU0SCBNYqcJsRSqaoqjO4WNINo2S0xdXmidA9eMvnDj54F7dUplpTHp/zWPChTS3jDYt8Nfln9JbUKCtJpti9B3idJVblW6679UYAwKF6A4Ocgi8CIM3qtj2R7zy0govHmwcpu0sFCOwB/6ZO4u83cVxEqcnZrv4SZv9N1dh3DJjRChJKflNGHxSVsRsC4Z87WfenEGJfzu2b4oEBpDrUQurrVkmqzv0vm0cs26isLVMcIE=
   - secure: UqHe40dlJpp+4IzERe3IvLQ3lv4ojX2FmgBOTYqDwNTrRfquLYB4a264XKhKXlT+Tilee1H9kaeUJQupnM55knWYaE/JKV28prWU+a3Ndp0avkKoFReeNXvEs1A7239IRtXrwHgmNDzub2PubMquDaLWReZvzq+6QGQhUZ/6RI05tYdLkOzcNVDSAIDMPos+pbGk7QAIIk/xKYWsx+xUi6oL+Jcw9FVasH4oZ3NiDn0PwIsJ74UG0buMLlRh2aXfR4EctDHNQCB5aHU2cKKAHIwMQ5HVo5HQ+hIv7z5vY7BhrhBa+8aYDn5kPyG3Kl93cszt0kGDcVvRqhZAGK8xkr2dPWGITSHz3Tiwr6k4RAqtpHy3mx9EPo2KIc4pBAVzooGt991fFQ8N0kntg09eiF5aZg8vOKmrvb1/xWV4890DzZlPmTlMggvQcHSRGXbNxkRzyL7YgFmxtuD/QBVyswImJnP9obJGNq82MjRxeaOTtHLan9y+Te+Kb+M2rg9g41Fd50gm5dch+iHU1EIDvjNIh8mPeneaYrNkrjiO9AlKdmSowk4/hnoZFuxl65SwwoVMgiJWSk7GobcQFLERjr03FebO2RW0Fs1F16KxHPkuwPAz6eJ9whXMSMrKWGw2RmzKHEoe3usBljzVQTvmndR5BAi3fJyZDAMs+40C6lA=
+  - secure: jQ0clmOxDLS3FMpBJkPETgEfxzZkwAgoHqbbyckutELG5Dz7P803XL0/zwRtuiisVCqUHESaJIUNabpEGEv4bMgGBQH2169Z9Z5GbnFCbQPsyuoVY3XcWA8nLzL0ysWZy8aHB3nAUJT4Z4C4RqiNlpVUQ/iHhYerPbD3Wcr76hkZpvn/De4XqXGuIGEzFFFxGPnFz68N/jAdv57QQYKEGk5vsOMYMZH6PEzZcEv0JoObFyNDqIaFIVmyE7qxzQ+MUzr2iBr11Vghx2prw8OI+PwogBhRAzNRbfKW9Xo1hIjKwI7AWHWcekQTp1PPaTGbV9mW0Ax029h30qsIZqfI/KN664ipebhhtO5rt/nOBKgNkmQHSA8Bb0hCNfgf8cXo6S2+NvxkrbUb6A0A3B8uXBaGg7PWjEyaaqB44lg3LB+54EamIc1OFMTD3s34NnjvNBoQAhpXmfUCXXtDArl/OzgB653TDfFgeCUnzLYLOQBIS6Cg24MwJ8O61p0ShtEGYb30+JLX8j0Oc3mSxbzxE88zyuzAd1ff8Jvm3qOky0dpf3mIlCKe8ucexORSFpvjRJ14/euDW7cx6bCj33XC+WafJcRXShHEwH4z7CHOswH8TMH1xAkPqc9JAAK9aWwCL+lMUArCBArFx2n4q6nppp2GBqLfA1moVRzclnLTKWQ=
+  - secure: I8gwtC7f7Lihba7lIP433RaIUB8Y3VnfAqikQ77J2gIvUcHIa4fesx5ubdyzYoQvAm7fGXRXTx9nsBywJXsGjQEPPCvGi3XlrFZlOsKsUbnr8XCd3dxLz1BHrc14oxuYA9xt8eMZlQm58y9VWCAvb/LdT7UJU6HwgVO8dBvyE3HHskw8VIIDoFwaqFNxuC90CELK1augBdjO40qYU4w+TDR8LSu3m1MEEMd+qvBUR6aGIwJ9B0Yyq1MeGp4zr8X+86145qiyg/fxjmxEHLngB9YW7a7Qfix7oeGoQY4nD9yFVobCaXeszkNrG8NxhZaOJFXyOIBYuULZblInu0maefEngNB//uQ3+yML/AaaY2p1sieTfykipY8H2aTFSgfSdeIL9wz0RQb4xJJFYzX53FrbY1cpqa9/71QuyTmRHT3nmzXrlFpB4TMHpYMoZrUvXYi/GrabvSq/ZU9DdFhfmh+krQfoeox3taLeFSUun326CY9RivyHIP8YsS5uRg+50zBPUzpLrCKgVu1/E+6nPoDh9M0JxBMjQI0YgT5TDJRceukDUU3LrNvVE1FOLLgBgT8UhdthpeKIKJqe6FJnodQ31xOwx0u7RXK2MYczCSfc9dFyYHVeAT5Ua9mveSAQUnqFEqr9zX8mqgXKr64Gfyx9IhoRjMfuCjkkfhceI0k=
   matrix:
   - mProc=dev
   - mProc=prod
