@@ -23,7 +23,7 @@ export default interface TableBuilder {
     mapApi: any;
     tableOptions: GridOptions;
     tableApi: GridApi;
-    panel: PanelManager;
+    panelManager: PanelManager;
     translations: any;
     configManager: ConfigManager;
     legendBlock: any;

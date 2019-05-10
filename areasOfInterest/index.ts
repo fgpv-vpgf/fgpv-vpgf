@@ -38,7 +38,7 @@ class AreasOfInterest {
             topElement.append(areaHTML);
 
             const currBtn = topElement.find('button').last();
-            currBtn.click(() => (this.api.extent = area));
+            currBtn.click(() => (this.api.setExtent(area)));
         });
 
         this.button = this.api.mapI.addPluginButton(

@@ -3735,7 +3735,10 @@ md-datepicker > div {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-  overflow: hidden; }
+  overflow: hidden;
+  margin-top: 5px;
+  margin-bottom: 0;
+  line-height: 11px; }
 
 .md-title {
   display: block !important; }

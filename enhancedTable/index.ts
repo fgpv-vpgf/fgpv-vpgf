@@ -28,11 +28,11 @@ export default class TableBuilder {
             }
         });
 
-        this.mapApi.layers.layerRemoved.subscribe((baseLayer: any) => {
-            if (baseLayer === this.panelManager.currentTableLayer) {
+        this.mapApi.ui.configLegend.elementRemoved.subscribe(legendBlock => {
+            if (legendBlock === this.panelManager.legendBlock) {
                 this.panelManager.panel.close();
             }
-        })
+        });
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {

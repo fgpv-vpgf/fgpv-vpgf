@@ -20,7 +20,10 @@ export declare class PanelManager {
      */
     prepListNavigation(): void;
     open(tableOptions: any, layer: any, tableBuilder: any): void;
-    close(): void;
+    /**
+     * Cleans up the table when the panel is being closed.
+     */
+    cleanUp(): void;
     onBtnExport(): void;
     onBtnPrint(): void;
     createHTMLTable(): string;
