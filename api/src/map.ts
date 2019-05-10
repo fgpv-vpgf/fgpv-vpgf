@@ -109,8 +109,23 @@ export class Map {
         });
     }
 
-    set extent(extent: any) {
-        this.mapI.setExtent((<any>window).RAMP.GAPI.Map.getExtentFromJson(extent));
+    /**
+     * Returns the map extent in the native projection (using ESRI JSON format).
+     * Note: the extent will not be modified.
+     */
+    getExtent(): any {
+        return this.mapI.extent;
+    }
+
+    /**
+     * Sets the extent of the map. The extent must be in the same spatial reference as the map.
+     * Note: the extent will not be modified.
+     *
+     * The `extent` property must be provided using standard ESRI JSON format.
+     * The `fit` property is optional (defaults to false). If true, for maps containing tile layers the input extent always shown completely on the map.
+     */
+    setExtent(extent: geo.Extent, fit: boolean = false) {
+        this.mapI.setExtent((<any>window).RAMP.GAPI.Map.getExtentFromJson(extent), fit);
     }
 
     /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
