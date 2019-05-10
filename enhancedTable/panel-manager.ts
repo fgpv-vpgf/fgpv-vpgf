@@ -44,8 +44,8 @@ export class PanelManager {
         close.addClass('black md-ink-ripple');
         this.setSize();
         //destroy the table properly whenever the panel is closed
-        this.panel.closing.subscribe(response => {
-            this.close();
+        this.panel.closing.subscribe(() => {
+            this.cleanUp();
         });
     }
 
@@ -147,11 +147,11 @@ export class PanelManager {
 
     open(tableOptions: any, layer: any, tableBuilder: any) {
         if (this.currentTableLayer === layer) {
-            this.close();
+            this.panel.close();
         } else {
             // close previous table properly if open
             if (this.currentTableLayer) {
-                this.close();
+                this.panel.close();
             }
             this.tableOptions = tableOptions;
 
@@ -255,7 +255,10 @@ export class PanelManager {
         }
     }
 
-    close() {
+    /**
+     * Cleans up the table when the panel is being closed.
+     */
+    cleanUp() {
         this.panelStateManager.sortModel = this.tableOptions.api.getSortModel();
 
         if (this.gridBody !== undefined) {

@@ -19,25 +19,25 @@ export default class TableBuilder {
     init(mapApi: any) {
         this.mapApi = mapApi;
 
-        this.panel = new PanelManager(mapApi);
-        this.panel.reload = this.reloadTable.bind(this);
+        this.panelManager = new PanelManager(mapApi);
+        this.panelManager.reload = this.reloadTable.bind(this);
 
         this.mapApi.layers.reload.subscribe((baseLayer: any, interval: boolean) => {
-            if (!interval && baseLayer === this.panel.currentTableLayer) {
+            if (!interval && baseLayer === this.panelManager.currentTableLayer) {
                 this.reloadTable(baseLayer);
             }
         });
 
         this.mapApi.layers.layerRemoved.subscribe((baseLayer: any) => {
-            if (baseLayer === this.panel.currentTableLayer) {
-                this.panel.close();
+            if (baseLayer === this.panelManager.currentTableLayer) {
+                this.panelManager.panel.close();
             }
         })
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {
             // Open the table if its closed, never been created or this is a different legend block
-            if (this.panel.panel.isClosed || !this.panel.panelStateManager || this.panel.panelStateManager.legendBlock !== legendBlock) {
+            if (this.panelManager.panel.isClosed || !this.panelManager.panelStateManager || this.panelManager.panelStateManager.legendBlock !== legendBlock) {
                 // creates a 'loader' panel to be opened if data hasn't loaded after 200ms
                 this.deleteLoaderPanel();
                 this.loadingPanel = new PanelLoader(this.mapApi, legendBlock);
@@ -48,7 +48,7 @@ export default class TableBuilder {
 
                 this.findMatchingLayer(legendBlock);
             } else {
-                this.panel.close();
+                this.panelManager.panel.close();
             }
         });
     }
@@ -69,7 +69,7 @@ export default class TableBuilder {
                 // if layer was created unsubscribe to layer added observable
                 // create + open the enhancedTable
                 this.legendBlock = legendBlock;
-                this.panel.setLegendBlock(legendBlock);
+                this.panelManager.setLegendBlock(legendBlock);
                 if (this.layerAdded !== undefined) {
                     this.layerAdded.unsubscribe();
                 }
@@ -92,7 +92,7 @@ export default class TableBuilder {
             // if no PanelStateManager exists for this BaseLayer, create a new one
             baseLayer.panelStateManager = new PanelStateManager(baseLayer, this.legendBlock);
         }
-        this.panel.panelStateManager = baseLayer.panelStateManager;
+        this.panelManager.panelStateManager = baseLayer.panelStateManager;
 
         const attrs = baseLayer.getAttributes();
         this.attributeHeaders = baseLayer.attributeHeaders;
@@ -100,16 +100,16 @@ export default class TableBuilder {
             // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
             this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
                 if (attrs.attributes.length > 0) {
-                    this.configManager = new ConfigManager(baseLayer, this.panel);
-                    this.panel.configManager = this.configManager;
+                    this.configManager = new ConfigManager(baseLayer, this.panelManager);
+                    this.panelManager.configManager = this.configManager;
                     this.createTable(attrs);
                 } else {
                     this.openTable(baseLayer);
                 }
             });
         } else {
-            this.configManager = new ConfigManager(baseLayer, this.panel);
-            this.panel.configManager = this.configManager;
+            this.configManager = new ConfigManager(baseLayer, this.panelManager);
+            this.panelManager.configManager = this.configManager;
 
             this.createTable({
                 attributes: attrs,
@@ -174,7 +174,7 @@ export default class TableBuilder {
                                     : undefined
                     };
 
-                    this.panel.notVisible[colDef.field] =
+                    this.panelManager.notVisible[colDef.field] =
                         this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined;
 
                     // set up floating filters and column header
@@ -188,9 +188,9 @@ export default class TableBuilder {
                             // floating filters of type number, date, text
                             // text can be of type text or selector
                             if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
-                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions, this.panel.panelStateManager);
+                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions, this.panelManager.panelStateManager);
                             } else if (fieldInfo.type === DATE_TYPE) {
-                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value, this.panel.panelStateManager);
+                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value, this.panelManager.panelStateManager);
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
                                 if (isSelector) {
                                     setUpSelectorFilter(
@@ -199,7 +199,7 @@ export default class TableBuilder {
                                         column.value,
                                         this.tableOptions,
                                         this.mapApi,
-                                        this.panel.panelStateManager
+                                        this.panelManager.panelStateManager
                                     );
                                 } else {
                                     setUpTextFilter(
@@ -209,7 +209,7 @@ export default class TableBuilder {
                                         this.configManager.searchStrictMatchEnabled,
                                         column.value,
                                         this.mapApi,
-                                        this.panel.panelStateManager
+                                        this.panelManager.panelStateManager
                                     );
                                 }
                             }
@@ -230,18 +230,18 @@ export default class TableBuilder {
             // Show toast on layer refresh is refresh interval is set
             const refreshInterval = this.legendBlock.proxyWrapper.layerConfig.refreshInterval;
             if (refreshInterval) {
-                this.panel.toastInterval = setInterval(() => {
-                    this.panel.showToast();
+                this.panelManager.toastInterval = setInterval(() => {
+                    this.panelManager.showToast();
                 }, refreshInterval * 60000);
             }
 
-            this.panel.open(this.tableOptions, attrBundle.layer, this);
+            this.panelManager.open(this.tableOptions, attrBundle.layer, this);
             this.tableApi = this.tableOptions.api;
         });
     }
 
     reloadTable(baseLayer) {
-        this.panel.close();
+        this.panelManager.panel.close();
         this.openTable(baseLayer);
     }
 }
@@ -321,7 +321,7 @@ export default interface TableBuilder {
     mapApi: any;
     tableOptions: GridOptions;
     tableApi: GridApi;
-    panel: PanelManager;
+    panelManager: PanelManager;
     translations: any;
     configManager: ConfigManager;
     legendBlock: any;
