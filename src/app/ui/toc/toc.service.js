@@ -246,6 +246,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     function removeLayer(legendBlock, showToast = true) {
         let resolve, reject, openPanelName;
 
+        // need to check all children in case of dynamic where a child table is open but parent is removed
+        if (legendBlock.blockType === LegendBlock.TYPES.GROUP || legendBlock.blockType === LegendBlock.TYPES.SET) {
+            legendBlock.walk(block => mApi.ui.configLegend._elementRemoved.next(block));
+        } else {
+            mApi.ui.configLegend._elementRemoved.next(legendBlock);
+        }
+
         // legendBlock is the only child in the group, remove parent instead of just child
         if (legendBlock.parent && legendBlock.parent.entries.length === 1) {
             removeLayer(legendBlock.parent, showToast);
