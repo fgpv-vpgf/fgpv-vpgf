@@ -1,6 +1,3 @@
-### [V3 Documentation](https://docs.fgpv.org/fgpv-vpgf/fgpv-vpgf/v3/#/) is in progress!
-
-
 [![Join the chat at https://gitter.im/fgpv-vpgf/fgpv-vpgf](https://img.shields.io/badge/GITTER-join%20chat-green.svg?style=flat-square)](https://gitter.im/fgpv-vpgf/fgpv-vpgf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Issue Count](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf/badges/issue_count.svg)](https://codeclimate.com/github/fgpv-vpgf/fgpv-vpgf)
@@ -115,6 +112,13 @@ To run these flags, prefix with `--` then `--env.` as in `npm run serve -- --env
 
 - `useMap`
     Creates full independent source maps files for `development` code only. Build time will increase.
+
+### Troubleshooting
+
+If the build process is failing, the following things can sometimes resolve the issue
+
+- If you are running a version of Node.js greater than 10, try downgrading to version 10 (e.g. `v10.14.1` has proved to be a go-to version in this scenario)
+- Attempt deleting the `node_modules` folder and/or the `package-lock.json` file
 
 ## Support
 

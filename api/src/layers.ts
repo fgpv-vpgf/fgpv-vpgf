@@ -1,19 +1,3 @@
-/**
- *               __
- *              /    \
- *             | STOP |
- *              \ __ /
- *                ||
- *                ||
- *                ||
- *                ||
- *                ||
- *              ~~~~~~~
- * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- *
- * THIS API IS NOT SUPPORTED.
- */
-
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { DynamicLayerEntryNode, InitialLayerSettings } from 'api/schema';
 import { BaseGeometry } from 'api/geometry';
