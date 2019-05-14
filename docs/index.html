@@ -14,8 +14,15 @@
         <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
         <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
         <script>
+            // this logic is broken after changing to hosting on github.io , which has different tag structure
+            // for now, will just put a hard link to the published docs in the "Annotated Source Code" menu below.
+            // someone smarter in the future can figure out the correct parsing to get magic url pointing.
+            // note this link also exists in api-overview.md so maybe makes more sense to keep it static
+            // (have not found a way to pass variables into .md files)
+            /*
             var tag = window.location.href.match(/\.com\/([\d|\w|\.|-]+)/);
             var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
+            */
 
             docute.init({
                 landing: 'landing.html',
@@ -41,7 +48,8 @@
                                 { title: 'Architecture Overview', path: '/technical/architecture' },
                                 { title: 'Bookmark Format', path: '/developer/bookmark_formats' },
                                 { title: 'Interactive Schema', path: 'https://fgpv-vpgf.github.io/schema-to-docs/' },
-                                { title: 'Annotated Source Code', path: `${url}developer/api_tech_docs` },
+                                // { title: 'Annotated Source Code', path: `${url}developer/api_tech_docs` },
+                                { title: 'Annotated Source Code', path: `http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/developer/api_tech_docs/` },
                                 { title: 'GeoAPI Annotated Source Code', path: 'http://fgpv-vpgf.github.io/geoApi/v3.0.0/'}
                             ]
                         },
