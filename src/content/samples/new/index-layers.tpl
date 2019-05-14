@@ -97,11 +97,13 @@
     <section id="header">
         <div class="row">
             <select id="selectConfig" class="tool">
-                <option value="NEEDS A CONFIG">01. Layer settings locked/disabled</option>
-                <option value="NEEDS A CONFIG">02. Layer types</option>
-                <option value="NEEDS A CONFIG">03. Layer customizations</option>
-                <option value="NEEDS A CONFIG">04. Dynamic layers</option>
-                <option value="NEEDS A CONFIG">05. Not true dynamic layers</option>
+                <option value="config/config-sample-layers-01-visibility.json">1a. Layer Settings: Opacity and Visibility Tests</option>
+                <option value="config/config-sample-layers-01-settings.json">1b. Layer Settings: Other Settings Panel Features</option>
+                <option value="config/config-sample-layers-01-controls.json">1c. Layer Settings: Control Tests</option>
+                <option value="config/config-sample-layers-02.json">02. Layer types</option>
+                <option value="config/config-sample-layers-03.json">03. Layer customizations</option>
+                <option value="config/config-sample-layers-04.json">04. Dynamic layers</option>
+                <option value="config/config-sample-layers-05.json">05. Not true dynamic layers</option>
             </select>
         </div>
 
@@ -117,7 +119,7 @@
     <button id="hideShow" class="chevron top fade" type="button"></button>
 
     <div class="myMap" id="sample-map" is="rv-map" ramp-gtm
-        rv-config="../config/config-sample-01.json"
+        rv-config="config/config-sample-layers-01-visibility.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
