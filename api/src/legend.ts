@@ -1,21 +1,6 @@
-/**
- *               __
- *              /    \
- *             | STOP |
- *              \ __ /
- *                ||
- *                ||
- *                ||
- *                ||
- *                ||
- *              ~~~~~~~
- * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- *
- * THIS API IS NOT SUPPORTED.
- */
-
 import { Observable, Subject } from 'rxjs';
 import { layerTypes } from './layers';
+
 /**
  * All legend types must be derived from this class. Not intended to be instantiated on its own.
  * Provides the core API functionality for both `SimpleLegend` and `ConfigLegend`

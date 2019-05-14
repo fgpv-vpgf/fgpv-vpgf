@@ -1,20 +1,3 @@
-/**
- *               __
- *              /    \
- *             | STOP |
- *              \ __ /
- *                ||
- *                ||
- *                ||
- *                ||
- *                ||
- *              ~~~~~~~
- * THE CODE HEREIN IS A WORK IN PROGRESS - DO NOT USE, BREAKING CHANGES WILL OCCUR FREQUENTLY.
- *
- * THIS API IS NOT SUPPORTED.
- */
-
-
 import { Observable, Subject } from 'rxjs';
 import { PanelEvent } from 'api/events';
 import Map from 'api/map';
