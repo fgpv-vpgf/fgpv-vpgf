@@ -121,7 +121,7 @@
             "children": [
               {
                 "infoType": "text",
-                "content": "Check for disabled global search in datatable. This is normally located to the left of the clear filters icon at the top right corner of the table. Open the datatable under Test 2 to see the enabled global search."
+                "content": "Check for disabled global search in datatable. This is normally located to the left of the clear filters icon at the top right corner of the table."
               },
               {
                 "layerId": "disabledTableGlobalSearch"
@@ -135,7 +135,7 @@
             "children": [
               {
                 "infoType": "text",
-                "content": "Open the different data tables below and test that the filters are applied on load, matching the descriptions of each layer. For each layer, hide all layers except the one being tested to see clearer results. "
+                "content": "Open the different data tables below and test that the filters are applied on load, matching the descriptions of each layer. For each layer, hide all layers except the one being tested."
               },
               {
                 "layerId": "filterLayers0"
