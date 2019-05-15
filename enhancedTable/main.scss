@@ -21,6 +21,10 @@ md-datepicker>div {
 
 .custom-header-label {
     text-transform: none;
+    width: auto;
+    max-width: 80%;
+    text-overflow: ellipsis;
+    margin-right: 0 !important;
 }
 
 .reorder-icons {

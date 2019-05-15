@@ -328,7 +328,7 @@ export class PanelManager {
         columns = columns ? columns : this.tableOptions.columnApi.getAllColumns();
         this.tableOptions.columnApi.autoSizeColumns(columns);
         columns.forEach(c => {
-            if (c.actualWidth > maxWidth) {
+        if (c.actualWidth > maxWidth) {
                 this.tableOptions.columnApi.setColumnWidth(c, maxWidth);
             }
         });

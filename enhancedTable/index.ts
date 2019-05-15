@@ -155,6 +155,7 @@ export default class TableBuilder {
                     let colDef: ColumnDefinition = {
                         width: column.width || 100,
                         minWidth: column.width,
+                        maxWidth: column.width,
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                         headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
                         field: columnName,
