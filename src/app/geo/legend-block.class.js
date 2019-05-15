@@ -1056,6 +1056,18 @@ function LegendBlockFactory(
 
                 timeSinceChunkLoad += updateDelta;
 
+                // if the estimate overshoots the total feature count, set it to the total feature count
+                // if the estimate is somehow less than 0, set it to 0
+                // this is to prevent the value display to be in the negatives or higher than the total amount required to load
+                if (this._derivedLoadedFeatureCount > this._proxyWrapper.featureCount) {
+                    this._derivedLoadedFeatureCount = this._proxyWrapper.featureCount;
+                } else if (this._derivedLoadedFeatureCount < 0) {
+                    this._derivedLoadedFeatureCount = 0;
+                }
+                if (this.loadingPanel !== undefined) {
+                    this.loadingPanel.prepareBody();
+                }
+
                 // when the actual loaded feature count changes...
                 if (previousCount !== this._proxyWrapper.loadedFeatureCount) {
                     // udpate time estimate on how long it takes to load a chunk
@@ -1080,17 +1092,6 @@ function LegendBlockFactory(
                         this._derivedLoadedFeatureCount,
                         this._proxyWrapper.loadedFeatureCount
                     );
-                    if (this.loadingPanel !== undefined) {
-                        this.loadingPanel.prepareBody();
-                    }
-                    // if the estimate overshoots the total feature count, set it to the total feature count
-                    // if the estimate is somehow less than 0, set it to 0
-                    // this is to prevent the value display to be in the negatives or higher than the total amount required to load
-                    if (this._derivedLoadedFeatureCount > this._proxyWrapper.featureCount) {
-                        this._derivedLoadedFeatureCount = this._proxyWrapper.featureCount;
-                    } else if (this._derivedLoadedFeatureCount < 0) {
-                        this._derivedLoadedFeatureCount = 0;
-                    }
                     if (this.loadingPanel !== undefined) {
                         this.loadingPanel.prepareBody();
                     }
