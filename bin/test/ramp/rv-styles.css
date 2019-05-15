@@ -4222,7 +4222,12 @@ md-datepicker > div {
 
 .rv-record-count {
   text-overflow: ellipsis;
-  white-space: nowrap; }
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 5px;
+  margin-bottom: 0;
+  line-height: 11px; }
 
 .md-title {
   display: block !important; }
@@ -21990,7 +21995,7 @@ Obviously you need some kind of rules and criteria:
           display: none;
           position: absolute;
           right: 0; }
-    [is=rv-map] .rv-geosearch-bar md-icon[md-svg-src="action:search"], .fgpv .rv-geosearch-bar md-icon[md-svg-src="action:search"] {
+    [is=rv-map] .rv-geosearch-bar md-icon[md-svg-src='action:search'], .fgpv .rv-geosearch-bar md-icon[md-svg-src='action:search'] {
       color: #607D8B;
       margin: 8px; }
   [is=rv-map] #mainGeosearch, .fgpv #mainGeosearch {
@@ -22002,6 +22007,9 @@ Obviously you need some kind of rules and criteria:
     background: none;
     overflow: initial !important;
     pointer-events: none; }
+    .rv-small[is=rv-map] #mainGeosearch, .rv-small.fgpv #mainGeosearch {
+      width: 100%;
+      margin: 0; }
     [is=rv-map] #mainGeosearch .panel-body, .fgpv #mainGeosearch .panel-body {
       padding: 0 !important;
       height: 100%;
@@ -22421,8 +22429,7 @@ Obviously you need some kind of rules and criteria:
     border: none !important; }
   [is=rv-map] rv-settings .rv-settings-divider, .fgpv rv-settings .rv-settings-divider {
     left: 0;
-    position: absolute;
-    width: 100%; }
+    margin: 0 -16px; }
     [is=rv-map] rv-settings .rv-settings-divider + .rv-settings-divider, .fgpv rv-settings .rv-settings-divider + .rv-settings-divider {
       display: none; }
   [is=rv-map] rv-settings rv-legend-control, .fgpv rv-settings rv-legend-control {
@@ -23040,6 +23047,9 @@ Obviously you need some kind of rules and criteria:
   [is=rv-map] #mainDetails, .fgpv #mainDetails {
     top: 49px;
     width: 400px; }
+    .rv-small[is=rv-map] #mainDetails, .rv-small.fgpv #mainDetails {
+      width: 100%;
+      margin: 0; }
     [is=rv-map] #mainDetails .rv-header.rv-has-layer-list, .fgpv #mainDetails .rv-header.rv-has-layer-list {
       margin-left: 49px; }
   [is=rv-map] .rv-details, .fgpv .rv-details {
@@ -23100,7 +23110,7 @@ Obviously you need some kind of rules and criteria:
       background: white;
       left: 0;
       top: -49px;
-      bottom: -8px;
+      bottom: -rem(0.8);
       border-right: solid 1px #e0e0e0;
       overflow: hidden; }
       .rv-medium[is=rv-map] .rv-details-layer-list, .rv-medium.fgpv .rv-details-layer-list,
@@ -23127,7 +23137,7 @@ Obviously you need some kind of rules and criteria:
         [is=rv-map] .rv-details-layer-list-item.rv-selected:before, .fgpv .rv-details-layer-list-item.rv-selected:before {
           background-color: #00BCD4; }
         [is=rv-map] .rv-details-layer-list-item:before, .fgpv .rv-details-layer-list-item:before {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           bottom: 0;
@@ -24987,7 +24997,7 @@ Obviously you need some kind of rules and criteria:
       left: 25%;
       top: 25%; }
   [is=rv-map] .dialog-container:before, .fgpv .dialog-container:before {
-    content: "";
+    content: '';
     background: rgba(0, 0, 0, 0.8);
     position: absolute;
     top: 0;
@@ -25015,6 +25025,10 @@ Obviously you need some kind of rules and criteria:
     [is=rv-map] #sideSettings .rv-header-controls, .fgpv #sideMetadata .rv-header-controls,
     .fgpv #sideSettings .rv-header-controls {
       padding: 0 0 0 0; }
+      [is=rv-map] #sideMetadata .rv-header-controls button,
+      [is=rv-map] #sideSettings .rv-header-controls button, .fgpv #sideMetadata .rv-header-controls button,
+      .fgpv #sideSettings .rv-header-controls button {
+        min-width: 40px; }
     .rv-small[is=rv-map] #sideMetadata, .rv-small[is=rv-map] #sideSettings, .rv-small.fgpv #sideMetadata, .rv-small.fgpv #sideSettings {
       left: 0px !important;
       top: 0px !important;
@@ -25077,6 +25091,12 @@ Obviously you need some kind of rules and criteria:
       width: 100% !important;
       height: 100% !important;
       margin: 0px;
+      top: 0px !important;
+      left: 0px !important; }
+    .rv-medium[is=rv-map] .panel-contents.tablet-fullscreen, .rv-medium.fgpv .panel-contents.tablet-fullscreen {
+      width: calc(100% - 20px) !important;
+      height: calc(100% - 20px) !important;
+      margin: 10px;
       top: 0px !important;
       left: 0px !important; }
   [is=rv-map] .panel-controls, .fgpv .panel-controls {

@@ -13,7 +13,21 @@ export class ConfigManager {
         this.attributeHeaders = baseLayer.attributeHeaders;
         this.attributeArray = baseLayer._attributeArray;
         this.columnConfigs = {};
-        this.tableConfig = baseLayer.table;
+        const layerEntries = this.baseLayer._viewerLayer._childTree;
+
+        if (this.baseLayer.table.title !== this.panelManager.legendBlock.name &&
+            layerEntries !== undefined) {
+            // if these titles are not the same, and the baseLayer has layer entries
+            // look for the layer entry with the matching name and set ITS table config as the table config
+            layerEntries.forEach(entry => {
+                if (entry.proxyWrapper.name === this.panelManager.legendBlock.name) {
+                    this.tableConfig = entry.proxyWrapper.layerConfig.source.table;
+                }
+            });
+        } else {
+            this.tableConfig = baseLayer.table;
+        }
+
         this.searchEnabled = this.tableConfig.search && this.tableConfig.search.enabled;
         this.tableInit();
     }

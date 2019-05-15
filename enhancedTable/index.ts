@@ -167,16 +167,10 @@ export default class TableBuilder {
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
                         suppressMovable: true,
-                        hide:
-                            this.configManager.filteredAttributes.length === 0 || column.value !== undefined
-                                ? false
-                                : column.column
-                                    ? !column.column.visible
-                                    : undefined
+                        hide: column.column !== undefined && column.column.visible !== undefined ? !column.column.visible : false
                     };
 
-                    this.panelManager.notVisible[colDef.field] =
-                        this.configManager.filteredAttributes.length === 0 ? false : column.column ? !column.column.visible : undefined;
+
 
                     // set up floating filters and column header
                     const fieldInfo = a.fields.find(field => field.name === columnName);

@@ -26,7 +26,6 @@ import { ColumnState } from 'ag-grid-community/dist/lib/columnController/columnC
  */
 export class PanelManager {
     constructor(mapApi: any) {
-        this.notVisible = {};
         this.mapApi = mapApi;
         this.panel = this.mapApi.panels.create('enhancedTable');
         this.setListeners();
@@ -230,10 +229,17 @@ export class PanelManager {
 
                 this.panelStatusManager.getFilterStatus();
                 this.tableOptions.columnDefs.forEach(column => {
-                    if (column.floatingFilterComponentParams.defaultValue !== undefined && this.notVisible[column.field] === true) {
-                        // we temporarily showed some hidden columns with default values (so that table would get filtered properly)
-                        // now toggle them to hidden to respect config specifications
+                    // determine if columnState is not visible either through saved state or through column definition
+                    const columnState = this.panelStateManager.columnState
+                    const notVisible = columnState !== null &&
+                        columnState.find(state => state.colId === column.field) !== undefined ?
+                        columnState : column.hide;
+
+                    if (column.floatingFilterComponentParams.defaultValue !== undefined && notVisible === true) {
                         let matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
+                        // temporarily show column filter of hidden columns (so that table gets filtered properly)
+                        this.columnMenuCtrl.toggleColumn(matchingCol);
+                        // then hide column (to respect config specifications)
                         this.columnMenuCtrl.toggleColumn(matchingCol);
                     }
                 });
@@ -688,6 +694,7 @@ export class PanelManager {
                 // on showing a column resize to autowidth then shrink columns that are too wide
                 if (col.visibility) {
                     that.autoSizeToMaxWidth();
+                    that.panelStateManager.columnState = that.tableOptions.columnApi.getColumnState();
                 }
 
                 // fit columns widths to table if there's empty space
@@ -733,7 +740,6 @@ export interface PanelManager {
     filtersChanged: boolean;
     hiddenColumns: any;
     columnMenuCtrl: any;
-    notVisible: any;
     clearGlobalSearch: Function;
     reload: Function;
     toastInterval: any;

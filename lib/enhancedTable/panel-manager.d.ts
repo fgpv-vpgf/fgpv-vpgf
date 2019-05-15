@@ -74,7 +74,6 @@ export interface PanelManager {
     filtersChanged: boolean;
     hiddenColumns: any;
     columnMenuCtrl: any;
-    notVisible: any;
     clearGlobalSearch: Function;
     reload: Function;
     toastInterval: any;
