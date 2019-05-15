@@ -97,7 +97,7 @@
                         "children": [
                             {
                                 "infoType": "text",
-                                "content": "Verify that the following datatable has a default sorting method for the OBJECTID, in descending order."
+                                "content": "Verify that the following datatable has a default sorting method for OBJECTID, which is in descending order."
                             },
                             {
                                 "layerId": "defaultSortingField"
@@ -161,13 +161,13 @@
                         ]
                     },
                     {
-                        "name": "Test 6: WFS System Co-ords in Attributes",
+                        "name": "Test 6: WFS Co-ords in Attributes",
                         "expanded": false,
                         "controls": [],
                         "children": [
                             {
                                 "infoType": "text",
-                                "content": "Test for accurate WFS system coordinates in the datatable. These are represented by the red dot data points on the map. For any single data point in the table, click on details (first option from the left) and compare the information with the table attribute values."
+                                "content": "Test for WFS point coordinates in the datatable. Look for fields rvInternalCoords[X|Y] to contain the latitude and longitude for each point."
                             },
                             {
                                 "layerId": "WFSsystemCoords"
@@ -187,12 +187,12 @@
                         {
                             "data": "OBJECTID",
                             "sort": "desc",
-                            "width": 10,
-                            "title": "This is an OBJECTID title that never ends, yes it goes on and on my friends. Some people say it will end but it never really does, it just keeps going on and on forever because [repeat from the start]"
+                            "width": 200,
+                            "title": "OBJECTID"
                         },
                         {
                             "data": "Country",
-                            "width": 20
+                            "width": 300
                         }
                     ]
                 },
@@ -209,6 +209,15 @@
                         },
                         {
                             "data": "OBJECTID"
+                        },
+                        {
+                            "data": "Latitude"
+                        },
+                        {
+                            "data": "Longitude"
+                        },
+                        {
+                            "data": "City"
                         }
                     ]
                 },
@@ -302,7 +311,7 @@
                 "nameField": "station_name",
                 "state": {
                     "opacity": 1,
-                    "visibility": true
+                    "visibility": false
                 },
                 "xyInAttribs": true,
                 "colour": "#f04116",

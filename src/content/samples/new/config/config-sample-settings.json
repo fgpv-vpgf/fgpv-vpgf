@@ -91,7 +91,7 @@
             "content": "Tests for Settings"
           },
           {
-            "name": "Test 1: Customized title of a data table",
+            "name": "Test 1: Customized Title of a Data Table",
             "controls": [],
             "children": [
               {
@@ -129,7 +129,7 @@
             ]
           },
           {
-            "name": "Test 4: Layers with filter applied on load",
+            "name": "Test 4: Layers with Filter Applied on Load",
             "expanded": false,
             "controls": [],
             "children": [
@@ -148,9 +148,6 @@
               },
               {
                 "layerId": "filterLayers3"
-              },
-              {
-                "layerId": "filterLayers4"
               },
               {
                 "layerId": "filterLayers5"
@@ -303,17 +300,8 @@
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/4"
       },
       {
-        "id": "filterLayers4",
-        "name": "No initial filter",
-        "layerType": "esriFeature",
-        "state": {
-          "visibility": false
-        },
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/5"
-      },
-      {
         "id": "filterLayers5",
-        "name": "Dynamic Layer",
+        "name": "Dynamic Layer with both childs with filter",
         "layerType": "esriDynamic",
         "layerEntries": [
           {
