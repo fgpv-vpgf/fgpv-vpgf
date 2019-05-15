@@ -184,6 +184,7 @@
                 <option value="config/config-sample-85.json">85. File based layers</option>
                 <option value="config/config-sample-86.json">86. API 2 blocks for a single layer</option>
                 <option value="config/config-sample-87.json">87. Enlarge correct symbology from stack</option>
+                <option value="config/config-sample-88.json">88. Dynamic and Non-dyamic layers with default values</option>
             </select>
         </div>
 
