@@ -389,14 +389,26 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             }
         }
 
-        decodeMainBookmark();
+        try {
+            decodeMainBookmark();
+        } catch(err) {
+            // If the URL has been messed with, a couple errors could come up in this function.
+            console.error("An error occurred while trying to load the provided bookmark.",err);
+            return;
+        }
 
         // Make sure there are layers before trying to loop through them
         if (bookmarkObject.layers) {
             const layerData = bookmarkObject.layers.split(',');
 
             // create partial layer configs from layer bookmarks
-            bookmarkObject.bookmarkLayers = parseLayers(layerData, version);
+            try {
+                bookmarkObject.bookmarkLayers = parseLayers(layerData, version);
+            } catch(err) {
+                // Parsing layers may also fail if the URL is broken.
+                console.error("An error occurred while trying to load the provided bookmark.",err);
+                return;
+            }
 
             // FIXME: restore
             // modify main config using layer configs
@@ -407,6 +419,13 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         // record the order of legends from the bookmark
         for (let layer of bookmarkObject.bookmarkLayers) {
             _orderdBookmarkIds.push(layer.id);
+        }
+
+        // Checks the scale, x and y values to ensure they are numbers. If they aren't, then the URL has
+        // probably been messed with.
+        if (isNaN(bookmarkObject.scale) || isNaN(bookmarkObject.x) || isNaN(bookmarkObject.y)) {
+            console.error("Could not load bookmark. The URL may be broken.")
+            return;
         }
 
         _bookmarkObject = bookmarkObject;
