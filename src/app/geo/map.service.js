@@ -42,7 +42,6 @@ function mapServiceFactory(
         checkForBadZoom
     };
 
-    let externalOffset;
     let timeout;
     let externalPanel;
     let mApi = null;
@@ -55,12 +54,7 @@ function mapServiceFactory(
     // this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
         configService.getSync.map.instance.zoomToFeature = (proxy, oid, offset) => {
-            externalOffset = offset;
-            service.zoomToFeature(proxy, oid);
-        };
-
-        configService.getSync.map.instance.externalOffset = (offset) => {
-            externalOffset = offset;
+            service.zoomToFeature(proxy, oid, offset);
         };
 
         configService.getSync.map.instance.externalPanel = (panel) => {
@@ -544,17 +538,23 @@ function mapServiceFactory(
      *
      * @param {LayerProxy} proxy proxy layer object containing the feature
      * @param {Number} oid feature object id
+     * @param {Object| undefined} [externalOffset = undefined] specify a custom offset for the zoom as a ratio relative to the centerpoint of the map
      * @return {Promise} a promise resolving after map completes extent change
      */
-    function zoomToFeature(proxy, oid) {
-        const offset = (externalOffset !== undefined) ? externalOffset : referenceService.mainPanelsOffset;
+    function zoomToFeature(proxy, oid, externalOffset = undefined) {
+        const offset = (externalOffset !== undefined) ? externalOffset : mApi.panels.panelOffset;
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
-        if (offset.x > peekFactor || offset.y > peekFactor) {
+        if (Math.abs(offset.x) > peekFactor || Math.abs(offset.y) > peekFactor || (offset.x === 0 && offset.y === 0) ) {
             offset.x = offset.y = 0;
             referenceService.peekAtMap();
-        } else if (externalPanel !== undefined) {
-            referenceService.peekAtMap(externalPanel);
+        } else {
+            // calc where in the mapDiv the point will end up
+            const mapBox = mApi.mapDiv[0].getBoundingClientRect();
+            const zoomPoint = {};
+            zoomPoint.x = (0.5 + offset.x) * (mapBox.right - mapBox.left) + mapBox.left;
+            zoomPoint.y = (0.5 + offset.y) * (mapBox.bottom - mapBox.top) + mapBox.top;
+            referenceService.peekAtMap(zoomPoint);
         }
 
         const map = configService.getSync.map.instance;

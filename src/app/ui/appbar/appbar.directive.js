@@ -31,7 +31,7 @@ function rvAppbar(referenceService) {
     };
 
     function link(scope, el) {
-        referenceService.panels.sidePanel = el;
+        referenceService.panels.appBar = el;
     }
 
     return directive;

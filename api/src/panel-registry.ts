@@ -124,4 +124,20 @@ export class PanelRegistry {
     get closing() {
         return this._panelClosing.asObservable();
     }
+
+    get panelOffset() {
+        // calculate what portion of the screen the main and filter panels take
+        const mainOpen = this.legend.isOpen || this.details.isOpen || this.fileLoader.isOpen || this.serviceLoader.isOpen || this.geoSearch.isOpen;
+        // TODO: If/When simpleTable becomes a thing, enhance this line with simple-ness
+        const tableOpen = this.getById('enhancedTable') && this.getById('enhancedTable')!.isOpen;
+
+        const offsetFraction = {
+            x: (mainOpen ? this.legend.element.width()! : 0) /
+                this._mapI.mapDiv.width()! / 2,
+            y: (tableOpen ? this.getById('enhancedTable')!.element.height()! : 0) /
+                this._mapI.mapDiv.height()! / 2
+        };
+
+        return offsetFraction;
+    }
 }
