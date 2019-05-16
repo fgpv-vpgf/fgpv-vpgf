@@ -42,8 +42,6 @@ function mapServiceFactory(
         checkForBadZoom
     };
 
-    let timeout;
-    let externalPanel;
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
     const triggerFilterChanged = debounceService.registerDebounce((fcParam) => {
@@ -55,10 +53,6 @@ function mapServiceFactory(
     events.$on(events.rvMapLoaded, () => {
         configService.getSync.map.instance.zoomToFeature = (proxy, oid, offset) => {
             service.zoomToFeature(proxy, oid, offset);
-        };
-
-        configService.getSync.map.instance.externalPanel = (panel) => {
-            externalPanel = panel;
         };
     });
 
