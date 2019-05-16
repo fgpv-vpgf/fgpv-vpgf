@@ -9,7 +9,7 @@ angular
     .module('app.layout')
     .factory('referenceService', referenceService);
 
-function referenceService($rootElement, $rootScope, events, configService) {
+function referenceService($rootElement, $rootScope, events, configService, appInfo) {
 
     const ref = {
         onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
@@ -34,8 +34,6 @@ function referenceService($rootElement, $rootScope, events, configService) {
 
         get mapNode () { return this._mapNode; },
 
-        get mainPanelsOffset () { return getPanelOffset() },
-
         isFiltersVisible: false
     };
 
@@ -54,57 +52,46 @@ function referenceService($rootElement, $rootScope, events, configService) {
      * Restores the regular opacity on the next click/touch event.
      *
      * @function peekAtMap
+     * @param {Object | undefined} [pointOfInterest = undefined] A point given by {x: number, y: number} where x and y are screen coordinates in pixels
      */
-    function peekAtMap(externalPanel = undefined) {
-        // filter out the shell it's a container for everything
-        let filteredPanels = Object.entries(service.panels)
-            .filter(( [name] ) => name !== 'shell')
-            .map(([name, panel]) => panel);
-
-        if(externalPanel !== undefined){
-            // for external panels (for example from plugins) that need this functionality
-            filteredPanels.push(externalPanel);
-        }
-
-        // convert panel of jQuery object into a jQuery array
-        const jQuerywrappedPanels = angular.element(angular.element.map(filteredPanels, el => el.get() ));
-
+    function peekAtMap(pointOfInterest = undefined) {
         let ignoreClick = true;
 
-        // otherPanels.addClass('rv-lt-lg-hide');
-        jQuerywrappedPanels.addClass('rv-peek rv-peek-enabled');
-        jQuerywrappedPanels.on('click.peek mousedown.peek touchstart.peek', () =>
-            ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
-        const deRegisterReiszeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
+        let panelsToFade = appInfo.mapi.panels.all.map(panel => panel.element);
+        panelsToFade.push(this.panels.appBar);
+
+        // if theres a point specified, remove all panels from the list that aren't close to it
+        if (pointOfInterest) {
+            panelsToFade = panelsToFade.filter(panel => {
+                const box = panel[0].getBoundingClientRect();
+                // collision detection w/ 50px buffer
+                const buffer = 50;
+                return !(box.right < pointOfInterest.x - buffer ||
+                    box.left > pointOfInterest.x + buffer ||
+                    box.top > pointOfInterest.y + buffer ||
+                    box.bottom < pointOfInterest.y - buffer);
+            });
+        }
+
+        panelsToFade.forEach(panel => {
+            panel.addClass('rv-peek rv-peek-enabled');
+            panel.on('click.peek mousedown.peek touchstart.peek', () =>
+                ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
+        });
+
+        const deRegisterResizeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
             if (newDimensions.width !== oldDimensions.width || newDimensions.height !== oldDimensions.height) {
                 _removePeekTransparency();
             }
         });
 
         function _removePeekTransparency() {
-            jQuerywrappedPanels.removeClass('rv-peek-enabled');
-            jQuerywrappedPanels.off('.peek');
-            deRegisterReiszeWatcher();
+            panelsToFade.forEach(panel => {
+                panel.removeClass('rv-peek-enabled');
+                panel.off('.peek');
+            });
+            deRegisterResizeWatcher();
         }
-    }
-
-    /**
-     * Returns the main and data panel offsets relative to the visible map.
-     *
-     * @return {Object} fractions of the current extent occupied by main and data panels in the form of { x: <Number>, y: <Number> }
-     */
-    function getPanelOffset() {
-        // calculate what portion of the screen the main and filter panels take
-        const { main, table } = service.panels;
-
-        const offsetFraction = {
-            x: (main.filter(':visible').length > 0 ? main.width() : 0) /
-                service.mapNode.width() / 2,
-            y: (table.filter(':visible').length > 0 ? table.height() : 0) /
-                service.mapNode.height() / 2
-        };
-
-        return offsetFraction;
     }
 
     /**
