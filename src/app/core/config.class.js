@@ -937,6 +937,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super(source);
             this._fileType = source.fileType;
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
+            this._state.snapshot = true;
         }
 
         get fileType () { return this._fileType; }
