@@ -57,7 +57,7 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
     function peekAtMap(pointOfInterest = undefined) {
         let ignoreClick = true;
 
-        let panelsToFade = appInfo.mapi.panels.all.map(panel => panel.element);
+        let panelsToFade = appInfo.mapi.panels.all.filter(panel => panel.isOpen).map(panel => panel.element);
         panelsToFade.push(this.panels.appBar);
 
         // if theres a point specified, remove all panels from the list that aren't close to it
@@ -75,9 +75,10 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
 
         panelsToFade.forEach(panel => {
             panel.addClass('rv-peek rv-peek-enabled');
-            panel.on('click.peek mousedown.peek touchstart.peek', () =>
-                ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
         });
+
+        appInfo.mapi.mapDiv.on('click.peek mousedown.peek touchstart.peek', () =>
+                ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
 
         const deRegisterResizeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
             if (newDimensions.width !== oldDimensions.width || newDimensions.height !== oldDimensions.height) {
@@ -88,7 +89,7 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
         function _removePeekTransparency() {
             panelsToFade.forEach(panel => {
                 panel.removeClass('rv-peek-enabled');
-                panel.off('.peek');
+                appInfo.mapi.mapDiv.off('.peek');
             });
             deRegisterResizeWatcher();
         }
