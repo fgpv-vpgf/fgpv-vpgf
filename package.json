@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@claviska/jquery-minicolors": "github:claviska/jquery-minicolors",
-    "@fgpv/rv-plugins": "github:ShrutiVellanki/plugins#813cc08ea496bce11c0e67a0e4ca04f5796f5086",
+    "@fgpv/rv-plugins": "github:spencerwahl/plugins#07f194304cfbb3f61a4f0b0a9dc199d5060d95cd",
     "@flowjs/ng-flow": "2.7.8",
     "angular": "1.7.5",
     "angular-animate": "1.7.5",
