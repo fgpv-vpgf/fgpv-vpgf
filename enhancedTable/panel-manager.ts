@@ -276,7 +276,6 @@ export class PanelManager {
             clearInterval(this.toastInterval);
         }
         this.currentTableLayer = undefined;
-        this.mapApi.mapI.externalPanel(undefined);
 
         // if enhancedTable closes, set focus to close button
         const mapNavContent = $('#' + this.mapApi.id).find('.rv-mapnav-content');
@@ -313,10 +312,8 @@ export class PanelManager {
     setSize() {
         if (this.maximized) {
             this.panel.element.css({ bottom: '0' });
-            this.mapApi.mapI.externalPanel($('#enhancedTable'));
         } else {
             this.panel.element.css({ bottom: '50%' });
-            this.mapApi.mapI.externalPanel(undefined);
         }
     }
 
@@ -472,7 +469,6 @@ export class PanelManager {
             // saves the set size to PanelStateManager
             this.setSize = function (value) {
                 that.panelStateManager.maximized = value === 'true' ? true : false;
-                !that.maximized ? that.mapApi.mapI.externalPanel(undefined) : that.mapApi.mapI.externalPanel($('#enhancedTable'));
                 that.maximized = value === 'true' ? true : false;
                 that.setSize();
                 that.panelStatusManager.getScrollRange();

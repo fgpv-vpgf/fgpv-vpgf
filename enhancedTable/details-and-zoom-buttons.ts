@@ -71,9 +71,6 @@ export class DetailsAndZoomButtons {
                         data: [detailsObj]
                     }
 
-                    // set offset for point in case zoom is accessed from details panel
-                    let offset = (that.panelManager.maximized || that.panelManager.isMobile()) ? { x: 0, y: 0 } : { x: 0.10416666666666667, y: 0.24464094319399785 };
-                    map.externalOffset(offset);
                     map.toggleDetailsPanel(details);
                 });
             };
