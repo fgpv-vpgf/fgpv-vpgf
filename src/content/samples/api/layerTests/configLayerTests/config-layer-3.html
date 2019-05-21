@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Config Layer Tests ( Set SQL Filter )</span>
+    </h1>
+    <h2><a href="../index.html">Directory</a></h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:30%; height:700px; overflow-y: scroll; padding:10px; background-color:lightgrey; border:solid;" class="column">
+
+            <div id="Layer Name Tests">
+                <h2>Filter Layer By Country: </h2>
+                <p>When clicking on one of the buttons below, the layer should update to only display points from the given country.</p>
+                <button id="FilterCountryCA">Show Canada Only</button>
+                <button id="FilterCountryMX">Show Mexico Only</button>
+                <button id="FilterCountryUS">Show US Only</button>
+            </div>
+            <br>
+
+            <div id="Layer Name Tests">
+              <h2>Remove Filter: </h2>
+              <p>Clicking this button should show all of the points, regardless of the country.</p>
+              <button id="RemoveFilter">Clear Filter</button>
+          </div>
+
+          <div id="Layer Name Tests">
+                <h2>Get Filter Value: </h2>
+                <p>Clicking this button should show display the current SQL value for the filter. If no filter is applied, the filter should be empty.</p>
+                <input type="text" id="FilterValue">
+                <button id="FetchFilter">Fetch Filter</button>
+            </div>
+          <br>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="config-layer-3.js"></script>
+</body>
+
+</html>
