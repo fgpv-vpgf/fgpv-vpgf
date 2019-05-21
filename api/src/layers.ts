@@ -370,6 +370,16 @@ export class BaseLayer {
         return this._queryableChanged.asObservable();
     }
 
+    /**
+     * Sets the SQL filter clause for the layer
+     *
+     * @param {String} filterType name of the filter to update
+     * @param {String} whereClause clause defining the active filters on symbols. Use '' for no filter. Use '1=2' for everything filtered
+     */
+    setFilterSql(filterType: String, whereClause: String) {
+        this._layerProxy.filter.setSql(filterType, whereClause);
+    }
+
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
     removeAttributes(attributeKey?: number): void {
         if (typeof attributeKey !== 'undefined') {
