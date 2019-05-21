@@ -155,7 +155,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             item.config.id === legendBlock.layerRecordId);
 
         const tableConfig = layerRecord ? layerRecord.initialConfig.tableConfig : null;
-
         // update filter flag
         if (tableConfig) {
             legendBlock.filter = tableConfig.applied;
@@ -168,6 +167,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         }
 
         const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
+        // console.log(`open panel found: ${openPanel}`);
         if (openPanel) {
             const panel = panelSwitch[openPanel.name].panel;
             panel.close();
@@ -175,7 +175,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             mApi.panels.settings.close();
             mApi.panels.metadata.close();
         }
-
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
             if (openPanel) {
                 const findBlock = block
@@ -209,12 +208,18 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
                 if (openPanel.name === 'table') {
+                    // not sure if _findOpenPanel is able to detect open table panel
                     toggleLayerTablePanel(legendBlock);
                 } else if (openPanel.name === 'settings') {
                     toggleSettings(legendBlock);
                 } else if (openPanel.name === 'metadata') {
                     toggleMetadata(legendBlock);
                 }
+            }
+            // clear the state for the datatable to match the refreshed legend
+            const fs = legendBlock.proxyWrapper.filterState;
+            if (fs !== undefined) {
+                fs.setSql(fs.coreFilterTypes.SYMBOL, '');
             }
 
             // fire layer reloaded observable if layer can be found
