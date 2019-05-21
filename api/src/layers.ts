@@ -370,6 +370,25 @@ export class BaseLayer {
         return this._queryableChanged.asObservable();
     }
 
+    /**
+     * Sets the SQL filter clause for the layer
+     *
+     * @param {String} filterName name of the filter to update. Plugins and pages managing their own filters should strive to pick a unique name to avoid collisions (e.g. dont use common generic name like map, filter)
+     * @param {String} whereClause clause defining the active filters on symbols. Use '' for no filter. Use '1=2' for everything filtered
+     */
+    setFilterSql(filterName: String, whereClause: String) {
+        this._layerProxy.filter.setSql(filterName, whereClause);
+    }
+
+    /**
+     * Returns the SQL for the given filter name
+     *
+     * @param filterName name of the filter to fetch the sql from
+     */
+    getFilterSql(filterName: String): String {
+        return this._layerProxy.filter.getSql(filterName);
+    }
+
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
     removeAttributes(attributeKey?: number): void {
         if (typeof attributeKey !== 'undefined') {
