@@ -36,10 +36,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
     // name mapping between true panel names and their short names
     const panelSwitch = {
-        table: {
-            panel: 'tableFulldata',
-            action: toggleLayerTablePanel
-        },
         metadata: {
             panel: 'sideMetadata',
             action: toggleMetadata
@@ -65,7 +61,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     // set state change watches on metadata, settings and table panel
     watchPanelState('metadata');
     watchPanelState('settings');
-    watchPanelState('table');
 
     events.$on(events.rvMapLoaded, () => {
         // wire in a hook to any map for removing a layer. this makes it available on the API
@@ -167,7 +162,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         }
 
         const openPanel = _findOpenPanel(panelSwitch, topLevelBlock);
-        // console.log(`open panel found: ${openPanel}`);
         if (openPanel) {
             const panel = panelSwitch[openPanel.name].panel;
             panel.close();
@@ -192,7 +186,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                 // for the table, panel data is columns, rows, etc. instead of the actual entry
                 // thus, we need to take the legend entry in those cases
                 // for settings and metadata, if data exists it is the correct entry
-                const node = openPanel.name !== 'table' && openPanel.data ?
+                const node = openPanel.data ?
                     openPanel.data :
                     openPanel.requester.legendEntry ?
                         openPanel.requester.legendEntry : legendBlock;
@@ -207,10 +201,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
-                if (openPanel.name === 'table') {
-                    // not sure if _findOpenPanel is able to detect open table panel
-                    toggleLayerTablePanel(legendBlock);
-                } else if (openPanel.name === 'settings') {
+                if (openPanel.name === 'settings') {
                     toggleSettings(legendBlock);
                 } else if (openPanel.name === 'metadata') {
                     toggleMetadata(legendBlock);
