@@ -331,7 +331,7 @@ export class PanelManager {
         columns = columns ? columns : this.tableOptions.columnApi.getAllColumns();
         this.tableOptions.columnApi.autoSizeColumns(columns);
         columns.forEach(c => {
-        if (c.actualWidth > maxWidth) {
+            if (c.actualWidth > maxWidth) {
                 this.tableOptions.columnApi.setColumnWidth(c, maxWidth);
             }
         });
@@ -578,10 +578,10 @@ export class PanelManager {
                 Object.keys(filterModel).forEach(col => {
                     colStrs.push(filterToSql(col, filterModel[col]));
                 });
-                if (that.searchText) {
-                    const globalSearchVal = globalSearchToSql();
+                if (that.searchText && that.searchText.length > 2) {
+                    const globalSearchVal = globalSearchToSql() !== '' ? globalSearchToSql() : '1=2';
                     if (globalSearchVal) {
-                        // will be an empty string if there are no visible rows
+                        // do not push an empty global search
                         colStrs.push(globalSearchVal);
                     }
                 }
@@ -660,7 +660,8 @@ export class PanelManager {
                 let filteredColumns = [];
                 columns.forEach(column => {
                     for (let row of sortedRows) {
-                        if (re.test(row.data[column.colId].toUpperCase())) {
+                        const cellData = row.data[column.colId] === null ? null : row.data[column.colId].toString();
+                        if (cellData !== null && re.test(cellData.toUpperCase())) {
                             filteredColumns.push(`UPPER(${column.colId}) LIKE \'${filterVal}%\'`);
                         }
                     }

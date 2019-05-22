@@ -19,10 +19,10 @@ export class ConfigManager {
             layerEntries !== undefined) {
             // if these titles are not the same, and the baseLayer has layer entries
             // look for the layer entry with the matching name and set ITS table config as the table config
+            let that = this;
             layerEntries.forEach(entry => {
-                if (entry.proxyWrapper.name === this.panelManager.legendBlock.name) {
-                    this.tableConfig = entry.proxyWrapper.layerConfig.source.table;
-                }
+                this.tableConfig = entry.proxyWrapper.layerConfig.source.table !== undefined ?
+                    entry.proxyWrapper.layerConfig.source.table !== undefined : that.baseLayer.table;
             });
         } else {
             this.tableConfig = baseLayer.table;
