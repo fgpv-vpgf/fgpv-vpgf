@@ -72,12 +72,11 @@ export class PanelManager {
         const enhancedTable = this.panel._element;
         const that = this;
 
-        enhancedTable.mouseover(() => {
-            $('.ag-body-viewport')[0].style.position = 'initial';
-        })
-
-        enhancedTable.mouseleave(() => {
-            $('.ag-body-viewport')[0].style.position = 'initial';
+        $(document).mousemove(() => {
+            if ($('.ag-body-viewport')[0] !== undefined) {
+                $('.ag-body-viewport')[0].style.overflowX = 'auto';
+                $('.ag-body-viewport')[0].style.position = 'static';
+            }
         })
 
         enhancedTable.on('keydown keyup', (event) => {
@@ -87,6 +86,8 @@ export class PanelManager {
             const focusedCell = that.tableOptions.api.getFocusedCell();
 
             if (focusedList !== undefined && $(focusedList).hasClass('ag-body-container')) {
+                $('.ag-body-viewport')[0].style.overflowX = 'hidden';
+
                 // if focused on grid body
                 if (event.keyCode === 9 && focusedCell === null) {
                     // if first tab into grid body automatically focus on first cell
@@ -102,7 +103,7 @@ export class PanelManager {
             if ((event.keyCode !== 9 && event.keyCode !== 27) || ($('.element-focused')[0] === undefined && inList)) {
                 // if you are not tabbing or you are tabbing within a list or you're not pressing the escape key
                 // set body to be scrollable
-                $('.ag-body-viewport')[0].style.position = 'initial';
+                $('.ag-body-viewport')[0].style.position = 'static';
             } else {
                 // if you are tabbing between lists, body should be absolute
                 $('.ag-body-viewport')[0].style.position = 'absolute';
