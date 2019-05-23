@@ -525,6 +525,26 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
     }
 
+    /**
+     * Find the new column width to be applied, particularly want to avoid overlapping arrows
+     *
+     * @method _adjustWidth
+     * @private
+     * @param   {Integer}   titleLength   column title length
+     * @param   {Integer}   width   column width value
+     * @return {Integer} new column width, may be unchanged
+     */
+    function _adjustWidth(titleLength, width) {
+        // case 1: if title length >= 25 (long title), then a safe width value would be at least 280 (if width specified by config is less than 280, then it will be set to 280)
+        // case 2: if title length <= 5, then a safe base width value is 180 (if width specified by config is less than 180, then it will be set to 180)
+        // case 3: if 5 < title length < 25, then a safe width value to prevent overlap is 180 + (title length - 5)*5
+        // in most other cases, column width is not specified in the config file or is large enough to not result in arrow overlap, in which case
+        const newWidth = (titleLength > 24 && width < 280) ? 280 : ((25 > titleLength) && (titleLength > 5) ? (180 + (titleLength - 5)*5) : width);
+        width = (newWidth > width) ? newWidth : width;
+        console.log(`new width: ${newWidth} title length: ${titleLength} width: ${width}`);
+        return width;
+    }
+
     class ColumnNode {
         constructor(source = {}) {
             this._source = source;
@@ -533,10 +553,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._title = source.title;
             this._description = source.description;
             this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
-            this._width = source.width;
+            this._width = (source.width && source.width < 180) ? 180 : source.width;
+            // this._width = source.width;
             this._sort = source.sort;
             this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
             this._filter = new FilterNode(source.filter);
+            // note width only may be adjusted when there is a specified width in config
+            if (this._title && this._width) {
+                this._width = _adjustWidth(this._title.length, this._width);
+            } else if (this._data && this._width) {
+                // if no column title specified apply the same adjustments for this._data
+                this._width = _adjustWidth(this._data.length, this._width);
+            }
         }
 
         get data () { return this._data; }
@@ -640,7 +668,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             default:
                 column.filter.type = 'number';
         }
-
         return new ColumnNode(column);
     }
 
