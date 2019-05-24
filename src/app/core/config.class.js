@@ -541,7 +541,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         // in most other cases, column width is not specified in the config file or is large enough to not result in arrow overlap, in which case
         const newWidth = (titleLength > 24 && width < 280) ? 280 : ((25 > titleLength) && (titleLength > 5) ? (180 + (titleLength - 5)*5) : width);
         width = (newWidth > width) ? newWidth : width;
-        console.log(`new width: ${newWidth} title length: ${titleLength} width: ${width}`);
+        // console.log(`new width: ${newWidth} title length: ${titleLength} width: ${width}`);
         return width;
     }
 
@@ -553,18 +553,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._title = source.title;
             this._description = source.description;
             this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
-            this._width = (source.width && source.width < 180) ? 180 : source.width;
-            // this._width = source.width;
+            // this._width = (source.width && source.width < 180) ? 180 : source.width;
+            this._width = source.width;
             this._sort = source.sort;
             this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
             this._filter = new FilterNode(source.filter);
             // note width only may be adjusted when there is a specified width in config
-            if (this._title && this._width) {
-                this._width = _adjustWidth(this._title.length, this._width);
-            } else if (this._data && this._width) {
-                // if no column title specified apply the same adjustments for this._data
-                this._width = _adjustWidth(this._data.length, this._width);
-            }
+            // if (this._title && this._width) {
+            //     this._width = _adjustWidth(this._title.length, this._width);
+            // } else if (this._data && this._width) {
+            //     // if no column title specified apply the same adjustments for this._data
+            //     this._width = _adjustWidth(this._data.length, this._width);
+            // }
         }
 
         get data () { return this._data; }
