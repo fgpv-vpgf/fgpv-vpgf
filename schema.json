@@ -512,7 +512,7 @@
                 },
                 "width": {
                     "type": "number",
-                    "description": "Specifies the column width. If missing, calculated column width will be use."
+                    "description": "Specifies the column width. The minimum column width is set to 100px. If missing, calculated column width will be use."
                 },
                 "sort": {
                     "type": "string",
