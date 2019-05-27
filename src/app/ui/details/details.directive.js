@@ -84,7 +84,6 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
-
             if (newValue.length > 1) {
                 detailService.mApi.panels.details.header._header.addClass('rv-has-layer-list');
             } else {
@@ -92,10 +91,20 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             }
 
             const previouslySelected = findPreviouslySelected(newValue);
+
+            /* Note: will remove these comments once we determine if this bug is fixed.
+
+               After the first point is clicked, previouslySelected will always return the same value. This was causing the
+               details panel to always display the layer that was first clicked, instead of the layer that the newly clicked point
+               belongs to.
+
             if (previouslySelected) {
+                console.log('previously selected! select ', previouslySelected.requester.proxy.name)
                 // pick selected item user previously selected one,
                 selectItem(previouslySelected);
-            } else if (newValue.length === 1) {
+            }
+            */
+            if (newValue.length === 1) {
                 // or if there is a single item, pick that
                 selectItem(newValue[0]);
             } else {
@@ -103,14 +112,11 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, status => {
                     if (status.firstResult) {
                         deRegisterFirstResultWatch();
-                        // if the user alreayd selected an item, do not override the selection
-                        if (!self.selectedItem) {
-                            selectItem(status.firstResult);
-                        }
-
+                        selectItem(status.firstResult);
                     } else if (!status.panelLoading) {
                         // all searches found nothing
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
+                        selectItem(null)
                         deRegisterFirstResultWatch();
                     }
                 });
