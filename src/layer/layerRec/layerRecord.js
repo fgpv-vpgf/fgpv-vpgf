@@ -181,6 +181,42 @@ class LayerRecord extends root.Root {
     }
 
     /**
+     * Trigger a filter event.
+     *
+     * @function raiseFilterEvent
+     * @param {String} layerID id for layer (record) who raised the filter.
+     * @param {String} layerIdx index of the FC for who raised the filter.
+     * @param {String} filterType indicates what kind of filter was changed. see shared.filterType enum for valid values
+     */
+    raiseFilterEvent (layerID, layerIdx, filterType) {
+        this._filterEvent.fireEvent({
+            layerID,
+            layerIdx,
+            filterType
+        });
+    }
+
+    /**
+     * Wire up filter listener.
+     *
+     * @function addFilterListener
+     * @param {Function} listenerCallback function to call when a filter event happens
+     */
+    addFilterListener (listenerCallback) {
+        return this._filterEvent.addListener(listenerCallback);
+    }
+
+    /**
+     * Remove a filter listener.
+     *
+     * @function removeFilterListener
+     * @param {Function} listenerCallback function to not call when a filter event happens
+     */
+    removeFilterListener (listenerCallback) {
+        this._filterEvent.removeListener(listenerCallback);
+    }
+
+    /**
      * Wire up mouse hover listener.
      *
      * @function addHoverListener
@@ -587,6 +623,7 @@ class LayerRecord extends root.Root {
         this.initialConfig = config;
         this._stateEvent = new shared.FakeEvent();
         this._attribEvent = new shared.FakeEvent();
+        this._filterEvent = new shared.FakeEvent();
         this._hoverEvent = new shared.FakeEvent();
         this._user = false;
         this._epsgLookup = epsgLookup;
