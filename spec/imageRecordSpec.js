@@ -79,7 +79,7 @@ class FakeGeoApiSymbology {
     generatePlaceholderSymbology () {}
     mapServerToLocalLegend () {
         return new Promise((resolve) => {
-            resolve();
+            resolve({ 'layers': [{ 'legend': { map: () => {}}}] });
         });
     }
 }
@@ -161,9 +161,11 @@ describe('imageRecord', () => {
         expect(imageRecordObject).not.toBe(undefined);
     });
 
+
     it('should how return an error when onLoad was called', () => {
         const imageRecordObject = new imageRecord.ImageRecord(FakeLayerObject, apiRef, config, esriLayer);
 
+        /* Second test fails here */
         imageRecordObject.onLoad();
     });
 });
