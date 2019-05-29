@@ -212,9 +212,10 @@ class FakeEvent {
     removeListener (listenerCallback) {
         const idx = this._listeners.indexOf(listenerCallback);
         if (idx < 0) {
-            throw new Error('Attempting to remove a listener which is not registered.');
+            console.error('Attempting to remove a listener which is not registered.');
+        } else {
+            this._listeners.splice(idx, 1);
         }
-        this._listeners.splice(idx, 1);
     }
 
     get listenerCount () { return this._listeners.length; }

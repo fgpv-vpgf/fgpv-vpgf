@@ -1,6 +1,5 @@
 'use strict';
 
-const shared = require('./shared.js')();
 const layerRecord = require('./layerRecord.js')();
 const attribFC = require('./attribFC.js')();
 
@@ -28,7 +27,6 @@ class AttribRecord extends layerRecord.LayerRecord {
 
         this._esriRequest = esriRequest;
         this._tolerance = this.config.tolerance;
-        this._filterEvent = new shared.FakeEvent();
     }
 
     /**
@@ -99,9 +97,9 @@ class AttribRecord extends layerRecord.LayerRecord {
     * @param {Object} attribs    the dictionary of attributes for the feature.
     * @returns {String}          the name of the feature
     */
-   getTooltipName (objId, attribs) {
-    return this._featClasses[this._defaultFC].getTooltipName(objId, attribs);
-}
+    getTooltipName (objId, attribs) {
+        return this._featClasses[this._defaultFC].getTooltipName(objId, attribs);
+    }
 
     /**
      * Fetches a graphic for the given object id.
@@ -230,42 +228,6 @@ class AttribRecord extends layerRecord.LayerRecord {
                     type: fieldType ? fieldType.type : fieldType
                 };
             });
-    }
-
-    /**
-     * Wire up filter listener.
-     *
-     * @function addFilterListener
-     * @param {Function} listenerCallback function to call when a filter event happens
-     */
-    addFilterListener (listenerCallback) {
-        return this._filterEvent.addListener(listenerCallback);
-    }
-
-    /**
-     * Remove a filter listener.
-     *
-     * @function removeFilterListener
-     * @param {Function} listenerCallback function to not call when a filter event happens
-     */
-    removeFilterListener (listenerCallback) {
-        this._filterEvent.removeListener(listenerCallback);
-    }
-
-    /**
-     * Trigger a filter event.
-     *
-     * @function raiseFilterEvent
-     * @param {String} layerID id for layer (record) who raised the filter.
-     * @param {String} layerIdx index of the FC for who raised the filter.
-     * @param {String} filterType indicates what kind of filter was changed. see shared.filterType enum for valid values
-     */
-    raiseFilterEvent (layerID, layerIdx, filterType) {
-        this._filterEvent.fireEvent({
-            layerID,
-            layerIdx,
-            filterType
-        });
     }
 }
 
