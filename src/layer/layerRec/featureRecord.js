@@ -158,6 +158,14 @@ class FeatureRecord extends attribRecord.AttribRecord {
             aFC.nameField = this.config.nameField || ld.nameField || '';
             aFC.tooltipField = this.config.tooltipField || aFC.nameField;
 
+            // check the config for any custom field aliases, and add the alias as a property if it exists
+            if (this.config.source.fieldMetadata) {
+                ld.fields.forEach(field => {
+                    const clientAlias = this.config.source.fieldMetadata.find(f => f.data === field.name);
+                    field.clientAlias = clientAlias ? clientAlias.alias : undefined;
+                });
+            }
+
             // trickery. file layer can have field names that are bad keys.
             // our file loader will have corrected them, but config.nameField and config.tooltipField will have
             // been supplied from the wizard (it pre-fetches fields to present a choice

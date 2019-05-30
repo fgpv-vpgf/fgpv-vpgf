@@ -380,6 +380,15 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
                     dFC.nameField = subC.nameField || ld.nameField || '';
 
+                    // check the config for any custom field aliases, and add the alias as a property if it exists
+                    ld.fields.forEach(field => {
+                        const layerConfig = this.config.source.layerEntries.find(r => r.index == idx);
+                        if (layerConfig && layerConfig.fieldMetadata) {
+                            const clientAlias = layerConfig.fieldMetadata.find(f => f.data === field.name);
+                            field.clientAlias = clientAlias ? clientAlias.alias : undefined;
+                        }
+                    });
+
                     // skip a number of things if it is a raster layer
                     // either way, return a promise so our loadPromises have a good
                     // value to wait on.

@@ -40,7 +40,7 @@ class AttribFC extends basicFC.BasicFC {
 
     get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
 
-    // basically an identifier object for this FC. 
+    // basically an identifier object for this FC.
     // TODO maybe consider using the id on the esri layer? to handle cases where no id provided / collision of ids?
     get fcID () {
         return {
@@ -192,7 +192,8 @@ class AttribFC extends basicFC.BasicFC {
 
         this._formattedAttributes = Promise.all([this.getAttribs(), this.getLayerData()])
             .then(([aData, lData]) => {
-                // create columns array consumable by datables
+                // create columns array consumable by datables. We don't include the alias defined in the config here as
+                // the grid handles it seperately.
                 const columns = lData.fields
                     .filter(field =>
 
@@ -303,7 +304,11 @@ class AttribFC extends basicFC.BasicFC {
             const attribField = fields.find(field => {
                 return field.name === attribName;
             });
-            if (attribField && attribField.alias && attribField.alias.length > 0) {
+
+            // prioritize clientAlias over alias, or default to the attribute name
+            if(attribField && attribField.clientAlias && attribField.clientAlias.length > 0) {
+                fName = attribField.clientAlias;
+            } else if (attribField && attribField.alias && attribField.alias.length > 0) {
                 fName = attribField.alias;
             }
         }
@@ -320,9 +325,9 @@ class AttribFC extends basicFC.BasicFC {
     static unAliasAttribs (attribs, fields) {
         const newA = {};
         fields.forEach(field => {
-            // attempt to extract on name. if not found, attempt to extract on alias
+            // attempt to extract on name. if not found, attempt to extract on alias, and then on clientAlias
             // dump value into the result
-            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs[field.alias];
+            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs.hasOwnProperty(field.alias) ? attribs[field.alias] : attribs[field.clientAlias];
         });
         return newA;
     }
