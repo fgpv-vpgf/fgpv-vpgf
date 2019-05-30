@@ -81,7 +81,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
     // eslint-disable-next-line max-statements
     function link(scope, element) {
         const self = scope.self;
-
         // if render style is not specified, symbology stack will not be interactive
         // self.isInteractive = typeof self.symbology.renderStyle !== 'undefined';
         self.isExpanded = false; // holds the state of symbology section
@@ -93,6 +92,20 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         self.symbologyWidth = 32;
 
         self.stackToggled = false;
+
+        // search for any existing legend group
+        let groupExists = false;
+        let cur = self.block;
+        let numParents = 0;
+        // this should find the parent group of the current entry, if any, and stop immediately
+        while (cur.parent && !groupExists) {
+            if (cur.constructor.name === 'LegendGroup') {
+                groupExists = true;
+            } else {
+                cur = cur.parent;
+                numParents += 1;
+            }
+        }
 
         const canvas = document.createElement('canvas');
 
@@ -322,6 +335,22 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             }
         });
 
+        // if there exists a legend group, watch for when the group gets expanded
+        if (groupExists) {
+            // for obtaining the link to the parent group block
+            let parent = '.parent'.repeat(numParents);
+            scope.$watch(
+                'self.block' + parent + '.expanded',
+                (newValue, oldValue) => {
+                    // when parent group is expanded, expand symbology stack if needed
+                    if (newValue !== oldValue && newValue) {
+                        // calling expandSymbology twice fixes some corner cases
+                        $timeout(() => self.expandSymbology(self.symbology.expanded), 0);
+                    }
+                }
+            );
+        }
+
         scope.$watch(
             'self.symbology.expanded',
             (newValue, oldValue) => (newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop)
@@ -333,7 +362,9 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         );
 
         // expand the symbology stack if needed
-        $timeout(() => expandSymbology(self.symbology.expanded), 0);
+        if (!groupExists || cur.expanded) {
+            $timeout(() => expandSymbology(self.symbology.expanded), 0);
+        }
 
         return true;
 
