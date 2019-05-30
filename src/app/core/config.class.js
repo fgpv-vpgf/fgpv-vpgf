@@ -565,7 +565,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     class TableNode {
         constructor(source = {}) {
             this._source = source;
-
             this._title = source.title || '';
             this._description = source.description;
             this._maximize = source.maximize || false;
@@ -788,6 +787,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
             this._customRenderer = source.customRenderer || {};
+            this._fieldMetadata = source.fieldMetadata;
 
             // apply layer definition query on the layer node object
             if (this.table.applyMap || this.table.applied) {
@@ -937,6 +937,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._fileType = source.fileType;
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
             this._state.snapshot = true;
+            this._fieldMetadata = source.fieldMetadata;
         }
 
         get fileType () { return this._fileType; }
@@ -957,6 +958,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             super(source); // when a regular source isn't enough, call for super-source
             this._xyInAttribs = source.xyInAttribs;
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
+            this._fieldMetadata = source.fieldMetadata;
         }
 
         get xyInAttribs () { return this._xyInAttribs; }
@@ -979,6 +981,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._nameField = source.nameField;
             this._outfields = source.outfields || '*';
             this._stateOnly = source.stateOnly;
+            this._fieldMetadata = source.fieldMetadata;
             this._extent = source.extent ?
                 gapiService.gapi.Map.getExtentFromJson(source.extent) :
                 undefined;

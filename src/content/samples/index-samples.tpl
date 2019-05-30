@@ -186,6 +186,7 @@
                 <option value="config/config-sample-87.json">87. Enlarge correct symbology from stack</option>
                 <option value="config/config-sample-88.json">88. Dynamic and Non-dyamic layers with default values</option>
                 <option value="config/config-sample-89.json">89. Custom Geosearch sorted results</option>
+                <option value="config/config-sample-90.json">90. Layer with custom field alias</option>
             </select>
         </div>
 
