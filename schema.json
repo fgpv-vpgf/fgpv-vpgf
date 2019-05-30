@@ -626,6 +626,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldAliases": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldAliasEntry" },
+                    "description": "Specifies the field title, uses the field name or alias if missing."
                 }
             },
             "required": [ "id", "layerType", "url" ],
@@ -659,6 +664,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldAliases": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldAliasEntry" },
+                    "description": "Specifies the field title, uses the field name or alias if missing."
                 }
             },
             "required": [ "id", "layerType", "fileType", "url" ],
@@ -690,6 +700,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldAliases": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldAliasEntry" },
+                    "description": "Specifies the field title, uses the field name or alias if missing."
                 }
             },
             "required": [ "id", "layerType", "url" ],
@@ -764,6 +779,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldAliases": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldAliasEntry" },
+                    "description": "Specifies the field title, uses the field name or alias if missing."
                 }
             },
             "required": [ "id", "layerType", "layerEntries", "url" ],
@@ -972,6 +992,21 @@
             },
             "required": [ "folderName" ],
             "additionalProperties": false
+        },
+        "fieldAliasEntry": {
+            "type": "object",
+            "description": "Specifies options for the fields of a layer.",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "description": "Specifies the field name (data) to use to link to the identifier. Must exist in the layer."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Specifies the field title, uses the field name or alias if missing."
+                }
+            },
+            "required": [ "data" ]
         }
     },
 

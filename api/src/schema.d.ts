@@ -977,6 +977,10 @@ export interface FeatureLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  fieldAliases?: FieldAliasEntry[];
 }
 /**
  * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
@@ -1028,6 +1032,20 @@ export interface FilterNode {
    * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
    */
   static?: boolean;
+}
+/**
+ * Specifies options for the fields of a layer.
+ */
+export interface FieldAliasEntry {
+  /**
+   * Specifies the field name (data) to use to link to the identifier. Must exist in the layer.
+   */
+  data: string;
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  title?: string;
+  [k: string]: any;
 }
 export interface FileLayerNode {
   /**
@@ -1144,6 +1162,10 @@ export interface FileLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  fieldAliases?: FieldAliasEntry[];
 }
 export interface WfsLayerNode {
   /**
@@ -1255,6 +1277,10 @@ export interface WfsLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  fieldAliases?: FieldAliasEntry[];
 }
 export interface WmsLayerNode {
   /**
@@ -1427,6 +1453,10 @@ export interface DynamicLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  fieldAliases?: FieldAliasEntry[];
 }
 export interface DynamicLayerEntryNode {
   /**
