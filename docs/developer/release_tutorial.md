@@ -4,6 +4,30 @@
 
 Before you start this tutorial.  Please setup remotes `origin` and `upstream` that point to your forked repositories and original repositories respectively.
 
+## Plugins Release
+
+1. Change directory to your plugins repository on your machine.
+
+2. Checkout the existing branch that mirrors the upstream develop branch (Let's call it local develop).
+
+    ```
+        git checkout develop
+    ```
+
+3. Ensure the branch is up to date with the upstream branch
+
+    ```
+        git pull --ff--only upstream develop
+    ```
+
+4. Execute the command to publish a new version to NPM. Select the version type that is appropriate for the release. See [npm version docs](https://docs.npmjs.com/cli/version)
+
+    ```
+        npm version [ major | minor | patch | prerelease ]
+    ```
+
+5. The local branch will auto update with a new tag and changes to `package.json`. However the commit will not end up on any of the remote branches. It should be merged into the develop or master branch depending on the release.
+
 ## geoApi Release
 
 1. Change directory to your geoApi repository on your machine.
@@ -19,6 +43,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
     ```json
         "version": [version]
     ```
+
 4. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
 
     <p class="tip">
@@ -64,12 +89,22 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
     ```json
         "version": [version],
         "geoApi": "github:fgpv-vpgf/geoApi#[version]",
+        "@fgpv/rv-plugins": "[version]",
     ```
     <p class="tip">
-        Please ensure GeoApi has been released first.  Ideally the version of geoApi should match the version of the viewer
+        Please ensure GeoApi and Plugins has been released first.  Ideally the versions of both should match the version of the viewer
     </p>
 
-4. Do `npm install` to update the local geoApi module, then do a sanity check on the viewer.
+4. Do `npm install` to update the local geoApi and plugins module, then do a sanity check on the viewer.
+
+    <p class="tip">
+        Sometimes `npm install` will not get the correct integrity key for the plugins module. The following steps can manually resolve this.
+
+        - Visit https://registry.npmjs.org/@fgpv/rv-plugins/
+        - Do a search (`CTRL+F`) for the version number of the plugins module you are updating to.
+        - Under the version json object, look for property `dist`, and inside that is property `integrity`. Copy the value of the integrity.
+        - In the `package-lock.json` file of the viewer, search for `rv-plugins` and update the `integrity` value there with the copied value.
+    </p>
 
 5. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
 

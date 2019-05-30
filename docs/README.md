@@ -1,6 +1,6 @@
 # Reusable Accessible Mapping Platform / Federal Geospatial Platform Visualiser
 
-The Reusable Accessible Mapping Platform, RAMP ( aka the Federal Geospatial Platform Visualiser, FGPV) is a web mapping application. It is designed to be usable in any webpage and maintains WCAG 2.0 AA accessibility.
+The Reusable Accessible Mapping Platform, RAMP ( aka the Federal Geospatial Platform Visualiser, FGPV ) is a web mapping application. It is designed to be usable in any webpage and maintains WCAG 2.0 AA accessibility.
 
 ## Documentation
 
