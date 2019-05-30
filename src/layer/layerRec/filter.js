@@ -105,7 +105,7 @@ class Filter {
      */
     arrayToIn (array) {
         // TODO do we need empty array checks? caller should be smart enough to recognize prior to calling this
-        return `${this._parent.oidField} IN (${array.join(',')})`
+        return `${this._parent.oidField} IN (${array.join(',')})`;
     }
 
     /**
