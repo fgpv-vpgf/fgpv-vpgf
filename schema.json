@@ -300,7 +300,12 @@
                 "controls": { "$ref": "#/definitions/legendEntryControls" },
                 "state": { "$ref": "#/definitions/initialLayerSettings" },
                 "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
-                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel" }
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel" },
+                "fieldMetadata": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldMetadataEntry" },
+                    "description": "Specifies options for the fields of a layer."
+                }
             },
             "required": [ "index" ],
             "additionalProperties": false
@@ -626,6 +631,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldMetadata": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldMetadataEntry" },
+                    "description": "Specifies options for the fields of a layer."
                 }
             },
             "required": [ "id", "layerType", "url" ],
@@ -659,6 +669,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldMetadata": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldMetadataEntry" },
+                    "description": "Specifies options for the fields of a layer."
                 }
             },
             "required": [ "id", "layerType", "fileType", "url" ],
@@ -690,6 +705,11 @@
                     },
                     "required":["template"],
                     "additionalProperties": false
+                },
+                "fieldMetadata": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/fieldMetadataEntry" },
+                    "description": "Specifies options for the fields of a layer."
                 }
             },
             "required": [ "id", "layerType", "url" ],
@@ -972,6 +992,21 @@
             },
             "required": [ "folderName" ],
             "additionalProperties": false
+        },
+        "fieldMetadataEntry": {
+            "type": "object",
+            "description": "Specifies options for a field in a layer.",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "description": "Specifies the field name (data) to use to link to the identifier. Must exist in the layer."
+                },
+                "alias": {
+                    "type": "string",
+                    "description": "Specifies the field title, uses the field name or alias if missing."
+                }
+            },
+            "required": [ "data" ]
         }
     },
 
