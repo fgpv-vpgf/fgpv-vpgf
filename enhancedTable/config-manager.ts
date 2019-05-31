@@ -21,11 +21,12 @@ export class ConfigManager {
             // look for the layer entry with the matching name and set ITS table config as the table config
             let that = this;
             layerEntries.forEach(entry => {
-                if (entry.proxyWrapper.name === this.panelManager.legendBlock.name) {
+                if (entry.proxyWrapper !== undefined && entry.proxyWrapper.name === this.panelManager.legendBlock.name) {
                     this.tableConfig = entry.proxyWrapper.layerConfig.source.table !== undefined ?
                         entry.proxyWrapper.layerConfig.source.table : that.baseLayer.table;
+                } else {
+                    this.tableConfig = that.baseLayer.table;
                 }
-
             });
         } else {
             this.tableConfig = baseLayer.table;
