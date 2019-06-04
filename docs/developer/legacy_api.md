@@ -38,9 +38,9 @@ init(api) {
 
 `registerPlugin` and `openDialogInfo` have been removed and are no longer available.
 
-See [registering a plugin](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/plugins?id=register) for help migrating to the new plugin system. Note that you can continue to access the legacy API (`RV`) even when it's loaded through the new plugin system.
+See [registering a plugin](/developer/plugins?id=register) for help migrating to the new plugin system. Note that you can continue to access the legacy API (`RV`) even when it's loaded through the new plugin system.
 
-See [opening and closing panels](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/#/developer/panels?id=open-close) for help with controlling panels.
+See [opening and closing panels](/developer/panels?id=open-close) for help with controlling panels.
 
 ## Available Methods and Alternatives
 
