@@ -202,7 +202,7 @@ function geosearchService(
             );
         }
         if (queryParams.province) {
-            data = data.filter(r => r.location.province.name === queryParams.province);
+            data = data.filter(r => r.location.province && r.location.province.name === queryParams.province);
         }
         if (queryParams.type) {
             data = data.filter(r => r.type.name === queryParams.type);
