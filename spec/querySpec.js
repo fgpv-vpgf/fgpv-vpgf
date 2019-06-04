@@ -59,6 +59,7 @@ describe('Query', () => {
             returnGeometry: true,
             outSpatialReference: new FakeSpatialReference()
         };
+
         const query = queryGeo.queryGeometry(options);
         expect(fakeBundle.Query).toHaveBeenCalled();
         expect(fakeBundle.QueryTask).toHaveBeenCalled();

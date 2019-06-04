@@ -210,34 +210,34 @@ describe('layerRecord', () => {
         layerRecordObject.bindEvents(layer);
     });
 
-    xit('should add a state change listener then remove it', () => {
+    it('should add a state change listener then remove it', () => {
         const layerRecordObject = new layerRecord.LayerRecord(FakeLayerObject, apiRef, config, esriLayer);
 
         // add the state listener
         let listenerCallback = layerRecordObject.addStateListener('listenerCallback');
 
         expect(listenerCallback).toEqual('listenerCallback');
-        expect(layerRecordObject._stateListeners.includes('listenerCallback')).toBe(true);
+        expect(layerRecordObject._stateEvent._listeners.includes('listenerCallback')).toBe(true);
 
         // remove the state listener
         layerRecordObject.removeStateListener('listenerCallback');
 
-        expect(layerRecordObject._stateListeners.includes('listenerCallback')).toBe(false);
+        expect(layerRecordObject._stateEvent._listeners.includes('listenerCallback')).toBe(false);
     });
 
-    xit('should add hover listener then remove it', () => {
+    it('should add hover listener then remove it', () => {
         const layerRecordObject = new layerRecord.LayerRecord(FakeLayerObject, apiRef, config, esriLayer);
 
         // add the state listener
         let listenerCallback = layerRecordObject.addHoverListener('listenerCallback');
 
         expect(listenerCallback).toEqual('listenerCallback');
-        expect(layerRecordObject._hoverListeners.includes('listenerCallback')).toBe(true);
+        expect(layerRecordObject._hoverEvent._listeners.includes('listenerCallback')).toBe(true);
 
         // remove the state listener
         layerRecordObject.removeHoverListener('listenerCallback');
 
-        expect(layerRecordObject._hoverListeners.includes('listenerCallback')).toBe(false);
+        expect(layerRecordObject._hoverEvent._listeners.includes('listenerCallback')).toBe(false);
     });
 
     it('should create an option object for the physical layer', () => {

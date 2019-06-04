@@ -5,9 +5,13 @@ const projBuilder = require('../src/proj.js');
 
 let fakeEsri = {
     EsriExtent: {},
-    GeometryService: () => {},
+    GeometryService: FakeGeoService,
     ProjectParameters: () => {}
 };
+
+function FakeGeoService() {
+    return { project: () => {} }
+}
 
 function makeFakeEsriExtent(o) {
     return {
@@ -138,12 +142,11 @@ describe('esri projection conversion function', () => {
     // calls fake geosvc and makes sure the parameters are correct
     it('should call esri server from wrapper function', () => {
         let esri = projBuilder(fakeEsri);
-        spyOn(fakeEsri, 'GeometryService');
+        spyOn(fakeEsri, 'GeometryService').and.callThrough();
         spyOn(fakeEsri, 'ProjectParameters');
 
         // fake call to esri server
-        let newPt = esri.esriServerProject('http://sncr01wbingsdv1.ncr.' +
-         'int.ec.gc.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer', [0], 12345);
+        let newPt = esri.esriServerProject('http://section917.cloudapp.net/arcgis/rest/services/Utilities/Geometry/GeometryServer', [0], 12345);
         expect(fakeEsri.GeometryService).toHaveBeenCalled();
         expect(fakeEsri.ProjectParameters).toHaveBeenCalled();
         expect(newPt).toEqual(jasmine.any(Promise));

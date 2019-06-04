@@ -25,6 +25,8 @@ describe('AttribFC', () => {
                 }
             }
         },
+        _attribsAdded: () => {},
+        dataSource: () => {},
         _layer: { },
         _esriRequest: () => {
             const x = {
