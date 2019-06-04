@@ -229,21 +229,7 @@ export class PanelManager {
                 initAccessibilityListeners(this.panel.element[0], this.gridBody, this.tableOptions);
 
                 this.panelStatusManager.getFilterStatus();
-                this.tableOptions.columnDefs.forEach(column => {
-                    // determine if columnState is not visible either through saved state or through column definition
-                    const columnState = this.panelStateManager.columnState
-                    const notVisible = columnState !== null &&
-                        columnState.find(state => state.colId === column.field) !== undefined ?
-                        columnState : column.hide;
 
-                    if (column.floatingFilterComponentParams.defaultValue !== undefined && notVisible === true) {
-                        let matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
-                        // temporarily show column filter of hidden columns (so that table gets filtered properly)
-                        this.columnMenuCtrl.toggleColumn(matchingCol);
-                        // then hide column (to respect config specifications)
-                        this.columnMenuCtrl.toggleColumn(matchingCol);
-                    }
-                });
 
                 // stop loading panel from opening, if we are about to open enhancedTable
                 clearTimeout(tableBuilder.loadingTimeout);
@@ -255,6 +241,17 @@ export class PanelManager {
                 } else {
                     tableBuilder.deleteLoaderPanel();
                 }
+
+                this.tableOptions.columnDefs.forEach(column => {
+                    const matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
+                    if (matchingCol !== undefined && matchingCol.visibility === false) {
+                        //temporarily show column filter of hidden columns(so that table gets filtered properly)
+                        this.columnMenuCtrl.toggleColumn(matchingCol);
+                        //then hide column(to respect config specifications)
+                        this.columnMenuCtrl.toggleColumn(matchingCol);
+                    }
+                });
+
                 this.panel.open();
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
@@ -527,6 +524,7 @@ export class PanelManager {
                     that.clearGlobalSearch();
                 }
                 that.tableOptions.api.setFilterModel(newFilterModel);
+                that.filtersChanged = true;
             };
 
             // determine if there are any active column filters
@@ -550,15 +548,16 @@ export class PanelManager {
 
         this.mapApi.agControllerRegister('ApplyToMapCtrl', function () {
 
-            let mapFilterQuery = "";
-
             this.filtersChanged = function () {
                 if (that.filtersChanged) {
+                    const filtersQuery = getFiltersQuery();
+                    const fState = that.legendBlock.proxyWrapper.filterState
+                    const mapFilter = fState.getSql(fState.coreFilterTypes.GRID);
                     // if filter is changed
                     // check if filter changed is the same as one applied to map
                     // if not, apply to map will be enabled
                     // else it will be disabled
-                    return getFiltersQuery() !== mapFilterQuery;
+                    return filtersQuery !== mapFilter;
                 }
                 return false;
             };
@@ -566,7 +565,7 @@ export class PanelManager {
             // apply filters to map
             this.applyToMap = function () {
                 const filter = that.legendBlock.proxyWrapper.filterState;
-                mapFilterQuery = getFiltersQuery();
+                const mapFilterQuery = getFiltersQuery();
                 filter.setSql(filter.coreFilterTypes.GRID, mapFilterQuery);
                 that.filtersChanged = false;
                 that.hideToolTips();
