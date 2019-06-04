@@ -24,6 +24,7 @@ mv docs "gh-page-files/$TRAVIS_BRANCH"
 
 # generate the index page with all the branches and tags
 . scripts/travis/make_doc_index.sh gh-page-files > "gh-page-files/index.html"
+touch gh-page-files/.nojekyll
 
 # upload a copy to fgpv.org (as a backup)
 rsync -e 'ssh -i /tmp/docs_rsa' -r --delete-after --quiet "./gh-page-files/$TRAVIS_BRANCH" milesap@fgpv.org:/disk/static/docs/$(basename "$TRAVIS_REPO_SLUG")
