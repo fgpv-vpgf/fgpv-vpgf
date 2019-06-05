@@ -36,10 +36,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
     // name mapping between true panel names and their short names
     const panelSwitch = {
-        table: {
-            panel: 'tableFulldata',
-            action: toggleLayerTablePanel
-        },
         metadata: {
             panel: 'sideMetadata',
             action: toggleMetadata
@@ -65,7 +61,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     // set state change watches on metadata, settings and table panel
     watchPanelState('metadata');
     watchPanelState('settings');
-    watchPanelState('table');
 
     events.$on(events.rvMapLoaded, () => {
         // wire in a hook to any map for removing a layer. this makes it available on the API
@@ -155,7 +150,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             item.config.id === legendBlock.layerRecordId);
 
         const tableConfig = layerRecord ? layerRecord.initialConfig.tableConfig : null;
-
         // update filter flag
         if (tableConfig) {
             legendBlock.filter = tableConfig.applied;
@@ -175,7 +169,6 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             mApi.panels.settings.close();
             mApi.panels.metadata.close();
         }
-
         legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
             if (openPanel) {
                 const findBlock = block
@@ -193,7 +186,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                 // for the table, panel data is columns, rows, etc. instead of the actual entry
                 // thus, we need to take the legend entry in those cases
                 // for settings and metadata, if data exists it is the correct entry
-                const node = openPanel.name !== 'table' && openPanel.data ?
+                const node = openPanel.data ?
                     openPanel.data :
                     openPanel.requester.legendEntry ?
                         openPanel.requester.legendEntry : legendBlock;
@@ -208,13 +201,16 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                             entry : null)
                     .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
 
-                if (openPanel.name === 'table') {
-                    toggleLayerTablePanel(legendBlock);
-                } else if (openPanel.name === 'settings') {
+                if (openPanel.name === 'settings') {
                     toggleSettings(legendBlock);
                 } else if (openPanel.name === 'metadata') {
                     toggleMetadata(legendBlock);
                 }
+            }
+            // clear the state for the datatable to match the refreshed legend
+            const fs = legendBlock.proxyWrapper.filterState;
+            if (fs !== undefined) {
+                fs.setSql(fs.coreFilterTypes.SYMBOL, '');
             }
 
             // fire layer reloaded observable if layer can be found
