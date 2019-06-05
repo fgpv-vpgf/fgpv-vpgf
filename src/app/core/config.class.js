@@ -533,7 +533,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._title = source.title;
             this._description = source.description;
             this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
-            this._width = source.width;
+            this._width = (source.width && source.width < 100) ? 100 : source.width;
             this._sort = source.sort;
             this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
             this._filter = new FilterNode(source.filter);
@@ -640,7 +640,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             default:
                 column.filter.type = 'number';
         }
-
         return new ColumnNode(column);
     }
 
