@@ -182,10 +182,11 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 };
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
-<div>
+<div class="column-header">
     <md-button class="custom-header-label">${displayName}</md-button>
     <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward"></md-icon>
     <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward"></md-icon>
+    <div class="arrows"></div>
     <div class="reorder-icons">
         <md-button class="reorder-button md-icon-button move-left" ng-disabled="min">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_left"></md-icon>

@@ -3714,13 +3714,23 @@ md-datepicker > div {
   text-transform: none;
   width: auto;
   max-width: 80%;
+  min-width: 0 !important;
   text-overflow: ellipsis;
   margin-right: 0 !important; }
 
+.arrows {
+  flex: 1; }
+
+.column-header {
+  display: flex; }
+
 .reorder-icons {
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 0px; }
+
+.rv-sort-arrow {
+  flex-shrink: 0; }
 
 .enhanced-table-details,
 .enhanced-table-zoom {
