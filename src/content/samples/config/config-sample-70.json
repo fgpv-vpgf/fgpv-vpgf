@@ -86,13 +86,44 @@
         "children": [
           {
             "name": "A Group with a Visibility Set",
-            "expanded": true,
+            "expanded": false,
             "controls": [
               "visibility"
             ],
             "children": [
               {
                 "exclusiveVisibility": [
+                  {
+                    "layerId": "powerplant100mw-electric"
+                  },
+                  {
+                    "layerId": "powerplant100mw-naturalGas",
+                    "symbologyExpanded": true,
+                    "description": "100mw Natural gas power plants"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layerId": "powerplant100mw-naturalGas",
+            "symbologyExpanded": true,
+            "description": "100mw Natural gas power plants"
+          },
+          {
+            "name": "A Second Group with a Visibility Set",
+            "expanded": false,
+            "controls": [
+              "visibility"
+            ],
+            "children": [
+              {
+                "name": "A Nested Second Group",
+                "expanded": false,
+                "controls": [
+                  "visibility"
+                ],
+                "children": [
                   {
                     "layerId": "powerplant100mw-electric"
                   },
