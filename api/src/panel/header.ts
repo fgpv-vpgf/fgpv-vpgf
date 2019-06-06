@@ -93,7 +93,7 @@ export default class Header extends Element {
             this._closeButton = new CloseButton(this._panel);
             this.append(this._closeButton.elem);
         }
-
+        
         return this._closeButton.elem;
     }
 
