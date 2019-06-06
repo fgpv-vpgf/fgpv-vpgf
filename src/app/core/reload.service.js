@@ -84,13 +84,14 @@ function reloadService(events, bookmarkService, geoService, configService, state
         const bookmark = bookmarkService.getBookmark();
 
         geoService.destroyMap();
-        configService.setLang(lang);
 
         configService.getAsync.then(config => {
             bookmarkService.parseBookmark(bookmark);
             bookmarkService.adjustRcsLanguage(lang);
             geoService.assembleMap();
         });
+
+        configService.setLang(lang);
 
         events.$broadcast(events.rvLanguageChanged);
     }

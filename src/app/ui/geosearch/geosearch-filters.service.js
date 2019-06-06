@@ -35,6 +35,13 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         }
     });
 
+
+    events.$on(events.rvLanguageChanged, () => {
+        // on language change clear the filters
+        geosearchService.setProvince(undefined);
+        geosearchService.setType(undefined);
+    })
+
     return service;
 
     /**
@@ -104,13 +111,13 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         // add loading label to the filters drop downs while their content is loading
         service.provinces = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
         service.types = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
-
-        geosearchService.getProvinces().then(values =>
-            (service.provinces = values));
-
-        geosearchService.getTypes().then(values => {
-            const disabledSearches = configService.getSync.services.search.disabledSearches || [];
-            service.types = values.filter(x => !disabledSearches.includes(x.code))
-        });
+        configService.getAsync.then(config => {
+            geosearchService.getProvinces().then(values =>
+                (service.provinces = values));
+            geosearchService.getTypes().then(values => {
+                const disabledSearches = configService.getSync.services.search.disabledSearches || [];
+                service.types = values.filter(x => !disabledSearches.includes(x.code))
+            });
+        })
     }
 }
