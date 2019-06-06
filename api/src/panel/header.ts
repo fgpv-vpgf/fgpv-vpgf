@@ -89,9 +89,15 @@ export default class Header extends Element {
      * Adds a close button to the header controls.
      */
     get closeButton() {
+        let divWrapper;
+
         if (!this._closeButton) {
             this._closeButton = new CloseButton(this._panel);
-            this.append(this._closeButton.elem);
+
+            divWrapper = $(`<div></div>`);
+            this.panel.api.$compile(divWrapper);
+            divWrapper.html(this._closeButton.elem[0])
+            this.append(divWrapper);
         }
 
         return this._closeButton.elem;
