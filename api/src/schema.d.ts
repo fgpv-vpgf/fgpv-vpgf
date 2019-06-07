@@ -999,7 +999,7 @@ export interface ColumnNode {
    */
   visible?: boolean;
   /**
-   * Specifies the column width. If missing, calculated column width will be use.
+   * Specifies the column width. The minimum column width is set to 100px. If missing, calculated column width will be use.
    */
   width?: number;
   /**

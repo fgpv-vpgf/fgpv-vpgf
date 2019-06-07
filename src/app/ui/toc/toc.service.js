@@ -214,14 +214,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
             }
 
             // fire layer reloaded observable if layer can be found
-            let layer;
-            if (legendBlock.parentLayerType === 'esriDynamic') {
-                layer = mApi.layers.allLayers.find(function (l) {
-                    return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
-                });
-            } else {
-                layer = mApi.layers.getLayersById(legendBlock.layerRecordId)[0];
-            }
+            let layer = findApiLayerFromLegendBlock(legendBlock);
             if (layer) {
                 mApi.layers._reload.next(layer, interval);
             }
@@ -383,7 +376,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     }
 
     function toggleLayerTablePanel(legendBlock) {
-        mApi.ui.configLegend._dataTableToggled.next(legendBlock);
+        let layer = findApiLayerFromLegendBlock(legendBlock);
+
+        // TODO: see if it's possible to just emit the apiLayer instead of requiring the legendBlock too (currently used in multiple places in table plugin)
+        mApi.ui.configLegend._dataTableToggled.next({ apiLayer: layer, legendBlock });
     }
 
     /**
@@ -482,5 +478,21 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         // to ensure a toc entry is not deselected untimely, keep count of open/close events
         ref.selectedLegendBlockLog[id] = (ref.selectedLegendBlockLog[id] || 0) + (value ? 1 : -1);
         block.isSelected = ref.selectedLegendBlockLog[id] > 0;
+    }
+
+    /**
+     * Find the API ConfigLayer corresponding to the legendBlock provided
+     * @function findApiLayerFromLegendBlock
+     * @param {Object} legendBlock layer object whose associated ConfigLayer is being found.
+     * @return {Object} ConfigLayer api layer
+     */
+    function findApiLayerFromLegendBlock(legendBlock) {
+        if (legendBlock.parentLayerType === 'esriDynamic') {
+            return mApi.layers.allLayers.find(function (l) {
+                return l.id === legendBlock.layerRecordId && l.layerIndex === parseInt(legendBlock.itemIndex);
+            });
+        } else {
+            return mApi.layers.getLayersById(legendBlock.layerRecordId)[0];
+        }
     }
 }
