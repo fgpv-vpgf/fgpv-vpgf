@@ -59,7 +59,8 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
 6. Checkout the local master branch , then do a rebase with the local develop branch.
 
     ```
-        git checkout master && git rebase develop
+        git checkout master
+        git rebase develop
     ```
 
 7. Push the rebased local master branch to the upstream master.
@@ -71,7 +72,8 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
 8. Stay in the local master branch and create a version tag then push the tag to upstream.
 
     ```
-        git tag [version] && git push upstream [version]
+        git tag [version]
+        git push upstream [version]
     ```
 
 ## FGPV Release
@@ -95,7 +97,9 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         Please ensure GeoApi and Plugins has been released first.  Ideally the versions of both should match the version of the viewer
     </p>
 
-4. Do `npm install` to update the local geoApi and plugins module, then do a sanity check on the viewer.
+4. Update the documentation urls in `README.md` to point to the current version of the documents. Note the actual URLs will not exist until the new tag is generated (a later step).  The url change will generally only involve updating the version number in the path.
+
+5. Do `npm install` to update the local geoApi and plugins module, then do a sanity check on the viewer.
 
     <p class="tip">
         Sometimes `npm install` will not get the correct integrity key for the plugins module. The following steps can manually resolve this.
@@ -106,7 +110,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         - In the `package-lock.json` file of the viewer, search for `rv-plugins` and update the `integrity` value there with the copied value.
     </p>
 
-5. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
+6. Commit and push the changes to your origin develop branch then do a pull request from origin develop against the upstream develop to get the upstream develop updated.
 
     <p class="tip">
         After the pull request is merged, ensure your local develop is re-synchronized with upstream develop.
@@ -116,29 +120,31 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         Please ensure upstream master and upstream develop are mergeable (i.e. develop is not behind master) before you continue with the next step.
     </p>
 
-6. Ensure your local master branch is up to date with the upstream master branch.
+7. Ensure your local master branch is up to date with the upstream master branch.
 
-7. Checkout the local master branch , then do a rebase with the local develop branch.
+8. Checkout the local master branch , then do a rebase with the local develop branch.
 
     ```
-        git checkout master && git rebase develop
+        git checkout master
+        git rebase develop
     ```
 
-8. Push the rebased local master branch to the upstream master.
+9. Push the rebased local master branch to the upstream master.
 
     ```
         git push upstream master
     ```
 
-9. Stay in the local master branch and create a version tag then push the tag to upstream.
+10. Stay in the local master branch and create a version tag then push the tag to upstream.
 
     ```
-        git tag [version] && git push upstream [version]
+        git tag [version]
+        git push upstream [version]
     ```
-10. Create a build and compress all build files to zip format.  The build can be found in `./build` and please leave out any samples when compressing.  You can also find the zipped build on http://fgpv.cloudapp.net/demo/[version]/dist/ if you have access to the fpgv cloud drive.
 
-11. Drag the zipped build in the release note.
+11. Create a build and compress all build files to zip format.  The build can be found in `./build` and please leave out any samples when compressing.  You can also find the zipped build on http://fgpv.cloudapp.net/demo/[version]/dist/ if you have access to the fpgv cloud drive.
 
-12. Ensure the release note is complete and correct.  Choose the correct tag on the release note then publish the release if you are satisfied.
+12. Drag the zipped build in the release note.
 
-13. Finally.  Update the documentation link in the `fgpv-vpgf` repository description.
+13. Ensure the release note is complete and correct.  Choose the correct tag on the release note then publish the release if you are satisfied.
+
