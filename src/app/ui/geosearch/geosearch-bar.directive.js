@@ -80,9 +80,8 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
 
         return () => {
             // because search value is cleared on esc, keep a reference if not empty or empty but user erase it
-            const prevLength = self.searchLength;
             const actualLength = self.service.searchValue.length;
-            if (self.service.searchValue !== '' || (prevLength === 1 && actualLength === 0)) {
+            if (self.service.searchValue !== '' || actualLength === 0) {
                 self.service.searchValuePerm = self.service.searchValue;
             }
             self.searchLength = self.service.searchValue.length;
