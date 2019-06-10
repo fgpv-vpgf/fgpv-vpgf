@@ -267,6 +267,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          */
         setLang (lang) {
             $translate.use(lang);
+
+            // update the language attribute of the root element for accessibility reasons
+            $rootElement.attr('lang', lang.substr(0,2))
+
             // only broadcast when config is ready
             getConfigByLanguage(lang).promise.then(() => {
                 events.$broadcast(events.rvCfgInitialized);
@@ -384,6 +388,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         const keysAttr = $rootElement.attr('rv-keys');
 
         $translate.use(languages[0]);
+
+        // set the language attribute of the root element for accessibility reasons
+        $rootElement.attr('lang', languages[0].substr(0,2))
 
         if (!configAttr) {
             languages = DEFAULT_LANGS;
