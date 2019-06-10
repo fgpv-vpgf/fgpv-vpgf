@@ -35,9 +35,9 @@ export default class TableBuilder {
         });
 
         // toggle the enhancedTable if toggleDataTable is called from Legend API
-        this.mapApi.ui.configLegend.dataTableToggled.subscribe(legendBlock => {
-            // Open the table if its closed, never been created or this is a different legend block
-            if (this.panelManager.panel.isClosed || !this.panelManager.panelStateManager || this.panelManager.panelStateManager.legendBlock !== legendBlock) {
+        this.mapApi.ui.configLegend.dataTableToggled.subscribe(({ apiLayer, legendBlock }) => {
+            // Open the table if its closed, never been created or this is a different layer (by comparing API layers, instead of legendBlocks, since reload changes legendBlock)
+            if (this.panelManager.panel.isClosed || !this.panelManager.panelStateManager || this.panelManager.panelStateManager.baseLayer !== apiLayer) {
                 // creates a 'loader' panel to be opened if data hasn't loaded after 200ms
                 this.deleteLoaderPanel();
                 this.loadingPanel = new PanelLoader(this.mapApi, legendBlock);
