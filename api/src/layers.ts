@@ -716,6 +716,26 @@ export class SimpleLayer extends BaseLayer {
         }
     }
 
+    /**
+     * Sets the SQL filter clause for the layer. Currently not implemented for SimpleLayer.
+     *
+     * @param {String} filterName name of the filter to update. Plugins and pages managing their own filters should strive to pick a unique name to avoid collisions (e.g. dont use common generic name like map, filter)
+     * @param {String} whereClause clause defining the active filters on symbols. Use '' for no filter. Use '1=2' for everything filtered
+     */
+    setFilterSql(filterName: String, whereClause: String) {
+        console.error('SQL filter support is not yet implemented for simple layers');
+    }
+
+    /**
+     * Returns the SQL for the given filter name. Currently not implemented for SimpleLayer.
+     *
+     * @param filterName name of the filter to fetch the sql from
+     */
+    getFilterSql(filterName: String): String {
+        console.error('SQL filter support is not yet implemented for simple layers');
+        return '';
+    }
+
     /** Returns the value of the requested data, or an empty array if the data does not exist. */
     get geometry(): Array<BaseGeometry> {
         return this._geometryArray;
