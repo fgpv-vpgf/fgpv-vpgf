@@ -84,6 +84,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
+
             if (newValue.length > 1) {
                 detailService.mApi.panels.details.header._header.addClass('rv-has-layer-list');
             } else {
@@ -91,8 +92,10 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             }
 
             const previouslySelected = findPreviouslySelected(newValue);
-
-            if (newValue.length === 1) {
+            if (previouslySelected) {
+                // pick selected item user previously selected one,
+                selectItem(previouslySelected);
+            } else if (newValue.length === 1) {
                 // or if there is a single item, pick that
                 selectItem(newValue[0]);
             } else {
@@ -100,17 +103,14 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, status => {
                     if (status.firstResult) {
                         deRegisterFirstResultWatch();
-
-                        if(previouslySelected && previouslySelected.data.length > 0) {
-                            // if the previously selected layer still has a data point, keep it on that layer
-                            selectItem(previouslySelected);
-                        } else {
-                            selectItem(status.firstResult);
+                        // if the user already selected an item, do not override the selection
+                        if (!self.selectedItem) {
+                            selectItem(status.firstResult)
                         }
                     } else if (!status.panelLoading) {
                         // all searches found nothing
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
-                        selectItem(null);
+
                         deRegisterFirstResultWatch();
                     }
                 });
