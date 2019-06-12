@@ -175,6 +175,7 @@ Side Navigation touch mode,sidenav.label.touch,Touch mode,1,Mode Tactile,1
 Side Navigation language,sidenav.label.language,Language,1,Langue,1
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
+Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Plus d’options,0
 Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
