@@ -687,7 +687,7 @@ function layerRegistryFactory(
         let reorderedElements = [];
         legendEntries.forEach((entry, index) => {
             entry = entry.collapsed ? entry.entries[0] : entry;
-            if (entry !== legendElements[index]._legendBlock) {
+            if (legendElements && legendElements.length && entry !== legendElements[index]._legendBlock) {
                 const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
                 if (element) {
                     reorderedElements.push(legendElements[index]);

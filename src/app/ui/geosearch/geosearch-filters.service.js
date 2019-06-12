@@ -18,6 +18,10 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         provinces: [], // filter drop downs will be empty until province and type lists are loaded
         types: [],
 
+        // list of integers from 1..n-1 (where n = provinces.length or types.length), used to iterate through filters in geosearch-top-filters.html
+        provinceIndexes: [],
+        typeIndexes: [],
+
         setProvince,
         setType,
         setVisible
@@ -112,11 +116,20 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         service.provinces = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
         service.types = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
         configService.getAsync.then(config => {
-            geosearchService.getProvinces().then(values =>
-                (service.provinces = values));
+            geosearchService.getProvinces().then(values => {
+                service.provinces = values;
+                service.provinceIndexes = [...Array(service.provinces.length).keys()];
+
+                // sort the province filters in alphabetical order
+                service.provinces.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
+            });
             geosearchService.getTypes().then(values => {
                 const disabledSearches = configService.getSync.services.search.disabledSearches || [];
                 service.types = values.filter(x => !disabledSearches.includes(x.code))
+                service.typeIndexes = [...Array(service.types.length).keys()];
+
+                // sort the type filters in alphabetical order
+                service.types.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
             });
         })
     }

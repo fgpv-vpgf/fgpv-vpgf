@@ -5,7 +5,8 @@
             placeholder="{{ 'geosearch.label.province' | translate }}"
             ng-model="self.selectedProvince"
             ng-change="self.setProvince()">
-            <md-option ng-repeat="province in self.service.provinces | orderBy: 'abbr'" ng-value="province">
+            <!-- <md-option ng-repeat="province in self.service.provinces| orderBy: 'abbr'" ng-value="province"> -->
+            <md-option ng-repeat="index in self.service.provinceIndexes" ng-value="province = self.service.provinces[index]">
                 {{ province.name }}
             </md-option>
         </md-select>
@@ -16,7 +17,8 @@
             placeholder="{{ 'geosearch.label.type' | translate }}"
             ng-model="self.selectedType"
             ng-change="self.setType()">
-            <md-option ng-repeat="type in self.service.types | orderBy: 'name'" ng-value="type">
+            <!-- <md-option ng-repeat="type in self.service.types | orderBy: 'name'" ng-value="type"> -->
+            <md-option ng-repeat="index in self.service.typeIndexes | orderBy: 'name'" ng-value="type = self.service.types[index]">
                 {{ type.name }}
             </md-option>
         </md-select>
