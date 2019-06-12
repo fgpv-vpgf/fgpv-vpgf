@@ -313,10 +313,9 @@ lookup: (code: string | number) => Promise<"proj4 string definition">
 GeoSearchUI(config: geoSearchConfig): geoSearchObject
 
 interface geoSearchConfig {
-    includeTypes: string | Array<string>,
     excludeTypes: string | Array<string>,
     language: string,
-    maxResults: number,
+    settings: Object,
     geoLocateUrl: string,
     geoNameUrl: string
 }
