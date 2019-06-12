@@ -294,13 +294,13 @@ function geosearchService(
         return new Promise(
             resolve => {
                 // add ... to the list to reset filter from the selection
-                const reset = {
-                    code: -1,
-                    abbr: '...',
-                    name: '...'
-                };
+                // const reset = {
+                //     code: -1,
+                //     abbr: '...',
+                //     name: '...'
+                // };
 
-                GSservice.fetchProvinces().push(reset);
+                // GSservice.fetchProvinces().push(reset);
 
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the
@@ -332,12 +332,12 @@ function geosearchService(
         return new Promise(
             resolve => {
                 // add ... to the list to reset filter from the selection
-                const reset = {
-                    code: -1,
-                    name: '...'
-                };
+                // const reset = {
+                //     code: -1,
+                //     name: '...'
+                // };
 
-                GSservice.fetchTypes().push(reset);
+                // GSservice.fetchTypes().push(reset);
 
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the

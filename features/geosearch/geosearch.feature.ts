@@ -143,6 +143,14 @@ class GeoSearchUI {
     fetchProvinces() {
         if (this.provinceList.length > 0) return this.provinceList; // in cache
         let provinceList = [];
+
+        const reset = {
+            code: -1,
+            abbr: '...',
+            name: '...'
+        };
+        provinceList.push(reset);
+
         let rawProvinces = (<any>this)._geoSearhObj.config.provinces.list;
         for (let code in rawProvinces) {
             provinceList.push({
@@ -163,6 +171,13 @@ class GeoSearchUI {
     fetchTypes() {
         if (this.typeList.length > 0) return this.typeList; // in cache
         let typeList = [];
+
+        const reset = {
+            code: -1,
+            name: '...'
+        };
+        typeList.push(reset);
+
         let rawTypes = (<any>this)._geoSearhObj.config.types.allTypes;
         for (let type in rawTypes) {
             if (!(<any>this)._excludedTypes.includes(type)) {
