@@ -398,6 +398,7 @@ TableBuilder.prototype.translations = {
             max: 'Maximize',
             print: 'Print',
             export: 'Export',
+            options: 'More options',
             filter: {
                 extent: 'Filter by extent',
                 show: 'Show filters'
@@ -432,6 +433,7 @@ TableBuilder.prototype.translations = {
             max: 'Agrandir',
             print: 'Imprimer',
             export: 'Exporter',
+            options: 'Plus d’options',
             filter: {
                 extent: 'Filtrer par étendue',
                 show: 'Afficher les filtres'

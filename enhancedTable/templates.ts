@@ -73,6 +73,7 @@ export const MENU_TEMPLATE = `
             class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
+            <md-tooltip>{{ 'plugins.enhancedTable.menu.options' | translate }}</md-tooltip>
         </md-button>
         <md-menu-content class="rv-menu rv-dense">
             <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" rv-right-icon="none">
