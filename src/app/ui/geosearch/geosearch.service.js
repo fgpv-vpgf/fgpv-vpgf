@@ -28,9 +28,11 @@ function geosearchService(
         // initialize geosearch feature
         let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
         let excludeTypes = configService.getSync.services.search.disabledSearches;
+        let settings = configService.getSync.services.search.settings;
         GSservice = new appInfo.features.geoSearch.GeoSearchUI({
             language,
-            excludeTypes
+            excludeTypes,
+            settings
         });
     });
 
