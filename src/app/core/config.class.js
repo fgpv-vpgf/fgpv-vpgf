@@ -1849,21 +1849,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
     class SearchService {
         constructor (source) {
-            if (source.settings) {
-                this._settings = {
-                    categories: source.settings.categories || [],
-                    sortOrder: source.settings.sortOrder || [],
-                    maxResults: source.settings.maxResults || 100,
-                    officialOnly: !!source.settings.officialOnly
-                };
-            } else {
-                this._settings = {
-                    categories: [],
-                    sortOrder: [],
-                    maxResults: 100,
-                    officialOnly: false
-                };
+            if (!source.settings) {
+                source.settings = {};
             }
+            this._settings = {
+                categories: source.settings.categories || [],
+                sortOrder: source.settings.sortOrder || [],
+                maxResults: source.settings.maxResults || 100,
+                officialOnly: !!source.settings.officialOnly
+            };
 
             this._disabledSearches = source.disabledSearches;
             this._serviceUrls = source.serviceUrls;

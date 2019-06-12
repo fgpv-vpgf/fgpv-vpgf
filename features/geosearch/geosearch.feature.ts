@@ -29,12 +29,11 @@ const CODE_TO_ABBR = {
  *
  * The following are the valid config object properties:
  * {
- *      includeTypes: string | Array<string>,
  *      excludeTypes: string | Array<string>,
  *      language: string,
+ *      settings: Object,
  *      geoLocateUrl: string,
- *      geoNameUrl: string,
- *      settings: Object
+ *      geoNameUrl: string
  * }
  */
 class GeoSearchUI {
