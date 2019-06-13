@@ -23,7 +23,7 @@
                 <rv-menu-link control="item" ng-if-start="!item.isHidden"></rv-menu-link>
                 <ul class="app-menu app-menu-sublist" ng-if="item.type === 'group'" ng-if-end>
                     <li ng-repeat="child in item.children">
-                        <rv-menu-link control="child"></rv-menu-link>
+                        <rv-menu-link lang="{{item.label === 'sidenav.label.language' ? child.value.toLowerCase().substr(0,2) : ''}}" control="child"></rv-menu-link>
                     </li>
                 </ul>
             </li>
