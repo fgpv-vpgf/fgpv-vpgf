@@ -218,7 +218,7 @@ function legendServiceFactory(
         if (pos) {
             // If the order from bookmark exists
             position = pos;
-        } else if (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
+        } else if (legendBlocks && configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
             const layerType = importedLegendBlock.layerType;
             const sortGroup = layerType ? sortGroups[layerType] : 1; // layerType doesn't exist, legend block is a group
             position = legendBlocks.entries.findIndex(
@@ -230,7 +230,9 @@ function legendServiceFactory(
         }
 
         // add the new legend block to the legend block (always to the root group)
-        legendBlocks.addEntry(importedLegendBlock, position);
+        if (legendBlocks) {
+            legendBlocks.addEntry(importedLegendBlock, position);
+        }
 
         // after ConfigLegend created, check to see if a LegendGroup/Item already exists
         // if so, update it (_initSettings) instead of creating a new instance

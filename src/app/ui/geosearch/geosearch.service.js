@@ -293,15 +293,6 @@ function geosearchService(
     function getProvinces() {
         return new Promise(
             resolve => {
-                // add ... to the list to reset filter from the selection
-                const reset = {
-                    code: -1,
-                    abbr: '...',
-                    name: '...'
-                };
-
-                GSservice.fetchProvinces().push(reset);
-
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the
                     // rvApiReady event is broadcasted, so this is a valid way to check
@@ -331,14 +322,6 @@ function geosearchService(
     function getTypes() {
         return new Promise(
             resolve => {
-                // add ... to the list to reset filter from the selection
-                const reset = {
-                    code: -1,
-                    name: '...'
-                };
-
-                GSservice.fetchTypes().push(reset);
-
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the
                     // rvApiReady event is broadcasted, so this is a valid way to check

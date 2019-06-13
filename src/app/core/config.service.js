@@ -295,7 +295,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             if (_loadingState >= States.LOADED) {
                 listener(getConfigByLanguage(currentLang()).config);
             }
-            this.listeners.push(listener);
+            // check for any duplicate listeners
+            if (!this.listeners.map(l => l.toString()).includes(listener.toString())) {
+                this.listeners.push(listener);
+            }
             return () => {
                 const idx = this.listeners.indexOf(listener);
                 if (idx < 0) {
