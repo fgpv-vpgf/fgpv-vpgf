@@ -163,6 +163,9 @@ export default class TableBuilder {
                         filter: 'agTextColumnFilter',
                         floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
                         floatingFilterComponent: undefined,
+                        cellRenderer: function (cell) {
+                            return cell.value;
+                        },
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
