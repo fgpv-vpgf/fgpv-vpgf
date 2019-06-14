@@ -295,17 +295,17 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             if (_loadingState >= States.LOADED) {
                 listener(getConfigByLanguage(currentLang()).config);
             }
-            // check for any duplicate listeners
-            if (!this.listeners.map(l => l.toString()).includes(listener.toString())) {
-                this.listeners.push(listener);
-            }
-            return () => {
-                const idx = this.listeners.indexOf(listener);
-                if (idx < 0) {
-                    throw new Error('Attempting to remove a listener which is not registered.');
-                }
+
+            // check for any duplicate listeners and de-register if found
+            let listenersToString = this.listeners.map(l => l.toString());
+            if (listenersToString.includes(listener.toString())) {
+                // get the index of the current listener by converting everything to string
+                const idx = listenersToString.indexOf(listener.toString());
                 this.listeners.splice(idx, 1);
-            };
+            }
+            this.listeners.push(listener);
+
+            return;
         }
 
         constructor() {
