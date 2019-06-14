@@ -135,7 +135,14 @@ export default class TableBuilder {
         const layerProxy = attrBundle.layer._layerProxy;
 
         layerProxy.formattedAttributes.then(a => {
-            Object.keys(a.rows[0]).forEach(columnName => {
+
+            // get column order according to the config if defined
+            // else get default columns
+            const columns = Object.keys(this.configManager.columnConfigs).length > 0 ?
+                ['rvInteractive', 'rvSymbol', ...Object.keys(this.configManager.columnConfigs)] :
+                Object.keys(a.rows[0]);
+
+            columns.forEach(columnName => {
                 if (
                     columnName === 'rvSymbol' ||
                     columnName === 'rvInteractive' ||
