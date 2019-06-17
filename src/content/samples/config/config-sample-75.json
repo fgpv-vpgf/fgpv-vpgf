@@ -117,7 +117,7 @@
                 "id": "f_layer",
                 "name": "Powerplants [Feature]",
                 "layerType": "esriFeature",
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
             },
             {
                 "id": "f_layer_2",
@@ -126,7 +126,7 @@
                 "state": {
                     "visibility": false
                 },
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
             },
             {
                 "id": "f_layer_3",
@@ -135,13 +135,13 @@
                     "boundingBox": true
                 },
                 "layerType": "esriFeature",
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
             },
             {
                 "id": "f_layer_4",
                 "name": "Powerplants 4 [Feature]",
                 "layerType": "esriFeature",
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/4"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/4"
             },
             {
                 "id": "d_layer",
@@ -165,7 +165,7 @@
                         "index": 20
                     }
                 ],
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
             },
             {
                 "id": "w_layer",
@@ -187,7 +187,7 @@
                 "id": "t_layer",
                 "name": "Canada Elevation [Tile]",
                 "layerType": "esriTile",
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
             },
             {
                 "id": "fs_layer",
@@ -467,7 +467,7 @@
                     {
                         "id": "CBMT",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
@@ -490,7 +490,7 @@
                     {
                         "id": "SMR",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -504,7 +504,7 @@
                     {
                         "id": "CBME_CBCE_HS_RO_3978",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -518,7 +518,7 @@
                     {
                         "id": "CBMT_CBCT_GEOM_3978",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"

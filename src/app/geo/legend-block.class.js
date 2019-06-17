@@ -1217,6 +1217,7 @@ function LegendBlockFactory(
             this._rootProxyWrapper = rootProxyWrapper;
             this._isDynamicRoot = isDynamicRoot;
             this._sameOpacity = true;
+            this._toggled = false;
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
@@ -1381,8 +1382,21 @@ function LegendBlockFactory(
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
-
-            this._activeEntries.forEach(entry => (entry.visibility = value));
+            if (value) {
+                this._activeEntries.forEach(entry => {
+                    if (entry.blockType === 'group') {
+                        entry._toggled = this._toggled;
+                    }
+                    entry.visibility = (entry.oldVisibility !== undefined && this._toggled) ? entry.oldVisibility : true;
+                });
+                this._toggled = false;
+            } else {
+                this._activeEntries.forEach(entry => {
+                    entry.oldVisibility = entry.visibility;
+                    entry.visibility = false;
+                });
+                this._toggled = true;
+            }
 
             updateLegendElementVisibility(this);
 
