@@ -149,12 +149,13 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
             // TODO update this code when issue 3152 is implemented
             self.block.visibilityChanged.subscribe(val => {
-                //make sure this doesn't fire if an individual symbology being toggled triggered  visibilityChanged
-                if (!self.stackToggled) {
+                // make sure this doesn't fire if an individual symbology being toggled triggered visibilityChanged
+                // only toggle when toggling visibility on after all symbology have been turned off
+                if (!self.stackToggled && noSymbolsVisible()) {
                     const query = val ? '' : '1=2';
                     if (self.block.proxyWrapper.isActiveState) {
                         // layer is loaded, apply stuff now
-                        //only update if currently selected...otherwise causes all sorts of race conditions
+                        // only update if currently selected...otherwise causes all sorts of race conditions
                         // TODO ensure this is race condition no longer exists in new filter structure
                         // TODO once things are working, move these two statements to a function and call in both locations.
                         applySymbolFilter(query);

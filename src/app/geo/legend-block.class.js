@@ -1217,6 +1217,7 @@ function LegendBlockFactory(
             this._rootProxyWrapper = rootProxyWrapper;
             this._isDynamicRoot = isDynamicRoot;
             this._sameOpacity = true;
+            this._toggled = false;
 
             this._aggregateStates = ref.aggregateStates;
             this._walk = ref.walkFunction.bind(this);
@@ -1382,7 +1383,37 @@ function LegendBlockFactory(
                 return;
             }
 
-            this._activeEntries.forEach(entry => (entry.visibility = value));
+            if (value) {
+                // Toggle each child entry's visibility on
+                this._activeEntries.forEach(entry => {
+                    // If a child is a group propogate the toggled value
+                    // This allows show all to effect all child groups
+                    if (entry.blockType === 'group') {
+                        entry._toggled = this._toggled;
+                    }
+                    if (entry.oldVisibility !== undefined && this._toggled) {
+                        // Don't set the visibility if it doesn't change
+                        // Prevents overwriting a past saved visibility state
+                        if (entry.visibility !== entry.oldVisibility) {
+                            entry.visibility = entry.oldVisibility;
+                        }
+                    } else {
+                        // If there's no saved state or pressing show all set the visibility to true
+                        entry.visibility = true;
+                    }
+                });
+                this._toggled = false;
+            } else {
+                this._activeEntries.forEach(entry => {
+                    entry.oldVisibility = entry.visibility;
+                    if (entry.visibility) {
+                        // Don't set the visibility if it doesn't change
+                        // Prevents overwriting a past saved visibility state
+                        entry.visibility = false;
+                    }
+                });
+                this._toggled = true;
+            }
 
             updateLegendElementVisibility(this);
 
