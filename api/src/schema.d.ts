@@ -511,9 +511,30 @@ export interface LegendUI {
   };
 }
 /**
- * Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG) and to set service endpoint urls
+ * Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG), modify default GeoSearch settings (filtering, sorting, etc.), and to set service endpoint urls
  */
 export interface SearchService {
+  /**
+   * Configuration settings related to GeoSearch
+   */
+  settings?: {
+    /**
+     * Filter the search results based on the type of the geographical names. Allowed values can be found here (if using the Canadian GeoNames Search Service API): http://geogratis.gc.ca/services/geoname/en/codes/concise.
+     */
+    categories?: string[];
+    /**
+     * The sort order of the defined 'categories'. Any missing categories are appended to the bottom of the sorted list. The results can still be sorted through this option even if there are no categories being filtered.
+     */
+    sortOrder?: string[];
+    /**
+     * The maximum number of results to return per request. The Canadian GeoNames Search Service API has a 1000 search limit which will be used as an upper limit of results returned unless another service is being used with a higher limit. The default is 100 results.
+     */
+    maxResults?: number;
+    /**
+     * Whether to return only official names for the geographic names. Default is false which will return both official names and formerly official names.
+     */
+    officialOnly?: boolean;
+  };
   /**
    * Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG
    */

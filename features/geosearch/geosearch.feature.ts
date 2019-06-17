@@ -27,12 +27,11 @@ const CODE_TO_ABBR = {
  * A class/interface that wraps around a GeoSearch object and provides extra servinces.
  * It can also consume an optional config object upon creation.
  *
- * The fellowing are the valid config objec properties:
+ * The following are the valid config object properties:
  * {
- *      includeTypes: string | Array<string>,
  *      excludeTypes: string | Array<string>,
  *      language: string,
- *      maxResults: number,
+ *      settings: Object,
  *      geoLocateUrl: string,
  *      geoNameUrl: string
  * }
@@ -44,11 +43,13 @@ class GeoSearchUI {
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
         (<any>this)._excludedTypes = (<any>config).excludeTypes || [];
+        (<any>this)._settings = (<any>config).settings || {};
     }
 
     get lang() { return (<any>this)._lang; }
     get provinceList() { return (<any>this)._provinceList; }
     get typeList() { return (<any>this)._typeList; }
+    get settings() { return (<any>this)._settings; }
 
     set provinceList(val) { (<any>this)._provinceList = val; }
     set typeList(val) { (<any>this)._typeList = val; }
