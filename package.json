@@ -1,13 +1,13 @@
 {
   "name": "RAMP2",
   "private": true,
-  "version": "3.1.0-b1",
+  "version": "3.1.0-b2",
   "description": "RAMP2 Viewer",
   "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
   "license": "MIT",
   "dependencies": {
     "@claviska/jquery-minicolors": "github:claviska/jquery-minicolors",
-    "@fgpv/rv-plugins": "github:ShrutiVellanki/plugins#5eb9741e7294cbcc815f8d84f1994fb60f346ca6",
+    "@fgpv/rv-plugins": "3.1.0-2",
     "@flowjs/ng-flow": "2.7.8",
     "angular": "1.7.5",
     "angular-animate": "1.7.5",
