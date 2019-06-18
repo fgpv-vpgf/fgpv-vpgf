@@ -977,6 +977,10 @@ export interface FeatureLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies options for the fields of a layer.
+   */
+  fieldMetadata?: FieldMetadataEntry[];
 }
 /**
  * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
@@ -1028,6 +1032,20 @@ export interface FilterNode {
    * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
    */
   static?: boolean;
+}
+/**
+ * Specifies options for a field in a layer.
+ */
+export interface FieldMetadataEntry {
+  /**
+   * Specifies the field name (data) to use to link to the identifier. Must exist in the layer.
+   */
+  data: string;
+  /**
+   * Specifies the field title, uses the field name or alias if missing.
+   */
+  alias?: string;
+  [k: string]: any;
 }
 export interface FileLayerNode {
   /**
@@ -1144,6 +1162,10 @@ export interface FileLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies options for the fields of a layer.
+   */
+  fieldMetadata?: FieldMetadataEntry[];
 }
 export interface WfsLayerNode {
   /**
@@ -1255,6 +1277,10 @@ export interface WfsLayerNode {
      */
     template: string;
   };
+  /**
+   * Specifies options for the fields of a layer.
+   */
+  fieldMetadata?: FieldMetadataEntry[];
 }
 export interface WmsLayerNode {
   /**
@@ -1501,6 +1527,10 @@ export interface DynamicLayerEntryNode {
      */
     printEnabled?: boolean;
   };
+  /**
+   * Specifies options for the fields of a layer.
+   */
+  fieldMetadata?: FieldMetadataEntry[];
 }
 export interface LegendAuto {
   type: "autopopulate";
