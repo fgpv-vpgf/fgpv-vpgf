@@ -98,7 +98,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         let cur = self.block;
         let numParents = 0;
         // this should find the parent group of the current entry, if any, and stop immediately
-        while (cur.parent && !groupExists) {
+        while (cur && cur.parent && !groupExists) {
             if (cur.constructor.name === 'LegendGroup') {
                 groupExists = true;
             } else {

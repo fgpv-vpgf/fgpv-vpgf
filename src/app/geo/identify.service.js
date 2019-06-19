@@ -225,7 +225,7 @@ function identifyService($q, configService, gapiService, referenceService, state
             const ubGraphics = gapi.hilight.getUnboundGraphics([graphicBundle], mapConfig.instance.spatialReference);
 
             ubGraphics[0].then(unboundG => {
-                console.log('unbound graphic for hilighting ', unboundG);
+                console.log('unbound graphic for highlighting ', unboundG);
                 mapConfig.highlightLayer.addHilight(unboundG);
             });
         });

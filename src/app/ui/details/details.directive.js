@@ -84,7 +84,6 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
-
             if (newValue.length > 1) {
                 detailService.mApi.panels.details.header._header.addClass('rv-has-layer-list');
             } else {
@@ -100,20 +99,20 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
-                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, status => {
-                    if (status.firstResult) {
-                        deRegisterFirstResultWatch();
+                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, data => {
+                    // check if first data point is detected
+                    if (data) {
                         // if the user already selected an item, do not override the selection
                         if (!self.selectedItem) {
-                            selectItem(status.firstResult)
+                            selectItem(data);
                         }
-                    } else if (!status.panelLoading) {
-                        // all searches found nothing
+                        deRegisterFirstResultWatch();
+                    // all searches found nothing, no data point
+                    } else if (!self.display.isLoading) {
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
-
                         deRegisterFirstResultWatch();
                     }
-                });
+                })
             }
 
             detailService.mApi.panels.details.open();
@@ -135,10 +134,13 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
          * @return {Object} data for a first item that has completed loading, and the status of the entire query
          */
         function _waitForFirstResult() {
-            return {
-                firstResult: self.display.data.find(item => item.data.length > 0),
-                panelLoading: self.display.isLoading
-            };
+            // previously, returning a new object everytime to wait for first result causes $digest() iterations error since objects are not ===
+            const searchFirstResult = self.display.data.find(item => item.data.length > 0);
+            return searchFirstResult;
+            // return {
+            //     firstResult: self.display.data.find(item => item.data.length > 0),
+            //     panelLoading: self.display.isLoading
+            // };
         }
     });
 }
