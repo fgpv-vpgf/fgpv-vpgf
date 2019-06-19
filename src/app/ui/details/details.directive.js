@@ -77,14 +77,13 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         self.display.selectedItem = self.selectedItem;
     }
 
-    let deRegisterFirstResultWatch = angular.noop;
+    let deregisterFirstResultWatch = angular.noop;
 
     $scope.$watch('self.display.data', (newValue, oldValue) => {
-        deRegisterFirstResultWatch();
+        deregisterFirstResultWatch();
 
         // if multiple points added to the details panel ...
         if (newValue && newValue.length > 0) {
-
             if (newValue.length > 1) {
                 detailService.mApi.panels.details.header._header.addClass('rv-has-layer-list');
             } else {
@@ -100,18 +99,18 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
-                deRegisterFirstResultWatch = $scope.$watch(_waitForFirstResult, status => {
-                    if (status.firstResult) {
-                        deRegisterFirstResultWatch();
+                deregisterFirstResultWatch = $scope.$watch(_waitForFirstResult, result => {
+                    // check if the result returned is an object and a successfully detected first data point
+                    if (typeof result === 'object' && result) {
                         // if the user already selected an item, do not override the selection
                         if (!self.selectedItem) {
-                            selectItem(status.firstResult)
+                            selectItem(result);
                         }
-                    } else if (!status.panelLoading) {
-                        // all searches found nothing
+                        deregisterFirstResultWatch();
+                    // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
+                    } else if (typeof result === 'boolean' && !result) {
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
-
-                        deRegisterFirstResultWatch();
+                        deregisterFirstResultWatch();
                     }
                 });
             }
@@ -132,13 +131,15 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
          *
          * @function _waitForFirstResult
          * @private
-         * @return {Object} data for a first item that has completed loading, and the status of the entire query
+         * @return {Object | Boolean} data for a first item that has completed loading, OR the loading status of the entire query
          */
         function _waitForFirstResult() {
-            return {
-                firstResult: self.display.data.find(item => item.data.length > 0),
-                panelLoading: self.display.isLoading
-            };
+            const searchFirstResult = self.display.data.find(item => item.data.length > 0);
+            const isLoading = self.display.isLoading;
+            // return an object representing the first data point clicked if found, otherwise return a boolean representing if loading is done
+            // reason for this is that angular executes this function being watched until it returns the same result twice, compared using ===
+            // in the previous case this would never hold true since we return a new object everytime, resulting in multiple watchers fired and the $digest() iterations error
+            return searchFirstResult ? searchFirstResult : isLoading;
         }
     });
 }
