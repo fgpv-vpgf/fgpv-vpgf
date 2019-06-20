@@ -70,7 +70,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             container: '=?'
         },
         link: link,
-        controller: () => { },
+        controller: () => {},
         controllerAs: 'self',
         bindToController: true
     };
@@ -98,7 +98,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         let cur = self.block;
         let numParents = 0;
         // this should find the parent group of the current entry, if any, and stop immediately
-        while (cur.parent && !groupExists) {
+        while (cur && cur.parent && !groupExists) {
             if (cur.constructor.name === 'LegendGroup') {
                 groupExists = true;
             } else {
@@ -135,7 +135,6 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
         // Helper function: apply definition to filter system
         function applySymbolFilter(defClause) {
-
             // TODO need a test for proxyWrapper?  it might not be ready yet?  might need a watch on 'loaded' if not ready
             const fs = self.block.proxyWrapper.filterState;
             if (fs !== undefined) {
@@ -159,20 +158,31 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         // TODO once things are working, move these two statements to a function and call in both locations.
                         applySymbolFilter(query);
 
-                        self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
-                    } else {
-                        // layer not yet loaded, wait until it is then apply stuff
-                        const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
-                            if (state === 'rv-loaded') {
-                                // only update if currently selected...otherwise causes all sorts of race conditions
-                                // TODO ensure this is race condition no longer exists in new filter structure
-                                applySymbolFilter(query);
-
-                                self.toggleList.forEach(toggle => { if (toggle.isSelected !== val) { self.onToggleClick(toggle, false); } });
-                                self.stackToggled = false;
-                                proxyLoaded();
+                        self.toggleList.forEach(toggle => {
+                            if (toggle.isSelected !== val) {
+                                self.onToggleClick(toggle, false);
                             }
                         });
+                    } else {
+                        // layer not yet loaded, wait until it is then apply stuff
+                        const proxyLoaded = $rootScope.$watch(
+                            () => self.block.proxyWrapper.state,
+                            (state, oldState) => {
+                                if (state === 'rv-loaded') {
+                                    // only update if currently selected...otherwise causes all sorts of race conditions
+                                    // TODO ensure this is race condition no longer exists in new filter structure
+                                    applySymbolFilter(query);
+
+                                    self.toggleList.forEach(toggle => {
+                                        if (toggle.isSelected !== val) {
+                                            self.onToggleClick(toggle, false);
+                                        }
+                                    });
+                                    self.stackToggled = false;
+                                    proxyLoaded();
+                                }
+                            }
+                        );
                     }
                 }
                 self.stackToggled = false;
@@ -263,13 +273,16 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             maxItemWidth: 350
         };
 
-        scope.$watch(() => (element.parent().width()), value => {
-            if (value) {
-                ref.containerWidth = value;
-                updateContainerWidth(value);
+        scope.$watch(
+            () => element.parent().width(),
+            value => {
+                if (value) {
+                    ref.containerWidth = value;
+                    updateContainerWidth(value);
+                }
+                scope.$applyAsync();
             }
-            scope.$applyAsync();
-        });
+        );
 
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
@@ -306,7 +319,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 // TODO check if we need to add file-based stuff here
                 if (
                     layerRecord &&
-                    (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC || layerRecord.layerType === Geo.Layer.Types.ESRI_FEATURE) &&
+                    (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC ||
+                        layerRecord.layerType === Geo.Layer.Types.ESRI_FEATURE) &&
                     layerRecord.config.toggleSymbology &&
                     self.symbology.stack.length > 1 &&
                     self.symbology._proxy.layerType !== Geo.Layer.Types.ESRI_RASTER
@@ -323,7 +337,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 self.toggleList.push(toggle);
 
                                 // toggle list gets generated each time block is reloaded, make sure check boxes and definition queries actually match the toggle list
-                                self.toggleList.forEach((toggle) => {
+                                self.toggleList.forEach(toggle => {
                                     if (toggle.isSelected !== self.block.visibility) {
                                         self.onToggleClick(toggle, false);
                                     }
@@ -339,26 +353,21 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         if (groupExists) {
             // for obtaining the link to the parent group block
             let parent = '.parent'.repeat(numParents);
-            scope.$watch(
-                'self.block' + parent + '.expanded',
-                (newValue, oldValue) => {
-                    // when parent group is expanded, expand symbology stack if needed
-                    if (newValue !== oldValue && newValue) {
-                        // calling expandSymbology twice fixes some corner cases
-                        $timeout(() => self.expandSymbology(self.symbology.expanded), 0);
-                    }
+            scope.$watch('self.block' + parent + '.expanded', (newValue, oldValue) => {
+                // when parent group is expanded, expand symbology stack if needed
+                if (newValue !== oldValue && newValue) {
+                    // calling expandSymbology twice fixes some corner cases
+                    $timeout(() => self.expandSymbology(self.symbology.expanded), 0);
                 }
-            );
+            });
         }
 
-        scope.$watch(
-            'self.symbology.expanded',
-            (newValue, oldValue) => (newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop)
+        scope.$watch('self.symbology.expanded', (newValue, oldValue) =>
+            newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop
         );
 
-        scope.$watch(
-            'self.symbology.fannedOut',
-            (newValue, oldValue) => (newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop)
+        scope.$watch('self.symbology.fannedOut', (newValue, oldValue) =>
+            newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop
         );
 
         // expand the symbology stack if needed
@@ -531,7 +540,9 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 // briefly show the description node to grab it's height, and hide it again
                 ref.descriptionItem.show();
                 let width = getTextWidth(canvas, ref.descriptionItem.text(), ref.descriptionItem.css('font'));
-                let height = Math.ceil(width / ref.descriptionItem.width()) * parseInt(ref.descriptionItem.css('line-height').slice(0, -2));
+                let height =
+                    Math.ceil(width / ref.descriptionItem.width()) *
+                    parseInt(ref.descriptionItem.css('line-height').slice(0, -2));
                 const descriptionHeight = ref.descriptionItem.height() > 0 ? ref.descriptionItem.height() : height;
                 ref.descriptionItem.hide();
 
@@ -904,7 +915,7 @@ function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
             if (proxy) {
                 $q.resolve(proxy)
                     .then(proxy => (this._proxy = proxy))
-                    .catch(() => { }); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
+                    .catch(() => {}); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
             }
 
             this._renderStyle = renderStyle;

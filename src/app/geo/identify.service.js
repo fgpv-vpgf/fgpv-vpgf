@@ -1,5 +1,6 @@
 import { MouseEvent, MapClickEvent } from 'api/events';
 import { IdentifyMode } from 'api/layers';
+import { IdentifiedResult } from 'api/map';
 
 /**
  * @module identifyService
@@ -26,21 +27,28 @@ function identifyService($q, configService, gapiService, referenceService, state
     return service;
 
     /**
-     * Handles global map clicks.  Currently configured to walk through all layer records
+     * Handles global map identifies.  Currently configured to walk through all layer records
      * and trigger service side identify queries.
      * GeoApi is responsible for performing client side spatial queries on registered
      * feature layers or server side queries for everything else.
      *
      * @function identify
-     * @param {Event} clickEvent ESRI map click event which is used to run identify function
+     * @param {Event} clickOrXY an ESRI map click event or an XY object from the API
      * @returns {Object} { details?: { data: Promise<any>[], isLoaded: Promise<boolean> }, requester?: { mapPoint: any } }
      */
-    function identify(clickEvent) {
-        console.log(clickEvent);
+    function identify(clickOrXY) {
+        const mapInstance = configService.getSync.map.instance;
+        const isClick = !clickOrXY.projectToPoint;
+        // normalize coordinates as an XY object in lat/lon (projection 4326)
+        const XY = isClick
+            ? new window.RAMP.GEO.XY(clickOrXY.mapPoint.x, clickOrXY.mapPoint.y, mapInstance.spatialReference.wkid)
+            : clickOrXY;
+        // keeping clickEvent to avoid a giant refactor - if it's an API based identify make a fake click-like object
+        const clickEvent = isClick ? clickOrXY : { mapPoint: XY.projectToPoint(mapInstance.spatialReference.wkid) };
+        const identifiedResult = new IdentifiedResult(XY);
 
         sessionId++;
 
-        const mapInstance = configService.getSync.map.instance;
         const opts = {
             clickEvent,
             map: mapInstance,
@@ -65,9 +73,13 @@ function identifyService($q, configService, gapiService, referenceService, state
             .filter(identifyInstance => typeof identifyInstance.identifyResults !== 'undefined');
 
         const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
-
         const mapClickEvent = new MapClickEvent(clickEvent, mApi);
-        mApi._clickSubject.next(mapClickEvent);
+
+        if (isClick) {
+            mApi._clickSubject.next(mapClickEvent);
+        }
+
+        mApi._identified.next(identifiedResult);
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.
@@ -91,6 +103,7 @@ function identifyService($q, configService, gapiService, referenceService, state
                     const featureList = idResult.data || [];
                     featureList.forEach(feat => {
                         mapClickEvent._featureSubject.next(feat);
+                        identifiedResult.emitFeature(feat);
                     });
                 });
             });

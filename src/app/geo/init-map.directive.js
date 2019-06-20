@@ -14,12 +14,25 @@ import { ConfigLegend } from 'api/legend';
  *
  * This directive also contains the keyboard navigation logic.
  */
-angular
-    .module('app.geo')
-    .directive('rvInitMap', rvInitMap);
+angular.module('app.geo').directive('rvInitMap', rvInitMap);
 
-function rvInitMap($rootScope, configService, geoService, events, referenceService, $rootElement, $interval, identifyService, api, appInfo, gapiService, $mdDialog, keyNames, $compile, $controllerProvider) {
-
+function rvInitMap(
+    $rootScope,
+    configService,
+    geoService,
+    events,
+    referenceService,
+    $rootElement,
+    $interval,
+    identifyService,
+    api,
+    appInfo,
+    gapiService,
+    $mdDialog,
+    keyNames,
+    $compile,
+    $controllerProvider
+) {
     // key codes that are currently active
     let keyMap = [];
     // interval which runs animation logic
@@ -99,10 +112,13 @@ function rvInitMap($rootScope, configService, geoService, events, referenceServi
                 const scope = $rootScope.$new(useIsolatedScope);
                 $compile(html)(scope);
                 return scope;
-            }
+            };
 
             // allows plugins to register components on the angular instance, usually to provide angular material support
             apiMap.agControllerRegister = $controllerProvider.register;
+
+            // allow access to identify service to the API.
+            apiMap._identify = identifyService.identify;
 
             events.$broadcast(events.rvApiPreMapAdded, apiMap);
 
