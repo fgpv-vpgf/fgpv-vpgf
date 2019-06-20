@@ -23,7 +23,7 @@ export class MouseEvent {
         } else {
             // need to use screen point to convert to the map point used in creating the XY
             // however, screenX/Y output the wrong map point value which is why layerX/Y needs to be used
-            const mapPoint = mapInstance.mapI.toMap({ x: (<any>event).layerX, y: (<any>event).layerY});
+            const mapPoint = mapInstance.mapI.toMap({ x: (<any>event).layerX, y: (<any>event).layerY });
             this.xy = new XY(mapPoint.x, mapPoint.y, mapPoint.spatialReference.wkid);
         }
 
@@ -51,6 +51,7 @@ export class MapClickEvent extends MouseEvent {
     /** @ignore */
     _featureSubject: Subject<Object>;
     features: Observable<Object>;
+    apiInitiated: false;
 
     constructor(event: esriMouseEvent, mapInstance: Map) {
         super(event, mapInstance);
@@ -81,11 +82,10 @@ export class PanelEvent {
 export interface esriMouseEvent extends MouseEvent {
     /** Decimal degrees in y,x form */
     mapPoint: {
-        y: number,
-        x: number
-        spatialReference: { wkid: number }
+        y: number;
+        x: number;
+        spatialReference: { wkid: number };
     };
-
 }
 
 function isEsriMouseEvent(event: esriMouseEvent | MouseEvent): event is esriMouseEvent {

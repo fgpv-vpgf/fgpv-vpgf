@@ -1,6 +1,5 @@
 import { MouseEvent, MapClickEvent } from 'api/events';
 import { IdentifyMode } from 'api/layers';
-import { IdentifiedResult } from 'api/map';
 
 /**
  * @module identifyService
@@ -45,7 +44,6 @@ function identifyService($q, configService, gapiService, referenceService, state
             : clickOrXY;
         // keeping clickEvent to avoid a giant refactor - if it's an API based identify make a fake click-like object
         const clickEvent = isClick ? clickOrXY : { mapPoint: XY.projectToPoint(mapInstance.spatialReference.wkid) };
-        const identifiedResult = new IdentifiedResult(XY);
 
         sessionId++;
 
@@ -75,11 +73,8 @@ function identifyService($q, configService, gapiService, referenceService, state
         const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
         const mapClickEvent = new MapClickEvent(clickEvent, mApi);
 
-        if (isClick) {
-            mApi._clickSubject.next(mapClickEvent);
-        }
-
-        mApi._identified.next(identifiedResult);
+        mapClickEvent.apiInitiated = !isClick;
+        mApi._clickSubject.next(mapClickEvent);
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.
@@ -103,7 +98,6 @@ function identifyService($q, configService, gapiService, referenceService, state
                     const featureList = idResult.data || [];
                     featureList.forEach(feat => {
                         mapClickEvent._featureSubject.next(feat);
-                        identifiedResult.emitFeature(feat);
                     });
                 });
             });
