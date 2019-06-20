@@ -29,7 +29,6 @@ import { Panel, ClosingResponse } from 'api/panel';
  * ```
  */
 export class Map {
-
     /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
@@ -107,6 +106,21 @@ export class Map {
         this.boundsChangedObj.subscribe(xyBounds => {
             this.setBounds(xyBounds, false);
         });
+    }
+
+    /**
+     * Performs an identify operation similar to clicking on the map at the provided xy coordinates.
+     */
+    @geo.XYLiteral
+    identify(xy: geo.XY) {
+        this._identify(xy);
+    }
+
+    /**
+     * Returns an observable which emits whenever an identify operation is performed, either via the api or by mouse.
+     */
+    get identified(): Observable<IdentifiedResult> {
+        return this._identified.asObservable();
     }
 
     /**
@@ -257,13 +271,15 @@ export class Map {
     }
 
     get panels(): PanelRegistry {
-        return this.panelRegistryObj
+        return this.panelRegistryObj;
     }
 
     // use of the following property is unsupported by ramp team.
     // it is provided for plugin developers who want to write advanced geo functions
     // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
-    get esriMap () { return this.mapI.esriMap; }
+    get esriMap() {
+        return this.mapI.esriMap;
+    }
 }
 
 //Map objects prototype
@@ -282,6 +298,8 @@ export interface Map {
 
     Panel: Panel;
 
+    _identify: any;
+    _identified: Subject<IdentifiedResult>;
     _panels: Panel[];
     _panelOpened: Subject<Panel>;
     _panelClosed: Subject<ClosingResponse>;
@@ -296,12 +314,39 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
     this.click = this._clickSubject.asObservable();
+    this._identified = new Subject();
 
-    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
     this.mouseMove = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousemove').pipe(
         map((evt: esriMouseEvent) => new MouseEvent(evt, this)),
         distinctUntilChanged((x, y) => x.equals(y))
     );
-    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt, this)));
-    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
+    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
+}
+
+/**
+ * An instance of this class is emitted whenever an identify operation is performed. It contains the identify coordinates and the feature subject/observable.
+ *
+ */
+export class IdentifiedResult {
+    coordinates: geo.XY;
+    features: Observable<Object>;
+    _featureSubject: Subject<Object>;
+
+    constructor(xy: geo.XY) {
+        this.coordinates = xy;
+        this._featureSubject = new Subject();
+        this.features = this._featureSubject.asObservable();
+    }
+
+    emitFeature(feat: any) {
+        this._featureSubject.next(feat);
+    }
 }
