@@ -94,7 +94,7 @@
         "layers": [{
                 "id": "0",
                 "layerType": "esriDynamic",
-                "url": "https://maps-cartes.dev.ec.gc.ca/arcgis/rest/services/CAM/MapServer",
+                "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer",
                 "tolerance": 20,
                 "singleEntryCollapse": true,
                 "layerEntries": [{
