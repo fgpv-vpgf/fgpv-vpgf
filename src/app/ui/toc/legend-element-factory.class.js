@@ -129,6 +129,44 @@ function LegendElementFactory(
         }
     }
 
+    class ShowAllControl extends VisibilityControl {
+        constructor(...args) {
+            super(...args);
+        }
+
+        action() {
+            this.block._toggled = false;
+            this.block.visibility = true;
+        }
+
+        get icon() {
+            return 'action:visibility';
+        }
+
+        get label() {
+            return `toc.menu.visibility.allon`;
+        }
+    }
+
+    class HideAllControl extends VisibilityControl {
+        constructor(...args) {
+            super(...args);
+        }
+
+        action() {
+            this.block._toggled = false;
+            this.block.visibility = false;
+        }
+
+        get icon() {
+            return 'action:visibility_off';
+        }
+
+        get label() {
+            return `toc.menu.visibility.alloff`;
+        }
+    }
+
     class OpacityControl extends BaseControl {
         constructor(...args) {
             super(...args);
@@ -775,6 +813,8 @@ function LegendElementFactory(
             visibility: VisibilityControl,
             visibilitynode: VisibilityNodeControl,
             visibilityset: VisibilitySetControl,
+            showall: ShowAllControl,
+            hideall: HideAllControl,
             opacity: OpacityControl,
             boundingBox: BoundingBoxControl,
             query: QueryControl,
