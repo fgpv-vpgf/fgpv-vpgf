@@ -10,14 +10,13 @@ export class XY {
     y: number;
 
     constructor(x: number, y: number, wkid?: number) {
-
         if (wkid) {
             const normalizePoints = this.projectFromPoint(wkid, x, y);
             x = normalizePoints.x;
             y = normalizePoints.y;
         }
 
-        x = x <= 180 && x >= -180 ? x : 360 % Math.abs(x) * (x < 0 ? 1 : -1);
+        x = x <= 180 && x >= -180 ? x : (360 % Math.abs(x)) * (x < 0 ? 1 : -1);
 
         if (typeof x !== 'number' || x > 180 || x < -180) {
             throw new Error(`Longitude (x) provided is bounded to ±180°, ${x} given.`);
@@ -34,7 +33,7 @@ export class XY {
         const proj = (<any>window).RAMP.GAPI.proj;
 
         let zoomPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
-        return proj.Point(zoomPoint[0], zoomPoint[1], {wkid: targetProjection});
+        return new proj.Point(zoomPoint[0], zoomPoint[1], new proj.SpatialReference(targetProjection));
     }
 
     /** Returns a projection Point */
@@ -42,7 +41,7 @@ export class XY {
         const proj = (<any>window).RAMP.GAPI.proj;
 
         let point = proj.localProjectPoint(sourceProjection, 4326, [this.x || x, this.y || y]);
-        return proj.Point(point[0], point[1], {wkid: sourceProjection});
+        return new proj.Point(point[0], point[1], new proj.SpatialReference(sourceProjection));
     }
 
     /**
@@ -102,7 +101,6 @@ export class XY {
  *
  */
 export class XYBounds {
-
     center: XY;
     northEast: XY;
     southWest: XY;
@@ -116,7 +114,7 @@ export class XYBounds {
             if (isXYLiteral(southWest)) {
                 this.southWest = new XY(southWest[0], southWest[1]);
             } else if (typeof southWest === 'undefined') {
-                throw new Error("southWest parameter is required if northEast is not an extent");
+                throw new Error('southWest parameter is required if northEast is not an extent');
             } else {
                 this.southWest = southWest;
             }
@@ -145,23 +143,29 @@ export class XYBounds {
 
     /** Returns true if the given XY point is contained within this boundary. */
     contains(xy: XY): boolean {
-        return xy.x >= this.southWest.x && xy.x <= this.northEast.x && xy.y >= this.southWest.y && xy.y <= this.northEast.y;
+        return (
+            xy.x >= this.southWest.x && xy.x <= this.northEast.x && xy.y >= this.southWest.y && xy.y <= this.northEast.y
+        );
     }
 
     /** Returns true if this boundary is equal geographically to the other XYBounds provided. */
     equals(otherXYBounds: XYBounds): boolean {
-        return this.northEast.x === otherXYBounds.northEast.x &&
+        return (
+            this.northEast.x === otherXYBounds.northEast.x &&
             this.northEast.y === otherXYBounds.northEast.y &&
             this.southWest.x === otherXYBounds.southWest.x &&
-            this.southWest.y === otherXYBounds.southWest.y;
+            this.southWest.y === otherXYBounds.southWest.y
+        );
     }
 
     /** Returns true if this boundary intersects with the other XYBounds provided. */
     intersects(otherXYBounds: XYBounds): boolean {
-        return !(this.southWest.x > otherXYBounds.northEast.x ||
+        return !(
+            this.southWest.x > otherXYBounds.northEast.x ||
             this.northEast.x < otherXYBounds.southWest.x ||
             this.southWest.y > otherXYBounds.northEast.y ||
-            this.northEast.y < otherXYBounds.southWest.y);
+            this.northEast.y < otherXYBounds.southWest.y
+        );
     }
 
     /**
@@ -214,7 +218,7 @@ export class Hover {
      * </ul>
      *
      * TODO: add option for position 'center' specifically used for polygons.
-    */
+     */
     constructor(id: string | number, text: string, opts?: HovertipOptions) {
         this._id = id.toString();
         this._text = text;
@@ -299,13 +303,19 @@ export class BaseGeometry {
      * Possibilities are 'Point', 'MultiPoint', 'LineString', 'Polygon', 'MultiLineString', 'MultiPolygon'.
      * Function implementation in subclasses.
      */
-    get type(): string { return ''; }
+    get type(): string {
+        return '';
+    }
 
     /** Returns the geometry id. */
-    get id(): string { return this._id; }
+    get id(): string {
+        return this._id;
+    }
 
     /** Returns the hovertip for the geometry, if any. */
-    get hover(): Hover | null { return this._hover; }
+    get hover(): Hover | null {
+        return this._hover;
+    }
 
     /** Adds a hovertip to the geometry. If one already exists, replace it. */
     set hover(hover: Hover | null) {
@@ -362,7 +372,7 @@ export class Point extends BaseGeometry {
      *     <li>style:          string style of point. default is `CIRCLE`.<br/>
      *     &emsp;&emsp;&nbsp;  one of: `CIRCLE, CROSS, DIAMOND, SQUARE, X, TRIANGLE, ICON`
      * </ul>
-    */
+     */
     constructor(id: string | number, xy: XY | XYLiteral, opts = {}) {
         super(id.toString());
 
@@ -435,14 +445,14 @@ export class MultiPoint extends BaseGeometry {
      * </ul>
      *
      * Style applies to all points and overrides any styling they may have
-    */
+     */
     constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts = {}) {
         super(id.toString());
 
         this._styleOptions = new PointStyleOptions(opts);
 
         elements.forEach((elem, index) => {
-            const subId = (index < 10) ? '0' + index : index;
+            const subId = index < 10 ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isPointInstance(elem)) {
@@ -455,7 +465,7 @@ export class MultiPoint extends BaseGeometry {
 
     /** Returns an array of the contained points. A new array is returned each time this is called. */
     get pointArray(): Array<Point> {
-        return [ ...this._pointArray ];
+        return [...this._pointArray];
     }
 
     /** Returns the n-th contained point. */
@@ -501,7 +511,6 @@ export class MultiPoint extends BaseGeometry {
  * ```
  */
 export class LineString extends MultiPoint {
-
     /** Constructs a LineString from the given Points, XYs or XYLiterals.
      *
      * The different style options and values available are the following:
@@ -511,7 +520,7 @@ export class LineString extends MultiPoint {
      *     <li>style:          string style of line. default is `SOLID`.<br/>
      *     &emsp;&emsp;&nbsp;  one of: `DASH, DASHDOT, DASHDOTDOT, DOT, NULL, SOLID`
      * </ul>
-    */
+     */
     constructor(id: string | number, elements: Array<Point | XY | XYLiteral>, opts = {}) {
         super(id, elements, opts);
 
@@ -562,7 +571,7 @@ export class MultiLineString extends BaseGeometry {
         this._styleOptions = new LineStyleOptions(opts);
 
         elements.forEach((elem, index) => {
-            const subId = (index < 10) ? '0' + index : index;
+            const subId = index < 10 ? '0' + index : index;
             const newId = id + '-' + subId;
 
             if (isLineInstance(elem)) {
@@ -575,7 +584,7 @@ export class MultiLineString extends BaseGeometry {
 
     /** Returns an array of the contained lines. A new array is returned each time this is called. */
     get lineArray(): Array<LineString> {
-        return [ ...this._lineArray ];
+        return [...this._lineArray];
     }
 
     /** Returns the n-th contained line. */
@@ -647,11 +656,11 @@ export class Polygon extends BaseGeometry {
             /** Constructs a LinearRing from the given Points, XYs or XYLiterals. */
             constructor(elements: Array<Point | XY | XYLiteral>) {
                 const ringCounter = outerClass._ringArray.length;
-                const subId = (ringCounter < 10) ? '0' + ringCounter : ringCounter;
+                const subId = ringCounter < 10 ? '0' + ringCounter : ringCounter;
                 this._id = outerClass.id + '-' + subId;
 
                 elements.forEach((elem, index) => {
-                    const subId = (index < 10) ? '0' + index : index;
+                    const subId = index < 10 ? '0' + index : index;
                     const newId = this._id + '-' + subId;
 
                     if (isPointInstance(elem)) {
@@ -676,7 +685,7 @@ export class Polygon extends BaseGeometry {
 
             /** Returns an array of the contained points. A new array is returned each time this is called. */
             get pointArray(): Array<Point> {
-                return [ ...this._pointArray ];
+                return [...this._pointArray];
             }
 
             /**
@@ -686,11 +695,11 @@ export class Polygon extends BaseGeometry {
                 // using private underscore property to avoid copying the array
                 return this._pointArray.map(p => p.toArray());
             }
-        }
+        };
     }
 
     /** @ignore */
-    _ringArray: Array<any> = [];    // type should be 'LinearRing', but that is not available any more
+    _ringArray: Array<any> = []; // type should be 'LinearRing', but that is not available any more
     /** @ignore */
     _styleOptions: PolygonStyleOptions;
 
@@ -714,27 +723,35 @@ export class Polygon extends BaseGeometry {
      * NOTE: if linear rings are added to a polygon after it has been added to the map, it will not redraw
      * TODO: add option for polygon icon fill.
      */
-    constructor(id: string | number, elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>, opts = {}) {
+    constructor(
+        id: string | number,
+        elements: Array<Point | XY | XYLiteral | Array<Point | XY | XYLiteral>>,
+        opts = {}
+    ) {
         super(id.toString());
 
         this._styleOptions = new PolygonStyleOptions(opts);
 
-        if (elements[0] !== undefined && elements[0] instanceof Array && !isXYLiteral(elements[0])) {   // single ring added
+        if (elements[0] !== undefined && elements[0] instanceof Array && !isXYLiteral(elements[0])) {
+            // single ring added
             elements.forEach(element => {
                 this._ringArray.push(new this.LinearRing(<Array<Point | XY | XYLiteral>>element));
             });
-        } else if (elements[0] !== undefined) {                                                         // multiple rings added
+        } else if (elements[0] !== undefined) {
+            // multiple rings added
             this._ringArray.push(new this.LinearRing(<Array<Point | XY | XYLiteral>>elements));
         }
     }
 
-    addLinearRings(linearRings: Array<any>): void { // type should be 'LinearRing', but that is not available any more
+    addLinearRings(linearRings: Array<any>): void {
+        // type should be 'LinearRing', but that is not available any more
         this._ringArray.push(...linearRings);
     }
 
     /** Returns an array of the contained rings. A new array is returned each time this is called. */
-    get ringArray(): Array<any> {   // type should be 'LinearRing', but that is not available any more
-        return [ ...this._ringArray ];
+    get ringArray(): Array<any> {
+        // type should be 'LinearRing', but that is not available any more
+        return [...this._ringArray];
     }
 
     /** Returns style options object for the polygon */
@@ -783,7 +800,6 @@ export class MultiPolygon extends BaseGeometry {
     /** @ignore */
     _styleOptions: PolygonStyleOptions;
 
-
     /**
      * Constructs a MultiPolygon from the given array of Polygons.
      *
@@ -811,7 +827,7 @@ export class MultiPolygon extends BaseGeometry {
         this._styleOptions = new PolygonStyleOptions(opts);
 
         polygons.forEach((polygon, index) => {
-            const subId = (index < 10) ? '0' + index : index;
+            const subId = index < 10 ? '0' + index : index;
             const newId = id + '-' + subId;
 
             const points = polygon.ringArray.map(ring => ring.pointArray);
@@ -821,7 +837,7 @@ export class MultiPolygon extends BaseGeometry {
 
     /** Returns an array of the contained polygons. A new array is returned each time this is called. */
     get polygonArray(): Array<Polygon> {
-        return [ ...this._polygonArray ];
+        return [...this._polygonArray];
     }
 
     /** Returns style options object for the polygons */
@@ -876,7 +892,6 @@ class StyleOptions {
     get style(): string {
         return this._style;
     }
-
 }
 
 class PointStyleOptions extends StyleOptions {
@@ -924,7 +939,6 @@ class PointStyleOptions extends StyleOptions {
 }
 
 class LineStyleOptions extends StyleOptions {
-
     constructor(opts?: any) {
         super(opts);
 
@@ -945,7 +959,7 @@ class PolygonStyleOptions extends StyleOptions {
     /** @ignore */
     _fillColor: Array<number> | string;
     /** @ignore */
-    _fillOpacity: number
+    _fillOpacity: number;
     /** @ignore */
     _fillStyle: string;
 
@@ -986,7 +1000,6 @@ class PolygonStyleOptions extends StyleOptions {
     get fillStyle(): string {
         return this._fillStyle;
     }
-
 }
 
 // Descriptors -----------------------
@@ -1002,17 +1015,17 @@ export function XYLiteral(target: Object, propertyKey: string, descriptor: Typed
 
 // Interfaces -------------------------
 export interface Extent {
-    xmin: number,
-    xmax: number,
-    ymax: number,
-    ymin: number,
-    spatialReference: { wkid: number },
-    getCenter: Function
+    xmin: number;
+    xmax: number;
+    ymax: number;
+    ymin: number;
+    spatialReference: { wkid: number };
+    getCenter: Function;
 }
 
 export interface XYLiteral {
-    0: number,
-    1: number
+    0: number;
+    1: number;
 }
 
 interface HovertipOptions {
