@@ -221,6 +221,7 @@ class AttribRecord extends layerRecord.LayerRecord {
             .filter(key => typeof attribs[key] !== 'function')
             .map(key => {
                 const fieldType = fields ? fields.find(f => f.name === key) : null;
+
                 return {
                     key: attribFC.AttribFC.aliasedFieldNameDirect(key, fields), // need synchronous variant of alias lookup
                     value: attribs[key],
