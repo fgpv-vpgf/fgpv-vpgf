@@ -21,12 +21,6 @@ import { Panel, ClosingResponse } from 'api/panel';
  *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
  * });
  * ```
- *
- * @example #### Disable identify feature
- *
- * ```js
- * mapInstance.identify = false;
- * ```
  */
 export class Map {
     /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
@@ -110,6 +104,14 @@ export class Map {
 
     /**
      * Performs an identify operation similar to clicking on the map at the provided xy coordinates.
+     *
+     * @example
+     *
+     * ```js
+     * // perform an identify on Toronto, ON
+     * RAMP.mapInstances[0].identify([-79.347015, 42.651070]);
+     * ```
+     *
      */
     @geo.XYLiteral
     identify(xy: geo.XY) {
@@ -171,7 +173,7 @@ export class Map {
     _clickSubject: Subject<MapClickEvent> = new Subject();
 
     /**
-     * Emits when a user clicks anywhere on the map.
+     * Emits when a user clicks anywhere on the map or when an identify operation is performed. This includes identify requests made via the API method `identify`.
      *
      * It **does not** emit for clicks on overlaying panels or map controls.
      * @event click
@@ -291,9 +293,21 @@ export interface Map {
 
     Panel: Panel;
 
+    /**
+     * @ignore
+     */
     _identify: any;
+    /**
+     * @ignore
+     */
     _panels: Panel[];
+    /**
+     * @ignore
+     */
     _panelOpened: Subject<Panel>;
+    /**
+     * @ignore
+     */
     _panelClosed: Subject<ClosingResponse>;
 }
 

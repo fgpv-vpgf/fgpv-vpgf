@@ -6,12 +6,12 @@ import { Observable, Subject } from 'rxjs';
 export class MouseEvent {
     /** Geographic point information from esri event */
     xy: XY | undefined;
-    screenY: number;
-    screenX: number;
-    pageX: number;
-    pageY: number;
-    offsetX: number;
-    offsetY: number;
+    screenY: number | undefined;
+    screenX: number | undefined;
+    pageX: number | undefined;
+    pageY: number | undefined;
+    offsetX: number | undefined;
+    offsetY: number | undefined;
 
     equals(otherMouseEvent: MouseEvent) {
         return this.screenX === otherMouseEvent.screenX && this.screenY === otherMouseEvent.screenY;
@@ -50,7 +50,15 @@ export class MouseEvent {
 export class MapClickEvent extends MouseEvent {
     /** @ignore */
     _featureSubject: Subject<Object>;
+
+    /**
+     * A stream of features as they become available once a map click has occurred.
+     */
     features: Observable<Object>;
+
+    /**
+     * Indicates whether this map click event was triggered programmatically via the API. If true, some properties like the screen position of the click will be undefined.
+     */
     apiInitiated: false;
 
     constructor(event: esriMouseEvent, mapInstance: Map) {
