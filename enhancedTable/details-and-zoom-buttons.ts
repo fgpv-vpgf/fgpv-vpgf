@@ -19,14 +19,16 @@ export class DetailsAndZoomButtons {
         const that = this;
         this.mapApi.agControllerRegister('DetailsAndZoomCtrl', function () {
             let proxy = that.legendBlock.proxyWrapper.proxy;
+
             // opens the details panel corresponding to the row where the details button is found
             this.openDetails = function (oid) {
-                let data = proxy.attribs.then(function (attribs) {
-                    const attributes = attribs.features.find(attrib => {
-                        if (attrib.attributes[that.oidField] === oid) {
-                            return attrib.attributes;
+                let data = proxy.formattedAttributes.then(function (attribs) {
+                    const attributes = attribs.rows.find(attrib => {
+                        if (attrib[that.oidField] === oid) {
+                            return attrib;
                         }
-                    }).attributes;
+                    });
+
                     let symbology = attributes['rvSymbol'];
                     let dataObj = [];
                     const map = that.mapApi.mapI;
@@ -34,8 +36,10 @@ export class DetailsAndZoomButtons {
                     // fake the array of objects containing attribute name, domain, type and alias
                     // this array - 'dataObj' is consumed by attributesToDetails
                     for (let key in attributes) {
+                        const fieldData = attribs.fields.find(r => r.name === key);
                         let attribObj = {
                             alias: that.currentTableLayer.attributeHeaders[key] ? that.currentTableLayer.attributeHeaders[key]['name'] : '',
+                            clientAlias: (fieldData && fieldData.clientAlias) ? fieldData.clientAlias : undefined,
                             name: key,
                             domain: null,
                             type: null
