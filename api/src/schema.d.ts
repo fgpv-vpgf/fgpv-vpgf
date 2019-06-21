@@ -53,6 +53,7 @@ export type LayerNode =
 export type SymbologyStack = {
   image: string;
   text: string;
+  sqlQuery?: string;
 }[];
 export type InfoSection =
   | {
