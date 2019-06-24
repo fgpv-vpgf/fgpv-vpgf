@@ -182,14 +182,13 @@ En démarrant le filtrage de la donnée, on obtient  plus de rétroaction : Affi
 
 ### Groupe de contrôle des filtres
 
-![](datatable/apply_fr.png)
+Le filtre du groupe témoin est situé dans le coin supérieur droit du tableau de données et contient trois boutons : __effacer les filtres__, __appliquer des filtres à la carte__, et __masquer les colonnes__.
 
-Ce groupe de contrôle se trouve dans le coin inférieur droit et il permet de faire ce qui suit :
-- Appliquer les filtres du tableau de données
-    - Si le type de couche le permet, lors d'une modification des filtres, __APPLIQUER À LA CARTE__ apparaîtra. Après avoir appuyé sur ce bouton, la carte est rafraîchie et seules les données visibles de votre table sont affichées.
-- Effacer tous les filtres ![](datatable/clear.png)
-    - Selon la configuration, il est possible que certains filtres ne s'effacent pas (voir la section __Filtrer les données__ pour plus d'informations)
-- Ouvrir le panneau de configuration des filtres ![](datatable/setting.png).
+__Effacer les filtres__ ![](datatable/clear.png) le bouton Effacer les filtres existants qui peuvent être appliquées à la table. Si aucun des filtres sont appliqués à la table, ce bouton sera désactivé.
+
+__L’appliquer des filtres pour carte__ ![](datatable/apply_en.png) le bouton mise à jour de la carte pour afficher seulement les données qui est visible dans le tableau. Si les données dans le tableau déjà correspond aux données affichées sur la carte, ce bouton sera désactivé.
+
+__Masquer les colonnes__ ![](datatable/hidecolumns_en.png) ouvre un menu distinct qui vous permet de choisir les colonnes que vous souhaitez être visibles sur la table.
 
 ### Filtrer les données
 
@@ -271,3 +270,15 @@ Un comportement imprévu peut survenir lorsque des interactions avec la carte on
 # Flèche Nord
 
 La carte principale contient une flèche du nord. Celle-ci se situe dans la partie supérieure de la carte. Elle se déplace horizontalement sur l'écran de sorte qu'elle traverse toujours une ligne droite imaginaire qui passe par le centre de la carte et le pôle Nord.
+
+
+# Recherche géolocalisée
+
+### Recherche géolocalisée filtrage
+Au moment de chercher un lieu, un des résultats s’affiche sous la case de recherche. Les résultats de ce tribunal contient deux boîtes de liste déroulante qui vous permettent de filtrer les résultats de la recherche par leur __province__ et par leur __type__ (Lake, ville, rivière, etc.). À la droite de ces deux boîtes est un __effacer les filtres__ ![](datatable/clear.png) lorsque l’on clique sur le bouton supprime le filtre sélectionné les options.
+
+![](geosearch/geofilter_fr.png)
+
+Au bas du panneau des résultats, il y a une case à cocher étiquetés __visible sur la carte__. Cette case sera filtrer les résultats à seulement démontrer des endroits qui sont actuellement visibles sur la carte. Déplacer la carte vers ou sortie de zoom avec cette case sélectionné sera automatiquement mise à jour les résultats pour afficher les emplacements qui sont sur la carte.
+
+![](geosearch/visiblemap_fr.png)
