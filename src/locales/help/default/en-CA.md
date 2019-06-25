@@ -181,14 +181,13 @@ By starting the filtering of the data, more feedback is obtained: Showing 1 to 4
 
 ### Filter Control Group
 
-![](datatable/apply_en.png)
+The filter control group is located in the upper right-hand corner of the data table and contains three buttons: __clear filters__, __apply filters to map__, and __hide columns__.
 
-This control group is located in the lower right corner and allows you to do the following:
-- Apply data table filters
-    - If the layer type allows it, when modifying the filters, __APPLY TO MAP__ will appear. After pressing this button, the map is refreshed and only the visible data of your table is displayed.
-- Clear all filters ![](datatable/clear.png)
-- Depending on the configuration, some filters may not be editable (see section __Filter Data__ for more information)
-- Open the filter control panel ![](datatable/setting.png)
+The __clear filters__ ![](datatable/clear.png) button will clear any existing filters that may be applied to the table. If no filters are applied to the table, this button will be disabled.
+
+The __apply filters to map__ ![](datatable/apply_en.png) button will update the map to display only the data that is visible in the table. If the data in the table already matches the data displayed on the map, this button will be disabled.
+
+The __hide columns__ ![](datatable/hidecolumns_en.png) button opens a separate menu that allows you to choose which columns you want to be visible on the table.
 
 ### Filter data
 
@@ -282,3 +281,15 @@ Unanticipated behaviour may occur if any map interactions occur before data is f
 ![](north_arrow/arrow.png)
 
 The main map contains a north arrow. It can be found at the top of the map. It will move horizontally on the screen such that it always intersects with an imaginary straight line that passes over the center of the map and the north pole.
+
+
+# Geolocation Search
+
+### Geosearch Filtering
+When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![](datatable/clear.png) button, which when clicked clears the selected filter options.
+
+![](geosearch/geofilter_en.png)
+
+At the bottom of the results panel, there is a checkbox labeled __visible on map__. Checking this box will further filter the results to only show locations that are currently visible on the map. Moving the map around or zooming in/out with this box selected will automatically update the results to display locations that are on the map.
+
+![](geosearch/visiblemap_en.png)
