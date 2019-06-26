@@ -216,18 +216,22 @@ When the input field is selected, the column names may change because they refle
 
 _Note: The filters defined by this control can not be applied to the map. They apply only to the data table._
 
-### Configuration Panel
+### Sorting and Reordering
 
-![](datatable/settingPanel_en.png)
+For each column in the data table, there may be a set of arrows associated with that column which represents how it can be sorted and reordered.
 
-In the configuration panel, if the configuration allows it , you can find a __Description__ section that contains information about the dataset and the different columns.
-Changes made in the configuration panel are retained in the data table and vice versa.
-Subsequently, the columns are found one after the other in the order in which the data table is displayed. For each column, the following actions can be carried out:
-- Reorder: allows you to move the columns by pressing the icon and moving it
-- Name: the name of the field
-- Filter: the field filter (if present)
-- Sort: allows you to sort data in ascending or descending order
-- Display: allows you to see or hide a column. _Note: If a column contains a filter, the data will be filtered even if the column is not visible_
+__Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
+- an upward arrow ![](datatable/sort_asc.png) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
+- a downward arrow ![](datatable/sort_desc.png) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
+- no arrow next to the column title means that there is no sort applied to current column
+- sort multiple columns at once using shift + select column names
+    - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
+
+__Column Reorder__: The two right/left arrows next to the column name are for reordering the columns.
+- click the right arrow ![](datatable/right_reorder_arrow.png) to swap a column with the one on the right
+    - the right arrow is disabled for the rightmost column of a data table
+- click the left arrow ![](datatable/left_reorder_arrow.png) to swap a column with the one on the left
+    - the left arrow is disabled for the leftmost column of a data table
 
 ### Menu of options
 
@@ -284,6 +288,38 @@ The main map contains a north arrow. It can be found at the top of the map. It w
 
 
 # Geolocation Search
+
+### General Use
+The geosearch component functions to allow users to search for places in Canada. When the geosearch icon is clicked, the main application bar is replaced with an input field for search keywords:
+
+![](geosearch/searchbar_en.png)
+
+#### Supported Search Types
+
+__Keyword search__: Type any keyword into geosearch to display a list of results that contains the keyword.
+- each search result consists of: location name (with keyword highlighted), location province, and location type (lake, city, town, etc.)
+- click on any individual result to mark its coordinates and zoom the map to center around this location
+
+__FSA search__: A __forward sortation area (FSA)__ is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an __FSA__.
+- a search using FSA will display a list of results in the vicinity of that area
+- the very first result is a location of the FSA itself, click to zoom and center the map on the FSA
+- example: type in __M3H__
+
+__Latitude/Longitude search__: Search using lat/long coordinates to display a list of results in the vicinity of that map point.
+- similarly to FSA search, the first result will be a location of those coordinates entered, click this to zoom and center the map on the map point
+- lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
+- example: type in __54.3733,-91.7417__
+
+__NTS search__: __National Topographic System (NTS)__ is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
+- the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
+- an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
+- likewise, the first result will be a location of the NTS map number, click to center map on this area
+- example: type in __030M13__
+
+#### Unsupported Search Types
+
+__Street address__: Search using direct street addresses is not supported by geosearch.
+- entering any valid street address should not return any results
 
 ### Geosearch Filtering
 When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![](datatable/clear.png) button, which when clicked clears the selected filter options.
