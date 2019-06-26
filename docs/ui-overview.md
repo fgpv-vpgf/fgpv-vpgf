@@ -26,7 +26,7 @@ The main application bar is used for accessing the [Side menu](#3-side-menu), [B
 
 ![](https://i.imgur.com/HUNIniX.png)
 
-The default configuration of the Main application bar will display the [Side menu](#3-side-menu), [Geo search](#4-geo-search), and [Layers panel](#5-layers-panel) controls. 
+The default configuration of the Main application bar will display the [Side menu](#3-side-menu), [Geo search](#4-geo-search), and [Layers panel](#5-layers-panel) controls.
 
 ![](https://i.imgur.com/0J0QXV3.png)
 
@@ -66,9 +66,9 @@ The overview map provides glanceable information on where the main map is situat
 
 ![](https://i.imgur.com/21TsgqS.png)
 
-On narrow (mobile) layouts, the Overview map is completely removed, so not to take up valuable space. It can also be disabled through the config. 
+On narrow (mobile) layouts, the Overview map is completely removed, so not to take up valuable space. It can also be disabled through the config.
 
-### 2.4. Feature tooltip 
+### 2.4. Feature tooltip
 
 Features of the vector-based layers (service and file) trigger on-hover tooltips to be shown. The tooltips are transient, and are removed when the mouse cursor moves away from the feature.
 
@@ -78,7 +78,7 @@ By default, the tooltip shows a symbology icon along with the value of a feature
 
 ### 2.5. Map navigation cluster
 
-The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the entirety of Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#4-geo-search), [Side menu](#3-side-menu), [Layers panel](#5-layers-panel), [Basemap selector](#34-basemap-selector), [Full screen toggle](#36-full-screen-toggle), and [Help](#310-help-information). 
+The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the entirety of Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#4-geo-search), [Side menu](#3-side-menu), [Layers panel](#5-layers-panel), [Basemap selector](#34-basemap-selector), [Full screen toggle](#36-full-screen-toggle), and [Help](#310-help-information).
 
 The default configuration includes just the Full screen toggle, geo-location, Home extent, and Help controls. All other controls duplicate functionality of the [Main application bar](#21-main-application-bar) and can be used if the Main application bar is hidden.
 
@@ -104,7 +104,7 @@ There is no customization for these components, but the host page can forcefully
 
 ![](https://i.imgur.com/dp7cdWx.png)
 
-## 3. Side menu 
+## 3. Side menu
 
 The application-level side menu can be opened from the [Main application bar](#1-main-application-bar) or from the [Map navigation cluster](#5-map-navigation-cluster). It contains various application settings such as the current language selector, full screen toggle, and touch mode, high-level functionalities such as the basemap selection, map export, bookmark sharing, help, and any loaded interactive plugins, and build information. All items on the Side menu except for the [Build information](#314-build-information) are optional and their presence is dictated by the config.
 
@@ -162,7 +162,7 @@ This menu option toggles the Full screen mode where the application is maximized
 
 ### 3.7. Export dialog
 
-This menu option closes the side menu and open the map Export dialog. The map Export dialog lets the user save the image of the map with all the data rendered on top of it exactly as seen on the screen (if allowed by the CORS policy). 
+This menu option closes the side menu and open the map Export dialog. The map Export dialog lets the user save the image of the map with all the data rendered on top of it exactly as seen on the screen (if allowed by the CORS policy).
 
 ![](https://i.imgur.com/7t5teBd.png)
 
@@ -217,7 +217,7 @@ The Map export legend contains all the symbology (including nested symbology of 
 
 #### 3.7.9 Export footer text
 
-The Map export footer text is placed after the map and legend images. It can be used for providing descriptions of the map and data layers, legal disclaimers or some other information. 
+The Map export footer text is placed after the map and legend images. It can be used for providing descriptions of the map and data layers, legal disclaimers or some other information.
 
 #### 3.7.10 Export timestamp
 
@@ -314,7 +314,7 @@ This will clear search filters.
 Each result consists of:
 
 - location name (search keyword will be highlighted)
-- location province 
+- location province
 - location type (lake, island, city, town, etc.)
 
 Click on any results will zoom and center the map on this location, and also place a marker at the location coordinates.
@@ -347,7 +347,7 @@ When searching by coordinates, the very first result will be a location of those
 
 ## 5. Layers panel
 
-The Layers panel is the main panel in the application and it displays a list of all the layers added to the map and their state. This panel is also can be referred to as "Layer selector", "Table of contents" or "Legend". 
+The Layers panel is the main panel in the application and it displays a list of all the layers added to the map and their state. This panel is also can be referred to as "Layer selector", "Table of contents" or "Legend".
 
 Apart from [Layer nodes](#54-layer-node) and [Layer groups](#55-layer-group) describing layers added to the map, the Layers panel can also contain arbitrary plain text (markdown, HTML markup), titles, images, blocks that look like proper layers but do not control anything on the map, groups that don't belong to Dynamic layers, and visibility sets. These sections are referred to as [Layer info sections](#516-layer-info-section).
 
@@ -355,7 +355,7 @@ The legend comes in two flavours - **structured** and **autogenerated**.
 
 The **Structured** legend lets the config author define the ordering of legend blocks, their names, specify custom [Symbology stacks](#57-layer-symbology-single), put things into regular groups or [Visibility sets](#515-layer-visibility-set), hide layers from the legend, and have a single legend block controlling several layers. Lots of power options, plenty of opportunities to break up the config. All this should be used for thematic maps (i.e. maps that tell a certain story with the data).
 
-The **Autogenerated** legend is simple - it takes the layer list and turns it into a legend, one to one correspondence (one regular legend block per one layer). 
+The **Autogenerated** legend is simple - it takes the layer list and turns it into a legend, one to one correspondence (one regular legend block per one layer).
 
 **Note:** The config uses the term `autopopulate` when indicating the type of legend in an application.
 
@@ -381,7 +381,7 @@ The only notable difference between the two is ability to reorder and layers in 
 | ESRI Image Server|  |
 
 
-#### 5.1.2. Add your File/Service 
+#### 5.1.2. Add your File/Service
 
 ![step 1 - connect the service](https://user-images.githubusercontent.com/25359812/53022159-9d113e80-3428-11e9-8bd8-57a9d0ea7130.png)
 
@@ -391,15 +391,15 @@ If you selected `Import Service` enter the service URL (as shown on the right).
 
 Click the `Continue` button to proceed.
 
-#### 5.1.3. Select the correct dataset type 
+#### 5.1.3. Select the correct dataset type
 
 ![](https://i.imgur.com/AY8qpFl.png)
 
-This step works the same for both file and service based layers. 
+This step works the same for both file and service based layers.
 
-- The Viewer will try to predict the dataset type. If you are satisfied with this, click the `Continue` button to proceed (Scenario 1). 
+- The Viewer will try to predict the dataset type. If you are satisfied with this, click the `Continue` button to proceed (Scenario 1).
 - If it is incorrect, select the option from the dropdown with the correct type (Scenario 2). Then click `Continue` to proceed.
-- If the import wizard warns you that the selected file/service type is incorrect, double check that the selected type is correct and make any nescessary changes. If this doesn't work, double check that the source is not corrupted. 
+- If the import wizard warns you that the selected file/service type is incorrect, double check that the selected type is correct and make any nescessary changes. If this doesn't work, double check that the source is not corrupted.
 
 **Note:** the drop down menu in Scenario 2 will look different depending on whether you are using a file or service. If you are using a service, it will look different depending on the *type* of service.
 
@@ -485,7 +485,7 @@ There is an ongoing discussion about changing how groups propagate their visibil
 
 #### 5.5.1 Dynamic layer groups
 
-By default, Dynamic layers are renders as groups. 
+By default, Dynamic layers are renders as groups.
 
 If a Dynamic layer does not support children _opacity_, the logic applying opacity is different and all children will have their _opacity_ controls disabled and display a jump link to its parent unless it's single entry collapsed. Read the following issue for more details: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2131#issuecomment-324723049
 
@@ -565,7 +565,7 @@ In **Autogenerated** legend, an additional "Remove" control is displayed which w
 
 ### 5.11. Loading layer indicator
 
-While a layer is loading, a happy face icon is displayed in the place of its symbology stack and an indeterminate progress back is shown at the bottom edge of the Layer node. 
+While a layer is loading, a happy face icon is displayed in the place of its symbology stack and an indeterminate progress back is shown at the bottom edge of the Layer node.
 
 ### 5.12. Reload layer control
 
@@ -693,26 +693,26 @@ The metadata panel can also be opened in a separate dialog which takes up a majo
 ![](https://i.imgur.com/RUegeQk.png)
 
 
-## 6. Enhanced Table 
+## 6. Enhanced Table
 
 ![table mockup and annotations](https://user-images.githubusercontent.com/25359812/52882741-a81d5380-3136-11e9-9c9d-bcf7f428ff53.png)
 
-The `enhancedTable` is an accessible way to visualize layer attributes. Each row corresponds to a layer feature. 
+The `enhancedTable` is an accessible way to visualize layer attributes. Each row corresponds to a layer feature.
 
 ### 6.1. Table Title
-Displays the name of the table. This name can be set through the config. 
+Displays the name of the table. This name can be set through the config.
 
 ### 6.2. Scroll  and Filter Status
-The filter status gives the user three pieces of information: 
+The filter status gives the user three pieces of information:
 1. The range of currently visible rows
 2. The number of records that can be scrolled through
 3. The number of records that were filtered out (if any)
 
-#### Example 1:  `6 - 12 of 15 records shown` 
+#### Example 1:  `6 - 12 of 15 records shown`
 1.  rows 6 - 12 are currently visible
 2.  15 records can be viewed in the table just by scrolling
 3.  there are 15 records total for the corresponding layer (no filters are applied)
-    
+
 #### Example 2: `1 - 6 of 10 records shown (filtered from 15 records)`
 1.  rows 1 - 6 are currently visible
 2.  10 records can be viewed in the table just by scrolling
@@ -739,7 +739,7 @@ Text filters allow the user to filter row records by making sure that the filter
 #### 6.5.2. Number Filter
 ![number filter mockup](https://user-images.githubusercontent.com/25359812/52876435-325cbc00-3125-11e9-9e7c-d612158d05e2.png)
 
-Number filters allow the user to filter row records by making sure that the rows' data at that column fall into the range specified by that filter: 
+Number filters allow the user to filter row records by making sure that the rows' data at that column fall into the range specified by that filter:
 
 - e.g. typing `3` into the min field and `4` into the max field will match for the first and second record because `3` and `4` fall into the range `3-4`
 - ranges are inclusive
@@ -748,9 +748,9 @@ Number filters allow the user to filter row records by making sure that the rows
 #### 6.5.3. Date Filter
 ![date filter mockup and annotations 1](https://user-images.githubusercontent.com/25359812/52875517-831ee580-3122-11e9-9a07-b881b346d812.png)
 
-Date filters let the user input dates by clicking on the calender icon to use a datepicker GUI or by typing dates into the input field. 
+Date filters let the user input dates by clicking on the calender icon to use a datepicker GUI or by typing dates into the input field.
 
-Date filters allow the user to filter row records by making sure that the rows' data at that column fall into the date range specified by that filter: 
+Date filters allow the user to filter row records by making sure that the rows' data at that column fall into the date range specified by that filter:
 
 - e.g. selecting  `2015-07-07` for the date min field and a date max of `2017-07-07` for the date max field will match for the last record because only `2016-10-05` falls into  the range `2015-07-07` - `2017-07-07`
 - ranges are inclusive
@@ -771,12 +771,12 @@ The global search allow the user to filter row records by making sure that the s
 Global search can be disabled in the config.
 
 #### 6.6.2. Toggle Column Visibilities
-Opens a menu that allows the user to toggle the column visibilities on or off. 
+Opens a menu that allows the user to toggle the column visibilities on or off.
 
 #### 6.6.3. Clear Column Filters
-Clears any column filters that are currently set. 
+Clears any column filters that are currently set.
 
-Note that this does not: 
+Note that this does not:
 - clear the global search
 - clear any symbology toggles that filter the table
 
@@ -786,42 +786,40 @@ Applies the table filters to the map, so that only layer features that are displ
 #### 6.6.5. Table Menu
 ![menu mockup and annotations](https://user-images.githubusercontent.com/25359812/52878964-fd079c80-312b-11e9-8cda-ce48e6be994a.png)
 
-- **Split View**:** table height is half of the map height  
+- **Split View**:** table height is half of the map height
 - **Maximize:**** table height takes up the full height of the map
-- **Filter by extent:** table automatically updates on map extent change to display only layer features within the current extent 
-- **Show filters:** toggling this option off will hide all column filters 
-    - the user will not be able to use or change column filters while this option is toggled off 
+- **Filter by extent:** table automatically updates on map extent change to display only layer features within the current extent
+- **Show filters:** toggling this option off will hide all column filters
+    - the user will not be able to use or change column filters while this option is toggled off
     - columns themselves will still be displayed and column filters will remain applied
 - **Print:** takes the user to a printer friendly page displaying table data
-    - this option is disabled by default 
+    - this option is disabled by default
     - it is the map author's responsibility to enable it in the config
 - **Export:** Exports table data to CSV
 
 
 ** **Note:** Not available in mobile view because table will take up whole height and width of the map by default
 
-#### 6.6.6.  Close table 
+#### 6.6.6.  Close table
 
 Closes the table.
 
 ### 6.7. Column Reorder
 
-Clicking the right arrow on a column makes it swap places with the column to the right of it. Clicking the left arrow makes it swap places with the column to the left of it. 
+Clicking the right arrow on a column makes it swap places with the column to the right of it. Clicking the left arrow makes it swap places with the column to the left of it.
 
-The right arrow is disabled for columns that are at the right end of the table, and the left arrow is disabled for columns that are at the left end of the table. 
-
-Columns can also be reordered by dragging and dropping.
+The right arrow is disabled for columns that are at the right end of the table, and the left arrow is disabled for columns that are at the left end of the table.
 
 ### 6.8. Column Title
-Displays the name of the column. This name is generated automatically using layer data but can also be set in the config. 
+Displays the name of the column. This name is generated automatically using layer data but can also be set in the config.
 
 ### 6.9. Column Sort
 
-Click on the column name to sort columns. 
+Click on the column name to sort columns.
 
 - An up arrow indicates that the column data is being sorted in ascending order (for numerical data) and in alphabetical order (for text data)
 - A down arrow indicates that the column data is being sorted in descending order (for numerical data) and in reverse alphabetical order (for text data)
-- No arrow indicates that no column sort is being applied to the current column 
+- No arrow indicates that no column sort is being applied to the current column
 - You can use `Shift + click` to sort multiple columns at once
 
 
@@ -863,7 +861,7 @@ The Zoom-to button is displayed when the identify result is hovered over (or whe
 
 Results are rendered as collapsed sections with just the name of the feature and its symbology icon visible. Initially, when all results are collapsed, all the corresponding features are highlighted.
 
-If the user expands a result, the corresponding feature on the map is highlighted while others are dimmed (depending on the identify mode). When subsequent results are expanded, their corresponding features are highlighted as well. 
+If the user expands a result, the corresponding feature on the map is highlighted while others are dimmed (depending on the identify mode). When subsequent results are expanded, their corresponding features are highlighted as well.
 
 ### 7.8. Identify marker
 
