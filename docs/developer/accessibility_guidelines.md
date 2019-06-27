@@ -102,10 +102,10 @@ Child elements are excluded from tabbing order with `tabindex='-1'`
 #### 1.2.3 Navigating through child elements
 
 We introduce a third focus management system here called `list-focus` to take care of navigation through child elements. In this system:
-- `list`: the parent (top level) component
-- `item`: each child component is an `item`
+- List (`rv-focus-list`): the parent (top level) component
+- Item (`rv-focus-item`): each child component is an `rv-focus-item`
 
-To implement this system on your component simply add the `list` class to the parent component and the `item` class to all the immediate child components that you want highlighted. RAMP will take care of the rest.
+To implement this system on your component simply add the `rv-focus-list` class to the parent component and the `rv-focus-item` class to all the immediate child components that you want highlighted. RAMP will take care of the rest.
 
 Lists can be either horizontal or vertical.
 - *Horizontal Lists:* navigate through child elements using the `Right` and `Left` arrow keys
@@ -119,11 +119,11 @@ When navigating through child elements, child elements are *highlighted*, mimick
 
 In the GIF above,
 
-The `list` (top level component) is the list of changed files. It is focused on a `Tab`.
+The `rv-focus-list` (top level component) is the list of changed files. It is focused on a `Tab`.
 
 ![](https://i.imgur.com/wlYSrfl.png)
 
-An `item` would be a changed file along with its controls. Each item is highlighted on an `Up`/`Down` arrow since the `list` is vertical.
+An `rv-focus-item` would be a changed file along with its controls. Each item is highlighted on an `Up`/`Down` arrow since the `list` is vertical.
 
 ![](https://i.imgur.com/AkLZaYc.png)
 
@@ -135,26 +135,26 @@ When a child element is highlighted, its controls are made to be tab-able by bei
 
 ![](https://camo.githubusercontent.com/b80e526c5f3ad1b251087dcc4780a855945a5955/68747470733a2f2f692e696d6775722e636f6d2f59775145786b662e676966)
 
-For the following `item`:
+For the following `rv-focus-item`:
 
 ![](https://i.imgur.com/AkLZaYc.png)
 
-the user was simply able to `Tab` through the controls (e.g. the `+` button) when the `item` highlighted as shown in the GIF.
+the user was simply able to `Tab` through the controls (e.g. the `+` button) when the `rv-focus-item` highlighted as shown in the GIF.
 
 #### 1.2.5 Exiting out of list navigation
 
 There are three scenarios where a user might want to exit list focus (outlined below). RAMP allows a user to do so in all three scenarios, ensuring compliance with **Guideline 2.1.2** in the [Summary Matrix](#_9-summary-matrix).
 
-**1. When the `list` is focused:**
+**1. When the `rv-focus-list` is focused:**
 
-- Simply press `Tab` or `Shift` + `Tab` to navigate from the focused `list`.
+- Simply press `Tab` or `Shift` + `Tab` to navigate from the focused `rv-focus-list`.
 
-**2. When an `item` is highlighted:**
+**2. When an `rv-focus-item` is highlighted:**
 
-- Simply press `Tab` or `Shift` + `Tab` to navigate from the focused `list` and unhighlight the highlighted `item`.
-- This works because the highlight simply mocks focus so the `list` still has focus in the DOM.
+- Simply press `Tab` or `Shift` + `Tab` to navigate from the focused `rv-focus-list` and unhighlight the highlighted `rv-focus-item`.
+- This works because the highlight simply mocks focus so the `rv-focus-list` still has focus in the DOM.
 
-**3. When an `item`'s control is focused:**
+**3. When an `rv-focus-item`'s control is focused:**
 
 - This refers to a scenario like [1.2.4](#_1-2-4-navigating-within-child-elements). Simply `Tab` through all the controls until you reach the last
 
@@ -162,7 +162,7 @@ There are three scenarios where a user might want to exit list focus (outlined b
 
 ## 2. Dropdown Menus
 
-Angular Material dropdown menus do not behave as `lists` since their menu items are focusable elements. Thus `list-focus` should not be applied to track them.
+Angular Material dropdown menus do not behave as `rv-focus-lists` since their menu items are focusable elements. Thus `list-focus` should not be applied to track them.
 
 Angular Material dropdown menus also do not behave as `Map Components` since they  are not permanently present in the DOM. Thus they need to be excluded from being tracked by `app-focus`. This can be done by adding a special attribute to the menu container. `app-focus` checks if the focused element is a descendant of the marked container and discards it if it is.
 
@@ -549,9 +549,9 @@ This can be achieved with `border: 1px solid #607d8b` CSS for that component.
 
 [More on List Navigation](#_1-2-within-component-navigation)
 
-Simply add the `item` class to the children of `list` that you want arrow keys to highlight. `list-focus` The`aria-activedescendant` attribute is automatically added so that screenreaders can pick up on the highlights.
+Simply add the `rv-focus-item` class to the children of `rv-focus-list` that you want arrow keys to highlight. `list-focus` The`aria-activedescendant` attribute is automatically added so that screenreaders can pick up on the highlights.
 
-Over here, the OBJECTID header cell (**i.e.** the `item`) has been highlighted.
+Over here, the OBJECTID header cell (**i.e.** the `rv-focus-item`) has been highlighted.
 
 ![](https://i.imgur.com/6KrCUMD.png)
 
