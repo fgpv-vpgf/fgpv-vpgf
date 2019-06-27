@@ -6,12 +6,12 @@ import { Observable, Subject } from 'rxjs';
 export class MouseEvent {
     /** Geographic point information from esri event */
     xy: XY | undefined;
-    screenY: number;
-    screenX: number;
-    pageX: number;
-    pageY: number;
-    offsetX: number;
-    offsetY: number;
+    screenY: number | undefined;
+    screenX: number | undefined;
+    pageX: number | undefined;
+    pageY: number | undefined;
+    offsetX: number | undefined;
+    offsetY: number | undefined;
 
     equals(otherMouseEvent: MouseEvent) {
         return this.screenX === otherMouseEvent.screenX && this.screenY === otherMouseEvent.screenY;
@@ -23,7 +23,7 @@ export class MouseEvent {
         } else {
             // need to use screen point to convert to the map point used in creating the XY
             // however, screenX/Y output the wrong map point value which is why layerX/Y needs to be used
-            const mapPoint = mapInstance.mapI.toMap({ x: (<any>event).layerX, y: (<any>event).layerY});
+            const mapPoint = mapInstance.mapI.toMap({ x: (<any>event).layerX, y: (<any>event).layerY });
             this.xy = new XY(mapPoint.x, mapPoint.y, mapPoint.spatialReference.wkid);
         }
 
@@ -50,7 +50,16 @@ export class MouseEvent {
 export class MapClickEvent extends MouseEvent {
     /** @ignore */
     _featureSubject: Subject<Object>;
+
+    /**
+     * A stream of features as they become available once a map click has occurred.
+     */
     features: Observable<Object>;
+
+    /**
+     * Indicates whether this map click event was triggered programmatically via the API. If true, some properties like the screen position of the click will be undefined.
+     */
+    apiInitiated: false;
 
     constructor(event: esriMouseEvent, mapInstance: Map) {
         super(event, mapInstance);
@@ -81,11 +90,10 @@ export class PanelEvent {
 export interface esriMouseEvent extends MouseEvent {
     /** Decimal degrees in y,x form */
     mapPoint: {
-        y: number,
-        x: number
-        spatialReference: { wkid: number }
+        y: number;
+        x: number;
+        spatialReference: { wkid: number };
     };
-
 }
 
 function isEsriMouseEvent(event: esriMouseEvent | MouseEvent): event is esriMouseEvent {

@@ -21,15 +21,8 @@ import { Panel, ClosingResponse } from 'api/panel';
  *  console.log(`Double click at pixel location (${mouseEvent.pageX}, ${mouseEvent.pageY})`);
  * });
  * ```
- *
- * @example #### Disable identify feature
- *
- * ```js
- * mapInstance.identify = false;
- * ```
  */
 export class Map {
-
     /**Creates a new map inside of the given HTML container, which is typically a DIV element.*/
     constructor(mapDiv: HTMLElement, config?: ViewerConfigSchema | string) {
         this.mapDiv = $(mapDiv);
@@ -110,6 +103,22 @@ export class Map {
     }
 
     /**
+     * Performs an identify operation similar to clicking on the map at the provided xy coordinates.
+     *
+     * @example
+     *
+     * ```js
+     * // perform an identify on Toronto, ON
+     * RAMP.mapInstances[0].identify([-79.347015, 42.651070]);
+     * ```
+     *
+     */
+    @geo.XYLiteral
+    identify(xy: geo.XY) {
+        this._identify(xy);
+    }
+
+    /**
      * Returns the map extent in the native projection (using ESRI JSON format).
      * Note: the extent will not be modified.
      */
@@ -164,7 +173,7 @@ export class Map {
     _clickSubject: Subject<MapClickEvent> = new Subject();
 
     /**
-     * Emits when a user clicks anywhere on the map.
+     * Emits when a user clicks anywhere on the map or when an identify operation is performed. This includes identify requests made via the API method `identify`.
      *
      * It **does not** emit for clicks on overlaying panels or map controls.
      * @event click
@@ -257,13 +266,15 @@ export class Map {
     }
 
     get panels(): PanelRegistry {
-        return this.panelRegistryObj
+        return this.panelRegistryObj;
     }
 
     // use of the following property is unsupported by ramp team.
     // it is provided for plugin developers who want to write advanced geo functions
     // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
-    get esriMap () { return this.mapI.esriMap; }
+    get esriMap() {
+        return this.mapI.esriMap;
+    }
 }
 
 //Map objects prototype
@@ -282,8 +293,21 @@ export interface Map {
 
     Panel: Panel;
 
+    /**
+     * @ignore
+     */
+    _identify: any;
+    /**
+     * @ignore
+     */
     _panels: Panel[];
+    /**
+     * @ignore
+     */
     _panelOpened: Subject<Panel>;
+    /**
+     * @ignore
+     */
     _panelClosed: Subject<ClosingResponse>;
 }
 
@@ -297,11 +321,17 @@ function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
     this.click = this._clickSubject.asObservable();
 
-    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
     this.mouseMove = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousemove').pipe(
         map((evt: esriMouseEvent) => new MouseEvent(evt, this)),
         distinctUntilChanged((x, y) => x.equals(y))
     );
-    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(map((evt) => new MouseEvent(evt, this)));
-    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(map((evt) => new MouseEvent(evt, this)));
+    this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
+    this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(
+        map(evt => new MouseEvent(evt, this))
+    );
 }
