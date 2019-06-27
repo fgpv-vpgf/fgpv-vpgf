@@ -1,4 +1,7 @@
-import { LegendItem, LegendGroup } from 'api/legend';
+import {
+    LegendItem,
+    LegendGroup
+} from 'api/legend';
 
 /**
  * @module legendService
@@ -64,7 +67,13 @@ function legendServiceFactory(
         };
 
         configService.getSync.map.instance.setLegendConfig = (legendStructure) => {
-            stateManager.setActive({ tableFulldata: false }, { sideMetadata: false }, { sideSettings: false });
+            stateManager.setActive({
+                tableFulldata: false
+            }, {
+                sideMetadata: false
+            }, {
+                sideSettings: false
+            });
 
             const apiLayers = mApi.layers.allLayers
                 // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
@@ -105,9 +114,9 @@ function legendServiceFactory(
             const legendItem = legendStructure.root
                 .walk(
                     entry =>
-                        entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1)
-                            ? entry
-                            : null
+                    entry.layerId === ld.id || (entry.controlledIds && entry.controlledIds.indexOf(ld.id) > -1) ?
+                    entry :
+                    null
                 )
                 .filter(a => a)[0];
 
@@ -133,13 +142,16 @@ function legendServiceFactory(
 
         if (mApi) {
             mApi.ui.configLegend._children = [];
-            mApi.ui.configLegend._sortGroup = [[], []];
+            mApi.ui.configLegend._sortGroup = [
+                [],
+                []
+            ];
         }
 
         legendBlocks.entries.filter(entry => !entry.hidden).forEach(entry => {
             // after ConfigLegend created, check to see if a LegendGroup/Item already exists
             // if so, update it (_initSettings) instead of creating a new instance
-            if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) {    // use constant
+            if (entry.blockConfig.entryType === 'legendGroup' && !entry.collapsed) { // use constant
                 let legendGroup = new LegendGroup(configService.getSync.map, entry);
                 _addElementToApiLegend(legendGroup);
             } else { // it's a collapsed dynamic layer or a node/infoSection
@@ -198,10 +210,8 @@ function legendServiceFactory(
         // TODO: this can potentially move to blueprint code
         const entryConfigObject = {
             layerId: layerBlueprint.config.id,
-            symbologyRenderStyle:
-                layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS
-                    ? ConfigObject.legend.Entry.IMAGES
-                    : ConfigObject.legend.Entry.ICONS
+            symbologyRenderStyle: layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS ?
+                ConfigObject.legend.Entry.IMAGES : ConfigObject.legend.Entry.ICONS
         };
 
         const sortGroups = Geo.Layer.SORT_GROUPS_;
@@ -237,7 +247,7 @@ function legendServiceFactory(
         // after ConfigLegend created, check to see if a LegendGroup/Item already exists
         // if so, update it (_initSettings) instead of creating a new instance
         if (!importedLegendBlock.hidden) {
-            if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) {    // use constant
+            if (importedLegendBlock.blockConfig.entryType === 'legendGroup' && !importedLegendBlock.collapsed) { // use constant
                 let legendGroup = new LegendGroup(configService.getSync.map, importedLegendBlock);
                 _addElementToApiLegend(legendGroup);
             } else { // it's a collapsed dynamic layer or a node/infoSection
@@ -273,18 +283,23 @@ function legendServiceFactory(
         const layerBlueprint = layerBlueprintsCollection.find(blueprint => blueprint.config.id === layerRecordId);
         layerRegistry.regenerateLayerRecord(layerBlueprint);
 
-        mappings.forEach(({ legendBlockId, legendBlockConfigId }) => {
+        mappings.forEach(({
+            legendBlockId,
+            legendBlockConfigId
+        }) => {
             // need to find the actual legend block mapped to the legendBlock being reloaded and its parent container legendGroup
             const legendBlocks = configService.getSync.map.legendBlocks;
-            const { legendBlock, legendBlockParent } = legendBlocks
+            const {
+                legendBlock,
+                legendBlockParent
+            } = legendBlocks
                 .walk(
                     (entry, index, parentEntry) =>
-                        entry.id === legendBlockId
-                            ? {
-                                legendBlock: entry,
-                                legendBlockParent: parentEntry
-                            }
-                            : null
+                    entry.id === legendBlockId ? {
+                        legendBlock: entry,
+                        legendBlockParent: parentEntry
+                    } :
+                    null
                 )
                 .filter(a => a !== null)[0];
 
@@ -552,13 +567,12 @@ function legendServiceFactory(
                 const tree = _createDynamicChildTree(layerRecord, layerConfig);
                 tree.forEach(item => {
                     item.symbologyExpanded = blockConfig.symbologyExpanded;
-                    _addChildBlock(item, legendBlockGroup);
+                    _addChildBlock(blockConfig, item, legendBlockGroup);
                 });
 
                 if (legendBlockGroup.collapsed) {
                     _updateApiReloadedBlock(legendBlockGroup.entries[0]);
-                }
-                else {
+                } else {
                     _updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
                 }
                 legendBlockGroup.synchronizeControlledEntries();
@@ -605,7 +619,7 @@ function legendServiceFactory(
              * @param {LegendBlock.GROUP} parentLegendGroup parent LegendGroup block when the newly created child will be added
              */
             // eslint-disable-next-line max-statements
-            function _addChildBlock(item, parentLegendGroup) {
+            function _addChildBlock(blockConfig, item, parentLegendGroup) {
                 let legendBlock, apiLegendElement;
 
                 if (item.childs) {
@@ -624,9 +638,9 @@ function legendServiceFactory(
                         _addChildItemToAPI(apiLegendElement, parentLegendGroup);
                     }
 
-                    item.childs.forEach(child => _addChildBlock(child, legendBlock));
+                    item.childs.forEach(child => _addChildBlock(blockConfig, child, legendBlock));
                 } else {
-                    const entryConfig = new ConfigObject.legend.Entry(item);
+                    const entryConfig = new ConfigObject.legend.Entry(blockConfig);
                     item.proxyWrapper.metadataUrl = parentLegendGroup.metadataUrl; // store the provided metadataUrl on the proxy wrapper
                     legendBlock = new LegendBlock.Node(item.proxyWrapper, entryConfig);
                     legendBlock.layerRecordId = layerConfig.id; // map all dynamic children to the block config and layer record of their root parent
