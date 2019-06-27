@@ -217,18 +217,22 @@ Lorsque l'on sélectionne le champ de saisie, les noms des colonnes peuvent chan
 
 _Remarque: On ne peut appliquer à la carte les filtres définis à l'aide de ce contrôle. Ils ne s’appliquent qu'au tableau de données._
 
-### Panneau de configuration
+### Le tri et la commande de réapprovisionnement
 
-![](datatable/settingPanel_fr.png)
+Pour chaque colonne dans le tableau de données, il peut y avoir un ensemble de flèches associés à cette colonne qui représente la façon dont il peut être triés et reordered.
 
-Dans le panneau de configuration, si la configuration le permet, on peut retrouver une section __Description__ qui contient de l'information sur le jeu de données et les différentes colonnes.
-Les changements effectués dans le panneau de configuration sont conservés dans le tableau de données et vice-versa.
-Par la suite, on retrouve les  colonnes l'un à la suite de l'autre dans l'ordre d'affichage du tableau de données. Pour chaque colonne, on peut effectuer les actions suivantes:
-- Réorganiser : permet de déplacer les colonnes en appuyant sur l'icône et en la déplaçant
-- Nom : le nom du champ
-- Filtre : le filtre du champ (si présent)
-- Trier:  permet de trier les données en ordre croissant ou décroissant
-- Afficher : permet de voir ou de cacher une colonne. _Remarque : Si une colonne contient un filtre, les données seront filtrées même si la colonne n'est pas visible_
+__Colonne trier__ : Cliquez sur le titre de la colonne pour trier les colonnes en ordre croissant ou ordre décroissant (pour les données numériques) et par ordre alphabétique (pour le texte des données).
+- une flèche ascendante ![](datatable/sort_asc.png) à côté du titre de la colonne indique que la colonne des données sont triés en ordre ascendant ou par ordre alphabétique
+- une flèche vers le bas ![](datatable/sort_desc.png) à côté du titre de la colonne indique que la colonne des données sont triés en ordre décroissant ou renverser par ordre alphabétique
+- aucune flèche vers le bas située à côté du titre de la colonne signifie qu’il n’y a pas de trier appliquées à la colonne
+- trier les données de plusieurs colonnes à une fois par quart de travail + colonne sélectionner Nom
+- comment il fonctionne : la prochaine colonne sélectionnée en utilisant l’onglet seront classés selon la dernière colonne sélectionnée de groupes de données identiques
+
+__Colonne réorganiser__ : Les deux droit / flèches gauche à côté de la colonne Nom sont pour modifier l’ordre d’affichage des colonnes.
+- cliquez sur la flèche droite ![](datatable/right_reorder_arrow.png) échanger une colonne avec celle de droite
+- la flèche de droite est invalide pour le rightmost colonne du tableau de données
+- cliquez sur la flèche de gauche ![](datatable/left_reorder_arrow.png) échanger une colonne avec le sur le côté gauche
+- la flèche de gauche est invalide pour la colonne complètement à gauche du tableau de données
 
 ### Menu d'options
 
@@ -273,6 +277,38 @@ La carte principale contient une flèche du nord. Celle-ci se situe dans la part
 
 
 # Recherche géolocalisée
+
+### Utilisation générale
+La composante GéoRecherche fonctions pour permettre aux utilisateurs de chercher des endroits au Canada. Lorsque le GéoRecherche cliqué sur l’icône, la demande principale barre est remplacé par un champ de saisie de recherche Mots clés:
+
+![](geosearch/searchbar_fr.png)
+
+#### Appuyé les types de recherche
+
+__Recherche par mot-clé__: Entrez tout mot clé en GéoRecherche pour afficher une liste de résultats qui contient le mot clé.
+- chaque résultat de recherche est composé de : le nom du lieu (avec le mot clé en surbrillance), emplacement, province et type d’emplacement (Lake, île, ville, de la municipalité, etc.)
+- cliquez sur n’importe quel résultat individuel pour souligner ses coordonnées et de zoom de la carte pour cet emplacement
+
+__Recherche de l’ASF__: Une zone de tri __région de tri d’acheminement (FSA)__ est une façon de désigner une région géographique fondée sur les trois premiers caractères dans un code postal canadien. Tous les codes postaux qui commencent avec les mêmes trois caractères sont considérés comme un __FSA__.
+- une recherche à l’aide de la RTA affichera une liste de résultats dans les environs de cette zone
+- le premier résultat est un endroit de l’ASF lui-même, cliquez sur ce de centre de zoom et la carte sur la FSA
+- exemple : tapez __M3H__
+
+__Latitude/longitude recherche__ : Recherche en utilisant LAT/long coordonne pour afficher une liste de résultats dans les environs de cette carte.
+- de la même façon aux ASF de recherche, le premier résultat sera un endroit de ces coordonnées entrées, cliquez sur pour faire un zoom avant et au Centre de la carte sur la carte point
+- lat/long recherche reconnaît les espaces, les virgules, points-virgules, ou barres verticale (|) pour séparer les coordonnées
+- exemple : tapez __54.3733,-91.7417__
+
+__Recherche des NNF__ : __Système national de référence cartographique (NTS)__ est un système utilisé pour la prestation de services généraux de cartes topographiques du pays, produisant des détails sur les reliefs, les lacs et les rivières, les forêts, les routes et les chemins de fer, etc.
+- les NNF est divisée en trois grandes zones : « Zone sud » - latitudes entre 40°N et 68°N, « zone de l’Arctique » - latitudes entre 68°N et 80°N, et la « zone de l’Extrême-Arctique » - latitudes entre 80°N et 88°N
+- une carte du SNRC nombre comprend une chaîne contenant un certain nombre de déterminer une feuille de carte, une lettre indiquant une région de la carte, et un certain nombre de déterminer l’ampleur de la feuille de carte
+- de même, le premier résultat sera un emplacement du numéro de carte du SNRC, cliquez sur pour centrer la carte sur ce domaine
+- exemple : tapez __030M13__
+
+#### Types de recherche non
+
+__Adresse municipale__ : Recherche en utilisant les adresses de la rue direct n’est pas appuyée par GéoRecherche.
+- Inscrivez toute adresse municipale valide ne devrait pas retourner les résultats
 
 ### Recherche géolocalisée filtrage
 Au moment de chercher un lieu, un des résultats s’affiche sous la case de recherche. Les résultats de ce tribunal contient deux boîtes de liste déroulante qui vous permettent de filtrer les résultats de la recherche par leur __province__ et par leur __type__ (Lake, ville, rivière, etc.). À la droite de ces deux boîtes est un __effacer les filtres__ ![](datatable/clear.png) lorsque l’on clique sur le bouton supprime le filtre sélectionné les options.
