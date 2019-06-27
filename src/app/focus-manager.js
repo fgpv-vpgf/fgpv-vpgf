@@ -393,7 +393,7 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
     // go to the last list in the enhancedTable
     if (document.activeElement === $('.rv-mapnav-content').find('button')[0] && !forward &&
         getMapInstance() !== undefined && !getMapInstance().panelRegistryObj.getById('enhancedTable').isClosed) {
-        const list = $('#enhancedTable').find('.list')[2];
+        const list = $('#enhancedTable').find('.rv-focus-list')[2];
         initInternalFocusManager($(list));
         return;
     }
@@ -451,11 +451,11 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
 }
 
 function initInternalFocusManager(focusSearch) {
-    if (focusSearch.hasClass('list') || focusSearch.parents().hasClass('list')) {
+    if (focusSearch.hasClass('rv-focus-list') || focusSearch.parents().hasClass('rv-focus-list')) {
         // for element of type list:
         // override FocusManager temporarily with InternalsFocusManager
         // InternalsFocusManager manages accessible list navigation
-        const list = focusSearch.hasClass('list') ? focusSearch : focusSearch.parents('.list');
+        const list = focusSearch.hasClass('rv-focus-list') ? focusSearch : focusSearch.parents('.rv-focus-list');
         if (ifm !== undefined) {
             ifm.focusOut();
             ifm = undefined;
@@ -477,15 +477,15 @@ function linkToNextIfm(list) {
     // but needs to be generalized in the future because enhancedTable won't be the only element with .list class
     let index;
     if (list.backtab === true) {
-        index = $('.list').index(list.list) - 1;
+        index = $('.rv-focus-list').index(list.list) - 1;
     } else {
-        index = $('.list').index(list.list) + 1;
+        index = $('.rv-focus-list').index(list.list) + 1;
     }
 
-    if ($('.list')[index] !== undefined) {
+    if ($('.rv-focus-list')[index] !== undefined) {
         // if there is another list item either tab or backtab to it
         // bring first item into view on tab
-        initInternalFocusManager($($('.list')[index]));
+        initInternalFocusManager($($('.rv-focus-list')[index]));
     } else if (list.backtab === true) {
         // if we are at the top list item, backtab to the close button
         document.activeElement.blur();
@@ -511,9 +511,9 @@ function onMouseDown(event) {
 
     const viewer = viewerGroup.contains(evtTarget); // check if the viewer was clicked
 
-    if (evtTarget.parents().hasClass('item') || evtTarget.hasClass('item')) {
-        const list = $(evtTarget.parents('.list'));
-        //const item = evtTarget.hasClass('item') ? evtTarget : evtTarget.parents('.item');
+    if (evtTarget.parents().hasClass('rv-focus-item') || evtTarget.hasClass('rv-focus-item')) {
+        const list = $(evtTarget.parents('.rv-focus-list'));
+        //const item = evtTarget.hasClass('rv-focus-item') ? evtTarget : evtTarget.parents('.rv-focus-item');
         if (ifm === undefined || list[0].classList !== ifm.list[0].classList) {
             // if internal focus manager does not exist
             // or if currently clicked item is on a different list
@@ -529,11 +529,11 @@ function onMouseDown(event) {
             });
 
             if (!evtTarget.parents().hasClass('disabled-arrows')) {
-                if (evtTarget.hasClass('item')) {
+                if (evtTarget.hasClass('rv-focus-item')) {
                     ifm.highlightedItem = evtTarget;
                     ifm.highlightItem();
-                } else if (evtTarget.parents('.item') !== undefined) {
-                    ifm.highlightedItem = $(evtTarget.parents('.item'));
+                } else if (evtTarget.parents('.rv-focus-item') !== undefined) {
+                    ifm.highlightedItem = $(evtTarget.parents('.rv-focus-item'));
                     ifm.highlightItem();
                 }
             }
