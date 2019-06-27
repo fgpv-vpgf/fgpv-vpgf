@@ -2169,12 +2169,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             // Begin hooking API into instance functions -------------------------------
             events.$on(events.rvApiMapAdded, (_, mapInstance) => {
+
                 mapInstance.zoomChanged = Observable.create(subscriber => {
-                    const originalSetZoom = instance.setZoom;
-                    instance.setZoom = function() {
-                        subscriber.next(arguments[0]);
-                        return originalSetZoom.apply(this, arguments);
-                    }
+                    // trigger zoomChanged observable on rvExtentChange event and when levelChange is true
+                    // fixes https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3617
+                    events.$on(events.rvExtentChange, (_, d) => {
+                        if (d.levelChange) {
+                            subscriber.next(mapInstance.zoom);
+                        }
+                    });
                 });
 
                 mapInstance.boundsChanged = Observable.create(subscriber => {
@@ -2190,7 +2193,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 mapInstance.centerChanged = Observable.create(subscriber => {
                     events.$on(events.rvExtentChange, (_, d) => {
                         const centerXY = d.extent.getCenter();
-
                         subscriber.next(pointToApi(centerXY.x, centerXY.y));
                     });
                 });
