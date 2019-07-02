@@ -8,7 +8,7 @@ export class InternalsFocusManager {
     constructor(list: JQuery<HTMLElement>, clicked: boolean = false) {
         ifm = this;
         this.list = list;
-        this.items = list.find('.item');
+        this.items = list.find('.rv-focus-item');
         this.buttonsAndInputs = list.find('button, input');
         this.isHorizontal = this.areItemsHorizontal();
         this.scrollableParent = $('.ag-body-viewport'); // TODO: change to be a more generalized parent
@@ -239,7 +239,7 @@ export class InternalsFocusManager {
      * If the list is currently focused on, move the focus down to the first list item.
      */
     private setNextItem() {
-        this.items = this.list.find('.item');
+        this.items = this.list.find('.rv-focus-item');
         if (this.highlightedItem === this.list) {
             this.highlightedItem = $(this.items[0]);
             this.setAriaActiveDescendant();
@@ -258,7 +258,7 @@ export class InternalsFocusManager {
      * Set focus on previous item in the list.
      * */
     private setPrevItem() {
-        this.items = this.list.find('.item');
+        this.items = this.list.find('.rv-focus-item');
         const indexOfPrev = this.items.index(this.highlightedItem) - 1;
         if (indexOfPrev >= 0) {
             this.highlightedItem = $(this.items[indexOfPrev]);
@@ -327,7 +327,7 @@ export class InternalsFocusManager {
                     // make sure this doesn't exit out on a backtab for last button
                     // or forward tab for first button
                     ifm.focusOut();
-                    const list = $(event.currentTarget).parents('.list')[0];
+                    const list = $(event.currentTarget).parents('.rv-focus-list')[0];
                     ifm._focusOut.next({ list: list, backtab: event.shiftKey });
                 }
                 break;
@@ -336,7 +336,7 @@ export class InternalsFocusManager {
 
     /**Scrolls the currently focused item into view */
     private scrollItemIntoView(prev = false) {
-        this.items = this.list.find('.item');
+        this.items = this.list.find('.rv-focus-item');
         if (this.isHorizontal) {
             const childOffsetRight = (<any>this.highlightedItem).offset().left + this.highlightedItem.width();
             const childOffsetLeft = (<any>this.highlightedItem).offset().left;

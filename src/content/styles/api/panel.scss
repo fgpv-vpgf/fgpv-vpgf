@@ -159,7 +159,7 @@
     md-input-container {
         margin: inherit;
 
-        > md-icon {
+        >md-icon {
             top: auto;
         }
     }
@@ -187,12 +187,12 @@
         margin: -1px;
         padding: inherit;
 
-        > div:first-child {
+        >div:first-child {
             height: 100%;
         }
     }
 
-    .list {
+    .rv-focus-list {
         width: 100%;
         height: 100%;
         border-left: 1px solid transparent;
@@ -203,7 +203,7 @@
             outline: 0 !important;
         }
 
-        .item {
+        .rv-focus-item {
             &:not(.ag-cell) {
                 border: 1px solid transparent;
             }
