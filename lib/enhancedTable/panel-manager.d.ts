@@ -16,7 +16,7 @@ export declare class PanelManager {
      */
     setListeners(): void;
     /**
-     * Add the item and list classes when focus manager reaches the table.
+     * Add the rv-focus-item and rv-focus-list classes when focus manager reaches the table.
      */
     prepListNavigation(): void;
     open(tableOptions: any, layer: any, tableBuilder: any): void;

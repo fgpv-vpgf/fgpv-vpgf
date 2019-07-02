@@ -82,7 +82,7 @@ export class PanelManager {
         enhancedTable.on('keydown keyup', (event) => {
             event.preventDefault();
             const focusedList = $('.element-focused')[0];
-            const inList = $(document.activeElement).hasClass('list') || $(document.activeElement).parents().hasClass('list');
+            const inList = $(document.activeElement).hasClass('rv-focus-list') || $(document.activeElement).parents().hasClass('rv-focus-list');
             const focusedCell = that.tableOptions.api.getFocusedCell();
 
             if (focusedList !== undefined && $(focusedList).hasClass('ag-body-container')) {
@@ -112,7 +112,7 @@ export class PanelManager {
     }
 
     /**
-     * Add the item and list classes when focus manager reaches the table.
+     * Add the rv-focus-item and rv-focus-list classes when focus manager reaches the table.
      */
     prepListNavigation() {
 
@@ -120,27 +120,27 @@ export class PanelManager {
 
         this.panel.populateList.subscribe(() => {
 
-            // add list class to both header rows
+            // add rv-focus-list class to both header rows
             panelBody.find('.ag-header-row').each((index, row) => {
                 if (row.childElementCount > 0) {
-                    $(row).addClass('list');
+                    $(row).addClass('rv-focus-list');
                 }
             });
 
-            // add list class to table body, make sure arrow navigation is disabled
-            panelBody.find('.ag-body-container').addClass('list disabled-arrows');
+            // add rv-focus-list class to table body, make sure arrow navigation is disabled
+            panelBody.find('.ag-body-container').addClass('rv-focus-list disabled-arrows');
 
-            // add item class to header cells with content in it
+            // add rv-focus-item class to header cells with content in it
             panelBody.find('.ag-header-cell').each((index, cell) => {
                 if ($(cell).children(':not(span, .ag-cell-label-container, .ag-floating-filter-body)').length > 0) {
-                    $(cell).addClass('item');
+                    $(cell).addClass('rv-focus-item');
                     $(cell).attr('tabindex', -1);
                 }
             });
 
-            // add item class to each table cell
+            // add rv-focus-item class to each table cell
             panelBody.find('.ag-cell').each((index, cell) => {
-                $(cell).addClass('item');
+                $(cell).addClass('rv-focus-item');
             });
         })
     }
