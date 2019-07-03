@@ -160,90 +160,115 @@ Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image d
 <sup>†</sup>Veuillez prendre note estampille temporelle est facultative et pourraient ne pas être disponibles selon la carte
 
 
-# Tableau de données
+# Tableau de données du Tribunal
 
 ![](datatable/overview_fr.png)
 
-Le panneau __tableau de données__ est affiché ci-dessus dans son état initial.
+Le __Tableau de données__ tribunal est indiqué ci-dessus dans son état initial.
 
- En plus de faire défiler les données, il est possible :
-- De trier les données en sélectionnant l'en-tête de la colonne
-- De se déplacer dans la table à l'aide des flèches de navigation
-- D’ouvrir le panneau de détails correspondant à une ligne donnée en sélectionnant l'icône Détails ![](datatable/details.png)
-- De déplacer la carte et de faire un zoom sur l'élément correspondant à une ligne donnée en sélectionnant l'icône Zoom ![](datatable/zoomto.png)
-- De déplacer les colonnes en cliquant sur l'en-tête lorsque l'icône du curseur devient une main et en la déplaçant près des icônes de tri de la destination
-- De filtrer les colonnes par étendue numérique, texte, sélection ou date (si la configuration le permet)
+En plus des données de défilement, il est possible de :
+- Trier les données en cliquant sur l’en-tête de la colonne. Plusieurs colonnes peuvent être triés en appuyant sur la touche Shift avant de cliquer sur un en-tête de colonne
+- Ouvrir le détail Tribunal correspondant à une ligne donnée en sélectionnant l’icône *détails* (![](datatable/details.png))
+- Déplacer la carte et Zoom sur l’élément correspondant à une ligne donnée en sélectionnant *la fonction de zoom* icône (![](datatable/zoomto.png))
+- Les colonnes en cliquant à côté du titre de la colonne de quart de travail il à gauche ou à droite (![](datatable/reorder.png))
+- Filtre les colonnes par gamme numérique, texte, la sélection ou la date (si la configuration permet). Changements dans le tableau peut également être apportées pour refléter sur la carte en appliquant des filtres de compensation ou de la carte (*appliquer*: ![](datatable/apply.png), *clair*: ![](datatable/clear.png))
+- Afficher ou masquer des colonnes en cliquant sur l’icône *masquer des colonnes* (![](datatable/hideColumns.png))
+- Naviguer dans le tableau à l’aide d’un clavier
 
-Si le nombre de caractères saisis dépasse la largeur de la boîte de texte, seuls les caractères visibles seront affichés, suivis de points de suspension (…). En sélectionnant le champ à l’aide de la souris ou du clavier, le texte complet s’affichera dans une infobulle.
+Si le nombre de caractères entrés dépasse la largeur de la zone de texte, seuls les caractères visibles sera affiché, suivi par ellipses (...). En sélectionnant le champ avec la souris ou le clavier et le curseur de la souris sur elle, le texte intégral sera affiché dans une infobulle.
 
-Le nombre d’entités dans la couche s’affiche dans le coin inférieur gauche : Affichage de l'élément 1 à 4 sur 247 éléments.
+Le nombre d’entités dans la couche est affiché dans le coin supérieur gauche de l’écran ci-dessous la couche Titre :
 
-En démarrant le filtrage de la donnée, on obtient  plus de rétroaction : Affichage de l'élément 1 à 4 sur 15 éléments (filtrés de 247 éléments au total).
+![](datatable/allEntries_fr.png)
 
-### Groupe de contrôle des filtres
+Filtrer les données des résultats dans plus de rétroaction :
 
-Le filtre du groupe témoin est situé dans le coin supérieur droit du tableau de données et contient trois boutons : __effacer les filtres__, __appliquer des filtres à la carte__, et __masquer les colonnes__.
+![](datatable/filteredEntries_fr.png)
 
-__Effacer les filtres__ ![](datatable/clear.png) le bouton Effacer les filtres existants qui peuvent être appliquées à la table. Si aucun des filtres sont appliqués à la table, ce bouton sera désactivé.
+### Le tableau de contrôle
 
-__L’appliquer des filtres pour carte__ ![](datatable/apply_en.png) le bouton mise à jour de la carte pour afficher seulement les données qui est visible dans le tableau. Si les données dans le tableau déjà correspond aux données affichées sur la carte, ce bouton sera désactivé.
+![](datatable/tableControls_fr.png)
 
-__Masquer les colonnes__ ![](datatable/hidecolumns_en.png) ouvre un menu distinct qui vous permet de choisir les colonnes que vous souhaitez être visibles sur la table.
+Ce groupe de contrôle est situé dans le coin supérieur droit du tableau de données et a les options suivantes :
+- Recherche mondiale
+    - filtrer la table en faisant en sorte que le terme de recherche est un substring des rangées' données à un ou plusieurs colonnes
+- Colonne claire filtres
+    - clair des filtres existants qui peuvent être appliquées à la table
+    - si aucun des filtres sont appliqués à la table, ce bouton sera désactivé
+- Appliquer le tableau des filtres pour carte
+    - mise à jour de la carte pour afficher seulement les données qui est visible dans le tableau
+    - si les données dans le tableau déjà correspond aux données affichées sur la carte, ce bouton sera désactivé
+- Basculer la colonne visibilité
+    - vous permet de choisir les colonnes que vous souhaitez être visibles sur la table
+- Tableau menu (plus d’options)
 
-### Filtrer les données
+    ![](datatable/menu_fr.png)
 
-On peut filtrer les données par colonne. Une colonne est interrogeable s'il y a un champ de saisie sous le titre de l’en-tête. Comme mentionné précédemment, il existe 4 types de filtres:
-- __Texte__ : Champ de saisie de type caractère. Utiliser le caractère générique \* pour remplacer une séquence de zéro ou plusieurs caractères (p. ex. _*levo_ va trouver Charlevoix)
-    - _Remarque, sans caractère générique, la recherche ne trouvera que les éléments où le mot cherché débute  la phrase._
-- __Numérique__ : Champs de saisie qui n'accepte que les nombres
-    - Si un minimum et un maximum sont définis le filtre recherchera une étendue
-    - Si, par exemple, seulement un minimum est défini, il effectuera l'opération _plus grand que_
-- __Sélection__ : Menu déroulant qui permet la sélection d'une ou de plusieurs valeurs prédéfinies
-- __Date__ : Similaire au champ numérique mais utilise des dates
-
-Certains filtres ne sont pas éditables; leur valeur ne peut donc pas être changée. Ils sont représentés par une ligne pointillée sous leur valeur.
-
-![](datatable/search_fr.png)
-
-Ce contrôle, que l'on retrouve dans le coin supérieur droit du tableau de données, permet de filtrer le tableau de données de manière globale.
-- Si on saisit la valeur _Brook_, le tableau de données sélectionnera les données qui contiennent _Brook_ à n'importe quel endroit (p. ex. _Corner Brook_ sera sélectionné)
-
-Lorsque l'on sélectionne le champ de saisie, les noms des colonnes peuvent changer car ils reflètent les noms internes de la donnée. Ces noms permettent de préciser des recherches, par exemple :
-- Rechercher un texte: _nom du champ:valeur_ (p. ex. Type:'mon type')
-- Rechercher un nombre ou une date:
-    - Simple valeur: _nom du champ:[operateteur]valeur_  (p. ex. OBJECTID:<30). Les opérateurs suivants peuvent être utilisés: <, <=, >, >=.
-    - Étendue: _nom du champ:[valeur..valeur]_ (p. ex. OBJECTID:[30..50])
-- On peut également combiner des champs avec _&&_ (p. ex. Type:'mon type' && OBJECTID:<30)
-
-_Remarque: On ne peut appliquer à la carte les filtres définis à l'aide de ce contrôle. Ils ne s’appliquent qu'au tableau de données._
+    - Vue partagée
+        - tableau hauteur est la moitié de la hauteur de la carte
+        - pas disponible dans vue mobile parce que le tableau prendra toute la hauteur et la largeur de la carte par défaut
+    - Maximiser
+        - tableau hauteur prend la pleine hauteur de la carte
+        - pas disponible dans vue mobile parce que le tableau prendra toute la hauteur et la largeur de la carte par défaut
+    - Filtrer par mesure
+        - le tableau met automatiquement à jour sur la carte mesure du changement pour afficher seulement les caractéristiques de la couche dans la période de mesure
+    - Montrer les filtres
+        - basculer cette option de congé sera de masquer tous les filtres de colonne
+            - incapable de modifier la colonne filtres alors activer à pied
+            - la colonne des filtres demeurent appliqué même lorsque les activer à pied
+    - Imprimer (désactivé par défaut)
+        - prend l’utilisateur à une imprimante à imprimer la page affichant Table de données
+    - Exportation
+        - les exportations Table de données de format CSV
+        - pourrait ne pas fonctionner comme prévu sur les appareils mobiles en raison des limites de téléchargement de fichiers
+- Fermer le tableau
+    - ferme le tableau
 
 ### Le tri et la commande de réapprovisionnement
 
 Pour chaque colonne dans le tableau de données, il peut y avoir un ensemble de flèches associés à cette colonne qui représente la façon dont il peut être triés et reordered.
 
-__Colonne trier__ : Cliquez sur le titre de la colonne pour trier les colonnes en ordre croissant ou ordre décroissant (pour les données numériques) et par ordre alphabétique (pour le texte des données).
-- une flèche ascendante ![](datatable/sort_asc.png) à côté du titre de la colonne indique que la colonne des données sont triés en ordre ascendant ou par ordre alphabétique
-- une flèche vers le bas ![](datatable/sort_desc.png) à côté du titre de la colonne indique que la colonne des données sont triés en ordre décroissant ou renverser par ordre alphabétique
+__La colonne genre__ : Cliquez sur le titre de la colonne pour trier les colonnes en ordre croissant ou ordre décroissant (pour les données numériques) et par ordre alphabétique (pour le texte des données).
+- une flèche vers le haut (![](datatable/sortAsc.png)) à côté du titre de la colonne indique que la colonne des données sont triées en ordre croissant ou ordre alphabétique
+- une flèche vers le bas (![](datatable/sortDesc.png)) à côté du titre de la colonne indique que la colonne des données sont triés en ordre décroissant ou inverser l’ordre alphabétique
 - aucune flèche vers le bas située à côté du titre de la colonne signifie qu’il n’y a pas de trier appliquées à la colonne
-- trier les données de plusieurs colonnes à une fois par quart de travail + colonne sélectionner Nom
-- comment il fonctionne : la prochaine colonne sélectionnée en utilisant l’onglet seront classés selon la dernière colonne sélectionnée de groupes de données identiques
+- tri de colonnes multiples à une fois par quart de travail + colonne sélectionner Nom
+    - comment il fonctionne : la prochaine colonne sélectionnée en utilisant l’onglet seront classés selon la dernière colonne sélectionnée de groupes de données identiques
 
-__Colonne réorganiser__ : Les deux droit / flèches gauche à côté de la colonne Nom sont pour modifier l’ordre d’affichage des colonnes.
-- cliquez sur la flèche droite ![](datatable/right_reorder_arrow.png) échanger une colonne avec celle de droite
-- la flèche de droite est invalide pour le rightmost colonne du tableau de données
-- cliquez sur la flèche de gauche ![](datatable/left_reorder_arrow.png) échanger une colonne avec le sur le côté gauche
-- la flèche de gauche est invalide pour la colonne complètement à gauche du tableau de données
+__La colonne de réapprovisionnement__ : Les deux droit / flèches gauche à côté de la colonne Nom sont pour modifier l’ordre d’affichage des colonnes.
+- cliquez sur la flèche vers la droite (![](datatable/rightReorderArrow.png)) pour échanger une colonne avec celle de droite
+    - la flèche de droite est invalide pour le rightmost colonne du tableau de données
+- cliquez sur la flèche de gauche (![](datatable/leftReorderArrow.png)) pour échanger une colonne avec le sur le côté gauche
+    - la flèche de gauche est invalide pour la colonne complètement à gauche du tableau de données
 
-### Menu d'options
+### Filtrer les données
 
-![](datatable/menu_fr.png)
+Les données peuvent être filtrés par colonne. Une colonne est consultable s’il y a un champ de saisie sous le titre de l’en-tête. Comme il a été mentionné précédemment, il y a quatre types de filtres :
+- __Texte__ : Champ de caractères. Utiliser le caractère de remplacement (\*) pour remplacer une séquence de zéro ou plus de caractères (p. ex. _* levo_ trouverez Charlevoix)
+    - _Remarque, sans un caractère générique, la recherche trouverez seulement les éléments où le mot fouillé commence la phrase._
+- __Nombre__ : Champs de saisie qui acceptent seulement les chiffres
+    - Si un minimum et un maximum sont définis le filtre pour une gamme de recherche
+    - Si, par exemple, seulement un minimum est défini, il faudra effectuer l’opération _de plus de_
+- __Sélection__ : Menu déroulant qui permet la sélection d’un ou de plusieurs valeurs prédéfinies
+- __Date__ : Semblable au champ numérique mais qu’il utilise les dates
 
-Le menu permet les actions suivantes:
-- Agrandir / réduire la taille de la table (via vue partagée / agrandir)
-- Filtrer les données de sorte que seules les données dans l’étendue actuelle s’affichent
-- Afficher les filtres des colonnes de la table
-- Exporter les données sous forme de fichier .csv
-- Imprimer les données​
+Certains filtres ne sont pas modifiable; leur valeur ne peut pas être modifiée. Ils sont représentés par une ligne en tirets inférieur à leur valeur.
+
+![](datatable/search_fr.png)
+
+Ce contrôle, qui se trouve dans le coin supérieur droit du tableau de données, permet de filtrer le tableau de données à l’échelle mondiale.
+- Si vous entrez la valeur _Brook_, le tableau de données sera, sélectionnez les données que contient _Brook_ à tout endroit (p. ex. _Corner Brook_ sera sélectionné)
+
+### Clavier, la navigation
+
+Utiliser `Tab` à passer en revue chaque de la table de contrôle et de naviguer entre les trois principaux groupes :
+- Les en-têtes de colonne
+- La colonne des filtres
+- Tableau corps
+
+Une fois que tout grand groupe est axé sur, vous pouvez utiliser les touches fléchées pour naviguer dans le tableau des cellules pour cette composante. Cela mettra en évidence les concentre actuellement le tableau cellule.
+
+Pour accéder les boutons et/ou les champs d’entrée de données dans une cellule, assurez-vous que la cellule est mis en évidence (en utilisant les touches fléchées comme ci-dessus) et utiliser `Tab` à naviguer entre ses enfants.
 
 
 # Panneau d'information de la sélection interactive
