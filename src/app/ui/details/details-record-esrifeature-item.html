@@ -1,16 +1,10 @@
-<div
-    class="rv-record-header"
-    ng-class="{ 'rv-selected rv-expanded': self.isExpanded }">
+<div class="rv-record-header" ng-class="{ 'rv-selected rv-expanded': self.isExpanded }">
 
-    <md-button
-        ng-if="::!self.solorecord"
-        class="rv-group-body-button rv-button-square"
-        ng-focus="self.isRendered = true"
-        ng-mouseover="self.isRendered = true"
-        ng-click="self.toggleDetails()"></md-button>
+    <md-button ng-if="::!self.solorecord" class="rv-group-body-button rv-button-square"
+        ng-focus="self.isRendered = true" ng-mouseover="self.isRendered = true" ng-click="self.toggleDetails()">
+    </md-button>
 
-    <rv-symbology-stack
-        symbology="self.item.symbologyStack"></rv-symbology-stack>
+    <rv-symbology-stack symbology="self.item.symbologyStack"></rv-symbology-stack>
 
     <span class="rv-group-name">
         {{ self.item.name }}
@@ -33,9 +27,7 @@
     </div>
 
     <div ng-if="::!self.solorecord" class="rv-icon-24 rv-group-toggle-icon">
-        <md-icon
-            class="md-toggle-icon"
-            ng-class="{ 'rv-toggled' : self.isExpanded }"
+        <md-icon class="md-toggle-icon" ng-class="{ 'rv-toggled' : self.isExpanded }"
             md-svg-src="hardware:keyboard_arrow_down"></md-icon>
     </div>
 </div>
@@ -49,11 +41,23 @@
             <div class="rv-details-attrib-key">{{ ::row.key }}</div>
             <span flex></span>
 
-            <div class="rv-details-attrib-value"
-                ng-switch-when="esriFieldTypeDate"
+            <!-- temporary fix for the wfs broken links by extracting href + title from object and formatting into a list -->
+            <ul class="rv-details-links-list" ng-if="row.listOfLinks">
+                <li class="rv-details-links-list-item" rv-lightbox ng-repeat="hlink in row.value">
+                    <a class="rv-wfs-details-hlink" href="{{ ::hlink.href }}" target="_blank">{{ ::hlink.title }}</a>
+                    <span flex></span>
+
+                    <div class="rv-details-attrib-value" ng-switch-when="esriFieldTypeDate"
+                        ng-bind-html="::hlink.title | dateTimeZone"></div>
+                    <div class="rv-details-attrib-value" ng-switch-default
+                        ng-bind-html="::hlink.title | picture | autolink"></div>
+                </li>
+            </ul>
+
+            <div class="rv-details-attrib-value" ng-if="!row.listOfLinks" ng-switch-when="esriFieldTypeDate"
                 ng-bind-html="::row.value | dateTimeZone"></div>
-            <div class="rv-details-attrib-value"
-                ng-switch-default ng-bind-html="::row.value | picture | autolink"></div>
+            <div class="rv-details-attrib-value" ng-if="!row.listOfLinks" ng-switch-default
+                ng-bind-html="::row.value | picture | autolink"></div>
         </li>
     </ul>
 </div>
