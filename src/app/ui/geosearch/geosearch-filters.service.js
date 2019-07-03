@@ -118,7 +118,7 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         configService.getAsync.then(config => {
             geosearchService.getProvinces().then(values => {
                 service.provinces = values;
-                service.provinceIndexes = [...Array(service.provinces.length).keys()];
+                service.provinceIndexes = Array.from(Array(service.provinces.length), (prov, idx) => idx);
 
                 // sort the province filters in alphabetical order
                 service.provinces.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
@@ -126,7 +126,7 @@ function geosearchFiltersService($translate, events, configService, geoService, 
             geosearchService.getTypes().then(values => {
                 const disabledSearches = configService.getSync.services.search.disabledSearches || [];
                 service.types = values.filter(x => !disabledSearches.includes(x.code))
-                service.typeIndexes = [...Array(service.types.length).keys()];
+                service.typeIndexes = Array.from(Array(service.types.length), (type, idx) => idx);
 
                 // sort the type filters in alphabetical order
                 service.types.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
