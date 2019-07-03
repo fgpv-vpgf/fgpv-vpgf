@@ -57,67 +57,67 @@ export type SymbologyStack = {
   image: string;
   text: string;
   /**
-   * An SQL where clause by which the map and datatable attributes can be filtered. Query results should cover all attributes for that layer.
+   * An SQL where clause by which the map and datatable attributes can be filtered. All the query results for the symbologyStack should cover all attributes for that layer.
    */
   sqlQuery?: string;
 }[];
 export type InfoSection =
   | {
-    infoType?: "title";
-    content?: string;
-    /**
-     * Indicates if the legend item should show up in the export legend.
-     */
-    export?: boolean;
-  }
+      infoType?: "title";
+      content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
+    }
   | {
-    infoType?: "image";
-    content?: string;
-    /**
-     * Indicates if the legend item should show up in the export legend.
-     */
-    export?: boolean;
-  }
+      infoType?: "image";
+      content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
+    }
   | {
-    infoType?: "unboundLayer";
-    /**
-     * Name to display in legend
-     */
-    content?: string;
-    /**
-     * [deprecated] Name to display in legend. Use `content` instead.
-     */
-    layerName?: string;
-    /**
-     * An optional icon, if present it will be used to primarily represent the unbound layer
-     */
-    coverIcon?: string;
-    /**
-     * Optional description displayed above the symbology stack.
-     */
-    description?: string;
-    symbologyStack?: SymbologyStack;
-    /**
-     * An optional style, describes how the symbology stack should be rendered
-     */
-    symbologyRenderStyle?: "icons" | "images";
-    /**
-     * Indicates if symbology stack is expand by default
-     */
-    symbologyExpanded?: boolean;
-    /**
-     * Indicates if the legend item should show up in the export legend.
-     */
-    export?: boolean;
-  }
+      infoType?: "unboundLayer";
+      /**
+       * Name to display in legend
+       */
+      content?: string;
+      /**
+       * [deprecated] Name to display in legend. Use `content` instead.
+       */
+      layerName?: string;
+      /**
+       * An optional icon, if present it will be used to primarily represent the unbound layer
+       */
+      coverIcon?: string;
+      /**
+       * Optional description displayed above the symbology stack.
+       */
+      description?: string;
+      symbologyStack?: SymbologyStack;
+      /**
+       * An optional style, describes how the symbology stack should be rendered
+       */
+      symbologyRenderStyle?: "icons" | "images";
+      /**
+       * Indicates if symbology stack is expand by default
+       */
+      symbologyExpanded?: boolean;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
+    }
   | {
-    infoType?: "text";
-    content?: string;
-    /**
-     * Indicates if the legend item should show up in the export legend.
-     */
-    export?: boolean;
-  };
+      infoType?: "text";
+      content?: string;
+      /**
+       * Indicates if the legend item should show up in the export legend.
+       */
+      export?: boolean;
+    };
 /**
  * A list of all controls to be enabled on the specified group
  */
@@ -578,21 +578,21 @@ export interface ExtentSetNode {
    * The projection for the given extents
    */
   spatialReference:
-  | {
-    [k: string]: any;
-  }
-  | {
-    [k: string]: any;
-  }
-  | {
-    [k: string]: any;
-  }
-  | {
-    [k: string]: any;
-  }
-  | {
-    [k: string]: any;
-  };
+    | {
+        [k: string]: any;
+      }
+    | {
+        [k: string]: any;
+      }
+    | {
+        [k: string]: any;
+      }
+    | {
+        [k: string]: any;
+      }
+    | {
+        [k: string]: any;
+      };
   /**
    * The default (starting) extent.
    */

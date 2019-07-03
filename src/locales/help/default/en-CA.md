@@ -164,35 +164,87 @@ Click on the download button in the header to get the final generated map image.
 
 ![](datatable/overview_en.png)
 
-The panel __Data Table__ is shown above in its initial state.
+The __Data Table__ panel is shown above in its initial state.
 
 In addition to scrolling data, it is possible to:
-- Sort the data by selecting the header of the column
-- Open the detail panel corresponding to a given line by selecting the Details icon ![](datatable/details.png)
-- Move the map and zoom the item corresponding to a given line by selecting the Zoom Icon ![](datatable/zoomto.png)
-- Move the columns by clicking on the header when the cursor icon becomes a hand and moving it around the sorting icons of the place where it should move
-- Filter the columns by numerical range, text, selection or date (if the configuration allows it)
+- Sort the data by clicking the header of the column. Multiple columns can be sorted by holding down shift before clicking a column header
+- Open the detail panel corresponding to a given row by selecting the *Details* icon (![](datatable/details.png))
+- Position the map view to the location of the feature corresponding to a given row by selecting the *Zoom To Feature* icon (![](datatable/zoomto.png))
+- Move the columns by clicking beside the column title to shift it left or right (![](datatable/reorder.png))
+- Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map (*apply*: ![](datatable/apply.png), *clear*: ![](datatable/clear.png))
+- Show and/or hide columns by clicking on the *Hide Columns* icon (![](datatable/hideColumns.png))
+- Navigate the table using a keyboard
 
-If the number of characters entered exceeds the width of the text box, only the visible characters will be displayed, followed by ellipses (...). By selecting the field with the mouse or the keyboard, the full text will be displayed in a tooltip.
+If the number of characters entered exceeds the width of the text box, only the visible characters will be displayed, followed by ellipses (...). By selecting the field with the mouse or the keyboard and hovering over it, the full text will be displayed in a tooltip.
 
-The number of entities in the layer is displayed in the lower left corner: Showing 1 to 4 of 247 entries.
+The number of features in the layer is displayed in the top left corner below the layer title:
 
-By starting the filtering of the data, more feedback is obtained: Showing 1 to 4 of 15 entries (filtered from 247 total entries).
+![](datatable/allEntries_en.png)
 
-### Filter Control Group
+Filtering the data results in more feedback:
 
-The filter control group is located in the upper right-hand corner of the data table and contains three buttons: __clear filters__, __apply filters to map__, and __hide columns__.
+![](datatable/filteredEntries_en.png)
 
-The __clear filters__ ![](datatable/clear.png) button will clear any existing filters that may be applied to the table. If no filters are applied to the table, this button will be disabled.
+### Table Controls
 
-The __apply filters to map__ ![](datatable/apply_en.png) button will update the map to display only the data that is visible in the table. If the data in the table already matches the data displayed on the map, this button will be disabled.
+![](datatable/tableControls_en.png)
 
-The __hide columns__ ![](datatable/hidecolumns_en.png) button opens a separate menu that allows you to choose which columns you want to be visible on the table.
+This control group is located in the upper right-hand corner of the data table and has the following options:
+- Global Search
+    - filter the table by making sure that the search term is a substring of the rows' data at one or more columns
+- Clear Column Filters
+    - clear any existing filters that may be applied to the table
+    - if no filters are applied to the table, this button will be disabled
+- Apply Table Filters To Map
+    - update the map to display only the data that is visible in the table
+    - if the data in the table already matches the data displayed on the map, this button will be disabled
+- Toggle Column Visibilities
+    - allows you to choose which columns you want to be visible on the table
+- Table Menu (More Options)
+
+    ![](datatable/menu_en.png)
+
+    - Split View
+        - table occupies the upper half of the map area
+        - not available in mobile view because table will take up whole height and width of the map by default
+    - Maximize
+        - table occupies all of the map area
+        - not available in mobile view because table will take up whole height and width of the map by default
+    - Filter by extent
+        - table automatically updates on map extent change to display only layer features within the current extent
+    - Show filters
+        - toggling this option off will hide all column filters
+            - unable to change column filters while toggled off
+            - column filters remain applied even when toggled off
+    - Print (disabled by default)
+        - takes the user to a printer friendly page displaying table data
+    - Export
+        - exports table data to CSV
+        - may not work as intended on mobile due to limitations with downloading files
+- Close Table
+    - closes the table
+
+### Sorting and Reordering
+
+For each column in the data table, there may be a set of arrows associated with that column which represents how it can be sorted and reordered.
+
+__Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
+- an upward arrow (![](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
+- a downward arrow (![](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
+- no arrow next to the column title means that there is no sort applied to current column
+- sort multiple columns at once using shift + select column names
+    - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
+
+__Column Reorder__: The two right/left arrows next to the column name are for reordering the columns.
+- click the right arrow (![](datatable/rightReorderArrow.png)) to swap a column with the one on the right
+    - the right arrow is disabled for the rightmost column of a data table
+- click the left arrow (![](datatable/leftReorderArrow.png)) to swap a column with the one on the left
+    - the left arrow is disabled for the leftmost column of a data table
 
 ### Filter data
 
 Data can be filtered by column. A column is searchable if there is an input field under the title of the header. As mentioned previously, there are 4 types of filters:
-- __Text__: Character input field. Use the wildcard character \* to replace a sequence of zero or more characters (e.g. _* levo_ will find Charlevoix)
+- __Text__: Character input field. Use the wildcard character (\*) to replace a sequence of zero or more characters (e.g. _* levo_ will find Charlevoix)
     - _Note, without a generic character, the search will find only the elements where the word searched begins the sentence._
 - __Number__: Input fields that accept only numbers
     - If a minimum and a maximum are defined the filter will search for a range
@@ -205,44 +257,18 @@ Some filters are not editable; Their value can not be changed. They are represen
 ![](datatable/search_en.png)
 
 This control, which is found in the upper right corner of the data table, allows to filter the data table globally.
-- If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g ._Corner Brook_ will be selected)
+- If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g. _Corner Brook_ will be selected)
 
-When the input field is selected, the column names may change because they reflect the internal names of the data. These names allow you to do specific searches, for example:
-- Search text: _name of field:value_ (e.g. Type:'my type')
-- Search a number or date:
-    - Simple value: _field name:[operator]value_ (eg OBJECTID:<30). The following operators can be used: <, <=,>,> =.
-    - Range: _field name:[value..value]_ (e.g. OBJECTID:[30..50])
-- You can also combine fields with _&&_ (e.g. Type:'my type' && OBJECTID:<30)
+### Keyboard Navigation
 
-_Note: The filters defined by this control can not be applied to the map. They apply only to the data table._
+Use `Tab` to go through each of the table controls, and to navigate between the three major table groups:
+- Column Headers
+- Column Filters
+- Table Body
 
-### Sorting and Reordering
+Once any major group is focused on, you can use the arrow keys to navigate through the table cells for that component. Doing this will highlight the currently focused table cell.
 
-For each column in the data table, there may be a set of arrows associated with that column which represents how it can be sorted and reordered.
-
-__Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
-- an upward arrow ![](datatable/sort_asc.png) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
-- a downward arrow ![](datatable/sort_desc.png) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
-- no arrow next to the column title means that there is no sort applied to current column
-- sort multiple columns at once using shift + select column names
-    - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
-
-__Column Reorder__: The two right/left arrows next to the column name are for reordering the columns.
-- click the right arrow ![](datatable/right_reorder_arrow.png) to swap a column with the one on the right
-    - the right arrow is disabled for the rightmost column of a data table
-- click the left arrow ![](datatable/left_reorder_arrow.png) to swap a column with the one on the left
-    - the left arrow is disabled for the leftmost column of a data table
-
-### Menu of options
-
-![](datatable/menu_en.png)
-
-The menu allows the following actions:
-- Enlarge / reduce the size of the table (via shared view / enlarge)
-- Filter data so that only data in the current spatial extent is displayed
-- Show table column filters
-- Export the data as a .csv file
-- Print the data
+To access the buttons and/or input fields within a cell, make sure the cell is highlighted (by using arrow keys as above) and use `Tab` to navigate between its children.
 
 
 # Feature Details Panel
