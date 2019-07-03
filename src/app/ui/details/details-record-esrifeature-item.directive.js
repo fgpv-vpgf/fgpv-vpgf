@@ -67,6 +67,7 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         if (self.requester.proxy._source.config) {
             self.details = self.requester.proxy._source.config.details;
         }
+
         if (self.details && self.details.template) {
             detailService.getTemplate(self.requester.proxy._source.layerId, self.details.template).then(template => {
                 if (self.details.parser) {
@@ -96,6 +97,18 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
                     });
                 }
             });
+        }
+
+        // set an attribute field to check for list of objects representing hyperlinks
+        if (self.item && self.item.data) {
+            self.item.data.forEach(data => {
+                // check if data is an array of objects with href and title attributes
+                if (Array.isArray(data.value)) {
+                    data.listOfLinks = data.value.every(d => d.href && d.title) ? true : false;
+                } else {
+                    data.listOfLinks = false;
+                }
+            })
         }
 
         // wrap raw symbology item into a symbology stack object
