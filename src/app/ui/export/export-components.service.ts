@@ -4,6 +4,7 @@ type InitialExportConfig = {
     [key: string]: {
         generators: any[];
         graphicOrder?: number[];
+        graphicPosition?: { justify?: 'start' | 'center' | 'end'; align?: 'start' | 'center' | 'end' }[];
         isVisible?: boolean;
     };
 };
@@ -23,7 +24,7 @@ type ExportComponent = any;
  * @requires dependencies
  * @description
  *
- * The `exportComponentsService` service handles available map export componets.
+ * The `exportComponentsService` service handles available map export components.
  *
  */
 angular.module('app.ui').factory('exportComponentsService', exportComponentsService);
@@ -52,7 +53,18 @@ function exportComponentsService(
             graphicOrder: [0, 2, 1]
         },
         mapElements: {
-            generators: [exportGenerators.scalebarGenerator, exportGenerators.northarrowGenerator]
+            generators: [exportGenerators.scalebarGenerator, exportGenerators.northarrowGenerator],
+            // position scalebar on the left, and north-arrow on the right side of the export image
+            graphicPosition: [
+                {
+                    justify: 'start',
+                    align: 'center'
+                },
+                {
+                    justify: 'end',
+                    align: 'center'
+                }
+            ]
         },
         legend: {
             generators: [exportGenerators.legendGenerator]
@@ -64,10 +76,14 @@ function exportComponentsService(
             generators: [exportGenerators.timestampGenerator],
             isVisible: false
         }
+        // NOTE: example of adding the new component/generator
+        /* text: {
+            generators: [exportGenerators.customMarkupGenerator]
+        } */
     };
 
     // indicates the order of the components, top to bottom
-    const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp'];
+    const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp' /* 'text' */];
 
     const service: ExportComponentsService = {
         items: null,
@@ -117,6 +133,7 @@ function exportComponentsService(
                     // add generators and graphic orders to the export component configs
                     exportComponent.generators = initialExportConfig[id].generators;
                     exportComponent.graphicOrder = initialExportConfig[id].graphicOrder;
+                    exportComponent.graphicPosition = initialExportConfig[id].graphicPosition;
 
                     service.items!.push(new ExportComponent(id, exportComponent));
                 });

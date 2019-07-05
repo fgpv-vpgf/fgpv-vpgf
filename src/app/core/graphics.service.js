@@ -8,9 +8,7 @@ import 'svg.textflow.js';
  *
  * Contains helper functions for working with svg and canvas objects.
  */
-angular
-    .module('app.core')
-    .factory('graphicsService', graphicsService);
+angular.module('app.core').factory('graphicsService', graphicsService);
 
 function graphicsService($q) {
     const service = {
@@ -45,7 +43,7 @@ function graphicsService($q) {
             const options = angular.extend(
                 defaultOptions,
                 optionOverrides,
-                {useCORS: false},
+                { useCORS: false },
                 { renderCallback: () => resolve(canvas) }
             );
 
@@ -87,9 +85,12 @@ function graphicsService($q) {
      * @param {Number} height height of the svg container
      * @return {Object} svg object
      */
-    function createSvg(width, height) {
-        const svg = SVG(document.createElement('div'))
-            .size(width, height);
+    function createSvg(width = null, height = null) {
+        const svg = SVG(document.createElement('div'));
+
+        if (width && height) {
+            svg.size(width, height);
+        }
 
         return svg;
     }
@@ -103,8 +104,6 @@ function graphicsService($q) {
      * @return {Object} merged canvas object
      */
     function mergeCanvases(canvases, offsets = []) {
-        canvases = canvases.filter(v => v);
-
         const baseCanvas = canvases.shift();
         const baseContext = baseCanvas.getContext('2d');
 
@@ -138,7 +137,7 @@ function graphicsService($q) {
      * it seems to be a bug from svg.js library.
      * @function setSvgHref
      * @param  {String} link link to reset the href for
-     * @return {String}        reseted href
+     * @return {String}        reset href
      */
     function setSvgHref(link) {
         // TODO: send issue to svg library

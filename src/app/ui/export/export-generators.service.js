@@ -1,3 +1,5 @@
+import html2canvas from 'html2canvas';
+
 const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 const RETRY_LIMIT = 3;
 
@@ -10,7 +12,7 @@ const RETRY_LIMIT = 3;
  * The `exportGenerators` contains generator functions for export components.
  * a generator function takes three parameters:
  *                          exportSize {ExportSize} - the currently selected map size
- *                          showToast {Function} - a function display a toast notifcation for the user
+ *                          showToast {Function} - a function display a toast notification for the user
  *                          value {Object} [optional] - any value stored in the component
  *                          timeout {Number} [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
  *                      generator function may optionally return a value object which will override the component's stored value object (this can be useful if generator updates the value and it needs to persist)
@@ -45,7 +47,9 @@ function exportGenerators(
 
         timestampGenerator,
 
-        footnoteGenerator
+        footnoteGenerator,
+
+        customMarkupGenerator
     };
 
     return service;
@@ -56,6 +60,7 @@ function exportGenerators(
      * @private
      * @param {Promise} graphicPromise a promise resolving with the generator result
      * @param {Object} value [optional] value passed to the generator and modified by it to be stored in the export component
+     * @return {Promise} generator output wrapped in a promise in the form of { graphic, value }
      */
     function wrapOutput(graphicPromise, value) {
         return graphicPromise.then(graphic => ({ graphic, value }));
@@ -66,16 +71,13 @@ function exportGenerators(
      * Generates the title of the export image.
      * @function titleGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function titleGenerator(exportSize, showToast, value) {
-        const containerWidth = exportSize.width;
-        let containerHeight = 30;
-
         // return empty graphic 0x0 if title text is not specified
         if (!angular.isString(value) || value === '') {
             return { graphic: graphicsService.createCanvas(0, 0) };
@@ -84,27 +86,19 @@ function exportGenerators(
         const titleText = value;
 
         // create an svg node to draw a timestamp on
-        const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
+        const containerSvg = graphicsService.createSvg();
 
-        const titleSvg = containerSvg
-            .textflow(titleText || '', containerWidth - 20 * 2)
-            .attr({
-                'font-family': 'Roboto',
-                'font-weight': 'normal',
-                'font-size': 32,
-                anchor: 'start'
-            })
-            .leading(1)
-            .cx(containerWidth / 2);
+        const titleSvg = containerSvg.textflow(titleText || '', exportSize.width - 20 * 2).attr({
+            'font-family': 'Roboto',
+            'font-weight': 'normal',
+            'font-size': 35,
+            anchor: 'start'
+        });
 
-        containerHeight = titleSvg.bbox().height + EXPORT_IMAGE_GUTTER;
+        const textBox = titleSvg.bbox();
+        containerSvg.size(textBox.width, Math.abs(textBox.y) + textBox.height);
 
-        // position the timestamp at the bottom of the export image
-        titleSvg.cy(containerHeight / 2);
-
-        containerSvg.height(containerHeight);
-
-        const titleGraphic = graphicsService.createCanvas(containerWidth, containerHeight);
+        const titleGraphic = graphicsService.createCanvas(textBox.width, Math.abs(textBox.y) + textBox.height);
         const titlePromise = graphicsService.svgToCanvas(containerSvg, titleGraphic);
 
         return wrapOutput(titlePromise);
@@ -115,7 +109,7 @@ function exportGenerators(
      *
      * @function mapDummyGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
@@ -134,7 +128,7 @@ function exportGenerators(
      *
      * @function mapSVGGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
@@ -151,7 +145,7 @@ function exportGenerators(
      *
      * @function mapImageGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @param {Number} timeout [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
      * @return {Object} a result object in the form of { graphic, value }
@@ -168,7 +162,7 @@ function exportGenerators(
         } = configService.getSync;
 
         let isGenerateCanceled = false; // the server print job was cancelled
-        let hasOmittedImage = false; // the local printing has ommited tainted images
+        let hasOmittedImage = false; // the local printing has omitted tainted images
         let canvasIsTainted = false; // the local printing has tainted the canvas
         let timeoutHandle;
 
@@ -253,7 +247,7 @@ function exportGenerators(
                     data.forEach(({ imgSource, imgItem, error }) => {
                         // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
                         // if the image loading failed, check if the local copy of the image is tainted
-                        // UPDATE: IE11 somehow manages to load non-cors images with 'anonymous' tag without errors, and this ends up taining canvas afterall
+                        // UPDATE: IE11 somehow manages to load non-cors images with 'anonymous' tag without errors, and this ends up tainting canvas after all
                         // always check if the loaded image is tainted
                         let imgTainted = graphicsService.isTainted(imgItem);
 
@@ -373,7 +367,7 @@ function exportGenerators(
      *
      * @function legendGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
@@ -401,24 +395,21 @@ function exportGenerators(
      *
      * @function scalebarGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function scalebarGenerator(exportSize) {
-        const containerWidth = exportSize.width;
-        const containerHeight = 100;
-
         // create an svg node to draw a timestamp on
-        const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
+        const containerSvg = graphicsService.createSvg();
         const scalebarGroup = containerSvg.group();
 
         // get scale bar information (can specify output image size if not same as map size)
         // need to specify containerWidth because when we resize the container width may changed
         // if we don't do this, scale bar does not update when output is resized
-        const scale = geoService.map.getScaleRatio(containerWidth);
+        const scale = geoService.map.getScaleRatio(exportSize.width);
 
         // text attributes
         const attr = {
@@ -441,9 +432,13 @@ function exportGenerators(
         scalebarGroup.line(0, 29, imperial.width, 29).stroke('black');
         scalebarGroup.text(imperial.label).attr(attr);
 
-        scalebarGroup.move(20, (containerHeight - 49) / 2);
+        // calculate the box of the scalebar group
+        const groupBbox = scalebarGroup.children().reduce((bbox, child) => bbox.merge(child.bbox()), new SVG.BBox());
 
-        const scalebarGraphic = graphicsService.createCanvas(containerWidth, containerHeight);
+        // size the container to its content
+        containerSvg.size(groupBbox.width, groupBbox.height);
+
+        const scalebarGraphic = graphicsService.createCanvas(groupBbox.width, groupBbox.height);
         const scalebarPromise = graphicsService.svgToCanvas(containerSvg, scalebarGraphic);
 
         return wrapOutput(scalebarPromise);
@@ -482,25 +477,22 @@ function exportGenerators(
      *
      * @function northarrowGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function northarrowGenerator(exportSize) {
-        // TOOD: move this into assets
+        // TODO: move this into assets
         // jscs:disable maximumLineLength
         const arrowSCG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.06 96.62"><g transform="translate(-1.438 30.744)"><g fill="none" stroke="#000"><path d="m61 35c0 16.02-12.984 29-29 29-16.02 0-29-12.984-29-29 0-16.02 12.984-29 29-29 16.02 0 29 12.984 29 29z" stroke-width="3"/><path d="m55 35c0 12.979-10.521 23.5-23.5 23.5-12.979 0-23.5-10.521-23.5-23.5 0-12.979 10.521-23.5 23.5-23.5 12.979 0 23.5 10.521 23.5 23.5z" transform="matrix(1.01148 0 0 .99988-.089.004)" stroke-width=".497"/><path d="m32 35v-32" stroke-width=".25"/></g><path d="m32-9.453l28.938 73.826-29-29-29 29z" fill="#fff" stroke="#fff" stroke-width="3"/><path d="m32-9.453l29 73.45-29-29-29 29z" fill="none" stroke="#000" stroke-linecap="square"/><text x="22.71" y="-10.854" font-family="OPEN SANS" word-spacing="0" line-height="125%" letter-spacing="0" font-size="40"><tspan x="22.71" y="-10.854" font-family="Adobe Heiti Std R" font-size="26">N</tspan></text></g><g transform="translate(0-3.829)" fill="none" stroke="#000" stroke-width=".25"><path d="m4 92.82l6.74-3.891"/><path d="m4.603 90.7l10.397-6"/><path d="m3 95.17l4-2.309"/><path d="m5.442 88.45l13.856-8"/><path d="m12 72.26l18.686-10.812"/><path d="m14.593 65.45l16.09-9.291"/><path d="m15.343 63.24l15.343-8.858"/><path d="m16.877 60.58l13.809-7.972"/><path d="m17.511 58.45l13.174-7.606"/><path d="m18.412 56.15l12.274-7.087"/><path d="m19 54.04l11.427-6.597"/><path d="m20 51.757l10.822-6.311"/><path d="m20.826 49.45l9.86-5.693"/><path d="m21.48 47.3l9.206-5.315"/><path d="m23 44.647l7.686-4.437"/><path d="m23.744 42.45l6.928-4"/><path d="m24.549 40.21l6.137-3.543"/><path d="m25 38.18l5.686-3.283"/><path d="m26.663 35.446l4.02-2.323"/><path d="m27.617 33.12l3.069-1.772"/><path d="m28 31.13l2.686-1.551"/><path d="m29.15 28.694l1.534-.886"/><path d="m13 69.909l17.686-10.211"/><path d="m9.206 79.19l21.48-12.402"/><path d="m8.36 81.45l22.326-12.89"/><path d="m7.671 83.62l19.946-11.516"/><path d="m6.137 86.27l17.02-9.827"/><path d="m10 76.956l20.686-11.943"/><path d="m11.279 74.45l19.407-11.205"/><path d="m14 67.56l16.686-9.634"/><path d="m30.562 65.744v-43.566" transform="translate(0 3.829)"/></g></svg>`;
         // jscs:enable maximumLineLength
 
         const rotation = mapToolService.northArrow().rotationAngle;
 
-        const containerWidth = exportSize.width;
-        const containerHeight = 100;
-
         // create an svg node to draw a timestamp on
-        const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
+        const containerSvg = graphicsService.createSvg();
 
         const arrowSvg = containerSvg
             .group()
@@ -509,17 +501,23 @@ function exportGenerators(
         const arrowViewBox = arrowSvg.viewbox();
         const arrowSizeRatio = arrowViewBox.width / arrowViewBox.height;
 
+        // size the arrow svg image according to its ratio
         const arrowHeight = 70;
         const arrowWidth = arrowHeight * arrowSizeRatio;
 
-        const [arrowX, arrowY] = [containerWidth - 20 - arrowWidth, (containerHeight - arrowHeight) / 2];
+        // size the arrow container as a square based on the longest size of the arrow
+        const containerSide = Math.max(arrowWidth, arrowHeight) * 1.2;
+        containerSvg.size(containerSide, containerSide);
 
+        // place and rotate the arrow inside its container
         arrowSvg
             .size(arrowWidth, arrowHeight)
-            .move(arrowX, arrowY)
-            .rotate(rotation, arrowX + arrowWidth / 2, arrowY + arrowHeight / 2);
+            .center(containerSide / 2, containerSide / 2)
+            .parent()
+            .rotate(rotation, containerSide / 2, containerSide / 2);
 
-        const northarrowGraphic = graphicsService.createCanvas(containerWidth, containerHeight);
+        // create a container canvas with the same size and draw arrow svg onto that canvas
+        const northarrowGraphic = graphicsService.createCanvas(containerSide, containerSide);
         const northarrowPromise = graphicsService.svgToCanvas(containerSvg, northarrowGraphic);
 
         return wrapOutput(northarrowPromise);
@@ -530,16 +528,13 @@ function exportGenerators(
      *
      * @function footnoteGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
     function footnoteGenerator(exportSize, showToast, value) {
-        const containerWidth = exportSize.width;
-        let containerHeight = 30;
-
         // return empty graphic 0x0 if footnote text is not specified
         if (!angular.isString(value) || value === '') {
             return { graphic: graphicsService.createCanvas(0, 0) };
@@ -548,25 +543,17 @@ function exportGenerators(
         const footnoteText = value;
 
         // create an svg node to draw a timestamp on
-        const containerSvg = graphicsService.createSvg(containerWidth, containerHeight);
+        const containerSvg = graphicsService.createSvg();
 
-        const footnoteSvg = containerSvg
-            .textflow(footnoteText, containerWidth - 20 * 2)
-            .attr({
-                'font-family': 'Roboto',
-                anchor: 'start'
-            })
-            .leading(1)
-            .cx((containerWidth - 20 * 2) / 2);
+        const footnoteSvg = containerSvg.textflow(footnoteText, exportSize.width).attr({
+            'font-family': 'Roboto',
+            anchor: 'start'
+        });
 
-        containerHeight = footnoteSvg.bbox().height + 30;
+        const textBox = footnoteSvg.bbox();
+        containerSvg.size(textBox.width, Math.abs(textBox.y) + textBox.height);
 
-        // position the timestamp at the bottom of the export image
-        footnoteSvg.cy(containerHeight / 2 + 10);
-
-        containerSvg.height(containerHeight);
-
-        const timestampGraphic = graphicsService.createCanvas(containerWidth, containerHeight);
+        const timestampGraphic = graphicsService.createCanvas(textBox.width, Math.abs(textBox.y) + textBox.height);
         const footerPromise = graphicsService.svgToCanvas(containerSvg, timestampGraphic);
 
         return wrapOutput(footerPromise);
@@ -577,7 +564,7 @@ function exportGenerators(
      *
      * @function timestampGenerator
      * @param {ExportSize} exportSize the currently selected map size
-     * @param {Function} showToast a function display a toast notifcation for the user
+     * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
@@ -613,5 +600,40 @@ function exportGenerators(
         const timestampPromise = graphicsService.svgToCanvas(containerSvg, timestampGraphic);
 
         return wrapOutput(timestampPromise, timestampString);
+    }
+
+    /**
+     * Generates an image of the supplied HTML string.
+     *
+     * @param {ExportSize} exportSize the currently selected map size
+     * @param {Function} showToast a function display a toast notification for the user
+     * @param {*} value HTML string
+     * @returns
+     */
+    function customMarkupGenerator(exportSize, showToast, value) {
+        // NOTE: example
+        // so far, the plugin calling this generator is responsible for setting the size of the container supplied with value
+        // if this generator is used internally, we might want to set the maximum width equal to `exportSize.width` on the container so it doesn't overflow the export image
+        // in cases where value is plain text, it should be wrapped in a `div` or `p`
+        /* value =
+            '<div style="width: 500px;">This is a footnote added from the configuration file. The note is very long so it should wrap on multiple lines when it reaches a certain limit in size. Maybe some user will want to use this as aplace holder to put a lot of information so we need to be able to wrap this content. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce aliquet ante quis aliquet feugiat. Cras eget semper nunc, eu placerat purus. Nunc sed lacinia enim, ut sollicitudin quam. Nunc quis finibus massa, eget maximus enim. Donec ac nisl libero. Nunc eu pharetra arcu. Fusce luctus, magna cursus gravida tristique, risus nisi porttitor magna, ac dictum ipsum dui vel nulla. Integer id ornare augue. Quisque condimentum velit quis elementum porta. Sed dui enim, iaculis cursus diam volutpat, laoreet porta quam. Sed nec aliquet magna. Curabitur commodo fringilla metus, eu posuere sapien mollis nec.</div>'; */
+
+        // create HTML element from the string provided and position it far away from the screen
+        const valueNode = angular.element(value);
+        valueNode.css({
+            position: 'absolute',
+            top: '-9999px',
+            left: ' -9999px'
+        });
+        const body = angular.element('body');
+
+        body.append(valueNode);
+
+        // transcribe this HTML element to canvas and remove the element
+        const h2cPromise = html2canvas(valueNode[0], { useCORS: true });
+        h2cPromise.then(() => valueNode.remove());
+
+        // return resulting canvas as a promise
+        return wrapOutput(h2cPromise);
     }
 }
