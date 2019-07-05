@@ -7,9 +7,7 @@
  * The `ExportComponent` service returns an ExportComponent class. It's used to create sections of the map export image.
  *
  */
-angular
-    .module('app.ui')
-    .factory('ExportComponent', ExportComponentFactory);
+angular.module('app.ui').factory('ExportComponent', ExportComponentFactory);
 
 function ExportComponentFactory($q, graphicsService) {
     class ExportComponent {
@@ -21,22 +19,33 @@ function ExportComponentFactory($q, graphicsService) {
          *                  generators {Array} [optional=[]] - an array of graphic generator functions
          *                      a generator function takes three parameters:
          *                          exportSize {ExportSize} - the currently selected map size
-         *                          showToast {Function} - a function display a toast notifcation for the user
+         *                          showToast {Function} - a function display a toast notification for the user
          *                          value {Object} [optional] - any value stored in the component
          *                      generator function may optionally return a value object which will override the component's stored value object (this can be useful if generator updates the value and it needs to persist)
-         *                  graphicOrder {Array} [optional=null - an array if indexes indicating in what order the generator output should be merged; the length must match the number of generator functions; for example graphicorder [1, 3, 2] will merge the output of the third generator on top of the first, and the output of the second on top of that
+         *                  graphicOrder {Array} [optional=null] - an array if indexes indicating in what order the generator output should be merged; the length must match the number of generator functions; for example graphicOrder [1, 3, 2] will merge the output of the third generator on top of the first, and the output of the second on top of that
+         *                  graphicPosition {Array} { justify?: 'start' | 'center' | 'end'; align?: 'start' | 'center' | 'end' } [optional=[]] - an array of positioning info with the same number of items as in `graphicOrder` array; `justify` is horizontal, and `align` is vertical positioning; the default positioning is `center` for both directions
          *                  isVisible {Boolean} [optional=true] - a flag indicating if the component is visible in the export dialog
-         *                  isSelectable {Boolean} [optional=true] - a flag indicating if the user can change wheather the compoenent is included in the map export image
-         *                  isSelected {Boolean} [optional=true] - a flag indicating if the compoenent is included in the map export image
+         *                  isSelectable {Boolean} [optional=true] - a flag indicating if the user can change whether the component is included in the map export image
+         *                  isSelected {Boolean} [optional=true] - a flag indicating if the component is included in the map export image
          */
-        constructor(id, { value = {}, generators = [], graphicOrder = null, isVisible = true,
-            isSelectable = true, isSelected = true }) {
-            let validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and emtpy, the component would become unselectable
+        constructor(
+            id,
+            {
+                value = {},
+                generators = [],
+                graphicOrder = null,
+                graphicPosition = null,
+                isVisible = true,
+                isSelectable = true,
+                isSelected = true
+            }
+        ) {
+            let validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and empty, the component would become unselectable
 
             // handle title differently. Even if empty, show it because user can modify it
             if (id === 'title') {
                 validToSelect = true;
-                value = (typeof value !== 'string') ? '' : value;
+                value = typeof value !== 'string' ? '' : value;
             }
 
             this._id = id;
@@ -44,6 +53,7 @@ function ExportComponentFactory($q, graphicsService) {
                 value,
                 generators,
                 graphicOrder: graphicOrder || generators.map((v, i) => i),
+                graphicPosition: graphicPosition || generators.map(() => ({ justify: 'center', align: 'center' })),
                 isVisible,
                 isSelectable: isSelectable && validToSelect,
                 isSelected: isSelected && validToSelect
@@ -84,8 +94,7 @@ function ExportComponentFactory($q, graphicsService) {
 
         get isGenerating() {
             // Checks if the component is blocking image saving. If this component is included but the generation hasn't completed yet, it's blocking.
-            return this._config.isSelected &&
-                this._graphics.filter(v => v).length !== this._config.generators.length;
+            return this._config.isSelected && this._graphics.filter(v => v).length !== this._config.generators.length;
         }
 
         get isSelectable() {
@@ -115,35 +124,98 @@ function ExportComponentFactory($q, graphicsService) {
          */
         generate(exportSize, timeout, showToast, refresh = false, generateId = ++this._generateId) {
             if (this._graphic === null || refresh) {
-
                 this._graphics = [];
 
                 // iterate over generators
-                return $q.all(this._config.generators.map((generator, generatorIndex) =>
+                return $q.all(
+                    this._config.generators.map((generator, generatorIndex) =>
+                        // run each one in parallel
+                        $q
+                            .resolve(generator(exportSize, showToast, this._config.value, timeout))
+                            .then(({ graphic, value = null }) => {
+                                // get the results; check if generator job is stale
+                                if (this._generateId === generateId) {
+                                    // store the graphic in the correct order
+                                    const graphicIndex = this._config.graphicOrder[generatorIndex];
+                                    this._graphics[graphicIndex] = graphic;
 
-                    // run each one in parallel
-                    $q.resolve(generator(exportSize, showToast, this._config.value, timeout))
-                        .then(({ graphic, value = null }) => {
-                            // get the results; check if generator job is stale
-                            if (this._generateId === generateId) {
+                                    // get the height of the tallest component graphic
+                                    const maximumHeight = Math.max(
+                                        ...this._graphics.filter(v => v).map(_g => (_g ? _g.height : 0))
+                                    );
 
-                                // store the graphic in the correct order
-                                const graphicIndex = this._config.graphicOrder[generatorIndex];
-                                this._graphics[graphicIndex] = graphic;
+                                    // create a base canvas with that height and the width of the map image
+                                    const baseGraphic = graphicsService.createCanvas();
+                                    baseGraphic.width = exportSize.width;
+                                    baseGraphic.height = maximumHeight;
 
-                                // merge currently available graphics in a single canvas
-                                this._graphic = graphicsService.mergeCanvases(this._graphics);
+                                    // select available graphics and calculate their offsets relative to the base graphic
+                                    const available = this._graphics.reduce(
+                                        (map, graphic, index) => {
+                                            // skip missing graphics or ones with 0 dimensions
+                                            if (!graphic || graphic.width === 0 || graphic.height === 0) {
+                                                return map;
+                                            }
 
-                                // if generator returns a value, store it
-                                if (value !== null) {
-                                    this._config.value = value;
+                                            const graphicPosition = this._config.graphicPosition[index];
+
+                                            map.graphics.push(graphic);
+                                            map.positions.push([
+                                                calculateOffset(
+                                                    graphicPosition.justify,
+                                                    graphic.width,
+                                                    baseGraphic.width
+                                                ),
+                                                calculateOffset(
+                                                    graphicPosition.align,
+                                                    graphic.height,
+                                                    baseGraphic.height
+                                                )
+                                            ]);
+
+                                            return map;
+                                        },
+                                        { graphics: [], positions: [] }
+                                    );
+
+                                    // merge currently available graphics in a single canvas using their corresponding positions
+                                    this._graphic = graphicsService.mergeCanvases(
+                                        [baseGraphic, ...available.graphics],
+                                        available.positions
+                                    );
+
+                                    // if generator returns a value, store it
+                                    if (value !== null) {
+                                        this._config.value = value;
+                                    }
                                 }
-                            }
-                        })
-                ));
+                            })
+                    )
+                );
             }
 
             return Promise.resolve();
+        }
+    }
+
+    /**
+     * Calculates pixel offsets for canvas elements relative to the supplied container dimension.
+     *
+     * @param {*} positionValue position value "start", "end", or "center"
+     * @param {*} elementDimension
+     * @param {*} containerDimension
+     * @returns pixel offset
+     */
+    function calculateOffset(positionValue, elementDimension, containerDimension) {
+        switch (positionValue) {
+            case 'start':
+                return 0;
+
+            case 'center':
+                return (containerDimension - elementDimension) / 2;
+
+            case 'end':
+                return containerDimension - elementDimension;
         }
     }
 

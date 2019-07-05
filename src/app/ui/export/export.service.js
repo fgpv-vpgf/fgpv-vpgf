@@ -227,7 +227,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          * If custom size option is selected from the select option, scroll to the rv-export-custom-size section
          * @function scrollCustomSettings
          * @private
-         * @param {Object} option the export size object seleted
+         * @param {Object} option the export size object selected
          */
         function scrollCustomSettings(option) {
             if (option._name === 'export.size.custom') {
@@ -239,7 +239,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
 
         /**
          * Generates the final canvas from created pieces and saves it as a file.
-         * Takes all the graphics from the export components and smashes them together; tries to save the results as a file; displayes error notifications if the file cannot be saved.
+         * Takes all the graphics from the export components and smashes them together; tries to save the results as a file; displays error notifications if the file cannot be saved.
          * @function saveImage
          * @private
          */
@@ -248,14 +248,15 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
             // get generated graphics from the export components
             const exportGraphics = self.exportComponents.items
                 .filter(component => component.isSelected && component.graphic.height > 0)
-                .map(component => component.graphic);
+                .map(component => component.graphic)
+                .filter(g => g);
 
             // extract graphic heights
             const graphicHeights = exportGraphics.map(graphic => graphic.height);
 
             // find the total height of the legend image including the gutters between component graphics
             const totalHeight = graphicHeights.reduce(
-                (runningHeihgt, currentHeight) => runningHeihgt + currentHeight + EXPORT_IMAGE_GUTTER,
+                (runningHeight, currentHeight) => runningHeight + currentHeight + EXPORT_IMAGE_GUTTER,
                 EXPORT_IMAGE_GUTTER
             );
 
@@ -298,7 +299,7 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 return;
             }
 
-            // check if the canvas is tained
+            // check if the canvas is tainted
             if (graphicsService.isTainted(canvas)) {
                 // show error; nothing works
                 self.isError = true;
@@ -312,10 +313,9 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
                 return;
             }
 
-
             try {
                 // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3184
-                // IE 10+ and Edge have their own `toBlob` implmenetation called `msToblob` ...
+                // IE 10+ and Edge have their own `toBlob` implementation called `msToblob` ...
                 if (canvas.msToBlob) {
                     // ... and it's synchronous!
                     FileSaver.saveAs(canvas.msToBlob(), `${fileName}.${self.fileType}`);
