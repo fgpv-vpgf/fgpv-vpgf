@@ -33,23 +33,19 @@ export class PanelStatusManager {
 
     // gets the updated text to display for the enhancedTable's filter status
     getFilterStatus() {
-        let text: string;
+        this.panelManager.recordCountScope.shownRecords = this.tableOptions.api.getDisplayedRowCount();
+        this.panelManager.recordCountScope.totalRecords = this.tableOptions.rowData.length;
 
-        if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
-            text = `${this.tableOptions.api.getDisplayedRowCount()} records shown (filtered from ${this.tableOptions.rowData.length} records)`;
+        // rows are filtered
+        if(this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
+            this.panelManager.recordCountScope.filtered = true;
             this.panelManager.legendBlock.filter = true; // add filter flag if rows are filtered
-        }
-        else {
-            text = `${this.tableOptions.rowData.length} records shown`;
+        } else {
+            this.panelManager.recordCountScope.filtered = false;
             this.panelManager.legendBlock.filter = false; // clear filter flag if all rows shown
         }
 
-        // if (this.panelManager.panel.panelControls.find('.filterRecords')[0]) {
-        //     this.panelManager.panel.panelControls.find('.filterRecords')[0].innerHTML = text;
-        // }
         this.getScrollRange();
-        this.panelManager.recordCountScope.filterRecords = text;
-        return text;
     }
 
     // gets the updated row range to get as table is scrolled vertically (example "showing 1-10 of 50 entries")

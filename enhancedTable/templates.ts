@@ -128,9 +128,9 @@ export const MOBILE_MENU_TEMPLATE = `
 </div>`;
 
 export const RECORD_COUNT_TEMPLATE = `
-<p class="rv-record-count" title="{{ scrollRecords }} of {{ filterRecords }}" >
-    <span class="scrollRecords">{{ scrollRecords }}</span> of
-    <span class="filterRecords">{{ filterRecords }}</span>
+<p class="rv-record-count" title="{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}" >
+    <span class="filterRecords" ng-if="filtered == false">{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}</span>
+    <span class="filterRecords" ng-if="filtered == true">{{ 'filter.default.label.filtered' | translate:{range: scrollRecords, total: shownRecords, max: totalRecords} }}</span>
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>
