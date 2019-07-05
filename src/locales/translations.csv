@@ -40,9 +40,9 @@ Datatable close toast,filter.default.action.close,Close,1,Fermer,1
 Datatable dismiss toast,filter.default.action.hide,Dismiss,1,Rejeter,0
 DataTable text for Search,filter.default.label.search,Search: ,1,Rechercher : ,1
 DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,1,Afficher _MENU_ éléments,1
-DataTable text for Info,filter.default.label.info,Showing _START_ to _END_ of _TOTAL_ entries,1,Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments,1
+DataTable text for Info,filter.default.label.info,{{range}} of {{total}} entries shown,1,Affichage de l'élément {{range}} sur {{total}} éléments,1
+DataTable text for Filtered,filter.default.label.filtered,{{range}} of {{total}} entries shown (filtered from {{max}} total entries),1,Affichage de l'élément {{range}} sur {{total}} éléments (filtrés de {{max}} éléments au total),1
 DataTable text for Empty,filter.default.label.zero,Showing 0 to 0 of 0 entries,1,Affichage de l'élément 0 à 0 sur 0 élément,1
-DataTable text for Filtered,filter.default.label.filtered,(filtered from _MAX_ total entries),1,(filtrés de _MAX_ éléments au total),1
 DataTable text for Postfix,filter.default.label.postfix,,0,,0
 DataTable text for Loading Records,filter.default.label.loadrec,Loading...,1,Chargement en cours...,1
 DataTable text for Zero records,filter.default.label.zerorecords,No matching records found,1,Aucun élément à afficher,1
