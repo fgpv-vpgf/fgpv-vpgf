@@ -43,8 +43,13 @@ export default class Header extends Element {
      * Sets the panel title.
      */
     set title(title: string) {
+        // escape every ' special char in title
+        const newTitle = title.replace(/'/g, '\\\'');
+        // revert every ' special char that has already previously been escaped
+        const finalTitle = newTitle.replace(/\\\\'/g, '\\\'');
+
         const titleElem = this._header.find('header > h3').first();
-        const titleText = /{{/.test(title) ? title : `{{ '${title}' | translate }}`;
+        const titleText = /{{/.test(finalTitle) ? finalTitle : `{{ '${finalTitle}' | translate }}`;
         titleElem
             .css('display', '')
             .text(titleText);
@@ -93,7 +98,7 @@ export default class Header extends Element {
             this._closeButton = new CloseButton(this._panel);
             this.append(this._closeButton.elem);
         }
-        
+
         return this._closeButton.elem;
     }
 

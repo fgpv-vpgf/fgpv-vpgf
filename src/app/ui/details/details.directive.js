@@ -69,7 +69,10 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         }
 
         if (item) {
-            detailService.mApi.panels.details.header.title = item.requester.proxy.name;
+            // escape all ' characters to properly display french layer title names with apostrophes
+            const newHeaderName = item.requester.proxy.name.replace(/'/g, '\\\'');
+            const finalHeaderName = newHeaderName.replace(/\\\\'/g, '\\\'');
+            detailService.mApi.panels.details.header.title = finalHeaderName;
         }
         self.selectedItem = item;
         self.selectedLayerProxy = item ? item.requester.proxy : null;
