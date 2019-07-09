@@ -148,8 +148,8 @@ export const ZOOM_TEMPLATE = (oid) =>
     </button>`;
 
 export const NUMBER_FILTER_TEMPLATE = (value, isStatic) => {
-    const minVal = (value === undefined) ? '' : (value.split(',')[0] !== '') ? parseInt(value.split(',')[0]) : '';
-    const maxVal = (value === undefined) ? '' : (value.split(',')[1] !== '') ? parseInt(value.split(',')[1]) : '';
+    const minVal = (value === undefined) ? '' : (value.split(',')[0] !== 'null') ? parseInt(value.split(',')[0]) : '';
+    const maxVal = (value === undefined) ? '' : (value.split(',')[1] !== 'null') ? parseInt(value.split(',')[1]) : '';
     if (isStatic === false) {
         return `<input class="rv-min" style="width:50%" type="text" placeholder="min" value='${minVal}'/>
          <input class="rv-max" style="width:50%" type="text" placeholder="max" value='${maxVal}'/>`;
