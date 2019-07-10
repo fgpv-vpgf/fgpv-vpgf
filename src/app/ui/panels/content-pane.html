@@ -45,7 +45,7 @@
             ng-click="self.closePanel()"
             ng-if="self.closeButton"
             rv-close-button>
-            <md-tooltip>Close</md-tooltip>
+            <md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip>
             <md-icon class="rv-show-single" md-svg-src="navigation:arrow_back"></md-icon>
             <md-icon class="rv-hide-single" md-svg-src="navigation:close"></md-icon>
         </md-button>
