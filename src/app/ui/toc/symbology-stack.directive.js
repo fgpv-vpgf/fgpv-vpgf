@@ -143,6 +143,27 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             }
         }
 
+        // Helper function: update symbol toggles
+        function updateToggles(val) {
+            console.log(val);
+            if (val) {
+                const someOn = self.toggleList.some((toggle => toggle.wasSelected === true));
+                self.toggleList.forEach(toggle => {
+                    if (toggle.wasSelected || !someOn) {
+                        toggle.wasSelected = undefined;
+                        self.onToggleClick(toggle, true);
+                    }
+                });
+            } else {
+                self.toggleList.forEach(toggle => {
+                    if (toggle.isSelected !== false) {
+                        toggle.wasSelected = true;
+                        self.onToggleClick(toggle, false);
+                    }
+                });
+            }
+        }
+
         // wire up a listener on the visibility change of the legend block
         if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
@@ -150,7 +171,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             self.block.visibilityChanged.subscribe(val => {
                 // make sure this doesn't fire if an individual symbology being toggled triggered visibilityChanged
                 // only toggle when toggling visibility on after all symbology have been turned off
-                if (!self.stackToggled && noSymbolsVisible()) {
+                if (!self.stackToggled) {
                     const query = val ? '' : '1=2';
                     if (self.block.proxyWrapper.isActiveState) {
                         // layer is loaded, apply stuff now
@@ -158,32 +179,19 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         // TODO ensure this is race condition no longer exists in new filter structure
                         // TODO once things are working, move these two statements to a function and call in both locations.
                         applySymbolFilter(query);
-
-                        self.toggleList.forEach(toggle => {
-                            if (toggle.isSelected !== val) {
-                                self.onToggleClick(toggle, false);
-                            }
-                        });
+                        updateToggles(val);
                     } else {
                         // layer not yet loaded, wait until it is then apply stuff
-                        const proxyLoaded = $rootScope.$watch(
-                            () => self.block.proxyWrapper.state,
-                            (state, oldState) => {
-                                if (state === 'rv-loaded') {
-                                    // only update if currently selected...otherwise causes all sorts of race conditions
-                                    // TODO ensure this is race condition no longer exists in new filter structure
-                                    applySymbolFilter(query);
-
-                                    self.toggleList.forEach(toggle => {
-                                        if (toggle.isSelected !== val) {
-                                            self.onToggleClick(toggle, false);
-                                        }
-                                    });
-                                    self.stackToggled = false;
-                                    proxyLoaded();
-                                }
+                        const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
+                            if (state === 'rv-loaded') {
+                                // only update if currently selected...otherwise causes all sorts of race conditions
+                                // TODO ensure this is race condition no longer exists in new filter structure
+                                applySymbolFilter(query);
+                                updateToggles(val);
+                                self.stackToggled = false;
+                                proxyLoaded();
                             }
-                        );
+                        });
                     }
                 }
                 self.stackToggled = false;
@@ -221,6 +229,9 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 } else if (!noSymb && self.block.visibility === false) {
                     self.stackToggled = true;
                     self.block.visibility = true;
+                    self.toggleList.forEach(toggle => {
+                        toggle.wasSelected = undefined;
+                    });
                 }
             }
 
