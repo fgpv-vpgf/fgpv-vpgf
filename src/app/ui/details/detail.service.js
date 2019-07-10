@@ -27,7 +27,10 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         api.panels.details.allowUnderlay = false;
         api.panels.details.allowOffscreen = true;
 
-        const expandBtn = new api.panels.details.Button(`<md-icon md-svg-src="action:open_in_new"></md-icon>`);
+        const expandBtn = new api.panels.details.Button(
+            `<md-icon md-svg-src="action:open_in_new"></md-icon>
+             <md-tooltip>{{ 'details.tooltip.expand' | translate }}</md-tooltip>`
+        );
         expandBtn.$.addClass('md-icon-button')
             .removeClass('md-raised')
             .on('click', () => {
