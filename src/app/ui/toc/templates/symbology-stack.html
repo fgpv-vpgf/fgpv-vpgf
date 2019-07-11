@@ -10,7 +10,8 @@
     </div>
 
     <div class="rv-symbol" ng-repeat="symbol in self.symbology.stack" ng-style="{'z-index': 100 + self.symbology.stack.length - $index, 'width': self.symbologyWidth}">
-        <rv-svg ng-if="symbol.image" rv-expand-image class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
+        <rv-svg ng-if="symbol.image && self.block.blockConfig.symbologyRenderStyle !== 'icons'" rv-expand-image class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
+        <rv-svg ng-if="symbol.image && self.block.blockConfig.symbologyRenderStyle === 'icons'" class="rv-symbol-graphic" source="{{ symbol.image }}" src="symbol.svgcode"></rv-svg>
         <rv-svg ng-if="!symbol.image" class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
 
 
