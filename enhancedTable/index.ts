@@ -131,6 +131,7 @@ export default class TableBuilder {
     }
 
     createTable(attrBundle: AttrBundle) {
+        const self = this;
         let cols: Array<any> = [];
         const layerProxy = attrBundle.layer._layerProxy;
 
@@ -171,7 +172,10 @@ export default class TableBuilder {
                         floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
                         floatingFilterComponent: undefined,
                         cellRenderer: function (cell) {
-                            return cell.value;
+                            const translated = $(`<span>{{ 'plugins.enhancedTable.table.complexValue' | translate }}</span>`);
+                            self.mapApi.$compile(translated);
+
+                            return cell.value ? (typeof cell.value === 'object' ? translated[0] : cell.value) : '';
                         },
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
@@ -401,7 +405,8 @@ TableBuilder.prototype.translations = {
                 clear: 'Clear filters',
                 apply: 'Apply filters to map'
             },
-            hideColumns: 'Hide columns'
+            hideColumns: 'Hide columns',
+            complexValue: 'Complex Value'
         },
         menu: {
             split: 'Split View',
@@ -436,7 +441,8 @@ TableBuilder.prototype.translations = {
                 clear: 'Effacer les filtres',
                 apply: 'Appliquer des filtres à la carte' // TODO: Add official French translation
             },
-            hideColumns: 'Masquer les colonnes' // TODO: Add Official French translation
+            hideColumns: 'Masquer les colonnes', // TODO: Add Official French translation
+            complexValue: 'Valeur Complexes'
         },
         menu: {
             split: 'Diviser la vue',
