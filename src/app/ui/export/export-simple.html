@@ -1,0 +1,67 @@
+<md-dialog class="rv-export" ng-class="{ 'rv-error': self.isError, 'rv-generate-error': self.isGenerateError }">
+    <form name="exportForm">
+        <md-dialog-content>
+            <div class="md-dialog-content rv-export-plugin">
+                <rv-failure-image ng-if="self.isGenerateError" message="self.errorMessage"></rv-failure-image>
+
+                <md-content>
+                    <div ng-if="self.isTainted">
+                        <rv-svg class="rv-export-graphic" once="false" src="self.taintedGraphic"></rv-svg>
+                    </div>
+
+                    <!-- assume the first graphic is the base layer; it should not be positioned absolutely -->
+                    <div
+                        class="rv-base-graphic"
+                        ng-hide="self.isTainted"
+                        ng-if="!self.isGenerateError && component"
+                        ng-repeat="component in self.exportPlugin.components.slice(0, 1)"
+                    >
+                        <rv-svg class="rv-export-graphic" once="false" src="component.graphic"></rv-svg>
+                    </div>
+
+                    <!-- all other graphics should be positioned absolutely relative to the base graphic -->
+                    <div
+                        class="rv-graphic"
+                        ng-hide="self.isTainted"
+                        ng-if="!self.isGenerateError && component"
+                        ng-repeat="component in self.exportPlugin.components.slice(1) track by $index"
+                        ng-class="{ 'rv-blur': self.exportPlugin.isGenerating }"
+                        ng-style="self.exportPlugin.visualDimensions(component)"
+                    >
+                        <rv-svg class="rv-export-graphic" once="false" src="component.graphic"></rv-svg>
+                    </div>
+                </md-content>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-progress-linear
+                class="rv-progress-bottom"
+                ng-hide="!self.exportPlugin.isGenerating || self.isError || self.isGenerateError"
+                md-mode="indeterminate"
+            ></md-progress-linear>
+
+            <span flex></span>
+
+            <md-button class="rv-button-square" ng-click="self.close()" rv-close-button>
+                {{ 'export.close' | translate }}
+            </md-button>
+
+            <!-- div needed to shop tooltip when button is disabled, see
+            https://github.com/angular/material/issues/1667#issuecomment-224651024
+            -->
+            <div>
+                <md-button
+                    class="rv-button-square md-raised md-primary"
+                    ng-click="self.saveImage()"
+                    ng-disabled="self.isDownloadBlocked()"
+                >
+                    {{ 'export.download' | translate }}
+                </md-button>
+                <md-tooltip ng-if="self.exportSizes.isCustomOptionSelected() && self.isDownloadBlocked()">{{
+                    'export.custom.note2' | translate
+                }}</md-tooltip>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
