@@ -1,5 +1,6 @@
 const FileSaver = require('file-saver');
-const templateUrl = require('./export.html');
+const fancyTemplate = require('./export.html');
+const simpleTemplate = require('./export-simple.html');
 
 const EXPORT_IMAGE_GUTTER = 20; // padding around the export image
 const EXPORT_CLASS = '.rv-export';
@@ -18,7 +19,7 @@ const EXPORT_CLASS = '.rv-export';
  */
 angular.module('app.ui').service('exportService', exportService);
 
-function exportService($mdDialog, $mdToast, referenceService, configService, events) {
+function exportService($rootScope, $mdDialog, $mdToast, referenceService, configService, events, appInfo) {
     const service = {
         open,
         close
@@ -44,6 +45,8 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
      */
     function open(event, fileType = 'png') {
         const shellNode = referenceService.panels.shell;
+
+        const templateUrl = appInfo.features.export ? simpleTemplate : fancyTemplate;
 
         $mdDialog.show({
             locals: {
@@ -98,6 +101,30 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
         self.exportSizes = exportSizesService.update();
         self.lastUsedSizeOption = self.exportSizes.selectedOption;
 
+        // stores export graphics returned by the export plugin
+        self.exportPlugin = {
+            components: [], // { graphic: <canvas>, offset: [<left>, <top>] }[]
+            isGenerating: true,
+            /**
+             * Sizes and positions graphics returned by the plugin relative to the base graphic. Since the export dialogue scales down all
+             *  the export graphics shown, dimensions need to be adjusted so proportions and distances match.
+             */
+            visualDimensions: (component = null) => {
+                const base = self.exportPlugin.components[0];
+
+                if (!base || !component) {
+                    return [0, 0];
+                }
+
+                return {
+                    left: `${(component.offset[0] / base.graphic.width) * 100}%`,
+                    top: `${(component.offset[1] / base.graphic.height) * 100}%`,
+                    width: `${(component.graphic.width / base.graphic.width) * 100}%`,
+                    height: `${(component.graphic.height / base.graphic.height) * 100}%`
+                };
+            }
+        };
+
         // functions
         self.saveImage = saveImage;
         self.close = service.close;
@@ -111,6 +138,20 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
 
         // updating export components will initialize them if this is called for the first time;
         exportComponentsService.init().then(() => {
+            // if an export plugin is present, use it to generate export graphics
+            if (appInfo.features.export) {
+                console.log(appInfo.features.export);
+
+                // an export plugin should return a collection of promises each resolving with with a graphic and its offset
+                // { graphic: <canvas>, offset: [<left>, <top>] }[]
+                // the first graphic is considered to be the base graphic and its offset should be [0,0]
+                // all other graphics will be offset relative to the base graphic
+                // when all promises have resolved, export is considered to be generated
+                // if any of the promises fail, the export is considered to have failed and a standard error message will be displayed
+
+                return;
+            }
+
             updateComponents();
 
             // title component is special since the user can modify its value; we expose it to bind the value to the input field
@@ -159,6 +200,11 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          * @return {Boolean} true if any of the components is actively generating export graphics
          */
         function isGenerating() {
+            // if an export plugin is present, wait until all components have resolved
+            if (appInfo.features.export) {
+                return self.exportPlugin.isGenerating;
+            }
+
             if (!self.exportComponents) {
                 return true;
             }
@@ -245,52 +291,68 @@ function exportService($mdDialog, $mdToast, referenceService, configService, eve
          */
         // eslint-disable-next-line max-statements
         function saveImage() {
-            // get generated graphics from the export components
-            const exportGraphics = self.exportComponents.items
-                .filter(component => component.isSelected && component.graphic.height > 0)
-                .map(component => component.graphic)
-                .filter(g => g);
+            let fileName = `${appInfo.id}`;
+            let canvas = null;
+            let exportGraphics = [];
+            let graphicOffsets = [];
 
-            // extract graphic heights
-            const graphicHeights = exportGraphics.map(graphic => graphic.height);
+            // if an export plugin present ...
+            if (appInfo.features.export) {
+                // use plugin-generated graphics and offsets
+                const components = self.exportPlugin.components;
 
-            // find the total height of the legend image including the gutters between component graphics
-            const totalHeight = graphicHeights.reduce(
-                (runningHeight, currentHeight) => runningHeight + currentHeight + EXPORT_IMAGE_GUTTER,
-                EXPORT_IMAGE_GUTTER
-            );
+                // create a new canvas because we don't want to override the one created by the plugin
+                // do not colour in though - plugin might want to have some transparent sections in the image
+                canvas = graphicsService.createCanvas(components[0].graphic.width, components[0].graphic.height);
 
-            // figure out offsets for individual graphics assuming they are arranged vertically one after another
-            let runningHeight = EXPORT_IMAGE_GUTTER;
-            const graphicOffsets = graphicHeights.map(h => {
-                runningHeight += h + EXPORT_IMAGE_GUTTER;
-                return [EXPORT_IMAGE_GUTTER, runningHeight];
-            });
+                exportGraphics = components.map(c => c.graphic);
+                graphicOffsets = components.map(c => c.offset);
+            } else {
+                // if not, get generated graphics from the export components
+                exportGraphics = self.exportComponents.items
+                    .filter(component => component.isSelected && component.graphic.height > 0)
+                    .map(component => component.graphic)
+                    .filter(g => g);
 
-            // add initial offset
-            graphicOffsets.unshift([EXPORT_IMAGE_GUTTER, EXPORT_IMAGE_GUTTER]);
+                // extract graphic heights
+                const graphicHeights = exportGraphics.map(graphic => graphic.height);
 
-            // create the final canvas of the end size
-            const canvas = graphicsService.createCanvas(
-                self.exportSizes.selectedOption.width + EXPORT_IMAGE_GUTTER * 2,
-                totalHeight,
-                '#fff'
-            );
+                // find the total height of the legend image including the gutters between component graphics
+                const totalHeight = graphicHeights.reduce(
+                    (runningHeight, currentHeight) => runningHeight + currentHeight + EXPORT_IMAGE_GUTTER,
+                    EXPORT_IMAGE_GUTTER
+                );
+
+                // figure out offsets for individual graphics assuming they are arranged vertically one after another
+                let runningHeight = EXPORT_IMAGE_GUTTER;
+                graphicOffsets = graphicHeights.map(h => {
+                    runningHeight += h + EXPORT_IMAGE_GUTTER;
+                    return [EXPORT_IMAGE_GUTTER, runningHeight];
+                });
+
+                // add initial offset
+                graphicOffsets.unshift([EXPORT_IMAGE_GUTTER, EXPORT_IMAGE_GUTTER]);
+
+                // create the final canvas of the end size
+                canvas = graphicsService.createCanvas(
+                    self.exportSizes.selectedOption.width + EXPORT_IMAGE_GUTTER * 2,
+                    totalHeight,
+                    '#fff'
+                );
+
+                // file name is either the `app id + title` provided by the user or `app id + timestamp`
+                if (self.titleComponent && self.titleComponent.value !== '') {
+                    fileName += ` - ${self.titleComponent.value}`;
+                } else {
+                    const timestampComponent = self.exportComponents.get('timestamp');
+                    if (timestampComponent) {
+                        fileName += ` - ${timestampComponent.value}`;
+                    }
+                }
+            }
 
             // SMASH!!!
             graphicsService.mergeCanvases([canvas, ...exportGraphics], graphicOffsets);
-
-            let fileName = `${appInfo.id}`;
-
-            // file name is either the `app id + title` provided by the user or `app id + timestamp`
-            if (self.titleComponent && self.titleComponent.value !== '') {
-                fileName += ` - ${self.titleComponent.value}`;
-            } else {
-                const timestampComponent = self.exportComponents.get('timestamp');
-                if (timestampComponent) {
-                    fileName += ` - ${timestampComponent.value}`;
-                }
-            }
 
             // safari can't save image directly
             if (RV.isSafari) {

@@ -28,6 +28,7 @@ function exportGenerators(
     $translate,
     configService,
     graphicsService,
+    exportSizesService,
     exportLegendService,
     geoService,
     mapToolService,
@@ -70,14 +71,15 @@ function exportGenerators(
     /**
      * Generates the title of the export image.
      * @function titleGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function titleGenerator(exportSize, showToast, value) {
+    function titleGenerator(showToast, value) {
+        const exportSize = exportSizesService.selectedOption;
+
         // return empty graphic 0x0 if title text is not specified
         if (!angular.isString(value) || value === '') {
             return { graphic: graphicsService.createCanvas(0, 0) };
@@ -108,14 +110,15 @@ function exportGenerators(
      * Generates an empty canvas with the currently selected size. This is needed to prevent the export dialog from collapsing until the map images can be generated.
      *
      * @function mapDummyGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapDummyGenerator(exportSize) {
+    function mapDummyGenerator() {
+        const exportSize = exportSizesService.selectedOption;
+
         const dummyGraphic = graphicsService.createCanvas();
         dummyGraphic.width = exportSize.width;
         dummyGraphic.height = exportSize.height;
@@ -127,14 +130,14 @@ function exportGenerators(
      * Generates an image of the svg-based layers.
      *
      * @function mapSVGGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapSVGGenerator(exportSize) {
+    function mapSVGGenerator() {
+        const exportSize = exportSizesService.selectedOption;
         const svgGeneratorPromise = geoService.map.printLocal(exportSize);
 
         return wrapOutput(svgGeneratorPromise);
@@ -144,7 +147,6 @@ function exportGenerators(
      * Generates an image of the image-based layers.
      *
      * @function mapImageGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @param {Number} timeout [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
@@ -152,7 +154,9 @@ function exportGenerators(
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapImageGenerator(exportSize, showToast, value, timeout = 0) {
+    function mapImageGenerator(showToast, value, timeout = 0) {
+        const exportSize = exportSizesService.selectedOption;
+
         const {
             map: { instance: mapInstance },
             services: {
@@ -366,23 +370,26 @@ function exportGenerators(
      * Generates the legend graphic.
      *
      * @function legendGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function legendGenerator(exportSize, showToast) {
+    function legendGenerator(showToast, value = {}) {
+        const exportSize = exportSizesService.selectedOption;
+
         // update `exportLegendService.generate` function to take ExportSize object as the first parameter
         let columnWidth;
-        if (configService.getSync.services.export && configService.getSync.services.export.legend) {
+        if (value.columnWidth) {
+            columnWidth = value.columnWidth;
+        } else if (configService.getSync.services.export && configService.getSync.services.export.legend) {
             columnWidth = configService.getSync.services.export.legend.columnWidth;
         }
 
         const legendPromise = exportLegendService.generate(
-            exportSize.height,
-            exportSize.width,
+            value.height || exportSize.height,
+            value.width || exportSize.width,
             columnWidth || 350,
             showToast
         );
@@ -394,14 +401,15 @@ function exportGenerators(
      * Generates scalebar graphic
      *
      * @function scalebarGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function scalebarGenerator(exportSize) {
+    function scalebarGenerator() {
+        const exportSize = exportSizesService.selectedOption;
+
         // create an svg node to draw a timestamp on
         const containerSvg = graphicsService.createSvg();
         const scalebarGroup = containerSvg.group();
@@ -476,14 +484,13 @@ function exportGenerators(
      * Generates north arrow graphic.
      *
      * @function northarrowGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function northarrowGenerator(exportSize) {
+    function northarrowGenerator() {
         // TODO: move this into assets
         // jscs:disable maximumLineLength
         const arrowSCG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.06 96.62"><g transform="translate(-1.438 30.744)"><g fill="none" stroke="#000"><path d="m61 35c0 16.02-12.984 29-29 29-16.02 0-29-12.984-29-29 0-16.02 12.984-29 29-29 16.02 0 29 12.984 29 29z" stroke-width="3"/><path d="m55 35c0 12.979-10.521 23.5-23.5 23.5-12.979 0-23.5-10.521-23.5-23.5 0-12.979 10.521-23.5 23.5-23.5 12.979 0 23.5 10.521 23.5 23.5z" transform="matrix(1.01148 0 0 .99988-.089.004)" stroke-width=".497"/><path d="m32 35v-32" stroke-width=".25"/></g><path d="m32-9.453l28.938 73.826-29-29-29 29z" fill="#fff" stroke="#fff" stroke-width="3"/><path d="m32-9.453l29 73.45-29-29-29 29z" fill="none" stroke="#000" stroke-linecap="square"/><text x="22.71" y="-10.854" font-family="OPEN SANS" word-spacing="0" line-height="125%" letter-spacing="0" font-size="40"><tspan x="22.71" y="-10.854" font-family="Adobe Heiti Std R" font-size="26">N</tspan></text></g><g transform="translate(0-3.829)" fill="none" stroke="#000" stroke-width=".25"><path d="m4 92.82l6.74-3.891"/><path d="m4.603 90.7l10.397-6"/><path d="m3 95.17l4-2.309"/><path d="m5.442 88.45l13.856-8"/><path d="m12 72.26l18.686-10.812"/><path d="m14.593 65.45l16.09-9.291"/><path d="m15.343 63.24l15.343-8.858"/><path d="m16.877 60.58l13.809-7.972"/><path d="m17.511 58.45l13.174-7.606"/><path d="m18.412 56.15l12.274-7.087"/><path d="m19 54.04l11.427-6.597"/><path d="m20 51.757l10.822-6.311"/><path d="m20.826 49.45l9.86-5.693"/><path d="m21.48 47.3l9.206-5.315"/><path d="m23 44.647l7.686-4.437"/><path d="m23.744 42.45l6.928-4"/><path d="m24.549 40.21l6.137-3.543"/><path d="m25 38.18l5.686-3.283"/><path d="m26.663 35.446l4.02-2.323"/><path d="m27.617 33.12l3.069-1.772"/><path d="m28 31.13l2.686-1.551"/><path d="m29.15 28.694l1.534-.886"/><path d="m13 69.909l17.686-10.211"/><path d="m9.206 79.19l21.48-12.402"/><path d="m8.36 81.45l22.326-12.89"/><path d="m7.671 83.62l19.946-11.516"/><path d="m6.137 86.27l17.02-9.827"/><path d="m10 76.956l20.686-11.943"/><path d="m11.279 74.45l19.407-11.205"/><path d="m14 67.56l16.686-9.634"/><path d="m30.562 65.744v-43.566" transform="translate(0 3.829)"/></g></svg>`;
@@ -527,14 +534,15 @@ function exportGenerators(
      * Generates footer note graphic.
      *
      * @function footnoteGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function footnoteGenerator(exportSize, showToast, value) {
+    function footnoteGenerator(showToast, value) {
+        const exportSize = exportSizesService.selectedOption;
+
         // return empty graphic 0x0 if footnote text is not specified
         if (!angular.isString(value) || value === '') {
             return { graphic: graphicsService.createCanvas(0, 0) };
@@ -563,14 +571,15 @@ function exportGenerators(
      * Generates the timestamp graphic
      *
      * @function timestampGenerator
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {Object} value any value stored in the ExportComponent related to this generator
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function timestampGenerator(exportSize) {
+    function timestampGenerator() {
+        const exportSize = exportSizesService.selectedOption;
+
         const timestampString = $filter('date')(new Date(), 'yyyy-MM-dd, h:mm a');
 
         const containerWidth = exportSize.width;
@@ -605,12 +614,11 @@ function exportGenerators(
     /**
      * Generates an image of the supplied HTML string.
      *
-     * @param {ExportSize} exportSize the currently selected map size
      * @param {Function} showToast a function display a toast notification for the user
      * @param {*} value HTML string
      * @returns
      */
-    function customMarkupGenerator(exportSize, showToast, value) {
+    function customMarkupGenerator(showToast, value) {
         // NOTE: example
         // so far, the plugin calling this generator is responsible for setting the size of the container supplied with value
         // if this generator is used internally, we might want to set the maximum width equal to `exportSize.width` on the container so it doesn't overflow the export image

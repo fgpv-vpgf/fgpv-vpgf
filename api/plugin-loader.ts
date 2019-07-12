@@ -63,9 +63,11 @@ export default class Loader {
                 // save the plugin name which is lost once we initialize it.
                 plugin._name = p;
 
-                if (plugin.feature && loadFeatures[plugin.feature]) {
-                    delete loadFeatures[plugin.feature];
+                if (plugin.feature) {
                     this.features[plugin.feature] = plugin;
+                    if (loadFeatures[plugin.feature]) {
+                        delete loadFeatures[plugin.feature];
+                    }
                 } else {
                     this.plugins.push(plugin);
                 }
