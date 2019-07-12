@@ -21,7 +21,7 @@
     "csvtojson": "1.1.11",
     "dotjem-angular-tree": "github:dotJEM/angular-tree",
     "file-saver": "2.0.0",
-    "geoApi": "github:fgpv-vpgf/geoApi#v3.1.0-3",
+    "geoApi": "github:fgpv-vpgf/geoApi#v3.1.0-4",
     "html2canvas": "^1.0.0-rc.3",
     "imports-loader": "0.8.0",
     "linkifyjs": "2.1.7",
