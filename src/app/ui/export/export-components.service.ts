@@ -75,11 +75,11 @@ function exportComponentsService(
         timestamp: {
             generators: [exportGenerators.timestampGenerator],
             isVisible: false
-        }
+        },
         // NOTE: example of adding the new component/generator
-        /* text: {
+        text: {
             generators: [exportGenerators.customMarkupGenerator]
-        } */
+        }
     };
 
     // indicates the order of the components, top to bottom
@@ -92,6 +92,9 @@ function exportComponentsService(
         update,
         get
     };
+
+    // HACK: export generators directly
+    (<any>window).exportService = initialExportConfig;
 
     return service;
 
