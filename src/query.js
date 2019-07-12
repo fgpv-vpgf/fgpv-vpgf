@@ -4,7 +4,6 @@
 
 const sqlParser = require('js-sql-parser');
 
-
 /**
  * Helper function to modify input geometries for queries. Will attempt to avoid various pitfalls,
  * usually around projections
@@ -328,10 +327,24 @@ class AqlLike extends AqlDiatomic {
         // TODO basic wildcard search for now. may need to handle escaping special characters
         //      can steal codes from https://stackoverflow.com/questions/1314045/emulating-sql-like-in-javascript
 
-        // convert % to *, and make pattern respect start and end of the string
-        pattern = `^${pattern.replace(/%/g, '.*')}$`;
+        // (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯
+        // special characters to be checked (different cases for pattern, exclude % and *)
+        const valEscRegex = /[(!"#$%&\'*+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+        const patternEscRegex = /[(!"#$\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
 
-        const result = RegExp(pattern).test(attVal);
+        // escape all special characters to be able to test properly with pattern
+        const newAttVal = attVal.replace(valEscRegex, '\\$&');
+        pattern = pattern.replace(patternEscRegex, '\\\\\\$&');
+
+        // TODO: likely for fgpv-vpgf/fgpv-vpgf#3647 - find a way to handle % and * characters from the plugins repo
+        // (since % gets added to SQL clause between spaces if lazyFilter is true and need a way to distinguish between those and user-searched % characters)
+        // pattern = pattern.slice(-1) === "%" ? pattern.substr(0, pattern.length - 1) + '.*' : pattern;
+        // pattern = `^${pattern.replace(/%/g, '\\\\\\$&')}$`.replace(/_/g, '.');
+
+        // convert % to *, and make pattern respect start and end of the string, also convert _ to match single character
+        pattern = `^${pattern.replace(/%/g, '.*')}$`.replace(/_/g, '.');
+
+        const result = RegExp(pattern).test(newAttVal);
         return this.hasNot ? !result : result;
     }
 }
@@ -561,7 +574,6 @@ function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false)
 
     // convert the sql where clause to an attribute query language tree, then
     // use that to evaluate against each attribute.
-
     const aql = sqlToAql(sqlWhere);
 
     // split in two to avoid doing boolean check at every iteration
@@ -580,8 +592,8 @@ function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false)
  * Given an SQL WHERE condition, will search an array of Graphics adjust their visibility
  * based on if they satisfy the WHERE condition.
  *
- * @function sqlAttributeFilter
- * @param {Array} graphics          array of Graphics. 
+ * @function sqlGraphicsVisibility
+ * @param {Array} graphics          array of Graphics.
  * @param {String} sqlWhere         a SQL WHERE clause (without the word `WHERE`) that has field names matching the attribute property names.
  * @returns {Array} array of attributes of visible features.
  */
