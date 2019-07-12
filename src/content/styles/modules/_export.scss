@@ -149,8 +149,8 @@
         .rv-export-custom-size,
         .rv-export-settings {
             position: relative;
-            top: - rem(2.4);
-            left: - rem(2.4);
+            top: -rem(2.4);
+            left: -rem(2.4);
             width: calc(100% + #{rem(2.4)} * 2);
 
             padding: rem(2.4) rem(3.2);
@@ -193,6 +193,17 @@
 
         .rv-export-section {
             // transition: filter $swift-ease-in-duration * 2 $swift-ease-in-out-timing-function;
+        }
+
+        .rv-export-plugin {
+            .rv-base-graphic {
+                position: relative;
+            }
+            .rv-graphic {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
         }
 
         rv-svg {

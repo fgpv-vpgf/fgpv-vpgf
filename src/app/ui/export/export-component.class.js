@@ -130,8 +130,9 @@ function ExportComponentFactory($q, graphicsService) {
                 return $q.all(
                     this._config.generators.map((generator, generatorIndex) =>
                         // run each one in parallel
+                        // generators no longer accept export size parameter; they get it directly from the export size service
                         $q
-                            .resolve(generator(exportSize, showToast, this._config.value, timeout))
+                            .resolve(generator(showToast, this._config.value, timeout))
                             .then(({ graphic, value = null }) => {
                                 // get the results; check if generator job is stale
                                 if (this._generateId === generateId) {
