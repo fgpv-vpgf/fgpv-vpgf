@@ -89,6 +89,8 @@
         <% } %>
     <% } %>
 
+    <script src="./plugins/customExport/customExport.js"></script>
+
 </head>
 
 <!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
@@ -206,6 +208,7 @@
         rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
+        rv-plugins="customExport"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
