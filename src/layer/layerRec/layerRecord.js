@@ -38,6 +38,9 @@ class LayerRecord extends root.Root {
     get userLayer () { return this._user; } // indicates if layer was added by a user
     set userLayer (value) { this._user = value; }
 
+    // indicates if the layer has successfully executed a load and refresh event, meaning it made it to the map
+    get initLoadDone () { return this._sawLoad && this._sawRefresh; }
+
     // really this is the client layer type. how it is implemented in the map stack.
     // layerType is implemented by the classes that inherit LayerRecord. So if someone forgets
     // they will get a lovely null here to remind them.
@@ -125,6 +128,11 @@ class LayerRecord extends root.Root {
     _stateChange (newState) {
         // console.log(`State change for ${this.layerId} to ${newState}`);
         this._state = newState;
+        if (newState === shared.states.LOADED) {
+            this._sawLoad = true;
+        } else if (newState === shared.states.REFRESH) {
+            this._sawRefresh = true;
+        }
         this._stateEvent.fireEvent(this._state);
     }
 
@@ -628,6 +636,8 @@ class LayerRecord extends root.Root {
         this._user = false;
         this._epsgLookup = epsgLookup;
         this.extent = config.extent; // if missing, will fill more values after layer loads
+        this._sawLoad = false;
+        this._sawRefresh = false;
 
         // TODO verify we still use passthrough bindings.
         this._layerPassthroughBindings.forEach(bindingName =>
@@ -640,11 +650,7 @@ class LayerRecord extends root.Root {
             Object.defineProperty(this, propName, descriptor);
         });
 
-        if (config.wfsConfig) {
-            // funny case where we have to kind of pause everything
-            // need this in layerRecord as it's constructor is executed before featureRecord's constructor
-            this._state = shared.states.LOADING;
-        } else if (esriLayer) {
+        if (esriLayer) {
             this.constructLayer = () => { throw new Error('Cannot construct pre-made layers'); };
             this._layer = esriLayer;
             this.bindEvents(this._layer);
@@ -658,8 +664,9 @@ class LayerRecord extends root.Root {
             }
 
             if (!esriLayer.url) {
-                // file layer. force snapshot, force an onload
+                // file layer. force snapshot, force an onload, flag the refresh (as files dont refresh)
                 this._snapshot = true;
+                this._sawRefresh = true;
                 this.onLoad();
             }
 
