@@ -11,6 +11,11 @@ import 'svg.textflow.js';
 angular.module('app.core').factory('graphicsService', graphicsService);
 
 function graphicsService($q) {
+    window.RAMP.utils = {
+        createCanvas,
+        mergeCanvases
+    };
+
     const service = {
         svgToCanvas,
         createSvg,

@@ -969,7 +969,7 @@ export interface FeatureLayerNode {
       [k: string]: any;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
      */
     lazyFilter?: boolean;
     /**
@@ -1154,7 +1154,7 @@ export interface FileLayerNode {
       [k: string]: any;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
      */
     lazyFilter?: boolean;
     /**
@@ -1265,7 +1265,7 @@ export interface WfsLayerNode {
       [k: string]: any;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
      */
     lazyFilter?: boolean;
     /**
@@ -1535,7 +1535,7 @@ export interface DynamicLayerEntryNode {
       [k: string]: any;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text feilds
+     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
      */
     lazyFilter?: boolean;
     /**

@@ -371,7 +371,7 @@ function exportGenerators(
      *
      * @function legendGenerator
      * @param {Function} showToast a function display a toast notification for the user
-     * @param {Object} value any value stored in the ExportComponent related to this generator
+     * @param {Object} value optional parameter of configuration settings for legend generator including which layers to include (API layers provided), the number of columns and the width
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
@@ -391,6 +391,8 @@ function exportGenerators(
             value.height || exportSize.height,
             value.width || exportSize.width,
             columnWidth || 350,
+            value.numColumns,
+            value.layersToInclude,
             showToast
         );
 

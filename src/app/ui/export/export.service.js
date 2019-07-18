@@ -19,7 +19,7 @@ const EXPORT_CLASS = '.rv-export';
  */
 angular.module('app.ui').service('exportService', exportService);
 
-function exportService($rootScope, $mdDialog, $mdToast, referenceService, configService, events, appInfo) {
+function exportService($rootScope, $mdDialog, $mdToast, $translate, referenceService, configService, events, appInfo, exportGenerators) {
     const service = {
         open,
         close
@@ -32,7 +32,30 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
                 throw new Error(`Invalid or unsupported file type ${fileType}.`);
             service.open(null, fileType);
         };
+
+        const legendConfig = configService.getSync.services.export.legend.value;
+        const mapConfig = configService.getSync.services.export.map.value;
+
+        // TODO: add proper documentaton for these functions
+        // the legend generator takes an object currently supporting: width, height, numColumns, and layersToInclude (which is an array of API layers to be included in the export legend)
+        configService.getSync.map.instance.exportGenerators  = {
+            title: value => [exportGenerators.titleGenerator(showToast, value)],
+            map: () => [
+                exportGenerators.mapDummyGenerator(),
+                exportGenerators.mapSVGGenerator(),
+                exportGenerators.mapImageGenerator(showToast, mapConfig)
+            ],
+            legend: configurationSettings => [exportGenerators.legendGenerator(showToast, Object.assign({}, legendConfig, configurationSettings))],
+            northArrow: () => [exportGenerators.northarrowGenerator()],
+            scaleBar: () => [exportGenerators.scalebarGenerator()],
+            timestamp: () => [exportGenerators.timestampGenerator()],
+            footNote: value => [exportGenerators.footnoteGenerator(showToast, value)],
+            text: value => [exportGenerators.customMarkupGenerator(showToast, value)]
+        };
     });
+
+    let mApi = null;
+    events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
 
     return service;
 
@@ -76,11 +99,28 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
         $mdDialog.hide();
     }
 
+    /**
+     * Show a notification toast.
+     * I think I'm being clever with default values here.
+     * @function showToast
+     * @private
+     * @param {String} textContent translation key of the string to display in the toast
+     * @param {Object} [optional] action word to be displayed on the toast; toast delay before hiding
+     * @return {Promise} promise resolves when the user clicks the toast button or the timer runs out
+     */
+    function showToast(textContent, { action = 'close', hideDelay = 0 } = {}) {
+        const options = {
+            parent: self.scope.element || self.shellNode,
+            position: 'bottom rv-flex-global',
+            textContent: $translate.instant(`export.${textContent}`),
+            action: action !== '' ? $translate.instant(`export.${action}`) : action,
+            hideDelay
+        };
+
+        return $mdToast.show($mdToast.simple(options));
+    }
+
     function ExportController(
-        $translate,
-        $mdToast,
-        $q,
-        $filter,
         appInfo,
         exportSizesService,
         exportComponentsService,
@@ -137,6 +177,7 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
         self.exportComponents = exportComponentsService;
 
         // updating export components will initialize them if this is called for the first time;
+        // eslint-disable-next-line max-statements
         exportComponentsService.init().then(() => {
             // if an export plugin is present, use it to generate export graphics
             if (appInfo.features.export) {
@@ -148,6 +189,128 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
                 // all other graphics will be offset relative to the base graphic
                 // when all promises have resolved, export is considered to be generated
                 // if any of the promises fail, the export is considered to have failed and a standard error message will be displayed
+
+                // CURRENTLY COMMENTED OUT WIP. Code modified though to use generators exposed on API
+                /*
+                /// PLUGIN CODE STARTS
+                const promises = [];
+
+                // create a base image and colour it white
+                const baseImage = graphicsService.createCanvas(
+                    self.exportSizes.selectedOption.width,
+                    self.exportSizes.selectedOption.height
+                );
+                const baseImageCtx = baseImage.getContext('2d');
+                baseImageCtx.fillStyle = '#ffffff';
+                baseImageCtx.fillRect(0, 0, baseImage.width, baseImage.height);
+
+                // create underlying base canvas
+                promises.push(
+                    Promise.resolve({
+                        graphic: baseImage
+                    })
+                );
+
+                //
+                const mapImageSize = {
+                    width: self.exportSizes.selectedOption.width * 0.8 - 20,
+                    height: self.exportSizes.selectedOption.height - 20
+                };
+
+                const sourceX = (self.exportSizes.selectedOption.width - mapImageSize.width) / 2;
+                const sourceY = (self.exportSizes.selectedOption.height - mapImageSize.height) / 2;
+
+                // svg export graphic needs to be generated first because generating a server-side map image hides svg layers (unless using local printing)
+                // TODO: prevent map generators from accepting export sizes
+                const apiGenerators = mApi.exportGenerators;
+
+                const mapGenerators = apiGenerators.map();
+                const pointsImage = mapGenerators[1]().then()().then(data => {
+                    const canvas = graphicsService.createCanvas(mapImageSize.width, mapImageSize.height);
+
+                    // crop the map image returned by the generator to fit into the layout
+                    // https://www.html5canvastutorials.com/tutorials/html5-canvas-image-crop/
+                    canvas
+                        .getContext('2d')
+                        .drawImage(
+                            data.graphic,
+                            sourceX,
+                            sourceY,
+                            mapImageSize.width,
+                            mapImageSize.height,
+                            0,
+                            0,
+                            mapImageSize.width,
+                            mapImageSize.height
+                        );
+
+                    return { graphic: canvas, offset: [10, 10] };
+                });
+                const mapImage = mapGenerators[2]().then(data => {
+                    const canvas = graphicsService.createCanvas(mapImageSize.width, mapImageSize.height, '#bfe8fe');
+
+                    // crop the map image returned by the generator to fit into the layout
+                    // https://www.html5canvastutorials.com/tutorials/html5-canvas-image-crop/
+                    canvas
+                        .getContext('2d')
+                        .drawImage(
+                            data.graphic,
+                            sourceX,
+                            sourceY,
+                            mapImageSize.width,
+                            mapImageSize.height,
+                            0,
+                            0,
+                            mapImageSize.width,
+                            mapImageSize.height
+                        );
+
+                    return { graphic: canvas, offset: [10, 10] };
+                });
+
+                const northArrowGenerator = apiGenerators.northArrow();
+                const northArrowImage = northArrowGenerator[0]().then(data => ({
+                    graphic: data.graphic,
+                    offset: [40, 20]
+                }));
+
+                const scalebarGenerator = apiGenerators.scalebarGenerator();
+                const scaleBarImage = scalebarGenerator[0]().then(data => ({
+                    graphic: data.graphic,
+                    offset: [mapImageSize.width - 10 - 120, mapImageSize.height - 50 - 10]
+                }));
+
+                const legendGenerator = apiGenerators.legendGenerator({
+                    columnWidth: self.exportSizes.selectedOption.width * 0.2 - 20 - 10,
+                    width: self.exportSizes.selectedOption.width * 0.2 - 20 - 10,
+                    height: mapImageSize.height
+                });
+                const legendImage = legendGenerator[0].then(data => ({
+                    graphic: data.graphic,
+                    offset: [mapImageSize.width + 30, 10]
+                }));
+
+                const titleGenerator = apiGenerators.titleGenerator(`<span style="font-size: 35px; padding: 8px 14px; display: block; text-align: center;"><b>Interesting Fact</b> | Atomic Engineering Lab is out of <i>Cake</i></span>`);
+                const titleImage = titleGenerator[0].then(data => ({
+                    graphic: data.graphic,
+                    offset: [mapImageSize.width - 10 - data.graphic.width, 10 + 20]
+                }));
+
+                promises.push(mapImage, pointsImage, northArrowImage, scaleBarImage, legendImage, titleImage);
+
+                /// PLUGIN CODE ENDS
+
+                // RAMP-side; accepts a list of promises from the plugin
+                promises.map((pr, index) =>
+                    pr.then(component => {
+                        self.exportPlugin.components[index] = { offset: [0, 0], ...component };
+                        $rootScope.$applyAsync();
+                    })
+                );
+
+                // wait for all promises returned by the export plugin are resolved
+                Promise.all(promises).then(() => (self.exportPlugin.isGenerating = false));
+                */
 
                 return;
             }
@@ -246,27 +409,6 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
             }
 
             return self.exportComponents.items.some(item => item.isSelectable);
-        }
-
-        /**
-         * Show a notification toast.
-         * I think I'm being clever with default values here.
-         * @function showToast
-         * @private
-         * @param {String} textContent translation key of the string to display in the toast
-         * @param {Object} [optional] action word to be displayed on the toast; toast delay before hiding
-         * @return {Promise} promise resolves when the user clicks the toast button or the timer runs out
-         */
-        function showToast(textContent, { action = 'close', hideDelay = 0 } = {}) {
-            const options = {
-                parent: self.scope.element || self.shellNode,
-                position: 'bottom rv-flex-global',
-                textContent: $translate.instant(`export.${textContent}`),
-                action: action !== '' ? $translate.instant(`export.${action}`) : action,
-                hideDelay
-            };
-
-            return $mdToast.show($mdToast.simple(options));
         }
 
         /**
