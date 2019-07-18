@@ -11,6 +11,13 @@ import 'svg.textflow.js';
 angular.module('app.core').factory('graphicsService', graphicsService);
 
 function graphicsService($q) {
+    window.RAMP.utils = {
+        svgToCanvas,
+        createCanvas,
+        mergeCanvases,
+        isTainted
+    };
+
     const service = {
         svgToCanvas,
         createSvg,
