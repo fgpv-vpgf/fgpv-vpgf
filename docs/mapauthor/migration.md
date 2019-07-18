@@ -95,7 +95,3 @@ These files are located in the RAMP release bundle in the folder **plugins/enhan
 <p class="tip">
   The enhanced table is autoloaded by RAMP even if you do nothing. This is by design to ease migration issues as we roll out version 3.0.0 on this widely used feature.
 </p>
-
-<p class="danger">
-  Version 3.1.x+ will cease autoloading the enhanced table, so we recommend you follow the steps above now to avoid any issues on subsequent releases.
-</p>
