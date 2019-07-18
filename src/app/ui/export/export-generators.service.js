@@ -26,6 +26,7 @@ function exportGenerators(
     $q,
     $filter,
     $translate,
+    $mdToast,
     configService,
     graphicsService,
     exportSizesService,
@@ -34,6 +35,21 @@ function exportGenerators(
     mapToolService,
     appInfo
 ) {
+
+    // TODO: add proper documentaton for these functions
+    // the legend generator takes an object currently supporting: width, height, numColumns, and layersToInclude (which is an array of API layers to be included in the export legend)
+    const allGenerators = {
+        title: value => titleGenerator(showToast, value),
+        mapSVG: () => mapSVGGenerator(),
+        mapImage: () => mapImageGenerator(showToast, configService.getSync.services.export.map.value),
+        legend: configurationSettings => legendGenerator(showToast, Object.assign({}, configService.getSync.services.export.legend.value, configurationSettings)),
+        northArrow: () => northarrowGenerator(),
+        scaleBar: () => scalebarGenerator(),
+        timestamp: () => timestampGenerator(),
+        footNote: value => footnoteGenerator(showToast, value),
+        text: value => customMarkupGenerator(showToast, value)
+    };
+
     const service = {
         titleGenerator,
 
@@ -50,7 +66,9 @@ function exportGenerators(
 
         footnoteGenerator,
 
-        customMarkupGenerator
+        customMarkupGenerator,
+
+        allGenerators
     };
 
     return service;
@@ -371,7 +389,7 @@ function exportGenerators(
      *
      * @function legendGenerator
      * @param {Function} showToast a function display a toast notification for the user
-     * @param {Object} value any value stored in the ExportComponent related to this generator
+     * @param {Object} value optional parameter of configuration settings for legend generator including which layers to include (API layers provided), the number of columns and the width
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
@@ -391,6 +409,8 @@ function exportGenerators(
             value.height || exportSize.height,
             value.width || exportSize.width,
             columnWidth || 350,
+            value.numColumns,
+            value.layersToInclude,
             showToast
         );
 
@@ -643,5 +663,26 @@ function exportGenerators(
 
         // return resulting canvas as a promise
         return wrapOutput(h2cPromise);
+    }
+
+    /**
+     * Show a notification toast.
+     * I think I'm being clever with default values here.
+     * @function showToast
+     * @private
+     * @param {String} textContent translation key of the string to display in the toast
+     * @param {Object} [optional] action word to be displayed on the toast; toast delay before hiding
+     * @return {Promise} promise resolves when the user clicks the toast button or the timer runs out
+     */
+    function showToast(textContent, { action = 'close', hideDelay = 0 } = {}) {
+        const options = {
+            parent: self.scope.element || self.shellNode,
+            position: 'bottom rv-flex-global',
+            textContent: $translate.instant(`export.${textContent}`),
+            action: action !== '' ? $translate.instant(`export.${action}`) : action,
+            hideDelay
+        };
+
+        return $mdToast.show($mdToast.simple(options));
     }
 }

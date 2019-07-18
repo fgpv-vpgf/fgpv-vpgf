@@ -147,6 +147,11 @@ export class Map {
         this.mapI.export();
     }
 
+    /** Expose export generators to allow export plugins to call them. */
+    get exportGenerators(): Object {
+        return this.mapI.exportGenerators;
+    }
+
     /** Triggers the map help screen. */
     help(): void {
         this.mapI.help();
