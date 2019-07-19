@@ -21,9 +21,9 @@ if [ "$TRAVIS_REPO_SLUG" == "fgpv-vpgf/fgpv-vpgf" ]; then
 
     if [ -n "$TRAVIS_TAG" ]; then
         # tags and branches from the upstream repo go into separate folders
-        DESTDIR="$DESTDIR/tags/$TRAVIS_TAG/"
+        DESTDIR="$DESTDIR/tags/$TRAVIS_TAG"
     else
-        DESTDIR="$DESTDIR/branches/$TRAVIS_BRANCH/"
+        DESTDIR="$DESTDIR/branches/$TRAVIS_BRANCH"
     fi
 
 else
