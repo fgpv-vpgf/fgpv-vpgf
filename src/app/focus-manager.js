@@ -592,15 +592,15 @@ function onFocusin(event) {
 
     viewer.setDialogAction(() =>
         viewer.mdDialog
-        .show({
-            contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-            clickOutsideToClose: false,
-            escapeToClose: false,
-            disableParentScroll: false,
-            parent: viewer.rootElement.find('rv-shell'),
-            focusOnOpen: false
-        })
-        .then(() => viewer.clearTabindex()));
+            .show({
+                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
+                clickOutsideToClose: false,
+                escapeToClose: false,
+                disableParentScroll: false,
+                parent: viewer.rootElement.find('rv-shell'),
+                focusOnOpen: false
+            })
+            .then(() => viewer.clearTabindex()));
 }
 
 /**
@@ -898,9 +898,16 @@ const bodyObserver = new MutationObserver(mutations => {
                  * The solution is to predict if a focusable element exists, and if not to set focus on the overall menu element.
                  */
                 const angularMenu = $(node).first().find('md-menu-content');
+                const firstChild = angularMenu.children[0];
+                const firstFocusableChild = angularMenu.find(focusSelector)[0];
+
                 if (angularMenu.length > 0 && angularMenu.find(focusSelector).length === 0) {
                     angularMenu.attr('tabindex', '-1');
                     angularMenu.rvFocus();
+                } else if (firstChild !== firstFocusableChild) {
+                    // if the first child is not focusable (the case with disable first item(s)) focus
+                    // on the next focusable child in the menu
+                    firstFocusableChild.rvFocus();
                 }
             });
         });
