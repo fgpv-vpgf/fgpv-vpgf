@@ -779,7 +779,7 @@ HTMLElement.prototype.origfocus = HTMLElement.prototype.focus;
  * You may not use this method if the element is not part of a viewer.
  *
  * @function rvFocus
- * @param   {Object}    opts    configuration obect for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
+ * @param   {Object}    opts    configuration object for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
  */
 HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
     const jqueryElem = $(this);
@@ -787,6 +787,9 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
 
     if (!viewerGroup.trapped(jqueryElem) && !opts.exempt) {
         console.warn('focusManager', 'You cannot use *rvFocus* on elements that are outside the viewer');
+        if (elem) {
+            elem.origfocus();
+        }
         return;
     }
 
