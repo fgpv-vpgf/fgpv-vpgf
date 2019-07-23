@@ -2030,6 +2030,11 @@
             }
         },
 
+        "plugins": {
+            "description": "A set of config snippets correponding to the plugins loaded onto the viewer",
+            "type": "object"
+        },
+
         "services": {
             "description": "A set of service endpoints used by the viewer",
             "type": "object",
