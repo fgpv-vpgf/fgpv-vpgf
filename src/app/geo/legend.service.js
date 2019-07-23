@@ -58,7 +58,9 @@ function legendServiceFactory(
                 $rootScope.$applyAsync();
                 return common.$q(resolve => {
                     events.$on(events.rvApiLayerAdded, (_, layers) => {
-                        resolve(layers);
+                        if ((layers.length > 0) && (layers[0].id === layerJSON.id)) {
+                            resolve(layers);
+                        }
                     });
                 });
             } else {
@@ -352,13 +354,13 @@ function legendServiceFactory(
 
                     function _onLayerRecordLoad(state) {
                         // add back entry
-                        if (state === 'rv-loaded' || state === 'rv-error') {
+                        if (state === Geo.Layer.States.LOADED || state === Geo.Layer.States.ERROR) {
                             layerRecord.removeStateListener(_onLayerRecordLoad);
                         }
 
-                        if (state === 'rv-loaded') {
+                        if (state === Geo.Layer.States.LOADED) {
                             resolve(legendBlockParent);
-                        } else if (state === 'rv-error') {
+                        } else if (state === Geo.Layer.States.ERROR) {
                             reject(layerRecord.name);
                         }
                     }
@@ -1134,7 +1136,7 @@ function legendServiceFactory(
                     layerRecord.addStateListener(_onLayerRecordLoad);
 
                     function _onLayerRecordLoad(state) {
-                        if (state !== 'rv-loaded') {
+                        if (state !== Geo.Layer.States.LOADED) {
                             return;
                         }
 

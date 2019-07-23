@@ -392,7 +392,6 @@ function layerRegistryFactory(
 
         const mapBody = mapConfig.instance;
         const layerRecord = ref.loadingQueue.shift();
-        let isRefreshed = false;
 
         // normal situation
         layerRecord.addStateListener(_onLayerRecordInitialLoad);
@@ -402,25 +401,8 @@ function layerRegistryFactory(
         mapBody.addLayer(layerRecord._layer);
         ref.loadingCount++;
 
-        // TODO need better solution for local wms layers that don't "load" when invisible.
-        const localWms = layerRecord.dataSource() === 'wms' && layerRecord.config.suppressGetCapabilities;
-        if (localWms) {
-            layerRecord.onLoad();
-        }
-
-        // HACK: for a file-based layer, call onLoad manually since such layers don't emmit events
-        //       extending the hack to wms layers who are supressing a server handshake.
-        if (
-            layerRecord.state === Geo.Layer.States.LOADED ||
-            (layerRecord.dataSource() !== 'esri' && layerRecord._layer.loaded) ||
-            localWms
-        ) {
-            isRefreshed = true;
-            _onLayerRecordInitialLoad('rv-loaded');
-
-            // turn off the loading indicator for such file-based layers
-            shellService.clearLoadingFlag(layerRecord.config.id, 300);
-        }
+        // do initial state check
+        _onLayerRecordInitialLoad('');
 
         // when a layer takes too long to load, it could be a slow service or a failed service
         // in any case, the queue will advance after THROTTLE_TIMEOUT
@@ -431,17 +413,16 @@ function layerRegistryFactory(
         /**
          * Waits for the layer to load or fail.
          *
-         * // TODO: check if there is a better way to wait for layer to load than to wait for 'refresh' -> 'load' event chain
          * @function _onLayerRecordInitialLoad
          * @private
          * @param {String} state name of the new LayerRecord state
          * @private
          */
         function _onLayerRecordInitialLoad(state) {
-            if (state === 'rv-refresh') {
-                isRefreshed = true;
-            } else if ((isRefreshed && state === 'rv-loaded') || state === 'rv-error') {
+
+           if (layerRecord.initLoadDone || state === Geo.Layer.States.ERROR) {
                 layerRecord.removeStateListener(_onLayerRecordInitialLoad);
+                shellService.clearLoadingFlag(layerRecord.config.id, 300);
 
                 events.$broadcast(events.rvLayerRecordLoaded, layerRecord.config.id);
                 common.$timeout.cancel(throttleTimeoutHandle);
@@ -449,7 +430,13 @@ function layerRegistryFactory(
                 _advanceLoadingQueue();
             }
 
-            if (state === 'rv-loaded') {
+            // we need both checks to handle things like server layers that start as invisible.
+            // they will never refresh until visible, but want to make the API layer when a load
+            // happens. for the weird situations where this gets called twice, the createAPI
+            // function wont make duplicates if called more than once.  However we can consider
+            // an enhancement in this function to prevent it (or alternately, have two functions
+            // reacting to state changes and deregister each when they have hit their condition)
+            if (layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) {
                 _createApiLayer(layerRecord);
             }
         }
@@ -499,19 +486,19 @@ function layerRegistryFactory(
      */
     function _onLayerLifecycleEvents(layerRecord, state) {
         switch (state) {
-            case 'rv-refresh':
+            case Geo.Layer.States.REFRESH:
                 _setLoadingFlagHelper(layerRecord.config);
                 break;
 
-            case 'rv-loaded':
+            case Geo.Layer.States.LOADED:
                 // clear up the error timeout delay if any
                 common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
 
                 shellService.clearLoadingFlag(layerRecord.config.id, 300);
                 break;
 
-            case 'rv-error':
-                console.log('rv-error', layerRecord, state);
+            case Geo.Layer.States.ERROR:
+                console.log(Geo.Layer.States.ERROR, layerRecord, state);
 
                 // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
                 // delay the rendering of the error toast to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed

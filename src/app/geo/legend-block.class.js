@@ -95,7 +95,7 @@ function LegendBlockFactory(
                 .catch(error => {
                     console.error(`Layer proxy failed to resolve for "${this.layerConfig.id}"`, error);
                     // if the proxy fails to resolve (layer data failed to load, etc.), set status to `rv-error`
-                    this._lastState = 'rv-error';
+                    this._lastState = Geo.Layer.States.ERROR;
                 });
         }
 
@@ -138,7 +138,7 @@ function LegendBlockFactory(
         }
 
         _stateTimeout = null;
-        _lastState = 'rv-loading'; // last valid state
+        _lastState = Geo.Layer.States.LOADING; // last valid state
 
         /**
          * A helper function to update state and cancel the state timeout.
@@ -165,9 +165,9 @@ function LegendBlockFactory(
             // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
             // delay the state update to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed
             // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2971
-            if (this._proxy.state !== 'rv-error') {
+            if (this._proxy.state !== Geo.Layer.States.ERROR) {
                 this._updateState();
-            } else if (this._lastState !== 'rv-error' && !this._stateTimeout) {
+            } else if (this._lastState !== Geo.Layer.States.ERROR && !this._stateTimeout) {
                 this._stateTimeout = common.$timeout(() => this._updateState.apply(this), 2500);
             }
 
@@ -739,7 +739,7 @@ function LegendBlockFactory(
             const deregisterWatch = $rootScope.$watch(
                 () => this.proxyWrapper.state,
                 state => {
-                    if (state === 'rv-loaded') {
+                    if (state === Geo.Layer.States.LOADED) {
                         // this is the first chance to properly create bounding box for this legend node
                         // since it's created on demand and cannot be created by geoapi when creating layerRecord
                         // need to read the layer config state here and initialize the bounding box manually when the layer loads
@@ -747,7 +747,7 @@ function LegendBlockFactory(
                         // as a result, legend service reapplies all the state to all legend blocks after layer record is loaded
                         this.boundingBox = this.proxyWrapper.boundingBox;
                         this.proxyWrapper.validateProjection();
-                    } else if (state !== 'rv-error') {
+                    } else if (state !== Geo.Layer.States.ERROR) {
                         return;
                     }
 
@@ -810,7 +810,7 @@ function LegendBlockFactory(
 
         get state() {
             if (!this.proxyWrapper.validProjection) {
-                return 'rv-bad-projection';
+                return Geo.Layer.States.BAD_PROJECTION;
             }
 
             const allStates = this._allProxyWrappers.map(proxyWrapper => proxyWrapper.state);
@@ -821,6 +821,7 @@ function LegendBlockFactory(
 
         get template() {
             const stateToTemplate = {
+                // TODO would be nice if we could leverage Geo.Layer.States constants instead of hardcoding
                 'rv-loading': () => 'placeholder',
                 'rv-loaded': () => super.template,
                 'rv-refresh': () => super.template,
@@ -834,7 +835,7 @@ function LegendBlockFactory(
         get isRefreshing() {
             const state = this.state;
 
-            return state === 'rv-loading' || state === 'rv-refresh';
+            return state === Geo.Layer.States.LOADING || state === Geo.Layer.States.REFRESH;
         }
 
         get sortGroup() {
@@ -1190,7 +1191,7 @@ function LegendBlockFactory(
                 this.visibility &&
                 !this.hidden &&
                 this.opacity !== 0 &&
-                (this.state === 'rv-refresh' || this.state === 'rv-loaded') &&
+                (this.state === Geo.Layer.States.REFRESH || this.state === Geo.Layer.States.LOADED) &&
                 !this.scale.offScale
             );
         }
@@ -1287,7 +1288,7 @@ function LegendBlockFactory(
                 return this._rootProxyWrapper.state;
             }
 
-            return 'rv-loaded';
+            return Geo.Layer.States.LOADED;
         }
 
         get template() {
@@ -1295,6 +1296,7 @@ function LegendBlockFactory(
             const collapsed = this.collapsed;
 
             // only add `reload` control to the available controls when the dynamic layer is loading or already failed
+            // TODO would be nice if we could utilize the constants in Geo.Layer.States instead of hardcoding
             const stateToTemplate = {
                 'rv-loading': () => 'placeholder',
                 'rv-loaded': () => {
@@ -1368,7 +1370,7 @@ function LegendBlockFactory(
         }
 
         get isRefreshing() {
-            return this.state === 'rv-loading';
+            return this.state === Geo.Layer.States.LOADING;
         }
 
         get name() {
@@ -1541,7 +1543,7 @@ function LegendBlockFactory(
             return (
                 !this.hidden &&
                 this.opacity !== 0 &&
-                (this.state === 'rv-refresh' || this.state === 'rv-loaded') &&
+                (this.state === Geo.Layer.States.REFRESH || this.state === Geo.Layer.States.LOADED) &&
                 this.entries.some(entry => entry.isVisibleOnExport)
             );
         }
@@ -1810,7 +1812,8 @@ function LegendBlockFactory(
      * @return {String} the aggregated state of the states supplied
      */
     function aggregateStates(states) {
-        const stateNames = ['rv-error', 'rv-bad-projection', 'rv-loading', 'rv-refresh', 'rv-loaded'];
+        const stateNames = [Geo.Layer.States.ERROR, Geo.Layer.States.BAD_PROJECTION, Geo.Layer.States.LOADING,
+            Geo.Layer.States.REFRESH, Geo.Layer.States.LOADED];
 
         const stateValues = stateNames.map(name => states.indexOf(name) !== -1);
 
