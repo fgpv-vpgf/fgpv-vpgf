@@ -27,6 +27,9 @@ class WmsRecord extends layerRecord.LayerRecord {
         this._defaultFC = '0';
         this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
 
+        if (config.suppressGetCapabilities) {
+            this.onLoad();
+        }
     }
 
     get layerType () { return shared.clientLayerType.OGC_WMS; }

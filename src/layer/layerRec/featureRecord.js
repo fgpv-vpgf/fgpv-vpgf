@@ -438,23 +438,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
         this._layer.setDefinitionExpression(query);
     }
 
-    /**
-     * Hot swaps the core underlying layer of this record.
-     * THIS IS VERY VERY BAD.
-     * Doing this as a workaround to our fundamental WFS loading problem.
-     *
-     * @function updateWfsSource
-     * @param {Object} esriLayer an esri layer. specifically a FeatureLayer that's been pre-created from GeoJSON source
-     */
-    updateWfsSource (esriLayer) {
-        this._layer = esriLayer;
-        this.bindEvents(this._layer);
-        this._snapshot = true; // possibly redundant
-
-        // do the loading activites.  will trigger the loaded event.
-        this.onLoad();
-    }
-
 }
 
 module.exports = () => ({
