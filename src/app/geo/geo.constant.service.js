@@ -32,7 +32,8 @@ const GEO = {
             LOADING: 'rv-loading',
             LOADED: 'rv-loaded', // TODO maybe loaded and default are the same?
             DEFAULT: 'rv-default', // TODO no code is referencing rv-default. remove?
-            ERROR: 'rv-error'
+            ERROR: 'rv-error',
+            BAD_PROJECTION: 'rv-bad-projection'
         }
     },
     Service: {

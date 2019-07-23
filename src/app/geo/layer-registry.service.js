@@ -420,7 +420,7 @@ function layerRegistryFactory(
          */
         function _onLayerRecordInitialLoad(state) {
 
-           if (layerRecord.initLoadDone || state === 'rv-error') {
+           if (layerRecord.initLoadDone || state === Geo.Layer.States.ERROR) {
                 layerRecord.removeStateListener(_onLayerRecordInitialLoad);
                 shellService.clearLoadingFlag(layerRecord.config.id, 300);
 
@@ -430,10 +430,13 @@ function layerRegistryFactory(
                 _advanceLoadingQueue();
             }
 
-            if (layerRecord.initLoadDone) {
-                // TODO this is likely safe as it's always been coded this way,
-                //      but may want to add extra check/counter to avoid calling this twice.
-                //      would only get called again if something else starts using this function
+            // we need both checks to handle things like server layers that start as invisible.
+            // they will never refresh until visible, but want to make the API layer when a load
+            // happens. for the weird situations where this gets called twice, the createAPI
+            // function wont make duplicates if called more than once.  However we can consider
+            // an enhancement in this function to prevent it (or alternately, have two functions
+            // reacting to state changes and deregister each when they have hit their condition)
+            if (layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) {
                 _createApiLayer(layerRecord);
             }
         }
@@ -483,19 +486,19 @@ function layerRegistryFactory(
      */
     function _onLayerLifecycleEvents(layerRecord, state) {
         switch (state) {
-            case 'rv-refresh':
+            case Geo.Layer.States.REFRESH:
                 _setLoadingFlagHelper(layerRecord.config);
                 break;
 
-            case 'rv-loaded':
+            case Geo.Layer.States.LOADED:
                 // clear up the error timeout delay if any
                 common.$timeout.cancel(ref.errorTimeout[layerRecord.config.id]);
 
                 shellService.clearLoadingFlag(layerRecord.config.id, 300);
                 break;
 
-            case 'rv-error':
-                console.log('rv-error', layerRecord, state);
+            case Geo.Layer.States.ERROR:
+                console.log(Geo.Layer.States.ERROR, layerRecord, state);
 
                 // multiple error events are fired by ESRI code when some tiles are missing in a tile layer; this does not mean that the layer is broken, but it does trigger the error toast
                 // delay the rendering of the error toast to allow for a subsequent `rv-loaded` event to clear the delay; if `rv-loaded` is not fired before the delay is over, the layer is considered to have failed

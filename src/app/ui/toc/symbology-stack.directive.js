@@ -183,6 +183,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     } else {
                         // layer not yet loaded, wait until it is then apply stuff
                         const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
+                            // TODO if possible, link in to Geo.Layer.States and use the LOADED constant
                             if (state === 'rv-loaded') {
                                 // only update if currently selected...otherwise causes all sorts of race conditions
                                 // TODO ensure this is race condition no longer exists in new filter structure
