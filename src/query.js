@@ -314,35 +314,44 @@ class AqlIn extends AqlDiatomic {
 
 // handles a like operator
 class AqlLike extends AqlDiatomic {
-    constructor (left, right, hasNot) {
+    constructor (left, right, hasNot, escape) {
         super(left, right);
         this.hasNot = hasNot;
+        this.escapeVal = escape ? escape.value : null;
     }
 
     evaluate (attribute) {
         // we assume .right evaulates to a string
         const attVal = this.left.evaluate(attribute);
         let pattern = this.right.evaluate(attribute);
+        if (this.escapeVal) {
+            // regex checks for some quote to start string, same type of quote to end string, and take the capturing group in between as the real escape value
+            const realEscapeVal = this.escapeVal.match(/^('|"|\\"|\\')(.*)\1$/);
+            this.escapeVal = realEscapeVal ? realEscapeVal[2] : this.escapeVal;
+        }
 
-        // TODO basic wildcard search for now. may need to handle escaping special characters
-        //      can steal codes from https://stackoverflow.com/questions/1314045/emulating-sql-like-in-javascript
-
-        // (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯ (╯°□°)╯
-        // special characters to be checked (different cases for pattern, exclude % and *)
-        const valEscRegex = /[(!"#$%&\'*+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+        // special characters to be checked (╯°□°)╯
+        const valEscRegex = /[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
         const patternEscRegex = /[(!"#$\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+
+        // REGEX FORMAT FOR %: LIKE '%/ௌ%%' ESCAPE 'ௌ', convert ௌ% to a hidden string to avoid being converted to JS regex form (.*)
+        // should work for most other escape characters other than ௌ should it get changed in plugins, some exceptions for SQL meaningful characters
+        if (this.escapeVal) {
+            pattern = pattern.replace(new RegExp(`${this.escapeVal}%`, 'g'), "hiddenpercent");
+            pattern = pattern.replace(new RegExp(`${this.escapeVal}_`, 'g'), "hiddenunderscore");
+        }
+
+        // TODO: may or may not need a different way to handle _ in the future since it is not being used at the moment in where clauses, but this should work
 
         // escape all special characters to be able to test properly with pattern
         const newAttVal = attVal.replace(valEscRegex, '\\$&');
         pattern = pattern.replace(patternEscRegex, '\\\\\\$&');
 
-        // TODO: likely for fgpv-vpgf/fgpv-vpgf#3647 - find a way to handle % and * characters from the plugins repo
-        // (since % gets added to SQL clause between spaces if lazyFilter is true and need a way to distinguish between those and user-searched % characters)
-        // pattern = pattern.slice(-1) === "%" ? pattern.substr(0, pattern.length - 1) + '.*' : pattern;
-        // pattern = `^${pattern.replace(/%/g, '\\\\\\$&')}$`.replace(/_/g, '.');
-
-        // convert % to *, and make pattern respect start and end of the string, also convert _ to match single character
+        // convert % to *, and make pattern respect start and end of the string, also convert _ to match single character (_ not being used at the moment)
         pattern = `^${pattern.replace(/%/g, '.*')}$`.replace(/_/g, '.');
+        // convert any hidden strings back to % and _
+        pattern = pattern.replace(/hiddenpercent/g, "\\\\\\%");
+        pattern = pattern.replace(/hiddenunderscore/g, "_");
 
         const result = RegExp(pattern).test(newAttVal);
         return this.hasNot ? !result : result;
@@ -421,7 +430,7 @@ function sqlNodeToAqlNode (node) {
             return new AqlIn(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot);
         },
         LikePredicate: n => {
-            return new AqlLike(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot);
+            return new AqlLike(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot, n.escape);
         },
         ComparisonBooleanPrimary: n => {
             const operatorMap = {
