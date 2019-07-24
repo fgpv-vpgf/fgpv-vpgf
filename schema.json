@@ -826,6 +826,16 @@
                     "default": false,
                     "description": "Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied."
                 },
+                "showFilter": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if the column filters should be displayed on the table."
+                },
+                "filterByExtent": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened."
+                },
                 "columns": {
                     "type": "array",
                     "items": {
