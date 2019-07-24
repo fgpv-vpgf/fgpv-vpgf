@@ -156,7 +156,10 @@
                 "fieldMetadata": [{
                     "data": "OBJECTID",
                     "alias": "Custom Field Alias - Feature"
-                }]
+                }],
+                "table": {
+                    "filterByExtent": true
+                }
             },
             {
                 "id": "1",
