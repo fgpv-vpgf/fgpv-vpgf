@@ -244,6 +244,9 @@ export default class TableBuilder {
                 }, refreshInterval * 60000);
             }
 
+            // Set menu defaults from config
+            this.tableOptions.floatingFilter = this.panelManager.panelStateManager.showFilter;
+
             this.panelManager.open(this.tableOptions, attrBundle.layer, this);
             this.tableApi = this.tableOptions.api;
         });

@@ -459,7 +459,7 @@ export class PanelManager {
         this.mapApi.agControllerRegister('MenuCtrl', function () {
             this.appID = that.mapApi.id;
             this.maximized = that.maximized ? 'true' : 'false';
-            this.showFilter = !!that.tableOptions.floatingFilter;
+            this.showFilter = that.panelStateManager.colFilter;
             this.filterByExtent = that.panelStateManager.filterByExtent;
             this.printEnabled = that.configManager.printEnabled;
 
@@ -484,6 +484,8 @@ export class PanelManager {
 
             // Hide filters button has been clicked
             this.toggleFilters = function () {
+                that.panelStateManager.colFilter = this.showFilter;
+
                 that.tableOptions.floatingFilter = this.showFilter;
                 that.tableOptions.api.refreshHeader();
             };

@@ -118,6 +118,13 @@ export class ConfigManager {
     }
 
     /**
+     * Returns if the column filters are displayed on the table. If undefined default to true.
+     */
+    get showFilter(): boolean {
+        return (this.tableConfig.showFilter !== undefined) ? this.tableConfig.showFilter : true;
+    }
+
+    /**
      * Returns a list of column data defined in the config, so that the table can be initialized according to them.
      */
     get filteredAttributes(): any[] {

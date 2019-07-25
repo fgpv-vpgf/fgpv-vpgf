@@ -11,7 +11,8 @@ export class PanelStateManager {
     constructor(baseLayer: any, legendBlock: any) {
         this.baseLayer = baseLayer;
         this.isMaximized = baseLayer.table.maximize || false;
-        this.filterByExtent = false;
+        this.showFilter = baseLayer.table.showFilter;
+        this.filterByExtent = baseLayer.table.filterByExtent || false;
         this.columnFilters = {};
         this.open = true;
         this.storedBlock = legendBlock;
@@ -47,6 +48,14 @@ export class PanelStateManager {
         return this.isMaximized;
     }
 
+    get colFilter(): boolean {
+        return this.showFilter;
+    }
+
+    set colFilter(show: boolean) {
+        this.showFilter = show;
+    }
+
     set isOpen(isOpen: boolean) {
         this.open = isOpen;
     }
@@ -63,6 +72,7 @@ export class PanelStateManager {
 export interface PanelStateManager {
     baseLayer: any;
     isMaximized: boolean;
+    showFilter: boolean;
     filterByExtent: boolean;
     rows: any;
     columnFilters: any;
