@@ -491,7 +491,6 @@ export class PanelManager {
             // Sync filterByExtent
             this.filterExtentToggled = function () {
                 that.panelStateManager.filterByExtent = this.filterByExtent;
-
                 // On toggle, filter by extent or remove the extent filter
                 if (that.panelStateManager.filterByExtent) {
                     that.panelRowsManager.filterByExtent(that.mapApi.mapI.extent);
@@ -571,7 +570,7 @@ export class PanelManager {
                 that.hideToolTips();
             };
 
-            // get filter SQL qeury string
+            // get filter SQL query string
             function getFiltersQuery() {
                 const filterModel = that.tableOptions.api.getFilterModel();
                 let colStrs = [];
@@ -598,11 +597,35 @@ export class PanelManager {
                         } else {
                             let val = colFilter.filter.replace(/'/g, /''/);
                             if (val !== '') {
-                                if (that.configManager.lazyFilterEnabled) {
-                                    const filterVal = `*${val}`;
-                                    val = filterVal.split(' ').join('*');
+                                // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
+                                const escRegex = /\\[(!"#$&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+                                // remVal stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
+                                let remVal = val;
+                                let newVal = '';
+                                let escMatch = escRegex.exec(val);
+                                // lastIdx stores the last found index of the start of an escaped special char
+                                let lastIdx = 0;
+                                while (escMatch) {
+                                    // update all variables after finding an escaped special char, preserving all text except the backslash
+                                    newVal = newVal + val.substr(lastIdx, escMatch.index - lastIdx) + escMatch[0].slice(-1);
+                                    lastIdx = escMatch.index + 2;
+                                    remVal =  val.substr(escMatch.index + 2);
+                                    escMatch = escRegex.exec(val);
                                 }
-                                return `UPPER(${col}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`;
+                                newVal = newVal + remVal;
+                                // console.log(`remaining val: ${remVal} new val: ${newVal} old val: ${val}`);
+
+                                // add ௌ before % and/or _ to act as the escape character
+                                // can change to MOST other characters and should still work (ideally want an escape char no one will search for) - just replace all instances of ௌ
+                                newVal = newVal.replace(/%/g, 'ௌ%');
+                                newVal = newVal.replace(/_/g, 'ௌ_');
+                                if (that.configManager.lazyFilterEnabled) {
+                                    const filterVal = `*${newVal}`;
+                                    newVal = filterVal.split(' ').join('*');
+                                }
+                                // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
+                                let sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
+                                return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_') ? `${sqlWhere} ESCAPE \'ௌ\'` : sqlWhere;
                             }
                         }
                     case 'number':

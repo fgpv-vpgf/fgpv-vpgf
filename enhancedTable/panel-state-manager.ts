@@ -23,7 +23,12 @@ export class PanelStateManager {
     }
 
     setColumnFilter(colDefField: string, filterValue: any): void {
-        this.columnFilters[colDefField] = filterValue;
+        let newFilterValue = filterValue;
+        if (filterValue && typeof filterValue === 'string') {
+            const escRegex = /[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+            newFilterValue = filterValue.replace(escRegex, '\\$&');
+        }
+        this.columnFilters[colDefField] = newFilterValue;
     }
 
     get sortModel(): any {
