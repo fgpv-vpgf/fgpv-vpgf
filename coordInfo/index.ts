@@ -5,7 +5,7 @@ class CoordInfo {
         nts: 'https://geogratis.gc.ca/services/delimitation/en/nts?',
         utm: 'https://geogratis.gc.ca/services/delimitation/en/utmzone?',
         alti: 'https://geogratis.gc.ca/services/elevation/cdem/altitude?',
-        decli: 'http://geomag.nrcan.gc.ca/service/tools/magnetic/calculator/?'
+        decli: 'https://geomag.nrcan.gc.ca/service/tools/magnetic/calculator/?'
     };
 
     init(api: any) {
@@ -144,23 +144,20 @@ class CoordInfo {
             })
         );
 
-        // Magnetic declination service is only available in http
-        if (window.location.protocol === 'http:') {
-            promises.push(
-                new Promise(resolve => {
-                    $.ajax({
-                        url: this.urls.decli,
-                        cache: true,
-                        data: { latitude: pt.y, longitude: pt.x, date: date, format: 'json' },
-                        dataType: 'jsonp',
-                        success: data => resolve(this.parseDecli(data, lang)),
-                        error: () => {
-                            resolve(undefined);
-                        }
-                    });
-                })
-            );
-        }
+        promises.push(
+            new Promise(resolve => {
+                $.ajax({
+                    url: this.urls.decli,
+                    cache: true,
+                    data: { latitude: pt.y, longitude: pt.x, date: date, format: 'json' },
+                    dataType: 'jsonp',
+                    success: data => resolve(this.parseDecli(data, lang)),
+                    error: () => {
+                        resolve(undefined);
+                    }
+                });
+            })
+        );
 
         // wait for all promises to resolve then show info
         Promise.all(promises).then(values => {
