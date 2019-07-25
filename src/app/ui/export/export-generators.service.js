@@ -37,7 +37,7 @@ function exportGenerators(
 ) {
 
     // TODO: add proper documentaton for these functions
-    // the legend generator takes an object currently supporting: width, height, numColumns, and layersToInclude (which is an array of API layers to be included in the export legend)
+    // the legend generator takes an object currently supporting: width, height, numColumns, and legendBlocks (which is a copy (and potentially modified version) of the legendBlock structure on the map)
     const allGenerators = {
         title: value => titleGenerator(showToast, value),
         mapSVG: () => mapSVGGenerator(),
@@ -389,7 +389,7 @@ function exportGenerators(
      *
      * @function legendGenerator
      * @param {Function} showToast a function display a toast notification for the user
-     * @param {Object} value optional parameter of configuration settings for legend generator including which layers to include (API layers provided), the number of columns and the width
+     * @param {Object} value optional parameter of configuration settings for legend generator including which layers to include (legendBlock structure provided), the number of columns and the height/width
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
@@ -410,7 +410,7 @@ function exportGenerators(
             value.width || exportSize.width,
             columnWidth || 350,
             value.numColumns,
-            value.layersToInclude,
+            value.legendBlocks,
             showToast
         );
 

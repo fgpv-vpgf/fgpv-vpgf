@@ -244,6 +244,9 @@ function exportService($rootScope, $mdDialog, $mdToast, referenceService, config
                     offset: [mapImageSize.width - 10 - 120, mapImageSize.height - 50 - 10]
                 }));
 
+                // we can pass in a modified copy of the legendBlocks if needed, in order to include/exclude certain layers from legend generation
+                // a copy of the legendBlock structure will be passed to export plugins in order to modify as required
+                // TODO: figure out best way to make copy of legendBlocks object. possibly: $.extend({}, configService.getSync.map.legendBlocks), angular.copy(configService.getSync.map.legendBlocks), ... other
                 const legendImage = apiGenerators.legend({
                     columnWidth: self.exportSizes.selectedOption.width * 0.2 - 20 - 10,
                     width: self.exportSizes.selectedOption.width * 0.2 - 20 - 10,
