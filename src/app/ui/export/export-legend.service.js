@@ -52,19 +52,18 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
      * @param {Number} availableWidth width of the legend graphic, should match width of the exported map image
      * @param {Number} preferredSectionWidth width of the individual legend sections inside the legend graphic
      * @param {Number} numColumns optional parameter of the number of columns the legend should be displayed on. 0 or undefined means default generation process
-     * @param {Array} layersToInclude optional parameter of API layers to include in graphic. Empty array or undefined means all layers included
+     * @param {Object} legendBlocks optional parameter of legendBlocks to include in graphic. null means default legend generation used
      * @param {Function} showToast a function display a toast notifcation for the user
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
-    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500, numColumns = 0, layersToInclude = [], showToast) {
+    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500, numColumns = 0, legendBlocks = null, showToast) {
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
         ref.showToast = showToast;
 
         const legendData = await extractLegendTree(
-            configService.getSync.map.legendBlocks,
-            layersToInclude,
+            legendBlocks || configService.getSync.map.legendBlocks,
             preferredSectionWidth,
             availableWidth
         );
@@ -96,7 +95,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
             legendDataCopy = angular.copy(
-                await extractLegendTree(configService.getSync.map.legendBlocks, layersToInclude, sectionInfo.width, availableWidth)
+                await extractLegendTree(legendBlocks || configService.getSync.map.legendBlocks, sectionInfo.width, availableWidth)
             );
 
             legendSection.clear();
@@ -479,13 +478,12 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
      *
      * @function extractLegendTree
      * @private
-     * @param {LegendBlock} legendBlock the root legend block from which to extract the flat symbology tree.
-     * @param {Array} layersToInclude optional parameter of API layers to include in graphic. Empty array or undefined means all layers included
+     * @param {LegendBlock} legendBlock the root legend block (or custom plugin legend structure) from which to extract the flat symbology tree.
      * @param {Number} sectionWidth the width of the current section
      * @param {Number} availableWidth the max width of the legend
      * @return {Array} a flat array of layers and their symbology items
      */
-    function extractLegendTree(legendBlock, layersToInclude, sectionWidth, availableWidth) {
+    function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
         // `TYPE_TO_SYMBOLOGY` functions return promises
         const TYPE_TO_SYMBOLOGY = {
             [LegendBlock.TYPES.NODE]: entry =>
@@ -495,7 +493,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                 }),
             [LegendBlock.TYPES.GROUP]: async entry => ({
                 name: entry.name,
-                items: await extractLegendTree(entry, layersToInclude, sectionWidth, availableWidth)
+                items: await extractLegendTree(entry, sectionWidth, availableWidth)
             }),
             [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
             // eslint-disable-next-line complexity
@@ -582,7 +580,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
         let legendTreeData = legendBlock.walk(
-            entry => (_showBlock(entry, layersToInclude) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
+            entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
             entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
         ); // don't walk entry's children if it's a group
 
@@ -619,15 +617,9 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
      * @function _showBlock
      * @private
      * @param {LegendBlock} entry the legend block to be checked whether it should be shown
-     * @param {Array} layersToInclude optional parameter of API layers to include in graphic. Empty array or undefined means all layers included
      * @return {Boolean} true if block should be shown in export legend
      */
-    function _showBlock(entry, layersToInclude = []) {
-        // check to see if the layer should be shown in export legend by comparing the API layer proxy to the entry proxy (no better method as of yet. TODO: fix that)
-        if (layersToInclude.length > 0 && entry.proxyWrapper && !layersToInclude.some(layer => layer._layerProxy === entry.proxyWrapper.proxy)) {
-            return false;
-        }
-
+    function _showBlock(entry) {
         const exportLegend = configService.getSync.services.export.legend;
 
         if (entry.controlled && entry.blockType !== LegendBlock.TYPES.INFO) {
