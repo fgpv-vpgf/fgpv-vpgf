@@ -35,19 +35,22 @@ function exportGenerators(
     mapToolService,
     appInfo
 ) {
-
-    // TODO: add proper documentaton for these functions
+    // TODO: add proper documentation for these functions
     // the legend generator takes an object currently supporting: width, height, numColumns, and legendBlocks (which is a copy (and potentially modified version) of the legendBlock structure on the map)
     const allGenerators = {
         title: value => titleGenerator(showToast, value),
         mapSVG: () => mapSVGGenerator(),
-        mapImage: () => mapImageGenerator(showToast, configService.getSync.services.export.map.value),
-        legend: configurationSettings => legendGenerator(showToast, Object.assign({}, configService.getSync.services.export.legend.value, configurationSettings)),
+        mapImage: value => mapImageGenerator(showToast, value || configService.getSync.services.export.map.value),
+        legend: configurationSettings =>
+            legendGenerator(
+                showToast,
+                Object.assign({}, configService.getSync.services.export.legend.value, configurationSettings)
+            ),
         northArrow: () => northarrowGenerator(),
         scaleBar: () => scalebarGenerator(),
         timestamp: () => timestampGenerator(),
         footNote: value => footnoteGenerator(showToast, value),
-        text: value => customMarkupGenerator(showToast, value)
+        htmlMarkup: value => htmlMarkupGenerator(showToast, value)
     };
 
     const service = {
@@ -66,7 +69,7 @@ function exportGenerators(
 
         footnoteGenerator,
 
-        customMarkupGenerator,
+        customMarkupGenerator: htmlMarkupGenerator,
 
         allGenerators
     };
@@ -166,13 +169,13 @@ function exportGenerators(
      *
      * @function mapImageGenerator
      * @param {Function} showToast a function display a toast notification for the user
-     * @param {Object} value any value stored in the ExportComponent related to this generator
+     * @param {Object} value { backgroundColour: <string> } any value stored in the ExportComponent related to this generator
      * @param {Number} timeout [optional=0] - a delay before after which the generation is considered to have failed; 0 means no delay
      * @return {Object} a result object in the form of { graphic, value }
      *                  graphic {Canvas} - a resulting graphic
      *                  value {Object} - a modified value passed from the ExportComponent
      */
-    function mapImageGenerator(showToast, value, timeout = 0) {
+    function mapImageGenerator(showToast, value = {}, timeout = 0) {
         const exportSize = exportSizesService.selectedOption;
 
         const {
@@ -190,7 +193,7 @@ function exportGenerators(
 
         // force `cleanCanvas` on IE11, since it's not possible to right-click-save-as the resulting export image in IE11
         // the clean canvas toggle tells the generator whether or not to omit tainted images, cleanCanvas = true iff omit tainted images
-        const localGeneratorPromise = localGenerate(cleanCanvas || appInfo.isIE11);
+        const localGeneratorPromise = localGenerate(cleanCanvas || appInfo.isIE11, value.backgroundColour);
         let serverGeneratorPromise;
 
         // If exportMapUrl is set, then start the server generation process
@@ -237,9 +240,9 @@ function exportGenerators(
             return wrapOutput(outputPromise);
         }
 
-        function localGenerate(cleanCanvas) {
+        function localGenerate(cleanCanvas, backgroundColour = '#ffffff') {
             const localPrintPromise = new Promise((resolve, reject) => {
-                const mainCanvas = graphicsService.createCanvas(exportSize.width, exportSize.height);
+                const mainCanvas = graphicsService.createCanvas(exportSize.width, exportSize.height, backgroundColour);
                 const ctx = mainCanvas.getContext('2d');
 
                 const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
@@ -638,7 +641,7 @@ function exportGenerators(
      * @param {*} value HTML string
      * @returns
      */
-    function customMarkupGenerator(showToast, value) {
+    function htmlMarkupGenerator(showToast, value) {
         // NOTE: example
         // so far, the plugin calling this generator is responsible for setting the size of the container supplied with value
         // if this generator is used internally, we might want to set the maximum width equal to `exportSize.width` on the container so it doesn't overflow the export image
