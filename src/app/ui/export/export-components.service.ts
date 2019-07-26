@@ -75,15 +75,14 @@ function exportComponentsService(
         timestamp: {
             generators: [exportGenerators.timestampGenerator],
             isVisible: false
+        },
+        htmlMarkup: {
+            generators: [exportGenerators.htmlMarkupGenerator]
         }
-        // NOTE: example of adding the new component/generator
-        /* text: {
-            generators: [exportGenerators.customMarkupGenerator]
-        } */
     };
 
     // indicates the order of the components, top to bottom
-    const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp' /* 'text' */];
+    const componentOrder = ['title', 'map', 'mapElements', 'legend', 'footnote', 'timestamp'];
 
     const service: ExportComponentsService = {
         items: null,
