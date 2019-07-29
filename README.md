@@ -4,7 +4,7 @@ Plugins for [RAMP](https://github.com/fgpv-vpgf/fgpv-vpgf) supported by the core
 
 ## Documentation
 
-https://docs.fgpv.org/fgpv-vpgf/plugins/
+https://fgpv-vpgf.github.io/plugins/master/docs/#/
 
 ## Local Development
 

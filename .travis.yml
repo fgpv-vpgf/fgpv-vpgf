@@ -6,13 +6,8 @@ node_js:
 install:
     - npm i
 
-before_script:
-    - echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-
-before_deploy:
+script:
     - bash ./bin/build/travis/before_deploy.sh
-
-script: echo "npm test temporarily disabled"
 
 deploy:
     - provider: pages
@@ -24,9 +19,11 @@ deploy:
           all_branches: true
           condition: '$TRAVIS_REPO_SLUG != fgpv-vpgf/plugins'
 
-    - provider: script
-      skip_cleanup: true
-      script: bash ./bin/build/travis/dist-build.sh
+    - provider: pages
+      local-dir: page_files
+      skip-cleanup: true
+      github-token: '$GITHUB_TOKEN'
+      keep-history: true
       on:
           all_branches: true
           repo: fgpv-vpgf/plugins

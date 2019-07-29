@@ -1,15 +1,15 @@
 #!/bin/bash
 
-echo "$TRAVIS_BRANCH and ${TRAVIS_BRANCH:0:1}"
+if git ls-remote --heads --exit-code https://github.com/$TRAVIS_REPO_SLUG.git gh-pages &> /dev/null; then
+    echo "gh-pages exists - cloning ..."
+    git clone --depth=50 --branch=gh-pages https://github.com/$TRAVIS_REPO_SLUG.git ./page_files
 
-if [ "$TRAVIS_BRANCH" == "develop" ] || "$TRAVIS_BRANCH" == "master" || [ ${TRAVIS_BRANCH:0:1} == "v" ]; then
-    echo "Building distribution for latest push to develop or tag."
-    npm run build
-
-    cp -pr ./dist "./$TRAVIS_BRANCH"
-    rsync -e 'ssh -i /tmp/cloud_rsa' -r --delete-after --quiet "./$TRAVIS_BRANCH" "milesap@fgpv.org:/disk/static/builds/$TRAVIS_REPO_SLUG"
-    rm -rf "./$TRAVIS_BRANCH"
-
-    mv ./docs "./$TRAVIS_BRANCH"
-    rsync -e 'ssh -i /tmp/cloud_rsa' -r --delete-after --quiet "./$TRAVIS_BRANCH" "milesap@fgpv.org:/disk/static/docs/$TRAVIS_REPO_SLUG"
+else
+    echo "gh-pages does not exist!"
 fi
+
+mkdir -p ./page_files/$TRAVIS_BRANCH
+npm run nonPublishedBuild
+
+cp -pr ./dist "./page_files/$TRAVIS_BRANCH/build"
+mv ./docs "./page_files/$TRAVIS_BRANCH/docs"
