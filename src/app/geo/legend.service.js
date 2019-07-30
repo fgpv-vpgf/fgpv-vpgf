@@ -69,13 +69,9 @@ function legendServiceFactory(
         };
 
         configService.getSync.map.instance.setLegendConfig = (legendStructure) => {
-            stateManager.setActive({
-                tableFulldata: false
-            }, {
-                sideMetadata: false
-            }, {
-                sideSettings: false
-            });
+            mApi.panels.getById('enhancedTable').close();
+            mApi.panels.getById('sideMetadata').close();
+            mApi.panels.getById('sideSettings').close();
 
             const apiLayers = mApi.layers.allLayers
                 // filter on the existence of a viewerLayer config, this will strip out 'simpleLayer's
