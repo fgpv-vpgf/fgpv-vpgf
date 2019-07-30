@@ -6,7 +6,7 @@
 export declare class PanelStatusManager {
     constructor(panelManager: any);
     setFilterAndScrollWatch(): void;
-    getFilterStatus(): string;
+    getFilterStatus(): void;
     getScrollRange(): string;
 }
 export interface PanelStatusManager {

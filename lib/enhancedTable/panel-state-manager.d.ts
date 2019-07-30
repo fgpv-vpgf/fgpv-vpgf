@@ -13,12 +13,14 @@ export declare class PanelStateManager {
     setColumnFilter(colDefField: string, filterValue: any): void;
     sortModel: any;
     maximized: boolean;
+    colFilter: boolean;
     isOpen: boolean;
     readonly legendBlock: any;
 }
 export interface PanelStateManager {
     baseLayer: any;
     isMaximized: boolean;
+    showFilter: boolean;
     filterByExtent: boolean;
     rows: any;
     columnFilters: any;

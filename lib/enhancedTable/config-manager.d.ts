@@ -45,6 +45,10 @@ export declare class ConfigManager {
      */
     readonly applyMap: boolean;
     /**
+     * Returns if the column filters are displayed on the table. If undefined default to true.
+     */
+    readonly showFilter: boolean;
+    /**
      * Returns a list of column data defined in the config, so that the table can be initialized according to them.
      */
     readonly filteredAttributes: any[];
