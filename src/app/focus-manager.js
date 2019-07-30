@@ -297,11 +297,18 @@ function focusableSearch(element, forward, gotoEnd = false) {
                 foundElement = element;
                 lastElementSet = element;
             }
-
         } else {
             element = forward ? element.next() : element.prev();
-
             foundElement = element.find(focusSelector).addBack(focusSelector).filter(elemIsFocusable);
+
+            // turn off the focus for symbology icon after being focused once
+            const newElement = forward ? foundElement.first() : foundElement.last();
+            changeIconFocus(newElement);
+            // reset icon focus once we are at end of traversal if previously expanded symbology icons have noFocus attribute set to true
+            if (gotoEnd) {
+                resetIconFocus(element);
+            }
+
             // lastElementSet should only store actual elements (not empty jQuery objects)
             if (foundElement.length > 0) {
                 lastElementSet = foundElement;
@@ -427,6 +434,8 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
     } else if (link && link[0][0] !== link[1][0]) { // check that the link created is not the element with itself
         // goto target if focusable
         if (link.getDestinationElement(forward).is(elemIsFocusable)) {
+            changeIconFocus(link.getDestinationElement(forward));
+
             link.getDestinationElement(forward).rvFocus();
             // otherwise remove link if not focusable
         } else {
@@ -444,10 +453,37 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
         if (focusSearch.length === 0) {
             return false;
         }
-
         focusSearch.rvFocus();
     }
     return true;
+}
+
+/**
+ * Change icon focus for expanded symbology icons
+ *
+ * @param {Object} element  the element to check if it is focusable
+ * @return  {Boolean}       true iff added/changed noFocus to the icon element, false otherwise
+ */
+function changeIconFocus(element) {
+    // want to only focus on each expanded symbology icon once allowing keyboard nav to move on so we add no focus attribute
+    if (element.is('.focusOnce')) {
+        element.attr('nofocus', true);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Resets icon focus for expanded symbology icons
+ *
+ * @param {Object} element  the element to check if it is focusable
+ */
+function resetIconFocus(element) {
+    // find all expanded symbology icons and remove no focus attribute when running it back on the next traversal
+    const viewer = viewerGroup.contains(element);
+    viewer.rootElement
+        .find('.focusOnce')
+        .removeAttr('noFocus');
 }
 
 function initInternalFocusManager(focusSearch) {
@@ -636,7 +672,6 @@ function onKeydown(event) {
             // or hackily activate shiftFocus for left/right arrows and enter
             // (when there is still highlighted item)
             // until we fully get rid of focus manager
-
             ignoreFocusLoss = false;
             const shiftState = shiftFocus(!event.shiftKey, restoreFromHistory);
             // prevent browser from changing focus iff our change took effect OR ours failed but did so on a non-direct child of the viewer trap
