@@ -63,7 +63,7 @@ function graphicsService($q) {
     /**
      * Creates a canvas DOM node;
      * @function createCanvas
-     * @param {Number} width target widht with of the canvas
+     * @param {Number} width target width with of the canvas
      * @param {Number} height target height with of the canvas
      * @param {String} backgroundColor [optional = null] if specified, the canvas is coloured with it
      * @return {Object} canvas DOM node
