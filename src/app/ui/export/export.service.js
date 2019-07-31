@@ -171,11 +171,10 @@ function exportService(
                 // The plugin is free to rearrange `legendBlocks` as it sees fit as long as its structure remains valid.
 
                 // a copy of the legendBlock structure will be passed to export plugins in order to modify as required
-                // TODO: figure out best way to make copy of legendBlocks object. possibly: $.extend({}, configService.getSync.map.legendBlocks), angular.copy(configService.getSync.map.legendBlocks), ... other
-                // NOTE: `angular.copy()` doesn't seem to work properly
+                // NOTE: `angular.copy()` doesn't seem to work properly, so we use this other method instead (found here: https://stackoverflow.com/a/44782052)
                 // const promises = standIn({
                 const promises = appInfo.features.export.generateExportStack({
-                    legendBlocks: configService.getSync.map.legendBlocks,
+                    legendBlocks: Object.assign(Object.create(Object.getPrototypeOf(configService.getSync.map.legendBlocks)), configService.getSync.map.legendBlocks),
                     mapSize: self.exportSizes.selectedOption
                 });
 
