@@ -8,7 +8,9 @@ else
     echo "gh-pages does not exist!"
 fi
 
+
 mkdir -p ./page_files/$TRAVIS_BRANCH
+rm -rf ./page_files/$TRAVIS_BRANCH/*
 npm run nonPublishedBuild
 
 cp -pr ./dist "./page_files/$TRAVIS_BRANCH/build"
