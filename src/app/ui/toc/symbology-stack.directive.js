@@ -299,18 +299,24 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
         scope.$watch('self.showSymbologyToggle', value => {
             if (value) {
-                element.find('.md-icon-button').addClass('show');
+                element
+                    .find('.md-icon-button')
+                    .addClass('show');
                 $.link(element.find('.md-icon-button'));
                 element
                     .find('button')
                     .not('.rv-symbol-trigger')
-                    .removeAttr('nofocus');
+                    .removeAttr('nofocus')
+                    .addClass('focusOnce');
             } else {
-                element.find('.md-icon-button').removeClass('show');
+                element
+                    .find('.md-icon-button')
+                    .removeClass('show');
                 element
                     .find('button')
                     .not('.rv-symbol-trigger')
-                    .attr('nofocus', true);
+                    .attr('nofocus', true)
+                    .removeClass('focusOnce');
             }
         });
 
