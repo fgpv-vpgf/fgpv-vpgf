@@ -138,3 +138,11 @@ md-datepicker>div {
         margin: auto 10px auto 10px;
     }
 }
+
+// allow table cell selection
+.ag-cell {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
