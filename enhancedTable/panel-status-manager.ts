@@ -27,7 +27,25 @@ export class PanelStatusManager {
         }
 
         tableOptions.onBodyScroll = function (event) {
-            that.getScrollRange();
+            const scrollRange = that.getScrollRange();
+            const focusedCell = that.tableOptions.api.getFocusedCell();
+
+            if (focusedCell !== null) {
+                const topRow = parseInt(scrollRange.split(' - ')[0]) - 1;
+                const bottomRow = parseInt(scrollRange.split(' - ')[1]) - 1;
+                const tableRight = $('#enhancedTable').position().left + $('#enhancedTable').width();
+                const focusedCellRight = $('.ag-cell-focus').offset().left + $('.ag-cell-focus').width();
+                const focusedRow = focusedCell.rowIndex;
+
+                if (topRow < focusedRow && bottomRow > focusedRow && tableRight > focusedCellRight) {
+                    // refocus cell on scroll if it is within grid view
+                    // this way adjusting the position and height of any associated tooltips is forced through onCellFocused event
+                    that.tableOptions.api.setFocusedCell(focusedCell.rowIndex, focusedCell.column.colId);
+                } else {
+                    // hide any tooltips that may be visible if the focused cell is out of grid view
+                    that.tableOptions.api.hideOverlay();
+                }
+            }
         }
     }
 
@@ -37,7 +55,7 @@ export class PanelStatusManager {
         this.panelManager.recordCountScope.totalRecords = this.tableOptions.rowData.length;
 
         // rows are filtered
-        if(this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
+        if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
             this.panelManager.recordCountScope.filtered = true;
             this.panelManager.legendBlock.filter = true; // add filter flag if rows are filtered
         } else {

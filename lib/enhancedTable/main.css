@@ -3705,7 +3705,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     padding-right: 1px; }
 
 .panel-body {
-  padding: 0 8px 8px !important; }
+  padding: 0 8px 8px !important;
+  overflow: hidden; }
 
 md-datepicker > div {
   border-bottom: none !important; }
@@ -3731,6 +3732,23 @@ md-datepicker > div {
 
 .rv-sort-arrow {
   flex-shrink: 0; }
+
+.rv-render-tooltip {
+  display: inline-block;
+  position: absolute;
+  background-color: #F2F2F2;
+  padding: 2px 5px;
+  box-shadow: 1px 1px 2px #CCC;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.5;
+  top: 20px;
+  left: -1px;
+  max-width: 250px;
+  overflow: hidden; }
+
+.ag-overlay {
+  position: absolute; }
 
 .enhanced-table-details,
 .enhanced-table-zoom {
