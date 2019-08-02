@@ -106,7 +106,8 @@ module.exports = function (env) {
             }),
 
             new WebpackShellPlugin({
-                onBuildStart: ['bash scripts/pluginSamples.sh']
+                onBuildStart: ['bash scripts/pluginSamples.sh'],
+                onBuildEnd: ['rm -rf build/help']
             }),
 
             new CopyWebpackPlugin([{
@@ -136,7 +137,7 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build']),
+            new CleanWebpackPlugin(['build', 'dist']),
 
             new SchemaValidatorPlugin()
         ],
