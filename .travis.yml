@@ -2,12 +2,11 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-- 8.11.1
+- 10.16.1
 before_script:
-- echo -e "Host fgpv.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 script:
-- "./scripts/travis/build.sh"
+- bash ./scripts/travis/build.sh
 before_install:
 - AZ_REPO=$(lsb_release -cs)
 - echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO
@@ -15,10 +14,6 @@ before_install:
 - curl -L https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 - sudo apt-get update
 - sudo apt-get install apt-transport-https azure-cli
-cache:
-  directories:
-  - node_modules
-  - features/node_modules
 deploy:
 - provider: script
   skip_cleanup: true

@@ -32,11 +32,6 @@ module.exports = function(env) {
             new SriPlugin({
                 hashFuncNames: ['sha256', 'sha384'],
                 enabled: true
-            }),
-
-            new WebpackShellPlugin({
-                onBuildStart: ['rm -rf dist'],
-                onBuildEnd: ['rm -rf build/help']
             })
         ],
         optimization: {
