@@ -309,25 +309,33 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.custom.note1,Custom sizes apply to the map image - the actual exported image size will vary based on the export options selected.,1,Les tailles personnalisées s'appliquent à l'image cartographique - la taille réelle de l'image exportée varie en fonction des options d'exportation sélectionnées.,1
 ,export.custom.note2,You must first click on the Generate button below to create your custom size before downloading is enabled.,1,Vous devez d'abord cliquer sur le bouton « Générer » ci-dessous pour créer votre taille personnalisée avant d'activer le téléchargement.,1
 ,import.title,Add Layer,1,Ajouter une couche,1
-,import.file.title,Import File,1,Importer un fichier,1
+,import.file.title,Import Layer,1,Importer un fichier,1
 ,import.file.upload.title,Upload data,1,Charger des données,1
-,import.file.upload.summary,"GeoJSON, CSV or zipped Shapefile",1,"GeoJSON, CSV ou Shapefile zippé",1
+,import.file.upload.summary,"Upload a file or enter a URL",1,"Télécharger un fichier ou entrez une adresse URL",0
 ,import.file.upload.choose,choose a file,1,Choisir un fichier,1
 ,import.file.upload.drop,Drop the file to upload,1,Déposer le fichier à téléverser,1
 ,import.file.upload.or,or,1,ou,1
-,import.file.upload.fileurl,File URL,1,Adresse URL du fichier,1
+,import.file.upload.fileurl,URL to File or Service,1,URL de déposer ou service,0
 ,import.file.upload.invalid,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
 ,import.file.upload.noaccess,Can't access file,1,Impossible d'accéder au fichier,1
-,import.file.select.title,Select file format,1,Sélectionner le format du fichier,1
+,import.file.select.title,Select format,1,Sélectionnez le format,0
 ,import.file.select.fileformat,File Format,1,Format du fichier,1
 ,import.file.select.wrong,Incorrect file format,1,Format de fichier incorrecte,1
 ,import.file.configure.title,Configure layer,1,Configurer la couche,1
 ,import.file.configure.latitudefield,Latitude Field,1,Champ latitude,1
 ,import.file.configure.longitudefield,Longitude Field,1,Champ longitude,1
 ,import.file.configure.invalid,ERROR: Invalid File,1,ERREUR: Le fichier est invalide,1
-,import.file.type.csv,CSV,1,CSV,1
-,import.file.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
-,import.file.type.geojson,GeoJSON,1,GeoJSON,1
+,import.upload.type.csv,CSV,1,CSV,1
+,import.upload.type.shapefile,zipped Shapefile,1,Shapefile zippé,1
+,import.upload.type.geojson,GeoJSON,1,GeoJSON,1
+,import.upload.type.featurelayer,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
+,import.upload.type.dynamicservice,ESRI Dynamic Layer,1,Couche dynamique d'ESRI,1
+,import.upload.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
+,import.upload.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
+,import.upload.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
+,import.upload.type.wfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
+,import.upload.type.rasterlayer,Raster Layer,1,Couche Raster,1
+,import.upload.type.geojson,GeoJSON,1,GeoJSON,0
 ,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les demandes seront faites en utilisant HTTPS,0
 ,import.service.title,Import Service,1,Importer un service,1
 ,import.service.connect.title,Connect service,1,Connecter au service,1
@@ -337,14 +345,6 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.service.select.title,Select Service type,1,Sélectionner le type de service,1
 ,import.service.select.servicetype,Service Type,1,Type de service,1
 ,import.service.select.wrong,Service can not be imported using this type,1,Le service ne peut être importé en utilisant ce type,1
-,import.service.type.featurelayer,ESRI Feature Layer,1,Couche d'éléments d'ESRI,1
-,import.service.type.dynamicservice,ESRI Dynamic Layer,1,Couche dynamique d'ESRI,1
-,import.service.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
-,import.service.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
-,import.service.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
-,import.service.type.wfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
-,import.service.type.rasterlayer,Raster Layer,1,Couche Raster,1
-,import.service.type.geojson,GeoJSON,1,GeoJSON,0
 ,import.service.configure.title,Configure layer,1,Configurer la couche,1
 ,import.service.configure.groupname,Group Name,1,Nom de groupe,1
 ,import.service.configure.layername,Layer Name,1,Nom de la couche,1
