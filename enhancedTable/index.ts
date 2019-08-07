@@ -174,8 +174,7 @@ export default class TableBuilder {
                         cellRenderer: function (cell) {
                             const translated = $(`<span>{{ 'plugins.enhancedTable.table.complexValue' | translate }}</span>`);
                             self.mapApi.$compile(translated);
-
-                            return cell.value ? (typeof cell.value === 'object' ? translated[0] : cell.value) : '';
+                            return cell.value || Number.isInteger(cell.value) ? (typeof cell.value === 'object' ? translated[0] : cell.value) : '';
                         },
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
