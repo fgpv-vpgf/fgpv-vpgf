@@ -30,6 +30,7 @@ function rvLoaderFile() {
     return directive;
 }
 
+// eslint-disable-next-line max-statements
 function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootElement,
     keyNames, layerSource, legendService, appInfo) {
     'ngInject';
@@ -37,6 +38,12 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
     self.closeLoaderFile = closeLoaderFile;
     self.dropActive = false; // flag to indicate if file drop zone is active
+
+    self.common = {
+        toggleLayers,
+        isAllLayersSelected,
+        onDynamicLayerSection
+    };
 
     // create three steps: upload data, select data type, and configure layer
     self.upload = {
@@ -97,7 +104,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             reset: selectReset
         },
         selectResetValidation,
-        form: null
+        form: null,
+        selection: null
     };
 
     self.configure = {
@@ -151,6 +159,51 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
     }
 
     /**
+     * Checks if all sub-layer options are selected. If `some` flag is set to true,
+     * checks if at least one, but not all sub-layer options are selected.
+     *
+     * @function isAllLayersSelected
+     * @return {Boolean} true if all sub-layer options are selected
+     */
+    function isAllLayersSelected(some = false) {
+        const selectedLayers = self.layerBlueprint.config.layerEntries;
+        const availableLayers = self.layerBlueprint.layers;
+
+        return (!some && selectedLayers.length === availableLayers.length) ||
+               (some && selectedLayers.length !== 0 && selectedLayers.length !== availableLayers.length);
+    }
+
+    /**
+     * Selects or deselects all sub-layer options depending on current state:
+     * - all selected -> deselect all
+     * - some selected -> select all
+     * - none selected -> select all
+     *
+     * @function toggleLayer
+     */
+    function toggleLayers() {
+        const selectedLayers = self.layerBlueprint.config.layerEntries;
+        const availableLayers = self.layerBlueprint.layers;
+
+        if (selectedLayers.length === availableLayers.length) {
+            self.layerBlueprint.config.layerEntries = [];
+        } else if (selectedLayers.length >= 0) {
+            self.layerBlueprint.config.layerEntries = self.layerBlueprint.layers.slice(0);
+        }
+    }
+
+    /**
+     * A helper function called when the dynamic layer selection changes to update the `singleEntryCollapse` property of the dynamic layer being imported.
+     * The option is enabled only if there is a single layer entry selected.
+     * @function onDynamicLayerSection
+     */
+    function onDynamicLayerSection() {
+        const config = self.layerBlueprint.config;
+
+        config.singleEntryCollapse = config.layerEntries.length === 1;
+    }
+
+    /**
      * Cancels any stepper movements if the step is processing data; resets input and moves to the previous step if not.
      * @function onCancel
      * @param {Object} step FIXME add docs
@@ -168,6 +221,9 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
      * @function uploadOnContinue
      */
     function uploadOnContinue() {
+        const connect = self.upload;
+        let loaderPromise;
+
         let isFileUploadAborted = false;
 
         self.upload.httpProgress = true;
@@ -178,7 +234,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             isFileUploadAborted = true;
         };
 
-        const loaderPromise = _loadFile(self.upload.fileUrl).then(arrayBuffer =>
+        if(connect.fileUrl.match(/.*(.zip|.csv|.json)/g)) {
+            loaderPromise = _loadFile(self.upload.fileUrl).then(arrayBuffer =>
                 isFileUploadAborted ?
                     $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
                     onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
@@ -191,6 +248,19 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                 console.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
                 toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
             });
+        } else {
+            loaderPromise = layerSource
+            // maps served over https can only accept https enabled services to avoid mixed content issues.
+            .fetchServiceInfo(self.isHTTPS ? connect.fileUrl.replace('http:', 'https:') : connect.fileUrl)
+            .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
+                self.layerBlueprintOptions = layerBlueprintOptions;
+                self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
+            })
+            .catch(error => {
+                toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
+                return $q.reject(error);
+            });
+        }
 
         // add some delay before going to the next step
         stepper.nextStep($timeout(() =>
