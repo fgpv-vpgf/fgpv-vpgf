@@ -304,13 +304,20 @@ export class NumberFloatingFilter {
     onMinInputBoxChanged() {
         if (this.minFilterInput.value === '') {
             this.currentValues.min = null;
+        } else if (this.minFilterInput.value === '-') {
+            this.currentValues.min = -Number.MAX_VALUE;
+        } else if (isNaN(this.minFilterInput.value)) {
+            // TODO: error message for wrong input type
+            this.minFilterInput.value = this.currentValues.min;
         } else {
             this.currentValues.min = Number(this.minFilterInput.value);
         }
 
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' min';
-        this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
+        // handle filtering negative values by replacing - with the largest negative number
+        this.currentValues.min === -Number.MAX_VALUE ?
+        this.params.panelStateManager.setColumnFilter(key, '-') : this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
 
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
@@ -319,13 +326,20 @@ export class NumberFloatingFilter {
     onMaxInputBoxChanged() {
         if (this.maxFilterInput.value === '') {
             this.currentValues.max = null;
+        } else if (this.maxFilterInput.value === '-') {
+            this.currentValues.max = -Number.MAX_VALUE;
+        } else if (isNaN(this.maxFilterInput.value)) {
+            // TODO: error message for wrong input type
+            this.maxFilterInput.value = this.currentValues.max;
         } else {
             this.currentValues.max = Number(this.maxFilterInput.value);
         }
 
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' max';
-        this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
+        // handle filtering negative values by replacing - with the largest negative number
+        this.currentValues.max === -Number.MAX_VALUE ?
+        this.params.panelStateManager.setColumnFilter(key, '-') : this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
 
         this.onFloatingFilterChanged({ model: this.getModel() });
     }

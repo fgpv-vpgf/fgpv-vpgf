@@ -664,7 +664,6 @@ export class PanelManager {
                                     escMatch = escRegex.exec(val);
                                 }
                                 newVal = newVal + remVal;
-                                // console.log(`remaining val: ${remVal} new val: ${newVal} old val: ${val}`);
 
                                 // add ௌ before % and/or _ to act as the escape character
                                 // can change to MOST other characters and should still work (ideally want an escape char no one will search for) - just replace all instances of ௌ
