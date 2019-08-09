@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@claviska/jquery-minicolors": "github:claviska/jquery-minicolors",
-    "@fgpv/rv-plugins": "github:yileifeng/plugins#0adf10ece0a0546f7cd9da3ee6ef88ff5b66d970",
+    "@fgpv/rv-plugins": "github:yileifeng/plugins#ef6430c59013d70730e8b082bb93e416201fc215",
     "@flowjs/ng-flow": "2.7.8",
     "angular": "1.7.5",
     "angular-animate": "1.7.5",
@@ -21,7 +21,7 @@
     "csvtojson": "1.1.11",
     "dotjem-angular-tree": "github:dotJEM/angular-tree",
     "file-saver": "2.0.0",
-    "geoApi": "github:fgpv-vpgf/geoApi#v3.1.0-6",
+    "geoApi": "github:fgpv-vpgf/geoApi#v3.1.0-8",
     "html2canvas": "^1.0.0-rc.3",
     "imports-loader": "0.8.0",
     "linkifyjs": "2.1.7",
