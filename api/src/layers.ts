@@ -124,12 +124,15 @@ export class BaseLayer {
      * TODO: add a counter observable when downloading the attributes.
      */
     getAttributes(attributeKey?: number): Object | undefined | Array<Object> {
-        let attributes: Array<Object>;
+        const noAttribs: Boolean = this._attributeArray.length === 0;
 
         if (typeof attributeKey !== 'undefined') {
+            if (noAttribs) {
+                console.warn('An attempt was made to get an attribute when no attributes have been downloaded. Consider calling apiLayer.fetchAttributes() first, and respect its observable to know when download is finished.');
+            }
             return this._attributeArray.find(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
         } else {
-            if (this._attributeArray.length === 0) {
+            if (noAttribs) {
                 this.fetchAttributes();
                 return [];
             } else {
