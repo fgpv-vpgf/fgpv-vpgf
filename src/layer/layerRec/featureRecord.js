@@ -369,20 +369,16 @@ class FeatureRecord extends attribRecord.AttribRecord {
             qry.geometry = this.makeClickBuffer(opts.clickEvent.mapPoint, opts.map, tolerance);
         }
 
-        // TODO possible efficiency boost.  change logic to not force the getAttribs() call.
-        //      instead, recognize if attribs are not loaded, and use the fast-cache attrib load
-        //      instead (similar to what a hovertip does)
+        // a big promise chain. resolves when all the asynch parts of identify are done.
+        // has no result parameter, instead updates contents of identifyResult object
         const identifyPromise = Promise.all([
-                this.getAttribs(),
+                // first asynch step. do identify on the layer, and ensure layer metadata is downloaded.
                 Promise.resolve(this._layer.queryFeatures(qry)),
                 this.getLayerData()
-            ])
-            .then(([attributes, queryResult, layerData]) => {
-                // transform attributes of query results into {name,data} objects one object per queried feature
-                //
-                // each feature will have its attributes converted into a table
-                // placeholder for now until we figure out how to signal the panel that
-                // we want to make a nice table
+
+            ]).then(([queryResult, layerData]) => {
+                // second asynch step. do any additional filtering on local layer results.
+                // then fetch full attribute values for all the identify results
 
                 let validResults;
                 if (this.dataSource() === shared.dataSources.ESRI) {
@@ -404,24 +400,50 @@ class FeatureRecord extends attribRecord.AttribRecord {
                         }
                     });
                 }
-                identifyResult.isLoading = false;
-                identifyResult.data = validResults.map(
-                    feat => {
-                        // grab the object id of the feature we clicked on.
-                        const objId = feat.attributes[layerData.oidField];
-                        const objIdStr = objId.toString();
 
-                        // use object id find location of our feature in the feature array, and grab its attributes
-                        const featAttribs = attributes.features[attributes.oidIndex[objIdStr]].attributes;
-                        return {
-                            name: this.getFeatureName(objIdStr, featAttribs),
-                            data: this.attributesToDetails(featAttribs, layerData.fields),
-                            oid: objId,
-                            symbology: [
-                                { svgcode: this._apiRef.symbology.getGraphicIcon(featAttribs, layerData.renderer) }
-                            ]
-                        };
+                // get the attributes using fetchGraphic (will pick most efficient route to attributes)
+                // bundle all requests in promises
+                const vAttribPromises = validResults.map(feat => {
+                    // grab the object id of the feature we clicked on.
+                    return new Promise(resolve => {
+                        const objId = feat.attributes[layerData.oidField];
+                        const graphicPromise = this.fetchGraphic(objId, { attribs: true });
+                        graphicPromise.then(graphicBundle => {
+                            resolve({
+                                oid: objId,
+                                attributes: graphicBundle.graphic.attributes
+                            });
+                        });
                     });
+                });
+
+                // tack on the layer data, as we need it for next section
+                vAttribPromises.push(Promise.resolve(layerData));
+
+                return Promise.all(vAttribPromises);
+
+            }).then(validAttributes => {
+                // third async step (this part is all synch, so is final part).
+                // transform attributes of identify results into objects containing info
+                // the details panel reqires.
+                //
+                // each feature will have its attributes converted into a table
+                // placeholder for now until we figure out how to signal the panel that
+                // we want to make a nice table
+
+                const layerData = validAttributes.pop();
+
+                identifyResult.data = validAttributes.map(vAtt => {
+                    return {
+                        name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
+                        data: this.attributesToDetails(vAtt.attributes, layerData.fields),
+                        oid: vAtt.oid,
+                        symbology: [
+                            { svgcode: this._apiRef.symbology.getGraphicIcon(vAtt.attributes, layerData.renderer) }
+                        ]
+                    };
+                });
+                identifyResult.isLoading = false;
             });
 
         return { identifyResults: [identifyResult], identifyPromise };
