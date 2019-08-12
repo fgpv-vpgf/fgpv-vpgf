@@ -74,7 +74,10 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
         // TODO: think about if this should toggle visiblity of legend blocks whose controls are disabled/userdisabled
         function _walkAction(block) {
             if (block.isInteractive && !block.hidden) {
-                block.visibility = value
+                block.symbologyStack.toggleList.forEach(toggle => {
+                    toggle.wasSelected = true;
+                });
+                block.visibility = value;
             }
         }
 
@@ -85,6 +88,7 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
 
     /**
      * Checks if all the legend entries are visible or hidden based on the supplied value.
+     * An entry is considered fully visible iff all its symbologies are visible.
      *
      * @function getLegendEntriesVisibility
      * @param {Boolean} value [optional = true] if true, checks if all entreis are visible; if false, if all are hidden.
@@ -105,7 +109,7 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
 
                 // TODO: the logic is not entirely correct as a group with only legend info blocks and disabled controls still have visiblity
                 // this causes the visibility menu not disable options correctly
-                return block.isControlSystemDisabled('visibility') ? null : block.visibility;
+                return block.isControlSystemDisabled('visibility') ? null : value ? block.fullyVisible : !block.fullyInvisible;
             })
             .filter(isVisible =>
                 isVisible !== null)
