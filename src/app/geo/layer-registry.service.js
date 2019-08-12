@@ -393,6 +393,15 @@ function layerRegistryFactory(
         const mapBody = mapConfig.instance;
         const layerRecord = ref.loadingQueue.shift();
 
+        // some trickery here.  we can have a situation where calling map.addLayer will trigger _onLayerRecordInitialLoad
+        // before the "do initial state check" can happen.  this can result in the loading code inside that handler
+        // to be called twice.  but we still need that initial state check for certain layers.
+        // so we make a scoped variable that _onLayerRecordInitialLoad can see. we set it to true when the handler loading
+        // code runs, and check it prior to the "do initial state check". this catches the really fast cases but
+        // also ensures the initial check happens for all other cases. the scoping means the boolean exists for every
+        // layer, then dies when everything wraps up.
+        let magicScopeReallyFastLoad = false;
+
         // normal situation
         layerRecord.addStateListener(_onLayerRecordInitialLoad);
         layerRecord.addAttribListener(_onLayerAttribDownload);
@@ -402,7 +411,9 @@ function layerRegistryFactory(
         ref.loadingCount++;
 
         // do initial state check
-        _onLayerRecordInitialLoad('');
+        if (!magicScopeReallyFastLoad) {
+            _onLayerRecordInitialLoad(layerRecord.state);
+        }
 
         // when a layer takes too long to load, it could be a slow service or a failed service
         // in any case, the queue will advance after THROTTLE_TIMEOUT
@@ -420,11 +431,12 @@ function layerRegistryFactory(
          */
         function _onLayerRecordInitialLoad(state) {
 
-           if (layerRecord.initLoadDone || state === Geo.Layer.States.ERROR) {
+            if (layerRecord.initLoadDone || state === Geo.Layer.States.ERROR) {
                 layerRecord.removeStateListener(_onLayerRecordInitialLoad);
+                magicScopeReallyFastLoad = true;
                 shellService.clearLoadingFlag(layerRecord.config.id, 300);
 
-                events.$broadcast(events.rvLayerRecordLoaded, layerRecord.config.id);
+                events.$broadcast(events.rvLayerRecordLoaded, layerRecord.layerId);
                 common.$timeout.cancel(throttleTimeoutHandle);
                 _setHoverTips(layerRecord);
                 _advanceLoadingQueue();
