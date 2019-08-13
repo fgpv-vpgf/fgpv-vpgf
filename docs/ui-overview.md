@@ -22,19 +22,19 @@ All the feature and components of the UI - excluding the map and visualized data
 
 ### 2.1. Main application bar
 
-The main application bar is used for accessing the [Side menu](#3-side-menu), [Basemap selector](#34-basemap-selector), [Layers panel](#5-layers-panel), and [Geo search](#4-geo-search). The [Layers](#5-layers-panel), [Details](#7-details-panel) and [Import wizard](#51-add-layer-layer-import-wizard) panels open underneath the Main application bar and the name of the currently open panel is displayed on the left side of the bar.
+The main application bar is used for accessing the [Side menu](#_3-side-menu), [Basemap selector](#_3-4-basemap-selector), [Layers panel](#_5-layers-panel), and [Geo search](#_4-geo-search). The [Layers](#_5-layers-panel), [Details](#_7-details-panel) and [Import wizard](#_5-1-add-layer-layer-import-wizard) panels open underneath the Main application bar and the name of the currently open panel is displayed on the left side of the bar.
 
 ![](https://i.imgur.com/HUNIniX.png)
 
-The default configuration of the Main application bar will display the [Side menu](#3-side-menu), [Geo search](#4-geo-search), and [Layers panel](#5-layers-panel) controls.
+The default configuration of the Main application bar will display the [Side menu](#_3-side-menu), [Geo search](#_4-geo-search), and [Layers panel](#_5-layers-panel) controls.
 
 ![](https://i.imgur.com/0J0QXV3.png)
 
-The [Basemap selector](#34-basemap-selector) control is shown only when the [Layers panel](#5-layers-panel) is expanded.
+The [Basemap selector](#_3-4-basemap-selector) control is shown only when the [Layers panel](#_5-layers-panel) is expanded.
 
 ![](https://i.imgur.com/cM98JeT.png)
 
-The [Side menu](#3-side-menu), [Geo search](#4-geo-search), and [Layers panel](#5-layers-panel) controls can be independently hidden. When only the Side menu control is shown, the Main application bar collapses to the left. The bar will expand if the user opens one of the main panels ([Layers](#5-layers-panel) or [Details](#7-details-panel)).
+The [Side menu](#_3-side-menu), [Geo search](#_4-geo-search), and [Layers panel](#_5-layers-panel) controls can be independently hidden. When only the Side menu control is shown, the Main application bar collapses to the left. The bar will expand if the user opens one of the main panels ([Layers](#_5-layers-panel) or [Details](#_7-details-panel)).
 
 ![](https://i.imgur.com/8EytaGY.png)
 
@@ -78,9 +78,9 @@ By default, the tooltip shows a symbology icon along with the value of a feature
 
 ### 2.5. Map navigation cluster
 
-The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the entirety of Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#4-geo-search), [Side menu](#3-side-menu), [Layers panel](#5-layers-panel), [Basemap selector](#34-basemap-selector), [Full screen toggle](#36-full-screen-toggle), and [Help](#310-help-information).
+The Map navigation cluster is located in the lower right corner of the `Inner shell` container. It contains controls performing actions on the map - such as zooming, gelocating, re-centering the map over the home extent (usually the entirety of Canada) - and triggering some of the higher level functionality - such as opening the [Geo search](#_4-geo-search), [Side menu](#_3-side-menu), [Layers panel](#_5-layers-panel), [Basemap selector](#_3-4-basemap-selector), [Full screen toggle](#_3-6-full-screen-toggle), and [Help](#_3-10-help-information).
 
-The default configuration includes just the Full screen toggle, geo-location, Home extent, and Help controls. All other controls duplicate functionality of the [Main application bar](#21-main-application-bar) and can be used if the Main application bar is hidden.
+The default configuration includes just the Full screen toggle, geo-location, Home extent, and Help controls. All other controls duplicate functionality of the [Main application bar](#_2-1-main-application-bar) and can be used if the Main application bar is hidden.
 
 All controls in the Map navigation cluster can be independently hidden (expect for zoom in/out - they are hidden together).
 
@@ -106,7 +106,7 @@ There is no customization for these components, but the host page can forcefully
 
 ## 3. Side menu
 
-The application-level side menu can be opened from the [Main application bar](#1-main-application-bar) or from the [Map navigation cluster](#5-map-navigation-cluster). It contains various application settings such as the current language selector, full screen toggle, and touch mode, high-level functionalities such as the basemap selection, map export, bookmark sharing, help, and any loaded interactive plugins, and build information. All items on the Side menu except for the [Build information](#314-build-information) are optional and their presence is dictated by the config.
+The application-level side menu can be opened from the [Main application bar](#_1-main-application-bar) or from the [Map navigation cluster](#_5-map-navigation-cluster). It contains various application settings such as the current language selector, full screen toggle, and touch mode, high-level functionalities such as the basemap selection, map export, bookmark sharing, help, and any loaded interactive plugins, and build information. All items on the Side menu except for the [Build information](#_3-14-build-information) are optional and their presence is dictated by the config.
 
 ![](https://i.imgur.com/xqCiCn4.png)
 
@@ -120,7 +120,7 @@ An optional application title can be displayed underneath the application logo o
 
 ### 3.3. Layers panel
 
-This menu option closes the side menu and toggles the [Layers panel](#5-layers-panel). A checkmark icon on the right side is displayed if the [Layers panel](#5-layers-panel) is already open.
+This menu option closes the side menu and toggles the [Layers panel](#_5-layers-panel). A checkmark icon on the right side is displayed if the [Layers panel](#_5-layers-panel) is already open.
 
 ### 3.4. Basemap selector
 
@@ -154,7 +154,7 @@ Display the basemap description text set in the config. If the text is long, the
 
 ### 3.5. Geo search
 
-This menu option closes the side menu and opens the [Geo search](#4-geo-search) panel.
+This menu option closes the side menu and opens the [Geo search](#_4-geo-search) panel.
 
 ### 3.6. Full screen toggle
 
@@ -205,7 +205,7 @@ The image of the map with all the data rendered on top of it as seen on the scre
 
 #### 3.7.6 Map scale
 
-The map scale is placed below the map image on the left side and is identical to the [Scalebar and mouse coordinates](#27-scalebar-and-mouse-coordinates) component without the mouse coordinates part.
+The map scale is placed below the map image on the left side and is identical to the [Scalebar and mouse coordinates](#_2-7-scalebar-and-mouse-coordinates) component without the mouse coordinates part.
 
 #### 3.7.7 North arrow
 
@@ -231,7 +231,7 @@ The Share dialog is used to generate a shareable URL of the current map state wi
 
 ### 3.9. Touch mode toggle
 
-The Touch mode increases button sizes (mostly inside the [Layer panel](#5-layers-panel) and [Map navigation cluster](#25-map-navigation-cluster)) and makes context menu controls visible by default to improves the experience for touch users.
+The Touch mode increases button sizes (mostly inside the [Layer panel](#_5-layers-panel) and [Map navigation cluster](#_2-5-map-navigation-cluster)) and makes context menu controls visible by default to improves the experience for touch users.
 
 ![](https://i.imgur.com/yDtmdpE.png)
 
@@ -289,7 +289,7 @@ This is a link to the main [fgpv-vpgf](https://github.com/fgpv-vpgf/fgpv-vpgf) r
 
 The functionality for this component is provided by [RAMP/geosearch](https://github.com/RAMP-PCAR/geosearch) plugin which uses [Geogratis services](http://geogratis.gc.ca/). It's possible to provide a different implementation of this plugin which can make use of any other search services.
 
-This component allows the user to search for places in Canada. When activated, it replaces the [Main application bar](#21-main-application-bar) with an input field for search keywords and closes the main and secondary panels. The search results are displayed directly below the Geo search bar.
+This component allows the user to search for places in Canada. When activated, it replaces the [Main application bar](#_2-1-main-application-bar) with an input field for search keywords and closes the main and secondary panels. The search results are displayed directly below the Geo search bar.
 
 ![](https://i.imgur.com/K0sS609.png)
 
@@ -349,11 +349,11 @@ When searching by coordinates, the very first result will be a location of those
 
 The Layers panel is the main panel in the application and it displays a list of all the layers added to the map and their state. This panel is also can be referred to as "Layer selector", "Table of contents" or "Legend".
 
-Apart from [Layer nodes](#54-layer-node) and [Layer groups](#55-layer-group) describing layers added to the map, the Layers panel can also contain arbitrary plain text (markdown, HTML markup), titles, images, blocks that look like proper layers but do not control anything on the map, groups that don't belong to Dynamic layers, and visibility sets. These sections are referred to as [Layer info sections](#516-layer-info-section).
+Apart from [Layer nodes](#_5-4-layer-node) and [Layer groups](#_5-5-layer-group) describing layers added to the map, the Layers panel can also contain arbitrary plain text (markdown, HTML markup), titles, images, blocks that look like proper layers but do not control anything on the map, groups that don't belong to Dynamic layers, and visibility sets. These sections are referred to as [Layer info sections](#_5-16-layer-info-section).
 
 The legend comes in two flavours - **structured** and **autogenerated**.
 
-The **Structured** legend lets the config author define the ordering of legend blocks, their names, specify custom [Symbology stacks](#57-layer-symbology-single), put things into regular groups or [Visibility sets](#515-layer-visibility-set), hide layers from the legend, and have a single legend block controlling several layers. Lots of power options, plenty of opportunities to break up the config. All this should be used for thematic maps (i.e. maps that tell a certain story with the data).
+The **Structured** legend lets the config author define the ordering of legend blocks, their names, specify custom [Symbology stacks](#_5-7-layer-symbology-single), put things into regular groups or [Visibility sets](#_5-15-layer-visibility-set), hide layers from the legend, and have a single legend block controlling several layers. Lots of power options, plenty of opportunities to break up the config. All this should be used for thematic maps (i.e. maps that tell a certain story with the data).
 
 The **Autogenerated** legend is simple - it takes the layer list and turns it into a legend, one to one correspondence (one regular legend block per one layer).
 
@@ -361,7 +361,7 @@ The **Autogenerated** legend is simple - it takes the layer list and turns it in
 
 It should be pointed out the **autogenerated** legend - after it was generated during the config parse - is technically a **structured** legend. It uses a subset of elements which can be used in the **structured** legend.
 
-The only notable difference between the two is ability to reorder and layers in the **autogenerated** legend. **Structured** legends are immutable (apart from removing user-added layers - this is allowed by both legend types and cannot be disabled, yet). The **autogenerated** can be [reordered](#517-layer-reorder).
+The only notable difference between the two is ability to reorder and layers in the **autogenerated** legend. **Structured** legends are immutable (apart from removing user-added layers - this is allowed by both legend types and cannot be disabled, yet). The **autogenerated** can be [reordered](#_5-17-layer-reorder).
 
 ![](https://i.imgur.com/jKmbVtR.png)
 
@@ -447,7 +447,7 @@ This step works the same for both file and service based layers.
 
 ### 5.2. Group toggle menu
 
-The Group toggle menu is located at the top of the Layers panel and allows the user to collapse or expand all the [Layer groups](#55-layer-group) at the same time.
+The Group toggle menu is located at the top of the Layers panel and allows the user to collapse or expand all the [Layer groups](#_5-5-layer-group) at the same time.
 
 ![](https://i.imgur.com/yPF3ZJ8.png)
 
@@ -459,7 +459,7 @@ The Visibility toggle menu is located at the top of the Layers panel and allows 
 
 ### 5.4. Layer Node
 
-A Layer node represents a single layer or a sublayer of a Dynamic layer. Usually, a Layer node has a [Symbology stack](#57-layer-symbology-single), layer name, [Layer flags](#56-layer-flags), [Layer Node context menu](#59-layer-node-context-menu), and [Visibility toggle](#58-visibility-toggle). In **Structured** legend, most of these elements can be customized through the config.
+A Layer node represents a single layer or a sublayer of a Dynamic layer. Usually, a Layer node has a [Symbology stack](#_5-7-layer-symbology-single), layer name, [Layer flags](#_5-6-layer-flags), [Layer Node context menu](#_5-9-layer-node-context-menu), and [Visibility toggle](#_5-8-visibility-toggle). In **Structured** legend, most of these elements can be customized through the config.
 
 ![](https://i.imgur.com/H1KDKtT.png)
 
@@ -475,7 +475,7 @@ If the layer's visibility is toggled off, it will be displayed with an empty vis
 
 ### 5.5. Layer Group
 
-Layer groups organize [Layer nodes](#54-layer-node) and [Layer info sections](#516-layer-info-section) into collapsible sections. Anything can be put inside a group, including other groups (group nesting). Nesting them more than ten levels deep will not produce any changes in the UI - it's a flat list from there on.
+Layer groups organize [Layer nodes](#_5-4-layer-node) and [Layer info sections](#_5-16-layer-info-section) into collapsible sections. Anything can be put inside a group, including other groups (group nesting). Nesting them more than ten levels deep will not produce any changes in the UI - it's a flat list from there on.
 
 ![](https://i.imgur.com/ihssSxE.png)
 
@@ -493,7 +493,7 @@ If a Dynamic layer does not support children _opacity_, the logic applying opaci
 
 ### 5.6. Layer flags
 
-Each [Layer node](#54-layer-node) has a set of layer flags displayed underneath the layer name:
+Each [Layer node](#_5-4-layer-node) has a set of layer flags displayed underneath the layer name:
 
 ![](https://i.imgur.com/Zcwn6HN.png)
 
@@ -507,7 +507,7 @@ Each [Layer node](#54-layer-node) has a set of layer flags displayed underneath 
 
 ### 5.7. Layer symbology (single)
 
-Layer symbology consisting of a single element is a special case of the [Layer symbology (multiple)](#514-layer-symbology-multiple).
+Layer symbology consisting of a single element is a special case of the [Layer symbology (multiple)](#_5-14-layer-symbology-multiple).
 
 
 ![](https://i.imgur.com/ze3lbLx.png)
@@ -539,19 +539,19 @@ This style is used by default for WMS layers as they symbology image usually alr
 
 ### 5.8. Visibility toggle
 
-The visibility toggle is a checkbox control indicating if the layer is visible on the map. For out-of-scale layers, this controls is replaced by the `zoom in/out` control. See [Scale-dependent layers](#541-scale-dependent-llayers). This control is always visible unless hidden through the config.
+The visibility toggle is a checkbox control indicating if the layer is visible on the map. For out-of-scale layers, this controls is replaced by the `zoom in/out` control. See [Scale-dependent layers](#_5-4-1-scale-dependent-llayers). This control is always visible unless hidden through the config.
 
 ### 5.9. Layer Node context menu
 
-The Layer Node context menu can be opened by clicking the "three horizontal dots" icon on any Layer node (only visible when hovering over a node or if the [Touch mode](#39-touch-mode-toggle) is enabled).
+The Layer Node context menu can be opened by clicking the "three horizontal dots" icon on any Layer node (only visible when hovering over a node or if the [Touch mode](#_3-9-touch-mode-toggle) is enabled).
 
 Not all options shown below might be available on all layers.
 
 ![](https://i.imgur.com/7laP4VC.png)
 
-- **Metadata**: opens the [Layer metadata](#519-layer-metadata-panel) panel
-- **Settings**: opens the [Layer settings](#518-layer-settings-panel) panel
-- **Datatable**: open the [Table panel](#6-enhanced-table) panel and displays layer data.
+- **Metadata**: opens the [Layer metadata](#_5-19-layer-metadata-panel) panel
+- **Settings**: opens the [Layer settings](#_5-18-layer-settings-panel) panel
+- **Datatable**: open the [Table panel](#_6-enhanced-table) panel and displays layer data.
 - **Legend**: expands layers's symbology stack
 - **Zoom to Layer Boundary**: zooms the map to the layer boundary
 - **Reload**: reloads the layer by removing it from the map and adding it back (will also reload any linked layer nodes)
@@ -569,25 +569,25 @@ While a layer is loading, a happy face icon is displayed in the place of its sym
 
 ### 5.12. Reload layer control
 
-A "Reload" control is shown in the place of the [Visibility toggle](#58-visibility-toggle) while a layer is loading. It will remove and re-add the layer back to the map if clicked.
+A "Reload" control is shown in the place of the [Visibility toggle](#_5-8-visibility-toggle) while a layer is loading. It will remove and re-add the layer back to the map if clicked.
 
 ### 5.13. Layer Group context menu
 
-The Layer Group context menu can be opened by clicking the "three horizontal dots" icon on any Layer group (only visible when hovering over a node or if the [Touch mode](#39-touch-mode-toggle) is enabled).
+The Layer Group context menu can be opened by clicking the "three horizontal dots" icon on any Layer group (only visible when hovering over a node or if the [Touch mode](#_3-9-touch-mode-toggle) is enabled).
 
 Not all options shown below might be available on all layer groups.
 
 ![](https://i.imgur.com/MGaLQus.png)
 
-- **Metadata**: opens the [Layer metadata](#519-layer-metadata-panel) panel [only available for root-level Dynamic groups]
-- **Settings**: opens the [Layer settings](#518-layer-settings-panel) panel
+- **Metadata**: opens the [Layer metadata](#_5-19-layer-metadata-panel) panel [only available for root-level Dynamic groups]
+- **Settings**: opens the [Layer settings](#_5-18-layer-settings-panel) panel
 - **Zoom to Layer Boundary**: zooms the map to the layer boundary
 - **Reload**: reloads layers inside the group by removing them from the map and adding it back (will also reload any linked layer nodes)
 - **Remove**: removes the group and all the nested layers from the map (a notification is displayed upon removal with an option to restore the remove layers)
 
 ### 5.14. Layer symbology (multiple)
 
-A layer's symbology is a collection of image-labels pairs explaining features available in the layer. Internally, it's referred to as a "symbology stack" with the "stack" bit describing its vertical orientation when rendered in the UI. The symbology stacks can be shown in the Layers panel, [Details panel](#7-details-panel), and [Enhanced table](#6-enhanced-table).
+A layer's symbology is a collection of image-labels pairs explaining features available in the layer. Internally, it's referred to as a "symbology stack" with the "stack" bit describing its vertical orientation when rendered in the UI. The symbology stacks can be shown in the Layers panel, [Details panel](#_7-details-panel), and [Enhanced table](#6-enhanced-table).
 
 #### 5.14.1 Interactivity
 
@@ -644,7 +644,7 @@ Indicates which layer the Setting panel belongs to.
 
 #### 5.18.2 Visibility toggle
 
-Same as the [5.8 Visibility toggle](#58-visibility-toggle). Available for both layer nodes and groups.
+Same as the [5.8 Visibility toggle](#_5-8-visibility-toggle). Available for both layer nodes and groups.
 
 #### 5.18.3 Opacity slider
 
@@ -670,7 +670,7 @@ This allows the user to select one of the available WMS styles. Only available f
 
 #### 5.18.9 Layer reload control
 
-Same as the [Reload layer control](#512-reload-layer-control). Available for both layer nodes and groups.
+Same as the [Reload layer control](#_5-12-reload-layer-control). Available for both layer nodes and groups.
 
 ### 5.19. Layer metadata panel
 
@@ -716,12 +716,12 @@ The filter status gives the user three pieces of information:
 #### Example 2: `1 - 6 of 10 records shown (filtered from 15 records)`
 1.  rows 1 - 6 are currently visible
 2.  10 records can be viewed in the table just by scrolling
-3.  there are 15 records total for the corresponding layer (5 records are filtered out either through [column filters](#65-column-filters) or [symbology toggles]())
+3.  there are 15 records total for the corresponding layer (5 records are filtered out either through [column filters](#_6-5-column-filters) or [symbology toggles]())
 
 
 ### 6.3. Details
 
-The details button is available on each row of the table, and opens up the [details panel](#7-details-panel) for the corresponding layer feature.
+The details button is available on each row of the table, and opens up the [details panel](#_7-details-panel) for the corresponding layer feature.
 
 ### 6.4. Zoom
 
@@ -855,7 +855,7 @@ Queryable layers with no identify results are rendered with their symbology stac
 
 ### 7.5. Zoom to feature button
 
-The Zoom-to button is displayed when the identify result is hovered over (or when the [Touch mode](#39-touch-mode-toggle) is enabled). This will zoom the map and center on the corresponding feature.
+The Zoom-to button is displayed when the identify result is hovered over (or when the [Touch mode](#_3-9-touch-mode-toggle) is enabled). This will zoom the map and center on the corresponding feature.
 
 ### 7.6. Collapsed identify result
 
