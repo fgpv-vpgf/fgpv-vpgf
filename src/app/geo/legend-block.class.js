@@ -903,6 +903,14 @@ function LegendBlockFactory(
             this._visibilityChanged.next(value);
         }
 
+        get fullyVisible() {
+            return this.symbologyStack.allSymbolsVisible === undefined ? null : this.symbologyStack.allSymbolsVisible();
+        }
+
+        get fullyInvisible() {
+            return this.symbologyStack.noSymbolsVisible === undefined ? null : this.symbologyStack.noSymbolsVisible();
+        }
+
         get visibilityChanged() {
             return this._visibilityChanged.asObservable();
         }
