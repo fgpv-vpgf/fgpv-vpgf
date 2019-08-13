@@ -145,11 +145,10 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
         // Helper function: update symbol toggles
         function updateToggles(val) {
-            console.log(val);
             if (val) {
                 const someOn = self.toggleList.some((toggle => toggle.wasSelected === true));
                 self.toggleList.forEach(toggle => {
-                    if (toggle.wasSelected || !someOn) {
+                    if ((toggle.wasSelected && toggle.isSelected === false) || !someOn) {
                         toggle.wasSelected = undefined;
                         self.onToggleClick(toggle, true);
                     }
@@ -262,6 +261,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         if (self.symbology) {
             self.symbology.toggleList = self.toggleList;
             self.symbology.onToggleClick = self.onToggleClick;
+            self.symbology.allSymbolsVisible = allSymbolsVisible;
+            self.symbology.noSymbolsVisible = noSymbolsVisible;
         }
 
         const ref = {
