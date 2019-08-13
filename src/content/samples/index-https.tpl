@@ -6,6 +6,8 @@
     <meta content="width=device-width,initial-scale=1" name="viewport">
     <title>title</title>
 
+    <script src="./plugins/coordInfo/coordInfo.js"></script>
+
     <style>
         .myMap {
             height: 100%;
@@ -26,7 +28,8 @@
         rv-config="config/config-https.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-wait="true"
-        rv-restore-bookmark="bookmark">
+        rv-restore-bookmark="bookmark"
+        rv-plugins="coordInfo">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -59,8 +62,6 @@
 
         // plugins
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
-        RV.getMap('https-map').registerPlugin(RV.Plugins.BackToCart, 'backToCart', baseUrl);
-        RV.getMap('https-map').registerPlugin(RV.Plugins.CoordInfo, 'coordInfo');
 
         function bookmark(){
             return new Promise(function (resolve) {
