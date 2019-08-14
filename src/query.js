@@ -358,6 +358,30 @@ class AqlLike extends AqlDiatomic {
     }
 }
 
+// handles a value with a prefix
+class AqlPrefix extends AqlAtomic {
+    constructor (val, prefix) {
+        super(val);
+        // add support for additional prefixes here
+        this.supportedPrefixes = ['-', '+'];
+        this.prefix = prefix;
+        this.negative = this.prefix === '-' ? true : false;
+        if (!this.supportedPrefixes.includes(this.prefix)) {
+            throw new Error('Unexpected prefix not recognized : ' + this.prefix);
+        }
+    }
+
+    evaluate (attribute) {
+        // check if value is a number and is negative
+        const result = this.value.evaluate(attribute);
+        if (!isNaN(result)) {
+            return this.negative ? result * -1 : result;
+        } else {
+            throw new Error(`Expected numeric value after ${this.prefix} prefix but none found`);
+        }
+    }
+}
+
 // handles a not operator
 class AqlNot extends AqlAtomic {
     evaluate (attribute) {
@@ -457,6 +481,9 @@ function sqlNodeToAqlNode (node) {
         },
         Identifier: n => {
             return new AqlIdentifier(n.value);
+        },
+        Prefix: n => {
+            return new AqlPrefix(sqlNodeToAqlNode(n.value), n.prefix);
         },
         Number: n => {
             // number in string form
