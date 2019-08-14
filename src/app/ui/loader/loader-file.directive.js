@@ -100,7 +100,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             isActive: false,
             isCompleted: false,
             onContinue: selectOnContinue,
-            onCancel: () => onCancel(self.select.step),
+            onCancel: () => {
+                selectReset();
+                onCancel(self.select.step)
+            },
             reset: selectReset
         },
         selectResetValidation,
@@ -127,6 +130,27 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         form: null
     };
 
+    // a list of supported service types.
+    self.serviceOptions = [
+        {
+            name: "featurelayer"
+        },
+        {
+            name: "dynamicservice"
+        },
+        {
+            name: "tileservice"
+        },
+        {
+            name: "imageservice"
+        },
+        {
+            name: "wfs"
+        },
+        {
+            name: "wms"
+        }
+    ];
     self.layerBlueprint = null;
 
     const stepper = new Stepper();
@@ -234,7 +258,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             isFileUploadAborted = true;
         };
 
-        if(connect.fileUrl.match(/.*(.zip|.csv|.json)/g)) {
+        // a file was provided, so we can load it before moving on to the next step.
+        if (connect.fileUrl.match(/.*(.zip|.csv|.json)/g)) {
             loaderPromise = _loadFile(self.upload.fileUrl).then(arrayBuffer =>
                 isFileUploadAborted ?
                     $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
@@ -248,22 +273,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                 console.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
                 toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
             });
-        } else {
-            loaderPromise = layerSource
-            // maps served over https can only accept https enabled services to avoid mixed content issues.
-            .fetchServiceInfo(self.isHTTPS ? connect.fileUrl.replace('http:', 'https:') : connect.fileUrl)
-            .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
-                self.layerBlueprintOptions = layerBlueprintOptions;
-                self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
-            })
-            .catch(error => {
-                toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
-                return $q.reject(error);
-            });
         }
 
         // add some delay before going to the next step
-        stepper.nextStep($timeout(() =>
+        stepper.moveToStep(1, $timeout(() =>
             loaderPromise, 300));
 
         /**
@@ -319,6 +332,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
             const file = files[0];
             self.upload.file = file; // store the first file from the array;
+            self.upload.fileUrl = file.name;
 
             const reader = new FileReader();
 
@@ -480,24 +494,46 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
      * @function selectOnContinue
      */
     function selectOnContinue() {
+        const connect = self.upload;
+
         let validationPromise;
+        let loaderPromise;
 
-        // incorrectly picking GeoJSON results in syntax error, must be caught here
-        try {
-            validationPromise = self.layerBlueprint.validate();
-        } catch (e) {
-            console.error('loaderFileDirective', 'file type is wrong', e);
-            toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
-            return;
+        if (self.select.selection) {
+            // now that we have a good idea of what type of service we're looking at, we can validate it
+
+            loaderPromise = layerSource
+            // maps served over https can only accept https enabled services to avoid mixed content issues.
+            .fetchServiceInfo(self.isHTTPS ? connect.fileUrl.replace('http:', 'https:') : connect.fileUrl, self.select.selection)
+            .then((options) => {
+                self.layerBlueprint = options[0];
+
+                validationPromise = self.layerBlueprint.validate();
+                stepper.nextStep(validationPromise);
+            })
+            .catch(error => {
+                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                return $q.reject(error);
+            });
+        } else {
+            // validate files
+            // incorrectly picking GeoJSON results in syntax error, must be caught here
+            try {
+                validationPromise = self.layerBlueprint.validate();
+            } catch (e) {
+                console.error('loaderFileDirective', 'file type is wrong', e);
+                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                return;
+            }
+
+            validationPromise.catch(error => {
+                console.error('loaderFileDirective', 'file type is wrong', error);
+                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
+            });
+
+            stepper.nextStep(validationPromise);
         }
-
-        validationPromise.catch(error => {
-            console.error('loaderFileDirective', 'file type is wrong', error);
-            toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
-            // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
-        });
-
-        stepper.nextStep(validationPromise);
     }
 
     /**
@@ -506,6 +542,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
      */
     function selectReset() {
         const select = self.select;
+
+        // reset variables
+        select.selection = null;
+        self.layerBlueprint = undefined;
+        self.layerBlueprintOptions = undefined;
 
         select.form.$setPristine();
         select.form.$setUntouched();

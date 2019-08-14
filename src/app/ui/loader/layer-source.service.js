@@ -39,76 +39,45 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
         configService.getSync.map.instance.checkCorsException(serviceUrl);
 
         const matrix = {
+            [geoServiceTypes.FeatureLayer]: () => [_parseAsFeature],
             [geoServiceTypes.FeatureService]: () => [_parseAsFeature],
-
             [geoServiceTypes.WFS]: () => [_parseAsWfs],
-
             [geoServiceTypes.ImageService]: () => [_parseAsImage],
-
-            [geoServiceTypes.DynamicService](serviceInfo) {
-                const defaultSet = [_parseAsDynamic];
-
-                const subMatrix = {
-                    get [geoServiceTypes.FeatureLayer]() {
-                        // adding as Feature layer is the first option
-                        return [_parseAsFeature].concat(defaultSet);
-                    },
-                    [geoServiceTypes.RasterLayer]: defaultSet,
-                    [geoServiceTypes.GroupLayer]: defaultSet
-                };
-
-                if (serviceInfo.tileSupport) {
-                    defaultSet.push(_parseAsTile);
-                }
-
-                if (serviceInfo.index !== -1) {
-                    return subMatrix[serviceInfo.indexType];
-                } else {
-                    return defaultSet;
-                }
-            }
+            [geoServiceTypes.DynamicService]: () => [_parseAsDynamic],
+            [geoServiceTypes.RasterLayer]: () => [_parseAsDynamic],
+            [geoServiceTypes.GroupLayer]: () => [_parseAsDynamic],
+            [geoServiceTypes.TileService]: () => [_parseAsTile]
         };
 
         const urlWrapper = new LayerBlueprint.UrlWrapper(serviceUrl);
 
         // check if it's a WMS first
         const fetchPromise = gapiService.gapi.layer.ogc
-            .parseCapabilities(serviceUrl)
-            .then(data => {
-                if (data.layers.length > 0) {
-                    // if there are layers, it's a wms layer
+        .parseCapabilities(serviceUrl)
+        .then(data => {
+            if (layerType === geoServiceTypes.WMS) {
+                // if the service doesn't have any layers, we reject it. either the service isn't a WMS, or it's a WMS
+                // with no layers, in which case there's no point in adding it anyways.
+                if (data.layers.length === 0) {
+                    $q.reject()
+                } else {
                     return _parseAsWMS(serviceUrl, data);
                 }
-
-                // test if it's a WFS
-                // make a quick request for a single feature and see what the prediction function says
-                const requestUrl = urlWrapper.updateQuery({ startindex: 0, limit: 1 });
-                return gapiService.gapi.layer.predictLayerUrl(requestUrl).then(serviceInfo => {
-                    if (serviceInfo.serviceType === Geo.Service.Types.Error) {
-                        // workaround in case predictUrl fails
-                        let layerInfo = _parseAsWfs(serviceUrl);
-
-                        const updatedServiceInfo = {
-                            serviceType: 'wfs',
-                            index: '-1',
-                            tileSupport: false,
-                            rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
-                        }
-
-                        return _parseAsSomethingElse(updatedServiceInfo, serviceUrl);
-                    }
-                    // if service is identified as WFS, parse as WFS
-                    else if (serviceInfo.serviceType === Geo.Service.Types.WFS) {
-                        return _parseAsSomethingElse(serviceInfo, serviceUrl);
-                    }
-                    return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
-                });
-            })
-            .then(options => ({
-                options,
-                preselectedIndex: 0
-            }))
-            .catch(error => $q.reject(error));
+            } else if (layerType === geoServiceTypes.WFS) {
+                // by having the user specify whether the layer is wfs, we can skip the
+                // esri request. This saves tons of loading time.
+                let layerInfo = _parseAsWfs(serviceUrl);
+                const updatedServiceInfo = {
+                    serviceType: 'wfs',
+                    index: '-1',
+                    tileSupport: false,
+                    rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
+                }
+                return _parseAsSomethingElse(updatedServiceInfo, serviceUrl);
+            } else {
+                return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
+            }
+        });
 
         return fetchPromise;
 
@@ -141,7 +110,7 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 return $q.reject(serviceInfo); // reject promise if the provided url cannot be accessed
             }
 
-            const parsingPromise = matrix[serviceInfo.serviceType](serviceInfo).map(layerInfoBuilder =>
+            const parsingPromise = matrix[layerType]().map(layerInfoBuilder =>
                 layerInfoBuilder(serviceUrl, serviceInfo)
             );
             return parsingPromise;
