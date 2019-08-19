@@ -456,7 +456,7 @@
                 <div class="panel-body clearfix">
                     <div style="display:flex;">
                         <button onclick="getBookmark()">Obtenir le lien</button>
-                        <input type="text" id="bookmarkDisplay" style="width:100%;" />
+                        <input type="text" id="bookmarkDisplay" style="width:100%;" onClick="this.select();" />
                         <button onclick="testBackToCart()">Retour au panier</button>
                     </div>
                     <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["fr-CA", "en-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-wait="true" rv-plugins="backToCart">
