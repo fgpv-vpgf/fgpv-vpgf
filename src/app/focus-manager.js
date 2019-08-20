@@ -1,7 +1,6 @@
 import {
     InternalsFocusManager
 } from './internals-focus-manager'
-/* global RV, jQuery */
 // eslint-disable-next-line max-statements
 
 // delay in milliseconds from time focus is lost to when action is taken
