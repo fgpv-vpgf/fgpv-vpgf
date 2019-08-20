@@ -26,6 +26,27 @@ function identifyService($q, configService, gapiService, referenceService, state
     return service;
 
     /**
+     * Convert an API XY object to a fake click event
+     *
+     * @param {XY} xy an API XY object
+     * @param {Object} mapInstance a reference to the map (caller has it, saves us looking it up again)
+     * @returns {Object} a fake click event containing mapPoint and screenPoint
+     */
+    function XYtoFakeEvent(xy, mapInstance) {
+        // shift from latlong (XY is native to that) to map projection
+        const mapPoint = xy.projectToPoint(mapInstance.spatialReference.wkid);
+
+        // generate screen co-ords if possible. needed for WMS identifies.
+        const screenPoint = mapInstance.toScreen(mapPoint);
+
+        // make a fake click-event-like object
+        return {
+            mapPoint,
+            screenPoint
+        };
+    }
+
+    /**
      * Handles global map identifies.  Currently configured to walk through all layer records
      * and trigger service side identify queries.
      * GeoApi is responsible for performing client side spatial queries on registered
@@ -38,12 +59,16 @@ function identifyService($q, configService, gapiService, referenceService, state
     function identify(clickOrXY) {
         const mapInstance = configService.getSync.map.instance;
         const isClick = !clickOrXY.projectToPoint;
-        // normalize coordinates as an XY object in lat/lon (projection 4326)
-        const XY = isClick
-            ? new window.RAMP.GEO.XY(clickOrXY.mapPoint.x, clickOrXY.mapPoint.y, mapInstance.spatialReference.wkid)
-            : clickOrXY;
-        // keeping clickEvent to avoid a giant refactor - if it's an API based identify make a fake click-like object
-        const clickEvent = isClick ? clickOrXY : { mapPoint: XY.projectToPoint(mapInstance.spatialReference.wkid) };
+        let clickEvent;
+
+        if (isClick) {
+            // raw input user, the param is a click. donethanks
+            clickEvent = clickOrXY;
+        } else {
+            // our input is an XY api object
+            // make a fake click-event-like object
+            clickEvent = XYtoFakeEvent(clickOrXY, mapInstance);
+        }
 
         sessionId++;
 
