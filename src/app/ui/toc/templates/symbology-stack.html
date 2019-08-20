@@ -24,7 +24,7 @@
         </div>
 
         <md-button class="md-icon-button rv-icon-20 toggle-button data-test-symbol-toggle-button"
-            ng-click="self.onToggleClick(symbol.toggle)" ng-if="symbol.toggle"
+            ng-click="self.onToggleClick(symbol.toggle)" ng-if="symbol.toggle && self.isExpanded"
             aria-pressed="{{symbol.toggle.isSelected }}" aria-label="{{ (symbol.toggle.isSelected && ('toc.aria.visibility.on' | translate)) ||
                 (!symbol.toggle.isSelected && ('toc.aria.visibility.off' | translate)) }}">
             <md-icon md-svg-src="{{symbol.toggle.icon}}"></md-icon>
