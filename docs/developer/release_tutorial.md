@@ -86,7 +86,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         git checkout [-b] develop
     ```
 
-3. Change the version tag and geoApi tag in `package.json` and `package.lock.json` to the appropriate versions
+3. Change the version tag and geoApi tag in `package.json` and `package-lock.json` to the appropriate versions
 
     ```json
         "version": [version],
