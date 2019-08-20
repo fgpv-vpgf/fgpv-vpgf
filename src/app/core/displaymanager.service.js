@@ -1,4 +1,3 @@
-/* global RV */
 
 /**
  * @module displayManager

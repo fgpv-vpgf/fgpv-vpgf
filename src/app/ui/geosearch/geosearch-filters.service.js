@@ -1,5 +1,3 @@
-/* global RV */
-
 /**
  * @module geosearchFiltersService
  * @memberof app.ui
