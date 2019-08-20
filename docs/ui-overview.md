@@ -367,9 +367,7 @@ The only notable difference between the two is ability to reorder and layers in 
 
 ### 5.1. Add layer (Layer Import Wizard)
 
-#### 5.1.1. Select the 'Import File' or 'Import Service' option through the Add layer menu
-
-![img](https://camo.githubusercontent.com/bad30d44ab651f4ed6a89d7bca0b028a61b29a72/68747470733a2f2f692e696d6775722e636f6d2f494f5a415067492e706e67)
+#### 5.1.1. Supported Services and File Types
 
 | Supported Services| Supported File Types|
 | ------------- |:-------------:|
@@ -383,31 +381,31 @@ The only notable difference between the two is ability to reorder and layers in 
 
 #### 5.1.2. Add your File/Service
 
-![step 1 - connect the service](https://user-images.githubusercontent.com/25359812/53022159-9d113e80-3428-11e9-8bd8-57a9d0ea7130.png)
+![step 1 - connect the service](https://i.imgur.com/5gL4WfB.png)
 
-If you selected `Import File`, click on the `Choose A File` button and select your local file (or alternatively drag and drop), or provide a URL  to the file (as shown on the left).
+If you want to import a file, click on the `Choose A File` button and select your local file (or alternatively drag and drop), or provide a URL to the file.
 
-If you selected `Import Service` enter the service URL (as shown on the right).
+If you want to import a service, enter the service URL into the text box.
 
 Click the `Continue` button to proceed.
 
 #### 5.1.3. Select the correct dataset type
 
-![](https://i.imgur.com/AY8qpFl.png)
+![](https://i.imgur.com/Im2JfEc.png)
 
 This step works the same for both file and service based layers.
 
-- The Viewer will try to predict the dataset type. If you are satisfied with this, click the `Continue` button to proceed (Scenario 1).
-- If it is incorrect, select the option from the dropdown with the correct type (Scenario 2). Then click `Continue` to proceed.
-- If the import wizard warns you that the selected file/service type is incorrect, double check that the selected type is correct and make any nescessary changes. If this doesn't work, double check that the source is not corrupted.
+- Select the type of the dataset from the dropdown menu, and then click `Continue`.
+- If the type is incorrect, select a different option from the dropdown (Scenario 2), and then click `Continue` to proceed.
+- If the import wizard warns you that the selected file/service type is incorrect, double check that the selected type is correct and make any necessary changes. If this doesn't work, double check that the source is not corrupted.
 
-**Note:** the drop down menu in Scenario 2 will look different depending on whether you are using a file or service. If you are using a service, it will look different depending on the *type* of service.
+**Note:** the drop down menu in Scenario 2 will look different depending on whether you are using a file or service.
 
 #### 5.1.4. Configure your file type
 
  Depending on the type of dataset being loaded, the following parameters can be set in this final phase:
 
-![](https://i.imgur.com/oCKzXZJ.png)
+![](https://i.imgur.com/8xkO9Y7.png)
 
 
 1. **Layer Name** : the layer name as it appears in the legend

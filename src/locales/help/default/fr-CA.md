@@ -130,11 +130,10 @@ Fournit des options supplémentaires lorsque la liste déroulante « Couches » 
 Des couches supplémentaires peuvent être ajoutées au visualiseur de carte. Les formats pris en charge sont les suivants: couche d'éléments d'ESRI, couche dynamique d'ESRI, couche de tuiles d'ESRI, couche d'images d'ESRI, couche WMS de l'OGC ou couche Raster. Le bouton « + » en haut du menu Légende lance le menu « Ajouter une couche ».
 
 Utilisation:
-- Sélectionnez l'option « Importer un fichier » ou « Importer un service ».
-- Lorsqu' « Importer un service » est sélectionné, cliquez sur le bouton « Choisir un fichier » pour sélectionner un fichier à l'aide d'un utilitaire de recherche de fichier ou saisissez dans la zone d'édition une adresse URL pointant sur le fichier désiré.
-- Lorsque vous sélectionnez « Importer un service », vous aurez la possibilité d'entrer l'adresse URL d'un service dans une zone d'édition.
+- Si vous souhaitez ajouter un fichier, vous pouvez le faire en faisant glisser le dossier sur l’importation Wizard, en cliquant sur le bouton « choisir un bouton File` et choisir le dossier, ou en fournissant l’adresse URL pour le dossier.
+- Si vous souhaitez ajouter un service, vous pouvez le faire en entrant le service URL dans la boîte de texte.
 - Cliquez sur le bouton « Continuer » pour continuer.
-- Le visualiseur essaiera de prédire le type de jeu de données. S'il est incorrect, sélectionnez manuellement le type correspondant à l'aide du menu déroulant.
+- Sélectionnez l’option dans le menu déroulant avec le bon dossier ou le type de service. Si le mauvais type est sélectionné, une erreur s’affichera vous demandant d’essayer un autre type.
 - Cliquez sur le bouton « Continuer » pour continuer.
 - Selon le type d'ensemble de données chargé, différents paramètres peuvent être définis dans cette phase finale.
 - Un service d'éléments permet le choix d'un attribut principal, qui détermine l'attribut utilisé pour identifier un élément (enregistrement) dans le tableau de données et les étiquettes correspondantes sur la carte. Toutes les autres informations proviennent des métadonnées du service.

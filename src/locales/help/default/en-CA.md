@@ -130,11 +130,10 @@ Provides additional layer options when the layer panel is open. It is shown in r
 Additional layers can be added to the map viewer. Supported formats include: ESRI Feature Layer, ESRI Dynamic Layer, ESRI Tile Layer, ESRI Image Layer, OGC Web Map Service, or a Raster Layer. The '+' button at the top of the Legend menu will launch the Add Layers menu.
 
 Usage:
-- Select the 'Import File' or 'Import Service' option.
-- When 'Import File' is selected, click on the 'choose a file' button and select your local file, or you can provide a url to the file.
-- When 'Import Service' is selected you'll be given the option to enter the service URL.
+- If you wish to add a file, you can do so by dragging the file over the import wizard, by clicking on the `Choose a File` button and selecting the file, or by providing the URL to the file.
+- If you wish to add a service, you can do so by entering the service URL into the text box.
 - Click the 'Continue' button to proceed.
-- The Viewer will try to predict the dataset type. If it is incorrect, select the option from the dropdown with the correct type.
+- Select the option from the dropdown menu with the correct file or service type. If the wrong type is selected, an error will be displayed prompting you to try a different type.
 - Click the 'Continue' button to proceed.
 - Depending on the type of dataset being loaded, various parameters can be set in this final phase.
 - A Feature Service allows the choice of a Primary Attribute, which determines the attribute used to identify a feature in the data table panel and map tips. All other information is derived from the service's metadata.
