@@ -35,7 +35,7 @@ export declare class NumberFloatingFilter {
      * If so fills col filter from either panelStateManager or default value from config
      */
     readonly preLoadedValue: any;
-    /** Update filter nimimum */
+    /** Update filter minimum */
     onMinInputBoxChanged(): void;
     /** Update filter maximum */
     onMaxInputBoxChanged(): void;

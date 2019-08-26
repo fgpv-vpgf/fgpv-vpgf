@@ -300,12 +300,12 @@ export class NumberFloatingFilter {
         }
     }
 
-    /** Update filter nimimum */
+    /** Update filter minimum */
     onMinInputBoxChanged() {
         if (this.minFilterInput.value === '') {
             this.currentValues.min = null;
         } else if (this.minFilterInput.value === '-') {
-            this.currentValues.min = -Number.MAX_VALUE;
+            this.currentValues.min = '-';
         } else if (isNaN(this.minFilterInput.value)) {
             // TODO: error message for wrong input type
             this.minFilterInput.value = this.currentValues.min;
@@ -315,10 +315,8 @@ export class NumberFloatingFilter {
 
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' min';
-        // handle filtering negative values by replacing - with the largest negative number
-        this.currentValues.min === -Number.MAX_VALUE ?
-        this.params.panelStateManager.setColumnFilter(key, '-') : this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
 
+        this.params.panelStateManager.setColumnFilter(key, this.currentValues.min);
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
@@ -327,7 +325,7 @@ export class NumberFloatingFilter {
         if (this.maxFilterInput.value === '') {
             this.currentValues.max = null;
         } else if (this.maxFilterInput.value === '-') {
-            this.currentValues.max = -Number.MAX_VALUE;
+            this.currentValues.max = '-';
         } else if (isNaN(this.maxFilterInput.value)) {
             // TODO: error message for wrong input type
             this.maxFilterInput.value = this.currentValues.max;
@@ -337,30 +335,29 @@ export class NumberFloatingFilter {
 
         // save value on panel reload manager
         let key = this.params.currColumn.field + ' max';
-        // handle filtering negative values by replacing - with the largest negative number
-        this.currentValues.max === -Number.MAX_VALUE ?
-        this.params.panelStateManager.setColumnFilter(key, '-') : this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
 
+        this.params.panelStateManager.setColumnFilter(key, this.currentValues.max);
         this.onFloatingFilterChanged({ model: this.getModel() });
     }
 
     /** Helper function to determine filter model */
     getModel(): any {
+        // handle filtering negative values by replacing - with the largest negative number
         if (this.currentValues.min !== null && this.currentValues.max !== null) {
             return {
                 type: 'inRange',
-                filter: this.currentValues.min,
-                filterTo: this.currentValues.max
+                filter: this.currentValues.min === '-' ? Number.MIN_SAFE_INTEGER : this.currentValues.min,
+                filterTo: this.currentValues.max === '-' ? Number.MIN_SAFE_INTEGER : this.currentValues.max
             };
         } else if (this.currentValues.min !== null && this.currentValues.max === null) {
             return {
                 type: 'greaterThanOrEqual',
-                filter: this.currentValues.min
+                filter: this.currentValues.min === '-' ? Number.MIN_SAFE_INTEGER : this.currentValues.min
             };
         } else if (this.currentValues.min === null && this.currentValues.max !== null) {
             return {
                 type: 'lessThanOrEqual',
-                filter: this.currentValues.max
+                filter: this.currentValues.max === '-' ? Number.MIN_SAFE_INTEGER : this.currentValues.max
             };
         } else {
             return {};
