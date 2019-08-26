@@ -207,8 +207,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                     toggleMetadata(legendBlock);
                 }
             }
+
             // clear the state for the datatable to match the refreshed legend
-            const fs = legendBlock.proxyWrapper.filterState;
+            const fs = legendBlock.proxyWrapper ? legendBlock.proxyWrapper.filterState : undefined;
             if (fs !== undefined) {
                 fs.setSql(fs.coreFilterTypes.SYMBOL, '');
             }
