@@ -77,8 +77,8 @@ export default class TableBuilder {
                 this.openTable(layer);
             } else {
                 // if layer was not created, subscribe to layer added observable
-                this.layerAdded = this.mapApi.layers.layerAdded.subscribe(layer => {
-                    if (layer.id === legendBlock.layerRecordId) {
+                this.layerAdded = this.mapApi.layers.layerAdded.subscribe(l => {
+                    if (l.id === legendBlock.layerRecordId) {
                         // if matching layer is found, call this function again so that enhancedTable can be created
                         this.findMatchingLayer(legendBlock);
                     }
@@ -98,11 +98,11 @@ export default class TableBuilder {
         this.attributeHeaders = baseLayer.attributeHeaders;
         if (attrs.length === 0) {
             // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
-            this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attrs => {
-                if (attrs.attributes.length > 0) {
+            this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attr => {
+                if (attr.attributes.length > 0) {
                     this.configManager = new ConfigManager(baseLayer, this.panelManager);
                     this.panelManager.configManager = this.configManager;
-                    this.createTable(attrs);
+                    this.createTable(attr);
                 } else {
                     this.openTable(baseLayer);
                 }
