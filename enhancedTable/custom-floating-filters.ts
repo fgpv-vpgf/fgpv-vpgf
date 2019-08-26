@@ -200,7 +200,28 @@ export class TextFloatingFilter {
      * If so fills col filter from either panelStateManager or default value from config
      */
     preLoadedValue(): void {
-        const reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+        let reloadedVal = this.params.panelStateManager.getColumnFilter(this.params.currColumn.field);
+
+        if (typeof reloadedVal === 'string') {
+            // UNESCAPE all special chars (remove the backslash) when reloading table
+            const escRegex = /\\[(!"#$%&\'+,.\\\/:;<=>?@[\]^`{|}~)]/g;
+            // remFilter stores the remaining string text after the last special char (or the entire string, if there are no special chars at all)
+            let remFilter = reloadedVal;
+            let newFilter = '';
+            let escMatch = escRegex.exec(reloadedVal);
+            let lastIdx = 0;
+
+            while (escMatch) {
+                // update all variables after finding an escaped special char, preserving all text except the backslash
+                newFilter = newFilter + reloadedVal.substr(lastIdx, escMatch.index - lastIdx) + escMatch[0].slice(-1);
+                lastIdx = escMatch.index + 2;
+                remFilter = reloadedVal.substr(escMatch.index + 2);
+                escMatch = escRegex.exec(reloadedVal);
+            }
+            newFilter = newFilter + remFilter;
+            reloadedVal = newFilter;
+        }
+
         if (reloadedVal !== undefined) {
             this.eGui.innerHTML = TEXT_FILTER_TEMPLATE(reloadedVal, this.params.isStatic);
             this.scope = this.params.map.$compile(this.eGui);
