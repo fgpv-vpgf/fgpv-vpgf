@@ -56,7 +56,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
         <md-menu-content class="rv-menu rv-dense">
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
                 <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }}" md-prevent-menu-close="md-prevent-menu-close">
-                    <span style='overflow-wrap:normal'>{{col.title}}</span>
+                    <span style='flex-basis: auto; overflow-wrap:normal;'>{{col.title}}</span>
                     <md-icon md-svg-icon="action:done" ng-if="col.visibility"></md-icon>
                 </md-button>
             </md-menu-item>
