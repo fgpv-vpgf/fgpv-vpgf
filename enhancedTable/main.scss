@@ -166,3 +166,6 @@ md-datepicker>div {
     -ms-user-select: text;
     user-select: text;
 }
+
+// fix for md-menu elements not showing up immediately in IE (see: https://github.com/angular/material/issues/11226)
+.md-open-menu-container > md-menu-content > * { transition: none !important; }
