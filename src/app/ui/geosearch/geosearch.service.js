@@ -45,7 +45,9 @@ function geosearchService(
 
         searchValue: '', // current search term
         searchValuePerm: '', // searchValue is cleared on esc, keep a reference
+        lastSearchValue: '', // last search term saved
         searchResults: [], // currect search results
+        savedResults: [], // search results for last search term
 
         runQuery,
 
@@ -138,36 +140,64 @@ function geosearchService(
         // show loading indicator
         service.isLoading = true;
 
-        return GSservice.query(`${service.searchValue}*`).then(
-            data => {
-                // hide loading indicator
-                service.isLoading = false;
-                service.isResultsVisible = true;
-                service.mApi.panels.geoSearch.element.css({
-                    opacity: 1,
-                    'pointer-events': '',
-                    bottom: ''
-                });
-                service.serviceError = false;
+        // only run query if a different search term is entered
+        if (service.searchValue && service.searchValue !== service.lastSearchValue) {
+            return GSservice.query(`${service.searchValue}*`).then(
+                data => {
+                    // store data for current search term
+                    service.lastSearchValue = service.searchValue;
+                    service.savedResults = data;
 
-                // discard any old results
-                if (requestCount === ref.runningRequestCount) {
-                    let filteredData = filter(data);
-                    service.searchResults = filteredData || [];
+                    // hide loading indicator
+                    service.isLoading = false;
+                    service.isResultsVisible = true;
+                    service.mApi.panels.geoSearch.element.css({
+                        opacity: 1,
+                        'pointer-events': '',
+                        bottom: ''
+                    });
+                    service.serviceError = false;
 
-                    service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+                    // discard any old results
+                    if (requestCount === ref.runningRequestCount) {
+                        let filteredData = filter(data);
+                        service.searchResults = filteredData || [];
+
+                        service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+                    }
+
+                    // return data for optional processing further down the promise chain
+                    return data;
+                },
+                _ => {
+                    service.searchResults = [];
+                    service.isLoading = false;
+                    service.isResultsVisible = true;
+                    service.serviceError = true;
                 }
+            );
+        // otherwise the unfiltered data is already saved for the current search term
+        } else {
+            // hide loading indicator
+            service.isLoading = false;
+            service.isResultsVisible = true;
+            service.mApi.panels.geoSearch.element.css({
+                opacity: 1,
+                'pointer-events': '',
+                bottom: ''
+            });
+            service.serviceError = false;
 
-                // return data for optional processing further down the promise chain
-                return data;
-            },
-            _ => {
-                service.searchResults = [];
-                service.isLoading = false;
-                service.isResultsVisible = true;
-                service.serviceError = true;
+            // discard any old results
+            if (requestCount === ref.runningRequestCount) {
+                let filteredData = filter(service.savedResults);
+                service.searchResults = filteredData || [];
+                service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
             }
-        );
+
+            // return data for optional processing further down the promise chain
+            return Promise.resolve(service.savedResults);
+        }
     }
 
     /**
@@ -203,10 +233,10 @@ function geosearchService(
                     )
             );
         }
-        if (queryParams.province) {
+        if (queryParams.province && queryParams.province !== '...') {
             data = data.filter(r => r.location.province && r.location.province.name === queryParams.province);
         }
-        if (queryParams.type) {
+        if (queryParams.type && queryParams.type !== '...') {
             data = data.filter(r => r.type.name === queryParams.type);
         }
         return data;
