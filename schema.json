@@ -1558,7 +1558,7 @@
                 },
                 "altText": {
                     "type": "string",
-                    "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image."
+                    "description": "Alt text for the basemap thumbnail image."
                 },
                 "thumbnailUrl": {
                     "type": "string",
