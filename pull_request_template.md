@@ -20,6 +20,7 @@
 - [ ] works on layer reload
 - [ ] datagrid works
 - [ ] identify works
+- [ ] the [accessibility guidelines](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/developer/accessibility_guidelines) have been respected
 
 ## Documentation
 <!-- Which areas of documentation have been changed: jsdoc, tutorials, samples, wiki -->
