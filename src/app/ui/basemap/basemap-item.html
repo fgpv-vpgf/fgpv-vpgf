@@ -1,7 +1,7 @@
 <div ng-switch="self.basemap.wkid" class="rv-wkid rv-{{self.basemap.wkid}}">
 
     <div ng-if="self.basemap.thumbnailUrl">
-        <img alt="" ng-src="{{ self.basemap.thumbnailUrl }}"/>
+        <img alt="{{ self.basemap.altText }}" ng-src="{{ self.basemap.thumbnailUrl }}"/>
     </div>
 
     <div ng-switch-when="3978" ng-if="!self.basemap.thumbnailUrl">
