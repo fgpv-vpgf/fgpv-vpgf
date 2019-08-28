@@ -38,7 +38,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         git checkout [-b] develop
     ```
 
-3. Change the version tag in `package.json` and `package.lock.json` to the appropriate version.
+3. Change the version tag in `package.json` and `package-lock.json` to the appropriate version.
 
     ```json
         "version": [version]
