@@ -6,7 +6,6 @@
     "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",
     "dependencies": {
-        "@claviska/jquery-minicolors": "github:claviska/jquery-minicolors",
         "@fgpv/rv-plugins": "github:RyanCoulsonCA/plugins#dcafb4851c2497055c14545f332ab7f0f4144323",
         "@flowjs/ng-flow": "2.7.8",
         "angular": "1.7.5",
@@ -18,6 +17,7 @@
         "angular-sanitize": "1.7.5",
         "angular-translate": "2.18.1",
         "angular-translate-loader-static-files": "2.18.1",
+        "colourpicker": "https://github.com/fgpv-vpgf/colourpicker",
         "csvtojson": "1.1.11",
         "dotjem-angular-tree": "github:dotJEM/angular-tree",
         "file-saver": "2.0.0",
