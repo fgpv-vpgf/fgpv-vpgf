@@ -296,10 +296,11 @@
                 <div layout="row" ng-switch-when="wfs|csv|geojson|shapefile" ng-switch-when-separator="|">
                     <md-input-container class="md-block" flex>
                         <label>{{ 'import.layer.configure.colourfield' | translate }}</label>
-                        <input rv-minicolors options="self.configure.colourPickerSettings"
-                            name="layerName"
+                        <input
+                            type="colour"
+                            class="rv_colourpicker"
                             ng-change="self.configure.configureResetValidation()"
-                            ng-model="self.layerBlueprint.config.colour" required>
+                            ng-model="self.layerBlueprint.config.colour">
                         <!-- TODO: decide whether and how to display a hint or error messages -->
                         <!--div ng-messages="self.configure.form.layerName.$error">
                             <div ng-message="required">This is required!</div>
