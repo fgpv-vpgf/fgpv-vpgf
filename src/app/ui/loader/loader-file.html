@@ -88,7 +88,13 @@
                 step="self.select.step"
                 summary-value="{{ self.layerBlueprint.type && self.select.step.isCompleted ? 'import.upload.type.' + self.layerBlueprint.type : '' }}">
 
-                <md-input-container class="md-block">
+                <!-- can't combine these two input containers because angular doesn't like having
+                     two select menus under the same container, even using ng-if :( -->
+
+                <!-- file case-->
+                <md-input-container
+                    ng-if="self.layerBlueprintOptions"
+                    class="md-block">
                     <label>{{ 'import.file.select.fileformat' | translate }}</label>
                     <md-select
                         name="dataType"
@@ -98,6 +104,26 @@
                             ng-repeat="option in self.layerBlueprintOptions"
                             ng-value="option">
                             {{ 'import.upload.type.' + option.type | translate }}
+                        </md-option>
+                    </md-select>
+                    <div ng-messages="self.select.form.dataType.$error">
+                        <div ng-message="wrong">{{ 'import.file.select.wrong' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <!-- service case -->
+                <md-input-container
+                    ng-if="!self.layerBlueprintOptions"
+                    class="md-block">
+                    <label>{{ 'import.service.select.servicetype' | translate }}</label>
+                    <md-select
+                        name="dataType"
+                        ng-model="self.select.selection"
+                        md-on-open="self.select.selectResetValidation()" required>
+                        <md-option
+                            ng-repeat="option in self.serviceOptions"
+                            ng-value="option.name">
+                            {{ 'import.upload.type.' + option.name | translate }}
                         </md-option>
                     </md-select>
                     <div ng-messages="self.select.form.dataType.$error">
