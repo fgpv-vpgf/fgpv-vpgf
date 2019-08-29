@@ -1,6 +1,9 @@
 // Need to add exported module to window as it needs it internally.
+import Colour from 'colourpicker';
+import style from 'colourpicker/colourpicker/colourpicker.css';
 import Flow from '@flowjs/ng-flow/dist/ng-flow-standalone';
 window.Flow = Flow;
+
 
 const templateUrl = require('./loader-file.html');
 
@@ -509,7 +512,12 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                 self.layerBlueprint = options[0];
 
                 validationPromise = self.layerBlueprint.validate();
-                stepper.nextStep(validationPromise);
+                validationPromise.then(() => {
+                    stepper.nextStep();
+
+                    // initialize colour picker
+                    $('#colourpicker_pick').colourPicker();
+                });
             })
             .catch(error => {
                 toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
@@ -526,13 +534,16 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                 return;
             }
 
-            validationPromise.catch(error => {
+            validationPromise.then(() => {
+                stepper.nextStep();
+
+                // initialize colour picker
+                $('#colourpicker_pick').colourPicker();
+            }).catch(error => {
                 console.error('loaderFileDirective', 'file type is wrong', error);
                 toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
                 // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
             });
-
-            stepper.nextStep(validationPromise);
         }
     }
 
