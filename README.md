@@ -27,12 +27,12 @@ Also, please visit the [Documentation Site](http://fgpv-vpgf.github.io/fgpv-vpgf
 
 ### Quick guide
 
-We'll go through the simplest way to use RAMP, for more information see the [map author guide](#map-author-guide)
+We'll go through the simplest way to use RAMP, for more information see the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro)
 
 First, grab the most recent release from the [github releases](https://github.com/fgpv-vpgf/fgpv-vpgf/releases)
 Place the files `rv-main.js` and `rv-styles.css` within your webpage's folder structure. We usually put our JavaScript files under a `js` folder and our stylesheets under a `css` folder.
 
-Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the [map author guide](#map-author-guide)):
+Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro)):
 1. Within `head`
 ```html
 <link rel="stylesheet" href="../../../rv-styles.css" />
