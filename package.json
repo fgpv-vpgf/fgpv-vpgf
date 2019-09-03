@@ -17,7 +17,7 @@
         "angular-sanitize": "1.7.5",
         "angular-translate": "2.18.1",
         "angular-translate-loader-static-files": "2.18.1",
-        "colourpicker": "https://github.com/fgpv-vpgf/colourpicker",
+        "colourpicker": "https://github.com/fgpv-vpgf/colourpicker#2464e48ac0f373055dcdbe2fb0f8b3ab72244fef",
         "csvtojson": "1.1.11",
         "dotjem-angular-tree": "github:dotJEM/angular-tree",
         "file-saver": "2.0.0",
