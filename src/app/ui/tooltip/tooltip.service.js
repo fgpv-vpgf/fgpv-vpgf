@@ -373,7 +373,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
                 removeHoverTooltip();
 
-                console.log('tooltipService', `movementOffset is ${movementOffset}`);
+                // console.log('tooltipService', `movementOffset is ${movementOffset}`);
             });
         }
     }

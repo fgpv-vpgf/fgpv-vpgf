@@ -49,8 +49,6 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             [geoServiceTypes.TileService]: () => [_parseAsTile]
         };
 
-        const urlWrapper = new LayerBlueprint.UrlWrapper(serviceUrl);
-
         // check if it's a WMS first
         const fetchPromise = gapiService.gapi.layer.ogc
         .parseCapabilities(serviceUrl)
@@ -192,10 +190,9 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
          * @function _parseAsWfs
          * @private
          * @param {String} url a service url to be used
-         * @param {Object} data service info data from the geoApi predition call
          * @return {Promise} a promsie resolving with a LayerBlueprint.WFSServiceInfo object
          */
-        function _parseAsWfs(url, data) {
+        function _parseAsWfs(url) {
             const splitUrl = url.split('/');
             const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
 
@@ -209,7 +206,6 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 }
             };
 
-            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
             const layerInfo = new LayerBlueprint.WFSServiceSource(layerRawConfig);
 
             return layerInfo;
@@ -390,8 +386,6 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                     userAdded: true
                 }
             };
-
-            const targetWkid = configService.getSync.map.instance.spatialReference.wkid;
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const blueprintOptions = [

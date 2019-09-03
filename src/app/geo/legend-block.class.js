@@ -963,14 +963,15 @@ function LegendBlockFactory(
             if (this._bboxProxy) {
                 return;
             }
-
-            const currentWkid = ref.map.selectedBasemap.spatialReference.wkid;
             this._bboxProxy = layerRegistry.getBoundingBoxRecord(this.bboxId);
 
             if (!this._bboxProxy) {
                 // no cached bounding box found
                 this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
-            } else if (this._bboxProxy.spatialReference.wkid !== currentWkid) {
+
+            } else if (!gapiService.gapi.proj.isSpatialRefEqual(
+                this._bboxProxy.spatialReference, ref.map.selectedBasemap.spatialReference)) {
+
                 // cached bbox projection not compatible
                 this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxId);
                 this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
@@ -992,11 +993,11 @@ function LegendBlockFactory(
         }
 
         set boundingBox(value) {
-            const currentWkid = ref.map.selectedBasemap.spatialReference.wkid;
-
             if (!value && !this._bboxProxy) {
                 return;
-            } else if (!this._bboxProxy || this._bboxProxy.spatialReference.wkid !== currentWkid) {
+            } else if (!this._bboxProxy || !gapiService.gapi.proj.isSpatialRefEqual(
+                this._bboxProxy.spatialReference, ref.map.selectedBasemap.spatialReference)) {
+
                 this._makeBbox();
             }
 

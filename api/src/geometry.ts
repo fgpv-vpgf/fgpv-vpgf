@@ -9,9 +9,16 @@ export class XY {
     /** Latitude in decimal degrees, bounded by ±90° */
     y: number;
 
-    constructor(x: number, y: number, wkid?: number) {
-        if (wkid) {
-            const normalizePoints = this.projectFromPoint(wkid, x, y);
+    /**
+     * Creates an XY object
+     *
+     * @param x - An X co-ordinate
+     * @param y - A Y co-ordinate
+     * @param [projection] - Projection of the provided co-ordinates. If not provided, assumes longitude/latitude. Accepts WKID or EPSG codes as integers, or WTK as string.
+     */
+    constructor(x: number, y: number, projection?: number | string) {
+        if (projection) {
+            const normalizePoints = this.projectFromPoint(projection, x, y);
             x = normalizePoints.x;
             y = normalizePoints.y;
         }
@@ -28,20 +35,32 @@ export class XY {
         this.y = y;
     }
 
-    /** Returns a projection Point */
-    projectToPoint(targetProjection: number) {
+    /**
+     * Returns the value of this XY in a different projection
+     *
+     * @param targetProjection - Projection of the result. Accepts WKID or EPSG codes as integers, or WTK as string.
+     * @returns a point object
+     */
+    projectToPoint(targetProjection: number | string) {
         const proj = (<any>window).RAMP.GAPI.proj;
 
-        let zoomPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
-        return new proj.Point(zoomPoint[0], zoomPoint[1], new proj.SpatialReference(targetProjection));
+        let projPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);
+        return new proj.Point(projPoint[0], projPoint[1], new proj.SpatialReference(targetProjection));
     }
 
-    /** Returns a projection Point */
-    projectFromPoint(sourceProjection: number, x?: number, y?: number) {
+    /**
+     * Returns the value of a given point in longitude/latitude
+     *
+     * @param sourceProjection - Projection of the co-ordinates. Accepts WKID or EPSG codes as integers, or WTK as string.
+     * @param x - An X co-ordinate
+     * @param y - A Y co-ordinate
+     * @returns a point object
+     */
+    projectFromPoint(sourceProjection: number | string, x: number, y: number) {
         const proj = (<any>window).RAMP.GAPI.proj;
 
-        let point = proj.localProjectPoint(sourceProjection, 4326, [this.x || x, this.y || y]);
-        return new proj.Point(point[0], point[1], new proj.SpatialReference(sourceProjection));
+        let point = proj.localProjectPoint(sourceProjection, 4326, [x, y]);
+        return new proj.Point(point[0], point[1], new proj.SpatialReference(4326));
     }
 
     /**
@@ -1019,7 +1038,11 @@ export interface Extent {
     xmax: number;
     ymax: number;
     ymin: number;
-    spatialReference: { wkid: number };
+    spatialReference: {
+        wkid: number,
+        latestWkid: number,
+        wkt: string
+    };
     getCenter: Function;
 }
 

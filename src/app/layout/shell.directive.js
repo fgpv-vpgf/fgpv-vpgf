@@ -55,7 +55,7 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
                     // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file
                     // use it. If not, use the basemap spatial reference
                     const sr = mapConfig.mouseInfo.spatialReference;
-                    outMouseSR = (typeof sr !== 'undefined') ? sr.wkid : geoService.mapObject.spatialReference;
+                    outMouseSR = (typeof sr !== 'undefined') ? sr : geoService.mapObject.spatialReference;
 
                     // set map coordinates
                     events.$on('rvMouseMove',

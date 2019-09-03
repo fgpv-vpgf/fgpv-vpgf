@@ -302,7 +302,7 @@ function apiBlock($rootScope, geoService, configService, events,
      *
      * @function projectGeometry
      * @param {Object} geometry     The geometry to project
-     * @param {Number} outSR        The output spatial reference ID
+     * @param {Object} outSR        The output spatial reference (spatial reference object, wkid/epsg integer, or wkt string)
      * @return {Object}             The projected geometry
      */
     function projectGeometry(geometry, outSR) {

@@ -80,6 +80,7 @@
         }
 
     </style>
+    <script src="./plugins/coordInfo/coordInfo.js"></script>
 
     <% for (var index in htmlWebpackPlugin.files.css) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>
@@ -188,6 +189,7 @@
                 <option value="config/config-sample-89.json">89. Custom Geosearch sorted results</option>
                 <option value="config/config-sample-90.json">90. Layer with custom field alias</option>
                 <option value="config/config-sample-91.json">91. Custom Symbology Stacks</option>
+                <option value="config/config-sample-92.json">92. Third Basemap Schema using WKT</option>
             </select>
         </div>
 
@@ -206,6 +208,7 @@
         rv-config="config/config-sample-01.json"
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
+        rv-plugins="coordInfo"
         rv-service-endpoint="http://section917.cloudapp.net:8000/">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>

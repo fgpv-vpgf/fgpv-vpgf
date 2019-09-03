@@ -50,7 +50,7 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
         const mapPntCntr = map.extent.getCenter();
         const mapBottomY = map.extent.ymin;
         const mapScrnCntr = map.toScreen(mapPntCntr);
-        const wkid = map.extent.spatialReference.wkid;
+        const wkid = map.extent.spatialReference.wkid; // NOTE this will not support any WKT mercator things
 
         let screenX = null;
         let screenY = null;
@@ -110,7 +110,7 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
 
     /**
     * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree) if
-    * wkid is 4326 or only show coordinates if wkid is different
+    * spatial reference is wkid 4326 or only show coordinates if spatial reference is different
     *
     * The returned array can contain 2 items:
     *   if spatial reference ouput = 4326 (lat/long)
@@ -122,12 +122,17 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
     *
     * @function  mapCoordinates
     * @param {Object} point point in map coordinate to project and get lat/long from
-    * @param {Object} outMouseSR output wkid to show coordinates
+    * @param {Object} outMouseSR output spatial reference object OR wkid integer to show coordinates
     * @returns  {Array}    an array containing data needed for map coordinates
     */
     function mapCoordinates(point, outMouseSR) {
+        // NOTE: ideally this function would only accept spatial reference objects as a parameter.
+        //       but since it's part of the legacy api, we need to continue to support the old
+        //       interface of integer wkid's as well.
+        const latLong = 4326;
+
         // project point in lat/long
-        const coord = gapiService.gapi.proj.localProjectGeometry(4326, point);
+        const coord = gapiService.gapi.proj.localProjectGeometry(latLong, point);
 
         // get values once to reuse in private functions (cardinal points and degree symbol)
         if (typeof cardinal.east === 'undefined') {
@@ -142,7 +147,7 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
         const xLabel = (coord.x < 0) ? cardinal.west : cardinal.east;
 
         const coordArray = [];
-        if (outMouseSR === 4326) {
+        if (outMouseSR === latLong || outMouseSR.wkid === latLong) {
             // degree, minute, second
             const dmsCoords = convertDDToDMS(coord.y, coord.x);
             coordArray.push(`${dmsCoords.y} ${yLabel} | ${dmsCoords.x} ${xLabel}`);

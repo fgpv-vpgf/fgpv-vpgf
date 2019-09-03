@@ -34,7 +34,7 @@ function identifyService($q, configService, gapiService, referenceService, state
      */
     function XYtoFakeEvent(xy, mapInstance) {
         // shift from latlong (XY is native to that) to map projection
-        const mapPoint = xy.projectToPoint(mapInstance.spatialReference.wkid);
+        const mapPoint = xy.projectToPoint(mapInstance.spatialReference);
 
         // generate screen co-ords if possible. needed for WMS identifies.
         const screenPoint = mapInstance.toScreen(mapPoint);
@@ -257,7 +257,7 @@ function identifyService($q, configService, gapiService, referenceService, state
             const ubGraphics = gapi.hilight.getUnboundGraphics([graphicBundle], mapConfig.instance.spatialReference);
 
             ubGraphics[0].then(unboundG => {
-                console.log('unbound graphic for highlighting ', unboundG);
+                // console.log('unbound graphic for highlighting ', unboundG);
                 mapConfig.highlightLayer.addHilight(unboundG);
             });
         });
