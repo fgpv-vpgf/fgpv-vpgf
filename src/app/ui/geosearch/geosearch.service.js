@@ -408,7 +408,7 @@ function geosearchService(
         // zoom to location (expand the bbox to include all the area)
         geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
             // get reprojected point and create point
-            const geoPt = gapi.proj.localProjectPoint(4326, mapSR.wkid, [
+            const geoPt = gapi.proj.localProjectPoint(4326, mapSR, [
                 parseFloat(position[0]),
                 parseFloat(position[1])
             ]);

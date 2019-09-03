@@ -1,4 +1,3 @@
-import RColor from 'rcolor';
 import to from 'await-to-js';
 import angular from 'angular';
 
@@ -211,8 +210,8 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
 
             await this.validate();
 
-            // TODO: targetWkid property should be added to the WFS layer config node
-            this.config.targetWkid = configService.getSync.map.instance.spatialReference.wkid;
+            // TODO: targetSR property should be added to the WFS layer config node
+            this.config.targetSR = configService.getSync.map.instance.spatialReference;
 
             // clone data because the makeSomethingLayer functions mangle the config data
             const clonedFormattedData = angular.copy(this._formattedData);

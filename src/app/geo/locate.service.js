@@ -42,7 +42,7 @@ function locateService($http, $translate, gapiService, configService, errorServi
         const lods = configService.getSync.map.selectedBasemap.lods;
 
         // get reprojected point and zoom to it
-        const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference.wkid,
+        const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference,
             [parseFloat(location.longitude), parseFloat(location.latitude)]);
         const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
 

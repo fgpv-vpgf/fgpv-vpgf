@@ -18,7 +18,7 @@
                         <h3 class="md-title">{{ tileSchema.name }}
                             <md-tooltip>{{ tileSchema.name }}</md-tooltip>
                         </h3>
-                        <div class="rv-icon-16" ng-show="self.selectedWkid != projection.wkid">
+                        <div class="rv-icon-16" ng-show="self.selectedTileSchemaId != tileSchema.id">
                             <md-icon md-svg-src="action:info" class="rv-basemap-warning"></md-icon>
                             <span class="md-catpion" >{{ 'basemap.refresh.req' | translate }}</span>
                         </div>
