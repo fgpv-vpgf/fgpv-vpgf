@@ -927,7 +927,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     * Converts a GeoJSON object into a FeatureLayer.  Expects GeoJSON to be formed as a FeatureCollection
     * containing a uniform feature type (FeatureLayer type will be set according to the type of the first
     * feature entry).  Accepts the following options:
-    *   - targetWkid: Required. an integer for an ESRI wkid to project geometries to
+    *   - targetSR: Required. a spatial reference object to project geometries to
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
@@ -953,8 +953,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         //      b) write code here that synchs the .fields option with any changes
         //         made by assignIds
 
-        // TODO add documentation on why we only support layers with WKID (and not WKT).
-        let targetWkid;
+        let targetSR;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId;
         const layerDefinition = {
@@ -983,10 +982,16 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                 srcProj = opts.sourceProjection;
             }
 
-            if (opts.targetWkid) {
-                targetWkid = opts.targetWkid;
+            if (opts.targetSR) {
+                targetSR = opts.targetSR;
+            } else if (opts.targetWkid) {
+                // technically no longer supported, but we'll be nice and convert up
+                console.warn('Suggest using option targetSR instead of targetWkid, as unofficial support for targetWkid may end at any time');
+                targetSR = {
+                    wkid: opts.targetWkid
+                };
             } else {
-                throw new Error('makeGeoJsonLayer - missing opts.targetWkid arguement');
+                throw new Error('makeGeoJsonLayer - missing opts.targetSR arguement');
             }
 
             if (opts.layerId) {
@@ -1010,11 +1015,14 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         // the field names
         cleanUpFields(geoJson, layerDefinition);
 
-        const destProj = 'EPSG:' + targetWkid;
+        const destProj = geoApi.proj.normalizeProj(targetSR);
 
         // look up projection definitions if they don't already exist and we have enough info
         const srcLookup = geoApi.proj.checkProj(srcProj, opts.epsgLookup);
-        const destLookup =  geoApi.proj.checkProj(destProj, opts.epsgLookup);
+
+        // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
+        //      and this function won't have a raw EPSG code / proj4 string coming from param targetSR
+        const destLookup =  geoApi.proj.checkProj(targetSR, opts.epsgLookup);
 
         // change latitude and longitude fields from esriFieldTypeString -> esriFieldTypeDouble if they exist
         if (opts) {
@@ -1036,10 +1044,20 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const buildLayer = () => {
             return new Promise(resolve => {
                 // project data and convert to esri json format
-                // console.log('reprojecting ' + srcProj + ' -> EPSG:' + targetWkid);
+
+                const fancySR = new esriBundle.SpatialReference(targetSR);
+
                 geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
-                const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: targetWkid });
+
+                // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
+                // use 8888 as placehold then adjust below
+                const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: 8888 });
                 const geometryType = layerDefinition.drawingInfo.geometryType;
+
+                // set proper SR on the geometeries
+                esriJson.forEach(gr => {
+                    gr.geometry.spatialReference = fancySR;
+                });
 
                 const fs = {
                     features: esriJson,
@@ -1055,7 +1073,7 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
                     });
 
                 // ＼(｀O´)／ manually setting SR because it will come out as 4326
-                layer.spatialReference = new esriBundle.SpatialReference({ wkid: targetWkid });
+                layer.spatialReference = fancySR;
 
                 if (opts.colour) {
                     layer.renderer.symbol.color = new esriBundle.Color(opts.colour);
@@ -1075,11 +1093,11 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     };
 }
 
-function makeCsvLayerBuilder(esriBundle, geoApi) {
+function makeCsvLayerBuilder(geoApi) {
 
     /**
     * Constructs a FeatureLayer from CSV data. Accepts the following options:
-    *   - targetWkid: Required. an integer for an ESRI wkid the spatial reference the returned layer should be in
+    *   - targetSR: Required. a spatial reference object to project geometries to
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - latfield: a string identifying the field containing latitude values ('Lat' by default)
     *   - lonfield: a string identifying the field containing longitude values ('Long' by default)
@@ -1154,11 +1172,11 @@ function csvPeek(csvData, delimiter) {
     return csv2geojson.dsv.dsvFormat(delimiter).parseRows(csvData);
 }
 
-function makeShapeLayerBuilder(esriBundle, geoApi) {
+function makeShapeLayerBuilder(geoApi) {
 
     /**
     * Constructs a FeatureLayer from Shapefile data. Accepts the following options:
-    *   - targetWkid: Required. an integer for an ESRI wkid the spatial reference the returned layer should be in
+    *   - targetSR: Required. a spatial reference object to project geometries to
     *   - renderer: a string identifying one of the properties in defaultRenders
     *   - sourceProjection: a string matching a proj4.defs projection to be used for the source data (overrides
     *     geoJson.crs)
@@ -1309,8 +1327,8 @@ module.exports = function (esriBundle, geoApi) {
         createGraphicsRecord: createGraphicsRecordBuilder(esriBundle, geoApi, layerClassBundle),
         LayerDrawingOptions: esriBundle.LayerDrawingOptions,
         makeGeoJsonLayer: makeGeoJsonLayerBuilder(esriBundle, geoApi),
-        makeCsvLayer: makeCsvLayerBuilder(esriBundle, geoApi),
-        makeShapeLayer: makeShapeLayerBuilder(esriBundle, geoApi),
+        makeCsvLayer: makeCsvLayerBuilder(geoApi),
+        makeShapeLayer: makeShapeLayerBuilder(geoApi),
         serverLayerIdentify: serverLayerIdentifyBuilder(esriBundle),
         predictFileUrl: predictFileUrlBuilder(esriBundle),
         predictLayerUrl: predictLayerUrlBuilder(esriBundle),

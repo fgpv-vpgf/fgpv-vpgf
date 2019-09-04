@@ -34,6 +34,8 @@ function getFeatureInfoBuilder(esriBundle) {
             wkid = srList[0];
         } else if (esriMap.spatialReference.wkid) {
             wkid = esriMap.spatialReference.wkid;
+        } else {
+            console.error('No valid wkid/epsg code found for WMS service. Identify request will likely fail.')
         }
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
             req = { CRS: 'EPSG:' + wkid, I: intX, J: intY, STYLES: '', FORMAT: wmsLayer.imageFormat };

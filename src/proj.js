@@ -56,28 +56,28 @@ function localProjectPoint(srcProj, destProj, point) {
  * @param {Object} geometry an object conforming to ESRI Geometry object standards containing the coordinates to Reproject
  * @return {Object} an object conforming to ESRI Geomtery object standards containing the input geometry in the destination projection
  */
-function localProjectGeometry(destProj, geometry) {
-    // FIXME we seem to be really dependant on wkid. ideally enhance to handle all SR types
+function localProjectGeometryBuilder(esriBundle) {
+    return (destProj, geometry) => {
+        // HACK >:'(
+        // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
+        // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
+        // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
+        const realSR = geometry.spatialReference;
+        geometry.spatialReference = { wkid: 8888 }; // nonsense!
+        const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
+        geometry.spatialReference = realSR;
 
-    // HACK >:'(
-    // terraformer has this undesired behavior where, if your input geometry is in WKID 102100, it will magically
-    // project all your co-ordinates to lat/long when converting between ESRI and GeoJSON formats.
-    // to stop it from ruining us, we temporarily set the spatial reference to nonsense so it will leave it alone
-    const realSR = geometry.spatialReference;
-    geometry.spatialReference = { wkid: 8888 }; // nonsense!
-    const grGeoJ = terraformer.ArcGIS.parse(geometry, { sr: 8888 });
-    geometry.spatialReference = realSR;
+        // project json
+        projectGeojson(grGeoJ, normalizeProj(destProj), normalizeProj(realSR));
 
-    // project json
-    projectGeojson(grGeoJ, normalizeProj(destProj), normalizeProj(realSR));
+        // back to esri format
+        const grEsri = terraformer.ArcGIS.convert(grGeoJ);
 
-    // back to esri format
-    const grEsri = terraformer.ArcGIS.convert(grGeoJ);
+        // doing this because .convert likes to attach a lat/long spatial reference for fun.
+        grEsri.spatialReference = new esriBundle.SpatialReference(destProj);
 
-    // doing this because .convert likes to attach a lat/long spatial reference for fun.
-    grEsri.spatialReference = destProj;
-
-    return grEsri;
+        return grEsri;
+    };
 }
 
 /**
@@ -121,13 +121,7 @@ function localProjectExtent(extent, sr) {
         .forEach(seg => interpolatedPoly = interpolatedPoly.concat(seg));
 
     // find the source extent (either from wkid or wkt)
-    if (extent.spatialReference.wkid) {
-        srcProj = 'EPSG:' + extent.spatialReference.wkid;
-    } else if (extent.spatialReference.wkt) {
-        srcProj = extent.spatialReference.wkt;
-    } else {
-        throw new Error('No WKT or WKID specified on extent.spatialReference');
-    }
+    srcProj = normalizeProj(extent.spatialReference);
 
     // find the destination extent
     let destProj = normalizeProj(sr);
@@ -361,8 +355,9 @@ module.exports = function (esriBundle) {
         isSpatialRefEqual,
         localProjectExtent,
         localProjectPoint,
-        localProjectGeometry,
+        localProjectGeometry: localProjectGeometryBuilder(esriBundle),
         projectGeojson,
+        normalizeProj,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),
         SpatialReference: esriBundle.SpatialReference

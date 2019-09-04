@@ -213,7 +213,7 @@ function esriMap(esriBundle, geoApi) {
         zoomToPoint ({ longitude, latitude }) {
 
             // get reprojected point and zoom to it
-            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference.wkid,
+            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference,
                 [parseFloat(longitude), parseFloat(latitude)]);
             const zoomPt = geoApi.proj.Point(geoPt[0], geoPt[1], this._map.spatialReference);
 

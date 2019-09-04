@@ -40,7 +40,7 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
  *
  * @function
  * @param {Object} esriBundle ESRI modules from the initial startup
- * @param {Object} basemapConfig basemap settings in the form { id: string, layers: [string], title: string, thumbnailUrl: string, wkid: integer }
+ * @param {Object} basemapConfig basemap settings in the form { id: string, layers: [string], title: string, thumbnailUrl: string }
  * @return {Object} a basemap object:
  */
 function createBasemap(esriBundle, basemapConfig) {
@@ -52,8 +52,7 @@ function createBasemap(esriBundle, basemapConfig) {
         id: basemapConfig.id,
         layers: layers,
         title: basemapConfig.name,
-        thumbnailUrl: basemapConfig.thumbnailUrl,
-        wkid: basemapConfig.wkid
+        thumbnailUrl: basemapConfig.thumbnailUrl
     });
 
     return basemap;
