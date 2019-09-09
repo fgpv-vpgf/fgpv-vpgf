@@ -661,7 +661,7 @@ function exportGenerators(
         body.append(valueNode);
 
         // transcribe this HTML element to canvas and remove the element
-        const h2cPromise = html2canvas(valueNode[0], { useCORS: true });
+        const h2cPromise = html2canvas(valueNode[0], { logging: false, useCORS: true });
         h2cPromise.then(() => valueNode.remove());
 
         // return resulting canvas as a promise

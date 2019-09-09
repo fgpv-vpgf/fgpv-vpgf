@@ -579,10 +579,19 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        let legendTreeData = legendBlock.walk(
-            entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
-            entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
-        ); // don't walk entry's children if it's a group
+        // eslint-disable-next-line no-useless-call
+        let legendTreeData = iterateLegendBlock(legendBlock);
+
+        function iterateLegendBlock(legendBlock) {
+            let returnVal = [];
+            legendBlock.entries.forEach((entry) => { 
+                returnVal.push(_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null);
+                if (entry.blockType !== LegendBlock.TYPES.GROUP && entry.entries) {
+                    returnVal = returnVal.concat(iterateLegendBlock(entry));
+                }
+            });
+            return returnVal;
+        }
 
         let titleBefore = false;
 
