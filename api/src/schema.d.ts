@@ -775,7 +775,7 @@ export interface BaseMapNode {
    */
   typeSummary?: string;
   /**
-   * Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image.
+   * Alt text for the basemap thumbnail image.
    */
   altText: string;
   /**
