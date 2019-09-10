@@ -579,9 +579,16 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        // eslint-disable-next-line no-useless-call
+        // Not using legendBlock.walk since it ignores any modifications made by export plugins.
         let legendTreeData = iterateLegendBlock(legendBlock);
 
+        /**
+         * Traverses the legendBlock object and builds a list of items to include in the legend export.
+         * 
+         * @function iterateLegendBlock
+         * @param {*} legendBlock 
+         * @return {Array} A list of legendBlock entries and null values
+         */
         function iterateLegendBlock(legendBlock) {
             let returnVal = [];
             legendBlock.entries.forEach((entry) => { 
