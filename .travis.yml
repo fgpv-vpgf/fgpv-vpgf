@@ -17,30 +17,28 @@ before_install:
 deploy:
 - provider: script
   skip_cleanup: true
-  script: bash ./scripts/travis/deploy-build-azure.sh
-  on:
-    all_branches: true
-- provider: script
-  skip_cleanup: true
   script: bash ./scripts/travis/docs.sh
   on:
     all_branches: true
     repo: fgpv-vpgf/fgpv-vpgf
-    condition:
-    - "$TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\\d"
-    - "$mProc == dev"
+    condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
+    condition: $mProc == dev
 - provider: pages
   target_branch: gh-pages
   local-dir: gh-page-files
   skip-cleanup: true
-  github-token: "$GITHUB_TOKEN"
+  github-token: $GITHUB_TOKEN
   keep-history: true
   on:
     all_branches: true
     repo: fgpv-vpgf/fgpv-vpgf
-    condition:
-    - "$TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\\d"
-    - "$mProc == dev"
+    condition: $TRAVIS_BRANCH =~ ^develop$|^ghpages-docs$|^master$|^v\d
+    condition: $mProc == dev
+- provider: script
+  skip_cleanup: true
+  script: bash ./scripts/travis/deploy-build-azure.sh
+  on:
+    all_branches: true
 notifications:
   webhooks:
     urls:
