@@ -579,10 +579,26 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
-        let legendTreeData = legendBlock.walk(
-            entry => (_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null),
-            entry => (entry.blockType === LegendBlock.TYPES.GROUP ? false : true)
-        ); // don't walk entry's children if it's a group
+        // Not using legendBlock.walk since it ignores any modifications made by export plugins.
+        let legendTreeData = iterateLegendBlock(legendBlock);
+
+        /**
+         * Traverses the legendBlock object and builds a list of items to include in the legend export.
+         * 
+         * @function iterateLegendBlock
+         * @param {*} legendBlock 
+         * @return {Array} A list of legendBlock entries and null values
+         */
+        function iterateLegendBlock(legendBlock) {
+            let returnVal = [];
+            legendBlock.entries.forEach((entry) => { 
+                returnVal.push(_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null);
+                if (entry.blockType !== LegendBlock.TYPES.GROUP && entry.entries) {
+                    returnVal = returnVal.concat(iterateLegendBlock(entry));
+                }
+            });
+            return returnVal;
+        }
 
         let titleBefore = false;
 
