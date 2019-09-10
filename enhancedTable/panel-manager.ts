@@ -232,7 +232,7 @@ export class PanelManager {
             this.panel.element.find('.rv-record-count').remove(); // remove old count if there
             this.panel.element.find('header').append(recordCountTemplate[0]);
 
-            //create details and zoom buttons, open the panel and display proper filter values
+            // create details and zoom buttons, open the panel and display proper filter values
             new DetailsAndZoomButtons(this);
             this.panel.body.empty();
             new Grid(this.panel.body[0], tableOptions);
@@ -279,11 +279,16 @@ export class PanelManager {
 
                 this.panelStatusManager.getFilterStatus();
 
+                // on table reopen with show filters off, reset floatingFilter and set to false to proc onFloatingFilterChanged in custom-floating-filters
+                if (!this.panelStateManager.showFilter && this.panelStateManager.showFilter !== this.tableOptions.floatingFilter) {
+                    this.tableOptions.floatingFilter = this.panelStateManager.showFilter;
+                    this.tableOptions.api.refreshHeader();
+                }
 
                 // stop loading panel from opening, if we are about to open enhancedTable
                 clearTimeout(tableBuilder.loadingTimeout);
                 if (tableBuilder.loadingPanel.isOpen) {
-                    //if loading panel was opened, make sure it stays on for at least 400 ms
+                    // if loading panel was opened, make sure it stays on for at least 400 ms
                     setTimeout(() => {
                         tableBuilder.deleteLoaderPanel();
                     }, 400);
@@ -294,9 +299,9 @@ export class PanelManager {
                 this.tableOptions.columnDefs.forEach(column => {
                     const matchingCol = this.columnMenuCtrl.columnVisibilities.find(col => col.id === column.field);
                     if (matchingCol !== undefined && matchingCol.visibility === false) {
-                        //temporarily show column filter of hidden columns(so that table gets filtered properly)
+                        // temporarily show column filter of hidden columns (so that table gets filtered properly)
                         this.columnMenuCtrl.toggleColumn(matchingCol);
-                        //then hide column(to respect config specifications)
+                        // then hide column (to respect config specifications)
                         this.columnMenuCtrl.toggleColumn(matchingCol);
                     }
                 });
