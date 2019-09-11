@@ -1,5 +1,3 @@
-/* global RV */
-
 const templateUrl = require('./loader-service.html');
 
 /**

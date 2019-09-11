@@ -1,6 +1,6 @@
 // Need to add exported module to window as it needs it internally.
-import Colour from 'colourpicker';
-import style from 'colourpicker/colourpicker/colourpicker.css';
+import 'colourpicker';
+import 'colourpicker/colourpicker/colourpicker.css';
 import Flow from '@flowjs/ng-flow/dist/ng-flow-standalone';
 window.Flow = Flow;
 

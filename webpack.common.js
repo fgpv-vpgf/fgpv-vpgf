@@ -8,7 +8,6 @@ const SchemaValidatorPlugin = require('./scripts/webpack/schema_validation_plugi
 const CopyWebpackPlugin     = require('copy-webpack-plugin');
 const VersionPlugin         = require('./scripts/webpack/version_plugin.js');
 const WrapperPlugin         = require('wrapper-webpack-plugin');
-const CleanWebpackPlugin    = require('clean-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const BundleAnalyzerPlugin  = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WebpackShellPlugin    = require('webpack-shell-plugin');
@@ -42,6 +41,7 @@ module.exports = function (env) {
             rules: [
                 {
                     test: /\.(woff(2)?)(\?v=\d+\.\d+\.\d+)?$/,
+                    include: [path.resolve(__dirname, 'src/content/fonts')],
                     use: [{
                         loader: 'file-loader',
                         options: {
@@ -54,7 +54,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/plugins'), geoPath],
+                    include: [path.resolve(__dirname, 'src/app'), geoPath],
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
@@ -76,6 +76,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.s?[ac]ss$/,
+                    include: [path.resolve(__dirname, 'src/content/styles'), path.resolve(__dirname, 'node_modules/@fgpv'), path.resolve(__dirname, 'node_modules/colourpicker')],
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
                         {loader: 'css-loader'},
@@ -87,14 +88,17 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.html$/,
+                    include: [path.resolve(__dirname, 'src/content/samples'), path.resolve(__dirname, 'src/app')],
                     use: ['ngtemplate-loader?relativeTo=' + (path.resolve(__dirname, './src/app')), 'html-loader?minimize=false']
                 },
                 {
                     test: /\.(png|svg)$/,
+                    include: [path.resolve(__dirname, 'src/content'), path.resolve(__dirname, 'node_modules/ag-grid-community'), path.resolve(__dirname, 'node_modules/@claviska')],
                     use: 'url-loader'
                 },
                 {
                     test: /\.xsl$/,
+                    include: [path.resolve(__dirname, 'src/content/metadata')],
                     use: 'raw-loader'
                 }
             ]
@@ -106,8 +110,8 @@ module.exports = function (env) {
             }),
 
             new WebpackShellPlugin({
-                onBuildStart: ['bash scripts/pluginSamples.sh'],
-                onBuildEnd: ['rm -rf build/help']
+                onBuildStart: ['bash scripts/preBuild.sh'],
+                onBuildEnd: ['bash scripts/postBuild.sh']
             }),
 
             new CopyWebpackPlugin([{
@@ -137,9 +141,7 @@ module.exports = function (env) {
 
             new VersionPlugin(),
 
-            new CleanWebpackPlugin(['build', 'dist']),
-
-            new SchemaValidatorPlugin()
+            new SchemaValidatorPlugin({outputDTSFile: !env.hmr})
         ],
 
         resolve: {
