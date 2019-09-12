@@ -6,7 +6,7 @@
     "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",
     "dependencies": {
-        "@fgpv/rv-plugins": "3.2.0-2",
+        "@fgpv/rv-plugins": "github:yileifeng/plugins#6635e679b6161d816bc86b8f139918ac3c019f61",
         "@flowjs/ng-flow": "2.7.8",
         "angular": "1.7.5",
         "angular-animate": "1.7.5",
