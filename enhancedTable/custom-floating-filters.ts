@@ -126,10 +126,18 @@ export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnable
         }
     }
 
+    // default to regex filtering for text columns
     if (!lazyFilterEnabled) {
-        // Default to "regex" filtering for text columns
         colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
             const re = new RegExp(`^${filterText.replace(/\*/, '.*')}`);
+            return re.test(value);
+        }
+    } else {
+        colDef.filterParams.textCustomComparator = function (filter, value, filterText) {
+            // treat * as a regular special char with lazy filter on
+            const newFilterText = filterText.replace(/\*/, '\\*');
+            // surround filter text with .* to match anything before and after
+            const re = new RegExp(`^.*${newFilterText}.*`);
             return re.test(value);
         }
     }
