@@ -2202,7 +2202,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 });
 
                 mapInstance.boundsChanged = Observable.create(subscriber => {
-                    events.$on(events.rvExtentChange, (_, d) => subscriber.next(extentToApi(d.extent)));
+                    events.$on(events.rvExtentChange, (_, d) => {
+                        try {
+                            const apiExtent = extentToApi(d.extent);
+                            subscriber.next(apiExtent);
+                        } catch(error) {
+                            // errors generally happen if the map view is enormous (e.g. earth wraparound, north pole in middle, etc)
+                            // TODO we will have a discussion on best way to handle the error case. warning for now
+                            console.warn('unable to convert extent to API format (lat-long co-ords). boundsChanged observable was not fired.');
+                        }
+                    });
                 });
 
                 // add this to avoid issues with projection changes

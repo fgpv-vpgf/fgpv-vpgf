@@ -108,6 +108,28 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
         };
     }
 
+    function loadCardinality() {
+        // separate function to reduce number of lines in mapCoordinates function.
+        // get values once to reuse in private functions (cardinal points and degree symbol)
+        if (typeof cardinal.east === 'undefined') {
+            cardinal.east = $translate.instant('geo.coord.east');
+            cardinal.west = $translate.instant('geo.coord.west');
+            cardinal.north = $translate.instant('geo.coord.north');
+            cardinal.south = $translate.instant('geo.coord.south');
+        }
+    }
+
+    function ddFormatting(point) {
+        // separate function to reduce number of lines in mapCoordinates function.
+        // does rounding and negative snipping for decimal degree display
+        const coord = {};
+        coord.y = point.y.toFixed(5);
+        coord.x = point.x.toFixed(5);
+        coord.y = coord.y > 0 ? coord.y : Math.abs(coord.y);
+        coord.x = coord.x < 0 ? Math.abs(coord.x) : coord.x;
+        return coord;
+    }
+
     /**
     * Provides data needed for the display of a map coordinates on the map in latitude/longitude (degree, minute, second and decimal degree) if
     * spatial reference is wkid 4326 or only show coordinates if spatial reference is different
@@ -130,39 +152,55 @@ function mapToolService(configService, geoService, gapiService, $translate, Geo)
         //       but since it's part of the legacy api, we need to continue to support the old
         //       interface of integer wkid's as well.
         const latLong = 4326;
+        const fixedOutMouseSR = isNaN(outMouseSR) ? outMouseSR : { wkid: outMouseSR };
+        let yLabel = '';
+        let xLabel = '';
+        const coordArray = [];
+        let failParty = false;
+        let coord;
 
         // project point in lat/long
-        const coord = gapiService.gapi.proj.localProjectGeometry(latLong, point);
+        // this is to get the direction (NESW), and we can use the result if our output is also lat/long
+        try {
+            const coordLL = gapiService.gapi.proj.localProjectPoint(point.spatialReference, latLong, [point.x, point.y]);
 
-        // get values once to reuse in private functions (cardinal points and degree symbol)
-        if (typeof cardinal.east === 'undefined') {
-            cardinal.east = $translate.instant('geo.coord.east');
-            cardinal.west = $translate.instant('geo.coord.west');
-            cardinal.north = $translate.instant('geo.coord.north');
-            cardinal.south = $translate.instant('geo.coord.south');
+            // this just messages back to older format, makes code more readable
+            coord = {
+                x: coordLL[0],
+                y: coordLL[1]
+            };
+
+            loadCardinality();
+
+            // get cardinality
+            yLabel = (coord.y > 0) ? cardinal.north : cardinal.south;
+            xLabel = (coord.x < 0) ? cardinal.west : cardinal.east;
+        } catch(error) {
+            failParty = true;
+            if (fixedOutMouseSR.wkid === latLong) {
+                // could not calculate point to show
+                coordArray.push('');
+                coordArray.push('');
+            }
         }
 
-        // get cardinality
-        const yLabel = (coord.y > 0) ? cardinal.north : cardinal.south;
-        const xLabel = (coord.x < 0) ? cardinal.west : cardinal.east;
-
-        const coordArray = [];
-        if (outMouseSR === latLong || outMouseSR.wkid === latLong) {
+        // format the result for display
+        if (fixedOutMouseSR.wkid === latLong && !failParty) {
             // degree, minute, second
             const dmsCoords = convertDDToDMS(coord.y, coord.x);
             coordArray.push(`${dmsCoords.y} ${yLabel} | ${dmsCoords.x} ${xLabel}`);
 
             // decimal
-            coord.y = coord.y.toFixed(5);
-            coord.x = coord.x.toFixed(5);
-            coord.y = `${(coord.y > 0) ? coord.y : Math.abs(coord.y)} ${yLabel}`;
-            coord.x = `${(coord.x < 0) ? Math.abs(coord.x) : coord.x} ${xLabel}`;
-            coordArray.push(`${coord.y} | ${coord.x}`);
+            coord = ddFormatting(coord);
+            coordArray.push(`${coord.y} ${yLabel} | ${coord.x} ${xLabel}`);
         } else {
-            // project point if wkid was different then 4326
-            const coordProj = gapiService.gapi.proj.localProjectGeometry(outMouseSR, point);
-            coordArray.push(`${coordProj.y.toFixed(5)} ${yLabel}`);
-            coordArray.push(`${coordProj.x.toFixed(5)} ${xLabel}`);
+            // project point if wkid was different then 4326, and different than mouse out projection
+            let coordProj = [point.x, point.y];
+            if (!gapiService.gapi.proj.isSpatialRefEqual(fixedOutMouseSR, point.spatialReference)) {
+                coordProj = gapiService.gapi.proj.localProjectPoint(point.spatialReference, fixedOutMouseSR, coordProj);
+            }
+            coordArray.push(`${coordProj[1].toFixed(5)} ${yLabel}`);
+            coordArray.push(`${coordProj[0].toFixed(5)} ${xLabel}`);
         }
 
         return coordArray;
