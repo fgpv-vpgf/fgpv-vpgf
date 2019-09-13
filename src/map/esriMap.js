@@ -261,30 +261,34 @@ function esriMap(esriBundle, geoApi) {
          * http://www.movable-type.co.uk/scripts/latlong.html
          * @function getNorthArrowAngle
          * @param {Object} opts options to apply to north arrow calculation
-         * @returns {Number} map rotation angle (in degree)
+         * @returns {String} map rotation angle (in degree) in string format
          */
         getNorthArrowAngle (opts) {
             // get center point in longitude and use bottom value for latitude for default point
             const bottomCenter = { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin };
             // get point if specified by caller else get default
             const point = opts ? opts.point || bottomCenter : bottomCenter;
-            const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326', point);
+            try {
+                const pointB = geoApi.proj.localProjectPoint(this._map.extent.spatialReference, 'EPSG:4326', point);
 
-            // north value (set longitude to be half of Canada extent (141° W, 52° W))
-            const pointA = { x: -96, y: 90 };
+                // north value (set longitude to be half of Canada extent (141° W, 52° W))
+                const pointA = { x: -96, y: 90 };
 
-            // set info on longitude and latitude
-            const dLon = (pointB.x - pointA.x) * Math.PI / 180;
-            const lat1 = pointA.y * Math.PI / 180;
-            const lat2 = pointB.y * Math.PI / 180;
+                // set info on longitude and latitude
+                const dLon = (pointB.x - pointA.x) * Math.PI / 180;
+                const lat1 = pointA.y * Math.PI / 180;
+                const lat2 = pointB.y * Math.PI / 180;
 
-            // calculate bearing
-            const y = Math.sin(dLon) * Math.cos(lat2);
-            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+                // calculate bearing
+                const y = Math.sin(dLon) * Math.cos(lat2);
+                const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+                const bearing = Math.atan2(y, x) * 180 / Math.PI;
 
-            // return angle (180 is pointiong north)
-            return ((bearing + 360) % 360).toFixed(1);
+                // return angle (180 is pointiong north)
+                return ((bearing + 360) % 360).toFixed(1);
+            } catch(error) {
+                return '180.0';
+            }
         }
 
         /**
