@@ -681,20 +681,29 @@ function layerRegistryFactory(
      * @private
      */
     function syncApiElementOrder() {
-        const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
-        const legendElements = mapApi.ui.configLegend.children;
-        let reorderedElements = [];
-        legendEntries.forEach((entry, index) => {
-            entry = entry.collapsed ? entry.entries[0] : entry;
-            if (legendElements && legendElements.length && entry !== legendElements[index]._legendBlock) {
-                const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
-                if (element) {
-                    reorderedElements.push(legendElements[index]);
-                    legendElements[index] = element;
+        if (mapApi) {
+            const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
+            const legendElements = mapApi.ui.configLegend.children;
+            let reorderedElements = [];
+            legendEntries.forEach((entry, index) => {
+                entry = entry.collapsed ? entry.entries[0] : entry;
+                if (legendElements && legendElements.length && entry !== legendElements[index]._legendBlock) {
+                    const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
+                    if (element) {
+                        reorderedElements.push(legendElements[index]);
+                        legendElements[index] = element;
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            const deregisterListener = events.$on(events.rvApiMapAdded, () => {
+                deregisterListener(); // need to react only once
+
+                syncApiElementOrder()
+            });
+        }
     }
+
     /**
      * // TODO: make a wrapper for the bounding box layer
      *

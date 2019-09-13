@@ -35,10 +35,16 @@ function legendServiceFactory(
     };
 
     let mApi = null;
+
     let elementsForApi = [];
+    let childItemsForApi = [];
+    let reloadedApiElements = [];
+
     events.$on(events.rvApiMapAdded, (_, api) => {
         mApi = api;
         elementsForApi.forEach(element => _addElementToApiLegend(element));
+        childItemsForApi.forEach(({ apiLegendElement, parentBlock, parentLegendGroup }) => _addChildItemToAPI(apiLegendElement, parentBlock, parentLegendGroup));
+        reloadedApiElements.forEach(element => _updateApiReloadedBlock(element));
     });
 
     // wire in a hook to any map for adding a layer through a JSON snippet. this makes it available on the API
@@ -633,7 +639,8 @@ function legendServiceFactory(
                             apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
                         }
 
-                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
+                        // need to pass in the `parentLegendGroup` twice due to the way this is set up now
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup, parentLegendGroup);
                     }
 
                     item.childs.forEach(child => _addChildBlock(blockConfig, child, legendBlock));
@@ -651,7 +658,9 @@ function legendServiceFactory(
 
                     if (!legendBlock.hidden) {
                         apiLegendElement = new LegendItem(configService.getSync.map, legendBlock);
-                        _addChildItemToAPI(apiLegendElement, parentLegendGroup);
+
+                        // need to pass in the `parentLegendGroup` twice due to the way this is set up now
+                        _addChildItemToAPI(apiLegendElement, parentLegendGroup, parentLegendGroup);
                     }
                 }
 
@@ -659,50 +668,6 @@ function legendServiceFactory(
                     legendBlock.disabledControls.push('metadata');
                 }
                 parentLegendGroup.addEntry(legendBlock);
-
-                function _addChildItemToAPI(apiLegendElement, parentBlock) {
-                    let parentElement = _findParentElement(parentBlock);
-                    if (parentElement && parentElement.children) {
-                        apiLegendElement.visibilityChanged.subscribe(() => {
-                            const oldVisibility = parentElement.visibility;
-                            if (oldVisibility !== parentElement._legendBlock.visibility) {
-                                parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
-                            }
-                        });
-                        apiLegendElement.opacityChanged.subscribe(() => {
-                            const oldOpacity = parentElement.opacity;
-                            if (oldOpacity !== parentElement._legendBlock.opacity) {
-                                parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
-                            }
-                        });
-                        apiLegendElement.queryableChanged.subscribe(() => {
-                            const oldQueryable = parentElement.queryable;
-                            if (oldQueryable !== parentElement._legendBlock.query) {
-                                parentElement._queryableChanged.next(parentElement._legendBlock.query);
-                            }
-                        });
-
-                        _updateLegendElementSettings(apiLegendElement);
-                        parentElement._children.push(apiLegendElement);
-                    } else if (parentLegendGroup.collapsed) {
-
-                        let blockFound = false;
-                        mApi.ui.configLegend.children.forEach(child => {
-                            if (child._legendBlock.layerRecordId === apiLegendElement._legendBlock.layerRecordId) {
-                                child._initSettings(apiLegendElement._legendBlock);
-                                blockFound = true;
-                            }
-                            if (child.id === parentLegendGroup.id) {
-                                _removeElementFromApiLegend(child)
-                            }
-                        });
-
-                        // if this block was an additon and not a reload add element to legend API
-                        if (!blockFound) {
-                            _addElementToApiLegend(apiLegendElement);
-                        }
-                    }
-                }
             }
         }
 
@@ -1191,6 +1156,63 @@ function legendServiceFactory(
     }
 
     /**
+     * Push a new child element to its API parent element for the map legend
+     *
+     * @function _addChildItemToAPI
+     * @private
+     * @param {LegendItem|LegendGroup} apiLegendElement an instance of an api legend item/group (child) created that needs to be added to its api parent
+     * @param {LegendItem|LegendGroup} parentBlock an instance of a parent block where the API child item is being added
+     * @param {LegendBlock.GROUP} parentLegendGroup parent LegendGroup block when the newly created child will be added
+     */
+    function _addChildItemToAPI(apiLegendElement, parentBlock, parentLegendGroup) {
+        if (mApi) {
+            let parentElement = _findParentElement(parentBlock);
+            if (parentElement && parentElement.children) {
+                apiLegendElement.visibilityChanged.subscribe(() => {
+                    const oldVisibility = parentElement.visibility;
+                    if (oldVisibility !== parentElement._legendBlock.visibility) {
+                        parentElement._visibilityChanged.next(parentElement._legendBlock.visibility);
+                    }
+                });
+                apiLegendElement.opacityChanged.subscribe(() => {
+                    const oldOpacity = parentElement.opacity;
+                    if (oldOpacity !== parentElement._legendBlock.opacity) {
+                        parentElement._opacityChanged.next(parentElement._legendBlock.opacity);
+                    }
+                });
+                apiLegendElement.queryableChanged.subscribe(() => {
+                    const oldQueryable = parentElement.queryable;
+                    if (oldQueryable !== parentElement._legendBlock.query) {
+                        parentElement._queryableChanged.next(parentElement._legendBlock.query);
+                    }
+                });
+
+                _updateLegendElementSettings(apiLegendElement);
+                parentElement._children.push(apiLegendElement);
+            } else if (parentLegendGroup.collapsed) {
+
+                let blockFound = false;
+                mApi.ui.configLegend.children.forEach(child => {
+                    if (child._legendBlock.layerRecordId === apiLegendElement._legendBlock.layerRecordId) {
+                        child._initSettings(apiLegendElement._legendBlock);
+                        blockFound = true;
+                    }
+                    if (child.id === parentLegendGroup.id) {
+                        _removeElementFromApiLegend(child)
+                    }
+                });
+
+                // if this block was an additon and not a reload add element to legend API
+                if (!blockFound) {
+                    _addElementToApiLegend(apiLegendElement);
+                }
+            }
+        } else {
+            childItemsForApi.push({ apiLegendElement, parentBlock });
+        }
+    }
+
+    /**
      * Update the API elements opacity and visibility after the proxy promise has resolved
      *
      * @function _updateLegendElementSettings
@@ -1256,21 +1278,26 @@ function legendServiceFactory(
      * @param {LegendGroup | LegendNode} reloadedBlock -the legendBlock that was reloaded
      */
     function _updateApiReloadedBlock(reloadedBlock) {
-        // Only run when the parent is ready on the reloadedBlock
-        const watchParent = $rootScope.$watch(() => reloadedBlock.parent, (parent, nullParent) => {
-            layerRegistry.syncApiElementOrder();
-            parent = parent.collapsed ? parent.parent : parent;
-            const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
-            const parentElement = parent.blockConfig === configService.getSync.map.legend.root ?
-                mApi.ui.configLegend :
-                _findParentElement(parent);
+        if (mApi) {
 
-            if (index > -1 && parentElement) {
-                parentElement.children[index]._initSettings(reloadedBlock);
-            }
+            // Only run when the parent is ready on the reloadedBlock
+            const watchParent = $rootScope.$watch(() => reloadedBlock.parent, parent => {
+                layerRegistry.syncApiElementOrder();
+                parent = parent.collapsed ? parent.parent : parent;
+                const index = parent.entries.filter(entry => !entry.hidden).indexOf(reloadedBlock);
+                const parentElement = parent.blockConfig === configService.getSync.map.legend.root ?
+                    mApi.ui.configLegend :
+                    _findParentElement(parent);
 
-            watchParent();
-        });
+                if (index > -1 && parentElement) {
+                    parentElement.children[index]._initSettings(reloadedBlock);
+                }
+
+                watchParent();
+            });
+        } else {
+            reloadedApiElements.push(reloadedBlock);
+        }
     }
 
     /**
