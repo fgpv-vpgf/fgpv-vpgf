@@ -3822,5 +3822,8 @@ md-datepicker > div {
   -ms-user-select: text;
   user-select: text; }
 
+.ag-body-container {
+  min-height: 2px; }
+
 .md-open-menu-container > md-menu-content > * {
   transition: none !important; }

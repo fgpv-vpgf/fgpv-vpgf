@@ -167,5 +167,10 @@ md-datepicker>div {
     user-select: text;
 }
 
+// preserve horizontal scroll when there are no rows to display
+.ag-body-container {
+    min-height: 2px;
+}
+
 // fix for md-menu elements not showing up immediately in IE (see: https://github.com/angular/material/issues/11226)
 .md-open-menu-container > md-menu-content > * { transition: none !important; }
