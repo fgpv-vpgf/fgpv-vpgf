@@ -1,4 +1,4 @@
-import angularDragula from 'angular-dragula';
+import angularDragula from '../../../node_modules/angular-dragula/dist/angular-dragula.js';
 
 /**
  * @namespace app.core
