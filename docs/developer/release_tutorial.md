@@ -24,6 +24,8 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
 
     ```
         npm version [ major | minor | patch | prerelease ]
+        or
+        npm version [version]
     ```
 
 5. The local branch will auto update with a new tag and changes to `package.json`. However the commit will not end up on any of the remote branches. It should be merged into the develop or master branch depending on the release.
