@@ -85,14 +85,15 @@
         "zip-webpack-plugin": "3.0.0"
     },
     "scripts": {
-        "build": "webpack",
-        "serve": "webpack-dev-server --progress --env.hmr",
+        "build": "npm run apply-dragula-patch && webpack",
+        "serve": "npm run apply-dragula-patch && webpack-dev-server --progress --env.hmr",
         "protractor": "node scripts/protractor/run.js",
         "server": "http-server ./build -p 6002",
         "docs": "jsdoc -p -r -c .jsdoc.json -R README.md -d ./docs/contribute/jsDocs ./src/app && typedoc --target ES6 --out docs/developer/api_tech_docs api/src",
         "svgcache": "node scripts/svgCache.js",
         "angular-material": "node scripts/generateAngularMaterial.js",
         "docute": "docute ./docs",
-        "enhance-configs": "node scripts/enhanceConfigs.js"
+        "enhance-configs": "node scripts/enhanceConfigs.js",
+        "apply-dragula-patch": "(git apply ./scripts/fix-ui-delay-drag-start.patch &> /dev/null && echo \"Dragula patch applied.\n\") || echo \"Dragula patch already applied, skipping.\n\""
     }
 }
