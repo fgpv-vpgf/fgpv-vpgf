@@ -51,11 +51,13 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
 
         const urlWrapper = new LayerBlueprint.UrlWrapper(serviceUrl);
 
+        let fetchPromise;
+
         // check if it's a WMS first
-        const fetchPromise = gapiService.gapi.layer.ogc
-        .parseCapabilities(serviceUrl)
-        .then(data => {
-            if (layerType === geoServiceTypes.WMS) {
+        if (layerType === geoServiceTypes.WMS) {
+            fetchPromise = gapiService.gapi.layer.ogc
+            .parseCapabilities(serviceUrl)
+            .then(data => {
                 // if the service doesn't have any layers, we reject it. either the service isn't a WMS, or it's a WMS
                 // with no layers, in which case there's no point in adding it anyways.
                 if (data.layers.length === 0) {
@@ -63,9 +65,12 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 } else {
                     return _parseAsWMS(serviceUrl, data);
                 }
-            } else if (layerType === geoServiceTypes.WFS) {
-                // by having the user specify whether the layer is wfs, we can skip the
-                // esri request. This saves tons of loading time.
+            });
+        } else if (layerType === geoServiceTypes.WFS) {
+            // by having the user specify whether the layer is wfs, we can skip the
+            // esri request. This saves tons of loading time.
+            fetchPromise = Promise.resolve()
+            .then(() => {
                 let layerInfo = _parseAsWfs(serviceUrl);
                 const updatedServiceInfo = {
                     serviceType: 'wfs',
@@ -74,10 +79,10 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                     rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
                 }
                 return _parseAsSomethingElse(updatedServiceInfo, serviceUrl);
-            } else {
-                return gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
-            }
-        });
+            });
+        } else {
+            fetchPromise = gapiService.gapi.layer.predictLayerUrl(serviceUrl).then(_parseAsSomethingElse);
+        }
 
         return fetchPromise;
 
@@ -113,6 +118,7 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             const parsingPromise = matrix[layerType]().map(layerInfoBuilder =>
                 layerInfoBuilder(serviceUrl, serviceInfo)
             );
+
             return parsingPromise;
         }
 
