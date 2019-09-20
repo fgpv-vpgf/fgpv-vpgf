@@ -11,19 +11,24 @@
             "type": "object",
             "properties": {
                 "wkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a projection"
                 },
                 "vcsWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a vertical co-ordinate system. RAMP currently does not support this property."
                 },
                 "latestWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a projection"
                 },
                 "latestVcsWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a vertical co-ordinate system. RAMP currently does not support this property."
                 },
                 "wkt": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "a well known type projection definition"
                 }
             },
             "anyOf": [{
@@ -47,19 +52,24 @@
             "type": "object",
             "properties": {
                 "wkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a projection"
                 },
                 "vcsWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a vertical co-ordinate system. RAMP currently does not support this property."
                 },
                 "latestWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a projection"
                 },
                 "latestVcsWkid": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "an ESRI well known id denoting a vertical co-ordinate system. RAMP currently does not support this property."
                 },
                 "wkt": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "a well known type projection definition"
                 }
             },
             "anyOf": [{

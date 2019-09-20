@@ -19,12 +19,14 @@ export class MouseEvent {
 
     constructor(event: esriMouseEvent | MouseEvent, mapInstance: Map) {
         if (isEsriMouseEvent(event)) {
-            this.xy = new XY(event.mapPoint.x, event.mapPoint.y, event.mapPoint.spatialReference.wkid);
+            const sr = event.mapPoint.spatialReference;
+            this.xy = new XY(event.mapPoint.x, event.mapPoint.y, sr.wkid || sr.wkt);
         } else {
             // need to use screen point to convert to the map point used in creating the XY
             // however, screenX/Y output the wrong map point value which is why layerX/Y needs to be used
             const mapPoint = mapInstance.mapI.toMap({ x: (<any>event).layerX, y: (<any>event).layerY });
-            this.xy = new XY(mapPoint.x, mapPoint.y, mapPoint.spatialReference.wkid);
+            const sr = mapPoint.spatialReference;
+            this.xy = new XY(mapPoint.x, mapPoint.y, sr.wkid || sr.wkt);
         }
 
         this.screenY = event.screenY;
@@ -92,7 +94,11 @@ export interface esriMouseEvent extends MouseEvent {
     mapPoint: {
         y: number;
         x: number;
-        spatialReference: { wkid: number };
+        spatialReference: {
+            wkid: number,
+            latestWkid: number,
+            wkt: string
+        };
     };
 }
 

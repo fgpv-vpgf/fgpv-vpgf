@@ -1271,6 +1271,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         /**
          * Returns the wkid of the basemap projection.
+         * NOTE: this is only being used to drive styles in the basemap selector.
+         *       Any code dealing with spatial references should use the spatialReference property.
+         *       This property will be undefined if using a non-wkid basemap.
          * @return {Number} wkid of the basemap projection
          */
         get wkid () { return this.spatialReference.wkid; }
@@ -1279,18 +1282,26 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * Returns the spatial reference of the basemap tile schema.
          * @return {Object} spatial reference
          */
-        get spatialReference () { return this._tileSchema.extentSet.spatialReference;  }
+        get spatialReference () { return this._tileSchema.extentSet.spatialReference; }
 
         /**
          * Returns the default extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
         get default () { return this._tileSchema.extentSet.default; }
+
+        /**
+         * Returns the tile schema id.
+         * @return {String} the tile schema id
+         */
+        get tileSchemaId () { return this._tileSchema.id; }
+
         /**
          * Returns the full extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
         get full () { return this._tileSchema.extentSet.full; }
+
         /**
          * Returns the maximum extent as an Esri extent object.
          * @return {Object} Esri extent object
@@ -2184,14 +2195,23 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     // trigger zoomChanged observable on rvExtentChange event and when levelChange is true
                     // fixes https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3617
                     events.$on(events.rvExtentChange, (_, d) => {
-                        if (d.levelChange) {
-                            subscriber.next(mapInstance.zoom);
+                        if (d.levelChange && d.lod) {
+                            subscriber.next(d.lod.level);
                         }
                     });
                 });
 
                 mapInstance.boundsChanged = Observable.create(subscriber => {
-                    events.$on(events.rvExtentChange, (_, d) => subscriber.next(extentToApi(d.extent)));
+                    events.$on(events.rvExtentChange, (_, d) => {
+                        try {
+                            const apiExtent = extentToApi(d.extent);
+                            subscriber.next(apiExtent);
+                        } catch(error) {
+                            // errors generally happen if the map view is enormous (e.g. earth wraparound, north pole in middle, etc)
+                            // TODO we will have a discussion on best way to handle the error case. warning for now
+                            console.warn('unable to convert extent to API format (lat-long co-ords). boundsChanged observable was not fired.');
+                        }
+                    });
                 });
 
                 // add this to avoid issues with projection changes
@@ -2201,9 +2221,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 });
 
                 mapInstance.centerChanged = Observable.create(subscriber => {
+                    // note do not use `instance` here, as it will scope to old maps if projection change happens
                     events.$on(events.rvExtentChange, (_, d) => {
                         const centerXY = d.extent.getCenter();
-                        subscriber.next(pointToApi(centerXY.x, centerXY.y));
+                        subscriber.next(pointToApi(centerXY.x, centerXY.y, d.extent.spatialReference));
                     });
                 });
 
@@ -2219,8 +2240,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 return new XYBounds([xy.x1, xy.y1], [xy.x0, xy.y0]);
             }
 
-            function pointToApi(x, y) {
-                const xy = gapiService.gapi.proj.localProjectPoint(instance.spatialReference.wkid, 4326, [x, y]);
+            function pointToApi(x, y, spatialReference) {
+                const xy = gapiService.gapi.proj.localProjectPoint(spatialReference, 4326, [x, y]);
                 return new XY(xy[0], xy[1]);
             }
 

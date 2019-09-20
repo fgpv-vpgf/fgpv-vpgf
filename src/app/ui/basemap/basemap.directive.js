@@ -40,6 +40,8 @@ function Controller(geoService, mapService, basemapService, configService, event
 
     self.notifyApiClick = notifyApiClick;
 
+    self.selectedTileSchemaId = '';
+
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
 
@@ -48,6 +50,7 @@ function Controller(geoService, mapService, basemapService, configService, event
     events.$on(events.rvMapLoaded, () => {
         const mapConfig = configService.getSync.map;
         const allBasemaps = mapConfig.basemaps;
+        self.selectedTileSchemaId = mapConfig.selectedBasemap.tileSchemaId;
 
         mapConfig.instance.changeBasemap = id => {
             const newBasemap = allBasemaps.find(basemap => basemap.id === id);
@@ -59,7 +62,7 @@ function Controller(geoService, mapService, basemapService, configService, event
             const index = allBasemaps.findIndex(basemap => basemap.id === id);
             const basemapToDelete = allBasemaps[index];
             if (apiBasemap.isActive) {
-                let newBasemap = allBasemaps.find(basemap => basemap.id !== id && basemap.wkid === basemapToDelete.wkid);
+                let newBasemap = allBasemaps.find(basemap => basemap.id !== id && basemap.tileSchemaId === basemapToDelete.tileSchemaId);
                 if (!newBasemap) {
                     newBasemap = allBasemaps.find(basemap => basemap.id !== id);
                 }
@@ -92,6 +95,8 @@ function Controller(geoService, mapService, basemapService, configService, event
      * @param {Basemap} newBasemap a Basemap object from the config
      */
     function selectBasemap(newBasemap) {
+
+        self.selectedTileSchemaId = newBasemap.tileSchemaId;
         const oldBasemap = configService.getSync.map.selectedBasemap;
 
         oldBasemap.deselect();
@@ -101,7 +106,7 @@ function Controller(geoService, mapService, basemapService, configService, event
         oldApiBasemap._isActive = false;
         oldApiBasemap._activeChanged.next(false);
 
-        if (newBasemap.wkid !== oldBasemap.wkid) {
+        if (newBasemap.tileSchemaId !== oldBasemap.tileSchemaId) {
             // cast the current center point into the new projection
             // it will be encoded in the bookmark, so there is no need to do the calculation when the bookmark is loaded
             const startPoint = mapService.getCenterPointInTargetBasemap(

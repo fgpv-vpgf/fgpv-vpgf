@@ -223,7 +223,7 @@ function mapServiceFactory(
 
         // avoid private variable
         const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, {
-            targetWkid: mapInstance._map.extent.spatialReference.wkid
+            targetSR: mapInstance._map.extent.spatialReference
         });
         res.then(esriLayer => {
             firstBasemapFlag = true;

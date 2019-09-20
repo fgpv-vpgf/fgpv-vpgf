@@ -78,7 +78,7 @@ export default class Loader {
             const pN = pluginList[pI];
 
             if (!pN && loadFeatures[pk]) {
-                console.warn(`The plugin ${pk} was loaded automatically. This functionality is being removed in the next major release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
+                console.warn(`The plugin ${pk} was loaded automatically. This functionality may be removed in a future release. Please load this plugin on the host page instead (see ramp documentation) or add 'no-${pk}' to rv-plugins to stop this plugin from being autoloaded.`);
             } else if (pN === `no-${pk}`) {
                 delete loadFeatures[pk];
                 pluginList.splice(pI, 1);
