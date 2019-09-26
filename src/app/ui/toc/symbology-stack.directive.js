@@ -158,6 +158,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     if (toggle.isSelected !== false) {
                         toggle.wasSelected = true;
                         self.onToggleClick(toggle, false);
+                    } else {
+                        toggle.wasSelected = undefined;
                     }
                 });
             }
