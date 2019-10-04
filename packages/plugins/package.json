@@ -1,0 +1,59 @@
+{
+    "name": "@fgpv/rv-plugins",
+    "version": "3.2.0",
+    "description": "Plugins for the RAMP viewer supported by the core team.",
+    "scripts": {
+        "build": "webpack --config ./bin/build/webpack.config.js && npm run prepublishOnly",
+        "serve": "webpack-dev-server --progress --hot --config ./bin/build/webpack.config.js",
+        "test": "tsc && intern",
+        "sass": "bash ./compileSass.sh",
+        "prepublishOnly": "tsc && npm run sass",
+        "postversion": "git push upstream v%npm_package_version%",
+        "nonPublishedBuild": "webpack --config ./bin/build/webpack.config.js"
+    },
+    "files": [
+        "lib/**/*",
+        "dist/**/*"
+    ],
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fgpv-vpgf/plugins.git"
+    },
+    "keywords": [
+        "plugins",
+        "RAMP"
+    ],
+    "author": "The RAMP Core Team",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/fgpv-vpgf/plugins/issues"
+    },
+    "homepage": "https://github.com/fgpv-vpgf/plugins#readme",
+    "devDependencies": {
+        "@types/jquery": "^3.3.29",
+        "@types/node": "10.12.21",
+        "copy-webpack-plugin": "4.6.0",
+        "css-loader": "2.1.0",
+        "intern": "^4.4.1",
+        "mini-css-extract-plugin": "0.5.0",
+        "node-sass": "4.11.0",
+        "node-sass-import": "^2.0.1",
+        "sass-loader": "7.1.0",
+        "style-loader": "0.23.1",
+        "ts-loader": "5.3.3",
+        "typescript": "3.3.1",
+        "url-loader": "1.1.2",
+        "webpack": "4.29.0",
+        "webpack-cli": "3.2.1",
+        "webpack-dev-server": "3.1.14"
+    },
+    "dependencies": {
+        "rxjs": "6.3.3",
+        "ag-grid-community": "19.0.0"
+    }
+}

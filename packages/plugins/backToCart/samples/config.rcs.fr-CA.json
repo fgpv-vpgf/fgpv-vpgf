@@ -1,0 +1,481 @@
+{
+    "ui": {
+        "navBar": {
+            "zoom": "buttons",
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
+        },
+        "sideMenu": {
+            "logo": true
+        },
+        "help": {
+            "folderName": "default"
+        },
+        "legend": {
+            "isOpen": {
+                "large": true,
+                "medium": true,
+                "small": false
+            }
+        }
+    },
+    "version": "2.0",
+    "language": "fr",
+    "services": {
+        "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+        "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        "export": {
+            "title": {
+                "value": "Titre"
+            },
+            "map": {},
+            "mapElements": {},
+            "legend": {},
+            "footnote": {
+                "value": ""
+            }
+        },
+        "search": {
+            "serviceUrls": {
+                "geoNames": "http://geogratis.gc.ca/services/geoname/fr/geonames.json",
+                "geoLocation": "http://geogratis.gc.ca/services/geolocation/fr/locate?q=",
+                "geoSuggest": "http://geogratis.gc.ca/services/geolocation/fr/suggest?q=",
+                "provinces": "http://geogratis.gc.ca/services/geoname/fr/codes/province.json",
+                "types": "http://geogratis.gc.ca/services/geoname/fr/codes/concise.json"
+            }
+        }
+    },
+    "map": {
+        "initialBasemapId": "baseNrCan",
+        "components": {
+            "geoSearch": {
+                "enabled": true,
+                "showGraphic": true,
+                "showInfo": true
+            },
+            "mouseInfo": {
+                "enabled": false,
+                "spatialReference": {
+                    "wkid": 102100
+                }
+            },
+            "northArrow": {
+                "enabled": true
+            },
+            "basemap": {
+                "enabled": true
+            },
+            "overviewMap": {
+                "enabled": true,
+                "layerType": "imagery"
+            },
+            "scaleBar": {
+                "enabled": true
+            }
+        },
+        "extentSets": [
+            {
+                "id": "EXT_NRCAN_Lambert_3978",
+                "default": {
+                    "xmax": 3549492,
+                    "xmin": -2681457,
+                    "ymax": 3482193,
+                    "ymin": -883440
+                },
+                "spatialReference": {
+                    "wkid": 3978
+                }
+            },
+            {
+                "id": "EXT_ESRI_World_AuxMerc_3857",
+                "default": {
+                    "xmax": -5007771.626060756,
+                    "xmin": -16632697.354854,
+                    "ymax": 10015875.184845109,
+                    "ymin": 5022907.964742964
+                },
+                "spatialReference": {
+                    "wkid": 102100,
+                    "latestWkid": 3857
+                }
+            }
+        ],
+        "lodSets": [
+            {
+                "id": "LOD_NRCAN_Lambert_3978",
+                "lods": [
+                    {
+                        "level": 0,
+                        "resolution": 38364.660062653464,
+                        "scale": 145000000
+                    },
+                    {
+                        "level": 1,
+                        "resolution": 22489.62831258996,
+                        "scale": 85000000
+                    },
+                    {
+                        "level": 2,
+                        "resolution": 13229.193125052918,
+                        "scale": 50000000
+                    },
+                    {
+                        "level": 3,
+                        "resolution": 7937.5158750317505,
+                        "scale": 30000000
+                    },
+                    {
+                        "level": 4,
+                        "resolution": 4630.2175937685215,
+                        "scale": 17500000
+                    },
+                    {
+                        "level": 5,
+                        "resolution": 2645.8386250105837,
+                        "scale": 10000000
+                    },
+                    {
+                        "level": 6,
+                        "resolution": 1587.5031750063501,
+                        "scale": 6000000
+                    },
+                    {
+                        "level": 7,
+                        "resolution": 926.0435187537042,
+                        "scale": 3500000
+                    },
+                    {
+                        "level": 8,
+                        "resolution": 529.1677250021168,
+                        "scale": 2000000
+                    },
+                    {
+                        "level": 9,
+                        "resolution": 317.50063500127004,
+                        "scale": 1200000
+                    },
+                    {
+                        "level": 10,
+                        "resolution": 185.20870375074085,
+                        "scale": 700000
+                    },
+                    {
+                        "level": 11,
+                        "resolution": 111.12522225044451,
+                        "scale": 420000
+                    },
+                    {
+                        "level": 12,
+                        "resolution": 66.1459656252646,
+                        "scale": 250000
+                    },
+                    {
+                        "level": 13,
+                        "resolution": 38.36466006265346,
+                        "scale": 145000
+                    },
+                    {
+                        "level": 14,
+                        "resolution": 22.48962831258996,
+                        "scale": 85000
+                    },
+                    {
+                        "level": 15,
+                        "resolution": 13.229193125052918,
+                        "scale": 50000
+                    },
+                    {
+                        "level": 16,
+                        "resolution": 7.9375158750317505,
+                        "scale": 30000
+                    },
+                    {
+                        "level": 17,
+                        "resolution": 4.6302175937685215,
+                        "scale": 17500
+                    }
+                ]
+            },
+            {
+                "id": "LOD_ESRI_World_AuxMerc_3857",
+                "lods": [
+                    {
+                        "level": 0,
+                        "resolution": 19567.87924099992,
+                        "scale": 73957190.948944
+                    },
+                    {
+                        "level": 1,
+                        "resolution": 9783.93962049996,
+                        "scale": 36978595.474472
+                    },
+                    {
+                        "level": 2,
+                        "resolution": 4891.96981024998,
+                        "scale": 18489297.737236
+                    },
+                    {
+                        "level": 3,
+                        "resolution": 2445.98490512499,
+                        "scale": 9244648.868618
+                    },
+                    {
+                        "level": 4,
+                        "resolution": 1222.992452562495,
+                        "scale": 4622324.434309
+                    },
+                    {
+                        "level": 5,
+                        "resolution": 611.4962262813797,
+                        "scale": 2311162.217155
+                    },
+                    {
+                        "level": 6,
+                        "resolution": 305.74811314055756,
+                        "scale": 1155581.108577
+                    },
+                    {
+                        "level": 7,
+                        "resolution": 152.87405657041106,
+                        "scale": 577790.554289
+                    },
+                    {
+                        "level": 8,
+                        "resolution": 76.43702828507324,
+                        "scale": 288895.277144
+                    },
+                    {
+                        "level": 9,
+                        "resolution": 38.21851414253662,
+                        "scale": 144447.638572
+                    },
+                    {
+                        "level": 10,
+                        "resolution": 19.10925707126831,
+                        "scale": 72223.819286
+                    },
+                    {
+                        "level": 11,
+                        "resolution": 9.554628535634155,
+                        "scale": 36111.909643
+                    },
+                    {
+                        "level": 12,
+                        "resolution": 4.77731426794937,
+                        "scale": 18055.954822
+                    },
+                    {
+                        "level": 13,
+                        "resolution": 2.388657133974685,
+                        "scale": 9027.977411
+                    },
+                    {
+                        "level": 14,
+                        "resolution": 1.1943285668550503,
+                        "scale": 4513.988705
+                    },
+                    {
+                        "level": 15,
+                        "resolution": 0.5971642835598172,
+                        "scale": 2256.994353
+                    },
+                    {
+                        "level": 16,
+                        "resolution": 0.29858214164761665,
+                        "scale": 1128.497176
+                    },
+                    {
+                        "level": 17,
+                        "resolution": 0.14929107082380833,
+                        "scale": 564.248588
+                    },
+                    {
+                        "level": 18,
+                        "resolution": 0.07464553541190416,
+                        "scale": 282.124294
+                    },
+                    {
+                        "level": 19,
+                        "resolution": 0.03732276770595208,
+                        "scale": 141.062147
+                    },
+                    {
+                        "level": 20,
+                        "resolution": 0.01866138385297604,
+                        "scale": 70.5310735
+                    }
+                ]
+            }
+        ],
+        "legend": {
+            "type": "autopopulate"
+        },
+        "layers": [],
+        "tileSchemas": [
+            {
+                "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                "name": "[fr] Lambert Maps",
+                "extentSetId": "EXT_NRCAN_Lambert_3978",
+                "lodSetId": "LOD_NRCAN_Lambert_3978",
+                "hasNorthPole": true
+            },
+            {
+                "id": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "name": "[fr] Web Mercator Maps",
+                "extentSetId": "EXT_ESRI_World_AuxMerc_3857",
+                "lodSetId": "LOD_ESRI_World_AuxMerc_3857"
+            }
+        ],
+        "baseMaps": [
+            {
+                "id": "baseNrCan",
+                "name": "Carte de base du Canada - transport (CBCT) avec étiquettes",
+                "description": "La carte de base du Canada – transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
+                "altText": "altText - La carte de base du Canada – transport (CBCT)",
+                "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                "layers": [
+                    {
+                        "id": "CBCT",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBCT3978/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseSimple",
+                "name": "Carte de base du Canada - simple",
+                "description": "La carte de base du Canada - simple",
+                "altText": "altText - La carte de base du Canada - simple",
+                "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                "layers": [
+                    {
+                        "id": "SMR",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                    },
+                    {
+                        "id": "SMW",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseCBME_CBCE_HS_RO_3978",
+                "name": "Carte de base du Canada - élevation (CBCE)",
+                "description": "La carte de base du Canada - élevation (CBCE) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
+                "altText": "altText - La carte de base du Canada - élevation (CBCE)",
+                "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                "layers": [
+                    {
+                        "id": "CBME_CBCE_HS_RO_3978",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseCBMT_CBCT_GEOM_3978",
+                "name": "Carte de base du Canada - transport (CBCT)",
+                "description": "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
+                "altText": "altText - La carte de base du Canada - transport (CBCT)",
+                "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
+                "layers": [
+                    {
+                        "id": "CBMT_CBCT_GEOM_3978",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriWorld",
+                "name": "Imagerie mondiale",
+                "description": "L'imagerie mondiale fournit une imagerie satellitaire et aérienne dans de nombreuses régions du monde avec une résolution de 1 mètres et moins et des images satellitaires de résolution inférieure dans le monde entier.",
+                "altText": "altText - L'imagerie mondiale",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Imagery",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriPhysical",
+                "name": "Monde physique",
+                "description": "La carte du monde physique représente l'aspect physique naturel de la Terre à 1.24 kilomètres par pixel pour le monde et à 500 mètres pour les États-Unis.",
+                "altText": "altText - La carte du monde physique",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Physical_Map",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriRelief",
+                "name": "Monde en relief ombragé",
+                "description": "La carte du monde en relief ombragé représente l'élévation de la surface de la terre comme un relief ombragé. Cette carte est utilisée comme couche de fond afin d'ajouter un relief ombragé à d'autres cartes SIG, comme la carte ArcGIS Online World Street Map.",
+                "altText": "altText - La carte du monde en relief ombragé",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Shaded_Relief",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriStreet",
+                "name": "Monde routier",
+                "description": "La carte du monde routier présente des données au niveau des autoroutes pour le monde.",
+                "altText": "altText - La carte du monde routier",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Street_Map",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriTerrain",
+                "name": "Monde terrain",
+                "description": "La carte du monde terrain est conçue pour être utilisée comme une carte de base par les professionnels du SIG pour superposer d'autres couches thématiques comme la démographie ou la couverture terrestre.",
+                "altText": "altText - La carte du monde terrain",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Terrain_Base",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+                    }
+                ]
+            },
+            {
+                "id": "baseEsriTopo",
+                "name": "Monde topographique",
+                "description": "La carte du monde topographique est conçue pour être utilisé comme une carte de base par les professionnels du SIG et comme une carte de référence par quiconque.",
+                "altText": "altText - La carte du monde topographique",
+                "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857",
+                "layers": [
+                    {
+                        "id": "World_Topo_Map",
+                        "layerType": "esriFeature",
+                        "url": "https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+                    }
+                ]
+            }
+        ]
+    },
+    "plugins": {
+        "backToCart": {
+            "catalogueUrl": "backtocart-index.html?keys={RV_LAYER_LIST}"
+        }
+    }
+}
