@@ -1,0 +1,12 @@
+language: node_js
+
+node_js:
+  - 8.11.1
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  global:
+    secure: yPKQoWNdz5t78uMy+N4lfZsAPFTl5HLd+Rh2I2Uy2IdgHmVIaRWTY4/FgxMJ2idgeEY5ihKn73djDyzQvxsX37zhSrcXEusg7tyHzqJiy3Yl0RLxte9ow+ludCtxG6OWVwGhd6D66AJtYwMdEh0XKyGZXTfWro6k2kfT9dKhbUvZrigkJ/fae6yJaibIvM4Qz8znHLKbzthFYN0ENK/xXAEtavC35THZxuRTQcOorq1+LwJ7Q+g0p48oqYplwgivCqZ4e+SmIhViKGHl33K6kd+SvWSGFKflr7+1vr81HTCfSu5i41mgOgTEoTWeEf0TSkbevQlrSHQWKboP9URywUmqdTTbDQfms7np+NsXsjuvXwnSda1tcpeqBXnZ8AUUlgDuQZ971CM7wv8WPQxW7LPG31HBf0MQI5xl+oVczZqJ3/FRTVHS70Mm7DVo/qa6itFLrLhJ6chQQgZMvAMrCbyydCK5eMUv0zzZx3lmhxC1g4q8pn+UScefiIcatDtQluUwb8+3y9r0rtYZd0Rzvc9/CJKJfSzN8yj9eSN/5hOKov9Hn5rFzHHMYTlRIpDAn6X4amXVdA3LN5CQGrW1RMFAdgk1LQGTQf9mAkyueRBoj/v8Qn/zAYaJTpyT48u79KfttzwQqESPzBLhUm8yAx4c19z4YFg3woQXQkUr3lI=
