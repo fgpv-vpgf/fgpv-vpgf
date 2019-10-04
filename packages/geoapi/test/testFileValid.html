@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+            api.mapManager.setProxy('proxy/dotNet/proxy.ashx');
+
+            // lets validate some nice files
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/test.csv', api.layer.serviceType.CSV).then(data => {
+                api.layer.validateFile(api.layer.serviceType.CSV, data.fileData).then(vData => {
+                    console.log('CSV validation');
+                    console.log(vData);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/happy.json', api.layer.serviceType.GeoJSON).then(data => {
+                api.layer.validateFile(api.layer.serviceType.GeoJSON, data.fileData).then(vData => {
+                    console.log('GeoJSON validation');
+                    console.log(vData);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/ne_10m_ports.zip', api.layer.serviceType.Shapefile).then(data => {
+                api.layer.validateFile(api.layer.serviceType.Shapefile, data.fileData).then(vData => {
+                    console.log('Shapefile validation');
+                    console.log(vData);
+                });
+            });
+
+            // lets validate some bad files
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/unhappy1.json', api.layer.serviceType.GeoJSON).then(data => {
+                api.layer.validateFile(api.layer.serviceType.GeoJSON, data.fileData).then(vData => {
+                    console.log('GeoJSON validation - bad geometry - validated when it shouldnt have');
+                    console.log(vData);
+                }).catch(err => {
+                    console.log('GeoJSON validation - bad geometry');
+                    console.log(err);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/unhappy2.json', api.layer.serviceType.GeoJSON).then(data => {
+                api.layer.validateFile(api.layer.serviceType.GeoJSON, data.fileData).then(vData => {
+                    console.log('GeoJSON validation - no features - validated when it shouldnt have');
+                    console.log(vData);
+                }).catch(err => {
+                    console.log('GeoJSON validation - no features');
+                    console.log(err);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/bad1.csv', api.layer.serviceType.CSV).then(data => {
+                api.layer.validateFile(api.layer.serviceType.CSV, data.fileData).then(vData => {
+                    console.log('CSV validation - less than 2 columns - validated when it shouldnt have');
+                    console.log(vData);
+                }).catch(err => {
+                    console.log('CSV validation - less than 2 columns');
+                    console.log(err);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/bad2.csv', api.layer.serviceType.CSV).then(data => {
+                api.layer.validateFile(api.layer.serviceType.CSV, data.fileData).then(vData => {
+                    console.log('CSV validation - unbalanced columns - validated when it shouldnt have');
+                    console.log(vData);
+                }).catch(err => {
+                    console.log('CSV validation - unbalanced columns');
+                    console.log(err);
+                });
+            });
+
+            api.layer.predictLayerUrl('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/RAMP_sample/test-data/corruptshape.zip', api.layer.serviceType.Shapefile).then(data => {
+                api.layer.validateFile(api.layer.serviceType.Shapefile, data.fileData).then(vData => {
+                    console.log('Shapefile validation - corrupted - validated when it shouldnt have');
+                    console.log(vData);
+                }).catch(err => {
+                    console.log('Shapefile validation - corrupted');
+                    console.log(err);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

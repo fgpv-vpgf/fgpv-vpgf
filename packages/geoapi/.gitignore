@@ -1,0 +1,10 @@
+logs
+*.log
+
+node_modules/
+.vscode/
+.vagrant/
+
+*~
+*.swp
+

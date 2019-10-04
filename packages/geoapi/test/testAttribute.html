@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+
+            var mahLayer = new api.layer.FeatureLayer('http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands/MapServer/0', {id:'test1'});
+
+            mahLayer.on('load', function(evt) {  //update-end
+
+                //test standard attribute loading of a feature layer
+                var nugget1 = api.attribs.loadLayerAttribs(mahLayer);
+
+                console.log('feature layer result - normal case - top ', nugget1);
+
+                nugget1["0"].getAttribs().then(
+                    function (attribD) {
+                        console.log('feature layer result - normal case - attrib data', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+ 
+                //test filtered attribute loading of a feature layer
+                var nugget2 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"attribs":"latitude,siteEventType_en,siteID"}});
+
+                console.log('feature layer result - filtered case - top ', nugget2);
+
+                nugget2["0"].getAttribs().then(
+                    function (attribD) {
+                        console.log('feature layer result - filtered case - attrib data', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+
+                //test skip attribute loading of a feature layer
+                var nugget3 = api.attribs.loadLayerAttribs(mahLayer, {"0": {"skip":true}}); //,OBJECTID
+
+                console.log('feature layer result - skip case - top ', nugget3);
+
+			});
+
+            var mahBigLayer = new api.layer.FeatureLayer('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_census_of_agriculture_2011_ccs/MapServer/0', {id:'gerth'});
+
+            mahBigLayer.on('load', function(evt) {
+
+                //test large attribute loading of a feature layer
+                var nugget4 = api.attribs.loadLayerAttribs(mahBigLayer);
+
+                console.log('feature layer result - big case - top ', nugget4);
+
+                nugget4["0"].getAttribs().then(
+                    function (attribD) {
+                        console.log('feature layer result - big case - attrib data', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+            });
+/*
+            var mahNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_OzonePeak/MapServer', {id:'mapjection'});
+
+            mahNestedLayer.on('load', function(evt) {
+
+                //test full loading of a dynamic layer
+                var nugget5 = api.attribs.loadLayerAttribs(mahNestedLayer);
+
+                console.log('dynamic layer result - full with groups - top', nugget5);
+
+                nugget5["1"].getAttribs().then(
+                    function (attribD) {
+                        console.log('dynamic layer result - full with groups - attrib data 1', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+                //test skip leaf loading of a dynamic layer
+                var nugget6 = api.attribs.loadLayerAttribs(mahNestedLayer, {"3": {"skip":true}});
+
+                console.log('dynamic layer result - skip leaf - top', nugget6);
+
+                nugget6["1"].getAttribs().then(
+                    function (attribD) {
+                        console.log('dynamic layer result - skip leaf - attrib data 1', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+                //test skip group loading of a dynamic layer
+                var nugget7 = api.attribs.loadLayerAttribs(mahNestedLayer, {"0": {"skip":true}});
+
+
+                console.log('dynamic layer result - skip group - top', nugget7);
+
+            });
+*/
+            /* TODO find another fancy layer, this one has been nuked
+           var mahFancyNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/', {id:'pants'});
+
+            mahFancyNestedLayer.on('load', function(evt) {
+
+                var skipper = {
+                    "1": {"skip":true},
+                    "8": {"skip":true},
+                    "11": {"skip":true},
+                    "16": {"skip":true},
+                    "22": {"skip":true},
+                    "23": {"skip":true},
+                    "29": {"skip":true}
+                };
+
+                //test large attribute loading of a feature layer
+                var nugget8= api.attribs.loadLayerAttribs(mahFancyNestedLayer, skipper);
+
+                console.log('dynamic layer result - complex nesting with skips - top', nugget8);
+
+                nugget8["7"].getAttribs().then(
+                    function (attribD) {
+                        console.log('dynamic layer result - complex nesting with skips - attrib data 7', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+            });
+            */
+
+           var mahRasterLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_crop_spatial_density_barley/MapServer', {id:'barls'});
+
+            mahRasterLayer.on('load', function(evt) {
+
+                //test with a raster layer
+                var nugget8= api.attribs.loadLayerAttribs(mahRasterLayer);
+
+                console.log('dynamic layer result - raster guts - top', nugget8);
+
+            });
+
+           var mahDeepNestedLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/TaxParcel/AssessorsBasemap/MapServer', {id:'horseface'});
+
+            mahDeepNestedLayer.on('load', function(evt) {
+
+                var skipper = {
+                    "2": {"skip":true},
+                    "29": {"skip":true},
+                    "31": {"skip":true}
+                };
+
+                //test large attribute loading of a feature layer
+                var nugget9= api.attribs.loadLayerAttribs(mahDeepNestedLayer, skipper);
+
+                console.log('dynamic layer result - deep nesting with skips (should see 1, 28, 30, 32) - top', nugget9);
+
+                nugget9["1"].getAttribs().then(
+                    function (attribD) {
+                        console.log('dynamic layer result - complex nesting with skips - attrib data 1', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+            });
+
+             // TEST GEOJSON LAYER
+
+            var happyData = {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Right Eye"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[-90.3515625,53.73571574532637],[-92.13134765625,53.199451902831555],[-91.29638671875,51.93071827931289],[-88.9453125,51.83577752045248],[-87.71484375,52.96187505907603],[-88.59374999999999,53.68369534495075],[-90.3515625,53.73571574532637]]]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Left Eye"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[-84.57275390625,53.44880683542759],[-86.0009765625,53.04121304075649],[-85.4296875,51.80861475198521],[-83.408203125,51.41291212935532],[-82.15576171875,52.308478623663355],[-82.90283203125,53.409531853086435],[-84.57275390625,53.44880683542759]]]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Happy Mouth"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates":[[[-92.8125,51.67255514839676],[-91.82373046875,50.499452103967734],[-88.9892578125,50.317408112618686],[-84.44091796875,50.190967765585604],[-82.33154296875,51.04139389812637],[-82.02392578125,49.96535590991311],[-83.60595703125,48.748945343432936],[-85.869140625,48.3416461723746],[-89.296875,48.66194284607008],[-92.021484375,49.05227025601607],[-93.2080078125,49.76707407366792],[-92.8125,51.67255514839676]]]
+                        }
+                    }
+                ]
+            }
+
+            var opts = {
+                targetWkid: 102100,
+                sourceProjection: 'EPSG:4326'
+            };
+
+
+            api.layer.makeGeoJsonLayer(happyData, opts).then(function (happyLayer) {
+                 //file based layer
+                var nugget10= api.attribs.loadLayerAttribs(happyLayer);
+
+                console.log('file layer result - top', nugget10);
+
+                nugget10["0"].getAttribs().then(
+                    function (attribD) {
+                        console.log('file layer result - attrib data 0', attribD);
+                    },
+                    function (iAmError) {
+                        console.log('I AM ATTRIB ERROR', iAmError);
+                    }
+                );
+
+            });
+
+        });
+</script>
+</body>
+</html>

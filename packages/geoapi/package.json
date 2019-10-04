@@ -1,0 +1,45 @@
+{
+    "name": "geoApi",
+    "version": "3.2.0",
+    "description": "",
+    "main": "src/index.js",
+    "dependencies": {
+        "babel-cli": "^6.24.1",
+        "babel-preset-env": "1.6.1",
+        "babel-preset-latest": "^6.24.1",
+        "babel-preset-stage-2": "^6.24.1",
+        "canvg-origin": "^1.0.0",
+        "csv2geojson": "5.0.2",
+        "dgeni": "^0.4.7",
+        "dgeni-packages": "^0.19.1",
+        "docdash": "https://github.com/alyec/docdash#master",
+        "jasmine": "^2.6.0",
+        "jsdoc": "^3.4.0",
+        "js-sql-parser": "1.0.7",
+        "lodash": "^4.17.4",
+        "proj4": "^2.4.3",
+        "rcolor": "1.0.1",
+        "rgbcolor": "1.0.1",
+        "shpjs": "https://github.com/fgpv-vpgf/shapefile-js.git#v3.6.0",
+        "svg.js": "2.6.1",
+        "terraformer": "~1.0.8",
+        "terraformer-arcgis-parser": "~1.0.5",
+        "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#v0.2.2",
+        "text-encoding": "0.6.4"
+    },
+    "scripts": {
+        "doc": "./node_modules/.bin/jsdoc -p -r -c .jsdoc.json -t node_modules/docdash -R README.md -d ./docbuild -u ./docs/content ./src",
+        "servedoc": "npm run doc && ./node_modules/.bin/http-server -p 6004 ./docbuild",
+        "test": "babel-node spec/support/specRunner.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fgpv-vpgf/geoApi.git"
+    },
+    "author": "Government of Canada",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/fgpv-vpgf/geoApi/issues"
+    },
+    "homepage": "https://fgpv-vpgf.github.io/geoApi"
+}

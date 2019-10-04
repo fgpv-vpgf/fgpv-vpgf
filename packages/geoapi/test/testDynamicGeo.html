@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <p id="mess" />
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+            var mahLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/');
+
+            var pt = api.layer.getFeatureInfo('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/ECNY/MapServer/0/', '5');
+        });
+</script>
+</body>
+</html>

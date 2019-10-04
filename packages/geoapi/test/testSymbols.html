@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id='map' style='height:90%; width: 100%;'></div>
+    <p id='mess' />
+    <script src='../dist/geoapi.js'></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+        var layer = new api.layer.FeatureLayer('http://sncr01wbingsdv1.ncr.int.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer/1');
+
+        layer.on('load', function(evt) {
+            console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE LOADED', layer.renderer);
+            console.log(layer);
+            console.log(Object.getPrototypeOf(layer.renderer).declaredClass);
+            // loadLayerAttribs
+            var fData = api.attribs.loadLayerAttribs(layer);
+            console.log('GGGGGGGGGGGGGGGGGG fData', fData);
+
+            var oid = 22795;
+            console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFF', fData[1]);
+            fData[1].layerData.then(lData => {
+                console.log('IIIIIIIIIIIIIIII renderer', lData.renderer);
+                
+                fData[1].getAttribs().then(gData => {
+                    console.log('HHHHHHHHHHHHHHHHH', gData);
+                    var icon = api.symbology.getGraphicIcon(gData.features[gData.oidIndex[oid]].attributes, lData.renderer);
+                    var myimg = document.getElementById('mine');
+                    myimg.src = icon;
+                    console.log(icon);
+                });
+            });
+        });
+    });
+    </script>
+    <img id='mine' width='32px' height='32px' border='1px' hspace='20' vspace='20' />
+</body>
+</html>

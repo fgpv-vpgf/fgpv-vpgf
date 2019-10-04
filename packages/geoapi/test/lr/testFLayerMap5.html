@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Feature Layer Hilight Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
+</head>
+<body>
+    <div id="map" style="height: 700px; width: 900px; margin: 0; overflow: hidden;"></div>
+    <p id="mess" />
+    <script src="../../dist/geoapi.js"></script>
+    <script>
+        // http://localhost:6002/test/testClass.html
+
+        var map;
+        var layerRec;
+        var mahGrafix
+
+        function clickHandler(clickBundle) {
+            console.log('MOUSE CLICK EVENT', clickBundle);
+
+            mahGrafix.addMarker(clickBundle.mapPoint);
+
+        }
+
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+
+            api.debug(true);
+
+            var config1 = {
+                id: 'dog',
+                name: 'Feature Test',
+                url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+                nameField: 'siteShortName_en',
+                metadataUrl: 'http://www.github.com',
+                layerType: 'esriFeature',
+                tolerance: 5,
+                controls: ['snapshot', 'visibility', 'opacity', 'boundingBox', 'query', 'data'],
+                state: {
+                    opacity: 1,
+                    visibility: true,
+                    boundingBox: false,
+                    query: true,
+                    snapshot: false
+                }
+            };
+
+            layerRec = api.layer.createFeatureRecord(config1);
+            console.log('layer PROOF ', layerRec);
+            var proxy = layerRec.getProxy();
+            console.log('proxy PROOF ', proxy);
+
+            console.log('loading state', proxy.state);
+            
+            var eb = api.esriBundle();
+            map = new eb.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-110, 55] });
+            map.addLayer(layerRec._layer);
+            console.log('mah map', map);
+
+
+            mahGrafix = api.hilight.makeHilightLayer({});
+            map.addLayer(mahGrafix);
+            console.log("glayer", mahGrafix); 
+
+            // add identify handler
+            // layerRec.addHoverListener(hoverOverHandler);
+
+            map.on('click', clickHandler);
+
+            function doHilight(oid) {
+                var gPromise = proxy.fetchGraphic(oid);
+                gPromise.then(gBundle => {
+                    var ubGraphics = api.hilight.getUnboundGraphics([gBundle], map.spatialReference);
+                    
+                    ubGraphics[0].then(unboundG => {
+                        console.log('unbound graphic for hilighting ', unboundG);
+                        mahGrafix.addHilight(unboundG);
+                    });
+                    
+                });
+
+            }
+
+            // hack to wait for layer to load
+            var to = setInterval(() => {
+                if (layerRec.state === 'rv-loaded') {
+                    clearInterval(to);
+                    afterLoadTests();
+                }
+            }, 1000);
+
+            function afterLoadTests() {
+                console.log('enhanced loaded');
+               
+                proxy.zoomToBoundary(map);
+                
+                setTimeout(() => {
+                    doHilight(47202);
+                }, 5000);
+
+            }
+
+        });
+    </script>
+</body>
+</html>
