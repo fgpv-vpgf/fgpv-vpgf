@@ -1,0 +1,36 @@
+/* Sets styles on base elements: html, body, a, ul, li, etc. */
+// include all base files
+
+span, p {
+    @extend %text !optional;
+}
+
+h1, h2, h3,
+h4, h5, h6 {
+    @extend %headings !optional;
+}
+
+%headings {
+    font-family: $font-family;
+    color: $primary-text-color;
+}
+
+& {
+    color: $primary-text-color;
+    font-family: $font-family;
+    background-color: #FFFFFF;
+}
+
+a {
+    color: $primary-color-dark; //or just $primary-color if it passess contrast check
+    text-decoration: none;
+    font-weight: 400;
+    border-bottom: 1px solid $primary-color-light;
+    transition: border-bottom 0.35s;
+
+    &:hover {
+        border-bottom-color: $primary-color-dark;
+    }
+
+    @include keyboard-focus;
+}

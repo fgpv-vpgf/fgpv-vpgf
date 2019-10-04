@@ -1,0 +1,23 @@
+<div class="rv-header">
+
+    <div layout="column" class="rv-header-content">
+        <h4 class="md-subhead">{{ self.headerTitle | translate }}</h4>
+        <!--h4 class="md-caption">{{ self.selectedItem.requester.caption }}</h4> what is caption?; suggestion to remove it completely since it's hard to decide what to show as catption in structured legend -->
+    </div>
+
+    <span flex class="rv-spacer"></span>
+
+    <md-button class="md-icon-button black rv-button-24 rv-gt-sm"
+        ng-click="self.expandPanel()"
+        ng-show="self.selectedItem">
+        <md-tooltip>{{ 'details.tooltip.expand' | translate }}</md-tooltip>
+        <md-icon md-svg-src="action:open_in_new"></md-icon>
+    </md-button>
+
+    <md-button aria-label="{{ 'contentPane.aria.close' | translate }}" class="rv-close md-icon-button black rv-button-24"
+        ng-click="self.closeDetails()">
+        <md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip>
+        <md-icon class="rv-lt-lg" md-svg-src="navigation:arrow_back"></md-icon>
+        <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
+    </md-button>
+</div>

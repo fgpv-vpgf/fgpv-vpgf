@@ -1,0 +1,14 @@
+@mixin dragula {
+    .gu-transit {
+        opacity: 0.2 !important;
+    }
+    .gu-mirror {
+        box-shadow: $whiteframe-shadow-4dp;
+        background-color: #fff;
+    }
+
+    .rv-mirror {
+        box-shadow: $whiteframe-shadow-4dp;
+        background-color: #fff;
+    }
+}

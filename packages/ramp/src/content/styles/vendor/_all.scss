@@ -1,0 +1,24 @@
+/* The vendor directory is for overriding third-party CSS. This is handy when using prepackaged components developed by other people.
+jQuery UI and a color picker override styles are examples of CSS that you might want to place in the vendor directory.
+This should make it easy to update my third-party stylesheets to more current versions in the future. */
+
+// overriding default icon color with a darker hue
+
+// Angular Material
+md-icon {
+    color: #666666;
+}
+
+// import all vendor override files
+@import '_datatable.scss';
+@import '_esri.scss';
+@import '_dragula.scss';
+@import '_wet.scss';
+@import '_minicolors.scss';
+@import '_angularmaterial.scss';
+
+@include datatable;
+@include esri;
+@include dragula;
+@include wet;
+@include angularmaterial;

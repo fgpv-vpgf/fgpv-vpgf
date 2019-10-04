@@ -1,0 +1,9 @@
+<form>
+    <md-input-container ng-repeat="entry in self.block.proxyWrapper.layerConfig.layerEntries" ng-if="::(entry.allStyles.length > 1)">
+        <label>{{ entry.desc }}</label>
+        <md-select ng-model="entry.currentStyle">
+            <md-option ng-value="style" ng-repeat="style in entry.allStyles">{{ style }}</md-option>
+        </md-select>
+        <div class="rv-hint" ng-if="entry.currentStyle !== entry.cachedStyle">{{ 'settings.label.stylereload' | translate }}</div>
+    </md-input-container>
+</form>

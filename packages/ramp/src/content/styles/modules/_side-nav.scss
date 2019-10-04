@@ -1,0 +1,26 @@
+@mixin side-nav {
+    .side-nav-summary {
+        height: 200px;
+        width: 400px;
+        border-radius: 0;
+
+        md-switch {
+            margin: 0;
+
+            span {
+                padding-right: 10px;
+            }
+        }
+
+        md-input-container {
+            input {
+                font-size: 1.2em;
+                text-overflow: ellipsis;
+            }
+
+            .hint {
+                float: right;
+            }
+        }
+    }
+}

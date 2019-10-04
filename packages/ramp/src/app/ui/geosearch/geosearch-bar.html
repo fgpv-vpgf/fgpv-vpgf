@@ -1,0 +1,46 @@
+<div class="rv-geosearch-bar rv-whiteframe-z2" ng-attr-rv-trap-focus="{{ !self.service.isResultsVisible ? '' : undefined }}">
+
+    <md-button
+        ng-if="self.config.ui.appBar.sideMenu"
+        aria-label="{{ 'appbar.aria.menu' | translate }}"
+        class="md-icon-button black"
+        ng-click="self.sideNavigationService.open();">
+        <md-tooltip>{{ 'appbar.tooltip.menu' | translate }}</md-tooltip>
+        <md-icon md-svg-src="navigation:menu"></md-icon>
+    </md-button>
+
+    <md-input-container md-no-float flex rv-focus-exempt>
+        <md-autocomplete flex class="rv-no-message-input rv-clearable-input"
+            md-autofocus="true"
+            md-menu-class="{{ ::self.geosearchMenuClass }}"
+            md-search-text-change="self.service.searchValue.length === 0 ? self.onUpdateDebounce() : null"
+            md-selected-item-change="self.onUpdateDebounce()"
+            placeholder="{{ 'geosearch.text.placeholder' | translate }}"
+            md-no-cache="true"
+            md-selected-item="self.selectedOption"
+            md-search-text="self.service.searchValue"
+            md-items="option in self.onUpdateDebounce()"
+            md-item-text="option">
+          <md-item-template>
+            <span md-highlight-text="self.service.searchValue">{{ option }}</span>
+          </md-item-template>
+        </md-autocomplete>
+    </md-input-container>
+
+    <md-icon md-svg-src="action:search"></md-icon>
+
+    <span class="rv-button-divider-24 rv-lg"></span>
+
+    <md-button
+        aria-label="{{ 'appbar.aria.geosearchclose' | translate }}"
+        class="md-icon-button black"
+        ng-click="self.service.toggle()">
+        <md-tooltip>{{ 'appbar.aria.geosearchclose' | translate }}</md-tooltip>
+        <md-icon md-svg-src="navigation:close"></md-icon>
+    </md-button>
+
+    <md-progress-linear
+            class="rv-progress-bottom"
+            md-mode="indeterminate"
+            ng-show="self.service.isLoading"></md-progress-linear>
+</div>

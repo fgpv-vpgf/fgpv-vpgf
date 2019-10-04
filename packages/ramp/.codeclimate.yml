@@ -1,0 +1,28 @@
+---
+engines:
+  scss-lint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+    config:
+      strings:
+      - FIXME
+      - BUG
+      - HACK
+      - XXX
+ratings:
+  paths:
+  - "src/**.scss"
+  - "src/**.js"
+exclude_paths:
+- "**/*.spec.js"
+- "src/test/"
+- "src/polyfill/"
+- "src/e2e-test/"

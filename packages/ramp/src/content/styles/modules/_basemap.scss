@@ -1,0 +1,192 @@
+@mixin basemap {
+    $list-item-gap: rem(1.6);
+
+    .rv-basemap-selector {
+
+        .rv-basemap-header {
+            padding: 0 0 0 16px;
+            min-height: 49px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid $primary-color-light;
+
+            h3 {
+                padding: 0;
+                margin: 0;
+            }
+        }
+
+        .rv-minimize-button {
+            margin: 10px;
+        }
+
+        .rv-basemap-content .rv-content-pane{
+            top: 49px;
+        }
+    }
+
+    // need this to manager lower opacity values on a backdrop
+    .rv-basemap {
+
+        h3 {
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        md-backdrop {
+            opacity: 0.18;
+
+            &.ng-enter {
+                opacity: 0;
+            }
+            &.ng-enter.ng-enter-active {
+                opacity: .18;
+            }
+            &.ng-leave {
+                opacity: .18;
+            }
+            &.ng-leave.ng-leave-active {
+                opacity: 0;
+            }
+        }
+    }
+
+    ul.rv-basemap-list {
+        > li {
+            margin-bottom: rem(1.6);
+        }
+    }
+
+    rv-basemap-item {
+        position: relative;
+        display: block;
+        overflow: hidden;
+
+        // this is a neat trick to keep the ratio of the box constant https://css-tricks.com/snippets/sass/maintain-aspect-ratio-mixin/
+        &:before {
+            content: "";
+            display: block;
+            padding-top: 100% / (3 / 2);
+        }
+
+        .rv-body-button:focus {
+            border: 2px solid #4d90fe;
+        }
+
+        .rv-basemap-thumb {
+            position: absolute;
+            display: flex;
+        }
+    }
+
+    .rv-wkid {
+        position: absolute;
+        top: 0;
+
+        > div {
+            display: flex;
+        }
+
+        @include wkid(102100, -55px, -220px);
+        @include wkid(3978, -60px, -60px);
+    }
+
+    .rv-basemap-description {
+        position: absolute;
+        top: -100%;
+        padding: rem(1.6);
+        color: black;
+        line-height: 20px;
+        opacity: 0;
+    }
+
+    .rv-basemap-footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+
+        background: rgba(0, 0, 0, 0.68);
+        color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: rem(4.8);
+        padding: rem(1.6) rem(0.8) rem(1.6) rem(1.6);
+        display: flex;
+        align-items: center;
+
+        &.rv-double {
+            height: rem(6.8);
+        }
+
+        .rv-basemap-name {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-right: rem(0.8);
+
+            > span {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+
+                // in case we want to style the first line a little bit larger
+                /*&:first-child {
+                    font-size: 16px;
+                    line-height: 24px;
+                }
+                &:nth-child(2) {
+                    font-size: 14px;
+                    line-height: 20px;
+                }*/
+            }
+        }
+
+        > .md-button {
+            flex-shrink: 0;
+            margin: 0;
+            z-index: 3; // to poke over the primary action button
+
+            md-icon {
+                color: white;
+            }
+        }
+    }
+
+    .rv-basemap-warning {
+        color: $primary-color;
+    }
+
+    .rv-basemap-check {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 3;
+
+        md-icon {
+            top: 2px;
+            right: 2px;
+            position: relative;
+            color: $primary-color-dark;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 0px;
+            height: 0px;
+            border-top: 50px solid rgba(250, 250, 250, 1);
+            border-left: 50px solid transparent;
+            right: 0;
+            top: 0;
+        }
+    }
+}
+
+// position basemap sample image for a specific wkid
+@mixin wkid($wkid, $top, $left) {
+    &.rv-#{$wkid} {
+        display: flex;
+        top: $top;
+        left: $left;
+    }
+}

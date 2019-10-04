@@ -1,0 +1,15 @@
+diff --git a/node_modules/angular-dragula/dist/angular-dragula.js b/node_modules/angular-dragula/dist/angular-dragula.js
+index e8a29ea7a..dd51aa844 100644
+--- a/node_modules/angular-dragula/dist/angular-dragula.js
++++ b/node_modules/angular-dragula/dist/angular-dragula.js
+@@ -487,6 +487,10 @@ function dragula (initialContainers, options) {
+     if (e.clientX !== void 0 && e.clientX === _moveX && e.clientY !== void 0 && e.clientY === _moveY) {
+       return;
+     }
++    // prevent drag from starting on tiny mouse movements which can happen when user presses on the left button
++    if (Math.abs(e.clientY - _moveY) + Math.abs(e.clientX - _moveX) < 6) {
++      return;
++    }
+     if (o.ignoreInputTextSelection) {
+       var clientX = getCoord('clientX', e);
+       var clientY = getCoord('clientY', e);

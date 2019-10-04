@@ -1,0 +1,59 @@
+@mixin effects {
+    .rv-transform-default {
+        transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+    }
+
+    $rotation-angles: 0, 30, 60, 90, 120, 150, 180, -30, -60, -90, -120, -150, -180;
+    @each $angle in $rotation-angles {
+        .rv-rotate-#{$angle} {
+            transform: rotate(#{$angle}deg);
+        }
+    }
+
+    %body-element {
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+    }
+
+    .rv-spinning {
+        animation: spinloop 1.7s linear infinite;
+    }
+
+    @keyframes spinloop {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .rv-peek {
+        & > * {
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
+        &.rv-peek-enabled {
+            outline: 1px solid #999;
+
+            &.panel-contents{
+                background-color: rgba(255, 255, 255, 0.14);
+            }
+
+            > * {
+                opacity: 0.14 !important;
+
+                @include rv-whiteframe-base {
+                    box-shadow: $whiteframe-shadow-1dp;
+                }
+            }
+        }
+    }
+}

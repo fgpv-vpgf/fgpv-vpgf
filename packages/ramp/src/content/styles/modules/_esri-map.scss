@@ -1,0 +1,58 @@
+@mixin esri-map {
+    .rv-esri-map {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        top: 0;
+        z-index: -1;
+
+        // override clip on esri container; it appears only on mercator maps; lambert is fine
+        // they use clip to prevent duplciates of the map to be shown side by side when you are zoomed
+        // far out;
+        // this arbitrary clipping is annoying and it's purpose might not be obvious to users;
+        // ESRI JSAPI v3.15 changes the use of class="container" to class="esriMapContainer"
+        div[id$="_container"].container, div[id$="_container"].esriMapContainer {
+            clip: auto !important;
+        }
+
+        .layerTile {
+            // tiles don't line up properly otherwise
+            position: absolute;
+        }
+
+        &:focus::after {
+            content: '';
+            border: 2px solid #4d90fe;
+            box-sizing: border-box;
+            height: 100%;
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0px;
+        }
+
+        .ovwContainer:before {
+            content: "";
+            position: absolute;
+            width: 0px;
+            height: 0px;
+            border-top: 40px solid rgba(250, 250, 250, 0.8);
+            border-left: 40px solid transparent;
+            z-index: 1;
+            right: 0;
+            top: 0;
+        }
+
+
+        .rv-overview-toggle {
+            position:absolute;
+            top:0;
+            right:0;
+            z-index:100;
+            transform: rotate(45deg);
+            margin: 0;
+        }
+    }
+}

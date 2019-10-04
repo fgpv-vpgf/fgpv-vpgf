@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Config Layer Tests ( Attributes )</span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:30%; height:700px; overflow-y: scroll; padding:10px; background-color:lightgrey; border:solid;" class="column">
+            <h2>Attributes Tests: </h2>
+            <h4>1. If button is already green, no need to click it.</h4>
+            <button id="FetchAttributes">Fetch Attributes</button>
+            <br>
+            <br>
+            <!--disabled until Fetch Attributes activated-->
+            <h4>2. Set Attributes. Double check with datagrid.</h4>
+            <p><i>Note: you need to re-open the datagrid to see changes.</i></p>
+            <button id="SetAttribute" disabled>(OID 1): Set Country Name </button>
+            <br>
+            <p>Country Name of Entry #1 should now be 'new Country'</p>
+            <button id="SetAllAttributes" disabled>(OID 2): Reset all attributes</button>
+            <p>Entry #2 has all fields reset except ObjectID. </p>
+            <br>
+            <h4>3. Double check Pipeline output with datagrid.</h4>
+            <button id="GetAttribute" disabled>Get Attribute (OID 5)</button>
+            <button id="GetAllAttributes" disabled>Get All Attributes</button>
+            <br>
+            <br>
+            <textarea rows="4" cols="50" id="output"></textarea>
+            <br>
+            <br>
+            <h4>4. Remove attributes. Double check with datagrid.</h4>
+            <p><i>Note: Expect errors to be thrown. You need to re-open the datagrid to see changes.<i></p>
+            <button id="RemoveAttribute" disabled>Remove Attribute (OID 5)</button>
+            <button id="RemoveAllAttributes" disabled>Remove All Attributes</button>
+            <br>
+            <br>
+            <h4>5. Reset Tests (Optional).</h4>
+            <button id="Reset">Reset (Double Click)</button>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+        <script src="config-layer-2.js"></script>
+    </div>
+</body>

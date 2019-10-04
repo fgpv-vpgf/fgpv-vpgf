@@ -1,0 +1,14 @@
+.fgpv:after, [is=rv-map]:after {
+    content: "I am error!";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 45%;
+    top: 45%;
+    background-color: #c0392b;
+    z-index: 1111111;
+    color: white;
+    text-align: center;
+    font-size: 43pt;
+    font-weight: bold;
+}

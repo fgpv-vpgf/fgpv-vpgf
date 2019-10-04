@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="23.999996"
+   viewBox="0 0 24 23.999996"
+   version="1.1"
+   id="svg8"
+   inkscape:export-filename="C:\Users\aleksueir\bitmap.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="crosshairs_source_2.svg">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path909"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#545353;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="181.01934"
+     inkscape:cx="13.401121"
+     inkscape:cy="11.926858"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg8"
+     showgrid="false"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="false"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     viewbox-width="200"
+     viewbox-height="200"
+     showborder="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     cy="12.000001"
+     cx="11.999996"
+     id="path3808"
+     style="fill:#545353;fill-opacity:1;stroke:#ffffff;stroke-width:0.07566904;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     rx="0.26193744"
+     ry="0.25412494" />
+  <path
+     inkscape:connector-curvature="0"
+     id="rect4632-6"
+     d="m 0.045,12.04673 6.092643,0.05136 4.264632,0.06776 v -0.169759 -0.16195 L 6.137643,11.901451 0.045,11.965171 v 0.03836 z"
+     style="fill:#545353;fill-opacity:1;stroke:#ffffff;stroke-width:0.09;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     sodipodi:nodetypes="ccccccccc" />
+  <path
+     inkscape:connector-curvature="0"
+     id="rect4632-6-0"
+     d="m 12.046732,23.954996 0.05136,-6.092643 0.06776,-4.264632 h -0.169759 -0.16195 l 0.06731,4.264632 0.06372,6.092643 h 0.03836 z"
+     style="fill:#545353;fill-opacity:1;stroke:#ffffff;stroke-width:0.09;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     sodipodi:nodetypes="ccccccccc" />
+  <path
+     inkscape:connector-curvature="0"
+     id="rect4632-6-4"
+     d="m 23.955,11.953266 -6.092643,-0.05136 -4.264632,-0.06776 v 0.169759 0.16195 l 4.264632,-0.06731 6.092643,-0.06372 v -0.03836 z"
+     style="fill:#545353;fill-opacity:1;stroke:#ffffff;stroke-width:0.09;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     sodipodi:nodetypes="ccccccccc" />
+  <path
+     inkscape:connector-curvature="0"
+     id="rect4632-6-9"
+     d="m 11.953268,0.045 -0.05136,6.092643 -0.06776,4.264632 h 0.169759 0.16195 L 12.098547,6.137643 12.034827,0.045 h -0.03836 z"
+     style="fill:#545353;fill-opacity:1;stroke:#ffffff;stroke-width:0.09;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     sodipodi:nodetypes="ccccccccc" />
+</svg>

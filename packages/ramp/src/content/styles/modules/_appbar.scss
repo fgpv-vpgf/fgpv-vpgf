@@ -1,0 +1,53 @@
+// Primary mixin
+%appbar-title {
+    flex: 1;
+    overflow: hidden;
+
+    h2 {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        margin: auto 0 auto rem(0.6);
+    }
+}
+
+%appbar {
+    pointer-events: all;
+    box-sizing: border-box;
+    z-index: auto;
+    background: white;
+    align-items: center;
+    padding: rem(0.4) rem(1.0);
+    display: flex;
+    position: relative;
+    flex: 1;
+
+    width: 100%;
+
+    transition: flex $swift-ease-in-duration / 3 $swift-ease-in-out-timing-function;
+
+    button {
+        margin: 0;
+    }
+}
+
+@mixin appbar {
+    .main-appbar {
+        @extend %appbar;
+
+        .rv-appbar-title {
+            @extend %appbar-title;
+        }
+
+        &.rv-appbar-collapsed {
+            flex: 0;
+        }
+    }
+
+    rv-geosearchbar {
+        position: absolute;
+        top: 90px;
+        left: 10px;
+    }
+}

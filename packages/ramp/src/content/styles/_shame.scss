@@ -1,0 +1,17 @@
+/* Also from CSS Wizardry (http://csswizardry.com/2013/04/shame-css/), a _shame file is something we've been trying out only recently. This file is a place where you put all the code you're not proud of, with the intention of A) isolating it and B) fixing it later. The goal is for this file to be empty, but some times you just have to throw that hack in there to get it working. */
+
+/*
+### The rules
+
+Obviously you need some kind of rules and criteria:
+
+1. If it’s a hack, it goes in shame.css.
+2. Document all hacks fully:
+    1. What part of the codebase does it relate to?
+    2. Why was this needed?
+    3. How does this fix it?
+    4. How might you fix it properly, given more time?
+3. Do not blame the developer; if they explained why they had to do it then their reasons are probably (hopefully) valid.
+4. Try and clean shame.css up when you have some down time.
+    1. Even better, get a tech-debt story in which you can dedicate actual sprint time to it.
+*/

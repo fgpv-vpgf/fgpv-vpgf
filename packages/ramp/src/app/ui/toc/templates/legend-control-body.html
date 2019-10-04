@@ -1,0 +1,10 @@
+<md-button
+    aria-label="{{ self.uiControl.label | translate }}"
+    class="rv-body-button rv-button-square"
+
+    ng-disabled="self.uiControl.isDisabled"
+    ng-click="self.uiControl.action(); self.notifyApiClick(self.block)">
+
+    {{ self.uiControl.label | translate }}
+
+</md-button>

@@ -1,0 +1,10 @@
+/* Depending on the complexity of the site, we will likely have a file dedicated to layout. Grids, responsive frameworks, wrappers, etc. all live here. */
+// import all layout files
+
+& {
+    // z-index on app root node is needed to prevent elements' shadows from overlapping
+    // http://blog.dudak.me/2014/css-shadows-under-adjacent-elements/
+    z-index: 0;
+}
+
+@import "_main.scss";
