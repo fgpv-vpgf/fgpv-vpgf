@@ -1,12 +1,12 @@
 {
     "name": "RAMP2",
     "private": true,
-    "version": "3.2.0-b3",
+    "version": "3.2.0",
     "description": "RAMP2 Viewer",
     "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",
     "dependencies": {
-        "@fgpv/rv-plugins": "3.2.0-3",
+        "@fgpv/rv-plugins": "3.2.0",
         "@flowjs/ng-flow": "2.7.8",
         "angular": "1.7.5",
         "angular-animate": "1.7.5",
@@ -21,7 +21,7 @@
         "csvtojson": "1.1.11",
         "dotjem-angular-tree": "github:dotJEM/angular-tree",
         "file-saver": "2.0.0",
-        "geoApi": "github:fgpv-vpgf/geoApi#v3.2.0-2",
+        "geoApi": "github:fgpv-vpgf/geoApi#v3.2.0",
         "html2canvas": "github:fgpv-vpgf/html2canvas#v1.0.0-rc.1-patch",
         "imports-loader": "0.8.0",
         "linkifyjs": "2.1.7",
