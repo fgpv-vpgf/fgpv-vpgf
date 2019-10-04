@@ -99,7 +99,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         Please ensure GeoApi and Plugins has been released first.  Ideally the versions of both should match the version of the viewer
     </p>
 
-4. Update the documentation urls in `README.md` to point to the current version of the documents. Note the actual URLs will not exist until the new tag is generated (a later step).  The url change will generally only involve updating the version number in the path.
+4. Update the documentation urls in `README.md` to point to the current version of the documents. Note the actual URLs will not exist until the new tag is generated (a later step).  The url change will generally only involve updating the version number in the path. Also update the path to the samples folder url.
 
 5. Do `npm install` to update the local geoApi and plugins module, then do a sanity check on the viewer.
 
