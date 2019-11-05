@@ -7,6 +7,7 @@
     env.geoLocal="path/to/geoApi"   -   Same as no argument env.geoLocal but uses provided path to local folder
     env.inspect                     -   Use for analysing our bundle component sizes and dependency trees.
 */
-module.exports = function(env = {}) {
-    return require(`./webpack.${env.prod ? 'prod' : 'dev'}.js`)(env);
+module.exports = function(env, argv) {
+    //return require(`./webpack.${env.prod ? 'prod' : 'dev'}.js`)(env);
+    return require(`./webpack.${argv.mode === 'development' ? 'dev' : 'prod'}.js`)(env);
 }

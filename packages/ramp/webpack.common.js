@@ -20,13 +20,15 @@ const babelPresets = {
 // eslint-disable-next-line complexity
 module.exports = function (env) {
 
-    const geoPath = env.geoLocal ?
+    // No need in monorepo setup
+    /* const geoPath = env.geoLocal ?
         env.geoLocal.length > 0 ?
             env.geoLocal :
             path.resolve(__dirname, '../', 'geoApi') :
-        path.resolve(__dirname, 'node_modules/geoApi');
+        path.resolve(__dirname, 'node_modules/geoApi'); */
 
     const config = {
+        stats: 'errors-only',
         entry: {
             'legacy-api': path.resolve(__dirname, 'src/legacy-api.ts'),
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js')
@@ -54,7 +56,7 @@ module.exports = function (env) {
                 },
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app'), geoPath],
+                    include: [path.resolve(__dirname, 'src/app')/*,  geoPath */],
                     use: [{
                         loader: 'ng-annotate-loader'
                     }, {
@@ -109,10 +111,10 @@ module.exports = function (env) {
                 filename: "rv-styles.css"
             }),
 
-            new WebpackShellPlugin({
+            /* new WebpackShellPlugin({
                 onBuildStart: ['bash scripts/preBuild.sh'],
                 onBuildEnd: ['bash scripts/postBuild.sh']
-            }),
+            }), */
 
             new CopyWebpackPlugin([{
                 context: 'src/content/samples',
@@ -127,7 +129,8 @@ module.exports = function (env) {
             }]),
 
             new webpack.ProvidePlugin({
-                $: 'jquery',
+                // NOTE: [monoRAMP] no clue what this is for, but it was breaking build with ts@3+, saying that jquery cannot be resolved in table plugin
+                //$: 'jquery',
                 jQuery: 'jquery',
                 'window.jQuery': 'jquery'
             }),
@@ -145,7 +148,9 @@ module.exports = function (env) {
         ],
 
         resolve: {
-            modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules'), path.resolve(__dirname, 'features/node_modules')],
+            // this line was breaking module resolution when running under `rush`
+            // NOTE: [monoRAMP] figure out what this line was doing;
+            // modules: [path.resolve(__dirname, 'node_modules'), path.resolve(geoPath, 'node_modules') , path.resolve(__dirname, 'features/node_modules')],
             alias: {
                 XSLT: path.resolve(__dirname, 'src/content/metadata/'),
                 jquery: 'jquery/src/jquery', // so webpack builds from src and not dist - optional but good to have
@@ -202,9 +207,9 @@ module.exports = function (env) {
         config.plugins.push(new BundleAnalyzerPlugin({openAnalyzer: false, generateStatsFile: true}));
     }
 
-    if (env.geoLocal) {
+    /* if (env.geoLocal) {
         config.resolve.alias['geoApi$'] = geoPath;
-    }
+    } */
 
     return config;
 }

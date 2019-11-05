@@ -1,7 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Manages the status to be displayed at any given time for an enhancedTable. One PanelStatusManager is created for one PanelManager.
  *
@@ -39,7 +37,8 @@ var PanelStatusManager = /** @class */ (function () {
                     // refocus cell on scroll if it is within grid view
                     // this way adjusting the position and height of any associated tooltips is forced through onCellFocused event
                     that.tableOptions.api.setFocusedCell(focusedCell.rowIndex, focusedCell.column.colId);
-                } else {
+                }
+                else {
                     // hide any tooltips that may be visible if the focused cell is out of grid view
                     that.tableOptions.api.hideOverlay();
                 }
@@ -54,7 +53,8 @@ var PanelStatusManager = /** @class */ (function () {
         if (this.tableOptions.api && this.tableOptions.api.getDisplayedRowCount() < this.tableOptions.rowData.length) {
             this.panelManager.recordCountScope.filtered = true;
             this.panelManager.legendBlock.filter = true; // add filter flag if rows are filtered
-        } else {
+        }
+        else {
             this.panelManager.recordCountScope.filtered = false;
             this.panelManager.legendBlock.filter = false; // clear filter flag if all rows shown
         }
@@ -83,7 +83,8 @@ var PanelStatusManager = /** @class */ (function () {
                 lastRow_1 = 0;
             }
             rowRange = firstRow_1.toString() + " - " + lastRow_1.toString();
-        } else {
+        }
+        else {
             rowRange = this.panelManager.maximized ? '1 - 15' : '1 - 5';
         }
         // if (this.panelManager.panel.panelControls.find('.scrollRecords')[0]) {

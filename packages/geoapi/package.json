@@ -30,7 +30,9 @@
     "scripts": {
         "doc": "./node_modules/.bin/jsdoc -p -r -c .jsdoc.json -t node_modules/docdash -R README.md -d ./docbuild -u ./docs/content ./src",
         "servedoc": "npm run doc && ./node_modules/.bin/http-server -p 6004 ./docbuild",
-        "test": "babel-node spec/support/specRunner.js"
+        "test": "babel-node spec/support/specRunner.js",
+        "build": "",
+        "serve": ""
     },
     "repository": {
         "type": "git",

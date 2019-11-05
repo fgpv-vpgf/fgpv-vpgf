@@ -1,17 +1,17 @@
-const fs            = require('fs');
-const path          = require('path');
-const Merge         = require('webpack-merge');
-const webpack       = require('webpack');
-const CommonConfig  = require('./webpack.common.js');
-const SriPlugin     = require('webpack-subresource-integrity');
-const pkg           = require('./package.json');
-const ZipPlugin     = require('zip-webpack-plugin');
-const CopyPlugin    = require('copy-webpack-plugin');
+const fs = require('fs');
+const path = require('path');
+const Merge = require('webpack-merge');
+const webpack = require('webpack');
+const CommonConfig = require('./webpack.common.js');
+const SriPlugin = require('webpack-subresource-integrity');
+const pkg = require('./package.json');
+const ZipPlugin = require('zip-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-module.exports = function(env) {
+module.exports = function (env = {}) {
     return Merge(CommonConfig(env), {
         devtool: 'source-map',
         mode: 'production',
@@ -24,8 +24,8 @@ module.exports = function(env) {
             }]),
 
             new ZipPlugin({
-                path:  path.resolve(__dirname, 'dist'),
-                filename:  path.resolve(__dirname, `dist/fgpv-${pkg.version}.zip`),
+                path: path.resolve(__dirname, 'dist'),
+                filename: path.resolve(__dirname, `dist/fgpv-${pkg.version}.zip`),
                 exclude: [/samples/],
             }),
 

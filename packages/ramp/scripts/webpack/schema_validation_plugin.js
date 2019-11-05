@@ -15,7 +15,10 @@ class SchemaValidatorPlugin {
     }
 
     apply (compiler) {
-        compiler.plugin('compile', compilation => {
+        const id = 'schema-validation-plugin';
+        // NOTE: [monoRAMP] fixing deprecation warning
+        compiler.hooks.compile.tap(id, compilation => {
+            // compiler.plugin('compile', compilation => {
             console.log('\n\nSchema validation');
             this.getConfigList().forEach(this.validateConfig.bind(this));
             if (this.hasError) {
