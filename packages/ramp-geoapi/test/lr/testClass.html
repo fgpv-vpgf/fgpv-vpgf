@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Basic Class Test Page</title>
+    <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map" style="height:90%; width: 100%;"></div>
+    <p id="mess" />
+    <script src="../../dist/geoapi.js"></script>
+    <script>
+        // http://localhost:6002/test/testClass.html
+
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+
+            var realLayer = new api.layer.FeatureLayer(
+                'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+                {
+                    id: 'dogguts',
+                    nameField: 'siteShortName_en'
+                }
+            );
+
+            var layerRec = api.layer.createFeatureRecord({}, realLayer);
+            console.log('layer PROOF ', layerRec);
+
+            layerRec.onLoad(); // cuz we're not using a map here
+
+            var formAttr = layerRec.getFormattedAttributes();
+            formAttr.then(a => {
+                console.log('attrib PROOF ', a);
+            });
+            
+            var countProm = layerRec.getFeatureCount();
+            countProm.then(c => {
+                console.log('the count ', c);
+            });
+
+            var aliasProm = layerRec.aliasedFieldName('siteNotes_en');
+            aliasProm.then(a => {
+                console.log('the alias of siteNotes_en ', a);
+            });
+
+
+            var dateProm = layerRec.checkDateType('siteNotes_en');
+            dateProm.then(d => {
+                console.log('is siteNotes_en a date ', d);
+            });
+
+
+
+        });
+    </script>
+</body>
+</html>

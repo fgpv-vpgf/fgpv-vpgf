@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+        <style>
+        .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+
+            var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'terrain', zoom: 6, center: [-100, 50] });
+
+            var mahLayer = new api.layer.ArcGISDynamicMapServiceLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/E2MS_Atlantic_region_data/MapServer/', {id:'pants'});
+
+            map.addLayer(mahLayer);
+
+            mahLayer.on('load', function(evt) {
+                //all layers start invisible cuz service says so
+                mahLayer.setVisibleLayers([9,10]);
+            });
+
+            map.on('click', function(evt) {
+
+                var opshuns = {
+                    geometry: evt.mapPoint,
+                    width: map.width,
+                    height: map.height,
+                    mapExtent: map.extent,
+                    tolerance: 5
+
+                };
+                console.log('opshuns');
+                console.log(opshuns);
+
+                //test large attribute loading of a feature layer
+                var nuggetPromise8= api.layer.serverLayerIdentify(mahLayer, opshuns);
+
+                nuggetPromise8.then(
+                    function (nugget) {
+                        console.log('click identify grand success');
+                        console.log(nugget);
+                    },
+                    function (iAmError) {
+                        console.log('click identify i am error');
+                        console.log(iAmError);
+
+                    }
+                );
+            });
+
+
+
+        });
+</script>
+<div style="height:100%; width: 100%;">
+    <div id="map" style="height:auto; width: auto; padding-bottom: 70px; display:block;"></div>
+    </div>
+</body>
+</html>

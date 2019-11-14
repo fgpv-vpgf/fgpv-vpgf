@@ -1,0 +1,45 @@
+// whiteframe provides a shadow around panels; 1 - tiny shadow; 5 - large shadow;
+@mixin rv-whiteframe-set {
+    .rv-whiteframe-z1 {
+        @include rv-whiteframe-base {
+            box-shadow: $whiteframe-shadow-1dp;
+        }
+    }
+
+    .rv-whiteframe-z2 {
+        @include rv-whiteframe-base {
+            box-shadow: $whiteframe-shadow-2dp;
+        }
+    }
+
+    .rv-whiteframe-z3 {
+        @include rv-whiteframe-base {
+            box-shadow: $whiteframe-shadow-3dp;
+        }
+    }
+
+    .rv-whiteframe-z4 {
+        @include rv-whiteframe-base {
+            box-shadow: $whiteframe-shadow-4dp;
+        }
+    }
+
+    .rv-whiteframe-z5 {
+        @include rv-whiteframe-base {
+            box-shadow: $whiteframe-shadow-5dp;
+        }
+    }
+}
+
+@mixin rv-whiteframe-base {
+    &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        @content;
+    }
+}

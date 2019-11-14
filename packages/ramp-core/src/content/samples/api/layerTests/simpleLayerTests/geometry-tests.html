@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser -
+        <span style="color:blue"> Geometry Tests</span>
+    </h1>
+    <h2>
+        <a href="../index.html">Directory</a>
+    </h2>
+    <div class="row" id="main" style="display:flex">
+        <div style="width:25%; padding:10px; background-color:lightgrey; border:solid" class="column">
+            <h2>Intro: </h2>
+            <p>"Hover" annotations appear when points are hovered over.</p>
+            <div id="Reset">
+                <h2>Reset After Each Test: </h2>
+                <p>Important for accurate results.</p>
+                <button id="RemovePoints">Reset changes</button>
+            </div>
+            <div id="Point Geometries Tests">
+                <h2>Point Geometries Test: </h2>
+                <button id="AddHover">Add Points + Hovers</button>
+                <button id="RemoveHover" disabled>Remove Hovers</button>
+                <br>
+            </div>
+            <div id="MultiPoint Geometry Tests">
+                <h2>MultiPoint Geometries Test:</h2>
+                <p>Note: Zoom out to see the hover.</p>
+                <button id="AddMultiPoint">Add MultiPoint + Hover</button>
+                <button id="RemoveHover2" disabled>Remove Hover</button>
+            </div>
+            <div id="Line Geometry Tests">
+                <h2>Line Geometries Test:</h2>
+                <button id="AddLine">Add Line + Hover</button>
+                <button id="RemoveHover3" disabled>Remove Hover</button>
+            </div>
+            <div id="Large Polygon Speed Test">
+                <h2>Large Polygon Speed Test:</h2>
+                <button id="AddBigPoly">Add Large Polygon near Montreal</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="geometry-tests.js"></script>
+</body>
+
+</html>

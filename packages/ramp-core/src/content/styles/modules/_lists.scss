@@ -1,0 +1,183 @@
+@mixin lists {
+    // TODO: move
+    ul.rv-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        > li {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    %base-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        > li {
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+    }
+
+    // TODO: refactor
+    %shadow-group-list {
+        @extend %base-list;
+
+        > li {
+            // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
+            // it helps to visualize which layers will be affected by the group toggle
+            .rv-shadow {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: rem(0.5);
+                opacity: 0.45;
+                background-color: transparent;
+                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+        }
+    }
+
+    %grouped-list {
+        > li {
+            .rv-shadow {
+                // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
+                // it helps to visualize which layers will be affected by the group toggle
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: rem(0.5);
+                opacity: 0.45;
+                background-color: transparent;
+                transition: background-color $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+        }
+    }
+
+    %zebra-list {
+        @extend %base-list;
+
+        > li {
+            padding: rem(0.5);
+            overflow: auto;
+        }
+
+        > li:nth-child(even) {
+            background-color: #ddd;
+        }
+    }
+
+    %action-list {
+        @extend %base-list;
+
+        list-style: none;
+        padding: 0;
+        max-width: 100%;
+
+        > li {
+            position: relative;
+            overflow: hidden;
+        }
+    }
+
+    %action-list-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        z-index: 0;
+
+        .rv-group-body-button {
+            text-align: left;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            top: 0; // anchor the button to its parent container
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
+        }
+
+        .rv-group-name {
+            margin-left: rem(1.6);
+            margin-top: 0;
+            margin-bottom: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: rem(1.6);
+            flex: 1;
+            font-weight: normal;
+        }
+
+        .rv-group-toggle-icon {
+            padding: rem(0.4);
+
+            .md-toggle-icon {
+                transition: transform $swift-ease-in-duration $swift-ease-in-out-timing-function;
+
+                &.rv-toggled {
+                    transform: rotate(-180deg);
+                }
+            }
+        }
+
+        .rv-group-controls {
+            z-index: 2;
+
+            // remove margins between toggle on legend layer entry
+            & > * {
+                & > .md-button {
+                    margin: 0;
+                }
+
+                &:first-child > .md-button {
+                    margin-left: rem(0.6);
+                }
+                &:last-child > .md-button {
+                    margin-right: rem(0.6);
+                }
+            }
+
+            & > .md-button {
+                margin: 0;
+
+                &:first-child {
+                    margin-left: rem(0.6);
+                }
+
+                &:last-child {
+                    margin-right: rem(0.6);
+                }
+            }
+
+            // hide layer toggles except the visibility toggle
+            & > * {
+                display: none;
+            }
+        }
+
+        &.rv-selected {
+            @extend %action-list-item-controls-hover;
+        }
+
+        // setting layer list shadow color when hover over layer group toggle
+        &:hover {
+            @extend %action-list-item-controls-hover;
+        }
+    }
+
+    %action-list-item-controls-hover {
+        .rv-group-controls > * {
+            display: inline !important;
+        }
+    }
+}

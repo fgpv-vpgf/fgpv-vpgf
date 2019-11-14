@@ -1,0 +1,65 @@
+<div
+    class="rv-list-item-body">
+
+    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
+</div>
+
+<div class="rv-icon-32">
+    <md-icon md-svg-src="community:emoticon-happy"></md-icon>
+</div>
+
+
+<div class="rv-list-item-content">
+    <div class="rv-list-item-name"
+        rv-truncate-title="self.block.name"
+        rv-truncate-title-is-active="self.isNameTruncated">
+    </div>
+</div>
+
+<div class="rv-list-item-controls">
+    <rv-legend-control block="self.block" name="reload" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+    <rv-legend-control block="self.block" name="remove" class="rv-stay-visible rv-list-item-control"></rv-legend-control>
+</div>
+
+<!--div class="rv-icon-32" ng-if-start="self.entry.state === 'rv-error'">
+    <md-icon md-svg-src="community:emoticon-sad"></md-icon>
+</div>
+
+<div class="rv-toc-entry-content">
+    <div class="rv-toc-entry-name">
+        {{ self.entry.name }}
+    </div>
+
+    <div class="rv-toc-entry-caption md-caption">
+        {{'toc.tmp.label.error.loading' | translate}}
+    </div>
+</div-->
+
+<!-- only show reorder handle on placeholder entry when reordering -->
+
+<!--div class="rv-toc-entry-controls" ng-if="self.isReorder">
+    <rv-toc-entry-control rv-drag-handle option="reorder"></rv-toc-entry-control>
+</div>
+
+<div class="rv-toc-entry-controls" ng-if-end ng-if="!self.isReorder">
+    <rv-toc-entry-control option="reload"></rv-toc-entry-control>
+    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
+</div>
+
+<div class="rv-icon-32" ng-if-start="self.entry.state !== 'rv-error'">
+    <md-icon md-svg-src="community:emoticon-happy"></md-icon>
+</div>
+
+<div class="rv-toc-entry-content">
+    <div class="rv-toc-entry-name">
+        {{ self.entry.name }}
+    </div>
+
+    <div class="rv-toc-entry-caption md-caption">
+        {{'toc.tmp.label.state.loading' | translate}}
+    </div>
+</div>
+
+<div class="rv-toc-entry-controls" ng-if-end>
+    <rv-toc-entry-control option="remove"></rv-toc-entry-control>
+</div-->

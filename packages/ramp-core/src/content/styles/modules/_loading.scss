@@ -1,0 +1,113 @@
+// loading spals
+@mixin loading {
+    // takes the entire viewer viewport
+    .rv-loading-screen {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        //color: white;
+        //background-color: darkgrey;
+        //text-align: center;
+        //vertical-align: middle;
+        z-index: 10000;
+        $reveal-duration: 0.7s;
+
+        .rv-loading-section {
+            position: absolute;
+            top: 0;
+            width: 51%;
+            height: 100%;
+            background: #222222;
+
+            //z-index: 1000;
+            transition: transform $reveal-duration $swift-ease-in-out-timing-function;
+
+            &.rv-left {
+                left: 0;
+            }
+
+            &.rv-right {
+                right: 0;
+            }
+        }
+
+        // set the size of the spinner
+        .rv-spinner {
+            width: rem(15);
+            height: rem(15);
+        }
+
+        &.rv-loaded {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility, opacity;
+            transition-delay: $reveal-duration + $swift-ease-in-duration;
+            transition-duration: 0.1s;
+
+            // fade out the spinner just before removing the splash
+            .rv-spinner {
+                opacity: 0;
+                transition: all $swift-ease-in-duration ease-out;
+            }
+
+            .rv-left {
+                transition-delay: $swift-ease-in-duration;
+                transform: translate3d(-100%, 0%, 0);
+            }
+
+            .rv-right {
+                transition-delay: $swift-ease-in-duration;
+                transform: translate3d(100%, 0%, 0);
+            }
+        }
+    }
+
+    /*
+    *
+    * By:       Aaron Lumsden
+    * Website:  Tuts+
+    * URL:      http://goo.gl/vdEJg5
+    *
+    */
+    .google-spin {
+        display: block;
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #3498db;
+        animation: spinloop 2s linear infinite;
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #e74c3c;
+            animation: spinloop 3s linear infinite;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #f9c922;
+            animation: spinloop 1.7s linear infinite;
+        }
+    }
+}

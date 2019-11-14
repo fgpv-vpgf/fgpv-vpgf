@@ -1,0 +1,91 @@
+// positions map navigation component
+
+@mixin mapnav {
+    $opacity-from: 0.62;
+    $opacity-to: 1;
+
+    rv-mapnav {
+        position: absolute;
+        bottom: $viewport-gutter;
+        top: 0;
+        right: $viewport-gutter;
+        pointer-events: none;
+
+        .rv-spacer {
+            &:first-child {
+                flex: 5 1 50%;
+            }
+
+            &:last-child {
+                flex: 2;
+            }
+        }
+
+        display: flex;
+        flex-direction: column;
+
+        @include include-size(rv-sm) {
+            bottom: 5px;
+            right: 5px;
+        }
+
+        .rv-mapnav-content {
+            // IE expands flex: 1 as flex-grow: 1; flex-shrink: 1; flex-basis: 0px; notice 0px; then it tries to squash the element to 0px; flex-basis needs to be set to 0 then the extra space around the item's content isn't factored in
+            flex: 1 1 0;
+            pointer-events: auto;
+        }
+
+        @include include-size(rv-md) {
+            bottom: $viewport-gutter;
+        }
+
+        &.basemap {
+            right: 300px + $viewport-gutter;
+        }
+
+        .rv-button-group {
+            background-color: rgba(255, 255, 255, $opacity-from);
+            transition: background-color $fade-in-out-duration ease-in;
+
+            &:not([disabled]):hover,
+            &:not([disabled]).md-focused {
+                background-color: rgba(255, 255, 255, $opacity-to);
+            }
+
+            @include touch {
+                background-color: rgba(255, 255, 255, 1);
+            }
+        }
+
+        rv-mapnav-button {
+            display: flex;
+            overflow: hidden;
+            width: rem(3.2);
+            text-align: center;
+
+            @include touch {
+                width: rem(4.0);
+            }
+
+            @include touch {
+                @include button-size(rem(4.0));
+                @include icon-size(rem(2.0));
+            }
+
+            .md-button {
+                margin: 0;
+
+                .md-ripple-container {
+                    border-radius: 0;
+                }
+
+                &:not([disabled]).selected {
+                    > md-icon {
+                        color: black;
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}

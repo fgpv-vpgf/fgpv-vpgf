@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>FGP Viewer</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+</head>
+
+<body style="padding:20px;">
+    <h1>Federal Geospatial Platform Visualiser - <span style="color:blue"> Config Layer Tests ( Zoom and Pan )</span></h1>
+    <h2><a href="../index.html">Directory</a></h2>
+    <div class="row" id="main" style="display:flex">
+    <div style="width:30%; height:700px; padding:10px; background-color:lightgrey; border:solid;" class="column">
+        <div id = "Zoom Tests">
+            <h2>Zoom and Pan Tests: </h2>
+            <h4>Note: Zoom in manually using scroll or 'plus' button on the map.</h4>
+            <p>1. Zoom in as far as possible. Check zoom level.</p>
+            <button id="CheckZoomLevel">Zoom In Check</button><br>
+            <p>2. Stay zoomed in as far as possible!</p>
+            <button id="PanToBoundary" disabled>Pan To Boundary</button>
+            <p>3. Zoom out as much possible. Check zoom level.</p>
+            <button id="CheckZoomLevel2">Zoom Out Check</button><br>
+            <p>4. Stay zoomed out! Layer should be visible on button click.</p>
+            <button id="ZoomToScale" disabled>Zoom To Scale (Part 1)</button>
+            <p>5. Now zoom in a bit more, then click. Layer should still be visble at current scale.</p>
+            <button id="ZoomToScale2" disabled>Zoom To Scale (Part 2)</button><br>
+            <h4>Reset</h4>
+            <button id="Reset">Reset Tests</button>
+        </div>
+    </div>
+</div>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="config-layer-zoom.js"></script>
+</body>
+</html>

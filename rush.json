@@ -363,21 +363,33 @@
     //   "reviewCategory": "tools"
     // }
 
-    {
-      "packageName": "RAMP2",
-      "projectFolder": "packages/ramp"
-    },
-    {
-      "packageName": "geoApi",
-      "projectFolder": "packages/geoapi"
-    },
-    {
-      "packageName": "rz-geosearch",
-      "projectFolder": "packages/geosearch"
-    },
-    {
-      "packageName": "@fgpv/rv-plugins",
-      "projectFolder": "packages/plugins"
-    }
+        {
+            "packageName": "ramp-geoapi",
+            "projectFolder": "packages/ramp-geoapi"
+        },
+        {
+            "packageName": "ramp-geosearch",
+            "projectFolder": "packages/ramp-geosearch"
+        },
+        {
+            "packageName": "ramp-core",
+            "projectFolder": "packages/ramp-core"
+        },
+        {
+            "packageName": "ramp-plugin-areas-of-interest",
+            "projectFolder": "packages/ramp-plugin-areas-of-interest"
+        },
+        {
+            "packageName": "ramp-plugin-back-to-cart",
+            "projectFolder": "packages/ramp-plugin-back-to-cart"
+        },
+        {
+            "packageName": "ramp-plugin-coordinate-info",
+            "projectFolder": "packages/ramp-plugin-coordinate-info"
+        },
+        {
+            "packageName": "ramp-plugin-enhanced-table",
+            "projectFolder": "packages/ramp-plugin-enhanced-table"
+        }
   ]
 }

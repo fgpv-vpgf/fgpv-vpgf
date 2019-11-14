@@ -1,0 +1,93 @@
+/* The common directory is reserved for Sass code that doesn't cause Sass to actually output CSS.
+Things like mixin declarations, functions, and variables. */
+
+// import all common files
+@import "_palette.scss";
+
+$font-family: Roboto, 'Helvetica Neue', sans-serif !default;
+$font-size:   rem(1.0);
+
+$viewport-gutter: rem(1.0);
+
+$toolbar-height: $icon-button-height + rem(0.8);
+$toolbar-width: rem(40);
+
+$side-panel-width: rem(35);
+
+//$toolbar-z-index: 10;
+
+// Map navigation
+$map-nav-button-width: 32px;
+$map-nav-button-height: 32px;
+
+$fade-in-out-duration: 130ms;
+
+// TODO: this doesn't seem to be used anywhere
+// $keyboard-only: '.rv-keyboard-only';
+
+@mixin keyboard {
+    @at-root {
+        #{selector-append('.rv-keyboard', &)} {
+            @content;
+        }
+    }
+}
+
+@mixin keyboard-focus {
+    @include keyboard {
+        &:focus {
+            outline: 2px solid #4d90fe;
+        }
+    }
+}
+
+@mixin touch {
+    @at-root {
+        #{selector-append('.rv-touch', &)} {
+            @content;
+        }
+    }
+}
+
+@mixin include-size($name) {
+    @if $name == rv-gt-sm {
+        @at-root {
+            #{selector-append('.rv-medium', &)},
+            #{selector-append('.rv-large', &)} {
+                @content;
+            }
+        }
+    } @else if $name == rv-sm {
+        @at-root #{selector-append('.rv-small', &)} {
+            @content;
+        }
+    } @else if $name == rv-lt-lg {
+        @at-root {
+            #{selector-append('.rv-small', &)},
+            #{selector-append('.rv-medium', &)} {
+                @content;
+            }
+        }
+    } @else if $name == rv-md {
+        @at-root #{selector-append('.rv-medium', &)} {
+            @content;
+        }
+    } @else if $name == rv-lg {
+        @at-root #{selector-append('.rv-large', &)} {
+            @content;
+        }
+    } @else if $name == rv-st {
+        @at-root #{selector-append('.rv-short', &)} {
+            @content;
+        }
+    }
+}
+
+.rv-small .rv-gt-sm,
+.rv-large .rv-lt-lg,
+.rv-small .rv-lg,
+.rv-medium .rv-lg,
+.rv-small .rv-lt-lg-hide,
+.rv-medium .rv-lt-lg-hide {
+    display: none !important;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+    .layerTile { position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="../dist/geoapi.js"></script>
+    <script>
+        var esriMap;
+        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+            api.mapManager.setProxy('http://cp.zz9.ca/index');
+            esriMap = api.mapManager.Map(document.getElementById('map'), { basemap: 'gray', zoom: 5, center: [-90, 45] });
+            esriMap.addLayer(new api.layer.FeatureLayer('http://maps-cartes.ec.gc.ca/ArcGIS/rest/services/Oilsands/MapServer/0'));
+            var layers = ['railway.track', 'railway.station'];
+            var l = new api.layer.ogc.WmsLayer('http://maps.geogratis.gc.ca/wms/railway_en', {visibleLayers:layers});
+            var layers2 = ['MonitoringStations', 'WaterWells'];
+            var l2 = new api.layer.ogc.WmsLayer('http://gin.gw-info.net/service/gin/wms/mediator/gin_en', {visibleLayers:layers2});
+            var l3 = new api.layer.ogc.WmsLayer('http://www.ga.gov.au/gis/services/topography/National_Electricity_Transmission_Lines/MapServer/WMSServer');
+            esriMap.addLayers([l, l2, l3]);
+            esriMap.on('click', function (e) {
+                api.layer.ogc.getFeatureInfo(l, e, layers, 'text/plain').then(function(x) {console.log(x);});
+                //api.layer.ogc.getFeatureInfo(l2, e, layers2, 'text/plain').then(function(x) {console.log(x);});
+                console.log(api.layer.ogc.getLegendUrls(l2, layers2));
+            });
+        });
+    </script>
+</body>
+</html>

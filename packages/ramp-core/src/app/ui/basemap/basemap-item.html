@@ -1,0 +1,57 @@
+<div ng-switch="self.basemap.wkid" class="rv-wkid rv-{{self.basemap.wkid}}">
+
+    <div ng-if="self.basemap.thumbnailUrl">
+        <img alt="{{ self.basemap.altText }}" ng-src="{{ self.basemap.thumbnailUrl }}"/>
+    </div>
+
+    <div ng-switch-when="3978" ng-if="!self.basemap.thumbnailUrl">
+        <div class="rv-basemap-thumb" ng-repeat="layer in self.basemap.layers">
+                <img alt="" ng-src="{{ layer.url }}/tile/8/285/268"/ ng-style="{ opacity: layer.opacity }">
+                <img alt="" ng-src="{{ layer.url }}/tile/8/285/269"/ ng-style="{ opacity: layer.opacity }">
+        </div>
+    </div>
+
+    <div ng-switch-when="102100" ng-if="!self.basemap.thumbnailUrl">
+        <div class="rv-basemap-thumb" ng-repeat="layer in self.basemap.layers">
+            <img alt="" ng-src="{{ layer.url }}/tile/8/91/74"/ ng-style="{ opacity: layer.opacity }">
+            <img alt="" ng-src="{{ layer.url }}/tile/8/91/75"/ ng-style="{ opacity: layer.opacity }">
+        </div>
+    </div>
+</div>
+
+<div class="rv-basemap-description" id="{{ ::$root.uid($id) }}-basemap-desc">{{ self.basemap.description | translate }}</div>
+
+<span flex></span>
+
+<div class="rv-basemap-footer" ng-class="{ 'rv-double': self.basemap.typeSummary }">
+    <div class="rv-basemap-name" >
+        <span class="md-body-2">{{ self.basemap.name | translate }}</span>
+        <span class="md-body-2" ng-if=" self.basemap.typeSummary">{{ self.basemap.typeSummary | translate }}</span>
+    </div>
+
+    <span flex></span>
+
+    <md-button
+        aria-label="{{ 'basemap.' + (self.isDescriptionVisible ? 'hide' : 'show') + 'description' | translate }}"
+        class="md-icon-button rv-button-32 rv-icon-20"
+        ng-class="{ selected: self.isDescriptionVisible }"
+        ng-click="self.toggleDescription()">
+
+        <!-- I don't like tooltips here... -->
+        <!--md-tooltip md-direction="top">I'm no tooltip.</md-tooltip-->
+
+        <md-icon md-svg-src="action:info{{ self.isDescriptionVisible ? '' : '_outline' }}"></md-icon>
+
+    </md-button>
+</div>
+
+<div class="rv-basemap-check" ng-if="self.basemap.isSelected">
+    <md-icon md-svg-src="navigation:check" ></md-icon>
+</div>
+
+<md-button
+    aria-label="{{ 'basemap.select' | translate }}"
+    aria-describedby="{{ ::$root.uid($id) }}-basemap-desc"
+    class="rv-body-button rv-button-square"
+    ng-click="self.select()">
+</md-button>

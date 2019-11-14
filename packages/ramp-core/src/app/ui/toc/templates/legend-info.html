@@ -1,0 +1,35 @@
+<div class="rv-list-item-content rv-legend-{{ self.block.infoType }}"
+
+    ng-switch="self.block.infoType">
+
+    <h3 ng-switch-when="title" class="md-subhead">{{ self.block.content }}</h3>
+
+    <p ng-switch-when="text" ng-bind-html="self.block.content | markdown: { sanitize: false }"></p>
+
+    <div ng-switch-when="image">
+        <img rv-expand-image ng-src="{{ self.block.content }}" alt="">
+    </div>
+
+    <div
+        ng-switch-when="unboundLayer"
+
+        ng-mouseover="self.block.symbologyStack.fannedOut = true"
+        ng-mouseleave="self.block.symbologyStack.fannedOut = false">
+
+        <rv-symbology-stack
+            description="self.block.description"
+            symbology="self.block.symbologyStack"
+            block="self.block"
+            container="self.element"></rv-symbology-stack>
+
+        <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.layerName }}</md-tooltip>
+
+        <div class="rv-list-item-content">
+            <div class="rv-list-item-name"
+                rv-truncate-title="self.block.content"
+                rv-truncate-title-is-active="self.isNameTruncated">
+            </div>
+        </div>
+
+    </div>
+</div>

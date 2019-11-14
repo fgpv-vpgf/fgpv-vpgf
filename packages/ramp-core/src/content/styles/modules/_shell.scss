@@ -1,0 +1,162 @@
+@mixin shell {
+    rv-shell {
+        overflow: hidden;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        position: absolute;
+        z-index: -1;
+
+        // the inner shell (will) contains all the map controls
+        // the inner shell can be resized so the controls occupy a certain region and them map overflows them filling the outer shell
+        .rv-inner-shell {
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+
+            max-width: 100%;
+            max-height: 100%;
+
+            // for example
+            /* width: 880px;
+            position: relative;
+            margin: 100px auto 0 auto;
+            height: calc(100% - 300px); */
+
+            pointer-events: none;
+
+            > * {
+                pointer-events: all;
+            }
+
+            rv-mapnav {
+                pointer-events: none;
+            }
+        }
+
+        // center dialogs
+        .md-dialog-container > .rv-inner-shell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-self: flex-start;
+        }
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background-color: #ffffff;
+            z-index: -2;
+        }
+
+        .rv-focus-dialog-content {
+            display: none;
+        }
+
+        .rv-north-arrow {
+            position: absolute;
+            transform-origin: top center;
+            transition: all $swift-ease-in-duration ease-out;
+
+            md-icon {
+                color: black;
+            }
+        }
+
+        .rv-map-coordinates {
+            position: absolute;
+            right: rem(15.5);
+            bottom: rem(0.1);
+            padding: rem(0.2);
+            display: flex !important;
+            flex-direction: column;
+            font-size: rem(1.1);
+            font-weight: 600;
+            height: rem(4);
+            background-color: rgba(255, 255, 255, 0.62);
+
+            span {
+                width: rem(17);
+                text-align: center;
+            }
+        }
+
+        @include include-size(rv-sm) {
+            .rv-north-arrow {
+                top: $toolbar-height;
+            }
+        }
+
+        $crosshairs-size: 230px;
+        $crosshairs-info-offset: calc(1em + 8px);
+        // the crossharis container assumes the same size as the rv-shell, pointer events are disabled to allow map interactions to go through
+        .rv-crosshairs {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+
+            padding-bottom: $crosshairs-info-offset;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            pointer-events: none !important;
+
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            opacity: 0;
+
+            // the actual crosshairs symbol
+            .rv-target {
+                width: $crosshairs-size;
+                height: $crosshairs-size;
+            }
+
+            // a text description how to navigation the map using the keyboard
+            .rv-info {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                height: $crosshairs-info-offset;
+                padding: 3px 1em 6px 1em;
+                background-color: rgba($color: #e4e3e3, $alpha: 0.9);
+            }
+
+            md-icon {
+                margin: 0;
+            }
+        }
+
+        // only show crosshairs in the keyboard mode and when the map has focus
+        @include keyboard {
+            .rv-esri-map {
+                transition: bottom $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+
+            // offset the bottom of the map and the inner shell to make room for the crossharis description
+            .rv-esri-map:focus {
+                bottom: $crosshairs-info-offset;
+
+                ~ .rv-crosshairs {
+                    opacity: 1;
+                }
+
+                // if the host page defines custom styles for the inner shell, this might need some adjustements
+                ~ .rv-inner-shell {
+                    bottom: $crosshairs-info-offset;
+                }
+            }
+        }
+    }
+}

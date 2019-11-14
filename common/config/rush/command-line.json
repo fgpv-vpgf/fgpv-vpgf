@@ -11,6 +11,13 @@
    * "rush my-global-command --help".
    */
   "commands": [
+    {
+      "commandKind": "bulk",
+      "name": "serve",
+      "summary": "Serves the page locally with hot-reload.",
+      "enableParallelism": true,
+      "ignoreDependencyOrder": true
+    }
     // {
     //   /**
     //    * (Required) Determines the type of custom command.

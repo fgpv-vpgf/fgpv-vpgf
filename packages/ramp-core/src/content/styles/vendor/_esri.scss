@@ -1,0 +1,401 @@
+// ESRI specific css
+// scalebar dijit styles
+@mixin esri {
+    @include map;
+    @include scalebar;
+    @include overview;
+    @include attribution;
+}
+
+@mixin map {
+    // makes bounding box ignore any mouse events and allow for hover tips to be triggered on feature layers underneath the bbox    .rv-esri-map.map {
+    // it seems that in 3.20 `layersDiv` class was changed to `esriMapLayers`
+    // allow mouse events through feature highlights: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2189
+    .esriMapLayers g {
+        &[id$="bbox_layer"], &[id="rv_hilight_layer"] {
+            pointer-events: none;
+        }
+    }
+
+    // no idea what this is, but it seems we don't need this
+    .esriPopup {
+        display: none;
+    }
+
+    .rv-esri-map {
+        .esriMapLayers {
+            > div, > svg > g {
+                transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            }
+        }
+
+        &.rv-map-highlight .esriMapLayers {
+            > div:not(:first-child) > img,
+            > svg > g:not([id="rv_hilight_layer"]) {
+                    opacity: 0.1 !important;
+            }
+
+            > svg > g[id="rv_hilight_layer"] {
+                opacity: 1 !important;
+            }
+        }
+
+        > .esriMapContainer > .esriSimpleSlider {
+            display: none;
+        }
+    }
+}
+
+@mixin scalebar {
+    .scalebar_top-left {
+        left: 10px;
+        top: 10px;
+    }
+
+    .scalebar_top-center {
+        left: 50%;
+        top: 10px;
+    }
+
+    .scalebar_top-right {
+        right: 150px;
+        top: 10px;
+    }
+
+    .scalebar_bottom-left {
+        left: 25px;
+        bottom: 5px;
+    }
+
+    .scalebar_bottom-center {
+        left: 50%;
+        bottom: 25px;
+    }
+
+    .scalebar_bottom-right {
+        right: 5px;
+        bottom: 1px;
+    }
+
+    .esriScalebar {
+        z-index: 30;
+        position: absolute;
+        width: 150px;
+        height: 40px;
+        padding-left: 2px;
+        background-color: rgba(255, 255, 255, 0.62);
+    }
+
+    .esriScalebarRuler {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 6px;
+        background-color: White;
+        border: 1px solid #444444;
+    }
+
+    .esriScalebarRulerBlock {
+        overflow: hidden;
+        position: absolute;
+        height: 50%;
+        background-color: #444444;
+    }
+
+    .upper_firstpiece {
+        top: 0;
+        left: 0;
+        width: 25%;
+    }
+
+    .upper_secondpiece {
+        top: 0;
+        left: 50%;
+        width: 25%;
+    }
+
+    .lower_firstpiece {
+        top: 50%;
+        left: 25%;
+        width: 25%;
+    }
+
+    .lower_secondpiece {
+        top: 50%;
+        left: 75%;
+        width: 30%;
+    }
+
+    .esriScalebarLine {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 1px;
+        border: 1px solid black;
+    }
+
+    .esriScalebarMetricLineBackground {
+        border: 4px solid white;
+        position: absolute;
+        left: -1px;
+        bottom: 2px;
+    }
+
+    .esriScalebarMetricLine {
+        border-top-style: none;
+        top: -2px;
+    }
+
+    .esriScalebarEnglishLine {
+        border-bottom-style: none;
+        top: 2px;
+    }
+
+    .esriScaleLabelDiv {
+        position: relative;
+        //top: -5px;
+        width: 100%;
+        //padding: 2px;
+    }
+
+    .scaleLabelDiv {
+        position: relative;
+        //width: 100%;
+        //height: 5px;
+    }
+
+    .esriScalebarLabel {
+        font-size: rem(1.0);
+        //position: absolute;
+        //width: 10%;
+        //text-align: center;
+        color: black;
+        font-weight: bold;
+        //height: 5px;
+        //top: -1px;
+    }
+
+    .esriScalebarLineLabel {
+        //position: relative;
+    }
+
+    .esriScalebarFirstNumber {
+        //left: 45%;
+    }
+
+    .esriScalebarSecondNumber {
+        //left: 95%;
+        //white-space: nowrap;
+    }
+}
+
+@mixin overview {
+    $beautifulIconSet: "data:image/png;base64,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";
+
+    .esriOverviewMap {
+        position: absolute;
+        z-index: 99;
+
+        @include include-size(rv-lt-lg) {
+            display: none;
+        }
+    }
+
+    .esriOverviewMap .ovwContainer {
+        position: absolute;
+        display: none;
+        top: $viewport-gutter;
+        right: $viewport-gutter;
+        width: rem(20);
+        height: rem(20);
+        max-width: rem(20);
+        max-height: rem(20);
+        @extend .rv-whiteframe-z2; // this is dirty trick to apply z class to esri dijit;
+
+        &.rv-minimized .ovwHighlight {
+            display: none !important;
+        }
+    }
+    /*
+ * Have added "width 100% height 100%" to the map div in template
+ * html to avoid timing problems in built code - where when overview map
+ * is about to be created in _initialize method, OverviewMap.css may not
+ * yet be loaded leading to incorrect sizing of the overview map control
+ * Note: this is reproducible either with built or unbuilt code depending
+ * on the browser
+ */
+    .esriOverviewMap .map {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #FFF;
+        overflow: hidden;
+
+        > .esriMapContainer > .esriMapContainer {
+            overflow: hidden;
+            margin: rem(0.3);
+            width: calc(100% - #{rem(0.3)} * 2);
+            height: calc(100% - #{rem(0.3)} * 2);
+        }
+    }
+
+    .esriOverviewMap .ovwHighlight {
+        position: absolute;
+        z-index: 99;
+        cursor: move;
+        border: 1px solid $primary-color-dark !important;
+        background-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .esriOverviewMap .ovwButton {
+        position: relative;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        z-index: 99;
+        /*background-color: #666;*/
+        display: none;
+    }
+
+    .esriOverviewMap .ovwMaximizer {
+        display: none;
+    }
+
+    .esriOverviewMap .ovwDisabledButton {
+        display: none !important;
+    }
+
+    .esriOverviewMap .ovwMaximize {
+        background: url($beautifulIconSet) 0 -130px;
+    }
+
+    .esriOverviewMap .ovwRestore {
+        background: url($beautifulIconSet) 0 -104px;
+    }
+
+    .esriOverviewMap.ovwTL {
+        top: 0;
+        left: 0;
+    }
+
+    .esriOverviewMap.ovwTR {
+        top: 0;
+        right: 0;
+    }
+
+    .esriOverviewMap.ovwBL {
+        bottom: 0;
+        left: 0;
+    }
+
+    .esriOverviewMap.ovwBR {
+        bottom: 0;
+        right: 0;
+    }
+
+    .esriOverviewMap.ovwTL .ovwContainer {
+        /*top: 0;
+        left: 0;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;*/
+    }
+
+    .esriOverviewMap.ovwTR .ovwContainer {
+        /*top: 0;
+        right: 0;
+        border-bottom: 1px solid #000;
+        border-left: 1px solid #000;*/
+    }
+
+    .esriOverviewMap.ovwBL .ovwContainer {
+        /*bottom: 0;
+        left: 0;
+        border-top: 1px solid #000;
+        border-right: 1px solid #000;*/
+    }
+
+    .esriOverviewMap.ovwBR .ovwContainer {
+        /*bottom: 0;
+        right: 0;
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;*/
+    }
+
+    .esriOverviewMap.ovwTL .ovwShow,
+    .esriOverviewMap.ovwBR .ovwHide {
+        background: url($beautifulIconSet) 0 -26px;
+        margin: 10px;
+    }
+
+    .esriOverviewMap.ovwTR .ovwShow,
+    .esriOverviewMap.ovwBL .ovwHide {
+        background: url($beautifulIconSet) 0 0;
+        margin: 10px;
+    }
+
+    .esriOverviewMap.ovwBL .ovwShow,
+    .esriOverviewMap.ovwTR .ovwHide {
+        background: url($beautifulIconSet) 0 -78px;
+        margin: 10px;
+    }
+
+    .esriOverviewMap.ovwBR .ovwShow,
+    .esriOverviewMap.ovwTL .ovwHide {
+        background: url($beautifulIconSet) 0 -52px;
+        margin: 10px;
+    }
+    /*.esriOverviewMap.ovwTL .ovwHide { background-image: url(../images/collapse-top-left.png); }
+.esriOverviewMap.ovwTR .ovwHide { background-image: url(../images/collapse-top-right.png); }
+.esriOverviewMap.ovwBL .ovwHide { background-image: url(../images/collapse-bottom-left.png); }
+.esriOverviewMap.ovwBR .ovwHide { background-image: url(../images/collapse-bottom-right.png); }
+
+.esriOverviewMap .logo-med,
+.esriOverviewMap .logo-sm,*/
+    .esriOverviewMap .bingLogo-lg {
+        display: none;
+    }
+    /* Sprites created using http://csssprites.com. Alternate choice: http://spritegen.website-performance.org/ */
+}
+
+@mixin attribution {
+    .esriControlsBR {
+        position: absolute;
+        left: 5px;
+        bottom: 5px;
+        z-index: 30;
+        text-align: left;
+        transform: scaleX(-1);
+
+        .esriAttribution {
+            font-size: 13px;
+            line-height: 15px;
+            color: #323232;
+            display: inline-block;
+            text-align: left;
+            vertical-align: bottom;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+            margin: 0 5px 0 0;
+            background: rgba(255,255,255,0.7);
+            transform: scaleX(-1);
+
+            .esriAttributionLastItem span.esriAttributionDelim {
+                display: none;
+            }
+        }
+    }
+
+    .map .logo-med {
+        transform: scaleX(-1);
+        display: inline-block;
+        vertical-align: bottom;
+        min-width: 65px;
+        min-height: 36px;
+        z-index: 30;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        _background-image: none;
+    }
+}

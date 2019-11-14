@@ -1,0 +1,19 @@
+{
+    "name": "ramp-plugin-coordinate-info",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "webpack --mode=production",
+        "serve": "webpack --watch --mode=development"
+    },
+    "devDependencies": {
+        "@types/jquery": "3.3.29",
+        "ts-loader": "5.3.2",
+        "typescript": "3.6.2",
+        "webpack-cli": "3.1.2",
+        "webpack": "4.28.3"
+    },
+    "author": "",
+    "license": "ISC"
+}

@@ -1,0 +1,19 @@
+<div class="rv-toggle-button">
+
+    <md-icon md-svg-src="{{ self.uiControl.icon }}"></md-icon>
+    <span>{{ self.uiControl.label | translate }}</span>
+
+    <md-button
+        aria-label="{{ self.uiControl.label | translate }}"
+        class="rv-button-square"
+        ng-click="self.uiControl.action()"
+        ng-disabled="self.uiControl.isDisabled || self.uiControl.value">
+
+        <md-tooltip ng-if="self.uiControl.tooltip" md-direction="top">{{ self.uiControl.tooltip | translate }}</md-tooltip>
+        {{ self.uiControl.value ? 'settings.label.enabled' : 'settings.label.enable' | translate }}
+
+    </md-button>
+
+</div>
+
+

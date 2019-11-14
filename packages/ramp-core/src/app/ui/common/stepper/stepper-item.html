@@ -1,0 +1,56 @@
+<div class="rv-stepper-item-container">
+    <div class="rv-stepper-item-header" ng-class="{ 'rv-summary': self.summaryValue || self.step.summaryValue }">
+        <span
+            class="rv-stepper-item-number"
+            ng-class="{ 'rv-active': self.isActive || self.step.isActive }"
+            ng-if="!self.isCompleted && !self.step.isCompleted">{{ self.stepNumber || self.step.stepNumber }}</span>
+        <md-icon
+            class="rv-stepper-item-check"
+            ng-class="{ 'rv-active': self.isActive || self.step.isActive }"
+            md-svg-src="action:check_circle"
+            ng-if="self.isCompleted || self.step.isCompleted"></md-icon>
+
+        <div class="rv-stepper-item-title">
+            <h5 class="md-body-2">{{ self.titleValue || self.step.titleValue | translate }}</h5>
+            <span class="md-caption">{{ self.summaryValue || self.step.summaryValue | translate }}</span>
+        </div>
+
+    </div>
+
+    <div class="rv-stepper-item-content rv-toggle-slide" ng-show="self.isActive || self.step.isActive">
+
+        <form name="self.stepForm">
+
+            <div class="rv-stepper-item-body">
+                <ng-transclude></ng-transclude>
+            </div>
+
+            <div
+                class="rv-stepper-item-footer"
+                ng-if="self.onCancel || self.step.onCancel || self.onContinue || self.step.onContinue">
+
+                <md-button
+                    class="rv-button-square rv-stepper-item-footer-cancel"
+                    ng-disabled="!self.isCancelEnabled && !self.step.isCancelEnabled"
+                    ng-if="self.onCancel || self.step.onCancel"
+                    ng-click="self.onCancelBefore()">
+                    {{ 'stepper.cancel' | translate }}
+                </md-button>
+
+
+                <md-button
+                    class="rv-button-square rv-stepper-item-footer-continue md-raised md-primary"
+                    ng-disabled="!(self.stepForm.$valid && (self.isContinueEnabled || self.step.isContinueEnabled) && !self.step.isThinking)"
+                    ng-if="self.onContinue || self.step.onContinue"
+                    ng-click="(self.onContinue || self.step.onContinue)()">
+                    {{ 'stepper.continue' | translate }}
+                    <md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.step.isThinking"></md-progress-linear>
+                </md-button>
+
+            </div>
+
+            {{ self.isThinking }}
+        </form>
+    </div>
+
+</div>

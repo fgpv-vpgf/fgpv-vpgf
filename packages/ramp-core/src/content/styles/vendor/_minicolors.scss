@@ -1,0 +1,30 @@
+// overrides for bootstrap theme
+.minicolors-input {
+    width: calc(100% - #{rem(4.0)});
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.minicolors-swatch {
+    border-radius: 0;
+    background-image: none;
+}
+
+.minicolors-panel {
+    box-shadow: $whiteframe-shadow-1dp;
+    width: 175px;
+    height: 154px;
+
+    .minicolors-slider {
+        .minicolors-picker {
+            width: 19px;
+        }
+    }
+}
+
+.minicolors-grid {
+    .minicolors-picker > div {
+        width: rem(0.6);
+        height: rem(0.6);
+    }
+}

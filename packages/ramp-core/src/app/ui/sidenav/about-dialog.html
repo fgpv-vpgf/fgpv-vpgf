@@ -1,0 +1,9 @@
+<md-dialog aria-label="{{'sidenav.label.about' | translate}}" class="rv-about-dialog">
+    <rv-content-pane close-panel="self.close()" title-style="title" title-value="{{'sidenav.label.about' | translate}}">
+
+        <div class="rv-about-desc" ng-if="self.about && !self.loading" ng-bind-html="self.about" tabindex="-2"></div>
+        <!-- set tabIndex, if not focus is not trap. Also let keyboard user focus text to scroll -->
+        <rv-failure-image ng-if="!self.about && !self.loading"></rv-failure-image>
+
+    </rv-content-pane>
+</md-dialog>

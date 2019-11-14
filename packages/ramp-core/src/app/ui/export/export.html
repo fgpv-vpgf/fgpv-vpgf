@@ -1,0 +1,159 @@
+<md-dialog class="rv-export" ng-class="{ 'rv-error': self.isError, 'rv-generate-error': self.isGenerateError }">
+    <form name="exportForm">
+        <md-dialog-content>
+            <div class="md-dialog-content">
+
+                <rv-failure-image ng-if="self.isGenerateError" message="self.errorMessage"></rv-failure-image>
+
+                <md-content class="rv-export-custom-size rv-invert rv-toggle-slide"
+                    ng-if="self.exportSizes.isCustomOptionSelected()">
+
+                    <h4 class="md-title">{{ 'export.size.custom' | translate }}</h4>
+                    <p class="md-caption">{{ 'export.custom.note1' | translate }}</p>
+                    <div class="rv-container" layout="column">
+                        <div layout="row" layout-wrap>
+                            <rv-export-custom-size></rv-export-custom-size>
+                        </div>
+                        <div layout="row">
+                            <span flex></span>
+                            <md-button
+                                ng-disabled="self.exportSizes.isCustomOptionUpdated() || (!exportForm.customSizeWidth.$viewValue && !exportForm.customSizeHeight.$viewValue && !self.exportSizes.customOption.height)"
+                                ng-click="self.exportSizes.resetTemporaryOption()"
+                                class="rv-button-square">
+                                {{ 'export.undo' | translate }}
+                            </md-button>
+
+                            <!-- disable the custom size generate button when the image is being generated; make the button available if the custom size is changed, so the user can trigger generation of a differently sized image not waiting until the previous generation completes -->
+                            <md-button
+                                ng-disabled="!exportForm.$valid || self.isGenerating() || (self.exportSizes.tempOption.height === self.exportSizes.selectedOption.height && !self.exportSizes.customToggled)"
+                                ng-click="self.exportSizes.updateCustomOption(); self.updateComponents();"
+                                class="rv-button-square md-raised md-primary">
+                                {{ 'export.generate' | translate }}
+                                <!-- show a progress indicator on the generate button when picking a custom export size -->
+                                <md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.isGenerating()"></md-progress-linear>
+                            </md-button>
+                        </div>
+                    </div>
+
+                </md-content>
+
+                <md-content class="rv-export-settings rv-invert rv-toggle-slide"
+                    ng-if="self.isExportSettingsOpen">
+
+                    <h4 class="md-title">{{ 'export.settings' | translate }}</h4>
+
+                    <div class="rv-container">
+                        <ul class="rv-list">
+                            <li ng-if="section.isSelectable"
+                                ng-repeat="section in self.exportComponents.items">
+
+                                    <md-checkbox
+                                        ng-model="section.isSelected"
+                                        class="md-primary">
+                                        {{ 'export.component.' + section.id | translate }}
+                                    </md-checkbox>
+
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </md-content>
+
+                <md-content>
+
+                    <div ng-if="self.isTainted">
+
+                        <rv-svg class="rv-export-graphic"
+                            once="false"
+                            src="self.taintedGraphic"></rv-svg>
+
+                    </div>
+
+                    <!-- need to hide the title input field when displaying the tainted canvas image for manual saving -->
+                    <!-- the title should be floated on top of the map image only if the map component is selected; if not, just put it before the first export component -->
+                    <div class="rv-export-title"
+                        ng-class="{ 'rv-float' : self.mapComponent.isSelected }"
+                        ng-hide="self.isTainted"
+                        ng-if="self.titleComponent.isSelected && !self.isGenerateError">
+                        <md-input-container md-no-float class="md-headline" ng-disabled="self.isError">
+                            <input ng-model="self.titleComponent.value"
+                                maxlength='128'
+                                ng-change="self.updateTitleComponent()"
+                                ng-model-options="{ updateOn: 'default blur', debounce: { default: 300, blur: 0 } }"
+                                placeholder="{{ 'export.title' | translate }}">
+                        </md-input-container>
+                    </div>
+
+                    <div class="rv-export-section"
+                        ng-hide="self.isTainted"
+                        ng-if="section.isSelected && section.isVisible && !self.isGenerateError"
+                        ng-repeat="section in self.exportComponents.items">
+
+                        <rv-svg class="rv-export-graphic"
+                            once="false"
+                            ng-class="{ 'rv-blur': section.isGenerating }"
+                            src="section.graphic"></rv-svg>
+
+                    </div>
+
+                </md-content>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+             <md-progress-linear
+                    class="rv-progress-bottom"
+                    ng-hide="!self.isGenerating() || self.isError || self.isGenerateError"
+                    md-mode="indeterminate"></md-progress-linear>
+
+            <md-select aria-label="{{ 'export.size.selector' | translate }}" translate
+                ng-if="false && !self.isGenerateError"
+                ng-model="self.exportSizes.selectedOption"
+                md-container-class="rv-export-select">
+
+                <md-option ng-value="sizeOption" ng-repeat="sizeOption in self.exportSizes.options">
+                    <div class="rv-option" ng-click="self.scrollCustomSettings(sizeOption)">
+                        <span >{{ sizeOption.name | translate }}</span>
+                        <span flex> </span>
+                        <span>{{ sizeOption.dimensions }}</span>
+                    </div>
+                </md-option>
+            </md-select>
+
+            <!-- don't display a settings button if none of the settings can be edited -->
+            <span class="rv-button-divider-24" ng-if="false && self.isSettingsEditable() && !self.isGenerateError"></span>
+
+            <md-button
+                class="md-icon-button"
+                ng-if="self.isSettingsEditable() && !self.isGenerateError"
+                ng-class="{ selected: self.isExportSettingsOpen }"
+                ng-click="self.isExportSettingsOpen = !self.isExportSettingsOpen">
+                <md-icon md-svg-src="action:settings"></md-icon>
+            </md-button>
+
+            <span flex></span>
+
+            <md-button
+                class="rv-button-square"
+                ng-click="self.close()"
+                rv-close-button>
+                {{ 'export.close' | translate }}
+            </md-button>
+
+            <!-- div needed to shop tooltip when button is disabled, see
+            https://github.com/angular/material/issues/1667#issuecomment-224651024
+            -->
+            <div>
+                <md-button
+                    class="rv-button-square md-raised md-primary"
+                    ng-click="self.saveImage()"
+                    ng-disabled="self.isDownloadBlocked()">
+                    {{ 'export.download' | translate }}
+                </md-button>
+                <md-tooltip ng-if="self.exportSizes.isCustomOptionSelected() && self.isDownloadBlocked()">{{ 'export.custom.note2' | translate }}</md-tooltip>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

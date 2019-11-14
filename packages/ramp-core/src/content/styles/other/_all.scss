@@ -1,0 +1,6 @@
+/* The name for this partial varies, but essentially this is all the code that doesn't fit in _base, _layout, or _modules. Code we just couldn't make modular; glue between modules; top level layouts; etc. */
+// import all other files
+
+.rv-blur {
+    filter: blur(rem(0.5));
+}

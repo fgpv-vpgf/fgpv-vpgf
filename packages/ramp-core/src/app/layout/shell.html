@@ -1,0 +1,82 @@
+<!-- TODO: add proper loading message or animation to the loading splash -->
+<div class="rv-loading-screen" layout layout-align="center center" ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
+    <div class="rv-loading-section rv-left"></div>
+    <div class="rv-loading-section rv-right"></div>
+    <div class="rv-spinner google-spin-wrapper">
+        <div class="google-spin"></div>
+    </div>
+</div>
+
+<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0"
+    aria-label="{{ 'geo.aria.mapdescription' | translate }}"
+    aria-describedby="rv-crosshairs-description"></div>
+
+<!-- crossharis are centered relative to the rv-shell; if the inner shell is not center aligned, crosshairs can appear off-center -->
+<rv-crosshairs class="rv-crosshairs"></rv-crosshairs>
+
+<div class="rv-inner-shell">
+
+    <div class="rv-map-coordinates rv-lg">
+        <span></span>
+        <span></span>
+    </div>
+
+    <!--
+        Each plug has a permanent position on the page defined through CSS; plugs themselves don't move or change size (with a small exception when the plug needs to change size to accomodate content's shadow). Plug's child is a panel (panelPlug - mainPanel), which does animate on enter and leave events. Panels take all availables space in their plug.
+
+        A panel can display a content pane - mainPanel can display either toc or toolbox content panes. When switching between toc and tollbox, the panel doesn't not animate (fade in/out animations), but the content pane does on etner and leave events.
+
+        Panel - Content Pane - Content
+    width: 880px;
+    position: relative;
+    height: calc(100% - 300px);
+    margin: 100px auto 0 auto;
+    -->
+
+    <rv-north-arrow class="rv-icon-32 rv-north-arrow"></rv-north-arrow>
+
+    <rv-appbar></rv-appbar>
+
+    <!--rv-geosearch></rv-geosearch-->
+
+    <!-- <rv-help-overlay rv-state='help'></rv-help-overlay> -->
+
+    <!-- rv-plug-slide-down class specifies the type of animation applied to the plug's panel on enter/leave  -->
+    <!-- rv-panel type="main" close-button="false" rv-state="main" rv-morph="main" class="rv-plug-slide-down" ng-class="{ 'rv-no-appbar': !self.config.ui.appBar.enabled }"></rv-panel -->
+
+    <rv-panel type="side" rv-state="side" class="rv-plug-slide-right"></rv-panel>
+
+    <rv-mapnav rv-morph="mapnav"></rv-mapnav>
+
+    <!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->
+
+    <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
+
+</div>
+
+<div class="rv-focus-dialog-content">
+    <div class="md-dialog-container">
+        <md-dialog>
+            <md-dialog-content class="md-dialog-content" role="document">
+                <h2 class="md-title ng-binding">{{ 'focus.dialog.press' | translate }}
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.enter' | translate }}</div>
+                    {{ 'focus.dialog.toactivate' | translate }}
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}
+                    </div>
+                </h2>
+
+                <div class="md-dialog-content-body">
+                    {{ 'focus.dialog.main' | translate }}
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div> +
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
+                </div>
+            </md-dialog-content>
+        </md-dialog>
+    </div>
+</div>
+
+<rv-sidenav></rv-sidenav>
+
+<rv-basemap></rv-basemap>
+
+<md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.shellService.isLoading"></md-progress-linear>

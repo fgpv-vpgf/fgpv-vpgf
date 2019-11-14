@@ -1,0 +1,41 @@
+<md-input-container ng-disabled="self.isError">
+    <input type="number" required md-no-asterisk="true"
+        name="customSizeWidth"
+        min="{{ ::self.exportSizes.width.min }}"
+        max="{{ ::self.exportSizes.width.max }}"
+        ng-pattern="/\d/"
+        step="any"
+        placeholder="{{ 'export.size.customwidth' | translate }}"
+        ng-model="self.exportSizes.tempOption.width">
+ 
+    <div ng-messages="exportForm.customSizeWidth.$error" role="alert">
+        <div ng-message="min">
+            {{ 'export.error.minwidth' | translate:self.exportSizes.width }}
+        </div>
+        <div ng-message="max">
+            {{ 'export.error.maxwidth' | translate:self.exportSizes.width }}
+        </div>
+    </div>
+</md-input-container>
+ 
+<md-icon md-svg-src="navigation:close"></md-icon>
+ 
+<md-input-container ng-disabled="self.isError">
+    <input type="number" required md-no-asterisk
+        name="customSizeHeight"
+        min="{{ ::self.exportSizes.height.min }}"
+        max="{{ ::self.exportSizes.height.max }}"
+        step="any"
+        ng-pattern="/\d/"
+        placeholder="{{ 'export.size.customheight' | translate }}"
+        ng-model="self.exportSizes.tempOption.height">
+ 
+    <div ng-messages="exportForm.customSizeHeight.$error" role="alert">
+        <div ng-message="min">
+            {{ 'export.error.minheight' | translate:self.exportSizes.height }}
+        </div>
+        <div ng-message="max">
+            {{ 'export.error.maxheight' | translate:self.exportSizes.height }}
+        </div>
+    </div>
+</md-input-container>

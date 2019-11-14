@@ -1,0 +1,53 @@
+@mixin progress-indicator {
+    md-progress-linear,
+    md-progress-circular {
+        opacity: 1;
+
+        &.ng-hide-add,
+        &.ng-hide-remove {
+            transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+        }
+
+        &.ng-hide {
+            opacity: 0;
+        }
+    }
+
+    .fileLoaded {
+        margin-left: 13px;
+        position: relative;
+        bottom: 7px;
+    }
+
+    .fileURLStatus {
+        display: flex;
+        flex-direction: row;
+
+        md-progress-linear {
+            width: 60%;
+        }
+    }
+
+    %progress {
+        position: absolute;
+        padding: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        overflow: hidden;
+
+        // This prevents layer loading indicators from showing when another panel overlays the toc (in small medium layouts only)
+        @include include-size(rv-lg) {
+            z-index: 10;
+        }
+    }
+
+    $progress-positions: top, bottom;
+
+    @each $item in $progress-positions {
+        .rv-progress-#{$item} {
+            @extend %progress;
+            #{$item}: 0;
+        }
+    }
+}

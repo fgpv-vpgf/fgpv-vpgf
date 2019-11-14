@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>RAMP2 Documentation</title>
+    <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css" />
+</head>
+
+<body>
+    <div id="app"></div>
+    <script src="https://unpkg.com/docute-emojify"></script>
+    <script src="https://unpkg.com/docute-evanyou@0.5.0/dist/evanyou.js"></script>
+    <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
+    <script src="https://unpkg.com/prismjs@1.11.0/components/prism-typescript.js"></script>
+    <script>
+        // this logic is broken after changing to hosting on github.io , which has different tag structure
+        // for now, will just put a hard link to the published docs in the "Annotated Source Code" menu below.
+        // someone smarter in the future can figure out the correct parsing to get magic url pointing.
+        // note this link also exists in api-overview.md so maybe makes more sense to keep it static
+        // (have not found a way to pass variables into .md files)
+        /*
+        var tag = window.location.href.match(/\.com\/([\d|\w|\.|-]+)/);
+        var url = tag ? `https://ramp-docs.fgpv-vpgf.com/${tag[1]}/` : window.location.href;
+        */
+
+        docute.init({
+            landing: 'landing.html',
+            nav: {
+                default: [{
+                        title: 'Home',
+                        path: '/home'
+                    },
+                    {
+                        title: 'Overview',
+                        path: '/ui-overview'
+                    },
+                    {
+                        title: 'Developer',
+                        type: 'dropdown',
+                        items: [{
+                                type: 'label',
+                                title: 'Guides'
+                            },
+                            {
+                                title: 'Introduction',
+                                path: '/developer/intro'
+                            },
+                            {
+                                title: 'Contributing',
+                                path: '/contribute/getting_started'
+                            },
+                            {
+                                title: 'Plugins',
+                                path: '/developer/plugins'
+                            },
+                            {
+                                title: 'Accessibility Guidelines',
+                                path: '/developer/accessibility_guidelines'
+                            },
+                            {
+                                type: 'sep'
+                            },
+                            {
+                                type: 'label',
+                                title: 'API'
+                            },
+                            {
+                                title: 'Overview',
+                                path: '/developer/api-overview'
+                            },
+                            {
+                                title: 'Panels',
+                                path: '/developer/panels'
+                            },
+                            {
+                                title: 'Legacy API',
+                                path: '/developer/legacy_api'
+                            },
+                            {
+                                type: 'sep'
+                            },
+                            {
+                                type: 'label',
+                                title: 'Technical Documentation'
+                            },
+                            {
+                                title: 'Architecture Overview',
+                                path: '/technical/architecture'
+                            },
+                            {
+                                title: 'Bookmark Format',
+                                path: '/developer/bookmark_formats'
+                            },
+                            {
+                                title: 'Interactive Schema',
+                                path: 'https://fgpv-vpgf.github.io/schema-to-docs/'
+                            },
+                            // { title: 'Annotated Source Code', path: `${url}developer/api_tech_docs` },
+                            {
+                                title: 'Annotated Source Code',
+                                path: `http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/developer/api_tech_docs/`
+                            },
+                            {
+                                title: 'GeoAPI Annotated Source Code',
+                                path: 'http://fgpv-vpgf.github.io/geoApi/v3.0.0/'
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Map Author',
+                        type: 'dropdown',
+                        items: [{
+                                title: 'Introduction',
+                                path: '/mapauthor/intro'
+                            },
+                            {
+                                title: 'Custom Attributes',
+                                path: '/mapauthor/custom_attributes'
+                            },
+                            {
+                                title: 'Details Templating',
+                                path: '/mapauthor/details_templating'
+                            },
+                            {
+                                title: 'WCAG Compliance',
+                                path: '/mapauthor/wcag_compliance'
+                            },
+                            {
+                                title: 'RAMP Configuration Service',
+                                path: '/mapauthor/rcs'
+                            },
+                            {
+                                title: 'Cross Origin Considerations',
+                                path: '/mapauthor/proxy'
+                            },
+                            {
+                                title: 'Migration guide V2 -> V3',
+                                path: '/mapauthor/migration'
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Plugins',
+                        type: 'dropdown',
+                        items: [{
+                                title: 'Enhanced Datatable',
+                                path: '/developer/datatables'
+                            },
+                            {
+                                title: 'Geosearch',
+                                path: 'https://geosearch-docs.fgpv-vpgf.com/v2.0.3/#/'
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Samples',
+                        path: '/samples'
+                    },
+
+
+                ]
+            },
+            plugins: [docuteEmojify(), evanyou()],
+            repo: 'fgpv-vpgf/fgpv-vpgf'
+        });
+    </script>
+</body>
+
+</html>

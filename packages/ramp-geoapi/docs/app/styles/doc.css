@@ -1,0 +1,14 @@
+.material-icons.red {
+    color: #B33A3A;
+}
+
+.menu-category {
+	text-transform: none;
+	padding-left: 16px;
+	color:rgba(255,255,255,0.541176);
+}
+
+.menu-page a{
+	text-transform: none;
+	padding-left: 16px;
+}

@@ -1,0 +1,854 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "FGPV Config Schema",
+    "type": "object",
+    "version": 2.0,
+    "comments": "FIXME: when draft 05 is release redo schema inheritance with patching / merging if they are accepted",
+    "additionalProperties": false,
+
+    "definitions": {
+        "spatialReference": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ]
+        },
+        "spatialReferenceNode": {
+            "type": "object",
+            "properties": {
+                "wkid": { "type": "number" },
+                "vcsWkid": { "type": "number" },
+                "latestWkid": { "type": "number" },
+                "latestVcsWkid": { "type": "number" },
+                "wkt": { "type": "string" }
+            },
+            "anyOf": [
+                { "required": [ "wkid" ] },
+                { "required": [ "vcsWkid" ] },
+                { "required": [ "latestWkid" ] },
+                { "required": [ "latestVcsWkid" ] },
+                { "required": [ "wkt" ] }
+            ],
+            "additionalProperties": false
+        },
+        "extent": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ]
+        },
+        "extentNode": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        },
+        "extentWithReferenceNode": {
+            "type": "object",
+            "properties": {
+                "xmin": { "type": "number" },
+                "ymin": { "type": "number" },
+                "xmax": { "type": "number" },
+                "ymax": { "type": "number" },
+                "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" }
+            },
+            "required": [ "xmin", "ymin", "xmax", "ymax" ],
+            "additionalProperties": false
+        },
+        "extentSetNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "spatialReference": { "$ref": "#/definitions/spatialReferenceNode", "description": "The projection for the given extents" },
+                "default": { "$ref": "#/definitions/extentNode", "description": "The default (starting) extent." },
+                "full": { "$ref": "#/definitions/extentNode", "description": "The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied." },
+                "maximum": { "$ref": "#/definitions/extentNode", "description": "The maximum extent; full or default extents will be used if not supplied." }
+            },
+            "required": [ "id", "default", "spatialReference" ],
+            "additionalProperties": false
+        },
+
+        "symbolNode": {
+            "type": "object",
+            "properties": {
+                "label": { "type": "string", "description": "description" },
+                "icon": { "type": "string", "description": "Graphical symbol as a URL (data URLs are encouraged for smaller symbols)" }
+            },
+            "required": [ "label", "icon" ],
+            "additionalProperties": false
+        },
+        "lodSetNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "lods": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "level": { "type": "number" },
+                            "resolution": { "type": "number" },
+                            "scale": { "type": "number" }
+                        },
+                        "required": [ "level", "resolution", "scale" ],
+                        "additionalProperties": false
+                    },
+                    "description": "Level of details for a specific tile schema"
+                }
+            },
+            "required": [ "id", "lods" ],
+            "additionalProperties": false
+        },
+        "tileSchemaNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "A unique id identifying a tile schema (combination of an extent set and a zoom scale)" },
+                "name": { "type": "string", "description": "The name to display in the basemap selector for the set of basemaps referencing this schema" },
+                "extentSetId": { "type": "string", "description": "The extent set to be used for this basemap (should reference map.extentSets.id)" },
+                "lodSetId": { "type": "string", "description": "Optional.  The level of details set to be used for this basemap (should reference map.lod.id)" }
+            },
+            "required": ["extentSetId", "lodSetId", "id", "name"],
+            "additionalProperties": false
+        },
+
+        "exportComponent": {
+            "type": "object",
+            "properties": {
+                "isSelected": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component is selected and included in the export graphic."
+                },
+                "isSelectable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Indicates if the component can be included or excluded from the export graphic by the user."
+                },
+                "value": {
+                    "type": "string",
+                    "description": "Value to be passed to the generation function of this export component."
+                }
+            },
+            "description": "This is the initial configuration for an export component.",
+            "additionalProperties": false
+        },
+
+        "attributionNode": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "Optional. Contains the attribution value. If empty, it will use copyright text from the server." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                },
+                "logo": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "value": { "type": "string", "description": "URL for the image." },
+                        "link": { "type": "string", "description": "URL to go to when clicked." }
+                    },
+                    "required": [ "enabled" ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "text", "logo" ],
+            "additionalProperties": false
+        },
+
+        "legendGroupControls": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "opacity",
+                    "visibility",
+                    "symbology",
+                    "query",
+                    "reload",
+                    "remove",
+                    "settings"
+                ]
+            },
+            "uniqueItems": true,
+            "description": "A list of all controls to be enabled on the specified group"
+        },
+        "legendEntryControls": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "opacity",
+                    "visibility",
+                    "boundingBox",
+                    "query",
+                    "snapshot",
+                    "metadata",
+                    "boundaryZoom",
+                    "refresh",
+                    "reload",
+                    "remove",
+                    "settings",
+                    "data"
+                ]
+            },
+            "uniqueItems": true,
+            "description": "A list of all controls to be enabled on the specified layer"
+        },
+        "initialLayerSettings": {
+            "type": "object",
+            "properties": {
+                "opacity": { "type": "number", "default": 1, "description": "Initial opacity" },
+                "visibility": { "type": "boolean", "default": true, "description": "Initial visibility setting" },
+                "boundingBox": { "type": "boolean", "default": false, "description": "Display bounding box" },
+                "query": { "type": "boolean", "default": true, "description": "Allow querying" },
+                "snapshot": { "type": "boolean", "default": false, "description": "Retrieve all feature data immediately on load" }
+            },
+            "additionalProperties": false
+        },
+        "wmsLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer entry in the WMS" },
+                "name": { "type": "string", "description": "A descriptive name for the layer.  To be used in the legend." },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" }
+            },
+            "required": ["id"],
+            "additionalProperties": false
+        },
+        "dynamicLayerEntryNode": {
+            "type": "object",
+            "properties": {
+                "index": { "type": "number", "description": "The index of the layer in the map service." },
+                "name": { "type": "string", "description": "A descriptive name for the layer, can override the name coming from the service." },
+                "outfields": { "type": "string", "default": "*", "description": "A comma separated list of attribute names that should be requested on query." },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode", "description": "Allows for overriding the bounding box supplied by the service." },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "stateOnly": { "type": "boolean", "default": false, "description": "A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings)." },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for table panel"}
+            },
+            "required": ["index"],
+            "additionalProperties": false
+        },
+
+        "entryGroup": {
+            "type": "object",
+            "properties": {
+                "name" : { "type": "string", "description": "Title of the group" },
+                "expanded": { "type": "boolean", "default": true },
+                "children": {
+                    "type": "array",
+                    "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/visibilitySet" }, { "$ref": "#/definitions/entry" }, { "$ref": "#/definitions/infoSection" } ] },
+                    "minItems": 1
+                },
+                "controls": { "$ref": "#/definitions/legendGroupControls" }
+            },
+            "required": ["name", "children"],
+            "additionalProperties": false
+        },
+        "visibilitySet": {
+            "type": "object",
+            "properties": {
+                "exclusiveVisibility": {
+                    "type": "array",
+                    "items": { "oneOf": [ { "$ref": "#/definitions/entryGroup" }, { "$ref": "#/definitions/entry" } ] },
+                    "minItems": 1
+                }
+            },
+            "required": ["exclusiveVisibility"],
+            "additionalProperties": false
+        },
+        "symbologyStack": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": { "image": { "type": "string" }, "text": { "type": "string" } },
+                "required":[ "image", "text" ],
+                "additionalProperties": false
+            },
+            "minItems": 1
+        },
+        "entry": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "layerId": {"type": "string", "description": "Link to a layer defined in the layers section"},
+                "hidden": {"type": "boolean", "default": false, "description": "Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user." },
+                "controlledIds": {
+                    "type": "array",
+                    "items": { "type": "string", "description": "Additional layer ids which are controlled by this layer" },
+                    "default": []
+                },
+                "entryIndex": {"type": "integer", "description": "Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true ."},
+                "entryId": {"type": "string", "description": "Id of the 'sublayer' in the case of an OGC WMS layer"},
+                "coverIcon": {"type": "string", "description": "An optional icon, if present it will be used to primarily represent the layer"},
+                "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
+                "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
+            },
+            "required": ["layerId"],
+            "additionalProperties": false
+        },
+        "infoSection": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "infoType": { "type": "string", "enum": [ "title" ] },
+                        "content": { "type": "string" }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "infoType": { "type": "string", "enum": [ "image" ] },
+                        "content": { "type": "string" }
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "infoType": { "type": "string", "enum": [ "unboundLayer" ] },
+                        "layerName": {"type": "string", "description": "Name to display in legend"},
+                        "symbologyStack": { "$ref": "#/definitions/symbologyStack" },
+                        "symbologyRenderStyle": {"type":"string", "enum": [ "icons", "images" ], "description": "An optional style, describes how the symbology stack should be rendered"}
+                    },
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "infoType": { "type": "string", "enum": [ "text" ] },
+                        "content": { "type": "string" }
+                    },
+                    "additionalProperties": false
+                }
+            ],
+            "required": ["infoType", "content"]
+        },
+
+        "legendAuto": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "autopopulate" ] }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "legendStructured": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "enum": [ "structured" ] },
+                "root": { "$ref": "#/definitions/entryGroup" }
+            },
+            "required": ["type", "root"],
+            "additionalProperties": false
+        },
+
+        "tableNode": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Specifies the table title to apply."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Specifies the additional information to display in the setting panel to give more information about a table."
+                },
+                "maximize": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies the default table size when first open. True: maximize view; False: split view."
+                },
+                "search": {
+                    "enabled": { "type": "boolean", "default": true },
+                    "value": {
+                        "type": "string",
+                        "default": null,
+                        "description": "Specifies the default filter to apply to a table (for global search)."
+                    }
+                },
+                "applyMap": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied."
+                },
+                "columns": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/columnNode" },
+                    "description": "Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled."
+                }
+            },
+            "description": "Specifies how layers columns and global search are set",
+            "additionalProperties": false
+        },
+        "columnNode": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "description": "Specifies the field name (data) to use to link to the layer column. Must exist in the layer."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Specifies the column title, uses the layer column name or alias if missing."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing."
+                },
+                "visible": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if column is visible by default. True: column is visible; False: column is hidden."
+                },
+                "width": {
+                    "type": "number",
+                    "description": "Specifies the column width. If missing, calculated column width will be use."
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": ["asc", "desc"],
+                    "description": "Specifies if column is sort. If missing, no sort is applied."
+                },
+                "searchable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use."
+                },
+                "filter": {
+                    "$ref": "#/definitions/filterNode"
+                }
+            },
+            "required": ["data"],
+            "additionalProperties": false,
+            "description": "Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array."
+        },
+
+        "filterNode": {
+            "type": "object",
+            "description": "Specifies the filter information for a column.",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["string", "number", "date", "selector"],
+                    "description": "Specifies the filter type to use. If type is not specified, data field type will be use. String filter can be string or selector. Other filter must be the same type. If not, apply on map will fails."
+                },
+                "value": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Specifies the filter value. For date and number values are split by ',' (e.g. 0,100). For selector it needs an array like [\"Fire\", \"Fatality\"]"
+                },
+                "static": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified."
+                }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+
+        "basicLayer": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "layerType": { "type": "string", "enum": [ "esriDynamic", "esriFeature", "esriImage", "esriTile", "ogcWms" ] },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" }
+            },
+            "required": [ "id", "layerType", "url" ]
+        },
+        "basicLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriImage", "esriTile" ] },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array." },
+                "state": { "$ref": "#/definitions/initialLayerSettings" }
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "featureLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "nameField": { "type": "string", "description": "The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriFeature" ] },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
+            },
+            "required": [ "id", "layerType", "url" ],
+            "additionalProperties": false
+        },
+        "wmsLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerEntries": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/wmsLayerEntryNode" },
+                    "minItems": 1
+                },
+                "layerType": { "type": "string", "enum": [ "ogcWms" ] },
+                "featureInfoMimeType": { "type": "string", "enum": [ "text/html;fgpv=summary", "text/html", "text/plain", "application/json" ], "description": "If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested." },
+                "legendMimeType": { "type": "string", "enum": [ "image/png", "image/gif", "image/jpeg", "image/svg", "image/svg+xml" ], "description": "If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" }
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "dynamicLayerNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "The id of the layer for referencing within the viewer (does not relate directly to any external service)" },
+                "name": { "type": "string", "description": "The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information." },
+                "url": { "type": "string", "description": "The service endpoint of the layer.  It should match the type provided in layerType." },
+                "metadataUrl": { "type": "string", "default": null, "description": "The metadata url of the layer service" },
+                "catalogueUrl": { "type": "string", "default": null, "description": "The catalogue url of the layer service" },
+                "layerType": { "type": "string", "enum": [ "esriDynamic" ] },
+                "singleEntryCollapse": { "type": "boolean", "default": false, "description": "Indicates that the dynamic layer with a single layer entry should be rendered without the root group." },
+                "layerEntries": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/dynamicLayerEntryNode" },
+                    "minItems": 1
+                },
+                "tolerance": { "type": "number", "default": 5, "description": "Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer" },
+                "extent": { "$ref": "#/definitions/extentWithReferenceNode" },
+                "controls": { "$ref": "#/definitions/legendEntryControls" },
+                "disabledControls": { "$ref": "#/definitions/legendEntryControls", "description": "A list of controls which are visible, but disabled for user modification" },
+                "state": { "$ref": "#/definitions/initialLayerSettings" },
+                "table": { "$ref": "#/definitions/tableNode", "description": "Settings for the table"}
+            },
+            "required": [ "id", "layerType", "layerEntries", "url" ],
+            "additionalProperties": false
+        },
+        "layerNode": {
+            "oneOf": [
+                { "$ref": "#/definitions/basicLayerNode" },
+                { "$ref": "#/definitions/featureLayerNode" },
+                { "$ref": "#/definitions/wmsLayerNode" },
+                { "$ref": "#/definitions/dynamicLayerNode" }
+            ]
+        },
+
+        "layerList": {
+            "type": "array",
+            "items": { "oneOf": [ { "$ref": "#/definitions/layerNode" } ] },
+            "minItems": 0
+        },
+
+        "baseMapNode": {
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description": "A unique identifier for the basemap" },
+                "name": { "type": "string", "description": "Name of the basemap used for labeling" },
+                "description": { "type": "string", "description": "Description of the basemap. Will be visible when basemap selector is expanded.Description of the basemap. Will be visible when basemap selector is expanded." },
+                "typeSummary": { "type": "string", "description": "Optional base map type. This is descriptive only, and will be shown in the basemap selector." },
+                "altText": { "type": "string", "description": "Alt text for the basemap thumbnail image.Alt text for the basemap thumbnail image." },
+                "thumbnailUrl": { "type": "string", "description": "Path to image file to display in the basemap selector." },
+                "tileSchemaId": { "type": "string", "description": "The tile schema for this basemap (should reference map.tileSchemas.id)" },
+                "layers": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": { "type": "string", "default": "" },
+                            "layerType": { "type": "string", "default": ""},
+                            "url": { "type": "string", "default": "" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["id", "layerType", "url"]
+                     },
+                    "minItems": 1,
+                    "description": "A set of URLs which should be composited to form a basemap entry"
+                },
+                "attribution": { "$ref": "#/definitions/attributionNode" },
+                "zoomLevels": {
+                    "type": "object",
+                    "properties": {
+                        "min": { "type": "number" },
+                        "max": { "type": "number" }
+                    },
+                    "default": { },
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "name", "description", "layers", "altText", "tileSchemaId" ],
+            "additionalProperties": false
+        },
+
+        "sideMenuNode": {
+            "type": "object",
+            "properties": {
+                "logo": { "type": "boolean", "default": true, "description": "Indicates if the logo should be shown in the left side menu." },
+                "items": { "type": "array", "items": { "$ref": "#/definitions/sideMenuButtons" }, "default": [] }
+            },
+            "additionalProperties": false,
+            "description": "Specifies which options are available in the left side menu."
+        },
+
+        "sideMenuButtons": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": ["layers", "basemap", "about", "fullscreen", "export", "share", "touch", "help", "language"]
+            }
+        },
+
+        "navBarNode": {
+            "type": "object",
+            "properties": {
+                "zoom": { "type": "string", "enum": ["all", "buttons", "slider"], "default": "buttons" },
+                "extra": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/definitions/navBarButtons" }, "default": [] }
+            },
+            "required": [ "zoom" ],
+            "additionalProperties": false
+        },
+
+        "navBarButtons": {
+            "type": "string",
+            "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen"]
+        },
+
+        "mapComponentsNode": {
+            "type": "object",
+            "properties": {
+                "geoSearch": { "type": "object", "properties": { "enabled": {"type": "boolean" }, "showGraphic": { "type": "boolean" }, "showInfo": { "type": "boolean" }}},
+                "mouseInfo": { "type": "object", "properties": { "spatialReference": { "$ref": "#/definitions/spatialReferenceNode" } }},
+                "northArrow": { "type": "object" },
+                "overviewMap": { "type": "object" },
+                "scaleBar": { "type": "object" },
+                "basemap": { "type": "object" }
+            },
+            "additionalProperties": false
+        }
+    },
+
+    "properties": {
+        "version": { "type": "string", "enum": [ "2.0" ], "description": "The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer." },
+        "language": { "type": "string", "enum": [ "en", "fr", "es" ], "description": "ISO 639-1 code indicating the language of strings in the schema file" },
+
+        "ui": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "fullscreen": { "type": "boolean", "default": false, "description": "Indicates viewer takes up entire viewport" },
+                "theme": { "type": "string", "enum": [ "default" ], "default": "default", "description": "UI theme of the viewer" },
+                "logoUrl": { "type": "string", "description": "An optional image to be used in the place of the default viewer logo" },
+                "title": { "type": "string", "description": "An optional title to be used in the place of the default viewer title" },
+                "navBar": { "$ref": "#/definitions/navBarNode" },
+                "sideMenu": { "$ref": "#/definitions/sideMenuNode" },
+                "restrictNavigation": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Will restrict the user from panning beyond the maximum extent."
+                },
+                "about": {
+                    "description": "About properties from configuration file or Markdown folder",
+                    "oneOf": [
+                        { "type": "object", "properties": { "content": { "type": "string" } }, "required": ["content"], "additionalProperties": false },
+                        { "type": "object", "properties": { "folderName": { "type": "string" } }, "required": ["folderName"], "additionalProperties": false }
+                    ]
+                },
+                "help": {
+                    "type": "object",
+                    "description": "Help properties",
+                    "properties": {
+                        "folderName": { "type": "string", "description": "Help folder name who contain the help description and images" }
+                    },
+                    "required": [ "folderName" ],
+                    "additionalProperties": false
+                },
+                "legend": {
+                    "type": "object",
+                    "properties": {
+                        "reorderable": { "type": "boolean", "default": true, "description": "Specifies if the items in the legend can be reordered; structured legend ignores this property." },
+                        "allowImport": { "type": "boolean", "default": true, "description": "Specifies if the user-added layers are allowed." },
+                        "isOpen": {
+                            "type": "object",
+                            "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
+                            "properties": {
+                                "large": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for large viewports" },
+                                "medium": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for medium viewports" },
+                                "small": { "type": "boolean", "default": false, "description": "Whether the legend is opened by default on initial loading of the map for small viewports" }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "tableIsOpen": {
+                    "type": "object",
+                    "description": "Specifies whether the table panel is opened by default on initial loading of the map for small, medium, and large viewports",
+                    "properties": {
+                        "id": { "type": "string", "description": "The id of the layer for referencing within the viewer" },
+                        "large": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for large viewports" },
+                        "medium": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for medium viewports" },
+                        "small": { "type": "boolean", "default": false, "description": "Whether the table panel is opened by default on initial loading of the map for small viewports" }
+                    },
+                    "additionalProperties": false,
+                    "required": ["id"]
+                },
+                "widgetsWidget": { "type": "object", "additionalProperties": true, "description": "FIXME" }
+            }
+        },
+
+        "services": {
+            "description": "A set of service endpoints used by the viewer",
+            "type": "object",
+            "properties": {
+                "proxyUrl": { "type": "string", "description": "An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers." },
+                "exportMapUrl": { "type": "string", "description": "An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask." },
+                "geometryUrl": { "type": "string", "description": "A URL to an ESRI ArcGIS geometry service REST endpoint." },
+                "googleAPIKey": { "type": "string", "description": "Google API key to enable geo location and share link shortening." },
+                "geolocation": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "coordInfo": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "print": { "type": "object", "additionalProperties": true, "description": "FIXME" },
+                "search": {
+                    "type": "object",
+                    "description": "Search properties including ability to disable certain types of searches (NTS, FSA, and/or LAT/LNG) and to set service endpoint urls",
+                    "properties": {
+                        "disabledSearches": {
+                            "type": "array",
+                            "items": { "type": "string", "enum": [ "NTS", "FSA", "LAT/LNG" ] },
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "description": "Disable specific types of searches including NTS, FSA, or LAT/LNG"
+                        },
+                        "serviceUrls": {
+                            "type": "object",
+                            "description": "Service endpoint urls",
+                            "properties": {
+                                "geoNames": { "type": "string", "description": "Endpoint url for geoNames service" },
+                                "geoLocation": { "type": "string", "description": "Endpoint url for geoLocation service" },
+                                "geoSuggest": { "type": "string", "description": "Endpoint url for geoSuggest service" },
+                                "provinces": { "type": "string", "description": "Endpoint url for provinces service" },
+                                "types": { "type": "string", "description": "Endpoint url for types service" }
+                            },
+                            "additionalProperties": false,
+                            "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["serviceUrls"]
+                },
+                "export": {
+                    "type": "object",
+                    "description": "Export properties",
+                    "properties": {
+                        "title": { "$ref": "#/definitions/exportComponent", "description": "Title of the export graphic." },
+                        "map": { "$ref": "#/definitions/exportComponent", "description": "Map component." },
+                        "mapElements": { "$ref": "#/definitions/exportComponent", "description": "North arrow and scalebar component." },
+                        "legend": { "$ref": "#/definitions/exportComponent", "description": "Legend component." },
+                        "footnote": { "$ref": "#/definitions/exportComponent", "description": "Foot notice to add to exported map" },
+                        "timestamp":  { "$ref": "#/definitions/exportComponent", "description": "Timestamp component." }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+
+        "map": {
+            "type": "object",
+            "description": "Core map properties (extent sets, levels of detail)",
+            "properties": {
+                "extentSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/extentSetNode" },
+                    "description": "The default, full and maximum extents of the map"
+                },
+                "lodSets": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/lodSetNode" },
+                    "description": "The levels of detail (zoom scales) available for the map"
+                },
+                "tileSchemas": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/tileSchemaNode" },
+                    "minItems": 1,
+                    "description": "A unique combination of an LoD and an extent set (each basemap must fit into a tile schema)"
+                },
+                "components": {
+                    "type": "object",
+                    "$ref": "#/definitions/mapComponentsNode"
+                },
+                "initialBasemapId": {
+                    "type": "string",
+                    "description": "Initial basemap to load. If not supplied viewer will select any basemap."
+                },
+                "baseMaps": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/baseMapNode" },
+                    "minItems": 1,
+                    "description": "A list of basemaps to be made available via the basemap selector."
+                },
+                "layers": {
+                    "$ref": "#/definitions/layerList",
+                    "description": "Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers."
+                },
+                "legend": {
+                    "oneOf": [ { "$ref": "#/definitions/legendAuto" }, { "$ref": "#/definitions/legendStructured" } ],
+                    "description": "A structured or automatically generated legend"
+                }
+            },
+            "required": ["tileSchemas", "baseMaps"]
+        }
+    },
+
+    "required": [ "version" ]
+}

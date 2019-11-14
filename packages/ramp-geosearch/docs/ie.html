@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>IE demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.0.0/json2html.min.js"></script>
+  <script src="dist/geosearch-polyd.js"></script>
+</head>
+<body>
+<script>
+    const transforms = {
+        "result": [
+            {"<>":"li", "html": function(){return this.name + ' (' + this.location + ', ' + this.province + ') @ ' + this.pointCoords;}}
+        ]
+    };
+
+    function getResults(q, config) {
+        // GeoSearch is a global window object since we included the library directly on our page.
+        var geoSearch = new GeoSearch(config);
+        geoSearch.query(q).then(function(results) {
+            if (results.length > 0) {
+                // json2html is used to display some of the returned data from our library for simplification.
+                document.getElementById("results").innerHTML = json2html.transform(results, transforms.result);
+            } else {
+                document.getElementById("results").innerHTML = 'No results were found.';
+            }
+        });
+    }
+
+    function getCityResults(q) {
+        const config = {
+            language: 'fr',
+            settings: {
+                categories: ['CITY']
+            }
+        };
+
+        getResults(q, config);
+    }
+</script>
+
+<p>This search will return all default result types in English</p>
+    <input id="searchField" type="text"> <button onclick="getResults(document.getElementById('searchField').value);">Search</button>
+
+<p>This search is configured to only return city results in French</p>
+    <input id="searchField1" type="text"> <button onclick="getCityResults(document.getElementById('searchField1').value); return false;">Search</button>
+
+<p class="tip">
+    <ul id="results">No results yet!</ul>
+</p>
+</body>
+</html>

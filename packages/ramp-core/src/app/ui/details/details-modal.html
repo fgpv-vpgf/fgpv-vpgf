@@ -1,0 +1,15 @@
+<md-dialog aria-label="Details Summary" class="rv-details-summary">
+    <!-- TODO: add metadata translation -->
+    <rv-content-pane
+        close-panel="self.cancel()"
+        title-style="title"
+        title-value="{{ self.item.requester.proxy.name }}">
+
+        <div class="rv-details">
+            <md-content class="rv-details-data rv-content"
+                rv-detect-scrollbar
+                rv-details-content rv-item="self.item">
+            </md-content>
+        </div>
+    </rv-content-pane>
+</md-dialog>

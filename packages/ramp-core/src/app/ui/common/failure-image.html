@@ -1,0 +1,6 @@
+<div class="rv-fail-before"></div>
+    <md-icon ng-if="!self.failureImageUrl" md-svg-src="sadpanda"></md-icon>
+    <img ng-if="self.failureImageUrl" ng-src="{{ self.failureImageUrl }}">
+
+    <p class="md-subhead">{{ self.failureMessage | translate }}</p>
+<div class="rv-fail-after"></div>
