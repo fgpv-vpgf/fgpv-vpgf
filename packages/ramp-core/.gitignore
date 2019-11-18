@@ -16,7 +16,8 @@ tsd.json
 .vagrant/
 docs/contribute/jsDocs
 docs/developer/api_tech_docs
-src/content/samples/plugins/**/*
+# plugin samples have been moved here
+# src/content/samples/plugins/**/*
 .vscode/
 .material-cache/
 angular_material/
