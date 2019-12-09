@@ -1,6 +1,6 @@
 import { pinImg, hasPic, noPic } from './html-assets';
 
-class AreasOfInterest {
+export default class AreasOfInterest {
     // A store of the instances of areasOfInterest, 1 per map
     static instances: { [id: string]: AreasOfInterest } = {};
 
@@ -90,13 +90,13 @@ class AreasOfInterest {
         });
 
         let closeBtn = this.panel.header.closeButton;
-        this.panel.header.title = 'plugins.areasOfInterest.title';
+        this.panel.header.title = 'plugins.AreasOfInterest.title';
 
         this.panel.body = bodyElement;
     }
 }
 
-interface AreasOfInterest {
+export default interface AreasOfInterest {
     translations: any;
     config: any;
     api: any;

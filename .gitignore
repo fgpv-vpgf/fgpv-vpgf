@@ -61,3 +61,7 @@ temp
 # Rush files
 common/temp/**
 package-deps.json
+
+# Distribution folders
+dist
+packages/**/dist

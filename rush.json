@@ -388,6 +388,10 @@
             "projectFolder": "packages/ramp-plugin-coordinate-info"
         },
         {
+            "packageName": "ramp-plugin-custom-export",
+            "projectFolder": "packages/ramp-plugin-custom-export"
+        },
+        {
             "packageName": "ramp-plugin-enhanced-table",
             "projectFolder": "packages/ramp-plugin-enhanced-table"
         }

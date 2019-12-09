@@ -1,6 +1,6 @@
 import { template, magSection } from './html-assets';
 
-class CoordInfo {
+export default class CoordInfo {
     private urls = {
         nts: 'https://geogratis.gc.ca/services/delimitation/en/nts?',
         utm: 'https://geogratis.gc.ca/services/delimitation/en/utmzone?',
@@ -217,7 +217,7 @@ class CoordInfo {
             this.panel.element.addClass('mobile-fullscreen');
 
             let closeBtn = this.panel.header.closeButton;
-            this.panel.header.title = `plugins.coordInfo.coordButtonLabel`;
+            this.panel.header.title = `plugins.CoordinateInfo.coordButtonLabel`;
         } else {
             this.panel.close();
         }
@@ -289,7 +289,7 @@ class CoordInfo {
     }
 }
 
-interface CoordInfo {
+export default interface CoordInfo {
     api: any;
     translations: any;
     _RV: any;
