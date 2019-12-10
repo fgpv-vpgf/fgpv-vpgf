@@ -143,7 +143,7 @@ export class GeoSearch {
     }
 }
 
-export { Q, Provinces, Types, defs as Defs};
+export { Q, Provinces, Types, defs as Defs };
 
 
 if ((<any>window)) {

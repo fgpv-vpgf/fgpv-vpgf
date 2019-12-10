@@ -16,7 +16,8 @@ export type SideMenuButtons = (
   | "touch"
   | "help"
   | "language"
-  | "plugins")[];
+  | "plugins"
+)[];
 /**
  * Specifies the location/content of the about section
  */
@@ -42,7 +43,8 @@ export type LegendEntryControls = (
   | "remove"
   | "settings"
   | "data"
-  | "styles")[];
+  | "styles"
+)[];
 export type LayerNode =
   | BasicLayerNode
   | FeatureLayerNode
@@ -128,7 +130,8 @@ export type LegendGroupControls = (
   | "query"
   | "reload"
   | "remove"
-  | "settings")[];
+  | "settings"
+)[];
 
 export interface FgpvConfigSchema {
   /**
@@ -472,7 +475,8 @@ export interface NavBarNode {
     | "fullscreen"
     | "geoSearch"
     | "sideMenu"
-    | "layers")[];
+    | "layers"
+  )[];
 }
 /**
  * Specifies which options are available in the left side menu.
@@ -706,7 +710,8 @@ export interface TileSchemaNode {
       | "remove"
       | "settings"
       | "data"
-      | "styles")[];
+      | "styles"
+    )[];
     state?: InitialLayerSettings;
     details?: {
       /**
@@ -876,7 +881,8 @@ export interface BasicLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   details?: {
     /**
@@ -953,7 +959,8 @@ export interface FeatureLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   /**
    * Settings for the table
@@ -1146,7 +1153,8 @@ export interface FileLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   /**
    * Settings for the table
@@ -1265,7 +1273,8 @@ export interface WfsLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   /**
    * Settings for the table
@@ -1401,7 +1410,8 @@ export interface WmsLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   details?: {
     /**
@@ -1495,7 +1505,8 @@ export interface DynamicLayerNode {
     | "remove"
     | "settings"
     | "data"
-    | "styles")[];
+    | "styles"
+  )[];
   state?: InitialLayerSettings;
   /**
    * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided

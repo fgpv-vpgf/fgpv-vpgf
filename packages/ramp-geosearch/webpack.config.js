@@ -8,7 +8,7 @@ module.exports = function(env, argv) {
         entry: './src/index.ts',
     
         output: {
-            path: path.resolve(__dirname, 'src'),
+            path: path.resolve(__dirname, 'dist'),
             filename: 'index.js',
             // NOTE: [monoRAMP] since this plugin is bundled directly into the RAMP core, it needs to be packaged as cjs module
             libraryTarget: 'commonjs2'
@@ -20,7 +20,7 @@ module.exports = function(env, argv) {
                 enforce: 'pre',
                 use: [{
                     loader: 'ts-loader'
-                }, 'tslint-loader'],
+                }, 'eslint-loader'],
                 exclude: /node_modules/
             }]
         },

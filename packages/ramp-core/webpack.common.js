@@ -34,7 +34,7 @@ module.exports = function (env) {
             'rv-main': path.resolve(__dirname, 'src/app/app-loader.js'),
             'ramp-plugin-areas-of-interest': path.resolve(__dirname, 'node_modules/ramp-plugin-areas-of-interest'),
             'ramp-plugin-back-to-cart': path.resolve(__dirname, 'node_modules/ramp-plugin-back-to-cart'),
-            //'ramp-plugin-cake-export': path.resolve(__dirname, 'node_modules/ramp-plugin-cake-export'),
+            'ramp-plugin-custom-export': path.resolve(__dirname, 'node_modules/ramp-plugin-custom-export'),
             'ramp-plugin-coordinate-info': path.resolve(__dirname, 'node_modules/ramp-plugin-coordinate-info')
         },
 

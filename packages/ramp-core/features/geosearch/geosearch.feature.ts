@@ -3,7 +3,7 @@
  * @description A feature that provides geo location search
  */
 
-import 'ramp-geosearch';
+import { GeoSearch } from 'ramp-geosearch';
 
 const CODE_TO_ABBR = {
     10: "NL",
@@ -38,7 +38,7 @@ const CODE_TO_ABBR = {
  */
 class GeoSearchUI {
     constructor(config = {}) {
-        (<any>this)._geoSearhObj = new (<any>window).GeoSearch(config);
+        (<any>this)._geoSearchObj = new GeoSearch(config);
         (<any>this)._lang = (<any>config).language || 'en';
         (<any>this)._provinceList = [];
         (<any>this)._typeList = [];
@@ -73,7 +73,7 @@ class GeoSearchUI {
      * @return {Promise} the promise that resolves as a formated location objects
      */
     query(q: string) {
-        return (<any>this)._geoSearhObj.query(q.toUpperCase()).onComplete.then((q: any) => {
+        return (<any>this)._geoSearchObj.query(q.toUpperCase()).onComplete.then((q: any) => {
             let featureResult: any[] = [];
 
             // need to ensure that any disabled types are not included in our results output (add constants later if required)
@@ -152,7 +152,7 @@ class GeoSearchUI {
         };
         provinceList.push(reset);
 
-        let rawProvinces = (<any>this)._geoSearhObj.config.provinces.list;
+        let rawProvinces = (<any>this)._geoSearchObj.config.provinces.list;
         for (let code in rawProvinces) {
             provinceList.push({
                 code: code,
@@ -179,7 +179,7 @@ class GeoSearchUI {
         };
         typeList.push(reset);
 
-        let rawTypes = (<any>this)._geoSearhObj.config.types.allTypes;
+        let rawTypes = (<any>this)._geoSearchObj.config.types.allTypes;
         for (let type in rawTypes) {
             if (!(<any>this)._excludedTypes.includes(type)) {
                 typeList.push({
