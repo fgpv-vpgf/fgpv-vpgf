@@ -165,17 +165,18 @@ export class PanelManager {
 
                         const positionTooltip = () => {
                             const tooltip = $('.rv-render-tooltip')[0];
-                            const topMargin = $(focusedCell).offset().top - $(tooltip).offset().top;
-                            const topLeft = $(focusedCell).offset().left - $(tooltip).offset().left;
-                            const overlayBottom = $('.ag-overlay').position().top + $('.ag-overlay').height();
+                            const topMargin = $(focusedCell).offset().top + $(focusedCell).height() + 10;
+                            const topLeft = $(focusedCell).offset().left;
+                            const overlayBottom = $('.ag-root').offset().top + $('.ag-root').height();
 
-                            // position the tooltip so that it is associated with the focused cell
-                            tooltip.style.top = `${topMargin + 240}px`;
-                            tooltip.style.left = `${topLeft}px`;
+                            $(tooltip).offset({top: topMargin, left: topLeft});
 
-                            if (tooltip.offsetTop + $(tooltip).height() > overlayBottom - 20) {
-                                // position the tooltip so that it stays within the grid
-                                tooltip.style.bottom = '20px';
+                            let offBottom = $(tooltip).offset().top + $(tooltip).height() > overlayBottom - 20;
+                            let offTop = $(focusedCell).offset().top - $(tooltip).height() - 10 < $('.ag-header-container').offset().top;
+
+                            if(offBottom && !offTop) {
+                                // if the tooltip is off the grid, have it appear above the cell unless it would also be cut off by appearing above
+                                $(tooltip).offset({top: $(focusedCell).offset().top - $(tooltip).height() - 10});
                             }
                         }
 
