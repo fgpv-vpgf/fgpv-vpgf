@@ -40,6 +40,7 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
                     api.panels.legend.open();
                 }
                 scope.self.config = config;
+                scope.self.api = api;
             });
         })
 
@@ -73,7 +74,12 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
 
             if (event.which === 27 && !mdSidePanelOpen) {
                 scope.$apply(() => {
-                    stateManager.closePanelFromHistory();
+                    let panels = scope.self.api.panels.opened;
+
+                    // on press of the escape key, close the most recently opened panel.
+                    if(panels.length > 0) {
+                        panels[0].close();
+                    }
                 });
             } else if (navigationKeys.find(x => x === event.which)) {
                 $rootElement.addClass('rv-keyboard');
