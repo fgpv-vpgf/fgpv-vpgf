@@ -77,6 +77,7 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
                 if (block.symbologyStack && block.symbologyStack.toggleList && block.symbologyStack.toggleList.length > 1) {
                     block.symbologyStack.toggleList.forEach(toggle => {
                         toggle.wasSelected = true;
+                        toggle.isSelected = value;
                     });
                 }
                 block.visibility = value;
