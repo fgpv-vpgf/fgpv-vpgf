@@ -794,6 +794,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             this._nameField = source.nameField;
             this._tooltipField = source.tooltipField;
+            this._outfields = source.outfields || '*';
             this._tolerance = source.tolerance || 5;
             this._table = new TableNode(source.table);
             this._customRenderer = source.customRenderer || {};
@@ -813,6 +814,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get tooltipField () { return this._tooltipField; }
         set tooltipField (value) { this._tooltipField = value; }
 
+        get outfields () { return this._outfields; }
+
         get tolerance () { return this._tolerance; }
         get table () { return this._table; }
 
@@ -824,6 +827,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             return angular.merge(super.JSON, {
                 nameField: this.nameField,
                 tooltipField: this.tooltipField,
+                outfields: this.outfields,
                 tolerance: this.tolerance,
                 table: this.table.JSON,
                 customRenderer: this.customRenderer

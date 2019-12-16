@@ -1054,6 +1054,11 @@
                     "type": "string",
                     "description": "The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided)."
                 },
+                "outfields": {
+                    "type": "string",
+                    "default": "*",
+                    "description": "A comma separated list of attribute names that should be requested on query."
+                },
                 "url": {
                     "type": "string",
                     "description": "The service endpoint of the layer.  It should match the type provided in layerType."
