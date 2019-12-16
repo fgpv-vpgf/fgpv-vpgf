@@ -1,6 +1,6 @@
 # RAMP2
 
-This projectis now a monorepo and contains the following repos under the `packages` folder:
+This project is now a monorepo and contains the following repos under the `packages` folder:
 - ramp-core (previously this repo)
 - ramp-geoapi (previously https://github.com/fgpv-vpgf/geoApi)
 - ramp-geosearch (previously https://github.com/RAMP-PCAR/geosearch)
@@ -46,7 +46,7 @@ $ npm run serve
 
 Lastly open the samples page:
 ```
-http://localhost:9001/samples/index-samples.html
+http://localhost:6001/samples/index-samples.html
 etc.
 ```
 
