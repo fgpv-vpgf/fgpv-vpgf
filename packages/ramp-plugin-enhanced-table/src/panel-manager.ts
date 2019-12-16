@@ -161,7 +161,8 @@ export class PanelManager {
                     const focusedCell = <HTMLElement>$(`[row-index=${cell.rowIndex}]`).find(`[col-id=${cell.column.colId}]`)[0];
                     const focusedCellText = <HTMLElement>focusedCell.children[0];
 
-                    if (focusedCellText.offsetWidth > focusedCell.offsetWidth) {
+                    // display the tooltip if the width of the text is larger than the cell width (excluding the padding), and it's not a button.
+                    if (focusedCellText.offsetWidth > focusedCell.offsetWidth - 48 && !focusedCellText.classList.contains('md-button')) {
 
                         const positionTooltip = () => {
                             const tooltip = $('.rv-render-tooltip')[0];
