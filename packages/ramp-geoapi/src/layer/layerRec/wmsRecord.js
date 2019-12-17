@@ -63,7 +63,7 @@ class WmsRecord extends layerRecord.LayerRecord {
 
     /**
      * Add a WMS layer parameter, maybe even refresh the layer
-     * 
+     *
      * @function setCustomParameter
      * @param {String} key name of the key to be created or updated
      * @param {String} value value of the key
@@ -134,6 +134,8 @@ class WmsRecord extends layerRecord.LayerRecord {
                 this.config.featureInfoMimeType)
             .then(data => {
                 identifyResult.isLoading = false;
+                identifyResult.layerId = this.layerId;
+                identifyResult.layerIdx = parseInt(this._defaultFC);
 
                 // TODO: check for French service
                 // check if a result is returned by the service. If not, do not add to the array of data
@@ -143,10 +145,8 @@ class WmsRecord extends layerRecord.LayerRecord {
                         identifyResult.data.push(data);
                     } else if (data.indexOf('Search returned no results') === -1 && data !== '') {
                         identifyResult.data.push(data);
-                    } 
+                    }
                 }
-
-                // console.info(data);
             });
 
         return { identifyResults: [identifyResult], identifyPromise };

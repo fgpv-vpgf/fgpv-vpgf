@@ -141,7 +141,7 @@ function identifyService($q, configService, gapiService, referenceService, state
         const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
             const requests = identifyResults.map(r => ({
                 // TODO: include the actual referenced layer
-                layer: "I' layer",
+                layer: "not yet implemented",
                 event: identifyMouseEvent,
                 sessionId,
                 features: identifyPromise.then(() => r.data)
