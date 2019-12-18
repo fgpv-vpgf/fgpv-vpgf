@@ -633,6 +633,7 @@ export class PanelManager {
                 Object.keys(filterModel).forEach(col => {
                     colStrs.push(filterToSql(col, filterModel[col]));
                 });
+                // maybe want to disable `apply filters to map` button when global search text length < 2 since it would show all points on the map
                 if (that.searchText && that.searchText.length > 2) {
                     const globalSearchVal = globalSearchToSql() !== '' ? globalSearchToSql() : '1=2';
                     if (globalSearchVal) {
@@ -718,31 +719,63 @@ export class PanelManager {
 
             // convert global search to SQL string filter of columns excluding unfiltered columns
             function globalSearchToSql(): string {
+                // TODO: support for global search on dates
                 let val = that.searchText.replace(/'/g, "''");
-                const filterVal = `%${val
-                    .replace(/\*/g, '%')
-                    .split(' ')
-                    .join('%')
-                    .toUpperCase()}`;
-                const re = new RegExp(
-                    `.*${val
-                        .split(' ')
-                        .join('.*')
-                        .toUpperCase()}`
-                );
+                // to implement quick filters, first need to split the search text on white space
+                const searchVals = val.split(' ');
                 const sortedRows = that.tableOptions.api.rowModel.rowsToDisplay;
                 const columns = that.tableOptions.columnApi
                     .getAllDisplayedColumns()
-                    .filter(column => column.colDef.filter === 'agTextColumnFilter');
+                    .filter(column => column.colDef.filter === 'agTextColumnFilter' || column.colDef.filter === 'agNumberColumnFilter');
                 columns.splice(0, 3);
-                let filteredColumns = [];
-                columns.forEach(column => {
-                    for (let row of sortedRows) {
-                        const cellData = row.data[column.colId] === null ? null : row.data[column.colId].toString();
-                        if (cellData !== null && re.test(cellData.toUpperCase())) {
-                            filteredColumns.push(`UPPER(${column.colId}) LIKE \'${filterVal}%\'`);
-                            return;
+                let filteredColumns = <any>[];
+
+                sortedRows.forEach(row => {
+                    let rowMatch = true;
+                    let rowSql = '';
+                    // each row must contain all of the split search values
+                    for (let searchVal of searchVals) {
+                        const re = new RegExp(
+                            `.*${searchVal
+                                .split(' ')
+                                .join('.*')
+                                .toUpperCase()}`
+                        );
+                        const filterVal = `%${searchVal
+                            .replace(/\*/g, '%')
+                            .split(' ')
+                            .join('%')
+                            .toUpperCase()}`;
+                        // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
+                        let foundVal = false;
+                        for (let column of columns) {
+                            // process global search sql independently for text and number columnns
+                            if (column.colDef.filter === 'agTextColumnFilter') {
+                                const cellData = row.data[column.colId] === null ? null : row.data[column.colId].toString();
+                                if (cellData !== null && re.test(cellData.toUpperCase())) {
+                                    rowSql ? rowSql = rowSql.concat(' AND ', `(UPPER(${column.colId}) LIKE \'${filterVal}%\')`) : rowSql = rowSql.concat('(', `(UPPER(${column.colId}) LIKE \'${filterVal}%\')`);
+                                    // if we have already stored the current sql break from loop
+                                    filteredColumns.includes(rowSql + ')') ? foundVal = false : foundVal = true;
+                                    break;
+                                }
+                            } else if (column.colDef.filter === 'agNumberColumnFilter') {
+                                const cellData = row.data[column.colId] === null ? null : row.data[column.colId];
+                                if (cellData !== null && re.test(cellData)) {
+                                    rowSql ? rowSql = rowSql.concat(' AND ', `(${column.colId} = ${cellData})`) : rowSql = rowSql.concat('(', `(${column.colId} = ${cellData})`);
+                                    filteredColumns.includes(rowSql + ')') ? foundVal = false : foundVal = true;
+                                    break;
+                                }
+                            }
+                        };
+                        // otherwise if any split search value is not found, set rowMatch to false and break because it has failed to meet criteria for quick search filters
+                        if (!foundVal) {
+                            rowMatch = false;
+                            break;
                         }
+                    }
+                    // sql is added to array iff all split search values have been found somewhere in the current row data
+                    if (rowMatch) {
+                        filteredColumns.push(rowSql + ')');
                     }
                 });
                 return filteredColumns.join(' OR ');
