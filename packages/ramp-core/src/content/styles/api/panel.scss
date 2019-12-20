@@ -224,6 +224,14 @@
             outline: initial;
         }
     }
+
+    .ag-header-cell {
+        &.wrong-filter:hover {
+            background-color: #fafafa;
+            border: 1px solid #f00010;
+            outline: initial;
+        }
+    }
 }
 
 .btn {

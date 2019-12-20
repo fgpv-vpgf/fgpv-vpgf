@@ -333,13 +333,17 @@ export class NumberFloatingFilter {
     onMinInputBoxChanged() {
         if (this.minFilterInput.value === '') {
             this.currentValues.min = null;
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         } else if (this.minFilterInput.value === '-') {
             this.currentValues.min = '-';
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         } else if (isNaN(this.minFilterInput.value)) {
-            // TODO: error message for wrong input type
+            console.error(`${this.minFilterInput.value} is not a valid filter input for numberic column "${this.params.currColumn.field}"`);
             this.minFilterInput.value = this.currentValues.min;
+            $(this.eGui.parentElement.parentElement).addClass('wrong-filter');
         } else {
             this.currentValues.min = Number(this.minFilterInput.value);
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         }
 
         // save value on panel reload manager
@@ -353,13 +357,17 @@ export class NumberFloatingFilter {
     onMaxInputBoxChanged() {
         if (this.maxFilterInput.value === '') {
             this.currentValues.max = null;
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         } else if (this.maxFilterInput.value === '-') {
             this.currentValues.max = '-';
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         } else if (isNaN(this.maxFilterInput.value)) {
-            // TODO: error message for wrong input type
+            console.error(`${this.maxFilterInput.value} is not a valid filter input for numberic column "${this.params.currColumn.field}"`);
             this.maxFilterInput.value = this.currentValues.max;
+            $(this.eGui.parentElement.parentElement).addClass('wrong-filter');
         } else {
             this.currentValues.max = Number(this.maxFilterInput.value);
+            $(this.eGui.parentElement.parentElement).removeClass('wrong-filter');
         }
 
         // save value on panel reload manager
