@@ -4,7 +4,8 @@
  * These are global values defined in the RV registry. They can be overridden by creating a global `RV` object with the same properties __before__ `injector.js` is executed.
  */
 const rvDefaults = {
-    dojoURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.29/init.js'
+    // NOTE is appears this URL def is no longer being used. The `dojoUrl` var in config.service.js is what gets loaded
+    dojoURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.31/init.js'
 };
 
 /**
