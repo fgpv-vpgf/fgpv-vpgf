@@ -569,7 +569,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._description = source.description;
             this._maximize = source.maximize || false;
             this._search = source.search || { enabled: true, value: null };
-            this._lazyFilter = source.lazyFilter || false;
+            this._lazyFilter = source.lazyFilter !== undefined ? source.lazyFilter : true;
             this._showFilter = source.showFilter !== undefined ? source.showFilter : true;
             this._filterByExtent = source.filterByExtent || false;
             this._applyMap = source.applyMap || false;

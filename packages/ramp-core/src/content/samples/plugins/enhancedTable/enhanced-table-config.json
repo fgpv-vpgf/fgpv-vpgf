@@ -127,7 +127,7 @@
                 "layerType": "esriFeature",
                 "table": {
                     "applyMap": true,
-                    "lazyFilter": true,
+                    "lazyFilter": false,
                     "searchStrictMatch": true,
                     "columns": [{
                         "data": "OBJECTID",
@@ -160,7 +160,7 @@
                             }
                         }
                     ],
-                    "lazyFilter": true
+                    "lazyFilter": false
                 },
                 "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
             },
@@ -229,7 +229,7 @@
                     "search": {
                         "enabled": false
                     },
-                    "lazyFilter": true,
+                    "lazyFilter": false,
                     "applyMap": true,
                     "printEnabled": true
                 }

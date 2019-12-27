@@ -828,7 +828,7 @@
                 },
                 "lazyFilter": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields"
                 },
                 "applyMap": {
