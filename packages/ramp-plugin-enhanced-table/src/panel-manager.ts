@@ -518,6 +518,8 @@ export class PanelManager {
             this.showFilter = that.panelStateManager.colFilter;
             this.filterByExtent = that.panelStateManager.filterByExtent;
             this.printEnabled = that.configManager.printEnabled;
+            this.lazyFilter = that.panelStateManager.lazyFilter;
+            this.startsWithFilter = !that.panelStateManager.lazyFilter;
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
@@ -554,6 +556,29 @@ export class PanelManager {
                     that.panelRowsManager.filterByExtent(that.mapApi.mapI.extent);
                 } else {
                     that.panelRowsManager.fetchValidOids();
+                }
+            };
+
+            // Toggle search mode (lazy, non-lazy)
+            this.lazyFilterToggled = function () {
+                // ensure lazy filter is set to true
+                this.lazyFilter = true;
+                // toggle non-lazy filter off and reload table if necessary
+                if (this.startsWithFilter) {
+                    this.startsWithFilter = !this.startsWithFilter;
+                    that.panelStateManager.lazyFilter = this.lazyFilter;
+                    that.reload(that.currentTableLayer);
+                }
+            };
+
+            this.startsWithFilterToggled = function () {
+                // ensure starts with filter is set to true
+                this.startsWithFilter = true;
+                // toggle lazy filter off and reload table if necessary
+                if (this.lazyFilter) {
+                    this.lazyFilter = !this.lazyFilter;
+                    that.panelStateManager.lazyFilter = this.lazyFilter;
+                    that.reload(that.currentTableLayer);
                 }
             };
         });
