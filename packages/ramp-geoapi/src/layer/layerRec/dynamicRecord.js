@@ -752,7 +752,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                             });
 
                         }
+
                         identifyResult.isLoading = false;
+                        identifyResult.layerId = this.layerId;
+                        identifyResult.layerIdx = ele.layerId;
                     });
                 });
 

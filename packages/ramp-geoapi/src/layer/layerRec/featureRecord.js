@@ -443,7 +443,10 @@ class FeatureRecord extends attribRecord.AttribRecord {
                         ]
                     };
                 });
+
                 identifyResult.isLoading = false;
+                identifyResult.layerId = this.layerId;
+                identifyResult.layerIdx = parseInt(this._defaultFC);
             });
 
         return { identifyResults: [identifyResult], identifyPromise };
