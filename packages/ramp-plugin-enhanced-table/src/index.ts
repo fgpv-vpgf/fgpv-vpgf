@@ -215,7 +215,6 @@ export default class TableBuilder {
                                     setUpTextFilter(
                                         colDef,
                                         isStatic,
-                                        this.configManager.lazyFilterEnabled,
                                         this.configManager.searchStrictMatchEnabled,
                                         column.value,
                                         this.mapApi,
@@ -420,7 +419,9 @@ TableBuilder.prototype.translations = {
             options: 'More options',
             filter: {
                 extent: 'Filter by extent',
-                show: 'Show filters'
+                show: 'Show filters',
+                lazy: 'All inclusive (lazy)',
+                startsWith: 'Starts with (non-lazy)'
             }
         },
         detailsAndZoom: {
@@ -456,7 +457,9 @@ TableBuilder.prototype.translations = {
             options: 'Plus d’options',
             filter: {
                 extent: 'Filtrer par étendue',
-                show: 'Afficher les filtres'
+                show: 'Afficher les filtres',
+                lazy: 'Tous les inclusivement (paresseux)',
+                startsWith: 'Commence avec (non paresseux)'
             }
         },
         detailsAndZoom: {
