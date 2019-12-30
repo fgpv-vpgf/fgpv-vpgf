@@ -13,6 +13,7 @@ export class PanelStateManager {
         this.isMaximized = baseLayer.table.maximize || false;
         this.showFilter = baseLayer.table.showFilter;
         this.filterByExtent = baseLayer.table.filterByExtent || false;
+        this.lazyFilter = baseLayer.table.lazyFilter || false;
         this.columnFilters = {};
         this.open = true;
         this.storedBlock = legendBlock;
@@ -74,6 +75,7 @@ export interface PanelStateManager {
     isMaximized: boolean;
     showFilter: boolean;
     filterByExtent: boolean;
+    lazyFilter: boolean;
     rows: any;
     columnFilters: any;
     open: boolean;

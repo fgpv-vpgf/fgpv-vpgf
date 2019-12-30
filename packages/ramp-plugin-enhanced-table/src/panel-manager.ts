@@ -518,6 +518,8 @@ export class PanelManager {
             this.showFilter = that.panelStateManager.colFilter;
             this.filterByExtent = that.panelStateManager.filterByExtent;
             this.printEnabled = that.configManager.printEnabled;
+            this.lazyFilter = that.panelStateManager.lazyFilter;
+            this.startsWithFilter = !that.panelStateManager.lazyFilter;
 
             // sets the table size, either split view or full height
             // saves the set size to PanelStateManager
@@ -554,6 +556,33 @@ export class PanelManager {
                     that.panelRowsManager.filterByExtent(that.mapApi.mapI.extent);
                 } else {
                     that.panelRowsManager.fetchValidOids();
+                }
+            };
+
+            // Toggle search mode (lazy, non-lazy)
+            this.lazyFilterToggled = function () {
+                // if lazy filter already enabled, do nothing except ensure non-lazy filters are off
+                if (this.lazyFilter) {
+                    this.startsWithFilter = false;
+                } else {
+                    // otherwise toggle both filters and reload table
+                    this.lazyFilter = !this.lazyFilter;
+                    this.startsWithFilter = !this.startsWithFilter;
+                    that.panelStateManager.lazyFilter = this.lazyFilter;
+                    that.reload(that.currentTableLayer);
+                }
+            };
+
+            this.startsWithFilterToggled = function () {
+                // if non-lazy filter already enabled, do nothing except ensure lazy filters are off
+                if (this.startsWithFilter) {
+                    this.lazyFilter = false;
+                } else {
+                    // otherwise toggle both filters and reload table
+                    this.startsWithFilter = !this.startsWithFilter;
+                    this.lazyFilter = !this.lazyFilter;
+                    that.panelStateManager.lazyFilter = this.lazyFilter;
+                    that.reload(that.currentTableLayer);
                 }
             };
         });
