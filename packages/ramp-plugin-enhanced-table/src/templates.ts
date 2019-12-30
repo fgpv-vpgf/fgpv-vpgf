@@ -83,6 +83,13 @@ export const MENU_TEMPLATE = `
                 {{ 'plugins.enhancedTable.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
+            <md-menu-item type="checkbox" ng-model="ctrl.lazyFilter" ng-click="ctrl.lazyFilterToggled()" rv-right-icon="community:contain">
+                {{ 'plugins.enhancedTable.menu.filter.lazy' | translate }}
+            </md-menu-item>
+            <md-menu-item type="checkbox" ng-model="ctrl.startsWithFilter" ng-click="ctrl.startsWithFilterToggled()" rv-right-icon="community:starts-with">
+                {{ 'plugins.enhancedTable.menu.filter.startsWith' | translate }}
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
             <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.filterExtentToggled()" rv-right-icon="community:filter">
                 {{ 'plugins.enhancedTable.menu.filter.extent' | translate }}
             </md-menu-item>
