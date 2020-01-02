@@ -93,7 +93,7 @@
                         ],
                         "children": [{
                                 "infoType": "text",
-                                "content": "When clicking on a data point on this layer, the OBJECTID field should have a custom alias in the details panel."
+                                "content": "When clicking on a data point on this layer, the OBJECTID field should have a custom alias in the details panel. When opening the grid, only four attributes should show up."
                             },
                             {
                                 "layerId": "0"
@@ -157,6 +157,7 @@
                     "data": "OBJECTID",
                     "alias": "Custom Field Alias - Feature"
                 }],
+                "outfields": "OBJECTID,COUNTRY,LATITUDE,LONGITUDE",
                 "table": {
                     "filterByExtent": true
                 }
