@@ -90,6 +90,18 @@ export const MENU_TEMPLATE = `
                 {{ 'plugins.enhancedTable.menu.filter.show' | translate }}
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
+            <md-menu-item>
+                <div class="table-control-header">
+                    {{ 'plugins.enhancedTable.menu.filter.textHeader' | translate }}
+                </div>
+            </md-menu-item>
+            <md-menu-item type="checkbox" ng-model="ctrl.lazyFilter" ng-click="!ctrl.showFilter || ctrl.lazyFilterToggled()" ng-disabled="!ctrl.showFilter" rv-right-icon="community:contain">
+                {{ 'plugins.enhancedTable.menu.filter.lazy' | translate }}
+            </md-menu-item>
+            <md-menu-item type="checkbox" ng-model="ctrl.startsWithFilter" ng-click="!ctrl.showFilter || ctrl.startsWithFilterToggled()" ng-disabled="!ctrl.showFilter" rv-right-icon="community:starts-with" >
+                {{ 'plugins.enhancedTable.menu.filter.startsWith' | translate }}
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
             <md-menu-item ng-if='ctrl.printEnabled'>
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>

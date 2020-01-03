@@ -78,8 +78,10 @@ export function setUpDateFilter(colDef: any, isItStatic: boolean, mapApi: any, d
 }
 
 /**Sets up text floating filter accounting for static types, default values and selector types*/
-export function setUpTextFilter(colDef: any, isStatic: boolean, lazyFilterEnabled: boolean,
-    searchStrictMatchEnabled: boolean, defaultValue: any, map: any, panelStateManager: any) {
+export function setUpTextFilter(colDef: any, isStatic: boolean, searchStrictMatchEnabled: boolean, defaultValue: any, map: any, panelStateManager: any) {
+    // obtain saved lazy filters mode, possible it has been changed to override config value
+    const lazyFilterEnabled = panelStateManager.lazyFilter;
+
     // if PanelStateManager has a value saved, it is going to override the default value in the config
     defaultValue = panelStateManager.getColumnFilter(colDef.field) !== undefined ?
         panelStateManager.getColumnFilter(colDef.field) :
