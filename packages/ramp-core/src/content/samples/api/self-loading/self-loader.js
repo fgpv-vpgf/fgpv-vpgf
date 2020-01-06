@@ -6,7 +6,7 @@ $.getScript('../../../rv-main.js', function() {
     });
 
     $('body').append(`
-        <div id="fgpmap" style="height: 700px;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.cloudapp.net:8000/"></div>
+        <div id="fgpmap" style="height: 700px;" rv-langs='["en-CA", "fr-CA"]' rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/"></div>
     `);
 
     const mapInstance = new RAMP.Map(document.getElementById('fgpmap'), '../../config.rcs.[lang].json');

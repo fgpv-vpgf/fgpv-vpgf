@@ -28,7 +28,7 @@
 </head>
 
 <body>
-<div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config/config-sample-01.json" data-rv-langs='["en-CA"]' data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys=''>
+<div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config/config-sample-01.json" data-rv-langs='["en-CA"]' data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" data-rv-keys=''>
     <noscript>
         <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
