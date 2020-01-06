@@ -35,7 +35,7 @@
 
             data-rv-config="config.rcs.[lang].json"
             data-rv-langs='["en-CA", "fr-CA"]'
-            data-rv-service-endpoint="http://section917.cloudapp.net:8000/"
+            data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/"
             data-rv-keys=""
             data-rv-wait="true"
             rv-plugins="BackToCart" >

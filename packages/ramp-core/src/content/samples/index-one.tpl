@@ -18,7 +18,7 @@
 
 <body>
     <div class="myMap" is="rv-map" data-rv-config="config.[lang].json" data-rv-langs='["en-CA", "fr-CA"]'
-         data-rv-service-endpoint="http://section917.cloudapp.net:8000/" data-rv-keys='["Airports"]'
+         data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" data-rv-keys='["Airports"]'
          data-rv-restore-bookmark="bookmark" >
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>

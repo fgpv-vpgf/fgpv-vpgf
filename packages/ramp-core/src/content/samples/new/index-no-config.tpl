@@ -22,13 +22,13 @@
 
 </head>
 
-<!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
+<!-- rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]' -->
 
 <body>
     <div class="myMap" id="sample-map" is="rv-map" ramp-gtm
         rv-langs='["en-CA", "fr-CA"]'
         rv-restore-bookmark="bookmark"
-        rv-service-endpoint="http://section917.cloudapp.net:8000/">
+        rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/">
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

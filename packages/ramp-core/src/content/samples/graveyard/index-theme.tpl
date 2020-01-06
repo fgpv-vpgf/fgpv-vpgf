@@ -21,7 +21,7 @@
     <% } %>
 </head>
 
-<!-- rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]' -->
+<!-- rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]' -->
 
 <body>
     <div class="myMap" id="theme-map" is="rv-map"

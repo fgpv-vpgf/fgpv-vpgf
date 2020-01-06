@@ -53,7 +53,7 @@
 <body>
     <div class="container">
         <div class="myMap" is="rv-map" rv-config="config-mobile-2.json" rv-langs='["en-CA", "fr-CA"]'
-            rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'>
+            rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]'>
             <noscript>
                 <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -62,7 +62,7 @@
         </div>
 
         <div class="myMap" is="rv-map" rv-config="config_mobile_2_auto" rv-langs='["en-CA", "fr-CA"]'
-            rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'>
+            rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]'>
             <noscript>
                 <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
@@ -71,7 +71,7 @@
         </div>
 
         <div class="myMap fullrow" is="rv-map" rv-config="config-mobile-3.json" rv-langs='["en-CA", "fr-CA"]'
-            rv-service-endpoint="http://section917.cloudapp.net:8000/" rv-keys='["Airports"]'>
+            rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]'>
             <noscript>
                 <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
