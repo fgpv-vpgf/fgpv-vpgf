@@ -49,6 +49,7 @@ RAMPInstance.mapAdded.subscribe(mapInstance => {
     let index: number = mapInstances.findIndex(map => map.id === mapInstance.id);
 
     if (index !== -1) {
+        console.warn("Any references to an older map instance may be out of date now, they will need to be updated to continue using the API.")
         mapInstances[index] = mapInstance;
     } else {
         mapInstances.push(mapInstance);

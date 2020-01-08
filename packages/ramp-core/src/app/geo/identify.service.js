@@ -99,7 +99,7 @@ function identifyService($q, configService, gapiService, referenceService, state
         const mapClickEvent = new MapClickEvent(clickEvent, mApi);
 
         mapClickEvent.apiInitiated = !isClick;
-        mApi._clickSubject.next(mapClickEvent);
+        events.$broadcast(events.rvClick, mapClickEvent);
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.

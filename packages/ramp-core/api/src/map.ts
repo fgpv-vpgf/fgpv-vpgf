@@ -289,6 +289,7 @@ export interface Map {
     fgpMapObj: Object;
     boundsObj: geo.XYBounds;
     boundsChangedObj: Observable<geo.XYBounds>;
+    click: Observable<MapClickEvent>;
     extentChanged: Observable<any>; // add this to avoid issues with projection changes see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
     filterChanged: Observable<any>;
     uiObj: UI;
@@ -325,7 +326,6 @@ function isConfigSchema(config: ViewerConfigSchema | string): config is ViewerCo
 
 function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
-    this.click = this._clickSubject.asObservable();
 
     this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(
         map(evt => new MouseEvent(evt, this))

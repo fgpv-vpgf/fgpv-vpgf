@@ -1,6 +1,5 @@
-import {
-    IdentifyMode
-} from 'api/layers';
+import { IdentifyMode } from 'api/layers';
+import { MapClickEvent } from 'api/events';
 
 /**
  * @module mapService
@@ -458,6 +457,10 @@ function mapServiceFactory(
                 // maybe it's viable to check `clickEvent.target` - feature vs map; not sure this should be done though
                 if (!isFeatureMousedOver && areGraphicsHighlighted) {
                     clearHighlight(false);
+
+                    const mapClickEvent = new MapClickEvent(clickEvent, mApi);
+                    mapClickEvent.apiInitiated = false;
+                    events.$broadcast(events.rvClick, mapClickEvent);
                     return;
                 }
 
