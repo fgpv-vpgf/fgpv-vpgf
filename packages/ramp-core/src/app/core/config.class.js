@@ -2218,6 +2218,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     });
                 });
 
+                mapInstance.click = Observable.create(subscriber => {
+                    events.$on(events.rvClick, (_, d) => subscriber.next(d));
+                });
+
                 // add this to avoid issues with projection changes
                 // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
                 mapInstance.extentChanged = Observable.create(subscriber => {

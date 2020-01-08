@@ -68,6 +68,7 @@ function events($rootScope) {
         rvMapPan: 'rvMapPan',
         rvMapZoomStart: 'rvMapZoomStart',
         rvExtentChange: 'extentChange', // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance
+        rvClick: 'rvClick',   // Fired when a click occurs
         rvMouseMove: 'rvMouseMove', // Fired when mouse move over the map (use to calculate mouse coordinates)
         rvBasemapChange: 'rvBasemapChange', // Fired when basemap is changed
         rvBasemapLoaded: 'rvBasemapLoaded',
