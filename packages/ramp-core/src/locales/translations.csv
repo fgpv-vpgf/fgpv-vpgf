@@ -400,7 +400,7 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,focus.dialog.main,We'll keep focus locked on the viewer - exit with,1,Nous allons garder le focus verrouillé sur le visualiseur - sortir à l'aide de,1
 ,focus.dialog.escape,Escape,1,Échapper,1
 ,toc.menu.symbology,Show legend,1,Afficher la légende,1
-,sidenav.menu.plugin,Plugin Links,1,Liens,1
+,sidenav.menu.plugin,Plugins,1,Modules,1
 Table of Content expand legend group,toc.label.group.expand,Expand Group,1,Ouvrir les groupes,1
 Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,1,Fermer les groupes,1
 Export size selector,export.size.selector,Size Selector,1,Sélecteur de taille,1
