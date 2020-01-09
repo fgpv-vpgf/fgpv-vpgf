@@ -445,7 +445,7 @@ function LegendElementFactory(
          * @return {Boolean} true if the remove control should be visible
          */
         get isVisible() {
-            return super.isVisible && (ref.autoLegendEh || this.block.userAdded);
+            return this.block.enabledStructuredDelete ? super.isVisible : super.isVisible && (ref.autoLegendEh || this.block.userAdded);
         }
     }
 

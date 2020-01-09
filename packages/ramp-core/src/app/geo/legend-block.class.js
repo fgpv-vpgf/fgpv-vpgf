@@ -437,11 +437,12 @@ function LegendBlockFactory(
         set metadataUrl(url) {
             this._layerConfig.metadataUrl = url;
         }
-
         get catalogueUrl() {
             return this._layerConfig.catalogueUrl;
         }
-
+        get enabledStructuredDelete() {
+            return this._layerConfig.enabledStructuredDelete;
+        }
         get availableControls() {
             return this._layerConfig.controls;
         }
@@ -798,6 +799,9 @@ function LegendBlockFactory(
             return [this.proxyWrapper].concat(this._controlledProxyWrappers);
         }
 
+        get enabledStructuredDelete() {
+            return this.proxyWrapper.enabledStructuredDelete;
+        }
         get availableControls() {
             return this.proxyWrapper.availableControls;
         }
