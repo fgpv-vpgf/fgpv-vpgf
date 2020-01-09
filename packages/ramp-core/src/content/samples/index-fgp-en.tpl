@@ -20,7 +20,7 @@
     <style>
         main div.myMap {
             height: 700px;
-            margin: 10px -15px -15px -15px;
+            margin: 10px -8px -8px -8px;
         }
         a {
             color: #0d520d;
