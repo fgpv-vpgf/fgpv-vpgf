@@ -445,7 +445,9 @@ function LegendElementFactory(
          * @return {Boolean} true if the remove control should be visible
          */
         get isVisible() {
-            return super.isVisible && (ref.autoLegendEh || this.block.userAdded);
+            // make Remove control available if enableStructuredDelete is turned on
+            // otherwise only show Remove control if we are in autolegend or the layer was added via the wizard
+            return this.block.enableStructuredDelete ? super.isVisible : super.isVisible && (ref.autoLegendEh || this.block.userAdded);
         }
     }
 

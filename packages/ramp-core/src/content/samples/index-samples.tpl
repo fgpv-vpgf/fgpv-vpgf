@@ -124,7 +124,7 @@
                 <option value="config/config-sample-24.json">24. Layer with Boundary zoom disabled</option>
                 <option value="config/config-sample-25.json">25. Layer with Reload disabled</option>
                 <option value="config/config-sample-26.json">26. Layer with Remove disabled</option>
-                <option value="config/config-sample-27.json">27. Layer with Settings disabled</option>
+                <option value="config/config-sample-27.json">27. Structured Legend with Remove + Layer with Settings disabled</option>
                 <option value="config/config-sample-28.json">28. Layer without option to view its data table</option>
                 <option value="config/config-sample-29.json">29. Layer with metadata included</option>
                 <option value="config/config-sample-30.json">30. Viewer with Map re-order disabled for auto legends</option>

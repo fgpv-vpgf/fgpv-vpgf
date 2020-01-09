@@ -90,6 +90,12 @@
                 "exclusiveVisibility": [
                   {
                     "layerId": "powerplant100mw-electric"
+                  },
+                  {
+                    "layerId": "powerplant100mw-naturalGas"
+                  },
+                  {
+                    "layerId": "powerplant100mw-liquids"
                   }
                 ]
               }
@@ -107,6 +113,31 @@
           "settings"
         ],
         "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+      },
+      {
+        "id": "powerplant100mw-naturalGas",
+        "name": "Natural Gas Pipeline",
+        "layerType": "esriFeature",
+        "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
+        "state": {
+          "visibility": false,
+          "boundingBox": false
+        },
+        "enableStructuredDelete": true,
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+      },
+      {
+        "id": "powerplant100mw-liquids",
+        "name": "Liquids Pipeline",
+        "layerType": "esriFeature",
+        "state": {
+          "visibility": true
+        },
+        "disabledControls": [
+          "remove"
+        ],
+        "enableStructuredDelete": true,
+        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
       }
     ],
     "extentSets": [
