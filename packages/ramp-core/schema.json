@@ -1013,6 +1013,11 @@
                     "$ref": "#/definitions/legendEntryControls",
                     "description": "A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array."
                 },
+                "enableStructuredDelete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend"
+                },
                 "state": {
                     "$ref": "#/definitions/initialLayerSettings"
                 },
@@ -1106,6 +1111,11 @@
                 "disabledControls": {
                     "$ref": "#/definitions/legendEntryControls",
                     "description": "A list of controls which are visible, but disabled for user modification"
+                },
+                "enableStructuredDelete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend"
                 },
                 "state": {
                     "$ref": "#/definitions/initialLayerSettings"
@@ -1401,6 +1411,11 @@
                     "$ref": "#/definitions/legendEntryControls",
                     "description": "A list of controls which are visible, but disabled for user modification"
                 },
+                "enableStructuredDelete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend"
+                },
                 "state": {
                     "$ref": "#/definitions/initialLayerSettings"
                 },
@@ -1493,6 +1508,11 @@
                 "disabledControls": {
                     "$ref": "#/definitions/legendEntryControls",
                     "description": "A list of controls which are visible, but disabled for user modification"
+                },
+                "enableStructuredDelete": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend"
                 },
                 "state": {
                     "$ref": "#/definitions/initialLayerSettings"
