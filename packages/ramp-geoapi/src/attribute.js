@@ -306,7 +306,6 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
             defService.then(serviceResult => {
                 if (serviceResult && (typeof serviceResult.error === 'undefined')) {
-
                     // properties for all endpoints
                     layerData.layerType = serviceResult.type;
                     layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
@@ -317,8 +316,16 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
                     if (serviceResult.type === 'Feature Layer') {
                         layerData.supportsFeatures = true;
-                        layerData.fields = serviceResult.fields;
                         layerData.nameField = serviceResult.displayField;
+
+                        // only add fields specified in outfields to the fields array, if outfields is defined.
+                        if(attribs !== '*') {
+                            // convert attributes list to uppercase to avoid case-related problems
+                            const attrs = attribs.toUpperCase();
+                            layerData.fields = serviceResult.fields.filter(f => attrs.contains(f.name.toUpperCase()));
+                        } else {
+                            layerData.fields = serviceResult.fields;
+                        }
 
                         // find object id field
                         // NOTE cannot use arrow functions here due to bug
