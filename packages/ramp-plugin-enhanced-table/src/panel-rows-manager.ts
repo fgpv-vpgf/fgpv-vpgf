@@ -129,7 +129,7 @@ export class PanelRowsManager {
         const filter = this.legendBlock.proxyWrapper.filterState;
         filter.getFilterOIDs([filter.coreFilterTypes.GRID], filterExtent).then(oids => {
             // filter symbologies if there's a filter applied
-            this.validOids = oids === null ? [] : oids;
+            this.validOids = oids === undefined ? [] : oids;
             this.externalFilter = oids !== undefined;
             this.updateGridFilters();
         });

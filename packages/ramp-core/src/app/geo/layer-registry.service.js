@@ -448,7 +448,13 @@ function layerRegistryFactory(
             // function wont make duplicates if called more than once.  However we can consider
             // an enhancement in this function to prevent it (or alternately, have two functions
             // reacting to state changes and deregister each when they have hit their condition)
-            if (layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) {
+            // UPDATE to ^
+            // turns out the double calling was a problem. _createApiLayer would detect that an existing
+            // API object existed and use it; but would also call initialize routines on it.
+            // Part of that init included wiping the attributes. So if anything had downloaded
+            // Dirty flag trick to solve it for now.
+            if ((layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) && (!layerRecord.flagIveBeenAPId)) {
+                layerRecord.flagIveBeenAPId = true;
                 _createApiLayer(layerRecord);
             }
         }
