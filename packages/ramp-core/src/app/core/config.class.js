@@ -673,6 +673,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
             this._expectedResponseTime = source.expectedResponseTime !== undefined ? source.expectedResponseTime : 4000;
             this._suppressGetCapabilities = source.suppressGetCapabilities !== undefined ? source.suppressGetCapabilities : false;
+            this._enableStructuredDelete = typeof source.enableStructuredDelete === 'boolean' ? source.enableStructuredDelete : false;
             const defaults = DEFAULTS.layer[this.layerType];
 
             const defaultedSource = applyLayerNodeDefaults(source, defaults);
@@ -730,6 +731,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get hovertipEnabled () {        return this._hovertipEnabled; }
         set hovertipEnabled (value) {   this._hovertipEnabled = value; }
 
+        get enableStructuredDelete () { return this._enableStructuredDelete; }
         /**
          * @return {Array} an array of control names which are visible in UI;
          * if a control name is not specified here, its value is blocked from modification
@@ -772,6 +774,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 suppressGetCapabilities: this.suppressGetCapabilities,
                 controls: this.controls,
                 disabledControls: this.disabledControls,
+                enableStructuredDelete: this.enableStructuredDelete,
                 state: this.state.JSON,
                 details: this.details
             };
