@@ -306,7 +306,6 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
             defService.then(serviceResult => {
                 if (serviceResult && (typeof serviceResult.error === 'undefined')) {
-
                     // properties for all endpoints
                     layerData.layerType = serviceResult.type;
                     layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
@@ -317,7 +316,6 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 
                     if (serviceResult.type === 'Feature Layer') {
                         layerData.supportsFeatures = true;
-                        layerData.fields = serviceResult.fields;
                         layerData.nameField = serviceResult.displayField;
 
                         // find object id field
@@ -338,11 +336,19 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                                 console.error(`Encountered service with no OID defined: ${layerUrl}`);
                         }
 
-                        // ensure our attribute list contains the object id
+
                         if (attribs !== '*') {
+                            // only add fields specified in outfields to the fields array, if outfields is defined. Converts the attribute to
+                            // uppercase to avoid case-related problems.
+                            const attrs = attribs.toUpperCase().split(',');
+                            layerData.fields = serviceResult.fields.filter(f => attrs.includes(f.name.toUpperCase()));
+
+                            // ensure our attribute list contains the object id
                             if (attribs.split(',').indexOf(layerData.oidField) === -1) {
                                 attribs += (',' + layerData.oidField);
                             }
+                        } else {
+                            layerData.fields = serviceResult.fields;
                         }
 
                         // add renderer and legend
