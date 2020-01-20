@@ -395,6 +395,10 @@ export class BaseLayer {
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
     removeAttributes(attributeKey?: number): void {
         if (typeof attributeKey !== 'undefined') {
+            if (this instanceof ConfigLayer) {
+                console.warn('Single key removal of attributes is not recommended for config layers due to the potential for synchronization issues');
+            }
+
             let allAttribs: Array<Object> = this.getAttributes();
 
             let index: number = this._attributeArray.findIndex(
@@ -413,33 +417,11 @@ export class BaseLayer {
                 this._attributesRemoved.next([oldValue]);
             }
         } else {
-            // TODO this logic is wiping attribute values from within the geoApi source.
-            //      but it leaves the husk of the source intact, so there is an array of
-            //      empty objects there. this fools all the other core logic into thinking there
-            //      is still attributes.
-            //      I'm not sure what the goal of removeAttributes() is;
-            //      if it's only cleaning up the attribute objects inside the API layer, then
-            //      we need to adjust the wiping logic so it doesn't erase the geoApi source.
-            //      If it should erase everything, we need to clean out geoApi as well so
-            //      the next time something requests attributes, it knows to re-download them.
-            //      E.g. without changing geoApi, would need bad code like
-            //           Feature/File layer version (six underscore champion)
-            //             var s = this._layerProxy._source;
-            //             s._featClasses[s._defaultFC]._layerPackage._attribData = undefined;
-            //           Dynamic child version
-            //             this._layerProxy._source._layerPackage._attribData = undefined;
-            //      Doing it a bit cleaner, look at function abortAttribLoad() peppered around geoApi,
-            //      copy the structure to make a clearAttributes() and that function sets ._layerPackage._attribData = undefined
             const copyAttribs: Array<Object> = this._attributeArray.map(a => Object.assign({}, a));
 
-            this._attributeArray.forEach(attrib => {
-                Object.keys(attrib).forEach(key => {
-                    (<any>attrib)[key] = undefined;
-                });
-            });
+            this._viewerLayer.cleanUpAttribs();
 
             this._attributeArray = [];
-
             this._attributesRemoved.next(copyAttribs);
         }
     }
@@ -604,6 +586,8 @@ export class ConfigLayer extends BaseLayer {
 
     /** Set the appropriate layer properties such as id, visibility and opacity. Called whenever layer is created or reloaded. */
     _initLayerSettings(layerRecord: any, layerIndex?: number): void {
+        this._viewerLayer = layerRecord;
+
         this.removeAttributes();
 
         this._layerType = layerRecord.config.layerType;
@@ -655,7 +639,6 @@ export class ConfigLayer extends BaseLayer {
 
         }
 
-        this._viewerLayer = layerRecord;
         this._id = layerRecord.config.id;
         this._name = layerRecord.config.name;
         this._catalogueUrl = layerRecord.config.catalogueUrl || '';
