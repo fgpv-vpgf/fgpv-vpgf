@@ -74,11 +74,10 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
 
             if (event.which === 27 && !mdSidePanelOpen) {
                 scope.$apply(() => {
-                    let panels = scope.self.api.panels.opened;
-
+                    let panels = scope.self.api.panels.open;
                     // on press of the escape key, close the most recently opened panel.
                     if(panels.length > 0) {
-                        panels[0].close();
+                        panels[panels.length - 1].close();
                     }
                 });
             } else if (navigationKeys.find(x => x === event.which)) {
