@@ -146,17 +146,29 @@ export class Panel {
      * Returns true if the panel container takes up the entire viewport.
      */
     get isFullScreen() {
-        return this.element && (<any>this.element).width() === this.api.innerShell.clientWidth && (<any>this.element).height() === this.api.innerShell.clientHeight;
+        return (
+            this.element &&
+            (<any>this.element).width() === this.api.innerShell.clientWidth &&
+            (<any>this.element).height() === this.api.innerShell.clientHeight
+        );
     }
 
     /**
-    * Opens the panel on the map. (For the user to see)
-    */
+     * Opens the panel on the map. (For the user to see)
+     */
     open(): void {
         if (this.isDialog) {
             this.openDialog();
         } else {
             this.openStandard();
+        }
+
+        // add the legend to the bottom of the open panel stack. This handles some edge cases, like when you
+        // close the geosearch panel.
+        if (this.id === 'mainToc') {
+            this.api.panels.open.unshift(this);
+        } else {
+            this.api.panels.open.push(this);
         }
 
         // watch for 'style' property changes on a panels element and perform underlay rule checks + offscreen checks.
@@ -181,7 +193,6 @@ export class Panel {
                     }
                 }
             });
-
         });
         this._observer.observe(this.element[0], { attributes: true, attributeFilter: ['style'] });
 
@@ -202,8 +213,19 @@ export class Panel {
         opts = opts ? opts : { destroy: false, silent: false };
 
         if (this.isClosed) {
+            this.api.panels.open.forEach((p, idx) => {
+                if(p.isClosed) {
+                    this.api.panels.open.splice(idx, 1);
+                }
+            });
+
             return;
         }
+
+        // find panel in openPanels array. If the panel was closed using esc, this should
+        // be the last index.
+        let idx = this.api.panels.open.findIndex(p => this === p);
+        this.api.panels.open.splice(idx, 1);
 
         try {
             this._observer.disconnect(); // disconnect the mutation observer
@@ -239,7 +261,7 @@ export class Panel {
         if (this.isClosed) {
             this.open();
         } else {
-            this.close({ 'destroy': false });
+            this.close({ destroy: false });
         }
     }
 
@@ -268,9 +290,9 @@ export class Panel {
     }
 
     /**
-    * Gets the id for the Panel
-    * @return {string} - the panel id
-    */
+     * Gets the id for the Panel
+     * @return {string} - the panel id
+     */
     get id(): string {
         return this.element.attr('id');
     }
@@ -321,15 +343,15 @@ export class Panel {
      * @param id A unique ID for the panel (and the DOM)
      */
     private _initElements(id: string): void {
-        this._element = $(document.createElement("div"));
+        this._element = $(document.createElement('div'));
         this.element.addClass('rv-content-pane layout-padding panel-contents');
 
-        this._body = $(document.createElement("div"));
+        this._body = $(document.createElement('div'));
         this.body.addClass(['panel-body']);
 
         this.element.attr('id', id);
         this.element.append(this.body);
-        this.element.css({ 'visibility': 'hidden' });
+        this.element.css({ visibility: 'hidden' });
         const documentFragment = document.createDocumentFragment();
         documentFragment.appendChild(this.element[0]);
 
@@ -350,17 +372,20 @@ export class Panel {
             otherPanel.isClosed ||
             this.allowUnderlay ||
             this.element.css('z-index') > otherPanel.element.css('z-index') || // only enforce an overlap if the overlapping panel has a greater than or equal z-index (on top of - not below this panel)
-            this.isFullScreen) {
+            this.isFullScreen
+        ) {
             return false;
         }
 
         const rect1 = this.element[0].getBoundingClientRect();
         const rect2 = otherPanel.element[0].getBoundingClientRect();
 
-        const overlap = !(rect1.right <= rect2.left ||
+        const overlap = !(
+            rect1.right <= rect2.left ||
             rect1.left >= rect2.right ||
             rect1.bottom <= rect2.top ||
-            rect1.top >= rect2.bottom);
+            rect1.top >= rect2.bottom
+        );
 
         if (overlap && close) {
             this.close({ closingCode: CLOSING_CODES.OVERLAID, otherPanel: otherPanel });
@@ -377,9 +402,13 @@ export class Panel {
         this.element.wrap('<div class="dialog-container"></div>');
 
         this.header.closeButton;
-        this.element.css({ 'visibility': '' });
+        this.element.css({ visibility: '' });
         this._element = this.element.parent();
-        this.element.prependTo($(this.api.innerShell).parent().parent());
+        this.element.prependTo(
+            $(this.api.innerShell)
+                .parent()
+                .parent()
+        );
 
         // position so backdrop only blocks the inner shell portion of the page.
         const innerShellDimensions = this.api.innerShell.getBoundingClientRect();
@@ -403,7 +432,7 @@ export class Panel {
      */
     private openStandard() {
         this.element.css({ 'z-index': this.isCloseable ? 14 : 10 });
-        this.element.css({ 'visibility': '' });
+        this.element.css({ visibility: '' });
 
         // this check must occur AFTER the element is placed in the DOM AND is visible.
         this.offScreenRuleCheck('Failed to open panel as all or part of it would render off the screen.');
@@ -422,7 +451,7 @@ export class Panel {
         this.allowUnderlay = true;
         this.allowOffscreen = false;
         this.reopenAfterOverlay = false;
-        this._isDialog = (panelType === PanelTypes.Dialog);
+        this._isDialog = panelType === PanelTypes.Dialog;
 
         this._style = {};
         this._initRXJS();
@@ -502,7 +531,7 @@ export enum CLOSING_CODES {
     CLOSEBTN = 'closebtn',
     CLICKEDOUTSIDE = 'clickedoutside',
     OTHER = 'other'
-};
+}
 
 export interface ClosingResponse {
     code: CLOSING_CODES;
@@ -516,8 +545,8 @@ export enum PanelTypes {
 }
 
 interface ClosingOpts {
-    destroy?: boolean,
-    silent?: boolean,
-    closingCode?: CLOSING_CODES,
-    otherPanel?: Panel
+    destroy?: boolean;
+    silent?: boolean;
+    closingCode?: CLOSING_CODES;
+    otherPanel?: Panel;
 }

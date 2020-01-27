@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 export class PanelRegistry {
     private _mapI: Map;
     private _panels: Panel[] = [];
+    private _openPanels: Panel[] = [];
     private _reopenList: Panel[] = [];
     private _panelOpening = new Subject();
     private _panelClosing = new Subject();
@@ -64,6 +65,18 @@ export class PanelRegistry {
         return this._panels;
     }
 
+    /* Returns the list of Panels that are opened, in the order of which
+     * they were opened.
+     * @return {Panel[]} list of open panels in the order of which they were opened.
+     */
+    get open(): Panel[] {
+        return this._openPanels;
+    }
+
+    /* Returns a list of open panels. The order of the panels in the list do not necessarily
+     * match the order in which they were opened.
+     * @return {Panel[]} list of open panels
+     */
     get opened() {
         return this.all.filter(p => p.isOpen);
     }
