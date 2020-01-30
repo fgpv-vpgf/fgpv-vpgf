@@ -49,7 +49,7 @@ function mdMenuItemDirectiveDecorator($delegate, $compile) {
                     if (attrs.type === 'checkbox' || attrs.type === 'radio') {
 
                         if (attrs.rvRightIcon !== 'none') {
-                            button.prepend($compile(`<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`)(scope));
+                            button.prepend($compile(`<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`)(scope).removeAttr('aria-label'));
                         }
 
                         // reverse the checkbox icon so it is icon/text and remove the ident class

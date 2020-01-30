@@ -186,7 +186,8 @@ Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Togg
 Table of Content extra menu items label,toc.label.extraMenu,Extra,1,Extra,1
 Table of Content extra menu items tootlip,toc.tooltip.extraMenu,Extra,1,Extra,1
 Table of Content metadata label,toc.label.metadata,Metadata,1,Métadonnées,1
-Table of Content metadata tootlip,toc.tooltip.metadata,Metadata,1,Métadonnées,1
+Table of Content metadata tooltip,toc.tooltip.metadata,Metadata,1,Métadonnées,1
+Table of Content more options label,toc.entry.aria.openData,More options,1,Plus d'options,1
 Table of Content query label,toc.label.query,Toggle query,1,Basculer la requête,1
 Table of Content query tootlip,toc.tooltip.query,Toggle query,1,Basculer la requête,1
 Table of Content settings label,toc.label.settings,Settings,1,Paramètres,1

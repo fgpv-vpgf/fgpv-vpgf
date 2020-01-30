@@ -436,6 +436,12 @@ TableBuilder.prototype.translations = {
                 max: 'date max'
             },
             text: 'text'
+        },
+        columnHeader: {
+            sortAsc: 'Ascending sort',
+            sortDsc: 'Descending sort',
+            reorderLeft: 'Shift column left',
+            reorderRight: 'Shift column right'
         }
     },
     'fr-CA': {
@@ -475,6 +481,12 @@ TableBuilder.prototype.translations = {
                 max: 'date max'
             },
             text: 'texte'
+        },
+        columnHeader: { // TODO: Add Official French translation
+            sortAsc: 'Tri ascendant',
+            sortDsc: 'Tri descendant',
+            reorderLeft: 'Déplacer la colonne à gauche',
+            reorderRight: 'Déplacer la colonne à droite'
         }
     }
 };
