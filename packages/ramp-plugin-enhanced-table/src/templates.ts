@@ -76,39 +76,39 @@ export const MENU_TEMPLATE = `
             <md-tooltip>{{ 'plugins.enhancedTable.menu.options' | translate }}</md-tooltip>
         </md-button>
         <md-menu-content class="rv-menu rv-dense">
-            <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" rv-right-icon="none">
+            <md-menu-item type="radio" ng-model="ctrl.maximized" value="false" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" aria-label="{{ 'plugins.enhancedTable.menu.split' | translate }}" rv-right-icon="none">
                 {{ 'plugins.enhancedTable.menu.split' | translate }}
             </md-menu-item>
-            <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)"  ng-if="!sizeDisabled" rv-right-icon="none">
+            <md-menu-item type="radio" ng-model="ctrl.maximized" value="true" ng-click="ctrl.setSize(ctrl.maximized)" ng-if="!sizeDisabled" aria-label="{{ 'plugins.enhancedTable.menu.max' | translate }}" rv-right-icon="none">
                 {{ 'plugins.enhancedTable.menu.max' | translate }}
             </md-menu-item>
             <md-menu-divider class="rv-lg"></md-menu-divider>
-            <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.filterExtentToggled()" rv-right-icon="community:filter">
+            <md-menu-item type="checkbox" ng-model="ctrl.filterByExtent" ng-click="ctrl.filterExtentToggled()" aria-label="{{ 'plugins.enhancedTable.menu.filter.extent' | translate }}" rv-right-icon="community:filter">
                 {{ 'plugins.enhancedTable.menu.filter.extent' | translate }}
             </md-menu-item>
-            <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" rv-right-icon="community:filter">
+            <md-menu-item type="checkbox" ng-model="ctrl.showFilter" ng-click="ctrl.toggleFilters()" aria-label="{{ 'plugins.enhancedTable.menu.filter.show' | translate }}" rv-right-icon="community:filter">
                 {{ 'plugins.enhancedTable.menu.filter.show' | translate }}
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
-            <md-menu-item>
+            <md-menu-item aria-label="{{ 'plugins.enhancedTable.menu.filter.textHeader' | translate }}">
                 <div class="table-control-header">
                     {{ 'plugins.enhancedTable.menu.filter.textHeader' | translate }}
                 </div>
             </md-menu-item>
-            <md-menu-item type="checkbox" ng-model="ctrl.lazyFilter" ng-click="!ctrl.showFilter || ctrl.lazyFilterToggled()" ng-disabled="!ctrl.showFilter" rv-right-icon="community:contain">
+            <md-menu-item type="checkbox" ng-model="ctrl.lazyFilter" ng-click="!ctrl.showFilter || ctrl.lazyFilterToggled()" ng-disabled="!ctrl.showFilter" aria-label="{{ 'plugins.enhancedTable.menu.filter.lazy' | translate }}" rv-right-icon="community:contain">
                 {{ 'plugins.enhancedTable.menu.filter.lazy' | translate }}
             </md-menu-item>
-            <md-menu-item type="checkbox" ng-model="ctrl.startsWithFilter" ng-click="!ctrl.showFilter || ctrl.startsWithFilterToggled()" ng-disabled="!ctrl.showFilter" rv-right-icon="community:starts-with" >
+            <md-menu-item type="checkbox" ng-model="ctrl.startsWithFilter" ng-click="!ctrl.showFilter || ctrl.startsWithFilterToggled()" ng-disabled="!ctrl.showFilter" aria-label="{{ 'plugins.enhancedTable.menu.filter.startsWith' | translate }}" rv-right-icon="community:starts-with" >
                 {{ 'plugins.enhancedTable.menu.filter.startsWith' | translate }}
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
-            <md-menu-item ng-if='ctrl.printEnabled'>
+            <md-menu-item ng-if='ctrl.printEnabled' aria-label="{{ 'plugins.enhancedTable.menu.print' | translate }}">
                 <md-button ng-click="ctrl.print()">
                     <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 'plugins.enhancedTable.menu.print' | translate }}
                 </md-button>
             </md-menu-item>
-            <md-menu-item>
+            <md-menu-item aria-label="{{ 'plugins.enhancedTable.menu.export' | translate }}">
                 <md-button ng-click="ctrl.export()">
                     <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                     {{ 'plugins.enhancedTable.menu.export' | translate }}
@@ -153,7 +153,7 @@ export const DETAILS_TEMPLATE = (oid) =>
     </button>`;
 
 export const ZOOM_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})'  md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-zoom' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}">
+    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-zoom' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}">
         <md-icon md-svg-src="action:zoom_in" aria-hidden='false'>
             <md-tooltip  md-direction="top">{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}</md-tooltip>
         </md-icon>
@@ -197,14 +197,14 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div class="column-header">
     <md-button class="custom-header-label">${displayName}</md-button>
-    <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward"></md-icon>
-    <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward"></md-icon>
+    <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortAsc' | translate }}"></md-icon>
+    <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortDsc' | translate }}"></md-icon>
     <div class="arrows"></div>
     <div class="reorder-icons">
-        <md-button class="reorder-button md-icon-button move-left" ng-disabled="min">
+        <md-button class="reorder-button md-icon-button move-left" ng-disabled="min" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderLeft' | translate }}">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_left"></md-icon>
         </md-button>
-        <md-button class="reorder-button md-icon-button move-right" ng-disabled="max">
+        <md-button class="reorder-button md-icon-button move-right" ng-disabled="max" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderRight' | translate }}">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_right"></md-icon>
         </md-button>
     </div>
