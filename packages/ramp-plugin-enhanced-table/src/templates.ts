@@ -141,8 +141,8 @@ export const MOBILE_MENU_TEMPLATE = `
 
 export const RECORD_COUNT_TEMPLATE = `
 <p class="rv-record-count" title="{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}" >
-    <span class="filterRecords" ng-if="filtered == false">{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}</span>
-    <span class="filterRecords" ng-if="filtered == true">{{ 'filter.default.label.filtered' | translate:{range: scrollRecords, total: shownRecords, max: totalRecords} }}</span>
+    <span class="filterRecords" role="status" ng-if="filtered == false">{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}</span>
+    <span class="filterRecords" role="status" ng-if="filtered == true">{{ 'filter.default.label.filtered' | translate:{range: scrollRecords, total: shownRecords, max: totalRecords} }}</span>
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>
@@ -196,7 +196,9 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div class="column-header">
-    <md-button class="custom-header-label">${displayName}</md-button>
+    <md-button class="custom-header-label">
+        <span ref="eText" role="columnheader">${displayName}</span>
+    </md-button>
     <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortAsc' | translate }}"></md-icon>
     <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortDsc' | translate }}"></md-icon>
     <div class="arrows"></div>
@@ -281,6 +283,7 @@ export const TABLE_UPDATE_TEMPLATE =
         <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
         <md-button ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
     </md-toast>`;
+
 
 export const TABLE_LOADING_TEMPLATE = (legendEntry) =>
     // hhite match parent
