@@ -196,7 +196,9 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div class="column-header">
-    <md-button class="custom-header-label">${displayName}</md-button>
+    <md-button class="custom-header-label">
+        <span ref="eText" role="columnheader">${displayName}</span>
+    </md-button>
     <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward"></md-icon>
     <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward"></md-icon>
     <div class="arrows"></div>
@@ -281,6 +283,13 @@ export const TABLE_UPDATE_TEMPLATE =
         <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
         <md-button ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
     </md-toast>`;
+
+export const TABLE_SUCCESS_TEMPLATE =
+    `<md-toast class="table-toast">
+        <span class="md-toast-text flex" role="status">{{ 'plugins.enhancedTable.menu.success' | translate }}</span>
+        <md-button ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
+    </md-toast>`;
+
 
 export const TABLE_LOADING_TEMPLATE = (legendEntry) =>
     // hhite match parent

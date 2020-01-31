@@ -8,7 +8,7 @@ import {
     MOBILE_MENU_BTN_TEMPLATE,
     RECORD_COUNT_TEMPLATE,
     APPLY_TO_MAP_TEMPLATE,
-    TABLE_UPDATE_TEMPLATE
+    TABLE_SUCCESS_TEMPLATE
 } from './templates';
 import { DetailsAndZoomButtons } from './details-and-zoom-buttons';
 import { PanelRowsManager } from './panel-rows-manager';
@@ -311,7 +311,11 @@ export class PanelManager {
                 this.panel.open();
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
+
+                this.showToast(TABLE_SUCCESS_TEMPLATE, 1000);
             };
+
+
         }
     }
 
@@ -465,13 +469,13 @@ export class PanelManager {
     angularHeader() {
         const that = this;
         this.mapApi.agControllerRegister('ToastCtrl', ['$scope', '$mdToast', '$rootElement', function ($scope, $mdToast, $rootElement) {
-            that.showToast = function () {
+            that.showToast = function (template, delay) {
                 if ($rootElement.find('.table-toast').length === 0) {
                     $mdToast.show({
-                        template: TABLE_UPDATE_TEMPLATE,
+                        template: template,
                         parent: that.panel.element[0],
                         position: 'bottom rv-flex-global',
-                        hideDelay: false,
+                        hideDelay: delay ? delay : false,
                         controller: 'ToastCtrl'
                     });
                 }

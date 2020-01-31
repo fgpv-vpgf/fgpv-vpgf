@@ -1,7 +1,7 @@
 import { GridOptions, GridApi } from 'ag-grid-community';
 import { take } from 'rxjs/internal/operators/take';
 import { PanelManager } from './panel-manager';
-import { DETAILS_TEMPLATE, ZOOM_TEMPLATE } from './templates';
+import { DETAILS_TEMPLATE, ZOOM_TEMPLATE, TABLE_UPDATE_TEMPLATE } from './templates';
 import { ConfigManager, ColumnConfigManager } from './config-manager';
 import { setUpDateFilter, setUpNumberFilter, setUpTextFilter, setUpSelectorFilter } from './custom-floating-filters';
 import { CustomHeader } from './custom-header';
@@ -240,7 +240,7 @@ export default class TableBuilder {
             const refreshInterval = this.legendBlock.proxyWrapper.layerConfig.refreshInterval;
             if (refreshInterval) {
                 this.panelManager.toastInterval = setInterval(() => {
-                    this.panelManager.showToast();
+                    this.panelManager.showToast(TABLE_UPDATE_TEMPLATE);
                 }, refreshInterval * 60000);
             }
 
@@ -417,6 +417,7 @@ TableBuilder.prototype.translations = {
             print: 'Print',
             export: 'Export',
             options: 'More options',
+            success: 'Table opened successfully',
             filter: {
                 extent: 'Filter by extent',
                 show: 'Show column filters',
@@ -456,6 +457,7 @@ TableBuilder.prototype.translations = {
             print: 'Imprimer',
             export: 'Exporter',
             options: 'Plus d’options',
+            success: 'Table ouverte avec succès',
             filter: {
                 extent: 'Filtrer par étendue',
                 show: 'Afficher les filtres',
