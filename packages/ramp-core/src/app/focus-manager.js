@@ -954,3 +954,22 @@ bodyObserver.observe(document.body, {
     attributes: false,
     childList: true
 });
+
+/**
+ * Fix Firefox behaviour where a focused element which is subsequently hidden is not blurred.
+ * 
+ * In cases such as the side menu the close button remained focused when the panel was closed. 
+ * Since this panel has a focus trap, the FM has no where to move focus and the keyboard navigation
+ * locks up.
+ * 
+ * This fix blurs the active element if its not visible allowing the FM to recover from history.
+ * 
+ */
+if (navigator.userAgent.indexOf("Firefox") > -1) {
+    $(document).on( "keyup", () => {
+        const activeElem = $(document.activeElement);
+        if (!activeElem.is(":visible")) {
+            activeElem.blur();
+        }
+    });
+}
