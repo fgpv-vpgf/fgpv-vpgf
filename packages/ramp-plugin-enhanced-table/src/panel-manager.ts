@@ -312,6 +312,8 @@ export class PanelManager {
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
             };
+
+
         }
     }
 
