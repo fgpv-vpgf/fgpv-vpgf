@@ -22,7 +22,7 @@ export function initAccessibilityListeners(panel: HTMLElement, gridBody: HTMLEle
     gridBody.addEventListener('focus', onGridTab, false);
     // Don't link last filter to first cell if using the mouse to focus grid
     gridBody.addEventListener('mousedown', onMousedown);
-    gridBody.addEventListener('mouseup', onMouseup)
+    gridBody.addEventListener('mouseup', onMouseup);
 }
 
 /**
