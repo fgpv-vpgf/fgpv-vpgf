@@ -122,7 +122,11 @@ function identifyService($q, configService, gapiService, referenceService, state
                 identifyResults.forEach(idResult => {
                     const featureList = idResult.data || [];
                     featureList.forEach(feat => {
-                        mapClickEvent._featureSubject.next(feat);
+                        mapClickEvent._featureSubject.next({
+                            layerId: idResult.layerId,
+                            layerIdx: idResult.layerIdx,
+                            ...feat
+                        });
                     });
                 });
             });
@@ -144,6 +148,8 @@ function identifyService($q, configService, gapiService, referenceService, state
                 layer: "not yet implemented",
                 event: identifyMouseEvent,
                 sessionId,
+                layerId: r.layerId,
+                layerIdx: r.layerIdx,
                 features: identifyPromise.then(() => r.data)
             }));
 

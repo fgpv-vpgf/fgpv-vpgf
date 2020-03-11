@@ -125,6 +125,8 @@ class WmsRecord extends layerRecord.LayerRecord {
         }
 
         const identifyResult = new shared.IdentifyResult(this.getProxy());
+        identifyResult.layerId = this.layerId;
+        identifyResult.layerIdx = parseInt(this._defaultFC);
 
         const identifyPromise = this._apiRef.layer.ogc
             .getFeatureInfo(
@@ -134,8 +136,6 @@ class WmsRecord extends layerRecord.LayerRecord {
                 this.config.featureInfoMimeType)
             .then(data => {
                 identifyResult.isLoading = false;
-                identifyResult.layerId = this.layerId;
-                identifyResult.layerIdx = parseInt(this._defaultFC);
 
                 // TODO: check for French service
                 // check if a result is returned by the service. If not, do not add to the array of data

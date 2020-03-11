@@ -353,6 +353,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
 
         const identifyResult = new shared.IdentifyResult(this.getProxy());
+        identifyResult.layerId = this.layerId;
+        identifyResult.layerIdx = parseInt(this._defaultFC);
         const tolerance = opts.tolerance || this.clickTolerance;
 
         // run a spatial query
@@ -445,8 +447,6 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 });
 
                 identifyResult.isLoading = false;
-                identifyResult.layerId = this.layerId;
-                identifyResult.layerIdx = parseInt(this._defaultFC);
             });
 
         return { identifyResults: [identifyResult], identifyPromise };
