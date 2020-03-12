@@ -1,7 +1,7 @@
 {
     "name": "ramp-core",
     "private": true,
-    "version": "3.3.0",
+    "version": "3.3.1",
     "description": "RAMP2 Viewer",
     "repository": "https://github.com/fgpv-vpgf/fgpv-vpgf",
     "license": "MIT",

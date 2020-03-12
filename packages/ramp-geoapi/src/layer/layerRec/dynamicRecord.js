@@ -704,6 +704,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
             let childProxy = this.getChildProxy(leafIndex);
             opts.layerDefinitions[leafIndex] = childProxy.filter.getCombinedSql();
             const identifyResult = new shared.IdentifyResult(childProxy);
+            identifyResult.layerId = this.layerId;
+            identifyResult.layerIdx = leafIndex;
             identifyResults[leafIndex] = identifyResult;
         });
 
@@ -754,8 +756,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
                         }
 
                         identifyResult.isLoading = false;
-                        identifyResult.layerId = this.layerId;
-                        identifyResult.layerIdx = ele.layerId;
                     });
                 });
 
