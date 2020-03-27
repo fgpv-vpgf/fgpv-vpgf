@@ -712,6 +712,10 @@ export interface TileSchemaNode {
       | "data"
       | "styles"
     )[];
+    /**
+     * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+     */
+    enableStructuredDelete?: boolean;
     state?: InitialLayerSettings;
     details?: {
       /**
@@ -883,6 +887,10 @@ export interface BasicLayerNode {
     | "data"
     | "styles"
   )[];
+  /**
+   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+   */
+  enableStructuredDelete?: boolean;
   state?: InitialLayerSettings;
   details?: {
     /**
@@ -912,6 +920,10 @@ export interface FeatureLayerNode {
    * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
    */
   tooltipField?: string;
+  /**
+   * A comma separated list of attribute names that should be requested on query.
+   */
+  outfields?: string;
   /**
    * The service endpoint of the layer.  It should match the type provided in layerType.
    */
@@ -961,6 +973,10 @@ export interface FeatureLayerNode {
     | "data"
     | "styles"
   )[];
+  /**
+   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+   */
+  enableStructuredDelete?: boolean;
   state?: InitialLayerSettings;
   /**
    * Settings for the table
@@ -1412,6 +1428,10 @@ export interface WmsLayerNode {
     | "data"
     | "styles"
   )[];
+  /**
+   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+   */
+  enableStructuredDelete?: boolean;
   state?: InitialLayerSettings;
   details?: {
     /**
@@ -1507,6 +1527,10 @@ export interface DynamicLayerNode {
     | "data"
     | "styles"
   )[];
+  /**
+   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+   */
+  enableStructuredDelete?: boolean;
   state?: InitialLayerSettings;
   /**
    * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided

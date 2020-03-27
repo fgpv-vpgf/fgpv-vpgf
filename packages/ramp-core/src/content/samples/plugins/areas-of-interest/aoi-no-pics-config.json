@@ -518,7 +518,7 @@
         ]
     },
     "plugins": {
-        "AreasOfInterest": {
+        "areasOfInterest": {
             "areas": [
                 {
                     "title-en-CA": "Reservoir Manicougan, Quebec, Canada",

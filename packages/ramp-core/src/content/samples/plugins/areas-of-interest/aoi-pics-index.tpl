@@ -48,7 +48,7 @@
             is="rv-map"
             rv-config="aoi-pics-config.json"
             rv-langs='["en-CA", "fr-CA"]'
-            rv-plugins="AreasOfInterest" >
+            rv-plugins="areasOfInterest" >
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

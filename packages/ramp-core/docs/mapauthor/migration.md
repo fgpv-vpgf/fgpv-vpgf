@@ -29,7 +29,7 @@ To continue to use the deprecated v2 API you'll need to add a script called **le
 
 ## Plugins
 
-The deprecated v2 API `registerPlugin` function has been removed, so you'll need to perform a few simple changes outlined below if you'd like to continue using the **BackToCart**, **CoorInfo**, or **AreaOfInterest** plugins.
+The deprecated v2 API `registerPlugin` function has been removed, so you'll need to perform a few simple changes outlined below if you'd like to continue using the **BackToCart**, **CoordInfo**, or **AreaOfInterest** plugins.
 
 ### Step 1: Add plugin script to host page header
 

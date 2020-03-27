@@ -33,7 +33,7 @@
             is="rv-map"
             rv-config="coordinate-info-config.json"
             rv-langs='["en-CA", "fr-CA"]'
-            rv-plugins="CoordinateInfo" >
+            rv-plugins="coordInfo" >
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 

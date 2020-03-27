@@ -38,7 +38,7 @@
             data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/"
             data-rv-keys=""
             data-rv-wait="true"
-            rv-plugins="BackToCart" >
+            rv-plugins="backToCart" >
          <noscript>
             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
