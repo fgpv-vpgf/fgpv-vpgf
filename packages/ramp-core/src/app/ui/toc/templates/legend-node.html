@@ -3,9 +3,7 @@
     ng-mouseover="self.block.symbologyStack.fannedOut = true"
     ng-mouseleave="self.block.symbologyStack.fannedOut = false">
 
-    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}">{{ self.block.name }}</md-tooltip>
-
-    <rv-legend-control block="self.block" template="body" name="data"></rv-legend-control>
+    <rv-legend-control block="self.block" template="body" node="self" name="data"></rv-legend-control>
 </div>
 
 <rv-symbology-stack
