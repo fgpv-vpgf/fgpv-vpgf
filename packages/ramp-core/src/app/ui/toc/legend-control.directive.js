@@ -40,6 +40,7 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
         templateUrl: (elm, attr) => templateUrl[attr.template || 'button'],
         scope: {
             block: '=',
+            node: '=',
             valueParentBlock: '=',
             name: '@'
         },
