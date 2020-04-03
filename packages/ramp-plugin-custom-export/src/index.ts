@@ -12,7 +12,7 @@ interface ExportPluginOptions {
 export default class CustomExport {
     feature: string = 'export';
 
-    // A store of the instances of areasOfInterest, 1 per map
+    // A store of the instances of CustomExport, 1 per map
     static instances: { [id: string]: CustomExport } = {};
 
     preInit() {

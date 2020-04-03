@@ -217,7 +217,7 @@ export default class CoordInfo {
             this.panel.element.addClass('mobile-fullscreen');
 
             let closeBtn = this.panel.header.closeButton;
-            this.panel.header.title = `plugins.CoordinateInfo.coordButtonLabel`;
+            this.panel.header.title = `plugins.coordInfo.coordButtonLabel`;
         } else {
             this.panel.close();
         }

@@ -90,7 +90,7 @@ export default class AreasOfInterest {
         });
 
         let closeBtn = this.panel.header.closeButton;
-        this.panel.header.title = 'plugins.AreasOfInterest.title';
+        this.panel.header.title = 'plugins.areasOfInterest.title';
 
         this.panel.body = bodyElement;
     }
