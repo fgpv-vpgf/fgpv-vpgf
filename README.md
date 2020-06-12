@@ -101,7 +101,7 @@ Now that you have the required files on your page we should add the map element.
 
 A map should now load on your page. Theres much more you can do with RAMP, a good place to start (I'm mentioning it again!) is the [map author guide](#map-author-guide)
 
-#### [Some samples](http://fgpv-app.azureedge.net/?prefix=demo/tags/v3.3.0/dist/samples/)
+#### [Some samples](http://fgpv-app.azureedge.net/?prefix=demo/tags/v3.3.1/dist/samples/)
 
 ### Support
 
