@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # login into Azure as a service-principal using encrypted credentials
-# following repos are allowed: 
+# following repos are allowed:
 # fgpv-vpgf/fgpv-vpgf
 # aleksueir/fgpv-vpgf
 # alyec/fgpv-vpgf
+# an-w/fgpv-vpgf
+# avocadoes/fgpv-vpgf
 # dane-thomas/fgpv-vpgf
 # JahidAhmed/fgpv-vpgf
 # james-rae/fgpv-vpgf
