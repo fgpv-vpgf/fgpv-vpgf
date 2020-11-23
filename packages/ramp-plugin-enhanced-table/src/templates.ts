@@ -47,7 +47,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 <md-menu-bar class="table-control" ng-controller="ColumnVisibilityMenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
-            aria-label="Menu"
+            aria-label="{{ 'plugins.enhancedTable.table.hideColumns' | translate }}"
             class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
             <md-tooltip>{{ 'plugins.enhancedTable.table.hideColumns' | translate }}</md-tooltip>
@@ -69,7 +69,7 @@ export const MENU_TEMPLATE = `
 <md-menu-bar class="table-control" ng-controller="MenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
-            aria-label="Menu"
+            aria-label="{{ 'plugins.enhancedTable.menu.options' | translate }}"
             class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
@@ -160,19 +160,17 @@ export const ZOOM_TEMPLATE = (oid) =>
     </button>`;
 
 export const NUMBER_FILTER_TEMPLATE = (value, isStatic) => {
-    const minVal = (value === undefined) ? '' : (value.split(',')[0] !== 'null') ? parseInt(value.split(',')[0]) : '';
-    const maxVal = (value === undefined) ? '' : (value.split(',')[1] !== 'null') ? parseInt(value.split(',')[1]) : '';
+    const minVal = value === undefined ? '' : value.split(',')[0] !== 'null' ? parseInt(value.split(',')[0]) : '';
+    const maxVal = value === undefined ? '' : value.split(',')[1] !== 'null' ? parseInt(value.split(',')[1]) : '';
     if (isStatic === false) {
         return `<input class="rv-min" style="width:50%" type="text" placeholder="min" value='${minVal}'/>
          <input class="rv-max" style="width:50%" type="text" placeholder="max" value='${maxVal}'/>`;
     }
     return `<input class="rv-min" style="width:45%; opacity: 0.4" type="text" placeholder="min" value='${minVal}' disabled/>
          <input class="rv-max" style="width:45%; opacity: 0.4" type="text" placeholder="max" value='${maxVal}' disabled/>`;
-
-}
+};
 
 export const DATE_FILTER_TEMPLATE = (value, isStatic) => {
-
     if (isStatic === true) {
         return `<span>
                  <md-datepicker md-placeholder="{{ 'plugins.enhancedTable.columnFilters.date.min' | translate }}" ng-model='min' ng-change="minChanged()" ng-disabled='true' style='opacity: 0.4'></md-datepicker>
@@ -183,15 +181,15 @@ export const DATE_FILTER_TEMPLATE = (value, isStatic) => {
                  <md-datepicker md-placeholder="{{ 'plugins.enhancedTable.columnFilters.date.min' | translate }}" ng-model='min' ng-change="minChanged()"></md-datepicker>
                  <md-datepicker md-placeholder="{{ 'plugins.enhancedTable.columnFilters.date.max' | translate }}" ng-model='max' ng-change="maxChanged()"></md-datepicker>
              </span>`;
-}
+};
 
 export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
-    value = (value === undefined) ? '' : value;
+    value = value === undefined ? '' : value;
 
     if (isStatic) {
-        return `<input class='rv-input' type="text" placeholder="{{ 'plugins.enhancedTable.columnFilters.text' | translate }}"' disabled style='opacity: 0.4' value='${value}'/>`
+        return `<input class='rv-input' type="text" placeholder="{{ 'plugins.enhancedTable.columnFilters.text' | translate }}"' disabled style='opacity: 0.4' value='${value}'/>`;
     }
-    return `<input class='rv-input' ng-model='input' ng-change='inputChanged()' type="text" placeholder="{{ 'plugins.enhancedTable.columnFilters.text' | translate }}"' value='${value}'/>`
+    return `<input class='rv-input' ng-model='input' ng-change='inputChanged()' type="text" placeholder="{{ 'plugins.enhancedTable.columnFilters.text' | translate }}"' value='${value}'/>`;
 };
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
@@ -223,14 +221,13 @@ export const SELECTOR_FILTER_TEMPLATE = (value, isStatic) => {
                          <md-option ng-value="option" ng-repeat="option in options">{{ option }}</md-option>
                      </md-select>`;
     }
-}
+};
 
 export const PRINT_TABLE = (title, cols, rws) => {
-
     // make headers with the column names of the currently displayed columns
     let headers = ``;
-    const columnNames = Object.keys(cols).map(column => cols[column]);
-    columnNames.forEach(columnName => {
+    const columnNames = Object.keys(cols).map((column) => cols[column]);
+    columnNames.forEach((columnName) => {
         if (columnName !== 'SHAPE' && columnName !== ' ' && columnName !== '') {
             headers += `<th style='width:200%; padding: 5px; border-bottom: 2px solid #000000'><div class='cell'>${columnName}</div></th>`;
         }
@@ -240,12 +237,16 @@ export const PRINT_TABLE = (title, cols, rws) => {
 
     // make rows
     // make sure row attributes are only pushed for columns that are currently displayed.
-    const rows = `<tbody>${rws.map((rowAttributes: any) => {
-        let eachRow = Object.keys(cols).map(attribute => rowAttributes.data[attribute]);
-        return `<tr>${eachRow.map((r: any) => {
-            return `<td><div class='cell'>${r}</div></td>`;
-        }).join('')}</tr>`;
-    }).join('')}</tbody>`;
+    const rows = `<tbody>${rws
+        .map((rowAttributes: any) => {
+            let eachRow = Object.keys(cols).map((attribute) => rowAttributes.data[attribute]);
+            return `<tr>${eachRow
+                .map((r: any) => {
+                    return `<td><div class='cell'>${r}</div></td>`;
+                })
+                .join('')}</tr>`;
+        })
+        .join('')}</tbody>`;
 
     // return formatted HTML table
     return `<head>
@@ -275,15 +276,13 @@ export const PRINT_TABLE = (title, cols, rws) => {
                     <table>${columns}${rows}</table>
                 </div>
             </body>`;
-}
+};
 
-export const TABLE_UPDATE_TEMPLATE =
-    `<md-toast class="table-toast">
+export const TABLE_UPDATE_TEMPLATE = `<md-toast class="table-toast">
         <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
         <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
         <md-button ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
     </md-toast>`;
-
 
 export const TABLE_LOADING_TEMPLATE = (legendEntry) =>
     // hhite match parent
@@ -295,6 +294,8 @@ export const TABLE_LOADING_TEMPLATE = (legendEntry) =>
                 </svg>
             <span class="rv-splash-count-total">${legendEntry.featureCount}</span>
         </div>
-        <span class="rv-splash-message md-caption">{{ ${Math.floor(legendEntry.loadedFeatureCount)} < ${legendEntry.featureCount} ? 'table.splash.loadingdata' : 'table.splash.buildingtable' | translate }} </span>
+        <span class="rv-splash-message md-caption">{{ ${Math.floor(legendEntry.loadedFeatureCount)} < ${
+        legendEntry.featureCount
+    } ? 'table.splash.loadingdata' : 'table.splash.buildingtable' | translate }} </span>
         <md-progress-linear class="rv-progress-top" md-mode="indeterminate" ng-show="true"></md-progress-linear>
     </div>`;
