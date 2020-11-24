@@ -12,6 +12,21 @@
  */
 angular.module('app.ui').factory('LegendElementFactory', LegendElementFactory);
 
+/**
+ * Adds a focus manager link between the currently focused element in the legend (data table button, setting button, etc.) and the first
+ * focusable element contained in the provided jQuery selector.
+ *
+ * Keyboard navigation is improved as the next tab press brings them to the action content. #WCAG
+ *
+ * @param { string } selector the jQuery string selector to set as the target link
+ */
+function setLink(selector) {
+    // in case selector is not yet available (async op or animation transition) we use a timeOut.
+    setTimeout(() => {
+        $.link($(selector));
+    }, 500);
+}
+
 // eslint-disable-next-line max-statements
 function LegendElementFactory(
     $translate,
@@ -301,6 +316,7 @@ function LegendElementFactory(
 
         action() {
             tocService.toggleMetadata(this.block);
+            setLink('#sideMetadata');
         }
     }
 
@@ -320,6 +336,7 @@ function LegendElementFactory(
 
         action() {
             tocService.toggleSettings(this.block);
+            setLink('#sideSettings');
         }
     }
 
@@ -418,6 +435,7 @@ function LegendElementFactory(
 
         _debouncedAction = debounceService.registerDebounce(() => {
             tocService.toggleLayerTablePanel(this.block);
+            setLink('#enhancedTable');
         }, 300);
     }
 
