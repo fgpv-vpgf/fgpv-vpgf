@@ -663,6 +663,8 @@ function onKeydown(event) {
         // set viewer inactive but allow tab action to be handled by the browser
         if (event.which === 9 && keys[27]) { // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
+            // Fixes an issue where keyup is not called in some cases causing focus manager to have an incorrect pressed key state
+            delete keys[27];
 
         } else if (event.which === 9 ||
             ((event.which === 37 || event.which === 39 || event.which === 13) &&
