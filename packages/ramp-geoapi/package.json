@@ -12,7 +12,7 @@
         "csv2geojson": "5.0.2",
         "dgeni": "^0.4.7",
         "dgeni-packages": "^0.19.1",
-        "docdash": "https://github.com/alyec/docdash#master",
+        "docdash": "github:alyec/docdash#master",
         "jasmine": "^2.6.0",
         "jsdoc": "^3.4.0",
         "js-sql-parser": "1.0.7",
@@ -20,11 +20,11 @@
         "proj4": "^2.4.3",
         "rcolor": "1.0.1",
         "rgbcolor": "1.0.1",
-        "shpjs": "https://github.com/fgpv-vpgf/shapefile-js.git#v3.6.0",
+        "shpjs": "github:fgpv-vpgf/shapefile-js#v3.6.0",
         "svg.js": "2.6.1",
         "terraformer": "~1.0.8",
         "terraformer-arcgis-parser": "~1.0.5",
-        "terraformer-proj4js": "https://github.com/RAMP-PCAR/terraformer-proj4js.git#v0.2.2",
+        "terraformer-proj4js": "github:RAMP-PCAR/terraformer-proj4js#v0.2.2",
         "text-encoding": "0.6.4"
     },
     "scripts": {
