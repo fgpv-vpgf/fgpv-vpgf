@@ -611,9 +611,8 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             if (totalCount === -1) {
                 // get the total number of records
                 newQueryMap = {
-                    request: 'GetFeature',
-                    resultType: 'hits',
-                    limit: '0'
+                    f: 'json',
+                    resulttype: 'hits'
                 };
             }
 
