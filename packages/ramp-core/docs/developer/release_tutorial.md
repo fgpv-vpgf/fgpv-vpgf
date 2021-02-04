@@ -6,6 +6,8 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
 
 ## Plugins Release
 
+Note: with the monorepo, this section is no longer relevant.
+
 1. Change directory to your plugins repository on your machine.
 
 2. Checkout the existing branch that mirrors the upstream develop branch (Let's call it local develop).
@@ -31,6 +33,8 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
 5. The local branch will auto update with a new tag and changes to `package.json`. However the commit will not end up on any of the remote branches. It should be merged into the develop or master branch depending on the release.
 
 ## geoApi Release
+
+Note: with the monorepo, this section is no longer relevant.
 
 1. Change directory to your geoApi repository on your machine.
 
@@ -88,7 +92,7 @@ Before you start this tutorial.  Please setup remotes `origin` and `upstream` th
         git checkout [-b] develop
     ```
 
-3. Change the version tag and geoApi tag in `package.json` and `package-lock.json` to the appropriate versions
+3. Change the version tag and geoApi tag in `package.json` and `package-lock.json` to the appropriate versions. Note geoapi and plugins versions are no longer relevant.
 
     ```json
         "version": [version],
