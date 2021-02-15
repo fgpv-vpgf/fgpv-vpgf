@@ -8,12 +8,15 @@
     rv-details {
         @include include-size(rv-sm) {
             //position: fixed;
-            position: absolute;
-            left: 0;
             // top: $toolbar-height + 1;
-            top: 0;
-            right: 0;
-            bottom: 0;
+
+            // removing these five, as they were causing details body to cover details header in mobile view
+            // position: absolute;
+            // left: 0;
+            // top: 0;
+            // right: 0;
+            // bottom: 0;
+
             z-index: 3;
         }
     }
