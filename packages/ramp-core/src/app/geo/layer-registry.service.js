@@ -979,6 +979,18 @@ function layerRegistryFactory(
      * @param {LayerRecord} layerRecord a layer record to use when creating ConfigLayer
      */
     function _createApiLayer(layerRecord) {
+        // there is a race condition where a fast layer can requst the api wrapper
+        // before the mapapi variable has been set. this avoids that.
+        const raceChecker = setInterval(() => {
+            if (mapApi) {
+                clearInterval(raceChecker);
+                _createApiLayerAction(layerRecord);
+            }
+        }, 50);
+    }
+
+    // the guts of _createApiLayer that happen after the race condition is resolved.
+    function _createApiLayerAction(layerRecord) {
         let apiLayer;
         const createdLayers = [];
 
