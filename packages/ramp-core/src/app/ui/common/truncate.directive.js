@@ -114,7 +114,7 @@ function rvTruncateTitle(graphicsService) {
 
             el.empty().append(`
                 <span class="rv-truncate-title-left">${left}</span>
-                <span calss="rv-truncate-title-right">${right}</span>
+                <span class="rv-truncate-title-right">${right}</span>
             `);
 
             scope.self.isActive = right !== '';
