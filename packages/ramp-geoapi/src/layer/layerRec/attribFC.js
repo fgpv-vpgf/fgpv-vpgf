@@ -429,9 +429,17 @@ class AttribFC extends basicFC.BasicFC {
             // attempt to get geometry from fastest source.
             if (gCache[objectId]) {
                 resultFeat.geometry = gCache[objectId];
-            } else if (layerObj.graphics) {
+            } else if (layerObj.graphics && nonPoint) {
                 // it is a feature layer. we can attempt to extract info from it.
                 // but remember the feature may not exist on the client currently
+                // NOTE: sometime after v3.22 of the ESRI API, point layers began showing a degradation
+                //       in accuracy when rendered locally at world-level scales. Unsure why (pixel alignment?)
+                //       but the result meant a point cached at world-level would not be in the correct spot
+                //       when drawn at ground-level.
+                //       Attempted to add an LOD cache for points (similar to lines & polys) but the zoom
+                //       was also impacted; the map would zoom and center on the inaccurate location.
+                //       So we are just not doing local graphic hunting for point layers. Will grab from the server
+                //       and cache that geometry.
                 if (!localGraphic) {
                     // wasn't fetched during attribute section. do it now
                     localGraphic = huntLocalGraphic(objectId);
