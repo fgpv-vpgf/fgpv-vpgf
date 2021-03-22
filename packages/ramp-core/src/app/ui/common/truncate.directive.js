@@ -112,10 +112,7 @@ function rvTruncateTitle(graphicsService) {
         function update() {
             const [left, right] = splitString(string, el.width() - 10); // 10 accounts for letter spacing
 
-            el.empty().append(`
-                <span class="rv-truncate-title-left">${left}</span>
-                <span calss="rv-truncate-title-right">${right}</span>
-            `);
+            el.empty().append(`<span class="rv-truncate-title-left">${left}</span><span class="rv-truncate-title-right">${right}</span>`);
 
             scope.self.isActive = right !== '';
         }

@@ -62,7 +62,7 @@ function FakePoint() {}
 // A class that mocks the Symbol class from Esri
 function FakeSymbol() {}
 
-// A calss that mocks the Geometry class from Esri
+// A class that mocks the Geometry class from Esri
 function FakeGeometry() {}
 
 // A class that mocks the Layer class from Esri
