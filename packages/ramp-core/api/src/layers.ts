@@ -394,6 +394,12 @@ export class BaseLayer {
 
     /** Removes the attributes with the given key, or all attributes if key is undefined. */
     removeAttributes(attributeKey?: number): void {
+        // If the layer is not ESRI do not delete the attributes.
+        // File based/WFS layers will not reload attributes so deleting them will break the layer.
+        if (this._viewerLayer.dataSource() !== 'esri') {
+            return;
+        }
+
         if (typeof attributeKey !== 'undefined') {
             if (this instanceof ConfigLayer) {
                 console.warn('Single key removal of attributes is not recommended for config layers due to the potential for synchronization issues');
