@@ -349,7 +349,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
 
         // load first config, other configs will be loaded as needed
         configList[0].promise.then(config => {
-            let dojoUrl = (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.31/init.js';
+            let dojoUrl = (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.35/init.js';
             // initialize gapi and store a return promise
             if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== "") {
                 dojoUrl = config.services._esriLibUrl;
