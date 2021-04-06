@@ -80,6 +80,7 @@ dependencies:
   rxjs: 6.4.0
   screenfull: 4.0.1
   shpjs: github.com/fgpv-vpgf/shapefile-js/dd6b31899dee1d70f106b3725430f2eb5f0b350c
+  source-map-loader: 0.2.3
   style-loader: 1.0.0
   svg.js: 2.6.1
   svg.textflow.js: github.com/fgpv-vpgf/svg.textflow.js/ae147794bb3cc45a388d0c2bcddf37963c344c8f
@@ -1629,6 +1630,21 @@ packages:
       loader-utils: 1.4.0
       mkdirp: 0.5.5
       webpack: 4.39.1_webpack@4.39.1
+    dev: false
+    engines:
+      node: '>=4'
+    peerDependencies:
+      babel-core: '6'
+      webpack: 2 || 3 || 4
+    resolution:
+      integrity: sha512-/hbyEvPzBJuGpk9o80R0ZyTej6heEOr59GoEUtn8qFKbnx4cJm9FWES6J/iv644sYgrtVw9JJQkjaLW/bqb5gw==
+  /babel-loader/7.1.4_babel-core@6.26.3+webpack@4.41.3:
+    dependencies:
+      babel-core: 6.26.3
+      find-cache-dir: 1.0.0
+      loader-utils: 1.4.0
+      mkdirp: 0.5.5
+      webpack: 4.41.3_webpack@4.41.3
     dev: false
     engines:
       node: '>=4'
@@ -11096,6 +11112,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-0Vb/54WJ6k5v8sSWN09S0ora+Hnr+cX40r9F170nT+mSkaxltoE/7R3OrIdBSUv1OoiobH1QoWQbCnAO+e8J1A==
+  /serialize-javascript/4.0.0:
+    dependencies:
+      randombytes: 2.1.0
+    dev: false
+    resolution:
+      integrity: sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw==
   /serve-index/1.9.1:
     dependencies:
       accepts: 1.3.7
@@ -11341,6 +11363,14 @@ packages:
     dev: false
     resolution:
       integrity: sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
+  /source-map-loader/0.2.3:
+    dependencies:
+      async: 2.6.3
+      loader-utils: 0.2.17
+      source-map: 0.6.1
+    dev: false
+    resolution:
+      integrity: sha512-MYbFX9DYxmTQFfy2v8FC1XZwpwHKYxg3SK8Wb7VPBKuhDjz8gi9re2819MsG4p49HDyiOSUKlmZ+nQBArW5CGw==
   /source-map-resolve/0.5.3:
     dependencies:
       atob: 2.1.2
@@ -11979,6 +12009,25 @@ packages:
       webpack: ^4.0.0
     resolution:
       integrity: sha512-ZXmmfiwtCLfz8WKZyYUuuHf3dMYEjg8NrjHMb0JqHVHVOSkzp3cW2/XG1fP3tRhqEqSzMwzzRQGtAPbs4Cncxg==
+  /terser-webpack-plugin/1.4.5_webpack@4.41.3:
+    dependencies:
+      cacache: 12.0.4
+      find-cache-dir: 2.1.0
+      is-wsl: 1.1.0
+      schema-utils: 1.0.0
+      serialize-javascript: 4.0.0
+      source-map: 0.6.1
+      terser: 4.8.0
+      webpack: 4.41.3_webpack@4.41.3
+      webpack-sources: 1.4.3
+      worker-farm: 1.7.0
+    dev: false
+    engines:
+      node: '>= 6.9.0'
+    peerDependencies:
+      webpack: ^4.0.0
+    resolution:
+      integrity: sha512-04Rfe496lN8EYruwi6oPQkG0vo8C+HT49X687FZnpPF0qMAIHONI6HEXYPKDOE8e5HjXTyKfqRd/agHtH0kOtw==
   /terser/4.8.0:
     dependencies:
       commander: 2.20.3
@@ -13087,6 +13136,28 @@ packages:
       webpack: ^4.x.x
     resolution:
       integrity: sha512-Cnqo7CeqeSvC6PTdts+dywNi5CRlIPbLx1AoUPK2T6vC1YAugMG3IOoO9DmEscd+Dghw7uRlnzV1KwOe5IrtgQ==
+  /webpack-cli/3.3.10_webpack@4.41.3:
+    dependencies:
+      chalk: 2.4.2
+      cross-spawn: 6.0.5
+      enhanced-resolve: 4.1.0
+      findup-sync: 3.0.0
+      global-modules: 2.0.0
+      import-local: 2.0.0
+      interpret: 1.2.0
+      loader-utils: 1.2.3
+      supports-color: 6.1.0
+      v8-compile-cache: 2.0.3
+      webpack: 4.41.3_webpack@4.41.3
+      yargs: 13.2.4
+    dev: false
+    engines:
+      node: '>=6.11.5'
+    hasBin: true
+    peerDependencies:
+      webpack: 4.x.x
+    resolution:
+      integrity: sha512-u1dgND9+MXaEt74sJR4PR7qkPxXUSQ0RXYq8x1L6Jg1MYVEmGPrH6Ah6C4arD4r0J1P5HKjRqpab36k0eIzPqg==
   /webpack-cli/3.3.6_webpack@4.39.1:
     dependencies:
       chalk: 2.4.2
@@ -13349,6 +13420,39 @@ packages:
       webpack: '*'
     resolution:
       integrity: sha512-/LAb2TJ2z+eVwisldp3dqTEoNhzp/TLCZlmZm3GGGAlnfIWDgOEE758j/9atklNLfRyhKbZTCOIoPqLJXeBLbQ==
+  /webpack/4.41.3_webpack@4.41.3:
+    dependencies:
+      '@webassemblyjs/ast': 1.8.5
+      '@webassemblyjs/helper-module-context': 1.8.5
+      '@webassemblyjs/wasm-edit': 1.8.5
+      '@webassemblyjs/wasm-parser': 1.8.5
+      acorn: 6.4.2
+      ajv: 6.12.6
+      ajv-keywords: 3.5.2_ajv@6.12.6
+      chrome-trace-event: 1.0.2
+      enhanced-resolve: 4.5.0
+      eslint-scope: 4.0.3
+      json-parse-better-errors: 1.0.2
+      loader-runner: 2.4.0
+      loader-utils: 1.4.0
+      memory-fs: 0.4.1
+      micromatch: 3.1.10
+      mkdirp: 0.5.5
+      neo-async: 2.6.2
+      node-libs-browser: 2.2.1
+      schema-utils: 1.0.0
+      tapable: 1.1.3
+      terser-webpack-plugin: 1.4.5_webpack@4.41.3
+      watchpack: 1.7.5
+      webpack-sources: 1.4.3
+    dev: false
+    engines:
+      node: '>=6.11.5'
+    hasBin: true
+    peerDependencies:
+      webpack: '*'
+    resolution:
+      integrity: sha512-EcNzP9jGoxpQAXq1VOoTet0ik7/VVU1MovIfcUSAjLowc7GhcQku/sOXALvq5nPpSei2HF6VRhibeJSC3i/Law==
   /websocket-driver/0.7.4:
     dependencies:
       http-parser-js: 0.5.3
@@ -13914,6 +14018,10 @@ packages:
   'file:projects/ramp-geoapi.tgz':
     dependencies:
       babel-cli: 6.26.0
+      babel-core: 6.26.3
+      babel-eslint: 8.2.3
+      babel-loader: 7.1.4_babel-core@6.26.3+webpack@4.41.3
+      babel-plugin-transform-runtime: 6.23.0
       babel-preset-env: 1.6.1
       babel-preset-latest: 6.24.1
       babel-preset-stage-2: 6.24.1
@@ -13930,15 +14038,18 @@ packages:
       rcolor: 1.0.1
       rgbcolor: 1.0.1
       shpjs: github.com/fgpv-vpgf/shapefile-js/dd6b31899dee1d70f106b3725430f2eb5f0b350c
+      source-map-loader: 0.2.3
       svg.js: 2.6.1
       terraformer: 1.0.12
       terraformer-arcgis-parser: 1.0.5
       terraformer-proj4js: github.com/RAMP-PCAR/terraformer-proj4js/246cf37a3398494f34d40a1eb603d4de0f1e6e2f
       text-encoding: 0.6.4
+      webpack: 4.41.3_webpack@4.41.3
+      webpack-cli: 3.3.10_webpack@4.41.3
     dev: false
     name: '@rush-temp/ramp-geoapi'
     resolution:
-      integrity: sha512-Xc1pSbQcAgQ0DfxdICJ7X93NZiUvOqu9+HV9a+nCkVebt5p0Oz/1pjJZd+rjXTYbwDPQ2OIn8XNVjEl9M8abug==
+      integrity: sha512-NDazLtzUmGvKXuAdknHC+DqVBZ8H3RnCrUgfSNkUx9M7WEbaNlV0trYGaBr85cRJhAX09YkhVMs0x576/nIwGw==
       tarball: 'file:projects/ramp-geoapi.tgz'
     version: 0.0.0
   'file:projects/ramp-geosearch.tgz':
@@ -14045,18 +14156,21 @@ packages:
     dev: false
     name: terraformer-proj4js
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/RAMP-PCAR/terraformer-proj4js/tar.gz/246cf37a3398494f34d40a1eb603d4de0f1e6e2f'
     version: 0.2.2
   github.com/alyec/docdash/0ac9d0dd482a9b65aa0885d5279fafc566a91f9b:
     dev: false
     name: docdash
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/alyec/docdash/tar.gz/0ac9d0dd482a9b65aa0885d5279fafc566a91f9b'
     version: 0.4.0
   github.com/dotJEM/angular-tree/1819b5150c3da8523629760667a1112cbb18a316:
     dev: false
     name: dotjem-angular-tree
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/dotJEM/angular-tree/tar.gz/1819b5150c3da8523629760667a1112cbb18a316'
     version: 0.2.3
   github.com/fgpv-vpgf/colourpicker/2464e48ac0f373055dcdbe2fb0f8b3ab72244fef:
@@ -14065,6 +14179,7 @@ packages:
     dev: false
     name: colourpicker
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/fgpv-vpgf/colourpicker/tar.gz/2464e48ac0f373055dcdbe2fb0f8b3ab72244fef'
     version: 1.0.0
   github.com/fgpv-vpgf/html2canvas/03944f351611868131f907b32c3a0a59b62803f7:
@@ -14075,6 +14190,7 @@ packages:
       node: '>=4.0.0'
     name: html2canvas
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/fgpv-vpgf/html2canvas/tar.gz/03944f351611868131f907b32c3a0a59b62803f7'
     version: 1.0.0-rc.1
   github.com/fgpv-vpgf/shapefile-js/dd6b31899dee1d70f106b3725430f2eb5f0b350c:
@@ -14087,14 +14203,17 @@ packages:
     dev: false
     name: shpjs
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/fgpv-vpgf/shapefile-js/tar.gz/dd6b31899dee1d70f106b3725430f2eb5f0b350c'
     version: 3.6.0
   github.com/fgpv-vpgf/svg.textflow.js/ae147794bb3cc45a388d0c2bcddf37963c344c8f:
     dev: false
     name: svg.textflow.js
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/fgpv-vpgf/svg.textflow.js/tar.gz/ae147794bb3cc45a388d0c2bcddf37963c344c8f'
     version: 1.0.0
+registry: ''
 specifiers:
   '@flowjs/ng-flow': 2.7.8
   '@rush-temp/ramp-core': 'file:./projects/ramp-core.tgz'
@@ -14177,6 +14296,7 @@ specifiers:
   rxjs: 6.4.0
   screenfull: 4.0.1
   shpjs: 'github:fgpv-vpgf/shapefile-js#v3.6.0'
+  source-map-loader: 0.2.3
   style-loader: 1.0.0
   svg.js: 2.6.1
   svg.textflow.js: 'github:fgpv-vpgf/svg.textflow.js'
