@@ -127,7 +127,7 @@ Map Navigation zoom in label,nav.label.zoomIn,Zoom in,1,Zoom avant,1
 Map Navigation zoom out label,nav.label.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation label,nav.label.geoLocation,Your location,1,Votre position,1
 Map Navigation search label,nav.label.search,Search,1,Recherche,1
-Map Navigation home label,nav.label.home,Canada,1,Canada,1
+Map Navigation home label,nav.label.home,Initial view,1,Vue initiale,1
 Map Navigation history label,nav.label.history,History,1,Historique,1
 Map Navigation basemap label,nav.label.basemap,Basemap,1,Carte de base,1
 Map Navigation zoom in tooltip,nav.tooltip.zoomIn,Zoom in,1,Zoom avant,1
@@ -135,7 +135,7 @@ Map Navigation zoom out tooltip,nav.tooltip.zoomOut,Zoom out,1,Zoom arrière,1
 Map Navigation geolocation tooltip,nav.tooltip.geoLocation,Your location,1,Votre position,1
 ,geoLocation.error,Your location could not be found.,1,Votre emplacement n'a pu être trouvé.,1
 Map Navigation search tooltip,nav.tooltip.search,Search,1,Recherche,1
-Map Navigation home tooltip,nav.tooltip.home,Canada,1,Canada,1
+Map Navigation home tooltip,nav.tooltip.home,Initial view,1,Vue initiale,1
 Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
@@ -176,7 +176,7 @@ Side Navigation touch mode,sidenav.label.touch,Touch mode,1,Mode Tactile,1
 Side Navigation language,sidenav.label.language,Language,1,Langue,1
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
-Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Plus d’options,0
+Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Plus d'options,1
 Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
