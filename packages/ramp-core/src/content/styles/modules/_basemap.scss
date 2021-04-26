@@ -2,7 +2,6 @@
     $list-item-gap: rem(1.6);
 
     .rv-basemap-selector {
-
         .rv-basemap-header {
             padding: 0 0 0 16px;
             min-height: 49px;
@@ -20,14 +19,13 @@
             margin: 10px;
         }
 
-        .rv-basemap-content .rv-content-pane{
+        .rv-basemap-content .rv-content-pane {
             top: 49px;
         }
     }
 
     // need this to manager lower opacity values on a backdrop
     .rv-basemap {
-
         h3 {
             flex: 1;
             white-space: nowrap;
@@ -40,10 +38,10 @@
                 opacity: 0;
             }
             &.ng-enter.ng-enter-active {
-                opacity: .18;
+                opacity: 0.18;
             }
             &.ng-leave {
-                opacity: .18;
+                opacity: 0.18;
             }
             &.ng-leave.ng-leave-active {
                 opacity: 0;
@@ -64,7 +62,7 @@
 
         // this is a neat trick to keep the ratio of the box constant https://css-tricks.com/snippets/sass/maintain-aspect-ratio-mixin/
         &:before {
-            content: "";
+            content: '';
             display: block;
             padding-top: 100% / (3 / 2);
         }
@@ -156,10 +154,6 @@
         display: block;
     }
 
-    .rv-icon-16 {
-        margin-top: 10px;
-    }
-
     .rv-basemap-warning {
         color: $primary-color;
     }
@@ -178,7 +172,7 @@
         }
 
         &::before {
-            content: "";
+            content: '';
             position: absolute;
             width: 0px;
             height: 0px;
