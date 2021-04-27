@@ -12,6 +12,8 @@ This project is now a monorepo and contains the following repos under the `packa
 
 ## Building the project
 
+Install Python 2 if you don't already have it: [Python 2.7.18 Download](https://www.python.org/downloads/release/python-2718/) (Python 3 is not supported)
+
 Install Rush if you don't already have it:
 ```
 $ npm install -g @microsoft/rush
@@ -23,6 +25,11 @@ $ rush update
 ```
 
 You might want to run `rush update -p --full` to cleanly re-install all the dependencies (`-p` will purge what is currently there)
+
+Build the project:
+```
+$ rush build
+```
 
 Serve the project:
 ```
