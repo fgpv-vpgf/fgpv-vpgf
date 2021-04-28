@@ -12,6 +12,18 @@ This project is now a monorepo and contains the following repos under the `packa
 
 ## Building the project
 
+Install Python 2 if you don't already have it: [Python 2.7.18 Download](https://www.python.org/downloads/release/python-2718/) (Python 3 is not supported)
+
+Install the required C++ build tools (2 options)
+- **OPTION 1 (recommended):** Install Visual Studio and the required additional package
+  - [Walkthrough for complete Visual Studio installation and additional packages post-install](https://docs.microsoft.com/en-us/cpp/build/vscpp-step-0-installation?view=msvc-160)
+  - [Build Tools for Visual Studio 2019](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019)
+- **OPTION 2:** Directly add [windows-build-tools](https://www.npmjs.com/package/windows-build-tools) package
+  ```
+  $ npm install --global windows-build-tools
+  ```
+  - **NOTE:** This may stop giving feedback in the console mid-install and seem to hang. However, it appears the required packages are still installed
+
 Install Rush if you don't already have it:
 ```
 $ npm install -g @microsoft/rush
@@ -23,6 +35,12 @@ $ rush update
 ```
 
 You might want to run `rush update -p --full` to cleanly re-install all the dependencies (`-p` will purge what is currently there)
+
+Build the project:
+```
+$ rush build
+```
+- **NOTE:** `rush build` will need to be run before the `rush serve` statement below any time code is changed in `ramp-geoapi` to avoid an outdated build
 
 Serve the project:
 ```
