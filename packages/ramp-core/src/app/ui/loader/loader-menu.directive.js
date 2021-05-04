@@ -61,12 +61,12 @@ function Controller(stateManager, appInfo, $timeout, $rootElement) {
 
     function openFileLoader() {
         mApi.panels.fileLoader.open();
-        setFocus('#fileLoader');
+        setFocus(`#${mApi.id} .fileLoader`);
     }
 
     function openServiceLoader() {
         mApi.panels.serviceLoader.open();
-        setFocus('#serviceLoader');
+        setFocus(`#${mApi.id} .serviceLoader`);
     }
 
     /**

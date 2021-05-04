@@ -342,9 +342,9 @@ export class Panel {
      *
      * @param id A unique ID for the panel (and the DOM)
      */
-    private _initElements(id: string): void {
+    private _initElements(id: string, cssClass: string): void {
         this._element = $(document.createElement('div'));
-        this.element.addClass('rv-content-pane layout-padding panel-contents');
+        this.element.addClass(`rv-content-pane layout-padding panel-contents ${cssClass}`);
 
         this._body = $(document.createElement('div'));
         this.body.addClass(['panel-body']);
@@ -443,7 +443,7 @@ export class Panel {
      *
      * @param id - the user defined ID name for this Panel
      */
-    constructor(id: string, api: ViewerAPI, panelType: PanelTypes) {
+    constructor(id: string, api: ViewerAPI, panelType: PanelTypes, cssClass: string = id) {
         this.api = api;
 
         this.appBar = new appBar(this);
@@ -455,7 +455,7 @@ export class Panel {
 
         this._style = {};
         this._initRXJS();
-        this._initElements(id);
+        this._initElements(id, cssClass);
 
         $(window).resize(() => {
             this.offScreenRuleCheck();

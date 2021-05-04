@@ -127,8 +127,8 @@ export default class TableBuilder {
                 this.legendBlock.loadingPanel = undefined;
             }
         }
-        if ($('#enhancedTableLoader') !== undefined) {
-            $('#enhancedTableLoader').remove();
+        if ($(`#${this.mapApi.id} .enhancedTableLoader`) !== undefined) {
+            $(`#${this.mapApi.id} .enhancedTableLoader`).remove();
         }
     }
 

@@ -6,7 +6,7 @@ import { Panel, PanelTypes } from 'api/panel';
  */
 export class PanelManager extends Panel {
     constructor(table: Table) {
-        super('tblID', table.mapApi, PanelTypes.Panel);
+        super(`tblID-${table.mapApi.id}`, table.mapApi, PanelTypes.Panel, 'tblID');
         this.tableContent = $(`<div></div>`);
         this.element.css({
             top: '0px',

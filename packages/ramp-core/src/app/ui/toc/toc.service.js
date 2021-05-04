@@ -270,7 +270,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         const undoToast = $mdToast.simple()
             .textContent($translate.instant('toc.label.state.remove'))
             .action($translate.instant('toc.label.action.remove'))
-            .parent($('#mainToc'))
+            .parent($rootElement.find('.mainToc').first())
             .position('bottom rv-flex');
 
         if (showToast) {

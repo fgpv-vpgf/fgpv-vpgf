@@ -29,6 +29,7 @@ function setLink(selector) {
 
 // eslint-disable-next-line max-statements
 function LegendElementFactory(
+    $rootElement,
     $translate,
     Geo,
     ConfigObject,
@@ -316,7 +317,7 @@ function LegendElementFactory(
 
         action() {
             tocService.toggleMetadata(this.block);
-            setLink('#sideMetadata');
+            setLink(`#${$rootElement[0].id} .sideMetadata`);
         }
     }
 
@@ -336,7 +337,7 @@ function LegendElementFactory(
 
         action() {
             tocService.toggleSettings(this.block);
-            setLink('#sideSettings');
+            setLink(`#${$rootElement[0].id} .sideSettings`);
         }
     }
 
@@ -435,7 +436,7 @@ function LegendElementFactory(
 
         _debouncedAction = debounceService.registerDebounce(() => {
             tocService.toggleLayerTablePanel(this.block);
-            setLink('#enhancedTable');
+            setLink(`#${$rootElement[0].id} .enhancedTable`);
         }, 300);
     }
 
