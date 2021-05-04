@@ -54,7 +54,8 @@ export class PanelRegistry {
      * @return {Panel | undefined} the matching panel, or if there is none; `undefined`
      */
     getById(id: string): Panel | undefined {
-        return this._panels.find(panel => panel.id === `${id}-${this._mapI.id}`);
+        id += `-${this._mapI.id}`
+        return this._panels.find(panel => panel.id === id);
     }
 
     /**
