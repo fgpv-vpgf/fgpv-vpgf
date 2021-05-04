@@ -87,6 +87,9 @@ export class PanelStatusManager {
             if ((firstRow === undefined && lastRow === undefined) || topPixel === bottomPixel) {
                 firstRow = 0;
                 lastRow = 0;
+            } else if (firstRow !== undefined && lastRow === undefined) {
+                // This only happens when the table is so small it only shows one row, the calculation above doesn't see the "last" row correctly
+                lastRow = firstRow;
             }
             rowRange = firstRow.toString() + " - " + lastRow.toString();
         }
