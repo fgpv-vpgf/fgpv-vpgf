@@ -344,7 +344,7 @@ function elemIsFocusable(index, element) {
     const map = getMapInstance();
 
     // prep list on enhancedTable
-    if (el.parents('#enhancedTable')[0] !== undefined && map !== undefined) {
+    if (map !== undefined && el.parents(`#${map.id} .enhancedTable`)[0] !== undefined) {
         const enhancedTable = map.panelRegistryObj.getById('enhancedTable');
         enhancedTable.listInit.next();
     }
@@ -397,9 +397,10 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
 
     // if the enhancedTable is open and  focused on zoom button, and back tabbing
     // go to the last list in the enhancedTable
+    const map = getMapInstance();
     if (document.activeElement === $('.rv-mapnav-content').find('button')[0] && !forward &&
-        getMapInstance() !== undefined && !getMapInstance().panelRegistryObj.getById('enhancedTable').isClosed) {
-        const list = $('#enhancedTable').find('.rv-focus-list')[2];
+        map !== undefined && !map.panelRegistryObj.getById('enhancedTable').isClosed) {
+        const list = $(`#${map.id} .enhancedTable`).find('.rv-focus-list')[2];
         initInternalFocusManager($(list));
         return;
     }
