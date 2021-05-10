@@ -46,9 +46,9 @@ $result-item-height-touch: rem(4.8);
         }
     }
 
-    #mainGeosearch {
+    .mainGeosearch {
         width: 400px;
-        top: 65px;
+        top: 65px !important;
         opacity: 0;
         box-shadow: none !important;
         bottom: 0;

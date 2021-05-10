@@ -56,8 +56,8 @@
         }
     }
 
-    #mainDetails {
-        top: 49px;
+    .mainDetails {
+        top: 49px !important;
         width: 400px;
 
         @include include-size(rv-sm) {

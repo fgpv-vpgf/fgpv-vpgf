@@ -355,8 +355,10 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 dojoUrl = config.services._esriLibUrl;
             }
 
-            // TODO v3: change this
-            window.RAMP.gapiPromise = geoapi(dojoUrl, window);
+            // Don't load geoapi again if its already loading
+            if (!window.RAMP.gapiPromise) {
+                window.RAMP.gapiPromise = geoapi(dojoUrl, window);
+            }
             window.RAMP.gapiPromise.then(() => {
                 gapiService.init();
                 gapiService.isReady.then(() => {

@@ -54,6 +54,7 @@ export class PanelRegistry {
      * @return {Panel | undefined} the matching panel, or if there is none; `undefined`
      */
     getById(id: string): Panel | undefined {
+        id += `-${this._mapI.id}`;
         return this._panels.find(panel => panel.id === id);
     }
 
@@ -89,11 +90,16 @@ export class PanelRegistry {
      */
     create(id: string, panelType: PanelTypes = PanelTypes.Panel) {
 
+        // Passed through to the constructor to set a css class on the panel
+        // id is used as it should be unique to the instance but will match the "same" panel in other instances for styling purposes
+        const cssClass = id;
+        id += `-${this._mapI.id}`;
+
         if ($(`#${id}`).length >= 1) {
             throw new Error(`API(panels): an element with ID ${id} already exists. A panel ID must be unique to the page.`);
         }
 
-        const panel = new Panel(id, this._mapI, panelType);
+        const panel = new Panel(id, this._mapI, panelType, cssClass);
 
         panel.opening.subscribe(p => {
             this._panelOpening.next(p);

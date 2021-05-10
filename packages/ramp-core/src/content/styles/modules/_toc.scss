@@ -8,8 +8,8 @@ $layer-item-height-touch: rem(7.2);
 
 
 @mixin toc {
-    #mainToc {
-        top: 49px;
+    .mainToc {
+        top: 49px !important;
         left: 0px;
         width: 400px;
 

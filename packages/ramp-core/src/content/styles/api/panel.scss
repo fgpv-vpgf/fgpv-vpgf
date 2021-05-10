@@ -37,8 +37,8 @@
     z-index: 1000;
 }
 
-#sideMetadata,
-#sideSettings {
+.sideMetadata,
+.sideSettings {
     .rv-header-controls {
         padding: 0 0 0 0;
 
@@ -86,16 +86,18 @@
     padding: 0 !important;
     margin-left: 0 !important;
     top: 0px;
-    left: 411px;
+    // !important needed to get past base panel styling after changing to class selectors
+    left: 411px !important;
     width: 350px;
 }
 
-#expandMetadata {
+.expandMetadata {
     width: 70%;
     height: 80%;
-    overflow: auto;
-    left: 15%;
-    top: 10%;
+    // !important needed to get past base panel styling after changing to class selectors
+    overflow: auto !important;
+    left: 15% !important;
+    top: 10% !important;
 
     .rv-header {
         padding-left: 10px;

@@ -47,7 +47,8 @@ function metadataBlock(events) {
         function expandPanel() {
             let panel = mApi.panels.getById('expandMetadata')
             if (panel === undefined) {
-                $('#expandMetadata').remove();
+                // It doesn't look like this line should do anything but it was here so I'm keeping it.
+                $(`#${mApi.id} .expandMetadata`).remove();
                 panel = mApi.panels.create('expandMetadata', 1);
                 const closeButton = panel.header.closeButton;
                 panel.header.title = metadataPanel.header.elements.title[0].innerHTML;
