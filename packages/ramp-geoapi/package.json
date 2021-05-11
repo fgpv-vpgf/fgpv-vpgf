@@ -16,7 +16,7 @@
         "jasmine": "^2.6.0",
         "jsdoc": "^3.4.0",
         "js-sql-parser": "1.0.7",
-        "lodash": "^4.17.4",
+        "lodash": "^4.17.21",
         "proj4": "^2.4.3",
         "rcolor": "1.0.1",
         "rgbcolor": "1.0.1",
