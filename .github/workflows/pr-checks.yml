@@ -1,0 +1,24 @@
+on:
+  pull_request:
+    branches: [develop]
+env:
+  NODE_VERSION: "14.15.4"
+jobs:
+  pr-checks:
+    name: PR Status Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Extract branch or tag name
+        shell: bash
+        run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/*/})"
+        id: extract_ref
+
+      - name: Check pnpm-lock.yaml is up to date
+        shell: bash
+        run: node common/scripts/install-run-rush.js install
