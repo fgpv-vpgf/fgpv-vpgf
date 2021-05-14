@@ -1,0 +1,34 @@
+on: push
+env:
+    NODE_VERSION: "14.15.4"
+jobs:
+    build-and-deploy:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+
+          - uses: actions/setup-node@v1
+            with:
+                node-version: ${{ env.NODE_VERSION }}
+
+          - name: Extract branch or tag name
+            shell: bash
+            run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/*/})"
+            id: extract_ref
+
+          - name: npm install, build
+            shell: bash
+            run: |
+                node common/scripts/install-run-rush.js install
+                node common/scripts/install-run-rush.js rebuild --verbose
+                ./common/scripts/deploy-to-azure.sh
+            env:
+              AZ_LOGIN_NAME: ${{ secrets.AZ_LOGIN_NAME }}
+              AZ_PASSWORD: ${{ secrets.AZ_PASSWORD }}
+              AZ_TENANT: ${{ secrets.AZ_TENANT }}
+              AZ_STORAGE_ACCOUNT: ${{ secrets.AZ_STORAGE_ACCOUNT }}
+              GITHUB_REPOSITORY: ${{ github.repository }}
+              IS_TAG: ${{ contains(github.ref, 'tags') }}
+              REF_NAME: ${{ steps.extract_ref.outputs.name }}
+              GITHUB_ACTOR: ${{ github.actor }}
