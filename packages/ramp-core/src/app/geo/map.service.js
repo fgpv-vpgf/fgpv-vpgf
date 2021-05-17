@@ -395,10 +395,28 @@ function mapServiceFactory(
                         .then(response => {
                             // response returned but its an error response since invalid URL, so initalize map
                             if (!response || typeof response.data.error !== 'undefined') {
+                                firstBasemapFlag = false;
                                 _initMap();
                             }
                         })
-                        .catch(() => _initMap()); // promise rejected due to server issues, so initialize map
+                        .catch(() => {
+                            // NOTE this catch appears to be firing all the time now. The url is fine if put in a browser
+                            //      but something is freaking this out. Causes _initMap to run too early (before basemap starts)
+                            //      and basemap ends up kicking out first layer.
+                            //      Puts us in a bit of a bind...never know if the catch is genuine or just being silly.
+                            //      (fwiw when server went down the .then block was running).
+                            //      For now, we are delaying for 10 seconds. If basemap has not loaded in that time, we assume
+                            //      service is actually dead and continue to load the map. Slow, but should be very rare thing,
+                            //      and better than first data layer disappearing.
+                            // An alternate solution could be to try a library like axios instead of $http and see if it
+                            // behaves better.
+                            setTimeout(()=> {
+                                if (firstBasemapFlag) {
+                                    firstBasemapFlag = false;
+                                    _initMap();
+                                }
+                            }, 10000);
+                        }); // promise rejected due to server issues, so initialize map
                 }
             },
             // eslint-disable-next-line max-statements
