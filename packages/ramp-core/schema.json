@@ -1272,7 +1272,7 @@
                 },
                 "url": {
                     "type": "string",
-                    "description": "The service endpoint of the layer.  It should match the type provided in layerType."
+                    "description": "The service endpoint of the layer.  It should match the type provided in layerType. WFS v3 support only."
                 },
                 "colour": {
                     "type": "string",
@@ -1553,7 +1553,8 @@
                     "$ref": "#/definitions/fileLayerNode"
                 },
                 {
-                    "$ref": "#/definitions/wfsLayerNode"
+                    "$ref": "#/definitions/wfsLayerNode",
+                    "description": "An OGC WFS v3 layer."
                 },
                 {
                     "$ref": "#/definitions/wmsLayerNode"
