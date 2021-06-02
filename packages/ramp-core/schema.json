@@ -1553,7 +1553,8 @@
                     "$ref": "#/definitions/fileLayerNode"
                 },
                 {
-                    "$ref": "#/definitions/wfsLayerNode"
+                    "$ref": "#/definitions/wfsLayerNode",
+                    "description": "An OGC WFS v3 layer."
                 },
                 {
                     "$ref": "#/definitions/wmsLayerNode"
