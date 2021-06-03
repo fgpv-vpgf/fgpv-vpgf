@@ -112,6 +112,8 @@ function esriMap(esriBundle, geoApi) {
         }
 
         checkCorsException(url) {
+            // TODO: remove the check for WMS in here before merging. This is for
+            // testing purposes.
             if (corsEverywhere) {
                 const hostRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?([^:\/\n]+)/i;
                 const match = hostRegex.exec(url);
