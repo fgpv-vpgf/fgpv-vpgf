@@ -94,6 +94,29 @@
         "layerType": "ogcWfs",
         "nameField": "station_id",
         "url": "https://geo.weather.gc.ca/geomet-beta/features/collections/ahccd-trends/items?measurement_type__type_mesure=temp_mean&period__periode=Ann&startindex=0&limit=1000"
+      },
+      {
+        "id": "wms",
+        "name": "WMS Layer",
+        "layerType": "ogcWms",
+        "suppressGetCapabilities": false,
+        "disabledControls": [
+          "styles"
+        ],
+        "layerEntries": [
+          {
+            "id": "GDPS.ETA_UU",
+            "allStyles": [
+              "WINDARROW",
+              "WINDARROWKMH"
+            ],
+            "currentStyle": "WINDARROWKMH"
+          }
+        ],
+        "state": {
+          "visibility": false
+        },
+        "url": "http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities&layers=GDPS.ETA_UU"
       }
     ],
     "extentSets": [
