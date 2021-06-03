@@ -334,7 +334,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.upload.type.imageservice,ESRI Image Layer,1,Couche d'images d'ESRI,1
 ,import.upload.type.tileservice,ESRI Tile Layer,1,Couche de tuiles d'ESRI,1
 ,import.upload.type.wms,OGC Web Map Service,1,Couche WMS de l'OGC,1
-,import.upload.type.wfs,OGC Web Feature Service,1,Service d'entités Web OGC,1
+,import.upload.type.wfs,OGC Web Feature Service 3,1,Service d'entités Web OGC 3,1
 ,import.upload.type.rasterlayer,Raster Layer,1,Couche Raster,1
 ,import.upload.type.geojson,GeoJSON,1,GeoJSON,0
 ,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les demandes seront faites en utilisant HTTPS,0
