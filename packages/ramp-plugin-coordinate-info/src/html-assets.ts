@@ -42,6 +42,5 @@ export const magSection = `<li>
     <div>{{ 'plugins.coordInfo.magDate' | translate }}{date}</div>
     <div>{{ 'plugins.coordInfo.magDecli' | translate }}{magnetic}</div>
     <div>{{ 'plugins.coordInfo.magChange' | translate }}{annChange}</div>
-    <div>{compass}</div>
 </div>
 </li>`;
