@@ -326,9 +326,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // process the child layers our config is interested in, and all their children.
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                if (!le.stateOnly) {
-                    processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
-                }
+                processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
             });
         }
 
