@@ -31,7 +31,7 @@
             // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
             // it helps to visualize which layers will be affected by the group toggle
             .rv-shadow {
-                content: "";
+                content: '';
                 position: absolute;
                 right: 0;
                 top: 0;
@@ -49,7 +49,7 @@
             .rv-shadow {
                 // rv-shadow is a thin guideline drawn on the right side of the list when group toggle is hovered over;
                 // it helps to visualize which layers will be affected by the group toggle
-                content: "";
+                content: '';
                 position: absolute;
                 right: 0;
                 top: 0;
@@ -104,6 +104,10 @@
             left: 0;
             width: 100%;
             z-index: 1; // this is needed to place the button over the rotating icon as it's creating a new stacking content when transformed
+
+            &:focus {
+                box-shadow: inset 0 0 0 1px black !important;
+            }
         }
 
         .rv-group-name {

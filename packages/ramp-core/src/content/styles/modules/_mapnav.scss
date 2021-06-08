@@ -59,17 +59,16 @@
 
         rv-mapnav-button {
             display: flex;
-            overflow: hidden;
             width: rem(3.2);
             text-align: center;
 
             @include touch {
-                width: rem(4.0);
+                width: rem(4);
             }
 
             @include touch {
-                @include button-size(rem(4.0));
-                @include icon-size(rem(2.0));
+                @include button-size(rem(4));
+                @include icon-size(rem(2));
             }
 
             .md-button {
