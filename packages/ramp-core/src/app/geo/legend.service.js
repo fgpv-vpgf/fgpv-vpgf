@@ -579,6 +579,23 @@ function legendServiceFactory(
                 } else {
                     _updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
                 }
+
+                // Hide each entry from the legend if has `stateOnly` set.
+                legendBlockGroup.entries.forEach(entry => {
+                    const config = entry.proxyWrapper.layerConfig;
+                    entry.hidden = config.stateOnly ? config.stateOnly : false;
+                });
+
+                const isStateOnly = (entry) => {
+                    return entry.proxyWrapper.layerConfig.stateOnly;
+                };
+
+                // If all entries have `stateOnly` set, then hide the entire group
+                // from the legend.
+                if (legendBlockGroup.entries.every(isStateOnly)) {
+                    legendBlockGroup.hidden = true;
+                }
+
                 legendBlockGroup.synchronizeControlledEntries();
             });
 
