@@ -15,13 +15,13 @@
  * The `templateRegistry` constant service provides template URLs.
  */
 
-
 angular
     .module('app.core')
     .factory('events', events)
-    .constant('bookmarkVersions', { // Bookmark versions https://github.com/fgpv-vpgf/fgpv-vpgf/wiki/Bookmark-Formats
+    .constant('bookmarkVersions', {
+        // see bookmark_formats.md
         A: 'A',
-        B: 'B'
+        B: 'B',
     })
     .constant('translations', AUTOFILLED_TRANSLATIONS)
     .factory('appInfo', appInfo);
@@ -36,12 +36,10 @@ function events($rootScope) {
          * @param {Function} listener a callback function to execute
          * @return {Function} a deregister function
          */
-        $on: (...args) =>
-            $rootScope.$on(...args),
-        $broadcast: (...args) =>
-            $rootScope.$broadcast(...args),
+        $on: (...args) => $rootScope.$on(...args),
+        $broadcast: (...args) => $rootScope.$broadcast(...args),
         $unsubscribe: (...events) => {
-            events.forEach(event => {
+            events.forEach((event) => {
                 $rootScope.$$listeners[event] = [];
             });
         },
@@ -68,7 +66,8 @@ function events($rootScope) {
         rvMapPan: 'rvMapPan',
         rvMapZoomStart: 'rvMapZoomStart',
         rvExtentChange: 'extentChange', // TODO: rename event to `rvExtentChange` and all the instances that use hardcoded `extentChange` instance
-        rvClick: 'rvClick',   // Fired when a click occurs
+        rvClick: 'rvClick', // Fired when a click occurs
+        rvKeyboardMove: 'rvKeyboardMove', // Fired when arrow keys are used to move over the map (use to calculate mouse coordinates)
         rvMouseMove: 'rvMouseMove', // Fired when mouse move over the map (use to calculate mouse coordinates)
         rvBasemapChange: 'rvBasemapChange', // Fired when basemap is changed
         rvBasemapLoaded: 'rvBasemapLoaded',
@@ -86,7 +85,7 @@ function events($rootScope) {
         rvApiPrePlugin: 'rvApiPrePlugin',
         rvApiPreMapAdded: 'rvApiPreMapAdded',
         rvApiMapAdded: 'rvApiMapAdded',
-        rvApiLayerAdded: 'rvApiLayerAdded'
+        rvApiLayerAdded: 'rvApiLayerAdded',
     };
 }
 
@@ -96,7 +95,7 @@ function appInfo() {
     const service = {
         id: null,
         apiMap: null,
-        isIE11: !!window.MSInputMethodContext && !!document.documentMode
+        isIE11: !!window.MSInputMethodContext && !!document.documentMode,
     };
 
     return service;

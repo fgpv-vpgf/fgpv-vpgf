@@ -10,13 +10,20 @@ const templateUrl = require('./shell.html');
  * The `ShellController` controller handles the shell which is the visible part of the layout.
  * `self.isLoading` is initially `true` and causes the loading overlay to be displayed; when `configService` resolves, it's set to `false` and the loading overly is removed.
  */
-angular
-    .module('app.layout')
-    .directive('rvShell', rvShell);
+angular.module('app.layout').directive('rvShell', rvShell);
 
-function rvShell($rootElement, events, stateManager, configService, layoutService, referenceService,
-    mapToolService, debounceService, geoService, keyNames) {
-
+function rvShell(
+    $rootElement,
+    events,
+    stateManager,
+    configService,
+    layoutService,
+    referenceService,
+    mapToolService,
+    debounceService,
+    geoService,
+    keyNames
+) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -24,7 +31,7 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
         link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     let outMouseSR;
@@ -32,17 +39,16 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
     return directive;
 
     function link(scope, el) {
-
         events.$on(events.rvApiMapAdded, (_, api) => {
             // open legend panel if option is set in config for current viewport
-            configService.onEveryConfigLoad(config => {
+            configService.onEveryConfigLoad((config) => {
                 if (config.ui.legend.isOpen[layoutService.currentLayout()]) {
                     api.panels.legend.open();
                 }
                 scope.self.config = config;
                 scope.self.api = api;
             });
-        })
+        });
 
         referenceService.panels.shell = el;
 
@@ -50,37 +56,48 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
         events.$on(events.rvApiReady, () => {
             $rootElement.find('.rv-esri-map svg').attr('focusable', false);
 
-            configService.getAsync.then(config => {
+            configService.getAsync.then((config) => {
                 const mapConfig = config.map.components;
                 if (mapConfig.mouseInfo.enabled) {
                     // set ouput spatial reference for mouse coordinates. If spatial reference is defined in configuration file
                     // use it. If not, use the basemap spatial reference
                     const sr = mapConfig.mouseInfo.spatialReference;
-                    outMouseSR = (typeof sr !== 'undefined') ? sr : geoService.mapObject.spatialReference;
+                    outMouseSR = typeof sr !== 'undefined' ? sr : geoService.mapObject.spatialReference;
 
-                    // set map coordinates
-                    events.$on('rvMouseMove',
-                        debounceService.registerDebounce(updateMapCoordinates, 100, false));
+                    // updates map coordinates on either mouse cursor movement or arrow keys panning map when map is focused
+                    events.$on('rvKeyboardMove', debounceService.registerDebounce(updateMapCoordinates, 100, false));
+                    events.$on('rvMouseMove', debounceService.registerDebounce(updateMapCoordinates, 100, false));
                 } else {
-                    el.find('.rv-map-coordinates').remove();    // mouseInfo disabled, remove element from DOM
+                    el.find('.rv-map-coordinates').remove(); // mouseInfo disabled, remove element from DOM
                 }
             });
         });
 
-        $rootElement.on('keydown', event => {
+        $rootElement.on('keydown', (event) => {
             // detect if any side panels are open, if so ignore escape key (side panel has own listener and will continue to close)
-            const mdSidePanelOpen = $('md-sidenav').toArray().find(el => !$(el).hasClass('md-closed'));
-            const navigationKeys = [keyNames.TAB, keyNames.ENTER, keyNames.LEFT_ARROW, keyNames.UP_ARROW, keyNames.RIGHT_ARROW,keyNames.DOWN_ARROW,keyNames.EQUAL_SIGN,keyNames.DASH];
+            const mdSidePanelOpen = $('md-sidenav')
+                .toArray()
+                .find((el) => !$(el).hasClass('md-closed'));
+            const navigationKeys = [
+                keyNames.TAB,
+                keyNames.ENTER,
+                keyNames.LEFT_ARROW,
+                keyNames.UP_ARROW,
+                keyNames.RIGHT_ARROW,
+                keyNames.DOWN_ARROW,
+                keyNames.EQUAL_SIGN,
+                keyNames.DASH,
+            ];
 
             if (event.which === 27 && !mdSidePanelOpen) {
                 scope.$apply(() => {
                     let panels = scope.self.api.panels.open;
                     // on press of the escape key, close the most recently opened panel.
-                    if(panels.length > 0) {
+                    if (panels.length > 0) {
                         panels[panels.length - 1].close();
                     }
                 });
-            } else if (navigationKeys.find(x => x === event.which)) {
+            } else if (navigationKeys.find((x) => x === event.which)) {
                 $rootElement.addClass('rv-keyboard');
                 $rootElement.on('mousedown', () => {
                     $rootElement.removeClass('rv-keyboard');
@@ -90,11 +107,11 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
         });
 
         /**
-        * Displays map coordinates on map
-        * @function  updateMapCoordinates
-        * @param {Object} evt mouse mouve events
-        * @param {Object} point point to show coordinates for
-        */
+         * Displays map coordinates on map
+         * @function  updateMapCoordinates
+         * @param {Object} evt mouse move or keyboard move events
+         * @param {Object} point point to show coordinates for
+         */
         function updateMapCoordinates(evt, point) {
             const coords = mapToolService.mapCoordinates(point, outMouseSR);
             const coordElem = el.find('.rv-map-coordinates span');
@@ -109,8 +126,7 @@ function rvShell($rootElement, events, stateManager, configService, layoutServic
 
         // set a resize listener on the root element to update it's layout styling based on the changed size
         _updateShallLayoutClass();
-        referenceService.onResize($rootElement,
-            debounceService.registerDebounce(_updateShallLayoutClass, 350, false));
+        referenceService.onResize($rootElement, debounceService.registerDebounce(_updateShallLayoutClass, 350, false));
 
         // FIXME: remove; opens the main panel for easier dev work
         // stateManager.setActive({ side: false }, 'mainLoaderService');
