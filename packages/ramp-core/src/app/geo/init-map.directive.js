@@ -41,7 +41,7 @@ function rvInitMap(
 
     const directive = {
         restrict: 'A',
-        link: linkFunc
+        link: linkFunc,
     };
 
     return directive;
@@ -70,7 +70,7 @@ function rvInitMap(
                         timingCategory: 'performance',
                         timingVariable: 'load',
                         timingLabel: 'mapLoaded',
-                        timingValue: timeSincePageLoad
+                        timingValue: timeSincePageLoad,
                     });
                 }
             }
@@ -108,7 +108,7 @@ function rvInitMap(
             events.$broadcast(events.rvApiPrePlugin, apiMap);
 
             // allows plugins to compile angular templates through the API
-            apiMap.$compile = function(html, useIsolatedScope = true) {
+            apiMap.$compile = function (html, useIsolatedScope = true) {
                 const scope = $rootScope.$new(useIsolatedScope);
                 $compile(html)(scope);
                 return scope;
@@ -154,18 +154,18 @@ function rvInitMap(
 
             let currentPosition = {
                 x: startingEvent.clientX,
-                y: startingEvent.clientY
+                y: startingEvent.clientY,
             };
 
-            return event => {
+            return (event) => {
                 const newPosition = {
                     x: event.clientX,
-                    y: event.clientY
+                    y: event.clientY,
                 };
 
                 const momevementOffset = {
                     x: currentPosition.x - newPosition.x,
-                    y: currentPosition.y - newPosition.y
+                    y: currentPosition.y - newPosition.y,
                 };
 
                 $rootScope.$broadcast(events.rvMapPan, momevementOffset);
@@ -313,6 +313,7 @@ function rvInitMap(
                 mapPntCntr.x += hasShiftMultiplier * x;
                 mapPntCntr.y += hasShiftMultiplier * y;
                 mapInstance.centerAt(mapPntCntr);
+                events.$broadcast(events.rvKeyboardMove, mapPntCntr);
             }, 40);
         }
     }
