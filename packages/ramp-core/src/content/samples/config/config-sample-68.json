@@ -26,7 +26,7 @@
   "version": "2.0",
   "language": "en",
   "services": {
-    "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
+    "proxyUrl": "https://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
     "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
     "export": {
       "title": {
@@ -98,7 +98,7 @@
             "currentStyle": "PRECIPMM"
           }
         ],
-        "url": "http://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&LAYERS=RDPA.24F_PR",
+        "url": "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&LAYERS=RDPA.24F_PR",
         "details": {
           "parser": "templates/test-script.js",
           "template": "templates/test-template.html"

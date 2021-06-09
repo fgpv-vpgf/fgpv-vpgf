@@ -9,7 +9,6 @@ const shared = require('./shared.js')();
  * @class WmsRecord
  */
 class WmsRecord extends layerRecord.LayerRecord {
-
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
@@ -27,7 +26,7 @@ class WmsRecord extends layerRecord.LayerRecord {
         this._defaultFC = '0';
         this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
 
-        if (config.suppressGetCapabilities) {
+        if (config.suppressGetCapabilities || this.config.url.toLowerCase().indexOf('layers=') !== -1) {
             this.onLoad();
         }
     }
@@ -50,7 +49,11 @@ class WmsRecord extends layerRecord.LayerRecord {
             styles: styles
         };
 
-        if (this.config.suppressGetCapabilities) {
+        // If suppressGetCapabilities is set to true, or if the URL contains the parameter `layers`,
+        // create fake metadata to prevent contacting the server.
+        if (this.config.suppressGetCapabilities || this.config.url.toLowerCase().indexOf('layers=') !== -1) {
+            // TODO: if the layers provided in the URL parameter `layers` does not match what is provided in layerEntries,
+            // display an error.
             cfg.resourceInfo = {
                 extent: new this._apiRef.Map.Extent(-141, 41, -52, 83.5, {wkid: 4326}), // TODO make this a parameter post-demo
                 layerInfos: this.config.layerEntries
@@ -77,17 +80,32 @@ class WmsRecord extends layerRecord.LayerRecord {
     }
 
     /**
-    * Triggers when the layer loads.
-    *
-    * @function onLoad
-    */
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     */
     onLoad () {
         const loadPromises = super.onLoad();
 
         const fc = new wmsFC.WmsFC(this, '0', this.config);
         this._featClasses['0'] = fc;
 
-        loadPromises.push(fc.loadSymbology());
+        // If suppressGetCapabilities is set, or the URL contains the `layers` parameter,
+        // load the data in a different manner.
+        //
+        // The `layers` parameter is used specifically for GeoMet WMS, which returns a very
+        // large amount of XML data if the parameter is not provided to specify which specific layers
+        // should be returned.
+        if (this.config.suppressGetCapabilities || this.config.url.toLowerCase().indexOf('layers=') !== -1) {
+            // Attempts to retrieve the LegendURL for the layer and updates the symbology afterwards.
+            loadPromises.push(
+                this.updateCapabilities().then(() => {
+                    fc.loadSymbology();
+                })
+            );
+        } else {
+            loadPromises.push(fc.loadSymbology());
+        }
 
         Promise.all(loadPromises).then(() => {
             this._stateChange(shared.states.LOADED);
@@ -134,7 +152,7 @@ class WmsRecord extends layerRecord.LayerRecord {
                 opts.clickEvent,
                 this.config.layerEntries.map(le => le.id),
                 this.config.featureInfoMimeType)
-            .then(data => {
+            .then((data) => {
                 identifyResult.isLoading = false;
 
                 // TODO: check for French service
@@ -160,6 +178,67 @@ class WmsRecord extends layerRecord.LayerRecord {
      */
     dataSource () {
         return shared.dataSources.WMS;
+    }
+
+    /**
+     * Fetch and process metadata from WMS endpoint. Constructs a GetCapabilities call using ogc and extracts properties from resulting metadata information.
+     *
+     * @function updateCapabilities
+     * @returns {Promise} a promise that resolves once metadata properties has been processed
+     */
+    updateCapabilities () {
+        let serviceUrl = this.config.url;
+        let isGeomet = serviceUrl.toLowerCase().indexOf('/geomet') !== -1;
+        let hasLayersParam = serviceUrl.toLowerCase().indexOf('layers=') !== -1;
+
+        // If this service is a GeoMet service and does not currently contain the `layers` parameter,
+        // build and add the parameter to the URL.
+        // NOTE: This code supports there being multiple parameters provided in layerEntries, but GeoMet does
+        // not support this yet.
+        if (isGeomet && !hasLayersParam) {
+            let layersParam = [];
+            this.config.layerEntries.forEach((entry, idx) => {
+                layersParam.push(entry.id);
+            });
+
+            if (layersParam.length > 0) {
+                serviceUrl += '&layers=' + layersParam.join(',');
+            }
+        }
+
+        // construct a ogc getCapabilities + parseCapabilities() call
+        const resPromise = new Promise((resolve, reject) => {
+            this._apiRef.layer.ogc.parseCapabilities(serviceUrl).then((data) => {
+                this.saveLegendUrls(data.layers);
+                resolve();
+            });
+        });
+        return resPromise;
+    }
+
+    /**
+     * Recursively updates the ESRI layer with the fetched legend URLs returned by getCapabilities.
+     *
+     * @function saveLegendUrls
+     * @param {Array} layers an array of layer objects returned by getCapabilities
+     */
+    saveLegendUrls (layers) {
+        layers.forEach((layer) => {
+            // Check to see if this layer belongs to the ESRI `layerInfos` array.
+            let layerInfo = this.esriLayer.layerInfos.find((item) => layer.name && item.name === layer.name);
+
+            if (layerInfo) {
+                const styles = this.esriLayer.customLayerParameters.styles;
+
+                // Set the legend URL to the style that is currently selected. If none is selected, use the default.
+                layerInfo.legendURL = typeof styles !== 'undefined' ? layer.styleToURL[styles] : layer.styleToURL[defaultStyle];
+            }
+
+            // Update sublayers if necessary.
+            if (layer.layers && layer.layers.length > 0) {
+                this.saveLegendUrls(layer.layers);
+            }
+        });
     }
 }
 
