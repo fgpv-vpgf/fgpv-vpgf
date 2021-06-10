@@ -836,6 +836,20 @@ export class PanelManager {
                 // fit columns widths to table if there's empty space
                 that.sizeColumnsToFitIfNeeded();
             };
+
+            // Determine whether any columns are hidden.
+            this.allColumnsVisible = function () {
+                return this.columnVisibilities.some((col) => !col.visibility);
+            }
+
+            // toggle visibility for all entries
+            this.toggleAllColumns = function () {
+                // If any columns are not visible, then clicking the button should turn them on. If all columns are
+                // visible, then clicking the button should turn them all off.
+                this.columnVisibilities.filter((col) => col.visibility == !this.allColumnsVisible()).forEach((col) => {
+                    this.toggleColumn(col);
+                });
+            };
         });
 
         this.mapApi.agControllerRegister('MobileMenuCtrl', function () {
