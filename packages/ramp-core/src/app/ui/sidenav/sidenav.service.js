@@ -2,29 +2,14 @@ import marked from 'marked';
 const moment = window.moment;
 const templateURLs = {
     about: require('./about-dialog.html'),
-    share: require('./share-dialog.html')
+    share: require('./share-dialog.html'),
 };
 
 // this is a default configuration of the side menu
 // options are grouped into sections and will be rendered as distinct lists in the side menu panel
 const SIDENAV_CONFIG_DEFAULT = {
     logo: true,
-    items: [
-        [
-            'layers',
-            'basemap'
-        ],
-        [
-            'fullscreen',
-            'export',
-            'share',
-            'touch',
-            'help'
-        ],
-        [
-            'language'
-        ]
-    ]
+    items: [['layers', 'basemap'], ['fullscreen', 'export', 'share', 'touch', 'help'], ['language']],
 };
 
 /**
@@ -36,14 +21,26 @@ const SIDENAV_CONFIG_DEFAULT = {
  * The `sideNavigationService` service provides access and controls the side navigation menu.
  * Exposes methods to close/open the side navigation panel.
  */
-angular
-    .module('app.ui')
-    .factory('sideNavigationService', sideNavigationService);
+angular.module('app.ui').factory('sideNavigationService', sideNavigationService);
 
 // need to find a more elegant way to include all these dependencies
-function sideNavigationService($mdSidenav, $rootElement, configService, basemapService, fullScreenService, exportService, referenceService, helpService, reloadService,
-    translations, $mdDialog, geosearchService, $mdDateLocale, events, appInfo) {
-
+function sideNavigationService(
+    $mdSidenav,
+    $rootElement,
+    configService,
+    basemapService,
+    fullScreenService,
+    exportService,
+    referenceService,
+    helpService,
+    reloadService,
+    translations,
+    $mdDialog,
+    geosearchService,
+    $mdDateLocale,
+    events,
+    appInfo
+) {
     const service = {
         open,
         close,
@@ -51,7 +48,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         controls: {},
 
         ShareController,
-        AboutController
+        AboutController,
     };
 
     service.controls = {
@@ -61,65 +58,57 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
             icon: 'maps:layers',
             isChecked: () => appInfo.mapi && appInfo.mapi.panels.legend.isOpen,
             action: () => {
-                service.close();
                 appInfo.mapi.panels.legend.toggle();
-            }
+            },
         },
         basemap: {
             type: 'link',
             label: 'nav.label.basemap',
             icon: 'maps:map',
             action: () => {
-                service.close();
                 basemapService.open();
-            }
+            },
         },
         geoSearch: {
             type: 'link',
             label: 'appbar.tooltip.geosearchshort',
             icon: 'action:search',
             action: () => {
-                service.close();
                 geosearchService.toggle();
-            }
+            },
         },
         export: {
             type: 'link',
             label: 'sidenav.label.export',
             icon: 'community:export',
             action: () => {
-                service.close();
                 exportService.open();
-            }
+            },
         },
         share: {
             type: 'link',
             label: 'sidenav.label.share',
             icon: 'social:share',
             action: () => {
-                service.close();
-
-                $mdDialog.show({
-                    controller: service.ShareController,
-                    controllerAs: 'self',
-                    templateUrl: templateURLs.share,
-                    parent: referenceService.panels.shell,
-                    disableParentScroll: false,
-                    clickOutsideToClose: true,
-                    fullscreen: false,
-                    onShowing: (scope, element) =>
-                        (scope.element = element.find('.side-nav-summary'))
-                }).then(() =>
-                    ($rootElement.find('.rv-shareLink').select()));
-            }
+                $mdDialog
+                    .show({
+                        controller: service.ShareController,
+                        controllerAs: 'self',
+                        templateUrl: templateURLs.share,
+                        parent: referenceService.panels.shell,
+                        disableParentScroll: false,
+                        clickOutsideToClose: true,
+                        fullscreen: false,
+                        onShowing: (scope, element) => (scope.element = element.find('.side-nav-summary')),
+                    })
+                    .then(() => $rootElement.find('.rv-shareLink').select());
+            },
         },
         about: {
             type: 'link',
             label: 'sidenav.label.about',
             icon: 'action:info_outline',
             action: () => {
-                service.close();
-
                 $mdDialog.show({
                     controller: service.AboutController,
                     controllerAs: 'self',
@@ -127,45 +116,44 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
                     parent: referenceService.panels.shell,
                     disableParentScroll: false,
                     clickOutsideToClose: true,
-                    fullscreen: false
+                    fullscreen: false,
                 });
-            }
+            },
         },
         fullscreen: {
             type: 'link',
             label: 'sidenav.label.fullscreen',
             icon: 'navigation:fullscreen',
             isChecked: fullScreenService.isExpanded,
-            action: () => fullScreenService.toggle()
+            action: () => fullScreenService.toggle(),
         },
         touch: {
             type: 'link',
             label: 'sidenav.label.touch',
             icon: 'action:touch_app',
             isChecked: () => $rootElement.hasClass('rv-touch'),
-            action: () => $rootElement.toggleClass('rv-touch')
+            action: () => $rootElement.toggleClass('rv-touch'),
         },
         help: {
             type: 'link',
             label: 'sidenav.label.help',
             icon: 'community:help',
             action: () => {
-                service.close();
                 helpService.open();
-            }
+            },
         },
         language: {
             type: 'group',
             label: 'sidenav.label.language',
             icon: 'action:translate',
-            children: []
+            children: [],
         },
         plugins: {
             type: 'group',
             label: 'sidenav.menu.plugin',
             icon: 'action:settings_input_svideo',
-            children: []
-        }
+            children: [],
+        },
     };
 
     events.$on(events.rvApiMapAdded, () => {
@@ -174,7 +162,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         if (service.controls.plugins.children.length > 0) {
             service.controls.plugins.children = [];
         }
-    })
+    });
 
     events.$on(events.rvApiPrePlugin, (_, mApi) => {
         mApi.changeLanguage = reloadService.loadNewLang;
@@ -188,8 +176,8 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
             let mItem = {
                 type: 'link',
                 label,
-                action
-            }
+                action,
+            };
 
             mItem.isChecked = () => mItem.isActive;
             service.controls.plugins.children.push(mItem);
@@ -208,7 +196,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         // url cache to avoid unneeded API calls
         const URLS = {
             short: undefined,
-            long: undefined
+            long: undefined,
         };
 
         self.switchChanged = switchChanged;
@@ -217,27 +205,30 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         getLongLink();
 
         // fetch googleAPIKey - if it exists the short link switch option is shown
-        configService.onEveryConfigLoad(conf =>
-            (self.googleAPIUrl = conf.googleAPIKey ?
-                `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}` : null)
+        configService.onEveryConfigLoad(
+            (conf) =>
+                (self.googleAPIUrl = conf.googleAPIKey
+                    ? `https://www.googleapis.com/urlshortener/v1/url?key=${conf.googleAPIKey}`
+                    : null)
         );
 
         /**
-        * Handles onClick event on URL input box
-        * @function switchChanged
-        * @param    {Boolean}    value   the value of the short/long switch option
-        */
+         * Handles onClick event on URL input box
+         * @function switchChanged
+         * @param    {Boolean}    value   the value of the short/long switch option
+         */
         function switchChanged(value) {
             self.linkCopied = false;
             return value ? getShortLink() : getLongLink();
         }
 
         /**
-        * Fetches a long url from the page if one has not yet been cached
-        * @function getLongLink
-        */
+         * Fetches a long url from the page if one has not yet been cached
+         * @function getLongLink
+         */
         function getLongLink() {
-            if (typeof URLS.long === 'undefined') { // no cached url exists
+            if (typeof URLS.long === 'undefined') {
+                // no cached url exists
                 // eslint-disable-next-line no-return-assign
                 URLS.long = self.url = window.location.href.split('?')[0] + '?rv=' + String(LEGACY_API.getBookmark());
                 selectURL();
@@ -248,19 +239,20 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         }
 
         /**
-        * Fetches a short url from the Google API service if one has not yet been cached
-        * @function getShortLink
-        */
+         * Fetches a short url from the Google API service if one has not yet been cached
+         * @function getShortLink
+         */
         function getShortLink() {
             // no cached url exists - making API call
             if (typeof URLS.short === 'undefined') {
-                $http.post(self.googleAPIUrl, { longUrl: self.url })
-                    .then(r => {
+                $http
+                    .post(self.googleAPIUrl, { longUrl: self.url })
+                    .then((r) => {
                         URLS.short = self.url = r.data.id;
                         selectURL();
                     })
                     .catch(() => (URLS.short = undefined)); // reset cache from failed API call);
-            // cache exists, API call not needed
+                // cache exists, API call not needed
             } else {
                 self.url = URLS.short;
                 selectURL();
@@ -268,9 +260,9 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         }
 
         /**
-        * Select URL in input box
-        * @function selectURL
-        */
+         * Select URL in input box
+         * @function selectURL
+         */
         function selectURL() {
             if (scope.element !== undefined) {
                 scope.element.find('.rv-shareLink').select();
@@ -286,18 +278,21 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         self.loading = true;
 
         // get about map description from markdown or config file
-        configService.onEveryConfigLoad(config => {
+        configService.onEveryConfigLoad((config) => {
             if (config.ui.about.content) {
                 self.about = config.ui.about.content;
                 self.loading = false;
             } else if (config.ui.about.folderName) {
-                useMarkdown(config.ui.about.folderName).then(html => {
-                    self.about = html;
-                }).catch(error => {
-                    console.warn(error);
-                }).finally(() => (self.loading = false));
+                useMarkdown(config.ui.about.folderName)
+                    .then((html) => {
+                        self.about = html;
+                    })
+                    .catch((error) => {
+                        console.warn(error);
+                    })
+                    .finally(() => (self.loading = false));
             }
-       });
+        });
 
         /**
          * Takes a folder path, fetches markdown files and parses them.
@@ -316,7 +311,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
             };
 
             const mdLocation = `about/${foldername}/${configService.getSync.language}.md`;
-            return $http.get(mdLocation).then(r => marked(r.data, { renderer }));
+            return $http.get(mdLocation).then((r) => marked(r.data, { renderer }));
         }
     }
 
@@ -346,7 +341,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
      * @private
      */
     function init() {
-        configService.onEveryConfigLoad(config => {
+        configService.onEveryConfigLoad((config) => {
             // all menu items should be defined in the config's ui section
             // should we account for cases when the export url is not specified, but export option is enabled in the side menu thought the config and hide it ourselves?
             // or just let it failed
@@ -355,60 +350,61 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
 
             // generate the language selector menu;
             const langs = config.languages;
-            service.controls.language.children = langs.map(l =>
-                ({
-                    type: 'link',
-                    label: translations[l].lang[l.substring(0, 2)],
-                    action: switchLanguage,
-                    isChecked: isCurrentLanguage,
-                    value: l
-                }));
+            service.controls.language.children = langs.map((l) => ({
+                type: 'link',
+                label: translations[l].lang[l.substring(0, 2)],
+                action: switchLanguage,
+                isChecked: isCurrentLanguage,
+                value: l,
+            }));
 
             // if there is isn't French data available, add it
             // from: https://github.com/moment/moment/blob/develop/locale/fr-ca.js
             if (!moment.locales().includes('fr-CA')) {
                 moment.locale('fr-CA', {
-                    months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
-                    monthsShort : 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
-                    monthsParseExact : true,
-                    weekdays : 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
-                    weekdaysShort : 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
-                    weekdaysMin : 'di_lu_ma_me_je_ve_sa'.split('_'),
-                    weekdaysParseExact : true,
-                    longDateFormat : {
-                        LT : 'HH:mm',
-                        LTS : 'HH:mm:ss',
-                        L : 'YYYY-MM-DD',
-                        LL : 'D MMMM YYYY',
-                        LLL : 'D MMMM YYYY HH:mm',
-                        LLLL : 'dddd D MMMM YYYY HH:mm'
+                    months: 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split(
+                        '_'
+                    ),
+                    monthsShort: 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
+                    monthsParseExact: true,
+                    weekdays: 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
+                    weekdaysShort: 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
+                    weekdaysMin: 'di_lu_ma_me_je_ve_sa'.split('_'),
+                    weekdaysParseExact: true,
+                    longDateFormat: {
+                        LT: 'HH:mm',
+                        LTS: 'HH:mm:ss',
+                        L: 'YYYY-MM-DD',
+                        LL: 'D MMMM YYYY',
+                        LLL: 'D MMMM YYYY HH:mm',
+                        LLLL: 'dddd D MMMM YYYY HH:mm',
                     },
-                    calendar : {
-                        sameDay : '[Aujourd’hui à] LT',
-                        nextDay : '[Demain à] LT',
-                        nextWeek : 'dddd [à] LT',
-                        lastDay : '[Hier à] LT',
-                        lastWeek : 'dddd [dernier à] LT',
-                        sameElse : 'L'
+                    calendar: {
+                        sameDay: '[Aujourd’hui à] LT',
+                        nextDay: '[Demain à] LT',
+                        nextWeek: 'dddd [à] LT',
+                        lastDay: '[Hier à] LT',
+                        lastWeek: 'dddd [dernier à] LT',
+                        sameElse: 'L',
                     },
-                    relativeTime : {
-                        future : 'dans %s',
-                        past : 'il y a %s',
-                        s : 'quelques secondes',
-                        ss : '%d secondes',
-                        m : 'une minute',
-                        mm : '%d minutes',
-                        h : 'une heure',
-                        hh : '%d heures',
-                        d : 'un jour',
-                        dd : '%d jours',
-                        M : 'un mois',
-                        MM : '%d mois',
-                        y : 'un an',
-                        yy : '%d ans'
+                    relativeTime: {
+                        future: 'dans %s',
+                        past: 'il y a %s',
+                        s: 'quelques secondes',
+                        ss: '%d secondes',
+                        m: 'une minute',
+                        mm: '%d minutes',
+                        h: 'une heure',
+                        hh: '%d heures',
+                        d: 'un jour',
+                        dd: '%d jours',
+                        M: 'un mois',
+                        MM: '%d mois',
+                        y: 'un an',
+                        yy: '%d ans',
                     },
                     dayOfMonthOrdinalParse: /\d{1,2}(er|e)/,
-                    ordinal : function (number, period) {
+                    ordinal: function (number, period) {
                         switch (period) {
                             // Words with masculine grammatical gender: mois, trimestre, jour
                             default:
@@ -424,7 +420,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
                             case 'W':
                                 return number + (number === 1 ? 're' : 'e');
                         }
-                    }
+                    },
                 });
             }
 
@@ -438,7 +434,7 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
             $mdDateLocale.firstDayOfWeek = localeData._week.dow;
 
             // mark each plugin inactive (unchecked) before loading the new language
-            service.controls.plugins.children.forEach(child => {
+            service.controls.plugins.children.forEach((child) => {
                 child.isActive = false;
             });
         });
@@ -453,7 +449,6 @@ function sideNavigationService($mdSidenav, $rootElement, configService, basemapS
         function switchLanguage(control) {
             // reload service with the new language and close side panel
             reloadService.loadNewLang(control.value);
-            service.close();
         }
 
         /**

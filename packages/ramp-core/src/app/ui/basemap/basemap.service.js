@@ -7,12 +7,9 @@
  * the currently selected basemap.
  *
  */
-angular
-    .module('app.ui')
-    .factory('basemapService', basemapService);
+angular.module('app.ui').factory('basemapService', basemapService);
 
 function basemapService($rootElement, $mdSidenav, $q) {
-
     let closePromise;
 
     const service = {
@@ -20,7 +17,7 @@ function basemapService($rootElement, $mdSidenav, $q) {
         close,
         toggle,
         isOpen,
-        onClose: () => closePromise // returns promise that resolves when panel has closed (by any means)
+        onClose: () => closePromise, // returns promise that resolves when panel has closed (by any means)
     };
 
     return service;
@@ -31,18 +28,19 @@ function basemapService($rootElement, $mdSidenav, $q) {
      * @return  {Promise}   resolves to undefined when panel animation is complete
      */
     function open() {
-        closePromise = $q($mdSidenav('right').onClose)
-            .then(() => setOtherChromeOpacity(1));
+        closePromise = $q($mdSidenav('right').onClose).then(() => setOtherChromeOpacity(1));
 
         setOtherChromeOpacity(0.2);
 
         // close the side menu
         $mdSidenav('left').close();
 
-        return $mdSidenav('right')
-            .open()
-            // Once the side panel is open, set focus on the panel
-            .then(() => $('md-sidenav[md-component-id="right"] button').first().rvFocus());
+        return (
+            $mdSidenav('right')
+                .open()
+                // Once the side panel is open, set focus on the panel
+                .then(() => $('md-sidenav[md-component-id="right"] button').first().rvFocus())
+        );
 
         /**
          * Makes all other chrome almost transparent so the basemap is more clearly visible
@@ -61,6 +59,7 @@ function basemapService($rootElement, $mdSidenav, $q) {
      * @return  {Promise}   resolves to undefined when panel animation is complete
      */
     function close() {
+        $mdSidenav('left').open();
         return $mdSidenav('right').close();
     }
 
