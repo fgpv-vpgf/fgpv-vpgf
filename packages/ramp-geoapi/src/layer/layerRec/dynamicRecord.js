@@ -326,9 +326,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // process the child layers our config is interested in, and all their children.
         if (this.config.layerEntries) {
             this.config.layerEntries.forEach(le => {
-                if (!le.stateOnly) {
-                    processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
-                }
+                processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
             });
         }
 
@@ -674,14 +672,19 @@ class DynamicRecord extends attribRecord.AttribRecord {
         } else {
             opts.layerIds = this._layer.visibleLayers
                 .filter(leafIndex => {
+                    // Determine whether the leaf has `stateOnly` set to true in the config.
+                    const isStateOnly = this.initialConfig.layerEntries.some(entry => {
+                        return entry.index === leafIndex && entry.stateOnly;
+                    });
+
                     if (leafIndex === -1) {
                         // this is marker for nothing is visible. get rid of it
                         return false;
                     } else {
                         const fc = this._featClasses[leafIndex];
                         if (fc) {
-                            // keep if it is queryable and on-scale
-                            return fc.queryable && !fc.isOffScale(opts.map.getScale()).offScale;
+                            // keep if it is queryable, on-scale, and is not state only.
+                            return fc.queryable && !isStateOnly && !fc.isOffScale(opts.map.getScale()).offScale;
                         } else {
                             // we dont have a feature class for this id.
                             //  it is likely a a group or something visible but not active
