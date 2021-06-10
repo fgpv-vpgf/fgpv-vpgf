@@ -65,12 +65,12 @@
     %zebra-list {
         @extend %base-list;
 
-        > li {
+        > div {
             padding: rem(0.5);
             overflow: auto;
         }
 
-        > li:nth-child(even) {
+        > div:nth-child(even) {
             background-color: #ddd;
         }
     }

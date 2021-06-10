@@ -163,7 +163,7 @@
         "name": "Hydrometric Stations - Start with 6000th index",
         "layerType": "ogcWfs",
         "nameField": "STATION_NAME",
-        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items?startindex=6000",
+        "url": "https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items?startindex=6000",
         "colour": "#FF0000"
       },
       {
@@ -171,7 +171,7 @@
         "name": "Hydrometric Stations - All features",
         "layerType": "ogcWfs",
         "nameField": "STATION_NAME",
-        "url": "http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/collections/hydrometric-stations/items",
+        "url": "https://geo.weather.gc.ca/geomet-beta/features/collections/hydrometric-stations/items",
         "colour": "#00FF00"
       }
     ],

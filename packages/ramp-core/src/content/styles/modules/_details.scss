@@ -287,7 +287,7 @@ $details-record-height: rem(6);
                 padding: rem(0.8) rem(1.6);
                 border-bottom: 1px solid $divider-color-light;
 
-                li {
+                div {
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: flex-end; // forces the key value to move the rigth of the container; key name is pushed to the left by the flexed span
