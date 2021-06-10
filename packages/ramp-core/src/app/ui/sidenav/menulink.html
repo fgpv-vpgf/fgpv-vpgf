@@ -1,25 +1,25 @@
 <md-button
     ng-if="self.control.type === 'link'"
     ng-click="self.control.action(self.control, $event)"
-    class="rv-button-square">
-
+    class="rv-button-square"
+    aria-label="{{ self.control.label | translate }}"
+>
     <div layout="row">
         <md-icon md-svg-src="{{ ::self.control.icon }}"></md-icon>{{ self.control.label | translate }}<span flex></span>
         <md-icon md-svg-src="navigation:check" ng-if="self.control.isChecked(self.control)"></md-icon>
     </div>
-
 </md-button>
 
 <md-button
     ng-if="self.control.type === 'fullscreen'"
     class="rv-button-square"
-    ngsf-toggle-fullscreen>
-
+    aria-label="{{ self.control.label | translate }}"
+    ngsf-toggle-fullscreen
+>
     <div layout="row">
         <md-icon md-svg-src="{{ ::self.control.icon }}"></md-icon>{{ self.control.label | translate }}<span flex></span>
         <md-icon md-svg-src="navigation:check" ng-if="self.control.isChecked(self.control)"></md-icon>
     </div>
-
 </md-button>
 
 <div layout="row" ng-if="self.control.type === 'group'" class="rv-menulink-header md-subhead">
