@@ -5,7 +5,7 @@ export default class CoordInfo {
     nts: "https://geogratis.gc.ca/services/delimitation/en/nts?",
     utm: "https://geogratis.gc.ca/services/delimitation/en/utmzone?",
     alti: "https://geogratis.gc.ca/services/elevation/cdem/altitude?",
-    decli: "https://geomag.nrcan.gc.ca/service/tools/magnetic/calculator/?",
+    decli: "https://ngdc.noaa.gov/geomag-web/calculators/calculateDeclination?",
   };
 
   init(api: any) {
@@ -105,8 +105,12 @@ export default class CoordInfo {
     // get point in dms
     const dms = this._RV.convertDDToDMS(pt.y, pt.x);
 
-    // todays date for magnetic declination
+    // todays date (extract year, month, day) for magnetic declination (new noaa service)
     const date = new Date().toISOString().substr(0, 10);
+    const splitDate = date.split("-");
+    const dateYear = parseInt(splitDate[0]);
+    const dateMonth = parseInt(splitDate[1]);
+    const dateDay = parseInt(splitDate[2]);
 
     // get info from services (nts, utm zone, altimetry and magnetic declination)
     const promises = [];
@@ -147,14 +151,21 @@ export default class CoordInfo {
       })
     );
 
+    const params = {
+      lat1: pt.y,
+      lon1: pt.x,
+      startYear: dateYear,
+      startMonth: dateMonth,
+      startDay: dateDay,
+      resultFormat: "json",
+    };
     promises.push(
       new Promise((resolve) => {
         $.ajax({
           url: this.urls.decli,
           cache: true,
-          data: { latitude: pt.y, longitude: pt.x, date: date, format: "json" },
-          dataType: "jsonp",
-          success: (data) => resolve(this.parseDecli(data, lang)),
+          data: params,
+          success: (data) => resolve(this.parseDecli(data.result[0])),
           error: () => {
             resolve(undefined);
           },
@@ -178,10 +189,19 @@ export default class CoordInfo {
    * @param {String}  date the today's date
    */
   generateOutput(val, pt, dms, date) {
+    // format latitude and longitude coordinates
+    const lat =
+      pt.y > 0
+        ? `${pt.y.toFixed(6)}${String.fromCharCode(176)} N`
+        : `${-pt.y.toFixed(6)}${String.fromCharCode(176)} S`;
+    const lon =
+      pt.x > 0
+        ? `${pt.x.toFixed(6)}${String.fromCharCode(176)} E`
+        : `${-pt.x.toFixed(6)}${String.fromCharCode(176)} W`;
     let output = template
       // coord
-      .replace(/{pt.y}/, pt.y.toFixed(6))
-      .replace(/{pt.x}/, pt.x.toFixed(6))
+      .replace(/{pt.y}/, lat)
+      .replace(/{pt.x}/, lon)
       .replace(/{dms.y}/, dms.y)
       .replace(/{dms.x}/, dms.x)
       // utm
@@ -283,24 +303,32 @@ export default class CoordInfo {
    *
    * @function  parseDecli
    * @param  {Object}  decli the answer from the service
-   * @param  {String}  lang the current language
-   * @return {Object}   the declination information (magnetic {String} magnetic declination, annChange {Number} Annual change, compass {String} Compass information)
+   * @return {Object} the declination information (magnetic {String} magnetic declination, annChange {Number} Annual change
    */
-  parseDecli(decli, lang) {
+  parseDecli(decli) {
     /* jshint -W106 */
     /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-    const magnetic =
-      decli.components.D !== null
-        ? `${decli.components.D}${String.fromCharCode(176)}`
-        : "---";
-    const annChange =
-      decli.annual_change.dD !== null ? decli.annual_change.dD : "---";
-    const compass =
-      decli.compass !== "useless"
-        ? ""
-        : CoordInfo.prototype.translations[lang].plugin.coordInfo.magCompassOut;
+    // parse and format declination results for display
+    let magnetic = "---";
+    if (decli.declination !== null) {
+      // round declination result and check for E or W
+      const roundedVal = decli.declination.toFixed(2);
+      magnetic =
+        decli.declination > 0
+          ? `${roundedVal}${String.fromCharCode(176)} E`
+          : `${-roundedVal}${String.fromCharCode(176)} W`;
+    }
 
-    return { magnetic, annChange, compass };
+    let annChange = "---";
+    if (decli.declnation_sv !== null) {
+      const roundedVal = decli.declnation_sv.toFixed(2);
+      annChange =
+        decli.declnation_sv > 0
+          ? `${roundedVal}${String.fromCharCode(176)} E`
+          : `${-roundedVal}${String.fromCharCode(176)} W`;
+    }
+
+    return { magnetic, annChange };
   }
 }
 
