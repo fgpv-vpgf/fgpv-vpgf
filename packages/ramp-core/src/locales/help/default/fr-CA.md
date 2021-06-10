@@ -15,6 +15,8 @@ Les commandes de navigation suivantes se trouvent dans le coin inférieur droit 
 
 Vous pouvez également parcourir la carte en utilisant les touches fléchées gauche, droite, haut et bas ou en cliquant sur la carte et en la faisant glisser. L'utilisation de la molette de la souris zoomera la carte en avant ou en arrière.
 
+Si vous êtes panoramique de la carte en utilisant les touches fléchées, vous pouvez appuyer sur « SHIFT » ou « CTRL » pour déplacer la carte plus rapidement ou plus lentement, respectivement.
+
 Notez que la carte doit être la zone active (avoir le « focus ») pour que les touches clavier fonctionnent. La carte devient la zone active lorsqu'il y a une bordure bleue autour d'elle.
 
 
