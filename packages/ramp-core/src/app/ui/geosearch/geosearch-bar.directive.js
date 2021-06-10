@@ -11,9 +11,7 @@ const GEOSEARCH_MENU_CLASS = 'rv-geosearch-suggestion-menu';
  * The `rvGeosearchBar` directive creates the geobar with a search field and the close button.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvGeosearchBar', rvGeosearchBar);
+angular.module('app.ui').directive('rvGeosearchBar', rvGeosearchBar);
 
 /**
  * `rvGeosearch` directive body.
@@ -28,12 +26,12 @@ function rvGeosearchBar() {
         scope: {
             value: '=',
             onUpdate: '=',
-            onClose: '='
+            onClose: '=',
         },
         link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -49,7 +47,7 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
     const self = this;
 
     const ref = {
-        _geosearchMenuNode: null
+        _geosearchMenuNode: null,
     };
 
     self.service = geosearchService;
@@ -60,8 +58,7 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
 
     self.onUpdateDebounce = onUpdateDebounceBuilder();
 
-    configService.onEveryConfigLoad(cfg =>
-        (self.config = cfg));
+    configService.onEveryConfigLoad((cfg) => (self.config = cfg));
 
     return;
 
@@ -75,7 +72,6 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
      * @return {Function} debounced onUpdateFunction
      */
     function onUpdateDebounceBuilder() {
-
         const onUpdateDebounce = debounceService.registerDebounce(getSuggestions, 300, false);
 
         return () => {
@@ -88,7 +84,7 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
 
             getGeosearchMenuNode().css('visibility', 'hidden');
 
-            return onUpdateDebounce().then(data => {
+            return onUpdateDebounce().then((data) => {
                 getGeosearchMenuNode().css('visibility', 'visible');
 
                 return data;
@@ -122,9 +118,7 @@ function Controller(appInfo, configService, sideNavigationService, debounceServi
      * @return {Promise} a promise resolving with geo search query suggestion if any
      */
     function getSuggestions() {
-        const suggestionsPromise = geosearchService.runQuery().then((data = {}) =>
-            data.suggestions || []
-        );
+        const suggestionsPromise = geosearchService.runQuery().then((data = {}) => data.suggestions || []);
 
         return suggestionsPromise;
     }

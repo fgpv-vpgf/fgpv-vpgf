@@ -6,33 +6,27 @@
     flow-prevent-drop
     class="rv-file-drop"
     rv-trap-focus="{{ ::self.appID }}"
-    ng-class="{'rv-file-drop-active': self.dropActive}">
-
-    <div
-        class="rv-loader-file"
-        flow-init="{ singleFile: true }">
-
+    ng-class="{'rv-file-drop-active': self.dropActive}"
+>
+    <div class="rv-loader-file" flow-init="{ singleFile: true }">
         <div class="rv-file-drop-blur">
-
             <rv-stepper-item
                 class="rv-loader-file-upload"
                 step="self.upload.step"
                 form="self.upload.form"
-                summary-value="{{ self.upload.step.isCompleted ? self.upload.file.name || self.upload.fileUrl : 'import.file.upload.summary' | translate }}">
-
+                summary-value="{{ self.upload.step.isCompleted ? self.upload.file.name || self.upload.fileUrl : 'import.file.upload.summary' | translate }}"
+            >
                 <md-input-container class="md-block rv-loader-file-upload-drop" flex>
-
                     <div class="md-block">
-                        <div
-                            flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)">
-
+                        <div flow-files-submitted="self.upload.filesSubmitted($files, $event, $flow)">
                             <md-button
                                 class="rv-button-square rv-loader-file-select-button md-raised"
                                 flow-btn
                                 flow-progress="console.log()"
                                 flow-attrs="{ accept: '.csv,.zip,.json' }"
                                 name="dataUpload"
-                                ng-click="self.upload.step.reset()">
+                                ng-click="self.upload.step.reset()"
+                            >
                                 <md-icon md-svg-src="file:file_upload"></md-icon>
                                 {{ "import.file.upload.choose" | translate }}
                             </md-button>
@@ -43,14 +37,18 @@
                     <md-progress-linear
                         md-mode="determinate"
                         value="{{ self.upload.progress }}"
-                        ng-class="{ 'rv-hide': !self.upload.file }"></md-progress-linear>
+                        ng-class="{ 'rv-hide': !self.upload.file }"
+                    ></md-progress-linear>
 
                     <!-- this field is needed to attach the error messages; is't hidden -->
-                    <input name="fileSelect" ng-model="self.upload.fileSelect" aria-label="{{ 'import.file.select.title' | translate }}">
+                    <input
+                        name="fileSelect"
+                        ng-model="self.upload.fileSelect"
+                        aria-label="{{ 'import.file.select.title' | translate }}"
+                    />
                     <div ng-messages="self.upload.form.fileSelect.$error">
                         <div ng-message="upload-error">{{ 'import.file.upload.noaccess' | translate }}</div>
                     </div>
-
                 </md-input-container>
 
                 <span class="md-subhead rv-loader-file-upload-or">{{ 'import.file.upload.or' | translate }}</span>
@@ -64,7 +62,8 @@
                         ng-model="self.upload.fileUrl"
                         ng-model-options="{ updateOn: 'default blur', debounce: { default: 30, blur: 0 } }"
                         ng-keypress="self.upload.step.onKeypress($event)"
-                        required>
+                        required
+                    />
 
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <div ng-messages="self.upload.form.fileUrl.$error">
@@ -76,33 +75,31 @@
                 <div class="fileURLStatus" ng-class="{ 'rv-hide': !self.upload.httpProgress }">
                     <md-progress-linear
                         md-mode="{{ self.upload.fileStatus ? 'determinate' : 'indeterminate' }}"
-                        value="{{ self.upload.progress }}"></md-progress-linear>
+                        value="{{ self.upload.progress }}"
+                    ></md-progress-linear>
 
                     <span class="fileLoaded">{{ self.upload.fileStatus || 'Loading ...' }}</span>
                 </div>
-
             </rv-stepper-item>
 
             <rv-stepper-item
                 form="self.select.form"
                 step="self.select.step"
-                summary-value="{{ self.layerBlueprint.type && self.select.step.isCompleted ? 'import.upload.type.' + self.layerBlueprint.type : '' }}">
-
+                summary-value="{{ self.layerBlueprint.type && self.select.step.isCompleted ? 'import.upload.type.' + self.layerBlueprint.type : '' }}"
+            >
                 <!-- can't combine these two input containers because angular doesn't like having
                      two select menus under the same container, even using ng-if :( -->
 
                 <!-- file case-->
-                <md-input-container
-                    ng-if="self.layerBlueprintOptions"
-                    class="md-block">
+                <md-input-container ng-if="self.layerBlueprintOptions" class="md-block">
                     <label>{{ 'import.file.select.fileformat' | translate }}</label>
                     <md-select
                         name="dataType"
                         ng-model="self.layerBlueprint"
-                        md-on-open="self.select.selectResetValidation()" required>
-                        <md-option
-                            ng-repeat="option in self.layerBlueprintOptions"
-                            ng-value="option">
+                        md-on-open="self.select.selectResetValidation()"
+                        required
+                    >
+                        <md-option ng-repeat="option in self.layerBlueprintOptions" ng-value="option">
                             {{ 'import.upload.type.' + option.type | translate }}
                         </md-option>
                     </md-select>
@@ -112,17 +109,15 @@
                 </md-input-container>
 
                 <!-- service case -->
-                <md-input-container
-                    ng-if="!self.layerBlueprintOptions"
-                    class="md-block">
+                <md-input-container ng-if="!self.layerBlueprintOptions" class="md-block">
                     <label>{{ 'import.service.select.servicetype' | translate }}</label>
                     <md-select
                         name="dataType"
                         ng-model="self.select.selection"
-                        md-on-open="self.select.selectResetValidation()" required>
-                        <md-option
-                            ng-repeat="option in self.serviceOptions"
-                            ng-value="option.name">
+                        md-on-open="self.select.selectResetValidation()"
+                        required
+                    >
+                        <md-option ng-repeat="option in self.serviceOptions" ng-value="option.name">
                             {{ 'import.upload.type.' + option.name | translate }}
                         </md-option>
                     </md-select>
@@ -137,17 +132,27 @@
                         <div ng-message="required">Required</div>
                     </div>
                     <div class="rv-hint">Tell us what it is.</div-->
-
                 </md-input-container>
             </rv-stepper-item>
 
-            <rv-stepper-item step="self.configure.step" form="self.configure.form" ng-switch on="self.layerBlueprint.type">
-
-                <md-input-container class="md-block" ng-switch-when="featurelayer|wms|wfs|csv|geojson|shapefile" ng-switch-when-separator="|">
+            <rv-stepper-item
+                step="self.configure.step"
+                form="self.configure.form"
+                ng-switch
+                on="self.layerBlueprint.type"
+            >
+                <md-input-container
+                    class="md-block"
+                    ng-switch-when="featurelayer|wms|wfs|csv|geojson|shapefile"
+                    ng-switch-when-separator="|"
+                >
                     <label>{{ 'import.layer.configure.layername' | translate }}</label>
-                    <input name="layerName"
+                    <input
+                        name="layerName"
                         ng-change="self.configure.configureResetValidation()"
-                        ng-model="self.layerBlueprint.config.name" required>
+                        ng-model="self.layerBlueprint.config.name"
+                        required
+                    />
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -162,7 +167,8 @@
                             name="primaryField"
                             md-on-open="self.configure.configureResetValidation()"
                             ng-model="self.layerBlueprint.config.nameField"
-                            required>
+                            required
+                        >
                             <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
@@ -177,7 +183,8 @@
                         <md-select
                             name="tooltipField"
                             md-on-open="self.configure.configureResetValidation()"
-                            ng-model="self.layerBlueprint.config.tooltipField">
+                            ng-model="self.layerBlueprint.config.tooltipField"
+                        >
                             <md-option ng-repeat="field in self.layerBlueprint.fields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
@@ -196,7 +203,8 @@
                             name="latitude"
                             md-on-open="self.configure.configureResetValidation()"
                             ng-model="self.layerBlueprint.config.latfield"
-                            required>
+                            required
+                        >
                             <md-option ng-repeat="field in self.layerBlueprint.latFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
@@ -212,7 +220,8 @@
                             name="longitude"
                             md-on-open="self.configure.configureResetValidation()"
                             ng-model="self.layerBlueprint.config.lonfield"
-                            required>
+                            required
+                        >
                             <md-option ng-repeat="field in self.layerBlueprint.longFields" value="{{ field.name }}">
                                 {{ field.name }}
                             </md-option>
@@ -226,12 +235,22 @@
 
                 <md-input-container class="md-block" ng-switch-when="dynamicservice">
                     <label>{{ 'import.service.configure.layers' | translate }}</label>
-                    <md-select name="dynamicLayers" ng-model="self.layerBlueprint.config.layerEntries" ng-model-options="{ trackBy: '$value.index' }"
-                        ng-change="self.common.onDynamicLayerSection()" required multiple>
+                    <md-select
+                        name="dynamicLayers"
+                        ng-model="self.layerBlueprint.config.layerEntries"
+                        ng-model-options="{ trackBy: '$value.index' }"
+                        ng-change="self.common.onDynamicLayerSection()"
+                        required
+                        multiple
+                    >
                         <md-select-header>
                             <md-input-container>
-                                <md-checkbox ng-checked="self.common.isAllLayersSelected()" md-indeterminate="self.common.isAllLayersSelected(true)" ng-click="self.common.toggleLayers(); self.common.onDynamicLayerSection();"
-                                    class="md-primary rv-select-header-all">
+                                <md-checkbox
+                                    ng-checked="self.common.isAllLayersSelected()"
+                                    md-indeterminate="self.common.isAllLayersSelected(true)"
+                                    ng-click="self.common.toggleLayers(); self.common.onDynamicLayerSection();"
+                                    class="md-primary rv-select-header-all"
+                                >
                                     {{ 'import.service.configure.selectall' | translate }}
                                 </md-checkbox>
                                 <md-divider class="rv-layer-list-divider"></md-divider>
@@ -250,16 +269,25 @@
 
                 <!-- the singleEntryCollapse option is enabled to user interaction only when a single layer entry is selected -->
                 <md-input-container class="md-block" ng-switch-when="dynamicservice">
-                    <md-checkbox ng-model="self.layerBlueprint.config.singleEntryCollapse" md-indeterminate="self.layerBlueprint.config.layerEntries.length === 0"
-                        ng-true-value="false" ng-false-value="true" ng-disabled="self.layerBlueprint.config.layerEntries.length !== 1"
-                        class="md-primary">
+                    <md-checkbox
+                        ng-model="self.layerBlueprint.config.singleEntryCollapse"
+                        md-indeterminate="self.layerBlueprint.config.layerEntries.length === 0"
+                        ng-true-value="false"
+                        ng-false-value="true"
+                        ng-disabled="self.layerBlueprint.config.layerEntries.length !== 1"
+                        class="md-primary"
+                    >
                         {{ 'import.service.configure.singleentrycollapse' | translate }}
                     </md-checkbox>
                 </md-input-container>
 
-                <md-input-container class="md-block" ng-if="!self.layerBlueprint.config.singleEntryCollapse" ng-switch-when="dynamicservice">
+                <md-input-container
+                    class="md-block"
+                    ng-if="!self.layerBlueprint.config.singleEntryCollapse"
+                    ng-switch-when="dynamicservice"
+                >
                     <label>{{ 'import.service.configure.groupname' | translate }}</label>
-                    <input name="layerServiceName" ng-model="self.layerBlueprint.config.name" required>
+                    <input name="layerServiceName" ng-model="self.layerBlueprint.config.name" required />
                     <!-- TODO: decide whether and how to display a hint or error messages -->
                     <!--div ng-messages="self.configure.form.layerName.$error">
                         <div ng-message="required">This is required!</div>
@@ -269,13 +297,22 @@
 
                 <md-input-container class="md-block" ng-switch-when="wms">
                     <label>{{ 'import.service.configure.layers' | translate }}</label>
-                    <md-select name="wmsLayers" ng-model="self.layerBlueprint.config.layerEntries" ng-model-options="{ trackBy: '$value.index' }"
-                        required multiple>
+                    <md-select
+                        name="wmsLayers"
+                        ng-model="self.layerBlueprint.config.layerEntries"
+                        ng-model-options="{ trackBy: '$value.index' }"
+                        required
+                        multiple
+                    >
                         <md-input-container class="md-block">
                             <md-select-header>
                                 <md-input-container>
-                                    <md-checkbox ng-checked="self.common.isAllLayersSelected()" md-indeterminate="self.common.isAllLayersSelected(true)" ng-click="self.common.toggleLayers()"
-                                        class="md-primary rv-select-header-all">
+                                    <md-checkbox
+                                        ng-checked="self.common.isAllLayersSelected()"
+                                        md-indeterminate="self.common.isAllLayersSelected(true)"
+                                        ng-click="self.common.toggleLayers()"
+                                        class="md-primary rv-select-header-all"
+                                    >
                                         {{ 'import.service.configure.selectall' | translate }}
                                     </md-checkbox>
                                     <md-divider class="rv-layer-list-divider"></md-divider>
@@ -300,7 +337,8 @@
                             type="colour"
                             class="rv_colourpicker"
                             ng-change="self.configure.configureResetValidation()"
-                            ng-model="self.layerBlueprint.config.colour">
+                            ng-model="self.layerBlueprint.config.colour"
+                        />
                         <!-- TODO: decide whether and how to display a hint or error messages -->
                         <!--div ng-messages="self.configure.form.layerName.$error">
                             <div ng-message="required">This is required!</div>
@@ -314,7 +352,6 @@
                 </div>
 
                 <p class="md-caption">{{ 'stepper.unresponsive' | translate }}</p>
-
             </rv-stepper-item>
         </div>
 
@@ -325,5 +362,4 @@
             </div>
         </div>
     </div>
-
 </rv-content-pane>

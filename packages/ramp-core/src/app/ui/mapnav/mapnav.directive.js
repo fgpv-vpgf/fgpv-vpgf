@@ -9,9 +9,7 @@ const templateUrl = require('./mapnav.html');
  * The `rvMapnav` directive handles the rendering of the map navigation component.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvMapnav', rvMapnav);
+angular.module('app.ui').directive('rvMapnav', rvMapnav);
 
 function rvMapnav() {
     const directive = {
@@ -20,7 +18,7 @@ function rvMapnav() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -31,6 +29,5 @@ function Controller(configService) {
     const self = this;
 
     // expose navbar config to the template
-    configService.onEveryConfigLoad(config =>
-        (self.config = config.ui.navBar));
+    configService.onEveryConfigLoad((config) => (self.config = config.ui.navBar));
 }

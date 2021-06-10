@@ -6,27 +6,37 @@ describe('DynamicFC', () => {
     const parent = {
         _apiRef: {
             symbology: {
-                generatePlaceholderSymbology: () => { return; }
+                generatePlaceholderSymbology: () => {
+                    return;
+                },
             },
             layer: {
-                LayerDrawingOptions: function () { }
-            }
+                LayerDrawingOptions: function () {},
+            },
         },
         _layer: {
-            visibleLayers: [ ],
-            setLayerDrawingOptions: (x) => { parent.testField = x; },
-            setVisibleLayers: (x) => { parent.visibleLayers = x; },
-            setVisibility: () => { return; },
-            refresh: () => {}
+            visibleLayers: [],
+            setLayerDrawingOptions: (x) => {
+                parent.testField = x;
+            },
+            setVisibleLayers: (x) => {
+                parent.visibleLayers = x;
+            },
+            setVisibility: () => {
+                return;
+            },
+            refresh: () => {},
         },
-        synchOpacity: () => { return; },
-        testField: [ ]
+        synchOpacity: () => {
+            return;
+        },
+        testField: [],
     };
-    const layerPackage = { };
+    const layerPackage = {};
     const config = {
         state: {
-            opacity: 1
-        }
+            opacity: 1,
+        },
     };
     let dynamicFC;
     beforeEach(() => {
@@ -70,14 +80,13 @@ describe('DynamicFC', () => {
             const res = dynamicFC.opacity;
             expect(res).toEqual(0.3);
         });
-
     });
 
     describe('setVisibility', () => {
         beforeEach(() => {
             spyOn(parent._layer, 'setVisibleLayers').and.callThrough();
             spyOn(parent._layer, 'setVisibility');
-            parent._layer.visibleLayers = [ ];
+            parent._layer.visibleLayers = [];
             parent._visDelay = {};
         });
 
@@ -112,7 +121,5 @@ describe('DynamicFC', () => {
             expect(parent._layer.setVisibility).not.toHaveBeenCalled();
             expect(parent.visibleLayers).toEqual([-1]);
         });
-
     });
-
 });

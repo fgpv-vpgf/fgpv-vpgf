@@ -32,8 +32,14 @@ function queryGeometryHelper(esriBundle, geometry, isFileLayer, mapScale, source
         // first check for case of very large extent in Lambert against a LatLong layer.
         // in this case, we tend to get better results keeping things in an Extent form
         // as it handles the north pole/180meridan crossage better.
-        if (mapScale && sourceWkid && mapScale > 20000000 && geometry.spatialReference &&
-            geometry.spatialReference.wkid === 3978 && sourceWkid === 4326) {
+        if (
+            mapScale &&
+            sourceWkid &&
+            mapScale > 20000000 &&
+            geometry.spatialReference &&
+            geometry.spatialReference.wkid === 3978 &&
+            sourceWkid === 4326
+        ) {
             finalGeom = geometry;
         } else {
             // convert extent to polygon to avoid issues when a service in a different projection
@@ -49,7 +55,6 @@ function queryGeometryHelper(esriBundle, geometry, isFileLayer, mapScale, source
 }
 
 function queryGeometryBuilder(esriBundle) {
-
     /**
      * Fetch attributes from a layer that intersects with the given geometry
      * Accepts the following options:
@@ -70,7 +75,7 @@ function queryGeometryBuilder(esriBundle) {
      * @param {Object} options settings to determine the details and behaviors of the query.
      * @return {Promise} resolves with a feature set of features that satisfy the query
      */
-    return options => {
+    return (options) => {
         // create and set the esri query parameters
 
         const isFile = !!options.featureLayer;
@@ -92,7 +97,13 @@ function queryGeometryBuilder(esriBundle) {
             query.where = options.where;
         }
 
-        query.geometry = queryGeometryHelper(esriBundle, options.geometry, isFile, options.mapScale, options.sourceWkid);
+        query.geometry = queryGeometryHelper(
+            esriBundle,
+            options.geometry,
+            isFile,
+            options.mapScale,
+            options.sourceWkid
+        );
 
         query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
 
@@ -102,21 +113,23 @@ function queryGeometryBuilder(esriBundle) {
                 const queryTask = new esriBundle.QueryTask(options.url);
 
                 // issue the map server query request
-                queryTask.execute(query,
-                    featureSet => {
+                queryTask.execute(
+                    query,
+                    (featureSet) => {
                         resolve(featureSet);
                     },
-                    error => {
+                    (error) => {
                         reject(error);
                     }
                 );
             } else if (isFile) {
                 // run the query on the layers internal data
-                options.featureLayer.queryFeatures(query,
-                    featureSet => {
+                options.featureLayer.queryFeatures(
+                    query,
+                    (featureSet) => {
                         resolve(featureSet);
                     },
-                    error => {
+                    (error) => {
                         reject(error);
                     }
                 );
@@ -129,7 +142,6 @@ function queryGeometryBuilder(esriBundle) {
 // specifically, we can ignore the result limit on the server. Also doesn't require a geomtery, can just be
 // where clause
 function queryIdsBuilder(esriBundle) {
-
     /**
      * Fetch the Object IDs of features from a layer that satisfies the options
      * Accepts the following options:
@@ -148,7 +160,7 @@ function queryIdsBuilder(esriBundle) {
      * @param {Object} options settings to determine the details of the query
      * @return {Promise} resolves with an array of Object Ids that satisfy the query
      */
-    return options => {
+    return (options) => {
         // create and set the esri query parameters
 
         const isFile = !!options.featureLayer;
@@ -162,7 +174,13 @@ function queryIdsBuilder(esriBundle) {
             query.where = options.where;
         }
         if (options.geometry) {
-            query.geometry = queryGeometryHelper(esriBundle, options.geometry, isFile, options.mapScale, options.sourceWkid);
+            query.geometry = queryGeometryHelper(
+                esriBundle,
+                options.geometry,
+                isFile,
+                options.mapScale,
+                options.sourceWkid
+            );
             query.spatialRelationship = esriBundle.Query.SPATIAL_REL_INTERSECTS; // esriSpatialRelIntersects
         }
 
@@ -172,21 +190,23 @@ function queryIdsBuilder(esriBundle) {
                 const queryTask = new esriBundle.QueryTask(options.url);
 
                 // issue the map server query request
-                queryTask.executeForIds(query,
-                    oidArray => {
+                queryTask.executeForIds(
+                    query,
+                    (oidArray) => {
                         resolve(oidArray);
                     },
-                    error => {
+                    (error) => {
                         reject(error);
                     }
                 );
             } else if (isFile) {
                 // run the query on the layers internal data
-                options.featureLayer.queryIds(query,
-                    oidArray => {
+                options.featureLayer.queryIds(
+                    query,
+                    (oidArray) => {
                         resolve(oidArray);
                     },
-                    error => {
+                    (error) => {
                         reject(error);
                     }
                 );
@@ -200,12 +220,11 @@ function queryIdsBuilder(esriBundle) {
 // (can be expanded)
 
 // for science. baseclass of all Aql classes. if we have a common property we can add here
-class AqlRoot {
-}
+class AqlRoot {}
 
 // baseclass for Aql classes that deal with one value
 class AqlAtomic extends AqlRoot {
-    constructor (val) {
+    constructor(val) {
         super();
         this.value = val;
     }
@@ -213,7 +232,7 @@ class AqlAtomic extends AqlRoot {
 
 // baseclass for Aql classes that deal with two values
 class AqlDiatomic extends AqlRoot {
-    constructor (left, right) {
+    constructor(left, right) {
         super();
         this.left = left;
         this.right = right;
@@ -224,7 +243,7 @@ class AqlDiatomic extends AqlRoot {
 class AqlLiteral extends AqlAtomic {
     // constructor param is the literal value
 
-    evaluate () {
+    evaluate() {
         return this.value;
     }
 }
@@ -233,7 +252,7 @@ class AqlLiteral extends AqlAtomic {
 class AqlIdentifier extends AqlAtomic {
     // constructor param is the property name of the attribute
 
-    evaluate (attribute) {
+    evaluate(attribute) {
         return attribute[this.value];
     }
 }
@@ -242,75 +261,75 @@ class AqlIdentifier extends AqlAtomic {
 class AqlArray extends AqlAtomic {
     // constructor param is the array
 
-    evaluate () {
+    evaluate() {
         return this.value;
     }
 }
 
 // handles an equals operator
 class AqlEquals extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) === this.right.evaluate(attribute);
     }
 }
 
 // handles a not-equals operator
 class AqlNotEquals extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) !== this.right.evaluate(attribute);
     }
 }
 
 // handles a greater-than-equals operator
 class AqlGreaterEquals extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) >= this.right.evaluate(attribute);
     }
 }
 
 // handles a less-than-equals operator
 class AqlLessEquals extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) <= this.right.evaluate(attribute);
     }
 }
 
 // handles a greater-than operator
 class AqlGreater extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) > this.right.evaluate(attribute);
     }
 }
 
 // handles a less-than operator
 class AqlLess extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) < this.right.evaluate(attribute);
     }
 }
 
 // handles an and operator
 class AqlAnd extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) && this.right.evaluate(attribute);
     }
 }
 
 // handles an or operator
 class AqlOr extends AqlDiatomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return this.left.evaluate(attribute) || this.right.evaluate(attribute);
     }
 }
 
 // handles an in / not in operator
 class AqlIn extends AqlDiatomic {
-    constructor (left, right, hasNot) {
+    constructor(left, right, hasNot) {
         super(left, right);
         this.hasNot = hasNot;
     }
 
-    evaluate (attribute) {
+    evaluate(attribute) {
         // we assume .right is an array (AqlArray)
         const result = this.right.evaluate(attribute).includes(this.left.evaluate(attribute));
         return this.hasNot ? !result : result;
@@ -319,13 +338,13 @@ class AqlIn extends AqlDiatomic {
 
 // handles a like operator
 class AqlLike extends AqlDiatomic {
-    constructor (left, right, hasNot, escape) {
+    constructor(left, right, hasNot, escape) {
         super(left, right);
         this.hasNot = hasNot;
         this.escapeVal = escape ? escape.value : null;
     }
 
-    evaluate (attribute) {
+    evaluate(attribute) {
         // we assume .right evaulates to a string
         const attVal = this.left.evaluate(attribute);
         let pattern = this.right.evaluate(attribute);
@@ -342,8 +361,8 @@ class AqlLike extends AqlDiatomic {
         // REGEX FORMAT FOR %: LIKE '%/ௌ%%' ESCAPE 'ௌ', convert ௌ% to a hidden string to avoid being converted to JS regex form (.*)
         // should work for most other escape characters other than ௌ should it get changed in plugins, some exceptions for SQL meaningful characters
         if (this.escapeVal) {
-            pattern = pattern.replace(new RegExp(`${this.escapeVal}%`, 'g'), "hiddenpercent");
-            pattern = pattern.replace(new RegExp(`${this.escapeVal}_`, 'g'), "hiddenunderscore");
+            pattern = pattern.replace(new RegExp(`${this.escapeVal}%`, 'g'), 'hiddenpercent');
+            pattern = pattern.replace(new RegExp(`${this.escapeVal}_`, 'g'), 'hiddenunderscore');
         }
 
         // TODO: may or may not need a different way to handle _ in the future since it is not being used at the moment in where clauses, but this should work
@@ -355,8 +374,8 @@ class AqlLike extends AqlDiatomic {
         // convert % to *, and make pattern respect start and end of the string, also convert _ to match single character (_ not being used at the moment)
         pattern = `^${pattern.replace(/%/g, '.*')}$`.replace(/_/g, '.');
         // convert any hidden strings back to % and _
-        pattern = pattern.replace(/hiddenpercent/g, "\\\\\\%");
-        pattern = pattern.replace(/hiddenunderscore/g, "_");
+        pattern = pattern.replace(/hiddenpercent/g, '\\\\\\%');
+        pattern = pattern.replace(/hiddenunderscore/g, '_');
 
         const result = RegExp(pattern).test(newAttVal);
         return this.hasNot ? !result : result;
@@ -365,7 +384,7 @@ class AqlLike extends AqlDiatomic {
 
 // handles a value with a prefix
 class AqlPrefix extends AqlAtomic {
-    constructor (val, prefix) {
+    constructor(val, prefix) {
         super(val);
         // add support for additional prefixes here
         this.supportedPrefixes = ['-', '+'];
@@ -376,7 +395,7 @@ class AqlPrefix extends AqlAtomic {
         }
     }
 
-    evaluate (attribute) {
+    evaluate(attribute) {
         // check if value is a number and is negative
         const result = this.value.evaluate(attribute);
         if (!isNaN(result)) {
@@ -389,14 +408,14 @@ class AqlPrefix extends AqlAtomic {
 
 // handles a not operator
 class AqlNot extends AqlAtomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         return !this.value.evaluate(attribute);
     }
 }
 
 // handles a set of parenthesis
 class AqlParentheses extends AqlAtomic {
-    evaluate (attribute) {
+    evaluate(attribute) {
         // INTENSE
         return this.value.evaluate(attribute);
     }
@@ -405,7 +424,7 @@ class AqlParentheses extends AqlAtomic {
 // handles an inline function.
 // can add functions as we find need to support them
 class AqlFunctionCall extends AqlRoot {
-    constructor (functionName, params) {
+    constructor(functionName, params) {
         super();
         this.params = params; // array of parameters for the function. can be none or many
 
@@ -416,52 +435,50 @@ class AqlFunctionCall extends AqlRoot {
         }
     }
 
-    evaluate (attribute) {
+    evaluate(attribute) {
         // call our named function. evaluate the parameters array then pass them as actual params to the function
-        return this[this.fName](...this.params.map(p => p.evaluate(attribute)));
+        return this[this.fName](...this.params.map((p) => p.evaluate(attribute)));
     }
 
     // assumes param will be a string
-    upper (value) {
+    upper(value) {
         return value.toUpperCase();
     }
 
     // assumes param will be a string
-    lower (value) {
+    lower(value) {
         return value.toLowerCase();
     }
 
     // assumes param will be something that can be cast to a date
-    date (value) {
+    date(value) {
         // ESRI date fields are epoch dates (integers).
         const d = new Date(value);
         return d.getTime();
     }
-
 }
 
 // converts a tree node from our SQL parse output to the appropriate Aql object
-function sqlNodeToAqlNode (node) {
-
+function sqlNodeToAqlNode(node) {
     // TODO add support for datatype casting?
 
     const typeReactor = {
-        AndExpression: n => {
+        AndExpression: (n) => {
             return new AqlAnd(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right));
         },
-        OrExpression: n => {
+        OrExpression: (n) => {
             return new AqlOr(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right));
         },
-        NotExpression: n => {
+        NotExpression: (n) => {
             return new AqlNot(sqlNodeToAqlNode(n.value));
         },
-        InExpressionListPredicate: n => {
+        InExpressionListPredicate: (n) => {
             return new AqlIn(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot);
         },
-        LikePredicate: n => {
+        LikePredicate: (n) => {
             return new AqlLike(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right), !!n.hasNot, n.escape);
         },
-        ComparisonBooleanPrimary: n => {
+        ComparisonBooleanPrimary: (n) => {
             const operatorMap = {
                 '=': AqlEquals,
                 '==': AqlEquals,
@@ -471,7 +488,7 @@ function sqlNodeToAqlNode (node) {
                 '<': AqlLess,
                 '<=': AqlLessEquals,
                 '!=': AqlNotEquals,
-                '!==': AqlNotEquals
+                '!==': AqlNotEquals,
             };
 
             const aqlClass = operatorMap[n.operator];
@@ -481,42 +498,45 @@ function sqlNodeToAqlNode (node) {
 
             return new aqlClass(sqlNodeToAqlNode(n.left), sqlNodeToAqlNode(n.right));
         },
-        FunctionCall:  n => {
-            return new AqlFunctionCall(n.name, n.params.map(p => sqlNodeToAqlNode(p)));
+        FunctionCall: (n) => {
+            return new AqlFunctionCall(
+                n.name,
+                n.params.map((p) => sqlNodeToAqlNode(p))
+            );
         },
-        Identifier: n => {
+        Identifier: (n) => {
             return new AqlIdentifier(n.value);
         },
-        Prefix: n => {
+        Prefix: (n) => {
             return new AqlPrefix(sqlNodeToAqlNode(n.value), n.prefix);
         },
-        Number: n => {
+        Number: (n) => {
             // number in string form
             return new AqlLiteral(Number(n.value));
         },
-        String: n => {
+        String: (n) => {
             // remove embedded quotes from string
             // TODO check if escaped double quote actually exists or was just part of the npm test page output display
             let s = n.value;
             if (s.startsWith('"') || s.startsWith(`'`)) {
                 s = s.substring(1, s.length - 1);
-            } else if (s.startsWith('\"')) {
+            } else if (s.startsWith('"')) {
                 s = s.substring(2, s.length - 2);
             }
             return new AqlLiteral(s);
         },
-        Boolean: n => {
+        Boolean: (n) => {
             // node values are in all caps
             return new AqlLiteral(n.value.toLowerCase() === 'true');
         },
-        ExpressionList: n => {
+        ExpressionList: (n) => {
             // this code currently assumes that items in the expression list are literals.
             // if we need any dynamically generated stuff (i.e. checking against other attribute properties)
             // then this needs to change and the guts of AqlArray.evaluate needs to generate the array at
             // every call (way less efficient)
-            return new AqlArray(n.value.map(nn => sqlNodeToAqlNode(nn).evaluate()));
+            return new AqlArray(n.value.map((nn) => sqlNodeToAqlNode(nn).evaluate()));
         },
-        SimpleExprParentheses: n => {
+        SimpleExprParentheses: (n) => {
             // n.value here is an ExpressionList, but i've yet to see an instance where it has more than one element in the array.
             // for now we do a hack and hoist up the first element. This hack lets us pre-evaluate other expression lists
             // (i.e. ones used in IN commands) that are filled with constants.
@@ -529,16 +549,21 @@ function sqlNodeToAqlNode (node) {
 
             if (n.value.type === 'ExpressionList') {
                 if (n.value.value.length > 1) {
-                    console.warn(`While converting SQL to AQL, encountered a parsed bracket containing an ExpressionList with more than one element`, n.value);
+                    console.warn(
+                        `While converting SQL to AQL, encountered a parsed bracket containing an ExpressionList with more than one element`,
+                        n.value
+                    );
                 }
                 return new AqlParentheses(sqlNodeToAqlNode(n.value.value[0]));
             } else {
                 // warn, and hail mary that we can just parse it
-                console.warn(`While converting SQL to AQL, encountered a parsed bracket containing ${n.value.type} instead of ExpressionList`);
+                console.warn(
+                    `While converting SQL to AQL, encountered a parsed bracket containing ${n.value.type} instead of ExpressionList`
+                );
                 return new AqlParentheses(sqlNodeToAqlNode(n.value));
             }
-        }
-    }
+        },
+    };
 
     if (!typeReactor[node.type]) {
         throw new Error('Encountered unsupported query in filter. Unhandled type: ' + node.type);
@@ -549,8 +574,7 @@ function sqlNodeToAqlNode (node) {
 
 // scans a where clause for any funny notation and attempts to convert to standard sql
 // returns cleaned version.
-function standardizeSql (sqlWhere) {
-
+function standardizeSql(sqlWhere) {
     // ESRI supports a non-standard approach to casting dates.
     // e.g. you can say `start_date < DATE '1-1-2001'`
     // our sql parser will die on this.
@@ -561,32 +585,33 @@ function standardizeSql (sqlWhere) {
     //      do we need to handle a date cast on an attribute name instead of a constant?
     //      can we rely on a space before/after DATE function?
 
-    const findDate = sql => {
+    const findDate = (sql) => {
         return sql.toUpperCase().indexOf(' DATE ');
     };
 
     let nextDate = findDate(sqlWhere);
 
     while (nextDate > -1) {
-
         const firstDelim = sqlWhere.indexOf(`'`, nextDate);
         const lastDelim = sqlWhere.indexOf(`'`, firstDelim + 1);
 
         // put bracket before and after delimiters
-        sqlWhere = sqlWhere.substring(0, nextDate) + ' DATE(' + sqlWhere.substring(firstDelim, lastDelim + 1) +
-            ')' + sqlWhere.substring(lastDelim + 1);
+        sqlWhere =
+            sqlWhere.substring(0, nextDate) +
+            ' DATE(' +
+            sqlWhere.substring(firstDelim, lastDelim + 1) +
+            ')' +
+            sqlWhere.substring(lastDelim + 1);
 
         // see if we still have more DATE functions
         nextDate = findDate(sqlWhere);
     }
 
     return sqlWhere;
-
 }
 
 // converts a SQL where clause to an Aql object
-function sqlToAql (sqlWhere) {
-
+function sqlToAql(sqlWhere) {
     const fakeSQL = 'SELECT muffins FROM pod WHERE ' + standardizeSql(sqlWhere);
 
     // the sqlParser will construct an object tree of the sql statement. we then crawl through the where clause tree
@@ -607,7 +632,7 @@ function sqlToAql (sqlWhere) {
  * @param {Boolean} [attribAsProperty=false]    indicates if the attribute object resides in a propery called `attributes`. Set to false if array contains raw attribute objects.
  * @returns {Array} array of attribute objects that meet the conditions of the filter. the result objects will be in the same form as they were passed in
  */
-function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false) {
+function sqlAttributeFilter(attributeArray, sqlWhere, attribAsProperty = false) {
     // attribAsProperty means where the attribute lives in relation to the array
     // {att} is a standard key-value object of attributes
     // [ {att} , {att} ] would be the false case.  this is the format of attributes from the geoApi attribute loader
@@ -619,13 +644,13 @@ function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false)
 
     // split in two to avoid doing boolean check at every iteration
     if (attribAsProperty) {
-        return attributeArray.filter(a => {
+        return attributeArray.filter((a) => {
             return aql.evaluate(a.attributes);
-         });
+        });
     } else {
-        return attributeArray.filter(a => {
+        return attributeArray.filter((a) => {
             return aql.evaluate(a);
-         });
+        });
     }
 }
 
@@ -638,7 +663,7 @@ function sqlAttributeFilter (attributeArray, sqlWhere, attribAsProperty = false)
  * @param {String} sqlWhere         a SQL WHERE clause (without the word `WHERE`) that has field names matching the attribute property names.
  * @returns {Array} array of attributes of visible features.
  */
-function sqlGraphicsVisibility (graphics, sqlWhere) {
+function sqlGraphicsVisibility(graphics, sqlWhere) {
     // variant of sqlAttributeFilter.  customized for turning graphics visibility on and off.
     // since we need to turn off the items "not in the query", this saves us doing multiple iterations.
     // however it becomes limited in that it really needs arrays of Graphic objects.
@@ -648,12 +673,12 @@ function sqlGraphicsVisibility (graphics, sqlWhere) {
 
     if (sqlWhere === '') {
         // no restrictions. show everything
-        graphics.forEach(g => g.show());
+        graphics.forEach((g) => g.show());
         return graphics;
     } else if (sqlWhere === '1=2') {
         // everything off. hide everything
         // TODO layer should be invisible, so maybe this is irrelevant? or is it better to be safe, as something else could use this function.
-        graphics.forEach(g => g.hide());
+        graphics.forEach((g) => g.hide());
         return [];
     }
 
@@ -661,23 +686,23 @@ function sqlGraphicsVisibility (graphics, sqlWhere) {
     const aql = sqlToAql(sqlWhere);
     const visibleAttributes = [];
 
-    graphics.forEach(g => {
+    graphics.forEach((g) => {
         if (aql.evaluate(g.attributes)) {
             g.show();
             visibleAttributes.push(g.attributes);
         } else {
             g.hide();
         }
-     });
+    });
 
-     return visibleAttributes;
+    return visibleAttributes;
 }
 
-module.exports = esriBundle => {
+module.exports = (esriBundle) => {
     return {
         queryGeometry: queryGeometryBuilder(esriBundle),
         queryIds: queryIdsBuilder(esriBundle),
         sqlAttributeFilter,
-        sqlGraphicsVisibility
+        sqlGraphicsVisibility,
     };
 };

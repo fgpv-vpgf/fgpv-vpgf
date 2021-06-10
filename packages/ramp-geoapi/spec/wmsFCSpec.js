@@ -9,33 +9,31 @@ describe('WmsFC', () => {
             layer: {
                 ogc: {
                     getLegendUrls: () => {
-                        const x = [
-                            { svgcode: '123' },
-                            { svgcode: '456' },
-                            { svgcode: '789' }
-                        ];
+                        const x = [{ svgcode: '123' }, { svgcode: '456' }, { svgcode: '789' }];
                         return x;
-                    }
-                }
+                    },
+                },
             },
             symbology: {
                 generateWMSSymbology: (name1, imageUri) => {
                     const fakeData = {
                         name: name1,
-                        svgcode: imageUri.svgcode
+                        svgcode: imageUri.svgcode,
                     };
                     return Promise.resolve(fakeData);
                 },
-                generatePlaceholderSymbology: () => { return; }
-            }
-        }
+                generatePlaceholderSymbology: () => {
+                    return;
+                },
+            },
+        },
     };
     const config = {
         name: '',
         state: {
-            query: { }
+            query: {},
         },
-        extent: { }
+        extent: {},
     };
     let wmsFC;
     beforeEach(() => {
@@ -43,36 +41,30 @@ describe('WmsFC', () => {
             layerEntries: [
                 { id: '0', name: '' },
                 { id: '1', name: '' },
-                { id: '2', name: '' }
-            ]
+                { id: '2', name: '' },
+            ],
         };
         parent._layer = {
             layerInfos: [
                 {
                     name: '',
                     title: '',
-                    subLayers: [
-                        { name: '', title: '' }
-                    ]
+                    subLayers: [{ name: '', title: '' }],
                 },
                 {
                     name: '',
                     title: '',
-                    subLayers: [
-                        { name: '', title: '' }
-                    ]
+                    subLayers: [{ name: '', title: '' }],
                 },
                 {
                     name: '',
                     title: '',
-                    subLayers: [
-                        { name: '', title: '' }
-                    ]
-                }
-            ]
+                    subLayers: [{ name: '', title: '' }],
+                },
+            ],
         };
         parent._visDelay = {
-            lastIdx: '2'
+            lastIdx: '2',
         };
         wmsFC = new wmsFCModule.WmsFC(parent, '1', config);
     });
@@ -95,8 +87,7 @@ describe('WmsFC', () => {
                     expect(wmsFC.symbology[i].name).toEqual('name' + i);
                 }
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -113,8 +104,7 @@ describe('WmsFC', () => {
                     expect(wmsFC.symbology[i].name).toEqual('match' + i);
                 }
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -131,8 +121,7 @@ describe('WmsFC', () => {
                     expect(wmsFC.symbology[i].name).toEqual('childMatch' + i);
                 }
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -145,8 +134,7 @@ describe('WmsFC', () => {
                     expect(wmsFC.symbology[i].name).toEqual(i.toString());
                 }
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -162,13 +150,10 @@ describe('WmsFC', () => {
                 expect(wmsFC.symbology[1].name).toEqual('serverName');
                 expect(wmsFC.symbology[2].name).toEqual('2');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
         });
-
     });
-
 });

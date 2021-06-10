@@ -9,7 +9,7 @@ class Filter {
     /**
      * @param {Object} parent        the FC object that this Filter belongs to
      */
-    constructor (parent) {
+    constructor(parent) {
         this._parent = parent;
 
         // dictionaries of potential values
@@ -18,7 +18,9 @@ class Filter {
     }
 
     // exposes enumeration of core types to the client
-    get coreFilterTypes () { return shared.filterType; }
+    get coreFilterTypes() {
+        return shared.filterType;
+    }
 
     /**
      * Returns list of filters that have active filters
@@ -27,13 +29,13 @@ class Filter {
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all filters
      * @returns {Array} list of filters with active filter sql
      */
-    sqlActiveFilters (exclusions = []) {
+    sqlActiveFilters(exclusions = []) {
         const s = this._sql;
-        const rawActive = Object.keys(s).filter(k => s[k]);
+        const rawActive = Object.keys(s).filter((k) => s[k]);
         if (exclusions.length === 0) {
             return rawActive;
         } else {
-            return rawActive.filter(k => exclusions.indexOf(k) === -1);
+            return rawActive.filter((k) => exclusions.indexOf(k) === -1);
         }
     }
 
@@ -43,7 +45,7 @@ class Filter {
      * @method isActive
      * @returns {Boolean} indicates if any filters are active
      */
-    isActive () {
+    isActive() {
         return this.sqlActiveFilters().length > 0;
     }
 
@@ -54,7 +56,7 @@ class Filter {
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all filters
      * @returns {String} all non-excluded sql statements connected with AND operators.
      */
-    getCombinedSql (exclusions = []) {
+    getCombinedSql(exclusions = []) {
         // list of active, non-excluded filters
         const keys = this.sqlActiveFilters(exclusions);
 
@@ -66,7 +68,7 @@ class Filter {
             return this._sql[keys[0]];
         } else {
             // wrap each nugget in bracket, connect with AND
-            return keys.map(k => `(${this._sql[k]})`).join(' AND ');
+            return keys.map((k) => `(${this._sql[k]})`).join(' AND ');
         }
     }
 
@@ -78,7 +80,7 @@ class Filter {
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of valid OIDs that layer is filtering. resolves with undefined if there is no filters being used
      */
-    getFilterOIDs (exclusions = [], extent) {
+    getFilterOIDs(exclusions = [], extent) {
         // TODO perhaps key-mapping here? figure out SQL here? meh
         return this._parent.getFilterOIDs(exclusions, extent);
     }
@@ -90,7 +92,7 @@ class Filter {
      * @private
      * @param {String} filterType type of filter event being raised. Should be member of shared.filterType
      */
-    eventRaiser (filterType) {
+    eventRaiser(filterType) {
         const fcID = this._parent.fcID;
         this._parent._parent.raiseFilterEvent(fcID.layerId, fcID.layerIdx, filterType);
     }
@@ -103,7 +105,7 @@ class Filter {
      * @param {Array} array an array of integers
      * @returns {String} a SQL IN clause that dictates the object id field must match a number in the input array
      */
-    arrayToIn (array) {
+    arrayToIn(array) {
         // TODO do we need empty array checks? caller should be smart enough to recognize prior to calling this
         return `${this._parent.oidField} IN (${array.join(',')})`;
     }
@@ -115,7 +117,7 @@ class Filter {
      * @param {String} filterType name of the filter to update
      * @param {String} whereClause clause defining the active filters on symbols. Use '' for no filter. Use '1=2' for everything filtered.
      */
-    setSql (filterType, whereClause) {
+    setSql(filterType, whereClause) {
         this._sql[filterType] = whereClause;
 
         // invalidate affected caches
@@ -132,7 +134,7 @@ class Filter {
      * @param {String} filterType key string indicating what filter the sql belongs to
      * @returns {String} the SQL, if any, that matches the filter type
      */
-    getSql (filterType) {
+    getSql(filterType) {
         return this._sql[filterType] || '';
     }
 
@@ -142,7 +144,7 @@ class Filter {
      * @method setExtent
      * @param {Extent} extent the extent to filter against
      */
-    setExtent (extent) {
+    setExtent(extent) {
         // NOTE while technically we can support other geometries (for server based layers)
         //      only extent works for file layers. for now, limit to extent.
         //      we can add fancier things later when we need them
@@ -169,7 +171,7 @@ class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {String} the cache key to use
      */
-    getCacheKey (sqlFilters, includeExtent) {
+    getCacheKey(sqlFilters, includeExtent) {
         const sqlKey = sqlFilters.sort().join('$');
         return `_cache$${sqlKey}${includeExtent ? '$' + shared.filterType.EXTENT : ''}$`;
     }
@@ -183,7 +185,7 @@ class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {Promise} resolves in a filter result appropriate for the parameters. returns nothing if no cache exists.
      */
-    getCache (sqlFilters, includeExtent) {
+    getCache(sqlFilters, includeExtent) {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         return this._cache[key];
     }
@@ -196,7 +198,7 @@ class Filter {
      * @param {Array} sqlFilters list of filters influencing this cache
      * @param {Boolean} includeExtent if the cache includes extent based filters
      */
-    setCache (queryPromise, sqlFilters, includeExtent) {
+    setCache(queryPromise, sqlFilters, includeExtent) {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         this._cache[key] = queryPromise;
     }
@@ -207,9 +209,9 @@ class Filter {
      * @method cacheActiveKeys
      * @returns {Array} list of keys with active caches
      */
-    cacheActiveKeys () {
+    cacheActiveKeys() {
         const c = this._cache;
-        return Object.keys(c).filter(k => c[k]);
+        return Object.keys(c).filter((k) => c[k]);
     }
 
     /**
@@ -217,7 +219,7 @@ class Filter {
      *
      * @method clearAllCaches
      */
-    clearAllCaches () {
+    clearAllCaches() {
         // lol
         this._cache = {};
     }
@@ -228,10 +230,10 @@ class Filter {
      * @method clearCacheSet
      * @param {String} filterName filter that has changed and needs its caches wiped
      */
-    clearCacheSet (filterName) {
+    clearCacheSet(filterName) {
         // the keys are wrapped in $ chars to avoid matching similarly named filter keys.
         // e.g. 'plugin' would also match 'plugin1' in an indexOf call, but '$plugin$' won't match '$plugin1$'
-        this.cacheActiveKeys().forEach(c => {
+        this.cacheActiveKeys().forEach((c) => {
             if (c.indexOf(`$${filterName}$`) > -1) {
                 this._cache[c] = undefined;
             }
@@ -243,13 +245,13 @@ class Filter {
      *
      * @method clearAll
      */
-    clearAll () {
+    clearAll() {
         this._sql = {};
-        this._extent = undefined; 
+        this._extent = undefined;
         this.clearAllCaches();
     }
 }
 
 module.exports = () => ({
-    Filter
+    Filter,
 });

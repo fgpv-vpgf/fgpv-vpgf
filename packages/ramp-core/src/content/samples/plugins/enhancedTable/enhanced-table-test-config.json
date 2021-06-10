@@ -2,12 +2,7 @@
     "ui": {
         "navBar": {
             "zoom": "buttons",
-            "extra": [
-                "fullscreen",
-                "geoLocator",
-                "home",
-                "help"
-            ]
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
         },
         "sideMenu": {
             "logo": true

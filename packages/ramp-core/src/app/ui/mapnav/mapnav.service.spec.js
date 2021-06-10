@@ -5,7 +5,6 @@
 */
 
 describe('mapNavigationService', () => {
-
     function mockConfigService($provide) {
         $provide.factory('configService', () => {
             return {};
@@ -26,8 +25,14 @@ describe('mapNavigationService', () => {
 
             Here 'app.ui.mapnav' module is identified as we are testing `mapNavigationService` service. We also need 'app.common.router' module since mapNavigationService uses StateManager.
         */
-        bard.appModule('app.ui.mapnav', 'app.common.router', 'app.geo', 'pascalprecht.translate',
-            mockConfigService, mockGeoService);
+        bard.appModule(
+            'app.ui.mapnav',
+            'app.common.router',
+            'app.geo',
+            'pascalprecht.translate',
+            mockConfigService,
+            mockGeoService
+        );
 
         /*
             injects angular components needed for testing and stores them on the global window object: https://github.com/wardbell/bardjs#inject
@@ -53,8 +58,7 @@ describe('mapNavigationService', () => {
         // disabled test - throwing error when service is working as intended
         xit('should be created successfully', () => {
             // check if service is defined
-            expect(mapNavigationService)
-                .toBeDefined();
+            expect(mapNavigationService).toBeDefined();
         });
     });
 });

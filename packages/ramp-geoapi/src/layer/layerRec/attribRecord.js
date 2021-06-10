@@ -9,7 +9,9 @@ const attribFC = require('./attribFC.js')();
 class AttribRecord extends layerRecord.LayerRecord {
     // this class has functions common to layers that have attributes
 
-    get clickTolerance () { return this._tolerance; }
+    get clickTolerance() {
+        return this._tolerance;
+    }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
@@ -22,7 +24,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+    constructor(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         this._esriRequest = esriRequest;
@@ -35,7 +37,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {String} attribName     the attribute name we want a nice name for
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
-    aliasedFieldName (attribName) {
+    aliasedFieldName(attribName) {
         return this._featClasses[this._defaultFC].aliasedFieldName(attribName);
     }
 
@@ -43,7 +45,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getFormattedAttributes () {
+    getFormattedAttributes() {
         return this._featClasses[this._defaultFC].getFormattedAttributes();
     }
 
@@ -53,51 +55,51 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {String} attribName     the attribute name to check if it's a date field
      * @return {Promise}              resolves with a boolean indicating if attrib name is a date field.
      */
-    checkDateType (attribName) {
+    checkDateType(attribName) {
         return this._featClasses[this._defaultFC].checkDateType(attribName);
     }
 
     /**
-    * Returns attribute data for this layer.
-    *
-    * @function getAttribs
-    * @returns {Promise}         resolves with a layer attribute data object
-    */
-    getAttribs () {
+     * Returns attribute data for this layer.
+     *
+     * @function getAttribs
+     * @returns {Promise}         resolves with a layer attribute data object
+     */
+    getAttribs() {
         return this._featClasses[this._defaultFC].getAttribs();
     }
 
     /**
-    * Returns layer-specific data for this Record
-    *
-    * @function getLayerData
-    * @returns {Promise}         resolves with a layer data object
-    */
-    getLayerData () {
+     * Returns layer-specific data for this Record
+     *
+     * @function getLayerData
+     * @returns {Promise}         resolves with a layer data object
+     */
+    getLayerData() {
         return this._featClasses[this._defaultFC].getLayerData();
     }
 
     /**
-    * Extract the feature name from a feature as best we can.
-    *
-    * @function getFeatureName
-    * @param {String} objId      the object id of the attribute
-    * @param {Object} attribs    the dictionary of attributes for the feature.
-    * @returns {String}          the name of the feature
-    */
-    getFeatureName (objId, attribs) {
+     * Extract the feature name from a feature as best we can.
+     *
+     * @function getFeatureName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
+    getFeatureName(objId, attribs) {
         return this._featClasses[this._defaultFC].getFeatureName(objId, attribs);
     }
 
     /**
-    * Extract the tooltip field from a feature as best we can.
-    *
-    * @function getTooltipName
-    * @param {String} objId      the object id of the attribute
-    * @param {Object} attribs    the dictionary of attributes for the feature.
-    * @returns {String}          the name of the feature
-    */
-    getTooltipName (objId, attribs) {
+     * Extract the tooltip field from a feature as best we can.
+     *
+     * @function getTooltipName
+     * @param {String} objId      the object id of the attribute
+     * @param {Object} attribs    the dictionary of attributes for the feature.
+     * @returns {String}          the name of the feature
+     */
+    getTooltipName(objId, attribs) {
         return this._featClasses[this._defaultFC].getTooltipName(objId, attribs);
     }
 
@@ -113,7 +115,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      *                 - attribs       boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (objId, opts) {
+    fetchGraphic(objId, opts) {
         return this._featClasses[this._defaultFC].fetchGraphic(objId, opts);
     }
 
@@ -126,7 +128,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
      * @return {Promise}                resolves after the map is done moving
      */
-    zoomToGraphic (objId, map, offsetFraction) {
+    zoomToGraphic(objId, map, offsetFraction) {
         return this._featClasses[this._defaultFC].zoomToGraphic(objId, map, offsetFraction);
     }
 
@@ -136,7 +138,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @function applyFilterToLayer
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applyFilterToLayer (exclusions = []) {
+    applyFilterToLayer(exclusions = []) {
         this._featClasses[this._defaultFC].applyFilterToLayer(exclusions);
     }
 
@@ -147,7 +149,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param {String} url     server url of the feature layer. empty string for file based layers
      * @return {Promise}       resolves with an integer indicating the feature count. -1 if error occured.
      */
-    getFeatureCount (url) {
+    getFeatureCount(url) {
         if (url) {
             // wrapping server call in a function, as we regularly encounter sillyness
             // where we need to execute the count request twice.
@@ -160,42 +162,47 @@ class AttribRecord extends layerRecord.LayerRecord {
                         f: 'json',
                         where: '1=1',
                         returnCountOnly: true,
-                        returnGeometry: false
+                        returnGeometry: false,
                     },
                     callbackParamName: 'callback',
                     handleAs: 'json',
                 });
 
-                return new Promise(resolve => {
-                    defService.then(serviceResult => {
-                        if (serviceResult && (typeof serviceResult.error === 'undefined') &&
-                            (typeof serviceResult.count !== 'undefined')) {
-                            // we got a row count
-                            resolve(serviceResult.count);
-                        } else if (!finalTry) {
-                            // do a second attempt
-                            resolve(esriServerCount(layerUrl, true));
-                        } else {
-                            // tells the app it failed
-                            resolve(-1);
+                return new Promise((resolve) => {
+                    defService.then(
+                        (serviceResult) => {
+                            if (
+                                serviceResult &&
+                                typeof serviceResult.error === 'undefined' &&
+                                typeof serviceResult.count !== 'undefined'
+                            ) {
+                                // we got a row count
+                                resolve(serviceResult.count);
+                            } else if (!finalTry) {
+                                // do a second attempt
+                                resolve(esriServerCount(layerUrl, true));
+                            } else {
+                                // tells the app it failed
+                                resolve(-1);
+                            }
+                        },
+                        (error) => {
+                            // failed to load service info.
+                            // TODO any tricks to avoid duplicating the error case in both blocks?
+                            if (!finalTry) {
+                                // do a second attempt
+                                resolve(esriServerCount(layerUrl, true));
+                            } else {
+                                // tells the app it failed
+                                console.warn(error);
+                                resolve(-1);
+                            }
                         }
-                    }, error => {
-                        // failed to load service info.
-                        // TODO any tricks to avoid duplicating the error case in both blocks?
-                        if (!finalTry) {
-                            // do a second attempt
-                            resolve(esriServerCount(layerUrl, true));
-                        } else {
-                            // tells the app it failed
-                            console.warn(error);
-                            resolve(-1);
-                        }
-                    });
+                    );
                 });
             };
 
             return esriServerCount(url);
-
         } else {
             // file based layer.  count local features
             return Promise.resolve(this._layer.graphics.length);
@@ -210,7 +217,7 @@ class AttribRecord extends layerRecord.LayerRecord {
      * @param  {Array} fields        optional. fields definition array for layer. no aliasing done if not provided
      * @return {Array}               attribute data transformed into a list, with potential field aliasing applied
      */
-    attributesToDetails (attribs, fields) {
+    attributesToDetails(attribs, fields) {
         // TODO make this extensible / modifiable / configurable to allow different details looks for different data
         // simple array of text mapping for demonstration purposes. fancy grid formatting later?
         // ignore any functions hanging around on the attribute.
@@ -218,20 +225,20 @@ class AttribRecord extends layerRecord.LayerRecord {
             attribs = attribFC.AttribFC.unAliasAttribs(attribs, fields);
         }
         return Object.keys(attribs)
-            .filter(key => typeof attribs[key] !== 'function')
-            .map(key => {
-                const fieldType = fields ? fields.find(f => f.name === key) : null;
+            .filter((key) => typeof attribs[key] !== 'function')
+            .map((key) => {
+                const fieldType = fields ? fields.find((f) => f.name === key) : null;
 
                 return {
                     key: attribFC.AttribFC.aliasedFieldNameDirect(key, fields), // need synchronous variant of alias lookup
                     value: attribs[key],
                     field: key,
-                    type: fieldType ? fieldType.type : fieldType
+                    type: fieldType ? fieldType.type : fieldType,
                 };
             });
     }
 }
 
 module.exports = () => ({
-    AttribRecord
+    AttribRecord,
 });

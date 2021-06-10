@@ -22,8 +22,7 @@ describe('rvHelpOverlay', () => {
     describe('rvHelpOverlay', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
         });
     });
 });

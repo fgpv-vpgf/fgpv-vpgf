@@ -46,7 +46,6 @@ class ExportSize {
         } else {
             this._height = null;
         }
-
     }
 
     get height() {
@@ -93,6 +92,4 @@ class ExportSize {
  * The `ExportSize` returns `ExportSize` class used to populate the size selector in the export map dialog.
  *
  */
-angular
-    .module('app.ui')
-    .factory('ExportSize', () => ExportSize);
+angular.module('app.ui').factory('ExportSize', () => ExportSize);

@@ -41,9 +41,7 @@ const templateUrl = require('./stepper-item.html');
  * </stepper-item>
  * ```
  */
-angular
-    .module('app.ui')
-    .directive('rvStepperItem', rvStepperItem);
+angular.module('app.ui').directive('rvStepperItem', rvStepperItem);
 
 function rvStepperItem($timeout) {
     const directive = {
@@ -63,20 +61,21 @@ function rvStepperItem($timeout) {
             isContinueEnabled: '=?',
             isCancelEnabled: '=?',
 
-            stepForm: '=?form'
+            stepForm: '=?form',
         },
         transclude: true,
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 
     /*********/
 
-    function link(scope, element) { // scope, el, attr, ctrl) {
+    function link(scope, element) {
+        // scope, el, attr, ctrl) {
         const self = scope.self;
         self.step = angular.isDefined(self.step) ? self.step : {};
 
@@ -101,12 +100,15 @@ function rvStepperItem($timeout) {
 
         // focus on the first input element when step is open. Need to be inside $timeout because focus manager tries to focus on close
         // when step is closed. We put 250 ms because with 100ms Safari sometimes lose focus.
-        scope.$watch(() => self.isActive || self.step.isActive, (newv, oldv) => {
-            // set focus to the next focusable element in the step only if the step itself is visible
-            if (newv && element.is(':visible')) {
-                $timeout(() => element.nextFocus(), 250);
+        scope.$watch(
+            () => self.isActive || self.step.isActive,
+            (newv, oldv) => {
+                // set focus to the next focusable element in the step only if the step itself is visible
+                if (newv && element.is(':visible')) {
+                    $timeout(() => element.nextFocus(), 250);
+                }
             }
-        });
+        );
     }
 }
 

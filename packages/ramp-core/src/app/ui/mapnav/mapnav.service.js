@@ -6,9 +6,7 @@
  * The `mapNavigationService` service provides access to map navgiation compoent's actions like `zoom`, `geolocation`, `full extent` and `history extent`.
  *
  */
-angular
-    .module('app.ui')
-    .factory('mapNavigationService', mapNavigationService);
+angular.module('app.ui').factory('mapNavigationService', mapNavigationService);
 
 /**
  * `mapNavigationService` exposes zoom and pan methods as well as controls available in the map navigation component.
@@ -17,11 +15,20 @@ angular
  * @private
  * @return {object} service object
  */
-function mapNavigationService(stateManager, geoService, locateService, debounceService,
-    helpService, basemapService, fullScreenService, geosearchService, sideNavigationService, appInfo) {
-
+function mapNavigationService(
+    stateManager,
+    geoService,
+    locateService,
+    debounceService,
+    helpService,
+    basemapService,
+    fullScreenService,
+    geosearchService,
+    sideNavigationService,
+    appInfo
+) {
     const service = {
-        controls: {}
+        controls: {},
     };
 
     // navigation controls presets
@@ -30,13 +37,13 @@ function mapNavigationService(stateManager, geoService, locateService, debounceS
             label: 'sidenav.label.fullscreen',
             icon: 'navigation:fullscreen',
             tooltip: 'sidenav.label.fullscreen',
-            action: () => fullScreenService.toggle()
+            action: () => fullScreenService.toggle(),
         },
         zoomIn: {
             label: 'nav.label.zoomIn',
             icon: 'content:add',
             tooltip: 'nav.tooltip.zoomIn',
-            action: () => geoService.map.shiftZoom(1)
+            action: () => geoService.map.shiftZoom(1),
         },
         slider: {
             // TODO: add slider properties when we find a suitable slider lib
@@ -45,7 +52,7 @@ function mapNavigationService(stateManager, geoService, locateService, debounceS
             label: 'nav.label.zoomOut',
             icon: 'content:remove',
             tooltip: 'nav.tooltip.zoomOut',
-            action: () => geoService.map.shiftZoom(-1)
+            action: () => geoService.map.shiftZoom(-1),
         },
         layers: {
             label: 'appbar.tooltip.layers',
@@ -53,37 +60,37 @@ function mapNavigationService(stateManager, geoService, locateService, debounceS
             tooltip: 'appbar.tooltip.layers',
             action: debounceService.registerDebounce(() => {
                 appInfo.mapi.panels.legend.toggle();
-            })
+            }),
         },
         sideMenu: {
             label: 'appbar.tooltip.menu',
             icon: 'navigation:menu',
             tooltip: 'appbar.tooltip.menu',
-            action: sideNavigationService.open
+            action: sideNavigationService.open,
         },
         geoSearch: {
             label: 'appbar.tooltip.geosearchshort',
             icon: 'action:search',
             tooltip: 'appbar.tooltip.geosearchshort',
-            action: geosearchService.toggle
+            action: geosearchService.toggle,
         },
         geoLocator: {
             label: 'nav.label.geoLocation',
             icon: 'maps:my_location',
             tooltip: 'nav.tooltip.geoLocation',
-            action: locateService.find
+            action: locateService.find,
         },
         marquee: {
             label: 'nav.label.search',
             icon: 'action:search',
             tooltip: 'nav.tooltip.search',
-            action: function () {} // FIXME: user proper call
+            action: function () {}, // FIXME: user proper call
         },
         home: {
             label: 'nav.label.home',
             icon: 'action:home',
             tooltip: 'nav.tooltip.home',
-            action: () => geoService.setFullExtent()
+            action: () => geoService.setFullExtent(),
         },
         /*history: {
             label: 'nav.label.history',
@@ -95,7 +102,7 @@ function mapNavigationService(stateManager, geoService, locateService, debounceS
             label: 'sidenav.label.help',
             icon: 'community:help',
             tooltip: 'sidenav.label.help',
-            action: helpService.open
+            action: helpService.open,
         },
         basemap: {
             label: 'nav.label.basemap',
@@ -103,8 +110,8 @@ function mapNavigationService(stateManager, geoService, locateService, debounceS
             tooltip: 'nav.tooltip.basemap',
 
             selected: () => stateManager.state.mapnav.morph !== 'default',
-            action: basemapService.open
-        }
+            action: basemapService.open,
+        },
     };
 
     // TODO when time permits, investigate this alternate form of translation.

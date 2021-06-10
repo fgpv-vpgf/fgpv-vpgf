@@ -18,7 +18,7 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
         expandPanel,
         closeDetails,
         getParser,
-        getTemplate
+        getTemplate,
     };
 
     events.$on(events.rvApiPreMapAdded, (_, api) => {
@@ -72,7 +72,7 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
             parent: referenceService.panels.shell,
             locals: {
                 item: stateManager.display.details.selectedItem,
-                cancel: $mdDialog.cancel
+                cancel: $mdDialog.cancel,
             },
             templateUrl,
             clickOutsideToClose: true,
@@ -80,7 +80,7 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
             escapeToClose: true,
             controllerAs: 'self',
             bindToController: true,
-            hasBackdrop
+            hasBackdrop,
         });
     }
 
@@ -96,11 +96,11 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
     }
 
     function getParser(layerId, parserUrl) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (parserFunctions[layerId]) {
                 resolve(parserFunctions[layerId]);
             } else {
-                $.ajax({ method: 'GET', dataType: 'text', url: parserUrl }).then(data => {
+                $.ajax({ method: 'GET', dataType: 'text', url: parserUrl }).then((data) => {
                     let f = `(${data})`;
                     parserFunctions[layerId] = f;
 
@@ -111,11 +111,11 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
     }
 
     function getTemplate(layerId, templatePath) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (templates[layerId]) {
                 resolve(templates[layerId]);
             } else {
-                $.ajax({ method: 'GET', dataType: 'text', url: templatePath }).then(data => {
+                $.ajax({ method: 'GET', dataType: 'text', url: templatePath }).then((data) => {
                     templates[layerId] = data;
 
                     resolve(data);

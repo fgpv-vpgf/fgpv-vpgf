@@ -2,7 +2,7 @@ import { skip } from 'rxjs/internal/operators/skip';
 
 const dataLayer = window.RAMP.gtmDL;
 
-export default function(api) {
+export default function (api) {
     if (!dataLayer) {
         return;
     }
@@ -11,7 +11,7 @@ export default function(api) {
             event: 'extentChanged',
             category: 'map',
             action: 'interaction',
-            label: 'extentChanged'
+            label: 'extentChanged',
         });
     });
 
@@ -19,7 +19,7 @@ export default function(api) {
         dataLayer.push({
             event: 'basemapChanged',
             category: 'map',
-            action: 'basemapChanged'
+            action: 'basemapChanged',
         });
     });
 }

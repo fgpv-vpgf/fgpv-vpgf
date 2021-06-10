@@ -15,7 +15,7 @@ function identifyService($q, configService, gapiService, referenceService, state
         identify,
         addGraphicHighlight,
         clearHighlight,
-        toggleHighlightHaze
+        toggleHighlightHaze,
     };
 
     let mApi = null;
@@ -42,7 +42,7 @@ function identifyService($q, configService, gapiService, referenceService, state
         // make a fake click-event-like object
         return {
             mapPoint,
-            screenPoint
+            screenPoint,
         };
     }
 
@@ -78,22 +78,22 @@ function identifyService($q, configService, gapiService, referenceService, state
             geometry: clickEvent.mapPoint,
             width: mapInstance.width,
             height: mapInstance.height,
-            mapExtent: mapInstance.extent
+            mapExtent: mapInstance.extent,
         };
 
         // TODO: the order of layerRecords might not match the order of the legend block; best to use the order of the layers from the config file
         // see `synchronizeLayerOrder` function in the `layer-registry` for more details on sorting
         const identifyInstances = configService.getSync.map.layerRecords
             // TODO: can we expose identify on all layer record types and vet in geoapi for consistency
-            .filter(layerRecord => typeof layerRecord.identify !== 'undefined')
-            .map(layerRecord => {
+            .filter((layerRecord) => typeof layerRecord.identify !== 'undefined')
+            .map((layerRecord) => {
                 const apiLayer = mApi.layers.getLayersById(layerRecord.layerId)[0];
                 const layerTolerance = apiLayer ? apiLayer.identifyBuffer : undefined;
                 opts.tolerance = layerTolerance;
                 return layerRecord.identify(opts);
             })
             // identify function returns undefined is the layer is cannot be queries because it's not visible or for some other reason
-            .filter(identifyInstance => typeof identifyInstance.identifyResults !== 'undefined');
+            .filter((identifyInstance) => typeof identifyInstance.identifyResults !== 'undefined');
 
         const allIdentifyResults = [].concat(...identifyInstances.map(({ identifyResults }) => identifyResults));
         const mapClickEvent = new MapClickEvent(clickEvent, mApi);
@@ -103,12 +103,12 @@ function identifyService($q, configService, gapiService, referenceService, state
 
         const allLoadingPromises = identifyInstances.map(({ identifyPromise, identifyResults }) => {
             // catch error on identify promises and store error messages to be shown in the details panel.
-            const loadingPromise = identifyPromise.catch(error => {
+            const loadingPromise = identifyPromise.catch((error) => {
                 // add common error handling
 
                 console.warn('identifyService', `Identify query failed with error`, error);
 
-                identifyResults.forEach(identifyResult => {
+                identifyResults.forEach((identifyResult) => {
                     // TODO: this outputs raw error message from the service
                     // we might want to replace it with more user-understandable messages
                     identifyResult.error = error.message;
@@ -119,13 +119,13 @@ function identifyService($q, configService, gapiService, referenceService, state
             const infallibleLoadingPromise = makeInfalliblePromise(loadingPromise);
 
             infallibleLoadingPromise.then(() => {
-                identifyResults.forEach(idResult => {
+                identifyResults.forEach((idResult) => {
                     const featureList = idResult.data || [];
-                    featureList.forEach(feat => {
+                    featureList.forEach((feat) => {
                         mapClickEvent._featureSubject.next({
                             layerId: idResult.layerId,
                             layerIdx: idResult.layerIdx,
-                            ...feat
+                            ...feat,
                         });
                     });
                 });
@@ -143,14 +143,14 @@ function identifyService($q, configService, gapiService, referenceService, state
 
         // map identify instances to identify requests
         const identifyRequests = identifyInstances.reduce((map, { identifyPromise, identifyResults }) => {
-            const requests = identifyResults.map(r => ({
+            const requests = identifyResults.map((r) => ({
                 // TODO: include the actual referenced layer
-                layer: "not yet implemented",
+                layer: 'not yet implemented',
                 event: identifyMouseEvent,
                 sessionId,
                 layerId: r.layerId,
                 layerIdx: r.layerIdx,
-                features: identifyPromise.then(() => r.data)
+                features: identifyPromise.then(() => r.data),
             }));
 
             return map.concat(requests);
@@ -164,18 +164,18 @@ function identifyService($q, configService, gapiService, referenceService, state
             mApi.layers._identify.next({
                 event: identifyMouseEvent,
                 sessionId,
-                requests: identifyRequests
+                requests: identifyRequests,
             });
         }
 
         const details = {
             data: allIdentifyResults,
-            isLoaded: $q.all(allLoadingPromises).then(() => true)
+            isLoaded: $q.all(allLoadingPromises).then(() => true),
         };
 
         // store the mappoint in the requester so it's possible to show a marker if there is no feature to highlight
         const requester = {
-            mapPoint: clickEvent.mapPoint
+            mapPoint: clickEvent.mapPoint,
         };
 
         // show details panel only when there is data and the identifyMode is set to `Details`
@@ -201,7 +201,7 @@ function identifyService($q, configService, gapiService, referenceService, state
          * @return {Promise} promise that doesn't reject
          */
         function makeInfalliblePromise(promise) {
-            const modifiedPromise = $q(resolve => promise.then(() => resolve(true)).catch(() => resolve(true)));
+            const modifiedPromise = $q((resolve) => promise.then(() => resolve(true)).catch(() => resolve(true)));
 
             return modifiedPromise;
         }
@@ -223,8 +223,8 @@ function identifyService($q, configService, gapiService, referenceService, state
 
         details.isLoaded.then(() => {
             // details.data contains a list of identify results; one result per feature layer or dynamic sublayer or wms layer
-            details.data.forEach(identifyResult =>
-                identifyResult.data.forEach(dataItem => {
+            details.data.forEach((identifyResult) =>
+                identifyResult.data.forEach((dataItem) => {
                     // clear everything before adding more highlights, but only once after it's clear there is at least one result
                     if (!isCleared) {
                         isCleared = true;
@@ -239,7 +239,7 @@ function identifyService($q, configService, gapiService, referenceService, state
                     const graphiBundlePromise = identifyResult.requester.proxy.fetchGraphic(dataItem.oid, {
                         map: mapConfig.instance,
                         geom: true,
-                        attribs: true
+                        attribs: true,
                     });
 
                     addGraphicHighlight(graphiBundlePromise, mApi.layers.identifyMode.includes(IdentifyMode.Haze));
@@ -259,10 +259,10 @@ function identifyService($q, configService, gapiService, referenceService, state
         const gapi = gapiService.gapi;
         const mapConfig = configService.getSync.map;
 
-        graphicBundlePromise.then(graphicBundle => {
+        graphicBundlePromise.then((graphicBundle) => {
             const ubGraphics = gapi.hilight.getUnboundGraphics([graphicBundle], mapConfig.instance.spatialReference);
 
-            ubGraphics[0].then(unboundG => {
+            ubGraphics[0].then((unboundG) => {
                 // console.log('unbound graphic for highlighting ', unboundG);
                 mapConfig.highlightLayer.addHilight(unboundG);
             });

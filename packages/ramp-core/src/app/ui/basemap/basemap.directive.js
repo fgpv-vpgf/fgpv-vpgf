@@ -9,9 +9,7 @@ const templateUrl = require('./basemap.html');
  * The `rvBasemap` directive displays a basemap selector. Its template uses a content pane which is loaded into the `other` panel opening on the right side of the screen. Selector groups basemaps by projection.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvBasemap', rvBasemap);
+angular.module('app.ui').directive('rvBasemap', rvBasemap);
 
 function rvBasemap() {
     const directive = {
@@ -20,18 +18,26 @@ function rvBasemap() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 }
 
-function Controller(geoService, mapService, basemapService, configService, events, reloadService, ConfigObject, $rootScope) {
+function Controller(
+    geoService,
+    mapService,
+    basemapService,
+    configService,
+    events,
+    reloadService,
+    ConfigObject,
+    $rootScope
+) {
     'ngInject';
     const self = this;
 
-    configService.onEveryConfigLoad(config =>
-        (self.map = config.map));
+    configService.onEveryConfigLoad((config) => (self.map = config.map));
 
     self.geoService = geoService;
 
@@ -43,7 +49,9 @@ function Controller(geoService, mapService, basemapService, configService, event
     self.selectedTileSchemaId = '';
 
     let mApi = null;
-    events.$on(events.rvApiMapAdded, (_, api) => { mApi = api});
+    events.$on(events.rvApiMapAdded, (_, api) => {
+        mApi = api;
+    });
 
     // wire in a hook to any map for changing a basemap using id. this makes it available on the API
     // also wire in a hook for adding / removing a basemap from the available list
@@ -52,19 +60,21 @@ function Controller(geoService, mapService, basemapService, configService, event
         const allBasemaps = mapConfig.basemaps;
         self.selectedTileSchemaId = mapConfig.selectedBasemap.tileSchemaId;
 
-        mapConfig.instance.changeBasemap = id => {
-            const newBasemap = allBasemaps.find(basemap => basemap.id === id);
+        mapConfig.instance.changeBasemap = (id) => {
+            const newBasemap = allBasemaps.find((basemap) => basemap.id === id);
             self.selectBasemap(newBasemap);
         };
 
-        mapConfig.instance.deleteBasemap = apiBasemap => {
+        mapConfig.instance.deleteBasemap = (apiBasemap) => {
             const id = apiBasemap.id;
-            const index = allBasemaps.findIndex(basemap => basemap.id === id);
+            const index = allBasemaps.findIndex((basemap) => basemap.id === id);
             const basemapToDelete = allBasemaps[index];
             if (apiBasemap.isActive) {
-                let newBasemap = allBasemaps.find(basemap => basemap.id !== id && basemap.tileSchemaId === basemapToDelete.tileSchemaId);
+                let newBasemap = allBasemaps.find(
+                    (basemap) => basemap.id !== id && basemap.tileSchemaId === basemapToDelete.tileSchemaId
+                );
                 if (!newBasemap) {
-                    newBasemap = allBasemaps.find(basemap => basemap.id !== id);
+                    newBasemap = allBasemaps.find((basemap) => basemap.id !== id);
                 }
                 self.selectBasemap(newBasemap);
             }
@@ -73,16 +83,15 @@ function Controller(geoService, mapService, basemapService, configService, event
             $rootScope.$applyAsync();
         };
 
-        mapConfig.instance.appendBasemap = JSONSnippet => {
-            const tileSchema = mapConfig.tileSchemas.find(tileSchema =>
-                tileSchema.id === JSONSnippet.tileSchemaId);
+        mapConfig.instance.appendBasemap = (JSONSnippet) => {
+            const tileSchema = mapConfig.tileSchemas.find((tileSchema) => tileSchema.id === JSONSnippet.tileSchemaId);
 
             const basemap = new ConfigObject.Basemap(JSONSnippet, tileSchema);
 
             mapConfig.basemaps.push(basemap);
             mapConfig.instance.addBasemap(JSONSnippet);
             $rootScope.$applyAsync();
-        }
+        };
     });
 
     return;
@@ -95,7 +104,6 @@ function Controller(geoService, mapService, basemapService, configService, event
      * @param {Basemap} newBasemap a Basemap object from the config
      */
     function selectBasemap(newBasemap) {
-
         self.selectedTileSchemaId = newBasemap.tileSchemaId;
         const oldBasemap = configService.getSync.map.selectedBasemap;
 
@@ -112,7 +120,8 @@ function Controller(geoService, mapService, basemapService, configService, event
             const startPoint = mapService.getCenterPointInTargetBasemap(
                 configService.getSync.map.instance,
                 oldBasemap,
-                newBasemap);
+                newBasemap
+            );
 
             // since the map will be reloaded after this point, and the newBasemap will be selected as part of the map construction process
             // there is no need to broadcast events or set attribution

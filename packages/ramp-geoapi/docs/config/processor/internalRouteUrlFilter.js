@@ -5,7 +5,6 @@ module.exports = function internalRouteUrlFilter() {
     return {
         name: 'toInternalRoute',
         process: function (doc, originatingDoc, title) {
-
             // dependency inline tag filter will generate URL tags for the doc app router
             var url;
             var compiled = _.template('<a href="${url}">${title}</a>');
@@ -21,6 +20,6 @@ module.exports = function internalRouteUrlFilter() {
             } else {
                 return doc;
             }
-        }
+        },
     };
 };

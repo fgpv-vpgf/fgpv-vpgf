@@ -10,9 +10,7 @@ const templateUrl = require('./loader-menu.html');
  * TODO: add description
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLoaderMenu', rvLoaderMenu);
+angular.module('app.ui').directive('rvLoaderMenu', rvLoaderMenu);
 
 function rvLoaderMenu() {
     const directive = {
@@ -21,7 +19,7 @@ function rvLoaderMenu() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

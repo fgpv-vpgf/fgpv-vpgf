@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -8,16 +7,10 @@
  *
  */
 angular
-    .module('app', [
-        'app.core',
-        'app.templates',
-        'app.geo',
-        'app.ui',
-        'app.layout'
-    ])
+    .module('app', ['app.core', 'app.templates', 'app.geo', 'app.ui', 'app.layout'])
     .config(($mdInkRippleProvider, $provide, $controllerProvider) => {
         $provide.value('$controllerProvider', $controllerProvider);
-        
+
         // appInfo.isIE11 is not available before the application has run
         if (!!window.MSInputMethodContext && !!document.documentMode) {
             // to improve IE performance disable ripple effects globally and debug info

@@ -42,7 +42,7 @@ function LegendElementFactory(
     const ref = {
         get autoLegendEh() {
             return configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE;
-        }
+        },
     };
 
     class BaseElement {
@@ -108,7 +108,7 @@ function LegendElementFactory(
             this._debouncedAction(value);
         }
 
-        _debouncedAction = debounceService.registerDebounce(value => {
+        _debouncedAction = debounceService.registerDebounce((value) => {
             this.block.visibility = value;
         }, 300);
     }
@@ -246,7 +246,7 @@ function LegendElementFactory(
             this._debouncedAction(value);
         }
 
-        _debouncedAction = debounceService.registerDebounce(value => {
+        _debouncedAction = debounceService.registerDebounce((value) => {
             this.block.boundingBox = value;
         }, 300);
     }
@@ -466,7 +466,9 @@ function LegendElementFactory(
         get isVisible() {
             // make Remove control available if enableStructuredDelete is turned on
             // otherwise only show Remove control if we are in autolegend or the layer was added via the wizard
-            return this.block.enableStructuredDelete ? super.isVisible : super.isVisible && (ref.autoLegendEh || this.block.userAdded);
+            return this.block.enableStructuredDelete
+                ? super.isVisible
+                : super.isVisible && (ref.autoLegendEh || this.block.userAdded);
         }
     }
 
@@ -602,7 +604,7 @@ function LegendElementFactory(
 
         get _styles() {
             return {
-                unresolved: 'rv-spinning'
+                unresolved: 'rv-spinning',
             };
         }
 
@@ -616,7 +618,7 @@ function LegendElementFactory(
                     return {
                         esriGeometryPoint: 'community:vector-point',
                         esriGeometryPolygon: 'community:vector-polygon',
-                        esriGeometryPolyline: 'community:vector-polyline'
+                        esriGeometryPolyline: 'community:vector-polyline',
                     }[geometryType];
                 },
                 esriDynamic: 'action:settings',
@@ -624,7 +626,7 @@ function LegendElementFactory(
                 ogcWms: 'image:photo',
                 ogcWmsLayerEntry: 'image:photo',
                 esriImage: 'image:photo',
-                esriTile: 'image:photo'
+                esriTile: 'image:photo',
             };
         }
 
@@ -639,7 +641,7 @@ function LegendElementFactory(
                 ogcWmsLayerEntry: 'toc.label.flag.wms',
                 ogcWfs: 'toc.label.flag.wfs',
                 esriImage: 'toc.label.flag.image',
-                esriTile: 'toc.label.flag.tile'
+                esriTile: 'toc.label.flag.tile',
             };
         }
 
@@ -670,7 +672,7 @@ function LegendElementFactory(
                 },
                 get esriDynamic() {
                     return { content: `(${$translate.instant('geometry.type.imagery')})` };
-                }
+                },
             }[layerType || TypeFlag.unresolvedType];
 
             return dataObject;
@@ -684,9 +686,7 @@ function LegendElementFactory(
         }
         get label() {
             return this._labels[
-                this.block.proxyWrapper.layerConfig.layerType ||
-                    this.block.parentLayerType ||
-                    TypeFlag.unresolvedType
+                this.block.proxyWrapper.layerConfig.layerType || this.block.parentLayerType || TypeFlag.unresolvedType
             ];
         }
 
@@ -816,7 +816,7 @@ function LegendElementFactory(
 
     const controlTypes = {
         flag: 'flag',
-        control: 'control'
+        control: 'control',
     };
 
     const typeToClass = {
@@ -828,7 +828,7 @@ function LegendElementFactory(
             query: QueryFlag,
             user: UserFlag,
             filter: FilterFlag,
-            badProjection: BadProjectionFlag
+            badProjection: BadProjectionFlag,
         },
         control: {
             visibility: VisibilityControl,
@@ -850,8 +850,8 @@ function LegendElementFactory(
             reorder: ReorderControl,
             symbology: SymbologyControl,
             styles: StylesControl,
-            interval: IntervalControl
-        }
+            interval: IntervalControl,
+        },
     };
 
     return {
@@ -861,6 +861,6 @@ function LegendElementFactory(
 
         makeFlag(legendBlock, controlName) {
             return new typeToClass[controlTypes.flag][controlName](legendBlock);
-        }
+        },
     };
 }

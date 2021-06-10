@@ -1,11 +1,10 @@
-import { CUSTOM_HEADER_TEMPLATE } from "./templates";
+import { CUSTOM_HEADER_TEMPLATE } from './templates';
 
 /**
  * Custom Header for the enhanced table
  * Includes accessible header button for sorting and accessible buttons for column movement
  */
 export class CustomHeader {
-
     init(agParams: any) {
         this.agParams = agParams;
         this.mapApi = this.agParams.mapApi;

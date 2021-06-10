@@ -9,14 +9,12 @@ const dialogTemplateUrl = require('./expand-image-dialog.html');
  * The `expandImageService` factory handles the display of full-size images
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvExpandImage', rvExpandImage);
+angular.module('app.ui').directive('rvExpandImage', rvExpandImage);
 
 function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templateCache, layoutService, appInfo) {
     const directive = {
         restrict: 'A',
-        link
+        link,
     };
 
     return directive;
@@ -44,11 +42,11 @@ function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templ
         // set canEnlarge true if natural width of the image is larger than the width of the toc panel
         // also get the natural width and height of the image
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             newScope.self.canEnlarge = this.width + 50 > appInfo.mapi.panels.legend.element.width();
             width = Math.min(this.width + 50, shellNode.width() * 0.8);
             height = Math.min(this.height, shellNode.height() * 0.8);
-        }
+        };
         img.src = imageUrl;
 
         const template = $templateCache.get(buttonTemplateUrl);
@@ -66,9 +64,9 @@ function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templ
                 clickOutsideToClose: true,
                 fullscreen: true,
                 templateUrl: dialogTemplateUrl,
-                parent: shellNode
+                parent: shellNode,
             });
-        }
+        };
 
         /**
          * Controller to set close for $mdDialog
@@ -77,14 +75,14 @@ function rvExpandImage($mdDialog, referenceService, $rootScope, $compile, $templ
          * @private
          */
         function ExpandDialogController() {
-                'ngInject';
-                const self = this;
+            'ngInject';
+            const self = this;
 
-                self.width = width;
-                self.height = height;
-                self.imageUrl = imageUrl;
+            self.width = width;
+            self.height = height;
+            self.imageUrl = imageUrl;
 
-                self.close = $mdDialog.hide;
+            self.close = $mdDialog.hide;
         }
     }
 }

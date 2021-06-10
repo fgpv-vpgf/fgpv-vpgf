@@ -14,12 +14,10 @@
  * </ul>
  */
 function initBasemaps(esriBundle, basemapsConfig, map) {
-
     const basemapGallery = new esriBundle.BasemapGallery({ showArcGISBasemaps: false, map });
 
     // iterate through basemap configs
-    basemapsConfig.forEach(basemapConfig => {
-
+    basemapsConfig.forEach((basemapConfig) => {
         const basemap = createBasemap(esriBundle, basemapConfig);
 
         basemapGallery.add(basemap);
@@ -30,7 +28,9 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
 
     // display message
     // TODO: add ui hook? to display msg on screen
-    basemapGallery.on('error', msg => { console.error(msg); });
+    basemapGallery.on('error', (msg) => {
+        console.error(msg);
+    });
 
     return basemapGallery;
 }
@@ -45,30 +45,31 @@ function initBasemaps(esriBundle, basemapsConfig, map) {
  */
 function createBasemap(esriBundle, basemapConfig) {
     // create basemap, add to basemap gallery
-    const layers = basemapConfig.layers.map(config =>
-        new esriBundle.BasemapLayer({ url: config.url, opacity: config.opacity }));
+    const layers = basemapConfig.layers.map(
+        (config) => new esriBundle.BasemapLayer({ url: config.url, opacity: config.opacity })
+    );
 
     const basemap = new esriBundle.Basemap({
         id: basemapConfig.id,
         layers: layers,
         title: basemapConfig.name,
-        thumbnailUrl: basemapConfig.thumbnailUrl
+        thumbnailUrl: basemapConfig.thumbnailUrl,
     });
 
     return basemap;
 }
 
 /**
-  *
-  * The `Basemap` module provides basemap related functions.
-  *
-  * This module exports an object with the following properties
-  * - `Basemap` esri/dijit/Basemap class
-  * - `BasemapGallery` esri/dijit/BasemapGallery class
-  * - `BasemapLayer` esri/dijit/BasemapLayer class
-  * - `initBasemaps` function that makes a basemap gallery based on the settings provided
-  * - 'createBasemap' helper function that makes an individual basemap to be added to the gallery
-  */
+ *
+ * The `Basemap` module provides basemap related functions.
+ *
+ * This module exports an object with the following properties
+ * - `Basemap` esri/dijit/Basemap class
+ * - `BasemapGallery` esri/dijit/BasemapGallery class
+ * - `BasemapLayer` esri/dijit/BasemapLayer class
+ * - `initBasemaps` function that makes a basemap gallery based on the settings provided
+ * - 'createBasemap' helper function that makes an individual basemap to be added to the gallery
+ */
 
 // Basemap related modules
 module.exports = { initBasemaps, createBasemap };

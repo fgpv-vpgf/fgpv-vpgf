@@ -4,7 +4,6 @@
  * Status is updated based on layer visibility, symbol visibilty, text filters, scrolling, and table min/maxing.
  */
 export class PanelStatusManager {
-
     constructor(panelManager: any) {
         this.panelManager = panelManager;
         this.tableOptions = panelManager.tableOptions;
@@ -24,7 +23,7 @@ export class PanelStatusManager {
                 tableOptions.api.deselectAllFiltered();
             }
             oldFilterChanged(event);
-        }
+        };
 
         tableOptions.onBodyScroll = function (event) {
             const scrollRange = that.getScrollRange();
@@ -46,7 +45,7 @@ export class PanelStatusManager {
                     that.tableOptions.api.hideOverlay();
                 }
             }
-        }
+        };
     }
 
     // gets the updated text to display for the enhancedTable's filter status
@@ -74,13 +73,13 @@ export class PanelStatusManager {
             const bottomPixel = this.tableOptions.api.getVerticalPixelRange().bottom;
             let firstRow;
             let lastRow;
-            this.tableOptions.api.getRenderedNodes().forEach(row => {
+            this.tableOptions.api.getRenderedNodes().forEach((row) => {
                 //if the top row is greater than the top pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
-                if (firstRow === undefined && row.rowTop > topPixel - (row.rowHeight / 2)) {
+                if (firstRow === undefined && row.rowTop > topPixel - row.rowHeight / 2) {
                     firstRow = parseInt(row.rowIndex) + 1;
                 }
                 //if the bottom row is less than the bottom pixel plus a little (to account rows that are just a little cut off) then broadcast its index in the status
-                if ((row.rowTop + row.rowHeight) < bottomPixel + (row.rowHeight / 2)) {
+                if (row.rowTop + row.rowHeight < bottomPixel + row.rowHeight / 2) {
                     lastRow = parseInt(row.rowIndex) + 1;
                 }
             });
@@ -91,9 +90,8 @@ export class PanelStatusManager {
                 // This only happens when the table is so small it only shows one row, the calculation above doesn't see the "last" row correctly
                 lastRow = firstRow;
             }
-            rowRange = firstRow.toString() + " - " + lastRow.toString();
-        }
-        else {
+            rowRange = firstRow.toString() + ' - ' + lastRow.toString();
+        } else {
             rowRange = this.panelManager.maximized ? '1 - 15' : '1 - 5';
         }
         // if (this.panelManager.panel.panelControls.find('.scrollRecords')[0]) {

@@ -172,11 +172,11 @@ export class Panel {
         }
 
         // watch for 'style' property changes on a panels element and perform underlay rule checks + offscreen checks.
-        this._observer = new MutationObserver(mutations => {
-            mutations.forEach(mutationRecord => {
+        this._observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutationRecord) => {
                 if (mutationRecord.type == 'attributes') {
                     // scan the attribute change to style to see if anything we care about changed, otherwise ignore. Performance optimization.
-                    const changedCSS = ['top', 'left', 'right', 'bottom', 'width', 'height'].filter(t => {
+                    const changedCSS = ['top', 'left', 'right', 'bottom', 'width', 'height'].filter((t) => {
                         const styleValue = this.element.css(t);
                         if (styleValue !== this._style[t]) {
                             this._style[t] = styleValue;
@@ -187,7 +187,7 @@ export class Panel {
                     });
 
                     if (changedCSS.length > 0) {
-                        this.api.panels.all.forEach(p => p.underlayRuleCheck(this));
+                        this.api.panels.all.forEach((p) => p.underlayRuleCheck(this));
                         this.offScreenRuleCheck('Panel position was moved offscreen.');
                         this.api.panels.reopenOverlay();
                     }
@@ -214,7 +214,7 @@ export class Panel {
 
         if (this.isClosed) {
             this.api.panels.open.forEach((p, idx) => {
-                if(p.isClosed) {
+                if (p.isClosed) {
                     this.api.panels.open.splice(idx, 1);
                 }
             });
@@ -224,7 +224,7 @@ export class Panel {
 
         // find panel in openPanels array. If the panel was closed using esc, this should
         // be the last index.
-        let idx = this.api.panels.open.findIndex(p => this === p);
+        let idx = this.api.panels.open.findIndex((p) => this === p);
         this.api.panels.open.splice(idx, 1);
 
         try {
@@ -238,7 +238,7 @@ export class Panel {
         if (!opts.silent) {
             const closingResponse: ClosingResponse = {
                 code: opts.closingCode ? opts.closingCode : CLOSING_CODES.OTHER,
-                panel: this
+                panel: this,
             };
 
             if (opts.otherPanel) {
@@ -266,7 +266,7 @@ export class Panel {
     }
 
     reopen() {
-        if (!this.api.panels.opened.find(p => this.underlayRuleCheck(p, false))) {
+        if (!this.api.panels.opened.find((p) => this.underlayRuleCheck(p, false))) {
             this.open();
         }
     }
@@ -312,7 +312,10 @@ export class Panel {
      */
     private destroy() {
         this.close();
-        this.api.panels.all.splice(this.api.panels.all.findIndex(p => p === this), 1); // remove this panel from the API
+        this.api.panels.all.splice(
+            this.api.panels.all.findIndex((p) => p === this),
+            1
+        ); // remove this panel from the API
         this.element.remove(); // remove element from the DOM
         this._openPanelSubscriber.unsubscribe(); // unsubscribe from panel opening stream
         this.element.off('click');
@@ -404,11 +407,7 @@ export class Panel {
         this.header.closeButton;
         this.element.css({ visibility: '' });
         this._element = this.element.parent();
-        this.element.prependTo(
-            $(this.api.innerShell)
-                .parent()
-                .parent()
-        );
+        this.element.prependTo($(this.api.innerShell).parent().parent());
 
         // position so backdrop only blocks the inner shell portion of the page.
         const innerShellDimensions = this.api.innerShell.getBoundingClientRect();
@@ -416,11 +415,11 @@ export class Panel {
             top: innerShellDimensions.top,
             left: innerShellDimensions.left,
             bottom: innerShellDimensions.bottom,
-            right: innerShellDimensions.right
+            right: innerShellDimensions.right,
         });
 
         // close the dialog when clicking on the backdrop
-        this.element.on('click', evt => {
+        this.element.on('click', (evt) => {
             if ($(evt.target).is(this.element)) {
                 this.close({ closingCode: CLOSING_CODES.CLICKEDOUTSIDE });
             }
@@ -459,7 +458,7 @@ export class Panel {
 
         $(window).resize(() => {
             this.offScreenRuleCheck();
-            this.api.panels.all.forEach(p => this.underlayRuleCheck(p));
+            this.api.panels.all.forEach((p) => this.underlayRuleCheck(p));
         });
 
         this._openPanelSubscriber = this.api.panels.opening.subscribe((otherPanel: Panel) => {
@@ -530,7 +529,7 @@ export enum CLOSING_CODES {
     OVERLAID = 'overlaid',
     CLOSEBTN = 'closebtn',
     CLICKEDOUTSIDE = 'clickedoutside',
-    OTHER = 'other'
+    OTHER = 'other',
 }
 
 export interface ClosingResponse {
@@ -541,7 +540,7 @@ export interface ClosingResponse {
 
 export enum PanelTypes {
     Panel,
-    Dialog
+    Dialog,
 }
 
 interface ClosingOpts {

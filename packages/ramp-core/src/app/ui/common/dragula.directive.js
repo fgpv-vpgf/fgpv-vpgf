@@ -1,4 +1,3 @@
-
 /**
  * @module rvDragula
  * @memberof app.ui
@@ -13,23 +12,22 @@
  * `rv-dragula-options` - [string] name of the object on the inherited scope (on `self`) providing any overrides for dragule init properies; use this to set up `accept` and other callbacks
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDragula', rvDragula);
+angular.module('app.ui').directive('rvDragula', rvDragula);
 
 function rvDragula($compile, dragulaService, keyNames, events) {
     const directive = {
         restrict: 'A',
         link: link,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 
     /***/
 
-    function link(scope, el, attr) { // , ctrl) {
+    function link(scope, el, attr) {
+        // , ctrl) {
         const dragulaScope = scope;
 
         // recreate dragular instance when projection is changed
@@ -59,10 +57,10 @@ function rvDragula($compile, dragulaService, keyNames, events) {
             const dragulaOptions = {
                 containers: [el[0]],
                 mirrorContainer: el[0],
-                rvDragCancel: () => { },
-                rvDragDrop: () => { },
-                rvDragStart: () => { },
-                rvDragDropModel: () => { }
+                rvDragCancel: () => {},
+                rvDragDrop: () => {},
+                rvDragStart: () => {},
+                rvDragDropModel: () => {},
             };
 
             // extend default options with extras from the the parent scope
@@ -70,12 +68,10 @@ function rvDragula($compile, dragulaService, keyNames, events) {
             dragulaService.options(dragulaScope, attr.rvDragula, dragulaOptions);
 
             // compile original dragula directive in some html without actually inserting it into the page
-            $compile(`<div dragula="'${attr.rvDragula}'" dragula-model="${attr.rvDragulaModel}"></div>`)(
-                dragulaScope);
+            $compile(`<div dragula="'${attr.rvDragula}'" dragula-model="${attr.rvDragulaModel}"></div>`)(dragulaScope);
 
             // get dragula instance of dragula
-            const drake = dragulaService.find(dragulaScope, attr.rvDragula)
-                .drake;
+            const drake = dragulaService.find(dragulaScope, attr.rvDragula).drake;
 
             keyboardDragula(el, scope, drake, dragulaOptions);
         }
@@ -117,8 +113,7 @@ function rvDragula($compile, dragulaService, keyNames, events) {
          * @param  {Object} event event object
          */
         function focusOutHandler(event) {
-            console.log('dragulaDirective', 'event', event,
-                `isReordering ${isReordering} isDragging ${isDragging}`);
+            console.log('dragulaDirective', 'event', event, `isReordering ${isReordering} isDragging ${isDragging}`);
             if (isDragging && !isReordering) {
                 dropElement(event, event.target);
             }
@@ -133,12 +128,14 @@ function rvDragula($compile, dragulaService, keyNames, events) {
             const target = angular.element(event.target);
 
             // if the target cannot be moved, exit
-            if (!drake.canMove(target[0])) { // `canMove` takes a raw dom node
+            if (!drake.canMove(target[0])) {
+                // `canMove` takes a raw dom node
                 return;
             }
 
             // if source and dragElement cannot be found, exit
-            if (!findElements(target[0])) { // take a raw dom node
+            if (!findElements(target[0])) {
+                // take a raw dom node
                 return;
             }
 
@@ -148,7 +145,7 @@ function rvDragula($compile, dragulaService, keyNames, events) {
                 [keyNames.DOWN_ARROW]: moveDown,
                 [keyNames.UP_ARROW]: moveUp,
                 [keyNames.ESCAPE]: escapeStop,
-                [keyNames.TAB]: tabStop
+                [keyNames.TAB]: tabStop,
             };
 
             const keyHandler = keySwitch[event.keyCode] || angular.noop;
@@ -173,16 +170,15 @@ function rvDragula($compile, dragulaService, keyNames, events) {
                     // if there is only one item after the dragElement, use fake element added to the list as the targetVelowItem (this is needed by `accepts ` function, read comments there)
                     if (targetAboveElement[0] === realListEndElement[0]) {
                         targetBelowElement = fakeListEndElement;
-                    // targetAboveElement will be null, if the dragElement is at the end of the list already
+                        // targetAboveElement will be null, if the dragElement is at the end of the list already
                     } else if (targetAboveElement.length === 0) {
                         return;
-                    // get the next item as the targetBelowElement
+                        // get the next item as the targetBelowElement
                     } else {
                         targetBelowElement = targetAboveElement.next();
                     }
 
                     moveElement(target);
-
                 } else {
                     setFocusToDragHandle(dragElement.next());
                 }
@@ -200,7 +196,6 @@ function rvDragula($compile, dragulaService, keyNames, events) {
                     }
 
                     moveElement(target);
-
                 } else {
                     setFocusToDragHandle(dragElement.prev());
                 }
@@ -269,7 +264,6 @@ function rvDragula($compile, dragulaService, keyNames, events) {
             while (getParent(dragElement) && isContainer(getParent(dragElement)) === false) {
                 dragElement = getParent(dragElement); // drag target should be a top element
                 if (!dragElement) {
-
                     dragElement = undefined;
                     return false;
                 }
@@ -320,7 +314,8 @@ function rvDragula($compile, dragulaService, keyNames, events) {
          * @return {Boolean}                    true if move is allowed; false otherwise
          */
         function moveElement(target) {
-            if (!dragulaOptions.accepts(dragElement[0], null, source[0], targetBelowElement[0])) { // dragular accepts takes raw dom nodes
+            if (!dragulaOptions.accepts(dragElement[0], null, source[0], targetBelowElement[0])) {
+                // dragular accepts takes raw dom nodes
                 return false;
             }
 
@@ -356,8 +351,10 @@ function rvDragula($compile, dragulaService, keyNames, events) {
 
                 // this is only needed when moving an item down as ng-repeater will yank and reinsert it; when moving the item up; the other element is yanked and reinserted
                 scope.$digest(); // run digest cycle so repeater can update the template according to the changed model
-                scope.$applyAsync(() => // schedule setting focus back to the drag handle on a future digest cycle after template is updated
-                    setFocusToDragHandle(dragElement));
+                scope.$applyAsync(() =>
+                    // schedule setting focus back to the drag handle on a future digest cycle after template is updated
+                    setFocusToDragHandle(dragElement)
+                );
                 scope.$apply();
             }
         }

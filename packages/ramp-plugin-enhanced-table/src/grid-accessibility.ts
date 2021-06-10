@@ -11,11 +11,11 @@ let onFocusOutOfView;
 export function initAccessibilityListeners(panel: HTMLElement, gridBody: HTMLElement, tableOptions: any) {
     onFocusOutOfView = (event: any) => {
         scrollIntoView(event, panel);
-    }
+    };
 
     onGridTab = (event: any) => {
         tabToGrid(event, tableOptions, panel);
-    }
+    };
 
     panel.addEventListener('focus', onFocusOutOfView, true);
 
@@ -30,7 +30,7 @@ export function initAccessibilityListeners(panel: HTMLElement, gridBody: HTMLEle
  * @param panel the table panel
  * @param gridBody element containing the grid
  */
-export function removeAccessibilityListeners(panel:HTMLElement, gridBody: HTMLElement) {
+export function removeAccessibilityListeners(panel: HTMLElement, gridBody: HTMLElement) {
     panel.removeEventListener('focus', onFocusOutOfView, true);
     gridBody.removeEventListener('focus', onGridTab, true);
     gridBody.removeEventListener('mousedown', onMousedown);
@@ -82,8 +82,8 @@ function scrollIntoView(event: any, panel: HTMLElement) {
             containerRect,
             offset: {
                 top: elementRect.top - containerRect.top,
-                left: elementRect.left - containerRect.left
-            }
+                left: elementRect.left - containerRect.left,
+            },
         };
     }
 }
@@ -94,7 +94,7 @@ function scrollIntoView(event: any, panel: HTMLElement) {
  * @param tableOptions provide access to table api
  * @param lastFilter final filter input before entering the grid
  */
-function tabToGrid (event: any, tableOptions: any, panel: HTMLElement) {
+function tabToGrid(event: any, tableOptions: any, panel: HTMLElement) {
     if (!mousedown) {
         if (event.relatedTarget !== null && event.relatedTarget.tagName === 'INPUT') {
             // scrolls to the first row
@@ -109,7 +109,6 @@ function tabToGrid (event: any, tableOptions: any, panel: HTMLElement) {
             // sets focus into the first grid cell
             // setTimeout(() => tableOptions.api.setFocusedCell(0, firstCol), 10);
             tableOptions.api.setFocusedCell(0, firstCol);
-
         } else {
             let headers = panel.getElementsByClassName('ag-header-cell');
             let filters = headers[headers.length - 1].getElementsByTagName('INPUT');
@@ -120,8 +119,8 @@ function tabToGrid (event: any, tableOptions: any, panel: HTMLElement) {
 }
 
 interface ElementOffset {
-    elementRect: ClientRect|DOMRect;
-    containerRect: ClientRect|DOMRect;
+    elementRect: ClientRect | DOMRect;
+    containerRect: ClientRect | DOMRect;
     offset: Offset;
 }
 

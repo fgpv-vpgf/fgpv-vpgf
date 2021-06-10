@@ -1,23 +1,22 @@
-const schemaToTs = require( 'json-schema-to-typescript');
-const ZSchema   = require("z-schema");
-const fs        = require('fs');
+const schemaToTs = require('json-schema-to-typescript');
+const ZSchema = require('z-schema');
+const fs = require('fs');
 
 class SchemaValidatorPlugin {
-
-    constructor (opts = {}) {
+    constructor(opts = {}) {
         this.validator = new ZSchema({ breakOnFirstError: false });
         this.configPath = opts.configPath ? opts.configPath : 'src/content/samples/config';
         this.schemaFile = opts.schemaFile ? opts.schemaFile : 'schema.json';
         this.hasError = false;
 
         if (opts.outputDTSFile)
-            schemaToTs.compileFromFile(this.schemaFile).then(ts => fs.writeFileSync('api/src/schema.d.ts', ts));
+            schemaToTs.compileFromFile(this.schemaFile).then((ts) => fs.writeFileSync('api/src/schema.d.ts', ts));
     }
 
-    apply (compiler) {
+    apply(compiler) {
         const id = 'schema-validation-plugin';
         // NOTE: [monoRAMP] fixing deprecation warning
-        compiler.hooks.compile.tap(id, compilation => {
+        compiler.hooks.compile.tap(id, (compilation) => {
             // compiler.plugin('compile', compilation => {
             console.log('\n\nSchema validation');
             this.getConfigList().forEach(this.validateConfig.bind(this));
@@ -29,18 +28,14 @@ class SchemaValidatorPlugin {
         });
     }
 
-    get schema () {
-        this._schema = this._schema ?
-            this._schema :
-            JSON.parse(fs.readFileSync(this.schemaFile, 'utf8'));
+    get schema() {
+        this._schema = this._schema ? this._schema : JSON.parse(fs.readFileSync(this.schemaFile, 'utf8'));
 
         return this._schema;
     }
 
-    getConfigList () {
-        return fs
-            .readdirSync(this.configPath)
-            .filter(fName => /\.json$/.test(fName))
+    getConfigList() {
+        return fs.readdirSync(this.configPath).filter((fName) => /\.json$/.test(fName));
     }
 
     validateConfig(fName) {
@@ -49,7 +44,7 @@ class SchemaValidatorPlugin {
         if (!this.validator.validate(config, this.schema)) {
             this.hasError = true;
             console.log(`\t Validation for ${fName} has failed:`);
-            this.validator.getLastErrors().forEach(vError => {
+            this.validator.getLastErrors().forEach((vError) => {
                 console.log(`\t\t - ${vError.message} (Path: ${vError.path})`);
             });
             console.log('\n\n');

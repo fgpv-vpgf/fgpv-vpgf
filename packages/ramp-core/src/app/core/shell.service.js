@@ -10,16 +10,15 @@ angular.module('app.core').factory('shellService', shellService);
  * @returns {object} shell service signature
  */
 function shellService(common, errorService) {
-
     const service = {
         // returns `true` if at least one of the loading processes is active
         get isLoading() {
-            return Object.values(service.loadingProcesses).some(process => process._state);
+            return Object.values(service.loadingProcesses).some((process) => process._state);
         },
 
         setLoadingFlag,
         clearLoadingFlag,
-        loadingProcesses: {}
+        loadingProcesses: {},
     };
 
     return service;
@@ -71,11 +70,11 @@ function shellService(common, errorService) {
             _initDelayHandle: null,
             _messageDelaylHandle: null,
 
-            ...item
+            ...item,
         };
 
         // create a deferred promise to return to the caller code
-        process._promiseHandle = common.$q(resolve => (process._resolvePromise = resolve));
+        process._promiseHandle = common.$q((resolve) => (process._resolvePromise = resolve));
 
         // store the process for tracking purposes
         service.loadingProcesses[process.id] = process;
@@ -101,10 +100,10 @@ function shellService(common, errorService) {
                         id: process.id,
                         textContent: process.message,
                         action: process.action !== '' ? process.action : null,
-                        hideDelay: process.messageDuration
+                        hideDelay: process.messageDuration,
                     })
-                    .then(response => process._resolvePromise(response))
-                    .catch(error => {}); // the toast is rejected when the loading process is cleared; catch all the rejections to avoid errors in the console
+                    .then((response) => process._resolvePromise(response))
+                    .catch((error) => {}); // the toast is rejected when the loading process is cleared; catch all the rejections to avoid errors in the console
             }, process.messageDelay);
         }, process.initDelay);
 
@@ -123,7 +122,7 @@ function shellService(common, errorService) {
         //
         if (id === null) {
             errorService.remove();
-            Object.keys(service.loadingProcesses).forEach(key => _clearProcess(key));
+            Object.keys(service.loadingProcesses).forEach((key) => _clearProcess(key));
             return;
         }
 

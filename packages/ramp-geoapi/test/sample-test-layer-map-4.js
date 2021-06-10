@@ -46,7 +46,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         var leaf4proxy = layerRec.getChildProxy(4);
         var leaf3proxy = layerRec.getChildProxy(3);
@@ -55,16 +55,16 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         leaf3proxy.setQuery(true);
         leaf4proxy.setQuery(true);
 
-        console.log('featurename test - sb pigdog', leaf3proxy.getFeatureName('3', {
-            SO2: 'hogleg',
-            E_Province: 'doglog',
-            City: 'pigdog'
-        }));
-
+        console.log(
+            'featurename test - sb pigdog',
+            leaf3proxy.getFeatureName('3', {
+                SO2: 'hogleg',
+                E_Province: 'doglog',
+                City: 'pigdog',
+            })
+        );
     }
-
 });
-
 
 function clickHandler(clickBundle) {
     console.log('MOUSE CLICK EVENT', clickBundle);
@@ -85,7 +85,7 @@ function clickHandler(clickBundle) {
 }
 
 function getConfig() {
-    return  {
+    return {
         id: 'guts',
         name: 'Dynamic Test',
         url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',
@@ -96,7 +96,7 @@ function getConfig() {
             opacity: 1,
             visibility: true,
             boundingBox: false,
-            query: true
+            query: true,
         },
         layerEntries: [
             {
@@ -106,10 +106,10 @@ function getConfig() {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks Three'
+                name: 'Hamhocks Three',
             },
             {
                 index: 4,
@@ -118,11 +118,11 @@ function getConfig() {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks Four'
+                name: 'Hamhocks Four',
             },
-        ]
+        ],
     };
 }

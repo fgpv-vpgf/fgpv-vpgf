@@ -4,14 +4,13 @@ import { TABLE_LOADING_TEMPLATE } from './templates';
  * Creates and manages one api panel instance to display the loading indicator before the `enhancedTable` is loaded.
  */
 export class PanelLoader {
-
     constructor(mapApi: any, legendBlock) {
         this.mapApi = mapApi;
         this.legendBlock = legendBlock;
         this.panel = this.mapApi.panels.create('enhancedTableLoader');
         this.panel.element.css({
             top: '0px',
-            left: '410px'
+            left: '410px',
         });
         this.panel.allowUnderlay = false;
         this.prepareHeader();
@@ -21,9 +20,9 @@ export class PanelLoader {
 
     setSize(maximized) {
         if (maximized) {
-            this.panel.element.css({ bottom: '0' });;
+            this.panel.element.css({ bottom: '0' });
         } else {
-            this.panel.element.css({ bottom: '50%' });;
+            this.panel.element.css({ bottom: '50%' });
         }
     }
 

@@ -13,7 +13,7 @@ $('body').append(`
 geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     console.log('TEST PAGE - Zoom To Feature (poly) on Feature Layer Record');
 
-        var config1 = {
+    var config1 = {
         id: 'dog',
         name: 'Feature Test',
         url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands/MapServer/1',
@@ -27,8 +27,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             visibility: true,
             boundingBox: false,
             query: true,
-            snapshot: false
-        }
+            snapshot: false,
+        },
     };
 
     var mapOpts = {
@@ -39,8 +39,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             ymin: 5022907.964742964,
             spatialReference: {
                 wkid: 102100,
-                latestWkid: 3857
-            }
+                latestWkid: 3857,
+            },
         },
         lods: [
             { level: 0, resolution: 19567.87924099992, scale: 73957190.948944 },
@@ -63,24 +63,25 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             { level: 17, resolution: 0.14929107082380833, scale: 564.248588 },
             { level: 18, resolution: 0.07464553541190416, scale: 282.124294 },
             { level: 19, resolution: 0.03732276770595208, scale: 141.062147 },
-            { level: 20, resolution: 0.01866138385297604, scale: 70.5310735 }
+            { level: 20, resolution: 0.01866138385297604, scale: 70.5310735 },
         ],
         basemaps: [
             {
-                id: "baseEsriWorld",
-                name: "World Imagery",
-                description: "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
-                altText: "altText - World Imagery",
+                id: 'baseEsriWorld',
+                name: 'World Imagery',
+                description:
+                    'World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.',
+                altText: 'altText - World Imagery',
                 layers: [
-                {
-                    id: "World_Imagery",
-                    layerType: "esriFeature",
-                    url: "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
-                }
+                    {
+                        id: 'World_Imagery',
+                        layerType: 'esriFeature',
+                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer',
+                    },
                 ],
-                tileSchemaId: "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-            }
-        ]
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+            },
+        ],
     };
 
     var layerRec = api.layer.createFeatureRecord(config1);
@@ -106,11 +107,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('enhanced loaded');
 
         // zoom to a point
-        proxy.zoomToGraphic(4, map, { x:0, y:0 }).then(() => {
+        proxy.zoomToGraphic(4, map, { x: 0, y: 0 }).then(() => {
             console.log('zoom to poly done');
         });
-
     }
-
 });
-

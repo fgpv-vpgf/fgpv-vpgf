@@ -7,9 +7,7 @@
  * Offending line: https://github.com/angular/material/blob/master/src/components/button/button.js#L146
  */
 
-angular
-    .module('material.components.button')
-    .decorator('mdButtonDirective', MdButtonDirectiveDecorator);
+angular.module('material.components.button').decorator('mdButtonDirective', MdButtonDirectiveDecorator);
 
 function MdButtonDirectiveDecorator($delegate, $interpolate) {
     'ngInject';
@@ -18,7 +16,7 @@ function MdButtonDirectiveDecorator($delegate, $interpolate) {
     const originalCompile = MdButtonDirective.compile; // store reference to its compile function
     MdButtonDirective.compile = decorateCompile(originalCompile); // decorate compile function
 
-    return ([MdButtonDirective]);
+    return [MdButtonDirective];
 
     /**
      * Decorates the original button compile functions.
@@ -34,9 +32,8 @@ function MdButtonDirectiveDecorator($delegate, $interpolate) {
             return (scope, el, attrs, ctrls) => {
                 originalLink(scope, el, attrs, ctrls);
 
-                el
-                    .contents()
-                    .filter(function() {
+                el.contents()
+                    .filter(function () {
                         return this.nodeType === 3 && this.nodeValue.trim().length > 0;
                     })
                     .wrap('<span></span>');

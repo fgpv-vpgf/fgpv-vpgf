@@ -9,20 +9,20 @@ function version_plugin(options) {
     version.major = packageVersion[0];
     version.minor = packageVersion[1];
     version.patch = packageVersion[2];
-    version.timestamp = + new Date();
+    version.timestamp = +new Date();
     version.gitHash = require('child_process').execSync('git rev-parse HEAD').toString().trim();
 }
 
-version_plugin.prototype.apply = function(compiler) {
+version_plugin.prototype.apply = function (compiler) {
     const id = 'version-plugin';
 
     // compiler.plugin('compilation', compilation => {
     // compilation.plugin('optimize-chunk-assets', (chunks, done) => {
     // NOTE: [monoRAMP] fixing deprecation warning
-    compiler.hooks.compilation.tap(id, compilation => {
+    compiler.hooks.compilation.tap(id, (compilation) => {
         compilation.hooks.optimizeChunkAssets.tapAsync(id, (chunks, done) => {
-            chunks.forEach(chunk => {
-                chunk.files.forEach(filename => {
+            chunks.forEach((chunk) => {
+                chunk.files.forEach((filename) => {
                     if (/^rv-main\.js$/.test(filename)) {
                         // TODO: Remove GSAP library once v2+ is released (v1+ is tightly couped to TweenMax)
                         const content =

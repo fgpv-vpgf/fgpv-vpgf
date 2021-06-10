@@ -50,7 +50,7 @@ function layerRegistryFactory(
 
         synchronizeLayerOrder,
         syncApiElementOrder,
-        getRcsLayerIDs
+        getRcsLayerIDs,
     };
 
     const ref = {
@@ -64,7 +64,7 @@ function layerRegistryFactory(
 
         refreshAttributes: {},
 
-        errorTimeout: {}
+        errorTimeout: {},
     };
 
     let mApiObjects = null;
@@ -89,19 +89,19 @@ function layerRegistryFactory(
         mApiObjects = {
             mouseOver: tt._mouseOver, // subject
             mouseOut: tt._mouseOut, // subject
-            add: tt.add.bind(tt) // tt.add is a function pointer, need to bind tt back into its scope
+            add: tt.add.bind(tt), // tt.add is a function pointer, need to bind tt back into its scope
         };
 
         // when tooltip is added via the api, we create it here
-        tt.added.subscribe(x => {
+        tt.added.subscribe((x) => {
             x.toolTip = tooltipService.addTooltip(x.screenPosition, {}, x.content);
         });
     });
 
     // wire in a hook to any map for adding a simple layer using id. this makes it available on the API
     events.$on(events.rvMapLoaded, () => {
-        configService.getSync.map.instance.addSimpleLayer = name => {
-            const index = mapApi.layers.allLayers.findIndex(layer => layer.id === name);
+        configService.getSync.map.instance.addSimpleLayer = (name) => {
+            const index = mapApi.layers.allLayers.findIndex((layer) => layer.id === name);
 
             let simpleLayer;
             if (index === -1) {
@@ -117,14 +117,14 @@ function layerRegistryFactory(
             return common.$q.resolve(simpleLayer ? [simpleLayer] : []);
         };
 
-        configService.getSync.map.instance.removeSimpleLayer = layerRecord => {
+        configService.getSync.map.instance.removeSimpleLayer = (layerRecord) => {
             configService.getSync.map.instance.removeLayer(layerRecord._layer);
             _removeLayerFromApiMap(layerRecord);
         };
 
         configService.getSync.map.instance.synchronizeLayerOrder = () => {
             synchronizeLayerOrder();
-        }
+        };
     });
 
     // listen for filter changes. inspect if they are relevant and apply to target layer if they are
@@ -154,7 +154,7 @@ function layerRegistryFactory(
     function getLayerRecord(id) {
         const layerRecords = configService.getSync.map.layerRecords;
 
-        return layerRecords.find(layerRecord => layerRecord.layerId === id);
+        return layerRecords.find((layerRecord) => layerRecord.layerId === id);
     }
 
     /**
@@ -186,8 +186,8 @@ function layerRegistryFactory(
         }
 
         layerRecordPromise
-            .then(layerRecord => (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord)))
-            .catch(() => { }); // if layer record creation fails, the error will be handled elsewhere
+            .then((layerRecord) => (ref.refreshAttributes[layerRecord.layerId] = _attribsInvalidation(layerRecord)))
+            .catch(() => {}); // if layer record creation fails, the error will be handled elsewhere
 
         /**
          * @function _attribsInvalidation
@@ -207,9 +207,9 @@ function layerRegistryFactory(
                     // remove the pre-existing attributes for the ConfigLayer(s)
                     if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
                         const childIndices = _simpleWalk(layerRecord.getChildTree());
-                        childIndices.forEach(idx => {
+                        childIndices.forEach((idx) => {
                             configLayer = mapApi.layers.allLayers.find(
-                                layer => layer.id === layerRecord.layerId && layer.layerIndex === idx
+                                (layer) => layer.id === layerRecord.layerId && layer.layerIndex === idx
                             );
                             if (configLayer) {
                                 configLayer.removeAttributes();
@@ -263,7 +263,7 @@ function layerRegistryFactory(
 
         // generate the layer record again
         // if layer record creation fails, the error will be handled elsewhere;
-        _startGeneratingLayerRecord(layerBlueprint, true).catch(() => { });
+        _startGeneratingLayerRecord(layerBlueprint, true).catch(() => {});
     }
 
     /**
@@ -315,8 +315,8 @@ function layerRegistryFactory(
 
         // if layer record creation fails, the error will be handled elsewhere
         layerRecordPromise
-            .then(layerRecord => {
-                const alreadyLoading = ref.loadingQueue.some(lr => lr === layerRecord);
+            .then((layerRecord) => {
+                const alreadyLoading = ref.loadingQueue.some((lr) => lr === layerRecord);
                 const alreadyLoaded = map.graphicsLayerIds.concat(map.layerIds).indexOf(layerRecord.config.id) !== -1;
 
                 // do nothing if the corresponding layer record is aleardy loading or has already loaded
@@ -327,7 +327,7 @@ function layerRegistryFactory(
                 ref.loadingQueue.push(layerRecord);
                 _loadNextLayerRecord();
             })
-            .catch(error => { });
+            .catch((error) => {});
     }
 
     /**
@@ -352,17 +352,17 @@ function layerRegistryFactory(
         ref.generatingQueue[layerBlueprint.config.id] = layerRecordPromise;
 
         layerRecordPromise = layerRecordPromise
-            .then(layerRecord => {
+            .then((layerRecord) => {
                 // store the actual generated record
                 layerRecords.push(layerRecord);
 
                 // start tracking layer record events to update/clear its loading process
-                layerRecord.addStateListener(state => _onLayerLifecycleEvents(layerRecord, state));
+                layerRecord.addStateListener((state) => _onLayerLifecycleEvents(layerRecord, state));
 
                 return layerRecord;
             })
             // clear the loading flag for this layer record if it fails to resolve
-            .catch(error => {
+            .catch((error) => {
                 shellService.clearLoadingFlag(layerBlueprint.config.id);
                 return Promise.reject(error);
             })
@@ -430,7 +430,6 @@ function layerRegistryFactory(
          * @private
          */
         function _onLayerRecordInitialLoad(state) {
-
             if (layerRecord.initLoadDone || state === Geo.Layer.States.ERROR) {
                 layerRecord.removeStateListener(_onLayerRecordInitialLoad);
                 magicScopeReallyFastLoad = true;
@@ -453,7 +452,7 @@ function layerRegistryFactory(
             // API object existed and use it; but would also call initialize routines on it.
             // Part of that init included wiping the attributes. So if anything had downloaded
             // Dirty flag trick to solve it for now.
-            if ((layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) && (!layerRecord.flagIveBeenAPId)) {
+            if ((layerRecord.initLoadDone || state === Geo.Layer.States.LOADED) && !layerRecord.flagIveBeenAPId) {
                 layerRecord.flagIveBeenAPId = true;
                 _createApiLayer(layerRecord);
             }
@@ -485,7 +484,7 @@ function layerRegistryFactory(
 
             ref.mapLoadingWaitHandle = $rootScope.$watch(
                 () => mapConfig.isLoaded,
-                value => {
+                (value) => {
                     if (value) {
                         ref.mapLoadingWaitHandle(); // de-register watch
                         ref.mapLoadingWaitHandle = null;
@@ -526,8 +525,8 @@ function layerRegistryFactory(
                     shellService.clearLoadingFlag(layerRecord.config.id);
                     errorService.display({
                         textContent: $translate.instant('toc.layer.longload.failed', {
-                            name: `"${layerRecord.config.name}"`
-                        })
+                            name: `"${layerRecord.config.name}"`,
+                        }),
                         // TODO: add reload action
                         // action: 'reload'
                     }); // .then(response => response === 'ok' ? dostuff() : {});
@@ -547,7 +546,7 @@ function layerRegistryFactory(
             id: config.id,
             messageDelay: config.expectedResponseTime,
             message: $translate.instant('toc.layer.longload.message', { name: `"${config.name}"` }),
-            action: $translate.instant('toc.layer.longload.hide')
+            action: $translate.instant('toc.layer.longload.hide'),
         });
         /* .then(response => {
             if (response === 'ok') {
@@ -569,38 +568,45 @@ function layerRegistryFactory(
 
         // an array of layer records ordered as visible to the user in the layer selector UI component
         const layerRecordIDsInLegend = configService.getSync.map.legendBlocks
-            .walk(lb => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
-            .filter(id => id) // this will strip all falsy values like `undefined` and `null` since ids should be strings; filter out artificial groups that don't have ids set to null and legend info elements
+            .walk((lb) => lb.layerRecordId) // get a flat list of layer record ids as they appear in UI
+            .filter((id) => id) // this will strip all falsy values like `undefined` and `null` since ids should be strings; filter out artificial groups that don't have ids set to null and legend info elements
             .reduce((a, b) => a.concat(a.indexOf(b) < 0 ? b : []), []); // remove duplicates (dynamic group and its children with have the same layer id)
 
         // if structured legend, take the layer order from the config as the authoritative source
         // TODO:? user-added layers are not added to `configService.getSync.map.layers`; they will be always added at the top of the stack for structured legend, so this is not an immediate concern;
         // if auto legend, take the legend block order from the legend panel
         // TODO: what is adding layer into the `configService.getSync.map.layers` ???
-        const orderedLayerRecords = (configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
-            ? layerRecordIDsInLegend
-            : configService.getSync.map.layers
-                .map(layer => layer.id)
-                .filter(id => layerRecordIDsInLegend.indexOf(id) !== -1)
+        const orderedLayerRecords = (
+            configService.getSync.map.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE
+                ? layerRecordIDsInLegend
+                : configService.getSync.map.layers
+                      .map((layer) => layer.id)
+                      .filter((id) => layerRecordIDsInLegend.indexOf(id) !== -1)
         )
             .map(getLayerRecord)
-            .filter(lr => lr); // get appropriate layer records
+            .filter((lr) => lr); // get appropriate layer records
 
-        const orderedLayerRecordsIds = orderedLayerRecords.map(record => record.layerId);
-        service.replacementIds = (service.replacementIds === undefined) ? {} : service.replacementIds;
+        const orderedLayerRecordsIds = orderedLayerRecords.map((record) => record.layerId);
+        service.replacementIds = service.replacementIds === undefined ? {} : service.replacementIds;
 
         // this massive loop is to ensure the graphicsLayerIds are properly formatted before being passed into the sortGroup
-        mapBody.graphicsLayerIds.forEach(id => {
+        mapBody.graphicsLayerIds.forEach((id) => {
             if (service.replacementIds[id] === undefined) {
                 // if current graphicLayerId does not have a match yet
-                if (!orderedLayerRecordsIds.includes(id)
-                    && id !== 'graphicsLayer1'
-                    && id !== 'graphicsLayer2'
-                    && id !== 'rv_hilight') {
+                if (
+                    !orderedLayerRecordsIds.includes(id) &&
+                    id !== 'graphicsLayer1' &&
+                    id !== 'graphicsLayer2' &&
+                    id !== 'rv_hilight'
+                ) {
                     // find a match for the case where the same ID is not stored in mapBody.graphicLayerIds and orderedLayerRecords
-                    const matches = Object.keys(service.replacementIds).map(key => service.replacementIds[key]);
-                    orderedLayerRecordsIds.forEach(orderedId => {
-                        if (!mapBody.graphicsLayerIds.includes(orderedId) && !mapBody.layerIds.includes(orderedId) && !matches.includes(orderedId)) {
+                    const matches = Object.keys(service.replacementIds).map((key) => service.replacementIds[key]);
+                    orderedLayerRecordsIds.forEach((orderedId) => {
+                        if (
+                            !mapBody.graphicsLayerIds.includes(orderedId) &&
+                            !mapBody.layerIds.includes(orderedId) &&
+                            !matches.includes(orderedId)
+                        ) {
                             service.replacementIds[id] = orderedId;
                         }
                     });
@@ -612,20 +618,22 @@ function layerRegistryFactory(
         });
 
         // sort group 0 corresponds to all the graphicLayerIDs (or the correct corresponding layers retrieved from orderedLayerRecords as done above)
-        const replacementIds = mapBody.graphicsLayerIds.map(id => service.replacementIds[id]);
+        const replacementIds = mapBody.graphicsLayerIds.map((id) => service.replacementIds[id]);
         const mapLayerStacks = {
             0: replacementIds,
-            1: mapBody.layerIds
+            1: mapBody.layerIds,
         };
 
         const sortGroups = [0, 1];
 
-        sortGroups.forEach(sortGroup => _syncSortGroup(sortGroup));
+        sortGroups.forEach((sortGroup) => _syncSortGroup(sortGroup));
 
         // just in case the bbox layers got out of hand,
         // push them to the bottom of the map stack (high drawing order)
         const featureStackLastIndex = mapLayerStacks['0'].length - 1;
-        boundingBoxRecords.forEach(boundingBoxRecord => mapBody.reorderLayer(boundingBoxRecord, featureStackLastIndex));
+        boundingBoxRecords.forEach((boundingBoxRecord) =>
+            mapBody.reorderLayer(boundingBoxRecord, featureStackLastIndex)
+        );
 
         // push the highlight layer on top of everything else
         if (highlightLayer) {
@@ -655,14 +663,14 @@ function layerRegistryFactory(
             // for example the user reorders a layer through UI:
             // ['three', 'one', 'two']
             const layerRecordStack = orderedLayerRecords
-                .filter(layerRecord => Geo.Layer.SORT_GROUPS_[layerRecord.layerType] === sortGroup)
-                .filter(layerRecord => mapLayerStack.indexOf(layerRecord.config.id) !== -1);
+                .filter((layerRecord) => Geo.Layer.SORT_GROUPS_[layerRecord.layerType] === sortGroup)
+                .filter((layerRecord) => mapLayerStack.indexOf(layerRecord.config.id) !== -1);
 
             // a sorted in decreasing order map stack index array of layers found in the previous step
             // this just reflects the positions or slots of the layers from the specified sort group on the map
             // for example: [3, 2, 1]
             const layerRecordIndexes = layerRecordStack
-                .map(layerRecord => mapLayerStack.indexOf(layerRecord.config.id))
+                .map((layerRecord) => mapLayerStack.indexOf(layerRecord.config.id))
                 .sort((a, b) => b - a);
 
             // layers are now iterated using their UI order and moved into the positions or slots found in the previous step
@@ -688,13 +696,15 @@ function layerRegistryFactory(
      */
     function syncApiElementOrder() {
         if (mapApi) {
-            const legendEntries = configService.getSync.map.legendBlocks.entries.filter(entry => !entry.hidden);
+            const legendEntries = configService.getSync.map.legendBlocks.entries.filter((entry) => !entry.hidden);
             const legendElements = mapApi.ui.configLegend.children;
             let reorderedElements = [];
             legendEntries.forEach((entry, index) => {
                 entry = entry.collapsed ? entry.entries[0] : entry;
                 if (legendElements && legendElements.length && entry !== legendElements[index]._legendBlock) {
-                    const element = legendElements.find(legendElement => entry === legendElement._legendBlock) || reorderedElements.find(legendElement => entry === legendElement._legendBlock);
+                    const element =
+                        legendElements.find((legendElement) => entry === legendElement._legendBlock) ||
+                        reorderedElements.find((legendElement) => entry === legendElement._legendBlock);
                     if (element) {
                         reorderedElements.push(legendElements[index]);
                         legendElements[index] = element;
@@ -705,7 +715,7 @@ function layerRegistryFactory(
             const deregisterListener = events.$on(events.rvApiMapAdded, () => {
                 deregisterListener(); // need to react only once
 
-                syncApiElementOrder()
+                syncApiElementOrder();
             });
         }
     }
@@ -722,7 +732,7 @@ function layerRegistryFactory(
     function getBoundingBoxRecord(id) {
         const boundingBoxRecords = configService.getSync.map.boundingBoxRecords;
 
-        return boundingBoxRecords.find(boundingBoxRecord => boundingBoxRecord.id === id);
+        return boundingBoxRecords.find((boundingBoxRecord) => boundingBoxRecord.id === id);
     }
 
     /**
@@ -804,7 +814,7 @@ function layerRegistryFactory(
             // this lets us weed any delayed events that are meant
             // for tooltips that are no longer active.
             const typeMap = {
-                mouseOver: e => {
+                mouseOver: (e) => {
                     events.$broadcast(events.rvFeatureMouseOver, true);
 
                     // a "fake" event preventDefault that disables default behavior
@@ -815,9 +825,11 @@ function layerRegistryFactory(
                     mApiObjects.mouseOver.next({
                         event: e,
                         // attribs is a promise, which resolves on the `mApiTipLoaded` event fired in the tipLoaded event
-                        attribs: new Promise(resolve => events.$on('mApiTipLoaded', (_, tip) => resolve(tip.attribs))),
+                        attribs: new Promise((resolve) =>
+                            events.$on('mApiTipLoaded', (_, tip) => resolve(tip.attribs))
+                        ),
                         // shortcut to add a tooltip with point information already applied
-                        add: content => tooltipService.addHoverTooltip(e.point, {}, content)
+                        add: (content) => tooltipService.addHoverTooltip(e.point, {}, content),
                     });
 
                     if (!e._prevented) {
@@ -825,14 +837,14 @@ function layerRegistryFactory(
                         tipContent = {
                             name: null,
                             svgcode: '<svg></svg>',
-                            graphic: e.target
+                            graphic: e.target,
                         };
 
                         const tipRef = tooltipService.addHoverTooltip(e.point, tipContent);
                     }
                 },
 
-                tipLoaded: e => {
+                tipLoaded: (e) => {
                     events.$broadcast('mApiTipLoaded', e);
                     // update the content of the tip with real data.
                     if (tipContent && tipContent.graphic === e.target) {
@@ -843,7 +855,7 @@ function layerRegistryFactory(
 
                     tooltipService.refreshHoverTooltip();
                 },
-                mouseOut: e => {
+                mouseOut: (e) => {
                     events.$broadcast(events.rvFeatureMouseOver, false);
 
                     e.preventDefault = function () {
@@ -860,7 +872,7 @@ function layerRegistryFactory(
                 forceClose: () => {
                     // if there is a hovertip, get rid of it
                     //destroyHovertip();
-                }
+                },
             };
 
             // execute function for the given type
@@ -887,10 +899,10 @@ function layerRegistryFactory(
             // this lets us weed any delayed events that are meant
             // for tooltips that are no longer active.
             const typeMap = {
-                mouseOver: e => {
+                mouseOver: (e) => {
                     const graphic = data.graphic;
                     const geometry = graphic.geometry;
-                    const apiGeo = simpleLayer.geometry.find(geo => geo.id === geometry.apiId);
+                    const apiGeo = simpleLayer.geometry.find((geo) => geo.id === geometry.apiId);
                     if (!apiGeo || !apiGeo.hover) {
                         return;
                     }
@@ -938,9 +950,9 @@ function layerRegistryFactory(
                         }
                     }
                 },
-                mouseOut: e => {
+                mouseOut: (e) => {
                     tooltipService.removeHover();
-                }
+                },
             };
 
             // execute function for the given type
@@ -961,9 +973,9 @@ function layerRegistryFactory(
         //       but not in the legend. Determine best way
         //       to detect this.
         return configService.getSync.map.layers
-            .filter(lyr => lyr.origin === 'rcs') // only take rcs layers
-            .filter(lyr => getLayerRecord(lyr.id)) // only take layers still in the map
-            .map(lyr => lyr.id.split('.')[1]); // extract rcs key from layer id
+            .filter((lyr) => lyr.origin === 'rcs') // only take rcs layers
+            .filter((lyr) => getLayerRecord(lyr.id)) // only take layers still in the map
+            .map((lyr) => lyr.id.split('.')[1]); // extract rcs key from layer id
     }
 
     return service;
@@ -997,10 +1009,10 @@ function layerRegistryFactory(
         // for dynamic layers, it will intentionally create one ConfigLayer for each child while not creating a ConfigLayer for parents
         if (layerRecord.config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
-            childIndices.forEach(idx => {
+            childIndices.forEach((idx) => {
                 let configLayer;
                 configLayer = mapApi.layers.allLayers.find(
-                    layer => layer.id === layerRecord.layerId && layer.layerIndex === idx
+                    (layer) => layer.id === layerRecord.layerId && layer.layerIndex === idx
                 );
 
                 if (configLayer) {
@@ -1009,9 +1021,9 @@ function layerRegistryFactory(
                     apiLayer = new ConfigLayer(configService.getSync.map, layerRecord, idx);
 
                     // dynamic layers must have the same identify tolerance for all children, so if one updates we must update them all
-                    apiLayer.bufferChanged.subscribe(tolerance => {
+                    apiLayer.bufferChanged.subscribe((tolerance) => {
                         const children = mapApi.layers.getLayersById(apiLayer.id);
-                        children.forEach(child => {
+                        children.forEach((child) => {
                             const oldBuffer = child._identifyBuffer;
                             if (oldBuffer !== tolerance) {
                                 child._identifyBuffer = tolerance;
@@ -1028,7 +1040,7 @@ function layerRegistryFactory(
         } else {
             // for non-dynamic layers, it will correctly create one ConfigLayer for the layer
             let configLayer;
-            configLayer = mapApi.layers.allLayers.find(layer => layer.id === layerRecord.layerId);
+            configLayer = mapApi.layers.allLayers.find((layer) => layer.id === layerRecord.layerId);
 
             if (configLayer) {
                 configLayer._initLayerSettings(layerRecord);
@@ -1051,25 +1063,25 @@ function layerRegistryFactory(
      * @param {BaseLayer} apiLayer an instance of an api layer created whose attributes updates we must subscribe to
      */
     function _initializeLayerObservables(apiLayer) {
-        apiLayer.attributesAdded.subscribe(attribs => {
+        apiLayer.attributesAdded.subscribe((attribs) => {
             mapApi.layers._attributesAdded.next({
                 layer: apiLayer,
-                attributes: attribs
+                attributes: attribs,
             });
         });
 
-        apiLayer.attributesChanged.subscribe(changedAttribs => {
+        apiLayer.attributesChanged.subscribe((changedAttribs) => {
             mapApi.layers._attributesChanged.next({
                 layer: apiLayer,
                 attributesBeforeChange: changedAttribs.attributesBeforeChange,
-                attributesAfterChange: changedAttribs.attributesAfterChange
+                attributesAfterChange: changedAttribs.attributesAfterChange,
             });
         });
 
-        apiLayer.attributesRemoved.subscribe(attribs => {
+        apiLayer.attributesRemoved.subscribe((attribs) => {
             mapApi.layers._attributesRemoved.next({
                 layer: apiLayer,
-                attributes: attribs
+                attributes: attribs,
             });
         });
     }
@@ -1113,7 +1125,7 @@ function layerRegistryFactory(
         let configLayer;
         if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
             configLayer = mapApi.layers.allLayers.find(
-                l => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx)
+                (l) => l.id === layerRecord.layerId && l.layerIndex === parseInt(idx)
             );
         } else {
             configLayer = mapApi.layers.getLayersById(layerRecord.layerId)[0];
@@ -1132,7 +1144,7 @@ function layerRegistryFactory(
      * @param {Object} params event parameters from geoApi event
      */
     function _onLayerFilterChange(params) {
-       events.$broadcast(events.rvFilterChanged, params);
+        events.$broadcast(events.rvFilterChanged, params);
     }
 
     /**
@@ -1148,9 +1160,9 @@ function layerRegistryFactory(
         // removing dynamic layers does not actually remove the layer if another child is still present  ?
         if (layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC && layerRecord.state === Geo.Layer.States.LOADED) {
             const childIndices = _simpleWalk(layerRecord.getChildTree());
-            childIndices.forEach(idx => {
+            childIndices.forEach((idx) => {
                 index = mapApi.layers.allLayers.findIndex(
-                    layer => layer.id === layerRecord.layerId && layer.layerIndex === idx
+                    (layer) => layer.id === layerRecord.layerId && layer.layerIndex === idx
                 );
                 if (index !== -1) {
                     const apiLayer = mapApi.layers.allLayers[index];
@@ -1160,7 +1172,7 @@ function layerRegistryFactory(
                 }
             });
         } else {
-            index = mapApi.layers.allLayers.findIndex(layer => layer.id === layerRecord.layerId);
+            index = mapApi.layers.allLayers.findIndex((layer) => layer.id === layerRecord.layerId);
             if (index !== -1) {
                 const apiLayer = mapApi.layers.allLayers[index];
 

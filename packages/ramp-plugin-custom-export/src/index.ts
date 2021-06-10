@@ -53,14 +53,14 @@ export default class CustomExport {
         // create underlying base canvas
         promises.push(
             Promise.resolve({
-                graphic: baseImage
+                graphic: baseImage,
             })
         );
 
         //
         const mapImageSize = {
             width: mapSize.width * 0.8 - 20,
-            height: mapSize.height - 20
+            height: mapSize.height - 20,
         };
 
         const sourceX = (mapSize.width - mapImageSize.width) / 2;
@@ -70,7 +70,7 @@ export default class CustomExport {
         // TODO: prevent map generators from accepting export sizes
         const apiGenerators = this.api.exportGenerators;
 
-        const pointsImage = apiGenerators.mapSVG().then(data => {
+        const pointsImage = apiGenerators.mapSVG().then((data) => {
             const canvas = RAMP.utils.createCanvas(mapImageSize.width, mapImageSize.height);
 
             // crop the map image returned by the generator to fit into the layout
@@ -91,7 +91,7 @@ export default class CustomExport {
 
             return { graphic: canvas, offset: [10, 10] };
         });
-        const mapImage = apiGenerators.mapImage({ backgroundColour: '#bfe8fe' }).then(data => {
+        const mapImage = apiGenerators.mapImage({ backgroundColour: '#bfe8fe' }).then((data) => {
             const canvas = RAMP.utils.createCanvas(mapImageSize.width, mapImageSize.height);
 
             // crop the map image returned by the generator to fit into the layout
@@ -113,14 +113,14 @@ export default class CustomExport {
             return { graphic: canvas, offset: [10, 10] };
         });
 
-        const northArrowImage = apiGenerators.northArrow().then(data => ({
+        const northArrowImage = apiGenerators.northArrow().then((data) => ({
             graphic: data.graphic,
-            offset: [40, 20]
+            offset: [40, 20],
         }));
 
-        const scaleBarImage = apiGenerators.scaleBar().then(data => ({
+        const scaleBarImage = apiGenerators.scaleBar().then((data) => ({
             graphic: data.graphic,
-            offset: [mapImageSize.width - 10 - 120, mapImageSize.height - 50 - 10]
+            offset: [mapImageSize.width - 10 - 120, mapImageSize.height - 50 - 10],
         }));
 
         // we can pass in a modified copy of the legendBlocks if needed, in order to include/exclude certain layers from legend generation
@@ -129,20 +129,20 @@ export default class CustomExport {
                 columnWidth: mapSize.width * 0.2 - 20 - 10,
                 width: mapSize.width * 0.2 - 20 - 10,
                 height: mapImageSize.height,
-                legendBlocks
+                legendBlocks,
             })
-            .then(data => ({
+            .then((data) => ({
                 graphic: data.graphic,
-                offset: [mapImageSize.width + 30, 10]
+                offset: [mapImageSize.width + 30, 10],
             }));
 
         const titleImage = apiGenerators
             .htmlMarkup(
                 `<span style="font-size: 35px; padding: 8px 14px; display: block; text-align: center;"><b>Interesting Fact</b> | <i>Atomic Engineering Lab</i> is out of 🎂</span>`
             )
-            .then(data => ({
+            .then((data) => ({
                 graphic: data.graphic,
-                offset: [mapImageSize.width - 10 - data.graphic.width, 10 + 20]
+                offset: [mapImageSize.width - 10 - data.graphic.width, 10 + 20],
             }));
 
         promises.push(mapImage, pointsImage, northArrowImage, scaleBarImage, legendImage, titleImage);
@@ -160,9 +160,9 @@ export default interface CustomExport {
 
 CustomExport.prototype.translations = {
     'en-CA': {
-        title: 'Cake Export'
+        title: 'Cake Export',
     },
     'fr-CA': {
-        title: `Export la Cake`
-    }
+        title: `Export la Cake`,
+    },
 };

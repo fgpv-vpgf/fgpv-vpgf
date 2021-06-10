@@ -24,11 +24,10 @@ angular.module('app.core').factory('stateManager', stateManager);
 // https://github.com/johnpapa/angular-styleguide#factory-and-service-names
 
 function stateManager(displayManager, initialState, initialDisplay) {
-
     const service = {
         callback,
         state: angular.copy(initialState),
-        display: angular.copy(initialDisplay)
+        display: angular.copy(initialDisplay),
     };
 
     const fulfillStore = {}; // keeping references to promise fulfill functions

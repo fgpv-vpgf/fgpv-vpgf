@@ -7,31 +7,28 @@
  * @description
  * The `animationService` service handles GSAP based animations. For IE or touch devices, the animation timeframe is set to almost zero to improve performance.
  */
-angular
-    .module('app.layout')
-    .factory('animationService', animationService);
+angular.module('app.layout').factory('animationService', animationService);
 
 function animationService($rootElement, appInfo) {
-
     const service = {
         timeLineLite,
         to: animationWrapper('to'),
         from: animationWrapper('from'),
         fromTo: animationWrapper('fromTo'),
-        set: TweenLite.set
+        set: TweenLite.set,
     };
 
     return service;
 
     /**
-    * Returns a new TimelineLite instance with 'to' and 'fromTo' methods overridden with custom implementation
-    * @function  timeLineLite
-    * @return  {Object} a new TimelineLite instance
-    */
+     * Returns a new TimelineLite instance with 'to' and 'fromTo' methods overridden with custom implementation
+     * @function  timeLineLite
+     * @return  {Object} a new TimelineLite instance
+     */
     function timeLineLite() {
         const tll = new TimelineLite(...arguments);
         // wrap original GSAP methods in custom method which can disable animations
-        ['to', 'from', 'fromTo'].forEach(type => {
+        ['to', 'from', 'fromTo'].forEach((type) => {
             tll['orig' + type] = tll[type];
             tll[type] = animationWrapper(type, tll);
         });
@@ -40,12 +37,12 @@ function animationService($rootElement, appInfo) {
     }
 
     /**
-    * Returns a function that can be called just like the original toWrap method, except this one disables animations for IE and touch devices.
-    * @function  animationWrapper
-    * @param     {String}   toWrap          the name of the existing method in TLLinstance to be wrapped
-    * @param     {Object}   TLLinstance     an instance of TimelineLite, defaults to static TweenLite class
-    * @return    {Function} a function which effectively replaces the original toWrap function
-    */
+     * Returns a function that can be called just like the original toWrap method, except this one disables animations for IE and touch devices.
+     * @function  animationWrapper
+     * @param     {String}   toWrap          the name of the existing method in TLLinstance to be wrapped
+     * @param     {Object}   TLLinstance     an instance of TimelineLite, defaults to static TweenLite class
+     * @return    {Function} a function which effectively replaces the original toWrap function
+     */
     function animationWrapper(toWrap, TLLinstance = TweenLite) {
         return function () {
             const args = [...arguments];

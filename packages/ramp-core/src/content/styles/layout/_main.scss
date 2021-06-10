@@ -75,37 +75,61 @@ div.sm-button {
 }
 
 div[type='table'] {
-
     @include include-size(rv-sm) {
-        &.default, &.full, &.attached {
+        &.default,
+        &.full,
+        &.attached {
             @include active-panel-plug($left: 0, $top: 0, $right: 0, $bottom: 0, $width: 100%, $from: right);
             z-index: 13;
         }
     }
 
     @include include-size(rv-md) {
-        &.default, &.full, &.attached {
-            @include active-panel-plug($left: $viewport-gutter - 2, $top: $viewport-gutter - 2, $right: $viewport-gutter - 2, $bottom: $viewport-gutter - 2, $from: right);
+        &.default,
+        &.full,
+        &.attached {
+            @include active-panel-plug(
+                $left: $viewport-gutter - 2,
+                $top: $viewport-gutter - 2,
+                $right: $viewport-gutter - 2,
+                $bottom: $viewport-gutter - 2,
+                $from: right
+            );
             z-index: 13;
         }
     }
 
     @include include-size(rv-lg) {
         &.default {
-            @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: 50%);
+            @include active-panel-plug(
+                $left: $viewport-gutter * 2 + $toolbar-width,
+                $top: $viewport-gutter,
+                $right: $viewport-gutter,
+                $bottom: 50%
+            );
             z-index: 13;
         }
 
         &.full {
-            @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $bottom: $viewport-gutter);
+            @include active-panel-plug(
+                $left: $viewport-gutter * 2 + $toolbar-width,
+                $top: $viewport-gutter,
+                $right: $viewport-gutter,
+                $bottom: $viewport-gutter
+            );
             z-index: 13;
         }
 
         &.attached {
-            @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter + $toolbar-height + 1, $width: 300px, $bottom: $viewport-gutter);
+            @include active-panel-plug(
+                $left: $viewport-gutter + $toolbar-width,
+                $top: $viewport-gutter + $toolbar-height + 1,
+                $width: 300px,
+                $bottom: $viewport-gutter
+            );
 
             &:before {
-                content: "";
+                content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -124,7 +148,12 @@ div[type='table'] {
     }
 
     &.minimized {
-        @include active-panel-plug($left: $viewport-gutter * 2 + $toolbar-width, $top: $viewport-gutter, $right: $viewport-gutter, $height: 100px);
+        @include active-panel-plug(
+            $left: $viewport-gutter * 2 + $toolbar-width,
+            $top: $viewport-gutter,
+            $right: $viewport-gutter,
+            $height: 100px
+        );
     }
 
     rv-table-default {
@@ -133,9 +162,14 @@ div[type='table'] {
 }
 
 rv-panel[type='main'] {
-
     @include include-size(rv-gt-sm) {
-        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + $toolbar-height + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+        @include active-panel-plug(
+            $left: $viewport-gutter,
+            $top: $viewport-gutter + $toolbar-height + 1,
+            $bottom: $viewport-gutter,
+            $width: $toolbar-width,
+            $from: top
+        );
     }
 
     @include include-size(rv-sm) {
@@ -145,7 +179,13 @@ rv-panel[type='main'] {
 
     &.rv-no-appbar {
         @include include-size(rv-gt-sm) {
-            @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter + 1, $bottom: $viewport-gutter, $width: $toolbar-width, $from: top);
+            @include active-panel-plug(
+                $left: $viewport-gutter,
+                $top: $viewport-gutter + 1,
+                $bottom: $viewport-gutter,
+                $width: $toolbar-width,
+                $from: top
+            );
         }
 
         @include include-size(rv-sm) {
@@ -170,7 +210,7 @@ rv-panel[type='main'] {
     }
 
     &:before {
-        content: "";
+        content: '';
         position: absolute;
         top: -1px;
         left: 0;
@@ -210,24 +250,35 @@ rv-panel[type='main'] {
 }
 
 rv-panel[type='side'] {
-
     @include include-size(rv-sm) {
         @include active-panel-plug($left: 0, $top: 0, $bottom: 0, $width: 100%, $from: right);
         z-index: 12;
     }
 
     @include include-size(rv-md) {
-        @include active-panel-plug($left: $viewport-gutter, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $toolbar-width, $from: left);
+        @include active-panel-plug(
+            $left: $viewport-gutter,
+            $top: $viewport-gutter,
+            $bottom: $viewport-gutter,
+            $width: $toolbar-width,
+            $from: left
+        );
         z-index: 12;
     }
 
     @include include-size(rv-lg) {
-        @include active-panel-plug($left: $viewport-gutter + $toolbar-width, $top: $viewport-gutter, $bottom: $viewport-gutter, $width: $side-panel-width, $from: left);
+        @include active-panel-plug(
+            $left: $viewport-gutter + $toolbar-width,
+            $top: $viewport-gutter,
+            $bottom: $viewport-gutter,
+            $width: $side-panel-width,
+            $from: left
+        );
         z-index: 10;
     }
 
     &:before {
-        content: "";
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
@@ -258,7 +309,7 @@ rv-panel[type='other'] {
 
     .rv-panel {
         //background-color: rgba(0,0,0,0.68);
-        background-color: rgba(#fff,.68);
+        background-color: rgba(#fff, 0.68);
         //color: white;
     }
 }

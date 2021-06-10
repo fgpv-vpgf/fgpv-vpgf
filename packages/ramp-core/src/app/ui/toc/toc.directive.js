@@ -12,9 +12,7 @@ const REORDER_CLASS = 'rv-reorder';
  * The `rvToc` directive wraps and provides functionailty for the toc for the main panel.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvToc', rvToc);
+angular.module('app.ui').directive('rvToc', rvToc);
 
 function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoService, animationService, configService) {
     const directive = {
@@ -24,7 +22,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -37,8 +35,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
         // flag the touchstart event happening on the layers panel, so the default drag-n-drop reorder can be canceled;
         // only reorder using the reorder mode is allowed when touch events are detected https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1457
         let isTouchDetected = false;
-        directiveElement.on('touchstart', () =>
-            (isTouchDetected = true));
+        directiveElement.on('touchstart', () => (isTouchDetected = true));
 
         // register toc node with referenceService so it can be targeted
         referenceService.panes.toc = directiveElement;
@@ -47,7 +44,6 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         self.dragulaOptions = {
-
             moves(el, source, handle) {
                 // disable any reorder when the legend is structured;
                 // drag handles are disabled in the template, but mouse reorder can be triggered without them
@@ -66,7 +62,6 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
                     } else {
                         return false;
                     }
-
                 } else {
                     return true; // always allow drag for with mouse events
                 }
@@ -110,13 +105,13 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
 
             rvDragCancel(evt, elem, target, source) {
                 source.removeAttr('data-sort-group');
-            }
+            },
         };
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         // set an empty animation object in the event a method is called prior
         // to a scroll animation being created
-        let scrollAnimation = { pause: () => { }, isActive: () => false };
+        let scrollAnimation = { pause: () => {}, isActive: () => false };
 
         // on drag start, add data attribute to the list indicating which sort group the dragged layer can be accepted into
         // this will highlight invalid drop target
@@ -125,8 +120,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
 
             // handle autoscroll when dragging layers
             const scrollElem = source.closest('md-content');
-            directiveElement.on('mousemove touchmove', event => {
-
+            directiveElement.on('mousemove touchmove', (event) => {
                 const pageY = event.pageY ? event.pageY : event.originalEvent.touches[0].clientY;
 
                 // scroll animation is linear
@@ -138,21 +132,22 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
                     scrollDuration = scrollElem.scrollTop() * speedRatio;
 
                     if (!scrollAnimation.isActive()) {
-                        scrollAnimation = animationService.to(scrollElem, scrollDuration,
-                            { scrollTo: { y: 0 }, ease: 'Linear.easeNone' });
+                        scrollAnimation = animationService.to(scrollElem, scrollDuration, {
+                            scrollTo: { y: 0 },
+                            ease: 'Linear.easeNone',
+                        });
                     }
 
                     // scrolling downwards
                 } else if (scrollElem.height() - pageY <= 0) {
                     if (!scrollAnimation.isActive()) {
-                        scrollDuration = (scrollElem[0].scrollHeight -
-                            scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
+                        scrollDuration =
+                            (scrollElem[0].scrollHeight - scrollElem.height() - scrollElem.scrollTop()) * speedRatio;
 
-                        scrollAnimation = animationService.to(scrollElem, scrollDuration,
-                            {
-                                scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
-                                ease: 'Linear.easeNone'
-                            });
+                        scrollAnimation = animationService.to(scrollElem, scrollDuration, {
+                            scrollTo: { y: scrollElem[0].scrollHeight - scrollElem.height() },
+                            ease: 'Linear.easeNone',
+                        });
                     }
 
                     // stop scrolling
@@ -182,8 +177,7 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
         });
 
         // `drop-model` is fired when the model is synchronized
-        scope.$on('toc-bag.drop-model', () =>
-            self.dragulaOptions.rvDragDropModel());
+        scope.$on('toc-bag.drop-model', () => self.dragulaOptions.rvDragDropModel());
 
         /**
          * @function toggleSortGroups
@@ -191,7 +185,6 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
          * @param {Booelan} value indicates whether the sort groups should be fanned out or collapsed
          */
         function toggleSortGroups(value) {
-
             const legendListElement = directiveElement.find(LEGEND_ROOT_CLASS);
             const legendListItemsElements = legendListElement.find('> li');
             const sortGroupCount = parseInt(legendListItemsElements.last().attr('data-sort-group'));
@@ -201,19 +194,17 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
                 paused: true,
                 onComplete: () => {
                     legendListElement.addClass(REORDER_CLASS);
-                    animationService.set(legendListItemsElements,
-                        { clearProps: 'margin-top' }
-                    );
+                    animationService.set(legendListItemsElements, { clearProps: 'margin-top' });
                 },
-                onReverseComplete: () => legendListElement.removeClass(REORDER_CLASS)
+                onReverseComplete: () => legendListElement.removeClass(REORDER_CLASS),
             });
 
             for (let i = 0; i < sortGroupCount; i++) {
-                splitSortGroupElement = legendListItemsElements
-                    .filter(`[data-sort-group="${i}"] + [data-sort-group="${i + 1}"]`);
+                splitSortGroupElement = legendListItemsElements.filter(
+                    `[data-sort-group="${i}"] + [data-sort-group="${i + 1}"]`
+                );
 
-                tl.fromTo(splitSortGroupElement, 0.3,
-                    { 'margin-top': 0 }, { 'margin-top': 36 }, 0);
+                tl.fromTo(splitSortGroupElement, 0.3, { 'margin-top': 0 }, { 'margin-top': 36 }, 0);
             }
 
             if (value) {
@@ -225,15 +216,25 @@ function rvToc($timeout, referenceService, layerRegistry, dragulaService, geoSer
     }
 }
 
-function Controller($scope, tocService, layerRegistry, stateManager, geoService, keyNames, configService,
-    $rootScope, events, layoutService, Geo) {
-
+function Controller(
+    $scope,
+    tocService,
+    layerRegistry,
+    stateManager,
+    geoService,
+    keyNames,
+    configService,
+    $rootScope,
+    events,
+    layoutService,
+    Geo
+) {
     'ngInject';
     const self = this;
 
     const ref = {
         initialTableDeregister: angular.noop,
-        initialDynamicLayerFilter: angular.noop
+        initialDynamicLayerFilter: angular.noop,
     };
 
     self.toggleTableFull = toggleTableFull;
@@ -245,7 +246,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
 
     let deregisterListener = angular.noop;
 
-    configService.onEveryConfigLoad(cfg => {
+    configService.onEveryConfigLoad((cfg) => {
         self.config = cfg;
 
         // check if we need to open a table panel by default
@@ -271,15 +272,19 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
             const layerRecord = layerRegistry.getLayerRecord(layerRecordId);
 
             if (layerRecord && layerRecord.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                layerRecord.config.layerEntries.forEach(currentSubLayer => {
-                    if (currentSubLayer.table) {        // if table exists, we need to reaply the definition query every time on reload
+                layerRecord.config.layerEntries.forEach((currentSubLayer) => {
+                    if (currentSubLayer.table) {
+                        // if table exists, we need to reaply the definition query every time on reload
                         const proxy = layerRecord.getChildProxy(currentSubLayer.index);
 
                         // this will mimick as if the grid had applied its filter goodness.
                         if (proxy.filter !== undefined) {
                             // not all sublayers will have a filter
                             // some sub-layers are dynamic groups and have sub-sub layers so check that proxy.filter !== undefined
-                            proxy.filter.setSql(proxy.filter.coreFilterTypes.GRID, currentSubLayer.initialFilteredQuery);
+                            proxy.filter.setSql(
+                                proxy.filter.coreFilterTypes.GRID,
+                                currentSubLayer.initialFilteredQuery
+                            );
                         }
                     }
                 });
@@ -308,9 +313,8 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
 
             // find that legend block
             const legendBlock = self.config.map.legendBlocks
-                .walk((entry, index, parentEntry) =>
-                    entry.id === legendBlockId ? entry : null)
-                .filter(a => a !== null)[0];
+                .walk((entry, index, parentEntry) => (entry.id === legendBlockId ? entry : null))
+                .filter((a) => a !== null)[0];
 
             // open the datatable if the legend block is found
             if (legendBlock) {
@@ -326,12 +330,7 @@ function Controller($scope, tocService, layerRegistry, stateManager, geoService,
     // hacky way to toggle table panel modes;
     // TODO: replace with a sane methods
     function toggleTableFull() {
-        const views = [
-            'default',
-            'minimized',
-            'full',
-            'attached'
-        ];
+        const views = ['default', 'minimized', 'full', 'attached'];
 
         let currentMode = stateManager.state.table.morph;
         let index = (views.indexOf(currentMode) + 1) % 4;

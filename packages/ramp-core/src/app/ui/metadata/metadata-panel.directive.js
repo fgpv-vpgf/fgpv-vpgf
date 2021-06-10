@@ -7,9 +7,7 @@
  * The `rvMetadataPanel` directive wraps the side panel's metadata content.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvMetadataPanel', rvMetadataPanel);
+angular.module('app.ui').directive('rvMetadataPanel', rvMetadataPanel);
 
 /**
  * `rvMetadataPanel` directive body.
@@ -24,7 +22,7 @@ function rvMetadataPanel(referenceService) {
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

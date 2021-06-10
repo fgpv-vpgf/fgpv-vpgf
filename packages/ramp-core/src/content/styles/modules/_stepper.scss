@@ -11,7 +11,7 @@
 
             // lines connecting steps
             &:after {
-                content: "";
+                content: '';
                 position: absolute;
                 border-left: 1px solid black;
                 top: rem(5.6);
@@ -20,7 +20,7 @@
             }
 
             &:before {
-                content: "";
+                content: '';
                 position: absolute;
                 border-left: 1px solid black;
                 top: 0;
@@ -42,7 +42,7 @@
 
             .md-caption {
                 //line-height: rem(0.8);
-                margin-top: - rem(0.6);
+                margin-top: -rem(0.6);
                 display: inline;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -76,7 +76,7 @@
         height: rem(2.4);
         background: $secondary-text-color;
         border-radius: 50%;
-        color: #FFF;
+        color: #fff;
         line-height: rem(2.5);
         text-align: center;
         padding-bottom: rem(0.1);
@@ -128,7 +128,7 @@
         padding-bottom: rem(2.4);
 
         &-continue {
-            min-width: rem(12.0);
+            min-width: rem(12);
         }
 
         .md-button {

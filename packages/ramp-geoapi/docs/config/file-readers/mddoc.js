@@ -19,10 +19,12 @@ module.exports = function mddocFileReader() {
         defaultPattern: /\.md$/,
         getDocs: function (fileInfo) {
             // We return a single element array because mddoc files only contain one document
-            return [{
-                content: fileInfo.content,
-                startingLine: 1
-            }];
-        }
+            return [
+                {
+                    content: fileInfo.content,
+                    startingLine: 1,
+                },
+            ];
+        },
     };
 };

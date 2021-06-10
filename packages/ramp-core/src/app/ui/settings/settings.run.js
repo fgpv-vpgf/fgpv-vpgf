@@ -13,7 +13,6 @@ function settingsBlock(events) {
         mApi.panels.legend.closing.subscribe(() => {
             mApi.panels.settings.close();
         });
-
     });
     function setPanelContents() {
         const closeButton = mApi.panels.settings.header.closeButton;

@@ -93,7 +93,6 @@
     }
 }
 
-
 @mixin button-size($size) {
     // adjust size of the button container to fit around the icon
 
@@ -117,9 +116,9 @@
             background: none;
 
             &:before {
-                content: "";
+                content: '';
                 position: absolute;
-                background: rgba(158,158,158,0.2);
+                background: rgba(158, 158, 158, 0.2);
                 border-radius: 50%;
                 @include icon-ripple-shape($size);
             }
@@ -134,8 +133,8 @@
 @mixin icon-ripple-shape($size) {
     width: $icon-button-width; // it's rem(4.0) now
     height: $icon-button-height; // it's rem(4.0) now
-    left: - ($icon-button-width - $size) / 2; // shift ripple so it's still centered over the icon
-    top: - ($icon-button-height - $size) / 2;
+    left: -($icon-button-width - $size) / 2; // shift ripple so it's still centered over the icon
+    top: -($icon-button-height - $size) / 2;
 }
 
 // sets the icon size in the icon button independently of the button size; can be used with `rv-button-x` classes;
@@ -158,14 +157,12 @@
 
     .rv-icon-16 {
         @include icon-size(rem(1.6));
-
     }
 
     .rv-icon-14 {
         @include icon-size(rem(1.4));
     }
 }
-
 
 @mixin icon-size($size) {
     &md-icon,
@@ -204,7 +201,7 @@
 
     &[disabled] {
         md-icon {
-            color: rgba(0,0,0,0.38);
+            color: rgba(0, 0, 0, 0.38);
         }
     }
 }
@@ -258,7 +255,7 @@
 
     // for plugin button, they do not get md-focused when keyboard focus
     .rv-body-button:focus {
-        background: rgba(158,158,158,0.2);
+        background: rgba(158, 158, 158, 0.2);
     }
 }
 
@@ -269,8 +266,8 @@ $icon-sizes: 40, 32, 24, 20, 16, 14;
     %button-divider {
         border-right: $divider-color 1px solid;
         margin: {
-            right: rem(1.0);
-            left: rem(1.0);
+            right: rem(1);
+            left: rem(1);
         }
     }
 

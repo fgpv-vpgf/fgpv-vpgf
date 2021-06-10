@@ -6,12 +6,9 @@
  * @description bookmarkService handles creation and parsing of bookmarks.
  *
  */
-angular
-    .module('app.core')
-    .factory('bookmarkService', bookmarkService);
+angular.module('app.core').factory('bookmarkService', bookmarkService);
 
 function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, ConfigObject) {
-
     let _bookmarkObject = null;
     let _orderdBookmarkIds = [];
 
@@ -21,10 +18,18 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         adjustRcsLanguage,
         extractRcsLayers,
         insertRcsLayers,
-        get storedBookmark() { return _bookmarkObject; },
-        getOrderdBookmarkIds() { return _orderdBookmarkIds},
-        emptyStoredBookmark() { _bookmarkObject = null; },
-        emptyOrderdBookmarkIds() { _orderdBookmarkIds = []; }
+        get storedBookmark() {
+            return _bookmarkObject;
+        },
+        getOrderdBookmarkIds() {
+            return _orderdBookmarkIds;
+        },
+        emptyStoredBookmark() {
+            _bookmarkObject = null;
+        },
+        emptyOrderdBookmarkIds() {
+            _orderdBookmarkIds = [];
+        },
     };
 
     return service;
@@ -55,18 +60,20 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             startPoint = {
                 x: mapExtent.x,
                 y: mapExtent.y,
-                scale: mapInstance._map.getScale()
+                scale: mapInstance._map.getScale(),
             };
         }
 
         const layerBookmarks = _getLayerRecords()
             // filter out `userAdded` layers
-            .filter(layerRecord => !layerRecord.config.state.userAdded)
-            .map(layerRecord => encode64(makeLayerBookmark(layerRecord)));
+            .filter((layerRecord) => !layerRecord.config.state.userAdded)
+            .map((layerRecord) => encode64(makeLayerBookmark(layerRecord)));
 
         // bookmarkVersions.? is the version. update this accordingly whenever the structure of the bookmark changes
-        const bookmark = `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(startPoint.scale)}` +
-            (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
+        const bookmark =
+            `${bookmarkVersions.B},${basemap},${encode64(startPoint.x)},${encode64(startPoint.y)},${encode64(
+                startPoint.scale
+            )}` + (layerBookmarks.length > 0 ? `,${layerBookmarks.toString()}` : '');
 
         console.log('bookmarkService', 'bookmark object', bookmark);
 
@@ -76,9 +83,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             if (mapConfig.legend.type === ConfigObject.TYPES.legend.AUTOPOPULATE) {
                 // - removed layers in the "undo" time frame will be bookmarked
                 // - bookmark layers in the same order they appear in the main panel - needed for autolegend only
-                return mapConfig.legendBlocks.entries.map(legendBlock =>
-                    mapConfig.layerRecords.find(layerRecord =>
-                        layerRecord.config.id === legendBlock.layerRecordId));
+                return mapConfig.legendBlocks.entries.map((legendBlock) =>
+                    mapConfig.layerRecords.find((layerRecord) => layerRecord.config.id === legendBlock.layerRecordId)
+                );
             } else {
                 return mapConfig.layerRecords;
             }
@@ -139,7 +146,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         // return parseInt(value, 2).toString(16);
 
         const fourBits = value.match(/.{1,4}/g);
-        return fourBits.map(b4 => parseInt(b4, 2).toString(16)).join('');
+        return fourBits.map((b4) => parseInt(b4, 2).toString(16)).join('');
     }
 
     /**
@@ -152,9 +159,11 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      */
     function hexToBinary(value) {
         const hexes = value.match(/./g); // split into single chars
-        return hexes.map(h =>
-            encodeInteger(parseInt(h, 16), 4) // 4-digit padded binary
-        ).join('');
+        return hexes
+            .map(
+                (h) => encodeInteger(parseInt(h, 16), 4) // 4-digit padded binary
+            )
+            .join('');
     }
 
     /**
@@ -209,29 +218,31 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             [types.ESRI_TILE]: '2',
             [types.ESRI_DYNAMIC]: '3',
             [types.ESRI_IMAGE]: '4',
-            [types.OGC_WFS]: '5'
+            [types.OGC_WFS]: '5',
         };
         const layerCode = typeToCode[layerDefinition.layerType];
 
         // determines what states we should inspect dynamic children
         // for bookmark. if not loaded & stable, we ignore children
         // and let them go back to default when bookmark loads
-        const goodState = state => {
+        const goodState = (state) => {
             switch (state) {
-            case Geo.Layer.States.ERROR:
-            case Geo.Layer.States.LOADING:
-            case Geo.Layer.States.NEW:
-                return false;
-            default:
-                return true;
+                case Geo.Layer.States.ERROR:
+                case Geo.Layer.States.LOADING:
+                case Geo.Layer.States.NEW:
+                    return false;
+                default:
+                    return true;
             }
         };
 
         // Children Info (calculate first so we have the count when doing layer settings)
         let childItems = [];
-        if (layerCode === typeToCode[types.ESRI_DYNAMIC] && layerDefinition.layerEntries &&
-            goodState(layerRecord.state)) {
-
+        if (
+            layerCode === typeToCode[types.ESRI_DYNAMIC] &&
+            layerDefinition.layerEntries &&
+            goodState(layerRecord.state)
+        ) {
             // walk the child tree encoding each child
             // we need to be aware of hierarchy here (at least on the top level).
             // top-level children of the layer get rootFlag set to true
@@ -265,21 +276,24 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         const query = encodeBoolean(layerDefinition.state.query);
         const snap = encodeBoolean(layerDefinition.state.snapshot);
 
-        const layerSettingAndChildren = opacity + viz + bb + snap + query +
-            encodeInteger(childItems.length, 9) + childItems.join('');
+        const layerSettingAndChildren =
+            opacity + viz + bb + snap + query + encodeInteger(childItems.length, 9) + childItems.join('');
 
         // <Layer Code><Layer Settings><Children Info><Layer Id>
         return layerCode + binaryToHex(layerSettingAndChildren) + layerDefinition.id;
 
         function simpleWalk(treeChildren, root = false) {
             // roll in the results into a flat array
-            return [].concat.apply([], treeChildren.map((treeChild, index) => {
-                if (treeChild.childs) {
-                    return [].concat(simpleWalk(treeChild.childs));
-                } else {
-                    return encodeLegendChild(treeChild, root);
-                }
-            }));
+            return [].concat.apply(
+                [],
+                treeChildren.map((treeChild, index) => {
+                    if (treeChild.childs) {
+                        return [].concat(simpleWalk(treeChild.childs));
+                    } else {
+                        return encodeLegendChild(treeChild, root);
+                    }
+                })
+            );
         }
 
         /**
@@ -292,10 +306,10 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
          * @returns {String}                  Encoded information in a 24-char binary data string
          */
         function encodeLegendChild(treeChild, root) {
-
             const childProxy = layerRecord.getChildProxy(treeChild.entryIndex);
-            const childConfig = layerRecord.config.layerEntries.find(layerEntry =>
-                layerEntry.index === treeChild.entryIndex);
+            const childConfig = layerRecord.config.layerEntries.find(
+                (layerEntry) => layerEntry.index === treeChild.entryIndex
+            );
 
             const opacity = encodeOpacity(childProxy.opacity);
             const viz = encodeBoolean(childProxy.visibility);
@@ -304,7 +318,6 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
             // extra 00 is padding to make our child have a length that is a factor of 4 (so it is encoded in 6 hex character)
             return opacity + viz + query + encodeBoolean(root) + idx + '00';
-
         }
     }
 
@@ -334,7 +347,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {Object}            The config with changes from the bookmark
      */
     // eslint-disable-next-line max-statements
-    function parseBookmark(bookmark/*, origConfig, opts*/) {
+    function parseBookmark(bookmark /*, origConfig, opts*/) {
         // this methods uses a lot of sub-methods because of the following rules
         // RULE #1 single method can't have more than 40 commands
         // RULE #2 obey all rules
@@ -353,7 +366,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             x: null,
             y: null,
             scale: null,
-            layers: null
+            layers: null,
         };
 
         //let blankBaseMap = false;
@@ -374,7 +387,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             const info = dBookmark.match(pattern);
 
             // pull out non-layer info
-            const chunks = [2, 3, 4, 5].map(i => decode64(info[i]));
+            const chunks = [2, 3, 4, 5].map((i) => decode64(info[i]));
             bookmarkObject.basemap = chunks[0];
             bookmarkObject.x = chunks[1];
             bookmarkObject.y = chunks[2];
@@ -391,9 +404,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
         try {
             decodeMainBookmark();
-        } catch(err) {
+        } catch (err) {
             // If the URL has been messed with, a couple errors could come up in this function.
-            console.error("An error occurred while trying to load the provided bookmark.",err);
+            console.error('An error occurred while trying to load the provided bookmark.', err);
             return;
         }
 
@@ -404,9 +417,9 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             // create partial layer configs from layer bookmarks
             try {
                 bookmarkObject.bookmarkLayers = parseLayers(layerData, version);
-            } catch(err) {
+            } catch (err) {
                 // Parsing layers may also fail if the URL is broken.
-                console.error("An error occurred while trying to load the provided bookmark.",err);
+                console.error('An error occurred while trying to load the provided bookmark.', err);
                 return;
             }
 
@@ -424,7 +437,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         // Checks the scale, x and y values to ensure they are numbers. If they aren't, then the URL has
         // probably been messed with.
         if (isNaN(bookmarkObject.scale) || isNaN(bookmarkObject.x) || isNaN(bookmarkObject.y)) {
-            console.error("Could not load bookmark. The URL may be broken.")
+            console.error('Could not load bookmark. The URL may be broken.');
             return;
         }
 
@@ -442,7 +455,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      */
     function extractLayerSettings(layerSettingsHex) {
         const [, opac, vis, bb, snap, query, childCount] =
-                    hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
+            hexToBinary(layerSettingsHex).match(/^(.{7})(.)(.)(.)(.)(.{9})/);
 
         // Note that property names here must match how they are spelled in the config options
         return {
@@ -451,7 +464,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             boundingBox: decodeBoolean(bb),
             snapshot: decodeBoolean(snap),
             query: decodeBoolean(query),
-            childCount: parseInt(childCount, 2)
+            childCount: parseInt(childCount, 2),
         };
     }
 
@@ -465,8 +478,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
      * @returns {Object}                    Child layer settings decoded in an object
      */
     function extractChildSettings(childSettingsHex) {
-        const [, opac, vis, query, root, idx] =
-                    hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
+        const [, opac, vis, query, root, idx] = hexToBinary(childSettingsHex).match(/^(.{7})(.)(.)(.)(.{12})/);
 
         // Note that property names here must match how they are spelled in the config options
         return {
@@ -474,7 +486,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
             visibility: decodeBoolean(vis),
             query: decodeBoolean(query),
             index: parseInt(idx, 2),
-            root: decodeBoolean(root)
+            root: decodeBoolean(root),
         };
     }
 
@@ -496,13 +508,13 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         // state snapshot refactor, which will likely change the whole situation.
 
         if (version === bookmarkVersions.A) {
-            console.warn('The Bookmark A format is no longer supported;')
+            console.warn('The Bookmark A format is no longer supported;');
 
             return;
         } else {
             // assume version B, get fancier after refactors
 
-            layerDataStrings.forEach(layer => {
+            layerDataStrings.forEach((layer) => {
                 layer = decode64(layer);
 
                 // take first 6 characters, which are layer code (1) & layer settings (5)
@@ -513,13 +525,12 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                 // this is actually a bookmarked layer state
                 const layerSettings = extractLayerSettings(layerSettingsHex);
 
-
                 // get layer id from remaining data
-                const layerId = layer.substring(6 + (layerSettings.childCount * 6));
+                const layerId = layer.substring(6 + layerSettings.childCount * 6);
 
                 const snippet = {
                     id: layerId,
-                    state: layerSettings
+                    state: layerSettings,
                 };
 
                 if (layerSettings.childCount > 0) {
@@ -535,7 +546,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
 
                     // split into individual childs (6 chars) and process
                     const childItems = childrenInfo.match(/.{6}/g);
-                    childItems.forEach(child => {
+                    childItems.forEach((child) => {
                         // decode from hex into settings
                         // is is child layer state
                         const childSettings = extractChildSettings(child);
@@ -543,14 +554,13 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                         snippet.layerEntries.push({
                             stateOnly: true,
                             state: childSettings,
-                            index: childSettings.index
+                            index: childSettings.index,
                         });
                     });
                 }
 
                 layerObjs.push(snippet);
             });
-
         }
 
         return layerObjs;
@@ -565,7 +575,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
     function adjustRcsLanguage(newLang) {
         if (_bookmarkObject && _bookmarkObject.bookmarkLayers) {
             const trimLang = newLang.substring(0, 2);
-            _bookmarkObject.bookmarkLayers.forEach(bmLayer => {
+            _bookmarkObject.bookmarkLayers.forEach((bmLayer) => {
                 const id = bmLayer.id;
                 if (id.indexOf('rcs.') === 0) {
                     bmLayer.id = id.substr(0, id.length - 2) + trimLang;
@@ -585,7 +595,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
         const regLayers = [];
         if (_bookmarkObject && _bookmarkObject.bookmarkLayers) {
             // sort layers into two buckets.
-            _bookmarkObject.bookmarkLayers.forEach(bmLayer => {
+            _bookmarkObject.bookmarkLayers.forEach((bmLayer) => {
                 const id = bmLayer.id;
                 if (id.indexOf('rcs.') === 0) {
                     rcsLayers.push(bmLayer);

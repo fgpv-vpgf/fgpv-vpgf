@@ -21,14 +21,15 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             visibility: true,
             boundingBox: false,
             query: true,
-            snapshot: false
-        }
+            snapshot: false,
+        },
     };
 
     var lods = [
-        { "level": 15, "resolution": 13.229193125052918, "scale": 50000 },
-        { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
-        { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
+        { level: 15, resolution: 13.229193125052918, scale: 50000 },
+        { level: 16, resolution: 7.9375158750317505, scale: 30000 },
+        { level: 17, resolution: 4.6302175937685215, scale: 17500 },
+    ];
 
     var layerRec = api.layer.createFeatureRecord(config1);
     console.log('layer PROOF ', layerRec);
@@ -48,16 +49,22 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         console.log('offscale test - sb false, flase', proxy.isOffScale(20000));
 
-        proxy.formattedAttributes.then(treats => {
+        proxy.formattedAttributes.then((treats) => {
             console.log('formatted attribs test - sb ? ', treats);
-            console.log('attributes to details ', proxy.attributesToDetails({
-                siteUUID: "pigdog",
-                latitude: 33.33
-            }, treats.fields));
+            console.log(
+                'attributes to details ',
+                proxy.attributesToDetails(
+                    {
+                        siteUUID: 'pigdog',
+                        latitude: 33.33,
+                    },
+                    treats.fields
+                )
+            );
         });
 
         // note using hack of layerRec._layer for zoom scales, as that thing is private
@@ -86,6 +93,5 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('definition query - sb test', layerRec._layer.getDefinitionExpression());
 
         console.log('root index - sb 2', proxy.itemIndex);
-
     }
 });

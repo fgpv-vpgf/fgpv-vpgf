@@ -15,7 +15,7 @@ $accent-color: #00bcd4;
     overflow: hidden;
 }
 
-md-datepicker>div {
+md-datepicker > div {
     // override this so ag-grid wont add a border to the div
     border-bottom: none !important;
 }
@@ -44,16 +44,15 @@ md-datepicker>div {
 }
 
 .rv-sort-arrow {
-    flex-shrink: 0
+    flex-shrink: 0;
 }
-
 
 .rv-render-tooltip {
     display: inline-block;
     position: absolute;
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
     padding: 2px 5px;
-    box-shadow: 1px 1px 2px #CCC;
+    box-shadow: 1px 1px 2px #ccc;
     white-space: normal;
     word-wrap: break-word;
     line-height: 1.5;
@@ -117,7 +116,6 @@ md-datepicker>div {
 }
 
 .rv-small {
-
     .table-control {
         display: none !important;
     }
@@ -148,7 +146,6 @@ md-datepicker>div {
 }
 
 .rv-table-search {
-
     input {
         flex-basis: 163px;
         -ms-flex-preferred-size: 163px !important;
@@ -178,4 +175,6 @@ md-datepicker>div {
 }
 
 // fix for md-menu elements not showing up immediately in IE (see: https://github.com/angular/material/issues/11226)
-.md-open-menu-container > md-menu-content > * { transition: none !important; }
+.md-open-menu-container > md-menu-content > * {
+    transition: none !important;
+}

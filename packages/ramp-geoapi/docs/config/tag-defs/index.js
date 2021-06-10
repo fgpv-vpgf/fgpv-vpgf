@@ -1,5 +1,1 @@
-module.exports = [
-	require('./mddoc'),
-	require('./memberof'),
-	require('./module')
-];
+module.exports = [require('./mddoc'), require('./memberof'), require('./module')];

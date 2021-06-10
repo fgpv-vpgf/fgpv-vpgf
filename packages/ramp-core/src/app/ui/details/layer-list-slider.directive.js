@@ -14,15 +14,13 @@ const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
  * The panel slides open when either any point layer is focused or on mouseover. It closes
  * when no point layers have focus, no mouseover, or the user clicked on a point layer.
  */
-angular
-    .module('app.ui')
-    .directive('rvLayerListSlider', rvLayerListSlider);
+angular.module('app.ui').directive('rvLayerListSlider', rvLayerListSlider);
 
 function rvLayerListSlider(animationService) {
     const directive = {
         restrict: 'E',
         templateUrl,
-        link
+        link,
     };
 
     return directive;
@@ -32,36 +30,47 @@ function rvLayerListSlider(animationService) {
 
         // create animation timeline
         const tl = animationService.timeLineLite({
-            paused: true
+            paused: true,
         });
 
         let forceClose = false;
 
         tl.to(element, RV_SLIDE_DURATION, {
             width: 280,
-            ease: RV_SWIFT_IN_OUT_EASE
+            ease: RV_SWIFT_IN_OUT_EASE,
         })
 
-        // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
-        // out what it was initially on the reverse run.
-            .fromTo(element, 0.01, {
-                'overflow-y': 'hidden'
-            }, {
-                'overflow-y': 'auto'
-            }, RV_SLIDE_DURATION / 2);
+            // This will explicitly "animate" the overflow property from hidden to auto and not try to figure
+            // out what it was initially on the reverse run.
+            .fromTo(
+                element,
+                0.01,
+                {
+                    'overflow-y': 'hidden',
+                },
+                {
+                    'overflow-y': 'auto',
+                },
+                RV_SLIDE_DURATION / 2
+            );
 
         // Place rv-expanded class on parent element once defined in details.directive.js
-        const pElemWatcher = scope.$watch(self.getSectionNode, node => {
+        const pElemWatcher = scope.$watch(self.getSectionNode, (node) => {
             if (typeof node !== 'undefined') {
-                tl.to(node, RV_SLIDE_DURATION, {
-                    className: '+=rv-expanded'
-                }, 0);
+                tl.to(
+                    node,
+                    RV_SLIDE_DURATION,
+                    {
+                        className: '+=rv-expanded',
+                    },
+                    0
+                );
                 pElemWatcher();
             }
         });
 
         // focus moving away from directive, hiding
-        element.on('focusout', event => {
+        element.on('focusout', (event) => {
             if (!$.contains(element[0], event.relatedTarget)) {
                 animateClosed();
             }
@@ -88,7 +97,7 @@ function rvLayerListSlider(animationService) {
          * @function itemSelectedByMouse
          * @param  {Object} item the selected item
          */
-        self.itemSelectedByMouse = item => {
+        self.itemSelectedByMouse = (item) => {
             forceClose = true;
             animateClosed();
             self.selectItem(item);
@@ -98,7 +107,7 @@ function rvLayerListSlider(animationService) {
         element.hoverIntent({
             over: animateOpen,
             out: animateClosed,
-            interval: 200
+            interval: 200,
         });
 
         /**

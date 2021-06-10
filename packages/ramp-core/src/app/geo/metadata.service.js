@@ -14,7 +14,7 @@ function metadataService($q, $http, $translate) {
     const cache = {};
 
     const service = {
-        loadFromURL
+        loadFromURL,
     };
 
     return service;
@@ -32,7 +32,7 @@ function metadataService($q, $http, $translate) {
         XSLT = XSLT.replace(/\{\{([\w\.]+)\}\}/g, (_, tag) => $translate.instant(tag));
 
         if (!cache[xmlUrl]) {
-            return loadXmlFile(xmlUrl).then(xmlData => {
+            return loadXmlFile(xmlUrl).then((xmlData) => {
                 cache[xmlUrl] = xmlData;
                 return applyXSLT(cache[xmlUrl], XSLT, params);
             });
@@ -61,7 +61,7 @@ function metadataService($q, $http, $translate) {
             xsltProc.importStylesheet(xslDoc);
             // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
             if (params) {
-                params.forEach(p => xsltProc.setParameter(null, p.key, p.value || ''));
+                params.forEach((p) => xsltProc.setParameter(null, p.key, p.value || ''));
             }
             output = xsltProc.transformToFragment(xmlDoc, document);
         } else if (window.hasOwnProperty('ActiveXObject')) {
@@ -75,7 +75,7 @@ function metadataService($q, $http, $translate) {
             const xsltProc = xslt.createProcessor();
             xsltProc.input = xmlDoc;
             if (params) {
-                params.forEach(p => xsltProc.addParameter(p.key, p.value, ''));
+                params.forEach((p) => xsltProc.addParameter(p.key, p.value, ''));
             }
             xsltProc.transform();
             output = document.createRange().createContextualFragment(xsltProc.output);
@@ -93,8 +93,8 @@ function metadataService($q, $http, $translate) {
     function loadXmlFile(url) {
         return $http
             .get(url)
-            .then(response => response.data)
-            .catch(error => {
+            .then((response) => response.data)
+            .catch((error) => {
                 console.error('Metadata XHR request failed.');
                 throw error;
             });

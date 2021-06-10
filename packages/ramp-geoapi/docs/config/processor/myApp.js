@@ -4,6 +4,6 @@ module.exports = function myApp() {
     'use strict';
     return {
         deployPath: '/dgeni/',
-        isDeploy: false
+        isDeploy: false,
     };
 };

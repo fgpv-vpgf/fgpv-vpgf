@@ -39,15 +39,7 @@
         "typeof"
     ],
 
-    "requireCurlyBraces": [
-        "if",
-        "else",
-        "for",
-        "while",
-        "do",
-        "try",
-        "catch"
-    ],
+    "requireCurlyBraces": ["if", "else", "for", "while", "do", "try", "catch"],
 
     "disallowSpacesInNamedFunctionExpression": {
         "beforeOpeningRoundBrace": true
@@ -59,9 +51,7 @@
         "beforeOpeningRoundBrace": true
     },
     "requireSpacesInsideObjectBrackets": "all",
-    "disallowSpaceBeforeBinaryOperators": [
-        ","
-    ],
+    "disallowSpaceBeforeBinaryOperators": [","],
     "requireSpaceAfterLineComment": {
         "allExcept": ["/"]
     },

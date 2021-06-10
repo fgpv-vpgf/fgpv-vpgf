@@ -6,9 +6,7 @@
  * Allows mdMenus to set their own initial focus on open. After this, focus manager handles movement within the menu.
  */
 
-angular
-    .module('material.components.select')
-    .decorator('mdSelectDirective', mdSelectDirective);
+angular.module('material.components.select').decorator('mdSelectDirective', mdSelectDirective);
 
 function mdSelectDirective($delegate) {
     'ngInject';
@@ -17,7 +15,7 @@ function mdSelectDirective($delegate) {
     const originalCompile = mdSelectDirective.compile; // store reference to its compile function
     mdSelectDirective.compile = decorateCompile(originalCompile); // decorate compile function
 
-    return ([mdSelectDirective]);
+    return [mdSelectDirective];
 
     /**
      * Decorates the original menu compile functions.

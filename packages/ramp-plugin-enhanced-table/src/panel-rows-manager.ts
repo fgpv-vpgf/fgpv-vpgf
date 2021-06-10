@@ -4,7 +4,6 @@
  * Rows are updated based on filters set, layer visibility, and symbology visibility.
  */
 export class PanelRowsManager {
-
     constructor(panelManager: any) {
         this.panelManager = panelManager;
         this.tableOptions = panelManager.tableOptions;
@@ -28,22 +27,24 @@ export class PanelRowsManager {
         // Subscribers
         // Filter all rows when visibility is off and none when it's on
         // Requires a separate check since it's not handled as a filter change
-        this.layerVisibilityObserver = this.legendBlock.visibilityChanged.subscribe(visibility => {
+        this.layerVisibilityObserver = this.legendBlock.visibilityChanged.subscribe((visibility) => {
             this.validOids = visibility ? undefined : [];
             this.externalFilter = !visibility;
             this.updateGridFilters();
         });
 
         // Update table on map filter change
-        this.mapFilterChangedObserver = this.mapApi.filterChanged.subscribe((params) =>  {
+        this.mapFilterChangedObserver = this.mapApi.filterChanged.subscribe((params) => {
             const filterTypes = this.legendBlock.proxyWrapper.filterState.coreFilterTypes;
             if (params.filterType === filterTypes.EXTENT) {
-                this.filterByExtent(params.extent)
+                this.filterByExtent(params.extent);
             } else if (params.filterType !== filterTypes.GRID) {
                 // Filter table if not GRID or EXTENT filter
-                const layerMatch = this.legendBlock.parentLayerType === 'esriDynamic'
-                                    ? params.layerID === this.legendBlock.layerRecordId && params.layerIdx === this.legendBlock.itemIndex
-                                    : params.layerID === this.legendBlock.layerRecordId;
+                const layerMatch =
+                    this.legendBlock.parentLayerType === 'esriDynamic'
+                        ? params.layerID === this.legendBlock.layerRecordId &&
+                          params.layerIdx === this.legendBlock.itemIndex
+                        : params.layerID === this.legendBlock.layerRecordId;
                 if (layerMatch) {
                     this.fetchValidOids(this.extent);
                 }
@@ -66,7 +67,7 @@ export class PanelRowsManager {
     initialFilterSettings() {
         if (!this.currentTableLayer.visibility) {
             // if  layer is invisible, table needs to show zero entries
-            this.validOids = []
+            this.validOids = [];
             this.externalFilter = true;
             this.updateGridFilters();
         } else {
@@ -79,7 +80,6 @@ export class PanelRowsManager {
      * Sets up initial row visibility based on layer visibility and symbology visibilities on open
      */
     initTableRowVisibility() {
-
         if (this.legendBlock.visibility === false) {
             // if the legendBlock is invisible on table open, table rows should be empty
             this.validOids = [];
@@ -127,7 +127,7 @@ export class PanelRowsManager {
         // get all filtered oids, but exclude any filters created by the grid itself
         const filterExtent = this.panelManager.panelStateManager.filterByExtent ? extent : undefined;
         const filter = this.legendBlock.proxyWrapper.filterState;
-        filter.getFilterOIDs([filter.coreFilterTypes.GRID], filterExtent).then(oids => {
+        filter.getFilterOIDs([filter.coreFilterTypes.GRID], filterExtent).then((oids) => {
             // filter symbologies if there's a filter applied
             this.validOids = oids === undefined ? [] : oids;
             this.externalFilter = oids !== undefined;
@@ -150,5 +150,5 @@ export interface PanelRowsManager {
     validOids: number[];
     extent: any; // implement after extent filter fixes
     layerVisibilityObserver: any;
-    mapFilterChangedObserver: any
+    mapFilterChangedObserver: any;
 }

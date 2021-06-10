@@ -9,7 +9,7 @@
     }
 
     $help-padding: rem(0.4);
-    $help-record-height: rem(6.0);
+    $help-record-height: rem(6);
 
     .rv-help-summary {
         height: 80%;
@@ -27,7 +27,7 @@
             @extend %action-list;
             @extend %shadow-group-list;
 
-            > li:last-child .rv-help-list{
+            > li:last-child .rv-help-list {
                 border-bottom: none;
             }
 
@@ -35,12 +35,14 @@
                 margin-bottom: rem(1.5);
             }
 
-            td, th {
+            td,
+            th {
                 padding: 0 rem(0.5);
             }
         }
 
-        .rv-content, .rv-subsection {
+        .rv-content,
+        .rv-subsection {
             padding: rem(0.8) 0;
         }
 
@@ -53,8 +55,8 @@
             @extend %action-list-group;
 
             height: $help-record-height;
-            padding-right: $help-padding + rem(1.0);
-            padding-left: $help-padding + rem(1.0);
+            padding-right: $help-padding + rem(1);
+            padding-left: $help-padding + rem(1);
 
             .rv-toggled.md-toggle-icon {
                 transform: rotate(180deg) !important;

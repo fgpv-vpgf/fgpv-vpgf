@@ -79,7 +79,7 @@ function newLayerPackage(featureIdx, esriBundle) {
         loadedFeatureCount: 0,
         loadAbortFlag: false,
         loadIsDone: false,
-        abortAttribLoad
+        abortAttribLoad,
     };
 
     /**
@@ -98,11 +98,10 @@ function newLayerPackage(featureIdx, esriBundle) {
         layerPackage.loadAbortFlag = false;
         layerPackage.loadedFeatureCount = 0;
         layerPackage._attribData = new Promise((resolve, reject) => {
-
             // first wait for the layer specific data to finish loading
             // NOTE: by the time the application has access to getAttribs(), the .layerData
             //       property will have been created.
-            layerPackage.layerData.then(layerData => {
+            layerPackage.layerData.then((layerData) => {
                 // FIXME switch to native Promise
                 const defFinished = new esriBundle.Deferred();
                 const params = {
@@ -113,25 +112,28 @@ function newLayerPackage(featureIdx, esriBundle) {
                     attribs: layerData.load.attribs,
                     supportsLimit: layerData.load.supportsLimit,
                     esriBundle,
-                    layerPackage
+                    layerPackage,
                 };
 
                 // begin the loading process
                 loadDataBatch(params, defFinished);
 
                 // after all data has been loaded
-                defFinished.promise.then(features => {
-                    layerPackage.loadIsDone = true;
+                defFinished.promise.then(
+                    (features) => {
+                        layerPackage.loadIsDone = true;
 
-                    // resolve the promise with the attribute set
-                    resolve(createAttribSet(layerData.oidField, features));
-                }, error => {
-                    console.warn('error getting attribute data for ' + layerData.load.layerUrl);
+                        // resolve the promise with the attribute set
+                        resolve(createAttribSet(layerData.oidField, features));
+                    },
+                    (error) => {
+                        console.warn('error getting attribute data for ' + layerData.load.layerUrl);
 
-                    // attrib data deleted so the first check for attribData doesn't return a rejected promise
-                    delete layerPackage._attribData;
-                    reject(error);
-                });
+                        // attrib data deleted so the first check for attribData doesn't return a rejected promise
+                        delete layerPackage._attribData;
+                        reject(error);
+                    }
+                );
             });
         });
 
@@ -151,18 +153,17 @@ function newLayerPackage(featureIdx, esriBundle) {
 }
 
 /**
-* Will generate attribute package with object id indexes
-* @private
-* @param  {String} oidField field containing object id
-* @param  {Array} featureData feature objects to index and return
-* @return {Object} object containing features and an index by object id
-*/
+ * Will generate attribute package with object id indexes
+ * @private
+ * @param  {String} oidField field containing object id
+ * @param  {Array} featureData feature objects to index and return
+ * @return {Object} object containing features and an index by object id
+ */
 function createAttribSet(oidField, featureData) {
-
     // add new data to layer data's array
     const res = {
         features: featureData,
-        oidIndex: {}
+        oidIndex: {},
     };
 
     // make index on object id
@@ -203,7 +204,6 @@ function getLayerIndex(layerUrl) {
  * @param  {Object} callerDef deferred object that resolves when current data has been downloaded
  */
 function loadDataBatch(opts, callerDef) {
-
     if (opts.layerPackage.loadAbortFlag) {
         delete opts.layerPackage._attribData;
         opts.layerPackage.loadedFeatureCount = 0;
@@ -223,72 +223,74 @@ function loadDataBatch(opts, callerDef) {
             f: 'json',
         },
         callbackParamName: 'callback',
-        handleAs: 'json'
+        handleAs: 'json',
     });
 
-    defData.then(dataResult => {
-        if (dataResult.features) {
-            const len = dataResult.features.length;
-            if (len > 0) {
-                // figure out if we hit the end of the data. different logic for newer vs older servers.
-                opts.layerPackage.loadedFeatureCount += len;
-                let moreData;
-                if (opts.supportsLimit) {
-                    moreData = dataResult.exceededTransferLimit;
-                } else {
-                    if (opts.batchSize === -1) {
-                        // this is our first batch. set the max batch size to this batch size
-                        opts.batchSize = len;
+    defData.then(
+        (dataResult) => {
+            if (dataResult.features) {
+                const len = dataResult.features.length;
+                if (len > 0) {
+                    // figure out if we hit the end of the data. different logic for newer vs older servers.
+                    opts.layerPackage.loadedFeatureCount += len;
+                    let moreData;
+                    if (opts.supportsLimit) {
+                        moreData = dataResult.exceededTransferLimit;
+                    } else {
+                        if (opts.batchSize === -1) {
+                            // this is our first batch. set the max batch size to this batch size
+                            opts.batchSize = len;
+                        }
+                        moreData = len >= opts.batchSize;
                     }
-                    moreData = (len >= opts.batchSize);
-                }
 
-                if (moreData) {
-                    // stash the result and call the service again for the next batch of data.
-                    // max id becomes last object id in the current batch
-                    const thisDef = new opts.esriBundle.Deferred();
-                    opts.maxId = dataResult.features[len - 1].attributes[opts.oidField];
-                    loadDataBatch(opts, thisDef);
+                    if (moreData) {
+                        // stash the result and call the service again for the next batch of data.
+                        // max id becomes last object id in the current batch
+                        const thisDef = new opts.esriBundle.Deferred();
+                        opts.maxId = dataResult.features[len - 1].attributes[opts.oidField];
+                        loadDataBatch(opts, thisDef);
 
-                    thisDef.then(dataArray => {
-                        // chain the next result to our current result, then pass back to caller
-                        callerDef.resolve(dataResult.features.concat(dataArray));
-                    },
+                        thisDef.then(
+                            (dataArray) => {
+                                // chain the next result to our current result, then pass back to caller
+                                callerDef.resolve(dataResult.features.concat(dataArray));
+                            },
 
-                    error => {
-                        callerDef.reject(error);
-                    });
+                            (error) => {
+                                callerDef.reject(error);
+                            }
+                        );
+                    } else {
+                        // done thanks
+                        callerDef.resolve(dataResult.features);
+                    }
                 } else {
-                    // done thanks
-                    callerDef.resolve(dataResult.features);
+                    // no more data.  we are done
+                    callerDef.resolve([]);
                 }
             } else {
-                // no more data.  we are done
-                callerDef.resolve([]);
+                // it is possible to have an error, but it comes back on the "success" channel.
+                callerDef.reject(dataResult.error);
             }
-        } else {
-            // it is possible to have an error, but it comes back on the "success" channel.
-            callerDef.reject(dataResult.error);
-        }
-    },
+        },
 
-    error => {
-        callerDef.reject(error);
-    });
+        (error) => {
+            callerDef.reject(error);
+        }
+    );
 }
 
 function loadServerAttribsBuilder(esriBundle, geoApi) {
-
     /**
-    * fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
-    * @param {String} mapServiceUrl   an arcgis map server service endpoint (no integer index)
-    * @param {String} featureIdx      index of where the endpoint is.
-    * @param {String} attribs         an optional comma separated list of attributes to download. default '*' will download all
-    * @param {Object} customRenderer  an optional renderer definition. if not supplied, the service renderer will be used
-    * @return {Object} attributes in a packaged format for asynch access
-    */
+     * fetch attributes from an ESRI ArcGIS Server Feature Layer Service endpoint
+     * @param {String} mapServiceUrl   an arcgis map server service endpoint (no integer index)
+     * @param {String} featureIdx      index of where the endpoint is.
+     * @param {String} attribs         an optional comma separated list of attributes to download. default '*' will download all
+     * @param {Object} customRenderer  an optional renderer definition. if not supplied, the service renderer will be used
+     * @return {Object} attributes in a packaged format for asynch access
+     */
     return (mapServiceUrl, featureIdx, attribs = '*', customRenderer = {}) => {
-
         const layerUrl = mapServiceUrl + '/' + featureIdx;
         const layerPackage = newLayerPackage(featureIdx, esriBundle);
 
@@ -304,88 +306,96 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                 handleAs: 'json',
             });
 
-            defService.then(serviceResult => {
-                if (serviceResult && (typeof serviceResult.error === 'undefined')) {
-                    // properties for all endpoints
-                    layerData.layerType = serviceResult.type;
-                    layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
-                    layerData.minScale = serviceResult.effectiveMinScale || serviceResult.minScale;
-                    layerData.maxScale = serviceResult.effectiveMaxScale || serviceResult.maxScale;
-                    layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
-                    layerData.extent = serviceResult.extent;
+            defService.then(
+                (serviceResult) => {
+                    if (serviceResult && typeof serviceResult.error === 'undefined') {
+                        // properties for all endpoints
+                        layerData.layerType = serviceResult.type;
+                        layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
+                        layerData.minScale = serviceResult.effectiveMinScale || serviceResult.minScale;
+                        layerData.maxScale = serviceResult.effectiveMaxScale || serviceResult.maxScale;
+                        layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
+                        layerData.extent = serviceResult.extent;
 
-                    if (serviceResult.type === 'Feature Layer') {
-                        layerData.supportsFeatures = true;
-                        layerData.nameField = serviceResult.displayField;
+                        if (serviceResult.type === 'Feature Layer') {
+                            layerData.supportsFeatures = true;
+                            layerData.nameField = serviceResult.displayField;
 
-                        // find object id field
-                        // NOTE cannot use arrow functions here due to bug
-                        const noFieldDefOid = serviceResult.fields.every(function (elem) {
-                            if (elem.type === 'esriFieldTypeOID') {
-                                layerData.oidField = elem.name;
-                                return false; // break the loop
+                            // find object id field
+                            // NOTE cannot use arrow functions here due to bug
+                            const noFieldDefOid = serviceResult.fields.every(function (elem) {
+                                if (elem.type === 'esriFieldTypeOID') {
+                                    layerData.oidField = elem.name;
+                                    return false; // break the loop
+                                }
+
+                                return true; // keep looping
+                            });
+
+                            if (noFieldDefOid) {
+                                // we encountered a service that does not mark a field as the object id.
+                                // attempt to use alternate definition. if neither exists, we are toast.
+                                layerData.oidField =
+                                    serviceResult.objectIdField ||
+                                    console.error(`Encountered service with no OID defined: ${layerUrl}`);
                             }
 
-                            return true; // keep looping
-                        });
+                            if (attribs !== '*') {
+                                // only add fields specified in outfields to the fields array, if outfields is defined. Converts the attribute to
+                                // uppercase to avoid case-related problems.
+                                const attrs = attribs.toUpperCase().split(',');
+                                layerData.fields = serviceResult.fields.filter((f) =>
+                                    attrs.includes(f.name.toUpperCase())
+                                );
 
-                        if (noFieldDefOid) {
-                            // we encountered a service that does not mark a field as the object id.
-                            // attempt to use alternate definition. if neither exists, we are toast.
-                            layerData.oidField = serviceResult.objectIdField ||
-                                console.error(`Encountered service with no OID defined: ${layerUrl}`);
-                        }
-
-
-                        if (attribs !== '*') {
-                            // only add fields specified in outfields to the fields array, if outfields is defined. Converts the attribute to
-                            // uppercase to avoid case-related problems.
-                            const attrs = attribs.toUpperCase().split(',');
-                            layerData.fields = serviceResult.fields.filter(f => attrs.includes(f.name.toUpperCase()));
-
-                            // ensure our attribute list contains the object id
-                            if (attribs.split(',').indexOf(layerData.oidField) === -1) {
-                                attribs += (',' + layerData.oidField);
+                                // ensure our attribute list contains the object id
+                                if (attribs.split(',').indexOf(layerData.oidField) === -1) {
+                                    attribs += ',' + layerData.oidField;
+                                }
+                            } else {
+                                layerData.fields = serviceResult.fields;
                             }
-                        } else {
-                            layerData.fields = serviceResult.fields;
+
+                            // add renderer and legend
+                            const renderer = customRenderer.type ? customRenderer : serviceResult.drawingInfo.renderer;
+                            layerData.renderer = geoApi.symbology.cleanRenderer(renderer, serviceResult.fields);
+
+                            layerData.legend = geoApi.symbology.rendererToLegend(
+                                layerData.renderer,
+                                featureIdx,
+                                serviceResult.fields
+                            );
+                            geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
+
+                            // temporarily store things for delayed attributes
+                            layerData.load = {
+                                // version number is only provided on 10.0 SP1 servers and up.
+                                // servers 10.1 and higher support the query limit flag
+                                supportsLimit: (serviceResult.currentVersion || 1) >= 10.1,
+                                layerUrl,
+                                attribs,
+                            };
                         }
 
-                        // add renderer and legend
-                        const renderer = customRenderer.type ? customRenderer : serviceResult.drawingInfo.renderer;
-                        layerData.renderer = geoApi.symbology.cleanRenderer(renderer, serviceResult.fields);
-
-                        layerData.legend = geoApi.symbology.rendererToLegend(layerData.renderer, featureIdx,
-                            serviceResult.fields);
-                        geoApi.symbology.enhanceRenderer(layerData.renderer, layerData.legend);
-
-                        // temporarily store things for delayed attributes
-                        layerData.load = {
-                            // version number is only provided on 10.0 SP1 servers and up.
-                            // servers 10.1 and higher support the query limit flag
-                            supportsLimit: (serviceResult.currentVersion || 1) >= 10.1,
-                            layerUrl,
-                            attribs
-                        };
-                    }
-
-                    // return the layer data promise result
-                    resolve(layerData);
-                } else {
-                    // case where error happened but service request was successful
-                    console.warn('Service metadata load error');
-                    if (serviceResult && serviceResult.error) {
-                        // reject with error
-                        reject(serviceResult.error);
+                        // return the layer data promise result
+                        resolve(layerData);
                     } else {
-                        reject(new Error('Unknown error loading service metadata'));
+                        // case where error happened but service request was successful
+                        console.warn('Service metadata load error');
+                        if (serviceResult && serviceResult.error) {
+                            // reject with error
+                            reject(serviceResult.error);
+                        } else {
+                            reject(new Error('Unknown error loading service metadata'));
+                        }
                     }
+                },
+                (error) => {
+                    // failed to load service info. reject with error
+                    console.warn('Service metadata load error : ' + error);
+                    reject(error);
                 }
-            }, error => {
-                // failed to load service info. reject with error
-                console.warn('Service metadata load error : ' + error);
-                reject(error);
-            });
+            );
         });
 
         return layerPackage;
@@ -393,8 +403,7 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
 }
 
 function loadFileAttribsBuilder(esriBundle, geoApi) {
-
-    return layer => {
+    return (layer) => {
         // feature layer was loaded from a file.
         // this approach is inefficient (duplicates attributes in layer and in attribute store),
         // but provides a consistent approach to attributes regardless of where the layer came from
@@ -402,9 +411,14 @@ function loadFileAttribsBuilder(esriBundle, geoApi) {
         const layerPackage = newLayerPackage('0', esriBundle); // files have no index (no server), so we use value 0
 
         // it's local, no need to lazy-load
-        layerPackage._attribData = Promise.resolve(createAttribSet(layer.objectIdField, layer.graphics.map(elem => {
-            return { attributes: elem.attributes };
-        })));
+        layerPackage._attribData = Promise.resolve(
+            createAttribSet(
+                layer.objectIdField,
+                layer.graphics.map((elem) => {
+                    return { attributes: elem.attributes };
+                })
+            )
+        );
 
         const renderer = layer.renderer.toJson();
         const legend = geoApi.symbology.rendererToLegend(renderer, 0);
@@ -419,7 +433,7 @@ function loadFileAttribsBuilder(esriBundle, geoApi) {
             maxScale: layer.maxScale,
             layerType: 'Feature Layer',
             renderer,
-            legend
+            legend,
         });
 
         return layerPackage;
@@ -432,6 +446,6 @@ module.exports = (esriBundle, geoApi) => {
     return {
         loadServerAttribs: loadServerAttribsBuilder(esriBundle, geoApi),
         loadFileAttribs: loadFileAttribsBuilder(esriBundle, geoApi),
-        getLayerIndex
+        getLayerIndex,
     };
 };

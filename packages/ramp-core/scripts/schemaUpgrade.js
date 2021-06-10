@@ -13,7 +13,7 @@ const validator = new ZS({
     assumeAdditional: true,
     // forceProperties: true, // TODO we probably want this at some point but too many errors right now
     forceItems: true,
-    breakOnFirstError: false
+    breakOnFirstError: false,
     // forceAdditional: true
 });
 

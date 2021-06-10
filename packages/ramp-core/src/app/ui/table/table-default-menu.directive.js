@@ -9,9 +9,7 @@ const templateUrl = require('./default-menu.html');
  * The `rvTableDefaultMenu` directive is a data panel menu allowing the user to change the layout of the data panel between 'full', 'default', and 'minimized', toggling search and table controls and pringting or exporting data from the table.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvTableDefaultMenu', rvTableDefaultMenu);
+angular.module('app.ui').directive('rvTableDefaultMenu', rvTableDefaultMenu);
 
 function rvTableDefaultMenu(layoutService) {
     const directive = {
@@ -21,7 +19,7 @@ function rvTableDefaultMenu(layoutService) {
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -47,7 +45,12 @@ function Controller($scope, stateManager, events, appInfo, $rootScope) {
     self.appID = appInfo.id;
 
     // check if filter size is modified from outside this directive and apply the filter mode. This can happen if config table wants the panel maximize on open.
-    $rootScope.$watch(() => stateManager.state.table.morph, val => { self.tableMode = val });
+    $rootScope.$watch(
+        () => stateManager.state.table.morph,
+        (val) => {
+            self.tableMode = val;
+        }
+    );
 
     function setMode(mode) {
         const requester = stateManager.display.table.requester;

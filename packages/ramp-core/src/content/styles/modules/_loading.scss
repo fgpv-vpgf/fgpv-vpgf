@@ -85,7 +85,7 @@
         animation: spinloop 2s linear infinite;
 
         &:before {
-            content: "";
+            content: '';
             position: absolute;
             top: 5px;
             left: 5px;
@@ -98,7 +98,7 @@
         }
 
         &:after {
-            content: "";
+            content: '';
             position: absolute;
             top: 15px;
             left: 15px;

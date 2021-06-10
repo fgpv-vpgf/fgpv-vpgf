@@ -7,9 +7,7 @@
  * `rvReverse` filter reverses a given array.
  *
  */
-angular
-    .module('app.ui')
-    .filter('rvReverse', reverseFilter);
+angular.module('app.ui').filter('rvReverse', reverseFilter);
 
 function reverseFilter() {
     return filter;

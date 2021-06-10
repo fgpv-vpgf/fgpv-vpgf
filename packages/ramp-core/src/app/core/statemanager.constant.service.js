@@ -8,7 +8,7 @@ const STATE_OBJECT_DEFAULTS = (parentName, displayName) => {
             // this is a horrible hack, but the statemanger was supposed to allow setting `activeSkip` from the outside code; this got lost somewhere along the way and now statemanager ignores this value and uses internal one;
             // setting this to `true` will force statemanager to use this value, and not the internal one
             activeSkipOverride: false,
-            display: displayName
+            display: displayName,
         };
     } else {
         return {
@@ -18,19 +18,17 @@ const STATE_OBJECT_DEFAULTS = (parentName, displayName) => {
             morph: 'default',
             morphSkip: false,
             morphSkipOverride: false,
-            history: []
+            history: [],
         };
     }
 };
 
-const DISPLAY_OBJECT_DEFAULTS = data =>
-    ({
-        isLoading: false,
-        requester: null,
-        requestId: null,
-        data: data || null
-    });
-
+const DISPLAY_OBJECT_DEFAULTS = (data) => ({
+    isLoading: false,
+    requester: null,
+    requestId: null,
+    data: data || null,
+});
 
 /**
  * @member initialState
@@ -71,7 +69,7 @@ angular
         tableFulldata: STATE_OBJECT_DEFAULTS('table', 'table'),
         tableNamedata: STATE_OBJECT_DEFAULTS('table'),
         mapnav: STATE_OBJECT_DEFAULTS(),
-        help: STATE_OBJECT_DEFAULTS()
+        help: STATE_OBJECT_DEFAULTS(),
     })
     .constant('initialDisplay', {
         // TODO: add a unit test to check mapping between display options and layer toggles
@@ -83,9 +81,9 @@ angular
 
         table: DISPLAY_OBJECT_DEFAULTS({
             columns: null,
-            data: null
+            data: null,
         }),
         metadata: DISPLAY_OBJECT_DEFAULTS(),
         settings: DISPLAY_OBJECT_DEFAULTS(),
-        details: DISPLAY_OBJECT_DEFAULTS()
+        details: DISPLAY_OBJECT_DEFAULTS(),
     });

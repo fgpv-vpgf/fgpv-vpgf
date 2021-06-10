@@ -19,7 +19,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+    constructor(layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         // handles placeholder symbol, possibly other things
@@ -31,7 +31,9 @@ class WmsRecord extends layerRecord.LayerRecord {
         }
     }
 
-    get layerType () { return shared.clientLayerType.OGC_WMS; }
+    get layerType() {
+        return shared.clientLayerType.OGC_WMS;
+    }
 
     /**
      * Creates an options object for the map API object
@@ -39,14 +41,14 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @function makeLayerConfig
      * @returns {Object} an object with api options
      */
-    makeLayerConfig () {
+    makeLayerConfig() {
         const cfg = super.makeLayerConfig();
-        cfg.visibleLayers = this.config.layerEntries.map(le => le.id);
+        cfg.visibleLayers = this.config.layerEntries.map((le) => le.id);
 
-        const styles = this.config.layerEntries.map(e => e.currentStyle).join();
+        const styles = this.config.layerEntries.map((e) => e.currentStyle).join();
 
         cfg.customLayerParameters = {
-            styles: styles
+            styles: styles,
         };
 
         // If suppressGetCapabilities is set to true, or if the URL contains the parameter `layers`,
@@ -55,9 +57,10 @@ class WmsRecord extends layerRecord.LayerRecord {
             // TODO: if the layers provided in the URL parameter `layers` does not match what is provided in layerEntries,
             // display an error.
             cfg.resourceInfo = {
-                extent: new this._apiRef.Map.Extent(-141, 41, -52, 83.5, {wkid: 4326}), // TODO make this a parameter post-demo
-                layerInfos: this.config.layerEntries
-                    .map(le => new this._apiRef.layer.WMSLayerInfo({name: le.id, title: le.name || ''}))
+                extent: new this._apiRef.Map.Extent(-141, 41, -52, 83.5, { wkid: 4326 }), // TODO make this a parameter post-demo
+                layerInfos: this.config.layerEntries.map(
+                    (le) => new this._apiRef.layer.WMSLayerInfo({ name: le.id, title: le.name || '' })
+                ),
             };
         }
 
@@ -72,7 +75,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(key, value, forceRefresh=true) {
+    setCustomParameter(key, value, forceRefresh = true) {
         this._layer.customLayerParameters[key] = value;
         if (forceRefresh) {
             this._layer.refresh();
@@ -84,7 +87,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      *
      * @function onLoad
      */
-    onLoad () {
+    onLoad() {
         const loadPromises = super.onLoad();
 
         const fc = new wmsFC.WmsFC(this, '0', this.config);
@@ -120,7 +123,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @param {Object} opts     additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    identify (opts) {
+    identify(opts) {
         // TODO add full documentation for options parameter
 
         // TODO consider having a constants area in geoApi / better place for this definition
@@ -128,16 +131,18 @@ class WmsRecord extends layerRecord.LayerRecord {
             'text/html;fgpv=summary': 'HTML',
             'text/html': 'HTML',
             'text/plain': 'Text',
-            'application/json': 'EsriFeature'
+            'application/json': 'EsriFeature',
         };
 
         // ignore layers with no mime type, not loaded, not visible, not queryable
-        if (this.state === shared.states.ERROR ||
+        if (
+            this.state === shared.states.ERROR ||
             this.state === shared.states.LOADING ||
             this.state === shared.states.NEW ||
             !this.visibility ||
             !this.isQueryable() ||
-            !infoMap.hasOwnProperty(this.config.featureInfoMimeType)) {
+            !infoMap.hasOwnProperty(this.config.featureInfoMimeType)
+        ) {
             // TODO verifiy this is correct result format if layer should be excluded from the identify process
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
@@ -150,8 +155,9 @@ class WmsRecord extends layerRecord.LayerRecord {
             .getFeatureInfo(
                 this._layer,
                 opts.clickEvent,
-                this.config.layerEntries.map(le => le.id),
-                this.config.featureInfoMimeType)
+                this.config.layerEntries.map((le) => le.id),
+                this.config.featureInfoMimeType
+            )
             .then((data) => {
                 identifyResult.isLoading = false;
 
@@ -176,7 +182,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @function dataSource
      * @returns {String} 'wms' since WMS based layer
      */
-    dataSource () {
+    dataSource() {
         return shared.dataSources.WMS;
     }
 
@@ -186,7 +192,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @function updateCapabilities
      * @returns {Promise} a promise that resolves once metadata properties has been processed
      */
-    updateCapabilities () {
+    updateCapabilities() {
         let serviceUrl = this.config.url;
         let isGeomet = serviceUrl.toLowerCase().indexOf('/geomet') !== -1;
         let hasLayersParam = serviceUrl.toLowerCase().indexOf('layers=') !== -1;
@@ -222,7 +228,7 @@ class WmsRecord extends layerRecord.LayerRecord {
      * @function saveLegendUrls
      * @param {Array} layers an array of layer objects returned by getCapabilities
      */
-    saveLegendUrls (layers) {
+    saveLegendUrls(layers) {
         layers.forEach((layer) => {
             // Check to see if this layer belongs to the ESRI `layerInfos` array.
             let layerInfo = this.esriLayer.layerInfos.find((item) => layer.name && item.name === layer.name);
@@ -231,7 +237,8 @@ class WmsRecord extends layerRecord.LayerRecord {
                 const styles = this.esriLayer.customLayerParameters.styles;
 
                 // Set the legend URL to the style that is currently selected. If none is selected, use the default.
-                layerInfo.legendURL = typeof styles !== 'undefined' ? layer.styleToURL[styles] : layer.styleToURL[defaultStyle];
+                layerInfo.legendURL =
+                    typeof styles !== 'undefined' ? layer.styleToURL[styles] : layer.styleToURL[defaultStyle];
             }
 
             // Update sublayers if necessary.
@@ -243,5 +250,5 @@ class WmsRecord extends layerRecord.LayerRecord {
 }
 
 module.exports = () => ({
-    WmsRecord
+    WmsRecord,
 });

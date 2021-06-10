@@ -9,9 +9,7 @@ const templateUrl = require('./appbar.html');
  * The `rvAppbar` directive wraps and adds functionality to the menu buttons.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvAppbar', rvAppbar);
+angular.module('app.ui').directive('rvAppbar', rvAppbar);
 
 /**
  * `rvAppbar` directive body.
@@ -27,7 +25,7 @@ function rvAppbar(referenceService) {
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     function link(scope, el) {
@@ -37,8 +35,16 @@ function rvAppbar(referenceService) {
     return directive;
 }
 
-function Controller(sideNavigationService, stateManager, debounceService, basemapService, geosearchService,
-    configService, events, $translate) {
+function Controller(
+    sideNavigationService,
+    stateManager,
+    debounceService,
+    basemapService,
+    geosearchService,
+    configService,
+    events,
+    $translate
+) {
     'ngInject';
 
     const self = this;
@@ -53,8 +59,7 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
 
     self.geosearchService = geosearchService;
 
-    configService.onEveryConfigLoad(cfg =>
-        (self.config = cfg));
+    configService.onEveryConfigLoad((cfg) => (self.config = cfg));
 
     let requesterStack = [];
     events.$on(events.rvApiPreMapAdded, (_, api) => {
@@ -62,21 +67,21 @@ function Controller(sideNavigationService, stateManager, debounceService, basema
             // push change onto stack
             requesterStack.unshift({ requester, title });
             updateTitle(title);
-        }
-        configService.getSync.map.instance.releaseAppbarTitle = requester => {
+        };
+        configService.getSync.map.instance.releaseAppbarTitle = (requester) => {
             // if this requester made the last change then clear the title
             if (requesterStack[0] && requesterStack[0].requester === requester) {
                 updateTitle('');
             }
 
             // remove anything from this requester from the stack
-            requesterStack = requesterStack.filter(oldRequester => oldRequester.requester !== requester);
+            requesterStack = requesterStack.filter((oldRequester) => oldRequester.requester !== requester);
 
             // if theres something left on the stack update the title
             if (requesterStack.length > 0) {
                 updateTitle(requesterStack[0].title);
             }
-        }
+        };
         self.panelRegistry = api.panels;
     });
 

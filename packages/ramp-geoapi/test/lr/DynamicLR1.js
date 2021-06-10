@@ -15,13 +15,13 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
         tolerance: 5,
-        extent: { pigdog: true},
+        extent: { pigdog: true },
         controls: ['visibility', 'opacity', 'boundingBox', 'query', 'data'],
         state: {
             opacity: 1,
             visibility: true,
             boundingBox: false,
-            query: true
+            query: true,
         },
         layerEntries: [
             {
@@ -32,28 +32,29 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks'
+                name: 'Hamhocks',
             },
-            { 
+            {
                 index: 2,
                 name: 'doggguts',
                 state: {
                     opacity: 0,
                     visibility: false,
-                    query: false
+                    query: false,
                 },
-                stateOnly: true
-            }
-        ]
+                stateOnly: true,
+            },
+        ],
     };
 
     var lods = [
-        { "level": 15, "resolution": 13.229193125052918, "scale": 50000 },
-        { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
-        { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
+        { level: 15, resolution: 13.229193125052918, scale: 50000 },
+        { level: 16, resolution: 7.9375158750317505, scale: 30000 },
+        { level: 17, resolution: 4.6302175937685215, scale: 17500 },
+    ];
 
     var layerRec = api.layer.createDynamicRecord(config1);
     console.log('layer PROOF ', layerRec);
@@ -76,7 +77,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         var leaf2proxy = layerRec.getChildProxy(2);
         var leaf3proxy = layerRec.getChildProxy(3);
@@ -89,16 +90,22 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('leaf 3 visible, should be false', leaf3proxy.visibility);
         console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
 
-        layerRec.getFormattedAttributes(2).then(fa => {
+        layerRec.getFormattedAttributes(2).then((fa) => {
             console.log('formatted attributes child 2', fa);
         });
 
-        layerRec.getFormattedAttributes(3).then(fa => {
+        layerRec.getFormattedAttributes(3).then((fa) => {
             console.log('formatted attributes child 3', fa);
-            console.log('attributes to details ', leaf3proxy.attributesToDetails({
-                PRUID: "pigdog",
-                AREA: 33.33
-            }, fa.fields));
+            console.log(
+                'attributes to details ',
+                leaf3proxy.attributesToDetails(
+                    {
+                        PRUID: 'pigdog',
+                        AREA: 33.33,
+                    },
+                    fa.fields
+                )
+            );
         });
 
         console.log('child tree', layerRec.getChildTree());
@@ -110,7 +117,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('leaf parent layer type - sb dynamic', leaf3proxy.parentLayerType);
 
         console.log('leaf loaded state', leaf3proxy.state);
-        console.log('layer loaded state', proxy.state);                
+        console.log('layer loaded state', proxy.state);
 
         console.log('layer proxy visible -- sb false', proxy.visibility);
         proxy.setVisibility(true);
@@ -119,7 +126,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
         console.log('leaf 3 name -- sb prov_point_l1', leaf3proxy.name);
         console.log('leaf 2 name -- sb doggguts', leaf2proxy.name);
-            
+
         console.log('geom type child 3 - sb point', leaf3proxy.geometryType);
         console.log('geom type layer root - sb undefined', proxy.geometryType);
 
@@ -138,7 +145,5 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
         console.log('root index - sb X', proxy.itemIndex);
         console.log('leaf index - sb 2', leaf2proxy.itemIndex);
-
     }
-
 });

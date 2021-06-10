@@ -19,9 +19,7 @@ const templateUrl = require('./templates/legend-flag.html');
  * If the `persist` attribute is set, the directive will be displayed empty if the corresponding control object is undefined.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLegendFlag', rvLegendFlag);
+angular.module('app.ui').directive('rvLegendFlag', rvLegendFlag);
 
 function rvLegendFlag(LegendElementFactory) {
     const directive = {
@@ -29,14 +27,14 @@ function rvLegendFlag(LegendElementFactory) {
         templateUrl,
         scope: {
             block: '=',
-            name: '@'
+            name: '@',
         },
         link: {
-            pre: link
+            pre: link,
         },
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -47,7 +45,5 @@ function rvLegendFlag(LegendElementFactory) {
         const self = scope.self;
 
         self.uiControl = LegendElementFactory.makeFlag(self.block, self.name);
-
-
     }
 }

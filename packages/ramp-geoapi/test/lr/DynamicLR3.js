@@ -10,66 +10,66 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test',
-        url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',                
+        url: 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/CESI_Air_SO2/MapServer',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
-        tolerance: 5,   
+        tolerance: 5,
         state: {
             opacity: 1,
             visibility: true,
             boundingBox: false,
-            query: true
+            query: true,
         },
         layerEntries: [
             {
                 index: 1,
-                outfields: '*',                       
+                outfields: '*',
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks One'
+                name: 'Hamhocks One',
             },
             {
                 index: 2,
-                outfields: '*',                       
+                outfields: '*',
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks Two'
+                name: 'Hamhocks Two',
             },
             {
                 index: 3,
-                outfields: '*',                       
+                outfields: '*',
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks Three'
+                name: 'Hamhocks Three',
             },
             {
                 index: 4,
-                outfields: '*',                       
+                outfields: '*',
                 state: {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks Four'
+                name: 'Hamhocks Four',
             },
-        ]
+        ],
     };
 
     var layerRec = api.layer.createDynamicRecord(config1);
@@ -87,14 +87,13 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         // everything starts off invisible
         var leaf4proxy = layerRec.getChildProxy(4);
         var leaf3proxy = layerRec.getChildProxy(3);
         var leaf2proxy = layerRec.getChildProxy(2);
         var leaf1proxy = layerRec.getChildProxy(1);
-
 
         console.log('symbology - sb 6 elements', leaf1proxy.symbology);
 
@@ -105,7 +104,6 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         leaf4proxy.setVisibility(true);
 
         console.log('leaf 4 should refresh the layer');
-
 
         /*
         // from visible to invisible
@@ -144,5 +142,4 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         }, 1000);
         */
     }
-
 });

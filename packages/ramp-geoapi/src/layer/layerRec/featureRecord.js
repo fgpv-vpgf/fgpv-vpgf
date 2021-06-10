@@ -10,7 +10,6 @@ const shared = require('./shared.js')();
  * @class FeatureRecord
  */
 class FeatureRecord extends attribRecord.AttribRecord {
-
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
@@ -22,7 +21,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
+    constructor(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup) {
         super(layerClass, esriRequest, apiRef, config, esriLayer, epsgLookup);
 
         // handles placeholder symbol, possibly other things
@@ -35,7 +34,9 @@ class FeatureRecord extends attribRecord.AttribRecord {
         }
     }
 
-    get queryUrl () { return `${this.rootUrl}/${this._defaultFC}`; }
+    get queryUrl() {
+        return `${this.rootUrl}/${this._defaultFC}`;
+    }
 
     /**
      * Creates an options object for the map API object
@@ -43,10 +44,9 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function makeLayerConfig
      * @returns {Object} an object with api options
      */
-    makeLayerConfig () {
+    makeLayerConfig() {
         const cfg = super.makeLayerConfig();
-        cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT
-                                                        : this._layerClass.MODE_ONDEMAND;
+        cfg.mode = this.config.state.snapshot ? this._layerClass.MODE_SNAPSHOT : this._layerClass.MODE_ONDEMAND;
 
         // if we have a definition at load, apply it here to avoid cancellation errors on
         if (this.config.initialFilteredQuery) {
@@ -67,7 +67,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function getGeomType
      * @returns {String} the geometry type of the layer
      */
-    getGeomType () {
+    getGeomType() {
         return this._featClasses[this._defaultFC].geomType;
     }
 
@@ -77,7 +77,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function getOidField
      * @returns {String} the oid field of the layer
      */
-    getOidField () {
+    getOidField() {
         return this._featClasses[this._defaultFC].oidField;
     }
 
@@ -87,7 +87,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function getProxy
      * @returns {Object} the proxy interface for the layer
      */
-    getProxy () {
+    getProxy() {
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this);
             this._rootProxy.convertToFeatureLayer(this);
@@ -100,12 +100,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
      *
      * @function onLoad
      */
-    onLoad () {
+    onLoad() {
         const loadPromises = super.onLoad();
 
         // we run into a lot of funny business with functions/constructors modifying parameters.
         // this essentially clones an object to protect original objects against trickery.
-        const jsonCloner = inputObject => {
+        const jsonCloner = (inputObject) => {
             return JSON.parse(JSON.stringify(inputObject));
         };
 
@@ -116,8 +116,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
             const classMapper = {
                 simple: this._apiRef.symbology.SimpleRenderer,
                 classBreaks: this._apiRef.symbology.ClassBreaksRenderer,
-                uniqueValue: this._apiRef.symbology.UniqueValueRenderer
-            }
+                uniqueValue: this._apiRef.symbology.UniqueValueRenderer,
+            };
 
             // renderer constructors apparently convert their input json from server style to client style.
             // we dont want that. use a clone to protect config's property.
@@ -140,8 +140,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
             // methods in the attrib loader will update our copy of the renderer. if we pass in the config reference, it gets
             // updated and some weird stuff happens. Make a copy.
             const cloneRenderer = jsonCloner(this.config.customRenderer);
-            attribPackage = this._apiRef.attribs.loadServerAttribs(splitUrl.rootUrl, featIdx, this.config.outfields,
-                cloneRenderer);
+            attribPackage = this._apiRef.attribs.loadServerAttribs(
+                splitUrl.rootUrl,
+                featIdx,
+                this.config.outfields,
+                cloneRenderer
+            );
         }
 
         // feature has only one layer
@@ -152,7 +156,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
         const pLS = aFC.loadSymbology();
 
         // update asynch data
-        const pLD = aFC.getLayerData().then(ld => {
+        const pLD = aFC.getLayerData().then((ld) => {
             aFC.geomType = ld.geometryType;
             aFC.oidField = ld.oidField;
             aFC.nameField = this.config.nameField || ld.nameField || '';
@@ -160,8 +164,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
             // check the config for any custom field aliases, and add the alias as a property if it exists
             if (this.config.source.fieldMetadata) {
-                ld.fields.forEach(field => {
-                    const clientAlias = this.config.source.fieldMetadata.find(f => f.data === field.name);
+                ld.fields.forEach((field) => {
+                    const clientAlias = this.config.source.fieldMetadata.find((f) => f.data === field.name);
                     field.clientAlias = clientAlias ? clientAlias.alias : undefined;
                 });
             }
@@ -172,12 +176,13 @@ class FeatureRecord extends attribRecord.AttribRecord {
             // to the user). If the nameField / tooltipField was adjusted for bad characters, we need to
             // re-synchronize it here.
             if (this.dataSource() !== shared.dataSources.ESRI) {
-                if (ld.fields.findIndex(f => f.name === aFC.nameField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.nameField);
+                if (ld.fields.findIndex((f) => f.name === aFC.nameField) === -1) {
+                    const validField = ld.fields.find((f) => f.alias === aFC.nameField);
                     if (validField) {
                         aFC.nameField = validField.name;
-                        if (!this.config.tooltipField) {    // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
-                            aFC.tooltipField = validField.name
+                        if (!this.config.tooltipField) {
+                            // tooltipField wasn't explicitly provided, so it was also using the bad nameField key
+                            aFC.tooltipField = validField.name;
                         }
                     } else {
                         // give warning. impact is tooltips will have no text, details pane no header
@@ -186,8 +191,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 }
 
                 // only check the tooltipField if it was provided from the config, otherwise it would have been corrected above already (if required)
-                if (this.config.tooltipField && ld.fields.findIndex(f => f.name === aFC.tooltipField) === -1) {
-                    const validField = ld.fields.find(f => f.alias === aFC.tooltipField);
+                if (this.config.tooltipField && ld.fields.findIndex((f) => f.name === aFC.tooltipField) === -1) {
+                    const validField = ld.fields.find((f) => f.alias === aFC.tooltipField);
                     if (validField) {
                         aFC.tooltipField = validField.name;
                     } else {
@@ -198,7 +203,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
             }
         });
 
-        const pFC = this.getFeatureCount().then(fc => {
+        const pFC = this.getFeatureCount().then((fc) => {
             this._fcount = fc;
         });
 
@@ -219,7 +224,7 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function getFeatureCount
      * @return {Promise}       resolves with an integer indicating the feature count.
      */
-    getFeatureCount () {
+    getFeatureCount() {
         // just use the layer url (or lack of in case of file layer)
         return super.getFeatureCount(this._layer.url);
     }
@@ -230,11 +235,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function dataSource
      * @returns {String} 'file' if file layer, 'wfs' if WFS, else 'esri'
      */
-    dataSource () {
+    dataSource() {
         // 'this.layerType' will be 'esriFeature' even for WFS layers, so must use 'this.config.layerType'
         if (this.config.layerType === shared.clientLayerType.OGC_WFS) {
             return shared.dataSources.WFS;
-        } else if (this._layer && !this._layer.url) {   // TODO revisit.  is it robust enough?
+        } else if (this._layer && !this._layer.url) {
+            // TODO revisit.  is it robust enough?
             return shared.dataSources.FILE;
         } else {
             return shared.dataSources.ESRI;
@@ -247,22 +253,34 @@ class FeatureRecord extends attribRecord.AttribRecord {
      *
      * @function abortAttribLoad
      */
-    abortAttribLoad () {
+    abortAttribLoad() {
         this._featClasses[this._defaultFC].abortAttribLoad();
     }
 
     // TODO determine who is setting this. if we have an internal
     //      snapshot process, it might become a read-only property
-    get isSnapshot () { return this._snapshot; }
-    set isSnapshot (value) { this._snapshot = value; }
+    get isSnapshot() {
+        return this._snapshot;
+    }
+    set isSnapshot(value) {
+        this._snapshot = value;
+    }
 
-    get layerType () { return shared.clientLayerType.ESRI_FEATURE; }
+    get layerType() {
+        return shared.clientLayerType.ESRI_FEATURE;
+    }
 
-    get featureCount () { return this._fcount; }
+    get featureCount() {
+        return this._fcount;
+    }
 
-    get loadedFeatureCount () { return this._featClasses[this._defaultFC].loadedFeatureCount; }
+    get loadedFeatureCount() {
+        return this._featClasses[this._defaultFC].loadedFeatureCount;
+    }
 
-    get filter () { return this._featClasses[this._defaultFC].filter; }
+    get filter() {
+        return this._featClasses[this._defaultFC].filter;
+    }
 
     /**
      * Triggers when the mouse enters a feature of the layer.
@@ -270,13 +288,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function onMouseOver
      * @param {Object} standard mouse event object
      */
-    onMouseOver (e) {
+    onMouseOver(e) {
         if (this._hoverEvent.listenerCount > 0) {
-
             const showBundle = {
                 type: 'mouseOver',
                 point: e.screenPoint,
-                target: e.target
+                target: e.target,
             };
 
             // tell anyone listening we moused into something
@@ -284,31 +301,31 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
             // pull metadata for this layer.
             let oid;
-            this.getLayerData().then(lInfo => {
-                // graphic attributes will only have the OID if layer is server based
-                oid = e.graphic.attributes[lInfo.oidField];
-                const graphicPromise = this.fetchGraphic(oid, { attribs: true });
-                return Promise.all([Promise.resolve(lInfo), graphicPromise]);
-            }).then(([lInfo, graphicBundle]) => {
+            this.getLayerData()
+                .then((lInfo) => {
+                    // graphic attributes will only have the OID if layer is server based
+                    oid = e.graphic.attributes[lInfo.oidField];
+                    const graphicPromise = this.fetchGraphic(oid, { attribs: true });
+                    return Promise.all([Promise.resolve(lInfo), graphicPromise]);
+                })
+                .then(([lInfo, graphicBundle]) => {
+                    const featAttribs = graphicBundle.graphic.attributes;
 
-                const featAttribs = graphicBundle.graphic.attributes;
+                    // get icon via renderer and geoApi call
+                    const svgcode = this._apiRef.symbology.getGraphicIcon(featAttribs, lInfo.renderer);
 
-                // get icon via renderer and geoApi call
-                const svgcode = this._apiRef.symbology.getGraphicIcon(featAttribs, lInfo.renderer);
+                    // duplicate the position so listener can verify this event is same as mouseOver event above
+                    const loadBundle = {
+                        type: 'tipLoaded',
+                        name: this.getTooltipName(oid, featAttribs),
+                        attribs: featAttribs,
+                        target: e.target,
+                        svgcode,
+                    };
 
-                // duplicate the position so listener can verify this event is same as mouseOver event above
-                const loadBundle = {
-                    type: 'tipLoaded',
-                    name: this.getTooltipName(oid, featAttribs),
-                    attribs: featAttribs,
-                    target: e.target,
-                    svgcode
-                };
-
-                // tell anyone listening we moused into something
-                this._hoverEvent.fireEvent(loadBundle);
-
-            });
+                    // tell anyone listening we moused into something
+                    this._hoverEvent.fireEvent(loadBundle);
+                });
         }
     }
 
@@ -318,11 +335,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function onMouseOut
      * @param {Object} standard mouse event object
      */
-    onMouseOut (e) {
+    onMouseOut(e) {
         // tell anyone listening we moused out
         const outBundle = {
             type: 'mouseOut',
-            target: e.target
+            target: e.target,
         };
         this._hoverEvent.fireEvent(outBundle);
     }
@@ -339,15 +356,16 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @param {Object} opts    additional arguemets, see above.
      * @returns {Object} an object with identify results array and identify promise resolving when identify is complete; if an empty object is returned, it will be skipped
      */
-    identify (opts) {
+    identify(opts) {
         // TODO add full documentation for options parameter
 
         // early kickout check. not loaded/error; not visible; not queryable; off scale
-        if (!shared.layerLoaded(this.state) ||
+        if (
+            !shared.layerLoaded(this.state) ||
             !this.visibility ||
             !this.isQueryable() ||
-            this.isOffScale(opts.map.getScale()).offScale) {
-
+            this.isOffScale(opts.map.getScale()).offScale
+        ) {
             // TODO verifiy this is correct result format if layer should be excluded from the identify process
             return { identifyResults: [], identifyPromise: Promise.resolve() };
         }
@@ -374,11 +392,11 @@ class FeatureRecord extends attribRecord.AttribRecord {
         // a big promise chain. resolves when all the asynch parts of identify are done.
         // has no result parameter, instead updates contents of identifyResult object
         const identifyPromise = Promise.all([
-                // first asynch step. do identify on the layer, and ensure layer metadata is downloaded.
-                Promise.resolve(this._layer.queryFeatures(qry)),
-                this.getLayerData()
-
-            ]).then(([queryResult, layerData]) => {
+            // first asynch step. do identify on the layer, and ensure layer metadata is downloaded.
+            Promise.resolve(this._layer.queryFeatures(qry)),
+            this.getLayerData(),
+        ])
+            .then(([queryResult, layerData]) => {
                 // second asynch step. do any additional filtering on local layer results.
                 // then fetch full attribute values for all the identify results
 
@@ -389,9 +407,9 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 } else {
                     // file / wfs
                     // the query will return items that are invisible due to filters. banish them.
-                    validResults = queryResult.features.filter(f => {
+                    validResults = queryResult.features.filter((f) => {
                         const objId = f.attributes[layerData.oidField];
-                        const graphic = this._layer.graphics.find(g => {
+                        const graphic = this._layer.graphics.find((g) => {
                             return g.attributes[layerData.oidField] === objId;
                         });
                         if (graphic) {
@@ -405,15 +423,15 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
                 // get the attributes using fetchGraphic (will pick most efficient route to attributes)
                 // bundle all requests in promises
-                const vAttribPromises = validResults.map(feat => {
+                const vAttribPromises = validResults.map((feat) => {
                     // grab the object id of the feature we clicked on.
-                    return new Promise(resolve => {
+                    return new Promise((resolve) => {
                         const objId = feat.attributes[layerData.oidField];
                         const graphicPromise = this.fetchGraphic(objId, { attribs: true });
-                        graphicPromise.then(graphicBundle => {
+                        graphicPromise.then((graphicBundle) => {
                             resolve({
                                 oid: objId,
-                                attributes: graphicBundle.graphic.attributes
+                                attributes: graphicBundle.graphic.attributes,
                             });
                         });
                     });
@@ -423,8 +441,8 @@ class FeatureRecord extends attribRecord.AttribRecord {
                 vAttribPromises.push(Promise.resolve(layerData));
 
                 return Promise.all(vAttribPromises);
-
-            }).then(validAttributes => {
+            })
+            .then((validAttributes) => {
                 // third async step (this part is all synch, so is final part).
                 // transform attributes of identify results into objects containing info
                 // the details panel reqires.
@@ -435,14 +453,14 @@ class FeatureRecord extends attribRecord.AttribRecord {
 
                 const layerData = validAttributes.pop();
 
-                identifyResult.data = validAttributes.map(vAtt => {
+                identifyResult.data = validAttributes.map((vAtt) => {
                     return {
                         name: this.getFeatureName(vAtt.oid.toString(), vAtt.attributes),
                         data: this.attributesToDetails(vAtt.attributes, layerData.fields),
                         oid: vAtt.oid,
                         symbology: [
-                            { svgcode: this._apiRef.symbology.getGraphicIcon(vAtt.attributes, layerData.renderer) }
-                        ]
+                            { svgcode: this._apiRef.symbology.getGraphicIcon(vAtt.attributes, layerData.renderer) },
+                        ],
                     };
                 });
 
@@ -458,13 +476,12 @@ class FeatureRecord extends attribRecord.AttribRecord {
      * @function setDefinitionQuery
      * @param {String} query a valid definition query
      */
-    setDefinitionQuery (query) {
+    setDefinitionQuery(query) {
         // very difficult.
         this._layer.setDefinitionExpression(query);
     }
-
 }
 
 module.exports = () => ({
-    FeatureRecord
+    FeatureRecord,
 });

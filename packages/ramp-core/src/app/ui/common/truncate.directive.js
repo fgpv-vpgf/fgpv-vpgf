@@ -11,10 +11,7 @@
  * <rv-truncate max-text-length="7">Some text to shorten</rv-truncate>
  * Results in `Some...`
  */
-angular
-    .module('app.ui')
-    .directive('rvTruncate', rvTruncate)
-    .directive('rvTruncateTitle', rvTruncateTitle);
+angular.module('app.ui').directive('rvTruncate', rvTruncate).directive('rvTruncateTitle', rvTruncateTitle);
 
 /**
  * `rvTruncate` directive body.
@@ -26,9 +23,9 @@ function rvTruncate($compile, $translate) {
     const directive = {
         restrict: 'E',
         scope: {
-            maxTextLength: '@'
+            maxTextLength: '@',
         },
-        link
+        link,
     };
 
     return directive;
@@ -41,20 +38,23 @@ function rvTruncate($compile, $translate) {
                 let longText = el.html();
 
                 // do not count HTML tags, more than one successive whitespace, or newlines towards the maxTextLength
-                const correctedLength = longText.replace(/<[^>]+>/gm, '').replace(/ +(?= )/g, '').replace(/(\r\n|\n|\r)/gm, '').length;
+                const correctedLength = longText
+                    .replace(/<[^>]+>/gm, '')
+                    .replace(/ +(?= )/g, '')
+                    .replace(/(\r\n|\n|\r)/gm, '').length;
                 let shortText = longText.substr(0, maxTextLength + (longText.length - correctedLength));
 
                 // do not cut off words, instead shorten to nearest word
                 shortText = shortText.substr(0, Math.min(shortText.length, shortText.lastIndexOf(' ')));
 
                 if (correctedLength > maxTextLength) {
-                    shortText +=
-                        `... <br><a href="#" ng-click="show()">${$translate.instant('rv-truncate.showMore')}</a>`;
-                    longText +=
-                        ` <br><a href="#" ng-click="hide()">${$translate.instant('rv-truncate.showLess')}</a>`;
+                    shortText += `... <br><a href="#" ng-click="show()">${$translate.instant(
+                        'rv-truncate.showMore'
+                    )}</a>`;
+                    longText += ` <br><a href="#" ng-click="hide()">${$translate.instant('rv-truncate.showLess')}</a>`;
                 }
 
-                const changeTxt = txt => {
+                const changeTxt = (txt) => {
                     el.html(txt);
                     $compile(el.contents())(scope);
                 };
@@ -79,12 +79,12 @@ function rvTruncateTitle(graphicsService) {
         restrict: 'A',
         scope: {
             title: '=rvTruncateTitle',
-            isActive: '=?rvTruncateTitleIsActive'
+            isActive: '=?rvTruncateTitleIsActive',
         },
         link,
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     const canvas = document.createElement('canvas');
@@ -94,12 +94,17 @@ function rvTruncateTitle(graphicsService) {
     function link(scope, el) {
         let string = '';
 
-        scope.$watch('self.title', newString => {
-            if (newString) { string = newString; }
+        scope.$watch('self.title', (newString) => {
+            if (newString) {
+                string = newString;
+            }
             update();
         });
 
-        scope.$watch(() => el.width(), () => update());
+        scope.$watch(
+            () => el.width(),
+            () => update()
+        );
 
         el.addClass('rv-truncate-title');
 
@@ -112,7 +117,9 @@ function rvTruncateTitle(graphicsService) {
         function update() {
             const [left, right] = splitString(string, el.width() - 10); // 10 accounts for letter spacing
 
-            el.empty().append(`<span class="rv-truncate-title-left">${left}</span><span class="rv-truncate-title-right">${right}</span>`);
+            el.empty().append(
+                `<span class="rv-truncate-title-left">${left}</span><span class="rv-truncate-title-right">${right}</span>`
+            );
 
             scope.self.isActive = right !== '';
         }
@@ -129,7 +136,6 @@ function rvTruncateTitle(graphicsService) {
          * @return {Array} [leftString, rightString] parts of the original string
          */
         function splitString(string, widthToFit) {
-
             // TODO: use [getComputedStyles](https://developer.mozilla.org/en/docs/Web/API/Window/getComputedStyle) to get the actual font name and font size instead of this hardcoded font
             const stringWidth = graphicsService.getTextWidth(canvas, string, 'normal 16px Roboto');
 
@@ -137,11 +143,11 @@ function rvTruncateTitle(graphicsService) {
                 return [string, ''];
             }
 
-            const desiredStringLength = Math.floor(string.length * widthToFit / stringWidth * 0.3);
+            const desiredStringLength = Math.floor(((string.length * widthToFit) / stringWidth) * 0.3);
 
             return [
                 string.substring(0, string.length - desiredStringLength),
-                string.substring(string.length - desiredStringLength, string.length)
+                string.substring(string.length - desiredStringLength, string.length),
             ];
         }
     }

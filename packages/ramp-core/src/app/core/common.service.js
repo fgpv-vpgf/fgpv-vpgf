@@ -16,7 +16,7 @@ function common($timeout, $interval, $q) {
         $interval,
         $q,
         intersect,
-        removeFromArray
+        removeFromArray,
     };
 
     return service;
@@ -35,7 +35,7 @@ function common($timeout, $interval, $q) {
      * @return {Array} intersection of the first and second arrays
      */
     function intersect(array1 = [], array2 = []) {
-        return array1.filter(item => array2.indexOf(item) !== -1);
+        return array1.filter((item) => array2.indexOf(item) !== -1);
     }
 
     /**

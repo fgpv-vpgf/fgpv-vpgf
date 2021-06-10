@@ -9,19 +9,19 @@ module.exports = (env, argv) => ({
         filename: 'index.js',
         library: 'BackToCart',
         libraryExport: 'default', // [monoRAMP] assign the default export of your entry point to the library
-        libraryTarget: 'window' // [monoRAMP] assign the return value of your entry point to the window
+        libraryTarget: 'window', // [monoRAMP] assign the return value of your entry point to the window
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
                 use: 'ts-loader',
-                exclude: /node_modules/
-            }
-        ]
+                exclude: /node_modules/,
+            },
+        ],
     },
     resolve: {
         // if multiple files share the same name but have different extensions, webpack will resolve the one with the extension listed first in the array and skip the rest.
-        extensions: ['.ts', '.js']
-    }
+        extensions: ['.ts', '.js'],
+    },
 });

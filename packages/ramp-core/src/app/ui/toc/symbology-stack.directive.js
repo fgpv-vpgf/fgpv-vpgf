@@ -53,10 +53,7 @@ class ToggleSymbol {
  * There are two sources of symbology: service symbology and user defined symbology.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvSymbologyStack', rvSymbologyStack)
-    .factory('SymbologyStack', symbologyStack);
+angular.module('app.ui').directive('rvSymbologyStack', rvSymbologyStack).factory('SymbologyStack', symbologyStack);
 
 function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, $timeout) {
     const directive = {
@@ -67,12 +64,12 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             symbology: '=',
             block: '=',
             description: '=?',
-            container: '=?'
+            container: '=?',
         },
         link: link,
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -113,12 +110,12 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         function allSymbolsVisible() {
             const toggleListKeys = Object.keys(self.toggleList);
 
-            return toggleListKeys.filter(key => self.toggleList[key].isSelected).length === toggleListKeys.length;
+            return toggleListKeys.filter((key) => self.toggleList[key].isSelected).length === toggleListKeys.length;
         }
 
         // returns true if no toggle symbology checkboxes are checked, false otherwise
         function noSymbolsVisible() {
-            return Object.keys(self.toggleList).filter(key => self.toggleList[key].isSelected).length === 0;
+            return Object.keys(self.toggleList).filter((key) => self.toggleList[key].isSelected).length === 0;
         }
 
         // stores instances of ToggleSymbol as key value pairs (with symbol name as the key)
@@ -146,15 +143,15 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         // Helper function: update symbol toggles
         function updateToggles(val) {
             if (val) {
-                const someOn = self.toggleList.some((toggle => toggle.wasSelected === true));
-                self.toggleList.forEach(toggle => {
+                const someOn = self.toggleList.some((toggle) => toggle.wasSelected === true);
+                self.toggleList.forEach((toggle) => {
                     if ((toggle.wasSelected && toggle.isSelected === false) || !someOn) {
                         toggle.wasSelected = undefined;
                         self.onToggleClick(toggle, true);
                     }
                 });
             } else {
-                self.toggleList.forEach(toggle => {
+                self.toggleList.forEach((toggle) => {
                     if (toggle.isSelected !== false) {
                         toggle.wasSelected = true;
                         self.onToggleClick(toggle, false);
@@ -169,7 +166,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         if (self.block && self.block.visibilityChanged) {
             // change all symbology stack to toggled/untoggled if top layer is visible/invisible
             // TODO update this code when issue 3152 is implemented
-            self.block.visibilityChanged.subscribe(val => {
+            self.block.visibilityChanged.subscribe((val) => {
                 // make sure this doesn't fire if an individual symbology being toggled triggered visibilityChanged
                 // only toggle when toggling visibility on after all symbology have been turned off
                 if (!self.stackToggled) {
@@ -183,17 +180,20 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         updateToggles(val);
                     } else {
                         // layer not yet loaded, wait until it is then apply stuff
-                        const proxyLoaded = $rootScope.$watch(() => self.block.proxyWrapper.state, (state, oldState) => {
-                            // TODO if possible, link in to Geo.Layer.States and use the LOADED constant
-                            if (state === 'rv-loaded') {
-                                // only update if currently selected...otherwise causes all sorts of race conditions
-                                // TODO ensure this is race condition no longer exists in new filter structure
-                                applySymbolFilter(query);
-                                updateToggles(val);
-                                self.stackToggled = false;
-                                proxyLoaded();
+                        const proxyLoaded = $rootScope.$watch(
+                            () => self.block.proxyWrapper.state,
+                            (state, oldState) => {
+                                // TODO if possible, link in to Geo.Layer.States and use the LOADED constant
+                                if (state === 'rv-loaded') {
+                                    // only update if currently selected...otherwise causes all sorts of race conditions
+                                    // TODO ensure this is race condition no longer exists in new filter structure
+                                    applySymbolFilter(query);
+                                    updateToggles(val);
+                                    self.stackToggled = false;
+                                    proxyLoaded();
+                                }
                             }
-                        });
+                        );
                     }
                 }
                 self.stackToggled = false;
@@ -215,8 +215,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             } else {
                 //otherwise proceed with joining geoApi definitionClauses
                 defClause = self.toggleList
-                    .map(toggle => toggle.query)
-                    .filter(q => q !== null)
+                    .map((toggle) => toggle.query)
+                    .filter((q) => q !== null)
                     .join(' OR ');
             }
 
@@ -231,7 +231,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 } else if (!noSymb && self.block.visibility === false) {
                     self.stackToggled = true;
                     self.block.visibility = true;
-                    self.toggleList.forEach(toggle => {
+                    self.toggleList.forEach((toggle) => {
                         toggle.wasSelected = undefined;
                     });
                 }
@@ -286,12 +286,12 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
             // TODO: container width will depend on app mode: desktop or mobile; need a way to determine this
             containerWidth: 350,
-            maxItemWidth: 350
+            maxItemWidth: 350,
         };
 
         scope.$watch(
             () => element.parent().width(),
-            value => {
+            (value) => {
                 if (value) {
                     ref.containerWidth = value;
                     updateContainerWidth(value);
@@ -300,26 +300,14 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             }
         );
 
-        scope.$watch('self.showSymbologyToggle', value => {
+        scope.$watch('self.showSymbologyToggle', (value) => {
             if (value) {
-                element
-                    .find('.md-icon-button')
-                    .addClass('show');
+                element.find('.md-icon-button').addClass('show');
                 $.link(element.find('.md-icon-button'));
-                element
-                    .find('button')
-                    .not('.rv-symbol-trigger')
-                    .removeAttr('nofocus')
-                    .addClass('focusOnce');
+                element.find('button').not('.rv-symbol-trigger').removeAttr('nofocus').addClass('focusOnce');
             } else {
-                element
-                    .find('.md-icon-button')
-                    .removeClass('show');
-                element
-                    .find('button')
-                    .not('.rv-symbol-trigger')
-                    .attr('nofocus', true)
-                    .removeClass('focusOnce');
+                element.find('.md-icon-button').removeClass('show');
+                element.find('button').not('.rv-symbol-trigger').attr('nofocus', true).removeClass('focusOnce');
             }
         });
 
@@ -348,11 +336,11 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     self.symbology._proxy.layerType !== Geo.Layer.Types.ESRI_RASTER
                 ) {
                     const stackConfig = self.block.blockConfig.symbologyStack;
-                    const drawPromises = self.symbology.stack.map(s => s.drawPromise);
+                    const drawPromises = self.symbology.stack.map((s) => s.drawPromise);
 
                     $q.all(drawPromises).then(() => {
                         // create a ToggleSymbol instance for each symbol
-                        self.symbology.stack.forEach(s => {
+                        self.symbology.stack.forEach((s) => {
                             // check legend config to see if the user has provided a definition clause
                             // user's definition clause takes priority over automatically generated one
                             const currIndex = self.symbology.stack.indexOf(s);
@@ -368,7 +356,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                                 self.toggleList.push(toggle);
 
                                 // toggle list gets generated each time block is reloaded, make sure check boxes and definition queries actually match the toggle list
-                                self.toggleList.forEach(toggle => {
+                                self.toggleList.forEach((toggle) => {
                                     if (toggle.isSelected !== self.block.visibility) {
                                         self.onToggleClick(toggle, false);
                                     }
@@ -495,7 +483,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         const symbol = {
                             container: domNode,
                             image: domNode.find('rv-svg'),
-                            label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS)
+                            label: domNode.find(RV_SYMBOLOGY_ITEM_NAME_CLASS),
                         };
 
                         // sort regular symbols from the cover symbol
@@ -512,7 +500,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // symbology item cannot be wider than the panel
             ref.maxItemWidth = Math.min(
                 Math.max(
-                    ...ref.symbolItems.map(symbolItem => {
+                    ...ref.symbolItems.map((symbolItem) => {
                         const svgImage = symbolItem.image.find('svg')[0];
                         const texLRPadding =
                             parseInt(symbolItem.label.css('padding-left').slice(0, -2)) +
@@ -527,7 +515,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             );
 
             //permit ref to be ready only when all symbology images are properly loaded
-            let isReady = ref.symbolItems.every(symbolItem => symbolItem.image.find('svg')[0] !== undefined);
+            let isReady = ref.symbolItems.every((symbolItem) => symbolItem.image.find('svg')[0] !== undefined);
 
             //only allow math for expanding/fanning out the stack when all images properly loaded
             //else causes negative margins and disappearing legend entries
@@ -554,7 +542,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     self.isExpanded = false;
                     self.symbologyWidth = 32;
                     scope.$digest();
-                }
+                },
             });
 
             // in pixels
@@ -580,7 +568,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 // move the node into position unhiding it (it's still invisible beacuse opacity is 0)
                 timeline.set(ref.descriptionItem, {
                     display: 'block',
-                    top: totalHeight - 30
+                    top: totalHeight - 30,
                 });
 
                 // show and animate description node
@@ -590,7 +578,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     {
                         opacity: 1,
                         top: totalHeight,
-                        ease: RV_SWIFT_IN_OUT_EASE
+                        ease: RV_SWIFT_IN_OUT_EASE,
                     },
                     RV_DURATION / 3
                 );
@@ -602,7 +590,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             // future-proofing - in case we need different behaviours for other legend types
             const legendItemTLgenerator = {
                 images: imageLegendItem,
-                icons: iconLegendItem
+                icons: iconLegendItem,
             };
 
             // loop over ref.symbolItems, generate timeline for each one, increase total height
@@ -627,7 +615,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     RV_DURATION,
                     {
                         marginBottom: totalHeight - symbologyListTopOffset,
-                        ease: RV_SWIFT_IN_OUT_EASE
+                        ease: RV_SWIFT_IN_OUT_EASE,
                     },
                     0
                 );
@@ -639,7 +627,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 RV_DURATION - 0.1,
                 {
                     opacity: 1,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 0.1
             );
@@ -656,7 +644,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 },
                 onReverseComplete: () => {
                     ref.isFannedOut = false;
-                }
+                },
             });
 
             // do not
@@ -666,7 +654,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     RV_DURATION,
                     {
                         transform: 'scale(1.2, 1.2)',
-                        ease: RV_SWIFT_IN_OUT_EASE
+                        ease: RV_SWIFT_IN_OUT_EASE,
                     },
                     0
                 );
@@ -684,7 +672,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         {
                             x: `-=${displacement}px`,
                             y: `-=${displacement}px`,
-                            ease: RV_SWIFT_IN_OUT_EASE
+                            ease: RV_SWIFT_IN_OUT_EASE,
                         },
                         0
                     );
@@ -696,7 +684,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                         {
                             x: `+=${displacement}px`,
                             y: `+=${displacement}px`,
-                            ease: RV_SWIFT_IN_OUT_EASE
+                            ease: RV_SWIFT_IN_OUT_EASE,
                         },
                         0
                     );
@@ -753,7 +741,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     height: itemHeight + labelHeight,
                     left: 0,
                     autoAlpha: 1,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 RV_DURATION / 3
             );
@@ -764,7 +752,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 RV_DURATION,
                 {
                     top: totalHeight,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 0
             );
@@ -777,7 +765,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                     width: itemWidth,
                     height: itemHeight,
                     padding: 0, // removes padding from expanded wms legend images making them clearer; TODO: revisit when all symbology is svg items
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 RV_DURATION / 3
             );
@@ -787,7 +775,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 symbolItem.label,
                 {
                     display: 'block',
-                    width: 'auto'
+                    width: 'auto',
                 },
                 0
             );
@@ -798,7 +786,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 RV_DURATION / 3,
                 {
                     opacity: 1,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 (RV_DURATION / 3) * 2
             );
@@ -827,7 +815,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 {
                     width: ref.containerWidth,
                     left: 0,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 RV_DURATION / 3
             );
@@ -838,7 +826,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 RV_DURATION,
                 {
                     top: totalHeight,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 0
             );
@@ -850,7 +838,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 RV_DURATION / 3,
                 {
                     autoAlpha: 1,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 0
             );
@@ -862,7 +850,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 {
                     width: itemSize,
                     height: itemSize,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 RV_DURATION / 3
             );
@@ -871,7 +859,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
             timeline.set(
                 symbolItem.label,
                 {
-                    display: 'block'
+                    display: 'block',
                 },
                 RV_DURATION / 3
             );
@@ -882,7 +870,7 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
                 (RV_DURATION / 3) * 2,
                 {
                     opacity: 1,
-                    ease: RV_SWIFT_IN_OUT_EASE
+                    ease: RV_SWIFT_IN_OUT_EASE,
                 },
                 RV_DURATION / 3
             );
@@ -945,7 +933,7 @@ function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
             // resolve proxy promise and store the proxy object itself
             if (proxy) {
                 $q.resolve(proxy)
-                    .then(proxy => (this._proxy = proxy))
+                    .then((proxy) => (this._proxy = proxy))
                     .catch(() => {}); // ignore proxyPromise error; if that happens, symbology will not be shown anyway
             }
 
@@ -956,7 +944,7 @@ function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
 
             const renderStyleSwitch = {
                 [ConfigObject.legend.Entry.ICONS]: gapiService.gapi.symbology.listToIconSymbology,
-                [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology
+                [ConfigObject.legend.Entry.IMAGES]: gapiService.gapi.symbology.listToImageSymbology,
             };
 
             // is the provided symbols is not an array, set to null
@@ -973,8 +961,8 @@ function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
                 this._coverIcon = renderStyleSwitch[ConfigObject.legend.Entry.ICONS]([
                     {
                         text: '',
-                        image: coverIcon
-                    }
+                        image: coverIcon,
+                    },
                 ])[0];
             }
 

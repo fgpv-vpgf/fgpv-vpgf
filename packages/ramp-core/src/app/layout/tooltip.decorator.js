@@ -11,17 +11,14 @@ const TOOLTIP_TOUCH_DELAY = 750;
  * The `mdTooltipDirective` decorates the vanilla mdTooltip.
  * Modifies display logic if touch mode is on.
  */
-angular
-    .module('material.components.tooltip')
-    .decorator('mdTooltipDirective', mdTooltipDirective);
+angular.module('material.components.tooltip').decorator('mdTooltipDirective', mdTooltipDirective);
 
 function mdTooltipDirective($delegate, $rootElement, $timeout) {
-
     const mdTooltipDirective = $delegate[0]; // get the vanilla directive
     const originalCompile = mdTooltipDirective.compile; // store reference to its compile function
     mdTooltipDirective.compile = decorateCompile(originalCompile); // decorate compile function
 
-    return ([mdTooltipDirective]);
+    return [mdTooltipDirective];
 
     /**
      * Decorates the original tooltip compile functions.
@@ -47,8 +44,8 @@ function mdTooltipDirective($delegate, $rootElement, $timeout) {
                         } else {
                             el.removeClass('rv-hide');
                         }
-                    }).on('touchend touchcancel', () =>
-                        isTouch() ? $timeout.cancel(showTooltipTimeout) : undefined);
+                    })
+                    .on('touchend touchcancel', () => (isTouch() ? $timeout.cancel(showTooltipTimeout) : undefined));
 
                 /**
                  * Returns whether touch mode is on, and if it is, ensures the tooltip is hidden.

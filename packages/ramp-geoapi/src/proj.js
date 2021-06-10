@@ -92,10 +92,11 @@ function localProjectGeometryBuilder(esriBundle) {
  * @returns {Object} an extent as an unstructured object
  */
 function localProjectExtent(extent, sr) {
-
     // interpolates two points by splitting the line in half recursively
     function interpolate(p0, p1, steps) {
-        if (steps === 0) { return [p0, p1]; }
+        if (steps === 0) {
+            return [p0, p1];
+        }
 
         let mid = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
         if (steps === 1) {
@@ -108,17 +109,21 @@ function localProjectExtent(extent, sr) {
         }
     }
 
-    const points = [[extent.xmin, extent.ymin], [extent.xmax, extent.ymin],
-                    [extent.xmax, extent.ymax], [extent.xmin, extent.ymax],
-                    [extent.xmin, extent.ymin]];
+    const points = [
+        [extent.xmin, extent.ymin],
+        [extent.xmax, extent.ymin],
+        [extent.xmax, extent.ymax],
+        [extent.xmin, extent.ymax],
+        [extent.xmin, extent.ymin],
+    ];
     let interpolatedPoly = [];
     let srcProj;
 
     // interpolate each edge by splitting it in half 3 times (since lines are not guaranteed to project to lines we need to consider
     // max / min points in the middle of line segments)
     [0, 1, 2, 3]
-        .map(i => interpolate(points[i], points[i + 1], 3).slice(1))
-        .forEach(seg => interpolatedPoly = interpolatedPoly.concat(seg));
+        .map((i) => interpolate(points[i], points[i + 1], 3).slice(1))
+        .forEach((seg) => (interpolatedPoly = interpolatedPoly.concat(seg)));
 
     // find the source extent (either from wkid or wkt)
     srcProj = normalizeProj(extent.spatialReference);
@@ -130,10 +135,10 @@ function localProjectExtent(extent, sr) {
         throw new Error('Source projection WKID not recognized by proj4 library');
     }
     const projConvert = proj4(srcProj, destProj);
-    const transformed = interpolatedPoly.map(x => projConvert.forward(x));
+    const transformed = interpolatedPoly.map((x) => projConvert.forward(x));
 
-    const xvals = transformed.map(x => x[0]);
-    const yvals = transformed.map(x => x[1]);
+    const xvals = transformed.map((x) => x[0]);
+    const yvals = transformed.map((x) => x[1]);
 
     const x0 = Math.min.apply(null, xvals);
     const x1 = Math.max.apply(null, xvals);
@@ -164,10 +169,10 @@ function checkProj(spatialReference, epsgLookup) {
     const res = {
         foundProj: false,
         message: 'Source projection OK',
-        lookupPromise: Promise.resolve(true)
+        lookupPromise: Promise.resolve(true),
     };
 
-    const addCode = idnum => {
+    const addCode = (idnum) => {
         return `EPSG:${idnum}`;
     };
 
@@ -178,7 +183,6 @@ function checkProj(spatialReference, epsgLookup) {
         if (spatialReference.latestWkid) {
             latestProj = addCode(spatialReference.latestWkid);
         }
-
     } else if (spatialReference.wkt) {
         // esri SR with wkt. it is good to go.
         res.foundProj = true;
@@ -222,8 +226,8 @@ function checkProj(spatialReference, epsgLookup) {
                     res.message = 'Attempting to lookup WKID';
 
                     // function to execute a lookup & store result if success
-                    const doLookup = epsgStr => {
-                        return epsgLookup(epsgStr).then(def => {
+                    const doLookup = (epsgStr) => {
+                        return epsgLookup(epsgStr).then((def) => {
                             if (def === null) {
                                 return false;
                             }
@@ -236,7 +240,7 @@ function checkProj(spatialReference, epsgLookup) {
                     // otherwise make a dummy promise that will just cause the standard wkid promise to run.
                     const latestLookup = latestProj ? doLookup(latestProj) : Promise.resolve(false);
 
-                    res.lookupPromise = latestLookup.then(latestSuccess => {
+                    res.lookupPromise = latestLookup.then((latestSuccess) => {
                         if (latestSuccess) {
                             // found the latestWkid code
                             applyLatest(latestProj, srcProj);
@@ -246,7 +250,6 @@ function checkProj(spatialReference, epsgLookup) {
                             return doLookup(srcProj);
                         }
                     });
-
                 } else {
                     // no lookup function. no projections for you.
                     res.lookupPromise = Promise.resolve(false);
@@ -278,24 +281,26 @@ function esriServiceBuilder(esriBundle) {
      * @returns {Promise} promise to return reprojected geometries
      */
     return (url, geometries, sr) => {
-        return new Promise(
-            (resolve, reject) => {
-                const params = new esriBundle.ProjectParameters();
+        return new Promise((resolve, reject) => {
+            const params = new esriBundle.ProjectParameters();
 
-                // connect to esri server
-                const gsvc = new esriBundle.GeometryService(url);
+            // connect to esri server
+            const gsvc = new esriBundle.GeometryService(url);
 
-                params.geometries = geometries;
-                params.outSR = sr;
+            params.geometries = geometries;
+            params.outSR = sr;
 
-                // call project function from esri server to do conversion
-                gsvc.project(params,
-                    projectedExtents => {
-                        resolve(projectedExtents);
-                    }, error => {
-                        reject(error);
-                    });
-            });
+            // call project function from esri server to do conversion
+            gsvc.project(
+                params,
+                (projectedExtents) => {
+                    resolve(projectedExtents);
+                },
+                (error) => {
+                    reject(error);
+                }
+            );
+        });
     };
 }
 
@@ -309,10 +314,10 @@ function esriServiceBuilder(esriBundle) {
  * @return {Boolean} true if the two spatial references are equivalent.  False otherwise.
  */
 function isSpatialRefEqual(sr1, sr2) {
-    if ((sr1.wkid) && (sr2.wkid)) {
+    if (sr1.wkid && sr2.wkid) {
         // both SRs have wkids
         return sr1.wkid === sr2.wkid;
-    } else if ((sr1.wkt) && (sr2.wkt)) {
+    } else if (sr1.wkt && sr2.wkt) {
         // both SRs have wkt's
         return sr1.wkt === sr2.wkt;
     } else {
@@ -325,17 +330,28 @@ module.exports = function (esriBundle) {
     // TODO: Move Point and SpatialReference to its own (geometry) module
     // TODO some of the hardcoded 102### projections might be removed after https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2234
     // TODO consider moving this elsewhere.  state is bad, but these are common, and we have no service for esri defs
-    proj4.defs('EPSG:3978', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
-        '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-    proj4.defs('EPSG:3979', '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 ' +
-        '+x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-    proj4.defs('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 ' +
-        '+datum=WGS84 +units=m +no_defs');
+    proj4.defs(
+        'EPSG:3978',
+        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 ' +
+            '+lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
+    proj4.defs(
+        'EPSG:3979',
+        '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 ' +
+            '+x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
+    proj4.defs('EPSG:54004', '+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 ' + '+datum=WGS84 +units=m +no_defs');
     proj4.defs('EPSG:102100', proj4.defs('EPSG:3857'));
-    proj4.defs('EPSG:102187', '+proj=tmerc +lat_0=0 +lon_0=-114 +k=0.9999 +x_0=0 +y_0=0 ' +
-        '+ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
-    proj4.defs('EPSG:102190', '+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 ' +
-        '+x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
+    proj4.defs(
+        'EPSG:102187',
+        '+proj=tmerc +lat_0=0 +lon_0=-114 +k=0.9999 +x_0=0 +y_0=0 ' +
+            '+ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
+    proj4.defs(
+        'EPSG:102190',
+        '+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 ' +
+            '+x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
+    );
 
     // add UTM projections
     let utm = 1;
@@ -360,6 +376,6 @@ module.exports = function (esriBundle) {
         normalizeProj,
         Point: esriBundle.Point,
         projectEsriExtent: projectEsriExtentBuilder(esriBundle),
-        SpatialReference: esriBundle.SpatialReference
+        SpatialReference: esriBundle.SpatialReference,
     };
 };

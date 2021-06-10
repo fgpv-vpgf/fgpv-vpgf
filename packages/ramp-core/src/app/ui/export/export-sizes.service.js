@@ -10,9 +10,7 @@
  * - default size option depends on the actual size of the viewer container and is generally the same size as the map object; this option should be updated every time the browser was resized.
  * - custom size option is used for user-defined sizes; this option should not be modified directly (bound to input fields), instead, the temporary size option should be modified by the user; this service provides several helper function to update he custom size option with the one from the temporary one, check if the custom size is equal to the temporary one, and to reset the temporary size to the last custom size used.
  */
-angular
-    .module('app.ui')
-    .factory('exportSizesService', exportSizesService);
+angular.module('app.ui').factory('exportSizesService', exportSizesService);
 
 function exportSizesService(ExportSize, referenceService) {
     const customOption = new ExportSize('export.size.custom', 1); // user types in the exact size
@@ -23,7 +21,7 @@ function exportSizesService(ExportSize, referenceService) {
         defaultOption,
         new ExportSize('export.size.small', 1, 720),
         new ExportSize('export.size.medium', 1, 1080),
-        customOption
+        customOption,
     ];
 
     const service = {
@@ -35,11 +33,11 @@ function exportSizesService(ExportSize, referenceService) {
 
         height: {
             min: 320,
-            max: 2160
+            max: 2160,
         },
         width: {
             min: 1,
-            max: 1
+            max: 1,
         },
 
         update,
@@ -54,7 +52,7 @@ function exportSizesService(ExportSize, referenceService) {
         // and then toggle between another size and back to custom, since the size matches, the generate button will be disabled
         // see: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2619
         // need to have a flag identifying whether we toggled out of custom size
-        customToggled: false
+        customToggled: false,
     };
 
     return service;
@@ -71,8 +69,7 @@ function exportSizesService(ExportSize, referenceService) {
         const [mapWidth, mapHeight] = [shellNode.width(), shellNode.height()];
 
         service.exportSizeRatio = mapWidth / mapHeight;
-        service.options.forEach(option =>
-            (option.widthHeightRatio = service.exportSizeRatio));
+        service.options.forEach((option) => (option.widthHeightRatio = service.exportSizeRatio));
 
         // temp option is not in the exposed options list, so need to update it manually
         service.tempOption.widthHeightRatio = service.exportSizeRatio;
@@ -88,7 +85,7 @@ function exportSizesService(ExportSize, referenceService) {
 
         service.width = {
             min: Math.round(service.height.min * service.exportSizeRatio),
-            max: Math.round(service.height.max * service.exportSizeRatio)
+            max: Math.round(service.height.max * service.exportSizeRatio),
         };
 
         return service;
@@ -117,8 +114,7 @@ function exportSizesService(ExportSize, referenceService) {
      * @return {Boolean} true if the custom and temporary size options have the same dimensions
      */
     function isCustomOptionUpdated() {
-        return service.customOption.height === service.tempOption.height &&
-            service.customOption.height !== null;
+        return service.customOption.height === service.tempOption.height && service.customOption.height !== null;
     }
 
     /**

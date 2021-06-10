@@ -14,8 +14,13 @@ describe('rvDetails', () => {
 
     beforeEach(() => {
         // mock the module with bardjs; include templates modules
-        bard.appModule('app.ui.details', 'app.templates', 'app.common.router', 'pascalprecht.translate',
-            mockGeoService);
+        bard.appModule(
+            'app.ui.details',
+            'app.templates',
+            'app.common.router',
+            'pascalprecht.translate',
+            mockGeoService
+        );
 
         // inject angular services
         bard.inject('$compile', '$rootScope');
@@ -23,9 +28,7 @@ describe('rvDetails', () => {
         // crete new scope
         scope = $rootScope.$new();
 
-        directiveElement = angular.element(
-            '<rv-details></rv-details>'
-        );
+        directiveElement = angular.element('<rv-details></rv-details>');
 
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
@@ -40,8 +43,7 @@ describe('rvDetails', () => {
         // TODO: test directive link functionality
         xit('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
         });
     });
 });

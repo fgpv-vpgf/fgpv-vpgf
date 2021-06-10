@@ -14,17 +14,15 @@
  * This can be used to include all sort of things: strings, jQuery nodes, (potentially) DOM nodes, etc.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvSvg', rvSvg);
+angular.module('app.ui').directive('rvSvg', rvSvg);
 
 function rvSvg(graphicsService) {
     const directive = {
         restrict: 'E',
         scope: {
-            src: '='
+            src: '=',
         },
-        link: link
+        link: link,
     };
 
     return directive;
@@ -38,7 +36,7 @@ function rvSvg(graphicsService) {
             attr.once = attr.once.toLowerCase() !== 'false'; // any other value apart from "false" will be considered as true
         }
 
-        const stopWatch = scope.$watch('src', newValue => {
+        const stopWatch = scope.$watch('src', (newValue) => {
             if (newValue) {
                 // check if this is a svg node and if it contain an image. If so, we need to modify the href element (for Safari)
                 const node = angular.element(scope.src);

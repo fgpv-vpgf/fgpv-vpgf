@@ -14,12 +14,10 @@ const iconTemplateUrls = {
     maps: require('../../content/svgCache/maps.svg'),
     navigation: require('../../content/svgCache/navigation.svg'),
     social: require('../../content/svgCache/social.svg'),
-    toggle: require('../../content/svgCache/toggle.svg')
+    toggle: require('../../content/svgCache/toggle.svg'),
 };
 
-angular
-    .module('app.core')
-    .config(configBlock);
+angular.module('app.core').config(configBlock);
 
 /**
  * @memberof app.core
@@ -31,7 +29,6 @@ angular
  * - configure translation provider by prepping static loader (and optionally setting preferred language if we know what it is),
  */
 function configBlock($translateProvider, $mdIconProvider, $parseProvider, $mdThemingProvider, $mdDateLocaleProvider) {
-
     configureParser();
     disableTheming();
     configureTranslations();
@@ -51,29 +48,33 @@ function configBlock($translateProvider, $mdIconProvider, $parseProvider, $mdThe
         // PR that fixes it https://github.com/angular/angular.js/commit/bd0915c4007dcc5b0cae6968598731117c510ffa
         // eslint-disable-next-line complexity
         function _isValidIdentifier(ch) {
-            return ('a' <= ch && ch <= 'z' ||
-                    'A' <= ch && ch <= 'Z' ||
-                    '_' === ch || ch === '$' ||
-                    'à' <= ch && ch <= 'ÿ' ||
-                    'À' <= ch && ch <= 'Ÿ' ||
-                    'Ç' === ch || ch === 'ç' ||
-                    '0' <= ch && ch <= '9'  ||
-                    ch === '’');
+            return (
+                ('a' <= ch && ch <= 'z') ||
+                ('A' <= ch && ch <= 'Z') ||
+                '_' === ch ||
+                ch === '$' ||
+                ('à' <= ch && ch <= 'ÿ') ||
+                ('À' <= ch && ch <= 'Ÿ') ||
+                'Ç' === ch ||
+                ch === 'ç' ||
+                ('0' <= ch && ch <= '9') ||
+                ch === '’'
+            );
         }
 
         // use moment timezone to parse dates in all formats
-        $mdDateLocaleProvider.parseDate = dateString => {
+        $mdDateLocaleProvider.parseDate = (dateString) => {
             const userTimeZone = moment.tz.guess();
             const time = moment.tz(dateString, userTimeZone);
             if (time.isValid()) {
                 const date = new Date(time);
                 // JS parses inconsistently for local time vs UTC
                 // apply time offset to ensure date entered is not given in UTC (a day behind)
-                return new Date(date.getTime() + Math.abs(date.getTimezoneOffset()*60000));
+                return new Date(date.getTime() + Math.abs(date.getTimezoneOffset() * 60000));
             }
 
             return new Date(NaN);
-        }
+        };
     }
 
     /**

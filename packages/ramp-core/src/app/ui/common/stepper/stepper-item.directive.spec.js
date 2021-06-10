@@ -6,7 +6,7 @@ describe('rvStepperItem', () => {
     let directiveElement;
 
     function mockTranslateFilterService($provide) {
-        $provide.value('translateFilter', value => value);
+        $provide.value('translateFilter', (value) => value);
     }
 
     beforeEach(() => {
@@ -36,8 +36,7 @@ describe('rvStepperItem', () => {
     describe('rvStepperItem', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
         });
     });
 });

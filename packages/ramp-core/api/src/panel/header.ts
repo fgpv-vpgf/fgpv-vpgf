@@ -20,7 +20,7 @@ export default class Header extends Element {
      * @param element the element to append to the header
      */
     append(element: Element | string | HTMLElement | JQuery<HTMLElement>) {
-        this._controls.append((<Element>element).elem ? (<any>element).elem : $((<any>element)));
+        this._controls.append((<Element>element).elem ? (<any>element).elem : $(<any>element));
     }
 
     /**
@@ -29,7 +29,7 @@ export default class Header extends Element {
      * @param element the element to prepend to the header
      */
     prepend(element: Element) {
-        this._controls.prepend((<Element>element).elem ? (<any>element).elem : $((<any>element)));
+        this._controls.prepend((<Element>element).elem ? (<any>element).elem : $(<any>element));
     }
 
     /**
@@ -51,16 +51,17 @@ export default class Header extends Element {
         // go through all the special characters that get matched
         while (escMatch) {
             // replace char at the escMatch.index with an \ before it to escape
-            newTitle = newTitle.substr(0, escMatch.index + counter) + `\\${escMatch[0]}` + newTitle.substr(escMatch.index + counter + 1);
+            newTitle =
+                newTitle.substr(0, escMatch.index + counter) +
+                `\\${escMatch[0]}` +
+                newTitle.substr(escMatch.index + counter + 1);
             escMatch = escRegex.exec(title);
             counter++;
         }
 
         const titleElem = this._header.find('header > h3').first();
         const titleText = `{{ '${newTitle}' | translate }}`;
-        titleElem
-            .css('display', '')
-            .text(titleText);
+        titleElem.css('display', '').text(titleText);
 
         this._elements.title = titleElem;
 
@@ -77,9 +78,7 @@ export default class Header extends Element {
     set subtitle(subtitle: string) {
         const subtitleElem = this._header.find('header > p').first();
         const subtitleText = /{{/.test(subtitle) ? subtitle : `{{ '${subtitle}' | translate }}`;
-        subtitleElem
-            .css('display', '')
-            .text(subtitleText);
+        subtitleElem.css('display', '').text(subtitleText);
 
         this._elements.subtitle = subtitle;
 
@@ -88,7 +87,6 @@ export default class Header extends Element {
         } catch {
             // if digest fails do nothing since the template is already compiled
         }
-
     }
 
     /**
@@ -129,7 +127,7 @@ export default class Header extends Element {
     private makeHeader() {
         this._header = $(document.createElement('div'));
         this._controls = $('<span class="rv-header-controls"></span>');
-        this._controls.css("flex-shrink", 0);
+        this._controls.css('flex-shrink', 0);
         this._elements.controls = this._controls;
         this._header.addClass('rv-header');
         this._header.html(`

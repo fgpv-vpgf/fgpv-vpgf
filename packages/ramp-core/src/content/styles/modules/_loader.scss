@@ -1,5 +1,6 @@
 @mixin loader {
-    .fileLoader, .serviceLoader {
+    .fileLoader,
+    .serviceLoader {
         top: 49px !important;
         left: 0px;
         width: 400px;
@@ -57,12 +58,12 @@
                 overflow: hidden;
                 margin-top: 0;
                 padding-top: 5px;
-                color: rgb(221,44,0); /*color needs to be tied to theme*/
+                color: rgb(221, 44, 0); /*color needs to be tied to theme*/
             }
 
             .rv-styles-list {
                 .style-title {
-                    color: darken(#00BCD4, 20%);
+                    color: darken(#00bcd4, 20%);
                     text-align: left;
                     padding: 0;
                     margin: 0;
@@ -116,7 +117,7 @@
             }
             // local file select button
             &-select-button {
-                padding: 0 rem(2.4) 0 rem(2.0);
+                padding: 0 rem(2.4) 0 rem(2);
 
                 md-icon {
                     margin-right: rem(0.6);

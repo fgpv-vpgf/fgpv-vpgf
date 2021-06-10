@@ -36,7 +36,7 @@
             overflow: hidden;
             box-shadow: $icon-shadow;
 
-            >.md-icon-button {
+            > .md-icon-button {
                 opacity: 0;
                 transition: opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
@@ -125,12 +125,12 @@
 
         // hide trigger button when the cover icon is set
         .rv-symbol.rv-cover-icon {
-            ~.rv-symbol-trigger {
+            ~ .rv-symbol-trigger {
                 opacity: 0 !important;
             }
 
             // hide all other symbols except for the cover symbol when stacked
-            ~.rv-symbol {
+            ~ .rv-symbol {
                 visibility: hidden;
             }
         }
@@ -149,7 +149,7 @@
                 overflow: visible;
                 box-shadow: none;
 
-                >.rv-symbol-graphic {
+                > .rv-symbol-graphic {
                     box-shadow: $icon-shadow;
                 }
 

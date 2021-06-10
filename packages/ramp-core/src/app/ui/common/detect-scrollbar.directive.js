@@ -23,14 +23,12 @@ const SCROLLBAR_WIDTH = (() => {
  * The `rvDetectScrollbar` directive fires a `rv-detect-scrollbar` event when a scrollbar is detected on a node.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetectScrollbar', rvDetectScrollbar);
+angular.module('app.ui').directive('rvDetectScrollbar', rvDetectScrollbar);
 
 function rvDetectScrollbar($timeout) {
     const directive = {
         restrict: 'A',
-        link: link
+        link: link,
     };
 
     return directive;
@@ -44,11 +42,14 @@ function rvDetectScrollbar($timeout) {
         // TODO: add check for overflow property and if it's auto, or scroll set the watch
         // if (window.getComputedStyle(domNode).overflowY)
 
-        scope.$watch(() => domNode.scrollHeight > domNode.clientHeight, (newValue, oldValue) => {
-            $timeout.cancel(handle);
-            handle = $timeout(() => {
-                scope.$emit('rv-detect-scrollbar', newValue, oldValue, SCROLLBAR_WIDTH);
-            }, 20); // magic binding sometimes doubles the height of the node; add a small timeout to avoid false detections
-        });
+        scope.$watch(
+            () => domNode.scrollHeight > domNode.clientHeight,
+            (newValue, oldValue) => {
+                $timeout.cancel(handle);
+                handle = $timeout(() => {
+                    scope.$emit('rv-detect-scrollbar', newValue, oldValue, SCROLLBAR_WIDTH);
+                }, 20); // magic binding sometimes doubles the height of the node; add a small timeout to avoid false detections
+            }
+        );
     }
 }

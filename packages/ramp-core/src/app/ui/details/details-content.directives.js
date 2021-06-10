@@ -11,9 +11,7 @@ const templateUrl = require('./details-content.html');
  * DOM insertion.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetailsContent', rvDetailsContent);
+angular.module('app.ui').directive('rvDetailsContent', rvDetailsContent);
 
 /**
  * `rvDetailsContent` directive body.
@@ -28,11 +26,11 @@ function rvDetailsContent() {
         scope: {
             item: '=rvItem',
             mapPoint: '=rvMapPoint',
-            isHidden: '=?rvIsHidden'
+            isHidden: '=?rvIsHidden',
         },
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

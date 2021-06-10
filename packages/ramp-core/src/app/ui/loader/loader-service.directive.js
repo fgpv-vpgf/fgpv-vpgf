@@ -18,13 +18,24 @@ function rvLoaderService() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 }
 
-function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyNames, layerSource, legendService, appInfo) {
+function Controller(
+    $q,
+    $timeout,
+    stateManager,
+    Geo,
+    Stepper,
+    $rootElement,
+    keyNames,
+    layerSource,
+    legendService,
+    appInfo
+) {
     'ngInject';
     const self = this;
 
@@ -39,14 +50,14 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
         Geo.Service.Types.ImageService,
         Geo.Service.Types.WMS,
         Geo.Service.Types.WFS,
-        Geo.Service.Types.RasterLayer
+        Geo.Service.Types.RasterLayer,
     ];
 
     self.common = {
         toggleLayers,
         isSomeLayersSelected,
         isAllLayersSelected,
-        onDynamicLayerSection
+        onDynamicLayerSection,
     };
 
     // TODO: turn into a proper class
@@ -61,7 +72,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
                 connectReset();
                 onCancel(self.connect.step);
             },
-            onKeypress: event => {
+            onKeypress: (event) => {
                 const connect = self.connect;
                 // prevent enter presses from triggering service handshake if the input value is not validated
                 if (event.keyCode === keyNames.ENTER) {
@@ -75,11 +86,11 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
                     }
                 }
             },
-            reset: connectReset
+            reset: connectReset,
         },
         form: null,
         serviceUrl: null,
-        serviceUrlResetValidation
+        serviceUrlResetValidation,
     };
 
     self.select = {
@@ -90,11 +101,11 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
             isCompleted: false,
             onContinue: selectOnContinue,
             onCancel: () => onCancel(self.select.step),
-            reset: selectReset
+            reset: selectReset,
         },
         serviceTypeResetValidation,
         form: null,
-        serviceType: null
+        serviceType: null,
     };
 
     self.configure = {
@@ -105,24 +116,20 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
             isCompleted: false,
             onContinue: configureOnContinue,
             onCancel: () => onCancel(self.configure.step),
-            reset: configureReset
+            reset: configureReset,
         },
         form: null,
         defaultOptions: {},
         colourPickerSettings: {
             theme: 'bootstrap',
-            position: 'top right'
-        }
+            position: 'top right',
+        },
     };
 
     self.layerBlueprint = null;
 
     const stepper = new Stepper();
-    stepper
-        .addSteps(self.connect.step)
-        .addSteps(self.select.step)
-        .addSteps(self.configure.step)
-        .start(); // activate stepper on the first step
+    stepper.addSteps(self.connect.step).addSteps(self.select.step).addSteps(self.configure.step).start(); // activate stepper on the first step
 
     /***/
 
@@ -174,7 +181,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
                 self.layerBlueprintOptions = layerBlueprintOptions;
                 self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
             })
-            .catch(error => {
+            .catch((error) => {
                 toggleErrorMessage(connect.form, 'serviceUrl', 'broken', false);
                 return $q.reject(error);
             });
@@ -241,7 +248,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
             return;
         }
 
-        validationPromise.catch(error => {
+        validationPromise.catch((error) => {
             console.error('loaderServiceDirective', 'service type is wrong', error);
             toggleErrorMessage(self.select.form, 'serviceType', 'wrong', false);
         });
@@ -286,7 +293,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
                 legendService.importLayerBlueprint(self.layerBlueprint);
                 closeLoaderService();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.warn('loaderServiceDirective', 'service is invalid ', error);
                 self.configure.form.$setValidity('invalid', false);
             });
@@ -374,7 +381,7 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
         return (
             self.layerBlueprint &&
             self.layerBlueprint.config.layerType === Geo.Layer.Types.OGC_WMS &&
-            self.layerBlueprint.config.layerEntries.some(entry => entry.allStyles.length > 1)
+            self.layerBlueprint.config.layerEntries.some((entry) => entry.allStyles.length > 1)
         );
     }
 
@@ -386,14 +393,11 @@ function Controller($q, $timeout, stateManager, Geo, Stepper, $rootElement, keyN
         // reset the loader after closing the panel
         self.layerBlueprint = null;
         stepper.reset().start();
-        appInfo.mapi.panels.serviceLoader.close({'destroy': false});
+        appInfo.mapi.panels.serviceLoader.close({ destroy: false });
 
         // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
         $timeout(() => {
-            $rootElement
-                .find('.rv-loader-add')
-                .first()
-                .rvFocus();
+            $rootElement.find('.rv-loader-add').first().rvFocus();
         }, 0);
     }
 }

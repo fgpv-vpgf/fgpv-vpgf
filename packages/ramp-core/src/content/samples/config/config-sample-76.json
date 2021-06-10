@@ -86,13 +86,13 @@
                 "name": "Homogenized mean temperature",
                 "nameField": "station_name",
                 "state": {
-                  "opacity": 1,
-                  "visibility": true
+                    "opacity": 1,
+                    "visibility": true
                 },
                 "xyInAttribs": true,
                 "colour": "#f04116",
                 "controls": ["data", "visibility", "opacity"]
-              }
+            }
         ],
         "extentSets": [
             {

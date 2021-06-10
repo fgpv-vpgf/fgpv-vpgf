@@ -14,7 +14,7 @@ class PlaceholderFC extends root.Root {
      * @param {Object} parent    the Record object the placeholder belongs to
      * @param {String} name      visible name for placeholder (shown in app)
      */
-    constructor (parent, name) {
+    constructor(parent, name) {
         super();
         this._parent = parent;
         this.name = name;
@@ -30,23 +30,31 @@ class PlaceholderFC extends root.Root {
      * @function getVisibility
      * @returns {Boolean}         the visibility of the FC
      */
-    getVisibility () {
+    getVisibility() {
         // TODO enhance to have some default value, assigned in constructor?
         // TODO can a user toggle placeholders? does state need to be updated?
         return true;
     }
 
     // TODO do we need to check if parent exists? Placeholder use-cases are not flushed out right now.
-    get state () { return this._parent._state; }
+    get state() {
+        return this._parent._state;
+    }
 
-    get layerType () {return this._layerType; }
-    set layerType (value) { this._layerType = value; }
+    get layerType() {
+        return this._layerType;
+    }
+    set layerType(value) {
+        this._layerType = value;
+    }
 
     // really this is the client layer type. how it is implemented in the map stack.
     // for FCs, it is essentially giving information about what type of Record
     // the FC is living in. Helps differentiate a feature-based FC living in a
     // feature Record (feature layer) vs a dynamic Record (dynamic layer)
-    get parentLayerType () { return this._parent.layerType; }
+    get parentLayerType() {
+        return this._parent.layerType;
+    }
 
     /**
      * Indicates if the feature class is not visible at the given scale,
@@ -56,15 +64,14 @@ class PlaceholderFC extends root.Root {
      * @param {Integer}  mapScale the scale to test against
      * @returns {Object} has boolean properties `offScale` and `zoomIn`
      */
-    isOffScale (mapScale) {
+    isOffScale(mapScale) {
         return {
             offScale: false,
-            zoomIn: false
+            zoomIn: false,
         };
     }
-
 }
 
 module.exports = () => ({
-    PlaceholderFC
+    PlaceholderFC,
 });

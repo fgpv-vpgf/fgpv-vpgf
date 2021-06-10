@@ -1,37 +1,38 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RAMP.mapAdded.subscribe(mapi => {
-
+    RAMP.mapAdded.subscribe((mapi) => {
         // make sure our legend gets populated properly before moving on with tests
         let legendPopulated = new Promise(function (resolve, reject) {
             const childrenLoaded = setInterval(() => {
-                if (mapi.ui.configLegend.children.length === 2 && mapi.ui.configLegend.children[0].children.length === 3) {
+                if (
+                    mapi.ui.configLegend.children.length === 2 &&
+                    mapi.ui.configLegend.children[0].children.length === 3
+                ) {
                     resolve('Legend sucessfully populated');
                 }
             }, 1000);
         });
 
-        legendPopulated.then(value => {
+        legendPopulated.then((value) => {
             let legendGroup = mapi.ui.configLegend.children[0];
             let legendItem = legendGroup.children[1];
             let legendInfo = mapi.ui.configLegend.children[1];
 
             // Item Tests:
-            $("#ItemToggleMeta").click(function () {
+            $('#ItemToggleMeta').click(function () {
                 if (legendItem._availableControls.includes('metadata')) {
                     legendItem.toggleMetadata();
                 }
             });
 
-            $("#ItemToggleSettings").click(function () {
+            $('#ItemToggleSettings').click(function () {
                 if (legendItem._availableControls.includes('settings')) {
                     legendItem.toggleSettings();
                 }
             });
 
-
-            $("#ItemToggleData").click(function () {
+            $('#ItemToggleData').click(function () {
                 if (legendItem._availableControls.includes('data')) {
                     console.log(legendItem.toggleDataTable);
                     legendItem.toggleDataTable();
@@ -39,42 +40,40 @@ $.getScript('../../../../rv-main.js', function () {
             });
 
             // Group Tests:
-            $("#GroupToggleMeta").click(function () {
+            $('#GroupToggleMeta').click(function () {
                 if (legendGroup._availableControls.includes('metadata')) {
                     legendGroup.toggleMetadata();
                 }
             });
 
-            $("#GroupToggleSettings").click(function () {
+            $('#GroupToggleSettings').click(function () {
                 if (legendGroup._availableControls.includes('settings')) {
                     legendGroup.toggleSettings();
                 }
             });
 
-
-            $("#GroupToggleData").click(function () {
+            $('#GroupToggleData').click(function () {
                 if (legendGroup._availableControls.includes('data')) {
                     legendGroup.toggleDataTable();
                 }
             });
 
-
             // InfoSection Tests:
-            $("#InfoToggleMeta").click(function () {
+            $('#InfoToggleMeta').click(function () {
                 if (legendInfo._availableControls && legendInfo._availableControls.includes('metadata')) {
                     $('#InfoToggleMeta').css('background-color', 'red');
                     console.log('Metadata is an available control for an InfoSection.');
                 }
             });
 
-            $("#InfoToggleSettings").click(function () {
+            $('#InfoToggleSettings').click(function () {
                 if (legendInfo._availableControls && legendInfo._availableControls.includes('settings')) {
                     $('#InfoToggleSettings').css('background-color', 'red');
                     console.log('Settings is an available control for an InfoSection.');
                 }
             });
 
-            $("#InfoToggleData").click(function () {
+            $('#InfoToggleData').click(function () {
                 if (legendInfo._availableControls && legendInfo._availableControls.includes('data')) {
                     $('#InfoToggleData').css('background-color', 'red');
                     console.log('Datatable is an available control for an InfoSection.');

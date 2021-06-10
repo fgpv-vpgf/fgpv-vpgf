@@ -8,9 +8,7 @@ const templateUrl = require('./menulink.html');
  *
  * The `rvMenuLink` directive is a wrapper around a button to provide some extra functionality (highlight currently selected item for example).
  */
-angular
-    .module('app.ui')
-    .directive('rvMenuLink', rvMenuLink);
+angular.module('app.ui').directive('rvMenuLink', rvMenuLink);
 
 /**
  * `rvMenuLink` directive body.
@@ -21,11 +19,11 @@ function rvMenuLink() {
         restrict: 'E',
         templateUrl,
         scope: {
-            control: '='
+            control: '=',
         },
         controller: angular.noop,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

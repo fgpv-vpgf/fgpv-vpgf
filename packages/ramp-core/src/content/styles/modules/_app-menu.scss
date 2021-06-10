@@ -70,7 +70,7 @@
 
             .rv-sidemenu-header {
                 border-bottom: 1px solid $primary-color-light;
-                background: linear-gradient(#CFD8DC, #FFFFFF);
+                background: linear-gradient(#cfd8dc, #ffffff);
             }
 
             .app-logo {
@@ -137,10 +137,10 @@
             }
 
             .minimize-button {
-                position:absolute;
+                position: absolute;
                 margin: 10px;
-                top:0;
-                right:0;
+                top: 0;
+                right: 0;
             }
 
             .app-logotype {
@@ -213,10 +213,10 @@
             @extend %menu-item;
 
             text-transform: capitalize;
-
         }
 
-        button, .rv-menulink-header {
+        button,
+        .rv-menulink-header {
             text-overflow: ellipsis;
 
             md-icon:first-child {

@@ -1,16 +1,17 @@
 <!--<md-menu md-position-mode="target target">-->
 
-    <!-- TODO: add translate filters -->
+<!-- TODO: add translate filters -->
 
-    <md-button
-        aria-label="{{ import.title | translate }}"
-        class="md-icon-button primary rv-loader-add"
-        ng-click="self.openFileLoader()">
-        <md-tooltip>{{ 'import.title' | translate }}</md-tooltip>
-        <md-icon md-svg-src="content:add"></md-icon>
-    </md-button>
+<md-button
+    aria-label="{{ import.title | translate }}"
+    class="md-icon-button primary rv-loader-add"
+    ng-click="self.openFileLoader()"
+>
+    <md-tooltip>{{ 'import.title' | translate }}</md-tooltip>
+    <md-icon md-svg-src="content:add"></md-icon>
+</md-button>
 
-    <!--
+<!--
     <md-menu-content rv-trap-focus="{{ ::self.appID }}" class="rv-menu rv-dense" width="4">
         <md-menu-item>
             <md-button
@@ -29,7 +30,7 @@
             </md-button>
         </md-menu-item>
     -->
-        <!-- data catalogue import functionality will be moved to the host page
+<!-- data catalogue import functionality will be moved to the host page
         <md-menu-divider></md-menu-divider>
 
         <md-menu-item >

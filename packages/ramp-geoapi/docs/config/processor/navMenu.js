@@ -6,7 +6,6 @@ module.exports = function navMenuProcessor() {
         $runAfter: ['apiRouteProcessor'],
         $runBefore: ['renderDocsProcessor'],
         $process: function (docs) {
-
             // generate navMenu for index.html
             var navMenu = [];
 
@@ -45,15 +44,14 @@ module.exports = function navMenuProcessor() {
                     navMenu.push({
                         name: moduleDoc.name,
                         url: '/' + moduleDoc.path,
-                        submenus: subMenu
+                        submenus: subMenu,
                     });
                 } else {
                     navMenu.push({
                         name: moduleDoc.name,
-                        url: '/' + moduleDoc.path
+                        url: '/' + moduleDoc.path,
                     });
                 }
-
             });
 
             // create new doc called index,  set output location to  ../
@@ -63,7 +61,7 @@ module.exports = function navMenuProcessor() {
                 gcMenu: navMenu,
                 name: 'This is a name field',
                 title: 'This is a title field',
-                outputPath: '../index.html'
+                outputPath: '../index.html',
             });
 
             docs.push({
@@ -71,7 +69,7 @@ module.exports = function navMenuProcessor() {
                 docType: 'constant',
                 template: 'constant-data.template.js',
                 outputPath: '../js/nav-data.js',
-                items: navMenu
+                items: navMenu,
             });
 
             // var apiDocs = _(moduleDocs)
@@ -88,6 +86,6 @@ module.exports = function navMenuProcessor() {
             // .value();
 
             return docs;
-        }
+        },
     };
 };

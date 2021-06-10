@@ -1,8 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
-const glob = require("glob");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const glob = require('glob');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TranslationPlugin = require('./scripts/webpack/translations_plugin.js');
 const SchemaValidatorPlugin = require('./scripts/webpack/schema_validation_plugin.js');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -14,12 +14,11 @@ const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const babelPresets = {
     presets: ['env', 'stage-2'],
-    cacheDirectory: true
-}
+    cacheDirectory: true,
+};
 
 // eslint-disable-next-line complexity
 module.exports = function (env) {
-
     // No need in monorepo setup
     /* const geoPath = env.geoLocal ?
         env.geoLocal.length > 0 ?
@@ -35,12 +34,12 @@ module.exports = function (env) {
             'ramp-plugin-areas-of-interest': path.resolve(__dirname, 'node_modules/ramp-plugin-areas-of-interest'),
             'ramp-plugin-back-to-cart': path.resolve(__dirname, 'node_modules/ramp-plugin-back-to-cart'),
             'ramp-plugin-custom-export': path.resolve(__dirname, 'node_modules/ramp-plugin-custom-export'),
-            'ramp-plugin-coordinate-info': path.resolve(__dirname, 'node_modules/ramp-plugin-coordinate-info')
+            'ramp-plugin-coordinate-info': path.resolve(__dirname, 'node_modules/ramp-plugin-coordinate-info'),
         },
 
         output: {
             path: path.resolve(__dirname, 'build'),
-            filename: '[name].js'
+            filename: '[name].js',
         },
 
         module: {
@@ -48,71 +47,95 @@ module.exports = function (env) {
                 {
                     test: /\.(woff(2)?)(\?v=\d+\.\d+\.\d+)?$/,
                     include: [path.resolve(__dirname, 'src/content/fonts')],
-                    use: [{
-                        loader: 'file-loader',
-                        options: {
-                            name: '[name].[ext]',
-                            mimetype: 'application/font-woff',
-                            publicPath: 'fonts/',
-                            outputPath: 'fonts/'
-                        }
-                    }]
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: {
+                                name: '[name].[ext]',
+                                mimetype: 'application/font-woff',
+                                publicPath: 'fonts/',
+                                outputPath: 'fonts/',
+                            },
+                        },
+                    ],
                 },
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, 'src/app')/*,  geoPath */],
-                    use: [{
-                        loader: 'ng-annotate-loader'
-                    }, {
-                        loader: 'babel-loader',
-                        options: babelPresets
-                    }/* , {
+                    include: [path.resolve(__dirname, 'src/app') /*,  geoPath */],
+                    use: [
+                        {
+                            loader: 'ng-annotate-loader',
+                        },
+                        {
+                            loader: 'babel-loader',
+                            options: babelPresets,
+                        } /* , {
                         loader: 'eslint-loader'
-                    } */]
+                    } */,
+                    ],
                 },
                 {
                     test: /\.ts$/,
-                    include: [path.resolve(__dirname, 'features'), path.resolve(__dirname, 'api'), path.resolve(__dirname, 'src/app'), path.resolve(__dirname, 'src/legacy-api.ts')],
-                    use: [{
-                        loader: 'babel-loader',
-                        options: babelPresets
-                    }, {
-                        loader: 'ts-loader'
-                    }]
+                    include: [
+                        path.resolve(__dirname, 'features'),
+                        path.resolve(__dirname, 'api'),
+                        path.resolve(__dirname, 'src/app'),
+                        path.resolve(__dirname, 'src/legacy-api.ts'),
+                    ],
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            options: babelPresets,
+                        },
+                        {
+                            loader: 'ts-loader',
+                        },
+                    ],
                 },
                 {
                     test: /\.s?[ac]ss$/,
-                    include: [path.resolve(__dirname, 'src/content/styles'), path.resolve(__dirname, 'node_modules/@fgpv'), path.resolve(__dirname, 'node_modules/colourpicker')],
+                    include: [
+                        path.resolve(__dirname, 'src/content/styles'),
+                        path.resolve(__dirname, 'node_modules/@fgpv'),
+                        path.resolve(__dirname, 'node_modules/colourpicker'),
+                    ],
                     use: [
                         env.hmr ? 'style-loader' : MiniCssExtractPlugin.loader,
                         { loader: 'css-loader' },
                         {
-                            loader: 'resolve-url-loader'
+                            loader: 'resolve-url-loader',
                         },
-                        'sass-loader'
-                    ]
+                        'sass-loader',
+                    ],
                 },
                 {
                     test: /\.html$/,
                     include: [path.resolve(__dirname, 'src/content/samples'), path.resolve(__dirname, 'src/app')],
-                    use: ['ngtemplate-loader?relativeTo=' + (path.resolve(__dirname, './src/app')), 'html-loader?minimize=false']
+                    use: [
+                        'ngtemplate-loader?relativeTo=' + path.resolve(__dirname, './src/app'),
+                        'html-loader?minimize=false',
+                    ],
                 },
                 {
                     test: /\.(png|svg)$/,
-                    include: [path.resolve(__dirname, 'src/content'), path.resolve(__dirname, 'node_modules/ag-grid-community'), path.resolve(__dirname, 'node_modules/@claviska')],
-                    use: 'url-loader'
+                    include: [
+                        path.resolve(__dirname, 'src/content'),
+                        path.resolve(__dirname, 'node_modules/ag-grid-community'),
+                        path.resolve(__dirname, 'node_modules/@claviska'),
+                    ],
+                    use: 'url-loader',
                 },
                 {
                     test: /\.xsl$/,
                     include: [path.resolve(__dirname, 'src/content/metadata')],
-                    use: 'raw-loader'
-                }
-            ]
+                    use: 'raw-loader',
+                },
+            ],
         },
 
         plugins: [
             new MiniCssExtractPlugin({
-                filename: "rv-styles.css"
+                filename: 'rv-styles.css',
             }),
 
             /* new WebpackShellPlugin({
@@ -120,35 +143,41 @@ module.exports = function (env) {
                 onBuildEnd: ['bash scripts/postBuild.sh']
             }), */
 
-            new CopyWebpackPlugin([{
-                context: 'src/content/samples',
-                from: '**/*.+(json|js|css|html)',
-                to: 'samples'
-            }, {
-                from: 'src/locales/about',
-                to: 'samples/about'
-            }, {
-                from: 'src/locales/help',
-                to: 'samples/help'
-            }]),
+            new CopyWebpackPlugin([
+                {
+                    context: 'src/content/samples',
+                    from: '**/*.+(json|js|css|html)',
+                    to: 'samples',
+                },
+                {
+                    from: 'src/locales/about',
+                    to: 'samples/about',
+                },
+                {
+                    from: 'src/locales/help',
+                    to: 'samples/help',
+                },
+            ]),
 
             new webpack.ProvidePlugin({
                 // NOTE: [monoRAMP] no clue what this is for, but it was breaking build with ts@3+, saying that jquery cannot be resolved in table plugin
                 //$: 'jquery',
                 jQuery: 'jquery',
-                'window.jQuery': 'jquery'
+                'window.jQuery': 'jquery',
             }),
 
             new TranslationPlugin('./src/locales/translations.csv'),
 
             new WrapperPlugin({
-                header: fileName => /^rv-main\.js$/.test(fileName) ? fs.readFileSync('./scripts/webpack/header.js', 'utf8') : '',
-                footer: fileName => /^rv-main\.js$/.test(fileName) ? fs.readFileSync('./scripts/webpack/footer.js', 'utf8') : ''
+                header: (fileName) =>
+                    /^rv-main\.js$/.test(fileName) ? fs.readFileSync('./scripts/webpack/header.js', 'utf8') : '',
+                footer: (fileName) =>
+                    /^rv-main\.js$/.test(fileName) ? fs.readFileSync('./scripts/webpack/footer.js', 'utf8') : '',
             }),
 
             new VersionPlugin(),
 
-            new SchemaValidatorPlugin({ outputDTSFile: !env.hmr })
+            new SchemaValidatorPlugin({ outputDTSFile: !env.hmr }),
         ],
 
         resolve: {
@@ -161,15 +190,15 @@ module.exports = function (env) {
                 api: path.resolve(__dirname, 'api/src/'),
                 src: path.resolve(__dirname, 'src/'),
                 app: path.resolve(__dirname, 'src/app/'),
-                features: path.resolve(__dirname, 'features/')
+                features: path.resolve(__dirname, 'features/'),
             },
-            extensions: ['.ts', '.js', 'css', 'scss']
+            extensions: ['.ts', '.js', 'css', 'scss'],
         },
 
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000,
-            ignored: /node_modules/
+            ignored: /node_modules/,
         },
 
         devServer: {
@@ -178,28 +207,31 @@ module.exports = function (env) {
             publicPath: '/',
             historyApiFallback: {
                 index: '/samples/webpack-note.html',
-                verbose: true
+                verbose: true,
             },
             disableHostCheck: true,
             contentBase: false,
             port: 6001,
             stats: { colors: true },
-            compress: true
-        }
+            compress: true,
+        },
     };
 
-    const files = glob.sync("samples/**/*", { cwd: './src/content/', nodir: true });
-    config.plugins.push(...files.map(file => {
-        if (/\.tpl$/.test(file)) {
-            const filePath = file.split('/');
-            const fileName = filePath.pop();
-            return new HtmlWebpackPlugin({
-                inject: false,
-                filename: `${filePath.join('/')}/${fileName.replace(/\.[^/.]+$/, '.html')}`,
-                template: `src/content/${file}`
-            });
-        }
-    }).filter(x => x)
+    const files = glob.sync('samples/**/*', { cwd: './src/content/', nodir: true });
+    config.plugins.push(
+        ...files
+            .map((file) => {
+                if (/\.tpl$/.test(file)) {
+                    const filePath = file.split('/');
+                    const fileName = filePath.pop();
+                    return new HtmlWebpackPlugin({
+                        inject: false,
+                        filename: `${filePath.join('/')}/${fileName.replace(/\.[^/.]+$/, '.html')}`,
+                        template: `src/content/${file}`,
+                    });
+                }
+            })
+            .filter((x) => x)
     );
 
     // not supported while doing hmr - causes memory leaks and slows build time by ~40%
@@ -216,4 +248,4 @@ module.exports = function (env) {
     } */
 
     return config;
-}
+};

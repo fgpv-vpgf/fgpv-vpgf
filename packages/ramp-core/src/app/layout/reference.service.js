@@ -5,14 +5,11 @@
  * @description
  * The `referenceService` service works as a reference manager for the rest of the application. `referenceService` exposes references for individual components.
  */
-angular
-    .module('app.layout')
-    .factory('referenceService', referenceService);
+angular.module('app.layout').factory('referenceService', referenceService);
 
 function referenceService($rootElement, $rootScope, events, configService, appInfo) {
-
     const ref = {
-        onResizeSubscriptions: [] // [ { element: <Node>, listeners: [Function ... ] } ... ]
+        onResizeSubscriptions: [], // [ { element: <Node>, listeners: [Function ... ] } ... ]
     };
 
     const service = {
@@ -23,7 +20,7 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
         onResize,
 
         _mapNode: null,
-        set mapNode (value) {
+        set mapNode(value) {
             if (this._mapNode) {
                 console.error('Map node can only be set once');
                 return;
@@ -32,9 +29,11 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
             this._mapNode = value;
         },
 
-        get mapNode () { return this._mapNode; },
+        get mapNode() {
+            return this._mapNode;
+        },
 
-        isFiltersVisible: false
+        isFiltersVisible: false,
     };
 
     // wire in a hook to peek at map.
@@ -57,28 +56,31 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
     function peekAtMap(pointOfInterest = undefined) {
         let ignoreClick = true;
 
-        let panelsToFade = appInfo.mapi.panels.all.filter(panel => panel.isOpen).map(panel => panel.element);
+        let panelsToFade = appInfo.mapi.panels.all.filter((panel) => panel.isOpen).map((panel) => panel.element);
         panelsToFade.push(this.panels.appBar);
 
         // if theres a point specified, remove all panels from the list that aren't close to it
         if (pointOfInterest) {
-            panelsToFade = panelsToFade.filter(panel => {
+            panelsToFade = panelsToFade.filter((panel) => {
                 const box = panel[0].getBoundingClientRect();
                 // collision detection w/ 50px buffer
                 const buffer = 50;
-                return !(box.right < pointOfInterest.x - buffer ||
+                return !(
+                    box.right < pointOfInterest.x - buffer ||
                     box.left > pointOfInterest.x + buffer ||
                     box.top > pointOfInterest.y + buffer ||
-                    box.bottom < pointOfInterest.y - buffer);
+                    box.bottom < pointOfInterest.y - buffer
+                );
             });
         }
 
-        panelsToFade.forEach(panel => {
+        panelsToFade.forEach((panel) => {
             panel.addClass('rv-peek rv-peek-enabled');
         });
 
         appInfo.mapi.mapDiv.on('click.peek mousedown.peek touchstart.peek', () =>
-                ignoreClick ? (ignoreClick = false) : _removePeekTransparency());
+            ignoreClick ? (ignoreClick = false) : _removePeekTransparency()
+        );
 
         const deRegisterResizeWatcher = service.onResize($rootElement, (newDimensions, oldDimensions) => {
             if (newDimensions.width !== oldDimensions.width || newDimensions.height !== oldDimensions.height) {
@@ -87,7 +89,7 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
         });
 
         function _removePeekTransparency() {
-            panelsToFade.forEach(panel => {
+            panelsToFade.forEach((panel) => {
                 panel.removeClass('rv-peek-enabled');
                 appInfo.mapi.mapDiv.off('.peek');
             });
@@ -104,25 +106,27 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
      * @return {Function} a function to deregister listener
      */
     function onResize(element, callback) {
-
-        let subscription = ref.onResizeSubscriptions.find(s =>
-            s.element === element);
+        let subscription = ref.onResizeSubscriptions.find((s) => s.element === element);
 
         if (subscription) {
             subscription.listeners.push(callback);
         } else {
             subscription = {
                 element,
-                listeners: [callback]
+                listeners: [callback],
             };
 
             ref.onResizeSubscriptions.push(subscription);
 
-            $rootScope.$watch(watchBBoxChangesBuilder(element), (newDimensions, oldDimensions) => {
-                ref.onResizeSubscriptions
-                    .find(s => s.element === element)
-                    .listeners.forEach(l => l(newDimensions, oldDimensions));
-            }, true);
+            $rootScope.$watch(
+                watchBBoxChangesBuilder(element),
+                (newDimensions, oldDimensions) => {
+                    ref.onResizeSubscriptions
+                        .find((s) => s.element === element)
+                        .listeners.forEach((l) => l(newDimensions, oldDimensions));
+                },
+                true
+            );
         }
 
         // build a deregister function
@@ -149,7 +153,7 @@ function referenceService($rootElement, $rootScope, events, configService, appIn
 
                 return {
                     width: br.width,
-                    height: br.height
+                    height: br.height,
                 };
             };
         }

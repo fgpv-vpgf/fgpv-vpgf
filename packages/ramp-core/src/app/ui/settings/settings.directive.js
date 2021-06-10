@@ -9,9 +9,7 @@ const SETTINGS_CONTENT_PANEL = '.rv-settings-content-panel';
  * The `rvSettings` directive wraps the side panel settings content.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvSettings', rvSettings);
+angular.module('app.ui').directive('rvSettings', rvSettings);
 
 /**
  * `rvSettings` directive body.
@@ -26,7 +24,7 @@ function rvSettings($compile) {
         link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -45,9 +43,7 @@ function rvSettings($compile) {
             if (newLegendBlock) {
                 self.block = newLegendBlock;
 
-                contentPanel
-                    .empty()
-                    .append($compile(template)(scope));
+                contentPanel.empty().append($compile(template)(scope));
             } else {
                 contentPanel.empty();
             }

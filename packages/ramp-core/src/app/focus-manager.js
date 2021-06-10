@@ -1,6 +1,4 @@
-import {
-    InternalsFocusManager
-} from './internals-focus-manager'
+import { InternalsFocusManager } from './internals-focus-manager';
 // eslint-disable-next-line max-statements
 
 // delay in milliseconds from time focus is lost to when action is taken
@@ -13,7 +11,7 @@ const statuses = {
     NONE: undefined,
     INACTIVE: 'NOT_ACTIVE',
     WAITING: 'WAITING',
-    ACTIVE: 'ACTIVE'
+    ACTIVE: 'ACTIVE',
 };
 // focus selectors we want to target
 const focusSelector = [
@@ -28,7 +26,7 @@ const focusSelector = [
     'button:not([disabled]):not([nofocus])',
     '.rv-esri-map',
     '[tabindex=-2]',
-    '[tabindex=-3]'
+    '[tabindex=-3]',
 ].join(', ');
 
 // object containing all currently depressed keyboard keys
@@ -195,7 +193,7 @@ class ViewerGroup {
      * @return  {Object}    Viewer instance which contains the element, or undefined if not contained
      */
     contains(el) {
-        return this.viewerList.find(v => v.contains(el));
+        return this.viewerList.find((v) => v.contains(el));
     }
 
     /**
@@ -204,7 +202,7 @@ class ViewerGroup {
      * @return  {Object}    Viewer instance which contains the element, or undefined if not contained
      */
     trapped(el) {
-        return this.viewerList.find(v => v.trapped(el));
+        return this.viewerList.find((v) => v.trapped(el));
     }
 
     /**
@@ -213,21 +211,21 @@ class ViewerGroup {
      * @return  {Object}    Viewer instance in the given state
      */
     status(status) {
-        return this.viewerList.find(v => v.status === status);
+        return this.viewerList.find((v) => v.status === status);
     }
 
     /**
      * Sets the status of all viewers to inactive
      */
     deactivate() {
-        this.viewerList.forEach(v => v.setStatus(statuses.INACTIVE));
+        this.viewerList.forEach((v) => v.setStatus(statuses.INACTIVE));
     }
 }
 
 const viewerGroup = new ViewerGroup();
 
 window.RAMP.focusManager = {
-    addViewer
+    addViewer,
 };
 
 /**
@@ -269,7 +267,6 @@ function focusableSearch(element, forward, gotoEnd = false) {
     let lastElementSet = gotoEnd ? foundElement : $();
     // loop until we locate an element
     while (gotoEnd || (foundElement.length === 0 && element.length > 0)) {
-
         // we have reached a focus trap, no more traversal is needed
         if (element.is('[rv-trap-focus]')) {
             // breaking here knowing that lastElementSet is very first/last focusable
@@ -283,8 +280,9 @@ function focusableSearch(element, forward, gotoEnd = false) {
                 // being reversed and we're on the first element, we would want the very last element in the focus trap
                 // however if focus should be leaving a fullpage viewer, do not wrap an return an empty element (none found)
                 const viewer = viewerGroup.contains(element);
-                return element.is(viewer.rootElement) && viewer.isFullscreen ?
-                    $() : focusableSearch(refElem, !forward, true);
+                return element.is(viewer.rootElement) && viewer.isFullscreen
+                    ? $()
+                    : focusableSearch(refElem, !forward, true);
             }
         }
 
@@ -326,7 +324,12 @@ function focusableSearch(element, forward, gotoEnd = false) {
  * @return  {Object}    jQuery element of last focusable element from history
  */
 function lastVisibleHistoryElement() {
-    return $(history.slice().reverse().find(el => el.is(elemIsFocusable)));
+    return $(
+        history
+            .slice()
+            .reverse()
+            .find((el) => el.is(elemIsFocusable))
+    );
 }
 
 /**
@@ -348,16 +351,17 @@ function elemIsFocusable(index, element) {
         const enhancedTable = map.panelRegistryObj.getById('enhancedTable');
         enhancedTable.listInit.next();
     }
-    return el.is(':visible') &&
+    return (
+        el.is(':visible') &&
         !el.is(':hidden') &&
         el.css('visibility') !== 'hidden' &&
         el.css('opacity') !== 0 &&
         // avoid setting focus on closing menu items
         !el.parents().hasClass('md-leave') &&
         !el.parents().hasClass('md-leave-add') &&
-        !el.is('[nofocus]');
+        !el.is('[nofocus]')
+    );
 }
-
 
 /**
  * Finds a link (created by the createLink function)
@@ -369,13 +373,12 @@ function elemIsFocusable(index, element) {
  */
 function hasLink(forward) {
     const histElem = lastVisibleHistoryElement();
-    return linkedList.find(link => histElem.is(link.getDestinationElement(!forward)));
+    return linkedList.find((link) => histElem.is(link.getDestinationElement(!forward)));
 }
-
 
 function getMapInstance() {
     let currentMapInstance;
-    window.RAMP.mapInstances.forEach(mapI => {
+    window.RAMP.mapInstances.forEach((mapI) => {
         if ($('#' + mapI.id).has(document.activeElement)[0] !== undefined) {
             currentMapInstance = mapI;
         }
@@ -398,8 +401,12 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
     // if the enhancedTable is open and  focused on zoom button, and back tabbing
     // go to the last list in the enhancedTable
     const map = getMapInstance();
-    if (document.activeElement === $('.rv-mapnav-content').find('button')[0] && !forward &&
-        map !== undefined && !map.panelRegistryObj.getById('enhancedTable').isClosed) {
+    if (
+        document.activeElement === $('.rv-mapnav-content').find('button')[0] &&
+        !forward &&
+        map !== undefined &&
+        !map.panelRegistryObj.getById('enhancedTable').isClosed
+    ) {
         const list = $(`#${map.id} .enhancedTable`).find('.rv-focus-list')[2];
         initInternalFocusManager($(list));
         return;
@@ -430,8 +437,8 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
 
     if (onlyUseHistory) {
         lastVisibleHistoryElement().rvFocus();
-
-    } else if (link && link[0][0] !== link[1][0]) { // check that the link created is not the element with itself
+    } else if (link && link[0][0] !== link[1][0]) {
+        // check that the link created is not the element with itself
         // goto target if focusable
         if (link.getDestinationElement(forward).is(elemIsFocusable)) {
             changeIconFocus(link.getDestinationElement(forward));
@@ -481,9 +488,7 @@ function changeIconFocus(element) {
 function resetIconFocus(element) {
     // find all expanded symbology icons and remove no focus attribute when running it back on the next traversal
     const viewer = viewerGroup.contains(element);
-    viewer.rootElement
-        .find('.focusOnce')
-        .removeAttr('noFocus');
+    viewer.rootElement.find('.focusOnce').removeAttr('noFocus');
 }
 
 function initInternalFocusManager(focusSearch) {
@@ -498,7 +503,7 @@ function initInternalFocusManager(focusSearch) {
         }
         lastVisibleHistoryElement().attr('tabindex', -1);
         ifm = new InternalsFocusManager(list);
-        ifm.returnToFM.subscribe(list => {
+        ifm.returnToFM.subscribe((list) => {
             linkToNextIfm(list);
         });
         return ifm;
@@ -542,7 +547,6 @@ function linkToNextIfm(list) {
  * @param {Object} event - the onMouseDown event object
  */
 function onMouseDown(event) {
-
     const evtTarget = $(event.target);
 
     const viewer = viewerGroup.contains(evtTarget); // check if the viewer was clicked
@@ -560,7 +564,7 @@ function onMouseDown(event) {
                 ifm = undefined;
             }
             ifm = new InternalsFocusManager(list, true);
-            ifm.returnToFM.subscribe(list => {
+            ifm.returnToFM.subscribe((list) => {
                 linkToNextIfm(list);
             });
 
@@ -596,15 +600,12 @@ function onMouseDown(event) {
     // fgpv-vpgf/fgpv-vpgf#2665; fgpv-vpgf/fgpv-vpgf#2969
     if (viewer.status !== statuses.ACTIVE) {
         const oldScroll = jQwindow.scrollTop();
-        jQwindow.one('scroll', () =>
-            jQwindow.scrollTop(oldScroll));
+        jQwindow.one('scroll', () => jQwindow.scrollTop(oldScroll));
     }
 
     ignoreFocusLoss = true;
     viewer.setStatus(statuses.ACTIVE);
-    evtTarget
-        .closest('.rv-esri-map, ' + focusSelector)
-        .rvFocus();
+    evtTarget.closest('.rv-esri-map, ' + focusSelector).rvFocus();
 }
 /**
  * Displays focus management dialog instructions and sets status to waiting when focus moves to
@@ -634,9 +635,10 @@ function onFocusin(event) {
                 escapeToClose: false,
                 disableParentScroll: false,
                 parent: viewer.rootElement.find('rv-shell'),
-                focusOnOpen: false
+                focusOnOpen: false,
             })
-            .then(() => viewer.clearTabindex()));
+            .then(() => viewer.clearTabindex())
+    );
 }
 
 /**
@@ -648,7 +650,6 @@ function onFocusin(event) {
  */
 // eslint-disable-next-line complexity
 function onKeydown(event) {
-
     keyCode = event.keyCode;
 
     /*jshint maxcomplexity:12 */
@@ -659,17 +660,18 @@ function onKeydown(event) {
     const isExempt = exemptElem.length > 0;
     keys[event.which] = true;
 
-
     if (viewerActive && !isExempt) {
         // set viewer inactive but allow tab action to be handled by the browser
-        if (event.which === 9 && keys[27]) { // escape + tab keydown
+        if (event.which === 9 && keys[27]) {
+            // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
             // Fixes an issue where keyup is not called in some cases causing focus manager to have an incorrect pressed key state
             delete keys[27];
-
-        } else if (event.which === 9 ||
+        } else if (
+            event.which === 9 ||
             ((event.which === 37 || event.which === 39 || event.which === 13) &&
-                ($('.highlighted')[0] !== undefined || $('.ag-cell-focus')[0] !== undefined))) {
+                ($('.highlighted')[0] !== undefined || $('.ag-cell-focus')[0] !== undefined))
+        ) {
             // tab keydown only
             // or hackily activate shiftFocus for left/right arrows and enter
             // (when there is still highlighted item)
@@ -689,13 +691,13 @@ function onKeydown(event) {
                 shiftFocus(event.which === 40);
             }
         }
-
     } else if (viewerWaiting) {
-        if (event.which === 13 || event.which === 32) { // enter or spacebar
+        if (event.which === 13 || event.which === 32) {
+            // enter or spacebar
             event.preventDefault(true);
             viewerWaiting.setStatus(statuses.ACTIVE);
-
-        } else if (event.which === 9) { // tab key
+        } else if (event.which === 9) {
+            // tab key
             viewerWaiting.clearTabindex();
             viewerWaiting.setStatus(statuses.INACTIVE);
         }
@@ -721,7 +723,6 @@ function onKeyup(event) {
  * @param  {Object} event the focusout event object
  */
 function onFocusout(event) {
-
     if (ignoreFocusLoss) {
         return;
     }
@@ -729,7 +730,6 @@ function onFocusout(event) {
     const viewer = viewerGroup.status(statuses.ACTIVE);
     if ($(event.target).closest('[rv-ignore-focusout]').length > 0) {
         restoreFromHistory = true;
-
     } else if (viewer && !lockFocus && event.relatedTarget === null) {
         // Allow for a short time as determined by focusoutDelay in milliseconds so that when focus
         // leaves unexpectedly, focus can be manually set and we don't need to be back through history
@@ -775,27 +775,23 @@ function noSourceLink(targetElemSet) {
  * @param   {Object}    targetElemSet    the jQuery element set to find a focusable element
  */
 function link(sourceEl, targetElemSet) {
-    const targetEl = targetElemSet
-        .find(focusSelector)
-        .addBack(focusSelector)
-        .filter(elemIsFocusable)
-        .first();
+    const targetEl = targetElemSet.find(focusSelector).addBack(focusSelector).filter(elemIsFocusable).first();
 
     if (targetEl.length === 0) {
         return;
     }
 
-    linkedList = linkedList.filter(bundle => !bundle[1].is(targetEl));
+    linkedList = linkedList.filter((bundle) => !bundle[1].is(targetEl));
 
     linkedList.push({
         0: sourceEl,
         1: targetEl,
-        getDestinationElement: forward => forward ? targetEl : sourceEl
+        getDestinationElement: (forward) => (forward ? targetEl : sourceEl),
     });
 }
 
 $.extend({
-    link: noSourceLink
+    link: noSourceLink,
 });
 
 $.fn.link = function (targetElement) {
@@ -832,9 +828,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
 
     // Calling rvFocus implies the viewer should be active, unless there is no viewer registered which throws an error. Default to normal focus.
     try {
-        viewerGroup
-            .contains(jqueryElem)
-            .setStatus(statuses.ACTIVE);
+        viewerGroup.contains(jqueryElem).setStatus(statuses.ACTIVE);
     } catch (e) {
         elem.origfocus(); // browser implementation
     }
@@ -850,7 +844,7 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
         lockFocus = false;
 
         // check focus history, if exists make it last element in history, else do nothing
-        const histIndex = history.findIndex(elem => elem.is(jqueryElem));
+        const histIndex = history.findIndex((elem) => elem.is(jqueryElem));
         history.length = histIndex !== -1 ? histIndex : history.length;
 
         if (jqueryElem.is(':focus')) {
@@ -883,12 +877,13 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
         // must process via rvFocus so that FM is aware of the change, and can add it to the history.
         // otherwise calling origfocus bypasses FM, which makes it think focus is being lost and tries to recover
         el[0].rvFocus({
-            exempt: true
+            exempt: true,
         }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
-
     } else if (viewerGroup.trapped(el)) {
-        console.warn('focusManager', `*rvFocus* must be used to set focus ` +
-            `on elements that are a part of the viewer`);
+        console.warn(
+            'focusManager',
+            `*rvFocus* must be used to set focus ` + `on elements that are a part of the viewer`
+        );
         return;
     } else {
         el[0].origfocus();
@@ -916,20 +911,19 @@ function disableCommonPrototypes(funcName) {
             if (takeAction || !viewerGroup.trapped($(this.target))) {
                 originalFunc.call(this);
             } else {
-                console.warn('focusManager', `*${funcName}* is disabled on elements ` +
-                    `inside or part of the viewer`);
+                console.warn('focusManager', `*${funcName}* is disabled on elements ` + `inside or part of the viewer`);
             }
         };
     })();
 }
 
 // Watches body for element insertions for more "fine grained control" of host page elements.
-const bodyObserver = new MutationObserver(mutations => {
+const bodyObserver = new MutationObserver((mutations) => {
     mutations
-        .filter(m => m.type === 'childList' && m.addedNodes && m.addedNodes.length > 0)
-        .forEach(m => {
+        .filter((m) => m.type === 'childList' && m.addedNodes && m.addedNodes.length > 0)
+        .forEach((m) => {
             const nodeList = m.addedNodes;
-            nodeList.forEach(node => {
+            nodeList.forEach((node) => {
                 /** ----- AM Menu Component -----
                  * We allow the angular material menu component to set its own initial focus by default. However when there is no focusable
                  * element in the component, AM does not set focus which leaves focus on the triggering element. This is turn makes it impossible to close
@@ -955,7 +949,7 @@ const bodyObserver = new MutationObserver(mutations => {
 
 bodyObserver.observe(document.body, {
     attributes: false,
-    childList: true
+    childList: true,
 });
 
 /**
@@ -968,10 +962,10 @@ bodyObserver.observe(document.body, {
  * This fix blurs the active element if its not visible allowing the FM to recover from history.
  *
  */
-if (navigator.userAgent.indexOf("Firefox") > -1) {
-    $(document).on( "keyup", () => {
+if (navigator.userAgent.indexOf('Firefox') > -1) {
+    $(document).on('keyup', () => {
         const activeElem = $(document.activeElement);
-        if (!activeElem.is(":visible")) {
+        if (!activeElem.is(':visible')) {
             activeElem.blur();
         }
     });

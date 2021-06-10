@@ -11,7 +11,7 @@ angular.module('app.ui').factory('errorService', errorService);
 function errorService($mdToast, $q) {
     const service = {
         display,
-        remove
+        remove,
     };
 
     let errorToast = null;
@@ -38,7 +38,7 @@ function errorService($mdToast, $q) {
         }
 
         // find a toast in the queue with the same id and remove it
-        let index = errorQueue.findIndex(toast => toast.id === id);
+        let index = errorQueue.findIndex((toast) => toast.id === id);
         if (index !== -1) {
             errorQueue[index]._rejectDisplayPromise();
             errorQueue.splice(index, 1);
@@ -90,12 +90,12 @@ function errorService($mdToast, $q) {
             const extendedOpts = angular.extend(
                 {},
                 {
-                    position: 'bottom rv-flex-global'
+                    position: 'bottom rv-flex-global',
                 },
                 opts
             );
 
-            $mdToast.show($mdToast.simple(extendedOpts)).then(data => {
+            $mdToast.show($mdToast.simple(extendedOpts)).then((data) => {
                 // resolve the promise (passing along the actual toast resolve data) returned to the outside code when `display` function was called
                 opts._resolveDisplayPromise(data);
 

@@ -18,7 +18,7 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
      * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, layerPackage, config) {
+    constructor(parent, idx, layerPackage, config) {
         super(parent, idx, config);
 
         this._layerPackage = layerPackage;
@@ -27,29 +27,41 @@ class AttribFC extends basicFC.BasicFC {
         this._fcount = undefined;
         this._quickCache = {
             attribs: {},
-            geoms: {}
+            geoms: {},
         };
         this.filter = new filter.Filter(this);
     }
 
-    get geomType () { return this._geometryType; }
-    set geomType (value) { this._geometryType = value; }
+    get geomType() {
+        return this._geometryType;
+    }
+    set geomType(value) {
+        this._geometryType = value;
+    }
 
-    get oidField () { return this._oidField; }
-    set oidField (value) { this._oidField = value; }
+    get oidField() {
+        return this._oidField;
+    }
+    set oidField(value) {
+        this._oidField = value;
+    }
 
-    get queryUrl () { return `${this._parent.rootUrl}/${this._idx}`; }
+    get queryUrl() {
+        return `${this._parent.rootUrl}/${this._idx}`;
+    }
 
     // basically an identifier object for this FC.
     // TODO maybe consider using the id on the esri layer? to handle cases where no id provided / collision of ids?
-    get fcID () {
+    get fcID() {
         return {
             layerId: this._parent.initialConfig.id,
-            layerIdx: this._idx
+            layerIdx: this._idx,
         };
     }
 
-    get loadedFeatureCount () { return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0; }
+    get loadedFeatureCount() {
+        return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0;
+    }
 
     /**
      * Returns attribute data for this FC.
@@ -57,12 +69,12 @@ class AttribFC extends basicFC.BasicFC {
      * @function getAttribs
      * @returns {Promise}         resolves with a layer attribute data object
      */
-    getAttribs () {
+    getAttribs() {
         const attribsDownloaded = this.attribsLoaded();
 
         const attribPromise = this._layerPackage.getAttribs();
 
-        attribPromise.then(attrib => {
+        attribPromise.then((attrib) => {
             // only trigger the event the first time when the download was in progress.
             // after the attribs have been downloaded, if triggered again through API, since the attributes have
             // previously been downloaded, this event will not trigger in the viewer
@@ -86,7 +98,7 @@ class AttribFC extends basicFC.BasicFC {
      * @function attribsLoaded
      * @returns {Boolean}         true if attributes are downloaded.
      */
-    attribsLoaded () {
+    attribsLoaded() {
         return this._layerPackage.loadIsDone;
     }
 
@@ -96,7 +108,7 @@ class AttribFC extends basicFC.BasicFC {
      * @function getLayerData
      * @returns {Promise}         resolves with a layer data object
      */
-    getLayerData () {
+    getLayerData() {
         return this._layerPackage.layerData;
     }
 
@@ -106,7 +118,7 @@ class AttribFC extends basicFC.BasicFC {
      *
      * @function abortAttribLoad
      */
-    abortAttribLoad () {
+    abortAttribLoad() {
         this._layerPackage.abortAttribLoad();
     }
 
@@ -116,8 +128,8 @@ class AttribFC extends basicFC.BasicFC {
      * @function loadSymbology
      * @returns {Promise}         resolves when symbology has been downloaded
      */
-    loadSymbology () {
-        return this.getLayerData().then(lData => {
+    loadSymbology() {
+        return this.getLayerData().then((lData) => {
             if (lData.layerType === 'Feature Layer') {
                 // feature always has a single item, so index 0
                 this.symbology = shared.makeSymbologyArray(lData.legend.layers[0].legend);
@@ -136,7 +148,7 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} attribs    the dictionary of attributes for the feature.
      * @returns {String}          the name of the feature
      */
-    getFeatureName (objId, attribs) {
+    getFeatureName(objId, attribs) {
         // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
         // NOTE: we used to have fallback logic here that would use layer settings
         //       if this.nameField had no value. Logic has changed to now push
@@ -160,7 +172,7 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} attribs    the dictionary of attributes for the feature.
      * @returns {String}          the name of the feature
      */
-    getTooltipName (objId, attribs) {
+    getTooltipName(objId, attribs) {
         // TODO revisit the objId parameter.  Do we actually need this fallback anymore?
         // NOTE: we used to have fallback logic here that would use layer settings
         //       if this.nameField had no value. Logic has changed to now push
@@ -180,7 +192,7 @@ class AttribFC extends basicFC.BasicFC {
      * Retrieves attributes from a layer for a specified feature index
      * @return {Promise}            promise resolving with formatted attributes to be consumed by the datagrid and esri feature identify
      */
-    getFormattedAttributes () {
+    getFormattedAttributes() {
         if (this._formattedAttributes) {
             return this._formattedAttributes;
         }
@@ -195,18 +207,18 @@ class AttribFC extends basicFC.BasicFC {
                 // create columns array consumable by datables. We don't include the alias defined in the config here as
                 // the grid handles it seperately.
                 const columns = lData.fields
-                    .filter(field =>
-
+                    .filter((field) =>
                         // assuming there is at least one attribute - empty attribute budnle promises should be rejected, so it never even gets this far
                         // filter out fields where there is no corresponding attribute data
-                        aData.features[0].attributes.hasOwnProperty(field.name))
-                    .map(field => ({
+                        aData.features[0].attributes.hasOwnProperty(field.name)
+                    )
+                    .map((field) => ({
                         data: field.name,
-                        title: field.alias || field.name
+                        title: field.alias || field.name,
                     }));
 
                 // derive the icon for the row
-                const rows = aData.features.map(feature => {
+                const rows = aData.features.map((feature) => {
                     const att = feature.attributes;
                     att.rvInteractive = '';
                     att.rvSymbol = this._parent._apiRef.symbology.getGraphicIcon(att, lData.renderer);
@@ -216,16 +228,16 @@ class AttribFC extends basicFC.BasicFC {
                 // if a field name resembles a function, the data table will treat it as one.
                 // to get around this, we add a function with the same name that returns the value,
                 // tricking that silly datagrid.
-                columns.forEach(c => {
+                columns.forEach((c) => {
                     if (c.data.substr(-2) === '()') {
                         // have to use function() to get .this to reference the row.
                         // arrow notation will reference the attribFC class.
-                        const secretFunc = function() {
+                        const secretFunc = function () {
                             return this[c.data];
                         };
 
                         const stub = c.data.substr(0, c.data.length - 2); // function without brackets
-                        rows.forEach(r => {
+                        rows.forEach((r) => {
                             r[stub] = secretFunc;
                         });
                     }
@@ -237,10 +249,10 @@ class AttribFC extends basicFC.BasicFC {
                     fields: lData.fields, // keep fields for reference ...
                     oidField: lData.oidField, // ... keep a reference to id field ...
                     oidIndex: aData.oidIndex, // ... and keep id mapping array
-                    renderer: lData.renderer
+                    renderer: lData.renderer,
                 };
             })
-            .catch(e => {
+            .catch((e) => {
                 delete this._formattedAttributes; // delete cached promise when the geoApi `getAttribs` call fails, so it will be requested again next time `getAttributes` is called;
                 if (e === 'ABORTED') {
                     throw new Error('ABORTED');
@@ -258,13 +270,13 @@ class AttribFC extends basicFC.BasicFC {
      * @param {String} attribName     the attribute name we want to check if it's a date or not
      * @return {Promise}              resolves to true or false based on the attribName type being esriFieldTypeDate
      */
-    checkDateType (attribName) {
+    checkDateType(attribName) {
         // TEST STATUS none
         // grab attribute info (waiting for it it finish loading)
-        return this.getLayerData().then(lData => {
+        return this.getLayerData().then((lData) => {
             // inspect attribute fields
             if (lData.fields) {
-                const attribField = lData.fields.find(field => {
+                const attribField = lData.fields.find((field) => {
                     return field.name === attribName;
                 });
                 if (attribField && attribField.type) {
@@ -281,12 +293,11 @@ class AttribFC extends basicFC.BasicFC {
      * @param {String} attribName     the attribute name we want a nice name for
      * @return {Promise}              resolves to the best available user friendly attribute name
      */
-    aliasedFieldName (attribName) {
+    aliasedFieldName(attribName) {
         // grab attribute info (waiting for it it finish loading)
-        return this.getLayerData().then(lData => {
+        return this.getLayerData().then((lData) => {
             return AttribFC.aliasedFieldNameDirect(attribName, lData.fields);
         });
-
     }
 
     /**
@@ -296,17 +307,17 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Array} fields          list of field definition objects (esri format) for the layer.
      * @return {String}               the best available user friendly attribute name
      */
-    static aliasedFieldNameDirect (attribName, fields) {
+    static aliasedFieldNameDirect(attribName, fields) {
         let fName = attribName;
 
         // search for aliases
         if (fields) {
-            const attribField = fields.find(field => {
+            const attribField = fields.find((field) => {
                 return field.name === attribName;
             });
 
             // prioritize clientAlias over alias, or default to the attribute name
-            if(attribField && attribField.clientAlias && attribField.clientAlias.length > 0) {
+            if (attribField && attribField.clientAlias && attribField.clientAlias.length > 0) {
                 fName = attribField.clientAlias;
             } else if (attribField && attribField.alias && attribField.alias.length > 0) {
                 fName = attribField.alias;
@@ -322,12 +333,16 @@ class AttribFC extends basicFC.BasicFC {
      * @param  {Array} fields       fields definition array for layer
      * @return {Object}              attribute key-value mapping with fields as keys
      */
-    static unAliasAttribs (attribs, fields) {
+    static unAliasAttribs(attribs, fields) {
         const newA = {};
-        fields.forEach(field => {
+        fields.forEach((field) => {
             // attempt to extract on name. if not found, attempt to extract on alias, and then on clientAlias
             // dump value into the result
-            newA[field.name] = attribs.hasOwnProperty(field.name) ? attribs[field.name] : attribs.hasOwnProperty(field.alias) ? attribs[field.alias] : attribs[field.clientAlias];
+            newA[field.name] = attribs.hasOwnProperty(field.name)
+                ? attribs[field.name]
+                : attribs.hasOwnProperty(field.alias)
+                ? attribs[field.alias]
+                : attribs[field.clientAlias];
         });
         return newA;
     }
@@ -344,8 +359,7 @@ class AttribFC extends basicFC.BasicFC {
      *                 - attribs       boolean. indicates if return value should have attributes included. default to false
      * @returns {Promise} resolves with a bundle of information. .graphic is the graphic; .layerFC for convenience
      */
-    fetchGraphic (objectId, opts) {
-
+    fetchGraphic(objectId, opts) {
         // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
         // things are done the way they are in this function.
 
@@ -356,7 +370,7 @@ class AttribFC extends basicFC.BasicFC {
         const layerObj = this._parent._layer;
         const result = {
             graphic: null,
-            layerFC: this
+            layerFC: this,
         };
         const resultFeat = {};
 
@@ -378,9 +392,8 @@ class AttribFC extends basicFC.BasicFC {
         let attribHackPromise = Promise.resolve();
 
         // subfunction to extract a graphic from a feature layerk
-        const huntLocalGraphic = objId => {
-            return layerObj.graphics.find(g =>
-                g.attributes[layerObj.objectIdField] === objId);
+        const huntLocalGraphic = (objId) => {
+            return layerObj.graphics.find((g) => g.attributes[layerObj.objectIdField] === objId);
         };
 
         if (opts.attribs) {
@@ -392,18 +405,16 @@ class AttribFC extends basicFC.BasicFC {
             } else if (this._layerPackage.loadIsDone) {
                 // all attributes have been loaded. use that store.
                 // since our store is a promise, need to do some hack trickery here
-                attribHackPromise = new Promise(resolve => {
-                    this._layerPackage.getAttribs().then(ad => {
+                attribHackPromise = new Promise((resolve) => {
+                    this._layerPackage.getAttribs().then((ad) => {
                         resultFeat.attributes = ad.features[ad.oidIndex[objectId]].attributes;
                         resolve();
                     });
                 });
-
             } else if (this._parent.dataSource() !== shared.dataSources.ESRI && layerObj.graphics) {
                 // it is a feature layer that is file based. we can extract info from it.
                 localGraphic = huntLocalGraphic(objectId);
                 resultFeat.attributes = localGraphic.attributes;
-
             } else {
                 // we will need to ask the service
                 needWebAttr = true;
@@ -418,7 +429,7 @@ class AttribFC extends basicFC.BasicFC {
                 // lines and polys have a cache for each LOD
 
                 const mapLevel = opts.map.getLevel();
-                lod = opts.map.lods.find(l => l.level === mapLevel);
+                lod = opts.map.lods.find((l) => l.level === mapLevel);
 
                 if (!gCache[lod.scale]) {
                     gCache[lod.scale] = {};
@@ -452,7 +463,6 @@ class AttribFC extends basicFC.BasicFC {
                 } else {
                     needWebGeom = true;
                 }
-
             } else {
                 needWebGeom = true;
             }
@@ -460,65 +470,65 @@ class AttribFC extends basicFC.BasicFC {
 
         // hit the server if we dont have cached values
         if (needWebAttr || needWebGeom) {
-            return new Promise(
-                (resolve, reject) => {
-                    const parent = this._parent;
-                    const reqParam = {
-                        url: `${parent.rootUrl}/${this._idx}/query`,
-                        content: {
-                            f: 'json',
-                            objectIds: objectId,
-                            outFields: '*',
-                            returnGeometry: needWebGeom
-                        },
-                        callbackParamName: 'callback',
-                        handleAs: 'json'
-                    };
+            return new Promise((resolve, reject) => {
+                const parent = this._parent;
+                const reqParam = {
+                    url: `${parent.rootUrl}/${this._idx}/query`,
+                    content: {
+                        f: 'json',
+                        objectIds: objectId,
+                        outFields: '*',
+                        returnGeometry: needWebGeom,
+                    },
+                    callbackParamName: 'callback',
+                    handleAs: 'json',
+                };
 
-                    if (needWebGeom) {
-                        reqParam.content.outSR = JSON.stringify(opts.map.spatialReference);
-                        if (nonPoint) {
-                            reqParam.content.maxAllowableOffset = lod.resolution;
-                        }
+                if (needWebGeom) {
+                    reqParam.content.outSR = JSON.stringify(opts.map.spatialReference);
+                    if (nonPoint) {
+                        reqParam.content.maxAllowableOffset = lod.resolution;
                     }
+                }
 
-                    // TODO investigate adding `geometryPrecision` to the param.
-                    //      if we have bloated decimal places, this will drop them.
-                    //      need to be careful of the units of the map and the current scale.
-                    //      e.g. a basemap in lat long will certainly need decimal places.
+                // TODO investigate adding `geometryPrecision` to the param.
+                //      if we have bloated decimal places, this will drop them.
+                //      need to be careful of the units of the map and the current scale.
+                //      e.g. a basemap in lat long will certainly need decimal places.
 
-                    const defData = parent._esriRequest(reqParam);
+                const defData = parent._esriRequest(reqParam);
 
-                    defData.then(
-                        queryResult => {
-                            const feat = queryResult.features[0];
+                defData.then(
+                    (queryResult) => {
+                        const feat = queryResult.features[0];
 
-                            if (!feat) {
-                                throw new Error(`Could not find feature (oid ${objectId})`);
-                            }
-
-                            if (needWebGeom) {
-                                // server result omits spatial reference
-                                feat.geometry.spatialReference = queryResult.spatialReference;
-                                gCache[objectId] = feat.geometry;
-                                resultFeat.geometry = feat.geometry;
-                            }
-
-                            if (needWebAttr) {
-                                aCache[objectId] = feat.attributes;
-                                resultFeat.attributes = feat.attributes;
-                            }
-
-                            result.graphic = resultFeat;
-                            attribHackPromise.then(() => {
-                                resolve(result);
-                            });
-                        }, error => {
-                            console.warn(error);
-                            reject(error);
+                        if (!feat) {
+                            throw new Error(`Could not find feature (oid ${objectId})`);
                         }
-                    );
-                });
+
+                        if (needWebGeom) {
+                            // server result omits spatial reference
+                            feat.geometry.spatialReference = queryResult.spatialReference;
+                            gCache[objectId] = feat.geometry;
+                            resultFeat.geometry = feat.geometry;
+                        }
+
+                        if (needWebAttr) {
+                            aCache[objectId] = feat.attributes;
+                            resultFeat.attributes = feat.attributes;
+                        }
+
+                        result.graphic = resultFeat;
+                        attribHackPromise.then(() => {
+                            resolve(result);
+                        });
+                    },
+                    (error) => {
+                        console.warn(error);
+                        reject(error);
+                    }
+                );
+            });
         } else {
             // no need for web requests. everything was available locally
             return attribHackPromise.then(() => {
@@ -537,10 +547,9 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
      * @return {Promise}                resolves after the map is done moving
      */
-    zoomToGraphic (objId, map, offsetFraction) {
-
+    zoomToGraphic(objId, map, offsetFraction) {
         return this.fetchGraphic(objId, { map, geom: true })
-            .then(fetchedGraphic => {
+            .then((fetchedGraphic) => {
                 const gapi = this._parent._apiRef;
 
                 // make new graphic (on the chance it came from server and is just raw json geometry)
@@ -550,8 +559,13 @@ class AttribFC extends basicFC.BasicFC {
                 let extent = gapi.proj.graphicsUtils.graphicsExtent([graphic]);
                 if (!gapi.proj.isSpatialRefEqual(graphic.geometry.spatialReference, map.spatialReference)) {
                     const intermExtent = gapi.proj.localProjectExtent(extent, map.spatialReference);
-                    extent = gapi.Map.Extent(intermExtent.x0, intermExtent.y0,
-                        intermExtent.x1, intermExtent.y1, intermExtent.sr);
+                    extent = gapi.Map.Extent(
+                        intermExtent.x0,
+                        intermExtent.y0,
+                        intermExtent.x1,
+                        intermExtent.y1,
+                        intermExtent.sr
+                    );
                 }
 
                 // move map according to geometry
@@ -567,18 +581,19 @@ class AttribFC extends basicFC.BasicFC {
 
                 // make next step wait for map to zoom, and pass it our projected target extent.
                 return geomZoomPromise.then(() => extent);
-            }).then(extent => {
-
+            })
+            .then((extent) => {
                 // determine if our optimal zoom is offscale
                 const scale = this.isOffScale(map.getScale());
 
                 // adjust the scale if the layer is offscale
-                const scaleZoomPromise = scale.offScale ?
-                    this.zoomToScale(map, map.lods, scale.zoomIn, false) : Promise.resolve();
+                const scaleZoomPromise = scale.offScale
+                    ? this.zoomToScale(map, map.lods, scale.zoomIn, false)
+                    : Promise.resolve();
 
                 return scaleZoomPromise.then(() => extent);
-
-            }).then(extent => {
+            })
+            .then((extent) => {
                 // map is at best position we can manage. do any offsetting for UI elements
                 return map.moveToOffsetExtent(extent, offsetFraction);
             });
@@ -590,7 +605,7 @@ class AttribFC extends basicFC.BasicFC {
      * @function applyFilterToLayer
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applyFilterToLayer (exclusions = []) {
+    applyFilterToLayer(exclusions = []) {
         // note DynamicFC will override this function to handle the dynamic layer case
         const p = this._parent;
         const sql = this.filter.getCombinedSql(exclusions);
@@ -613,7 +628,7 @@ class AttribFC extends basicFC.BasicFC {
      * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
      * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
      */
-    getFilterOIDs (exclusions = [], extent) {
+    getFilterOIDs(exclusions = [], extent) {
         const sql = this.filter.getCombinedSql(exclusions);
 
         const p = this._parent;
@@ -621,8 +636,8 @@ class AttribFC extends basicFC.BasicFC {
         const opts = {
             geometry: extent,
             where: sql,
-            mapScale: p._layer._map && p._layer._map.__LOD ? p._layer._map.__LOD.scale  : undefined,
-            sourceWkid: p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined
+            mapScale: p._layer._map && p._layer._map.__LOD ? p._layer._map.__LOD.scale : undefined,
+            sourceWkid: p._layer.spatialReference ? p._layer.spatialReference.wkid : undefined,
         };
 
         if (!(sql || extent)) {
@@ -666,8 +681,7 @@ class AttribFC extends basicFC.BasicFC {
                 if (sql) {
                     // use our custom filter to find graphics that satisfy our sql
                     const oid = this.oidField;
-                    sArray = api.query.sqlAttributeFilter(p._layer.graphics, sql, true)
-                                .map(a => a.attributes[oid]);
+                    sArray = api.query.sqlAttributeFilter(p._layer.graphics, sql, true).map((a) => a.attributes[oid]);
                     if (!extent) {
                         // nothing else to filter, set the cache
                         cache = Promise.resolve(sArray);
@@ -675,7 +689,7 @@ class AttribFC extends basicFC.BasicFC {
                 }
                 if (sql && extent) {
                     // combine the two results, cache it
-                    cache = eProm.then(qArray => {
+                    cache = eProm.then((qArray) => {
                         return shared.arrayIntersect(qArray, sArray);
                     });
                 }
@@ -684,9 +698,8 @@ class AttribFC extends basicFC.BasicFC {
         }
         return cache;
     }
-
 }
 
 module.exports = () => ({
-    AttribFC
+    AttribFC,
 });

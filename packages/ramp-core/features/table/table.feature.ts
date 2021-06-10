@@ -27,7 +27,7 @@ export class Table {
             } else {
                 this.prep({
                     attributes: attrs,
-                    layer: baseLayer
+                    layer: baseLayer,
                 });
             }
         });
@@ -39,15 +39,21 @@ export class Table {
      * @param attrBundle attribute data
      */
     prep(attrBundle: AttrBundle) {
-        const cols = `<thead><tr>${ Object.keys(attrBundle.attributes[0]).map((c: any) => {
-            return `<th>${c}</th>`;
-        }).join('') }</tr></thead>`;
+        const cols = `<thead><tr>${Object.keys(attrBundle.attributes[0])
+            .map((c: any) => {
+                return `<th>${c}</th>`;
+            })
+            .join('')}</tr></thead>`;
 
-        const rows = `<tbody>${ attrBundle.attributes.map((rs: any) => {
-            return `<tr>${ Object.values(rs).map((r: any) => {
-                return `<td>${r}</td>`;
-            }).join('') }</tr>`;
-        }).join('') }</tbody>`;
+        const rows = `<tbody>${attrBundle.attributes
+            .map((rs: any) => {
+                return `<tr>${Object.values(rs)
+                    .map((r: any) => {
+                        return `<td>${r}</td>`;
+                    })
+                    .join('')}</tr>`;
+            })
+            .join('')}</tbody>`;
 
         this.panel.tableContent.html(`<table class="table table-bordered">${cols} ${rows}</table>`);
 
@@ -77,5 +83,5 @@ export default {
 
     init(mapApi: any) {
         new Table(mapApi);
-    }
-}
+    },
+};

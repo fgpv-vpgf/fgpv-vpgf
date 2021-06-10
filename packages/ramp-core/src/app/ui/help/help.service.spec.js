@@ -8,7 +8,7 @@ describe('helpService', () => {
     function mockTranslate($provide) {
         $provide.service('$translate', () => {
             return {
-                use: () => {}
+                use: () => {},
             };
         });
     }
@@ -32,9 +32,14 @@ describe('helpService', () => {
     }
 
     beforeEach(() => {
-
-        bard.appModule('app.ui.help', mockDialog, mockTranslate, mockTranslates,
-            mocklayoutService, mockSideNavigationService);
+        bard.appModule(
+            'app.ui.help',
+            mockDialog,
+            mockTranslate,
+            mockTranslates,
+            mocklayoutService,
+            mockSideNavigationService
+        );
 
         // inject services
         bard.inject('helpService');
@@ -44,17 +49,14 @@ describe('helpService', () => {
         // check that controller is created
         it('should be created successfully', () => {
             // check if service is defined
-            expect(helpService)
-                .toBeDefined();
-
+            expect(helpService).toBeDefined();
         });
 
         it('should register help sections', () => {
             let obj = { getCoords: () => {}, key: 'blam' };
             helpService.register(obj);
 
-            expect(helpService.registry[0])
-                .toBe(obj);
+            expect(helpService.registry[0]).toBe(obj);
         });
 
         it('should remove help sections', () => {
@@ -62,16 +64,14 @@ describe('helpService', () => {
             helpService.register(obj);
             helpService.unregister(obj);
 
-            expect(helpService.registry.length)
-                .toBe(0);
+            expect(helpService.registry.length).toBe(0);
         });
 
         it('should register drawn sections', () => {
             let obj = { getCoords: () => {}, key: 'blam' };
             helpService.setDrawn(obj);
 
-            expect(helpService.drawnCache[0])
-                .toBe(obj);
+            expect(helpService.drawnCache[0]).toBe(obj);
         });
 
         it('should clear drawn sections', () => {
@@ -79,8 +79,7 @@ describe('helpService', () => {
             helpService.setDrawn(obj);
             helpService.clearDrawn(obj);
 
-            expect(helpService.drawnCache.length)
-                .toBe(0);
+            expect(helpService.drawnCache.length).toBe(0);
         });
     });
 });

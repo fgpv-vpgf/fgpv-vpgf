@@ -6,9 +6,7 @@
  * The 'translationService' service is provided to $translateProvider as a custom language loader.
  * It allows translations to be added by plugins at any point in the application life cycle.
  */
-angular
-    .module('app.core')
-    .factory('translationService', translationService);
+angular.module('app.core').factory('translationService', translationService);
 
 function translationService($q, translations, $translate) {
     const translationData = translations;
@@ -16,13 +14,13 @@ function translationService($q, translations, $translate) {
     return (options, pluginName) => {
         // default custom loader implementation returns a promise which resolves with language translation data
         if (options.action === 'loader') {
-            return $q(resolve => {
+            return $q((resolve) => {
                 resolve(translationData[options.key]);
             });
 
-        // add translations to existing languages
+            // add translations to existing languages
         } else {
-            Object.keys(options).forEach(lang => {
+            Object.keys(options).forEach((lang) => {
                 if (translationData[lang]) {
                     if (!translationData[lang].plugins) {
                         translationData[lang].plugins = {};

@@ -12,7 +12,8 @@
         // far out;
         // this arbitrary clipping is annoying and it's purpose might not be obvious to users;
         // ESRI JSAPI v3.15 changes the use of class="container" to class="esriMapContainer"
-        div[id$="_container"].container, div[id$="_container"].esriMapContainer {
+        div[id$='_container'].container,
+        div[id$='_container'].esriMapContainer {
             clip: auto !important;
         }
 
@@ -34,7 +35,7 @@
         }
 
         .ovwContainer:before {
-            content: "";
+            content: '';
             position: absolute;
             width: 0px;
             height: 0px;
@@ -45,12 +46,11 @@
             top: 0;
         }
 
-
         .rv-overview-toggle {
-            position:absolute;
-            top:0;
-            right:0;
-            z-index:100;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 100;
             transform: rotate(45deg);
             margin: 0;
         }

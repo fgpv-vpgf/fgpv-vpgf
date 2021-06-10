@@ -20,9 +20,7 @@ const BASEMAP_WKID_IMAGE = '.rv-wkid';
  * ```
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvBasemapItem', rvBasemapItem);
+angular.module('app.ui').directive('rvBasemapItem', rvBasemapItem);
 
 function rvBasemapItem(animationService) {
     const directive = {
@@ -30,19 +28,20 @@ function rvBasemapItem(animationService) {
         templateUrl,
         scope: {
             basemap: '=',
-            select: '&'
+            select: '&',
         },
         link: link,
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 
     /***/
 
-    function link(scope, el) { // scope, el, attr, ctrl) {
+    function link(scope, el) {
+        // scope, el, attr, ctrl) {
         const self = scope.self;
 
         self.toggleDescription = toggleDescription;
@@ -65,25 +64,45 @@ function rvBasemapItem(animationService) {
             if (!tlToggle) {
                 const fullHeight = Math.max(
                     footer.outerHeight(true) + descNode.outerHeight(true),
-                    el[0].getBoundingClientRect().height); // jQuery.height() returns rounded pixels, using boundingBox instead
+                    el[0].getBoundingClientRect().height
+                ); // jQuery.height() returns rounded pixels, using boundingBox instead
 
                 tlToggle = animationService.timeLineLite();
                 tlToggle
-                    .to(el, RV_DURATION / 3 * 2, {
-                        height: fullHeight,
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0)
-                    .to(wkidImage, RV_DURATION / 3 * 2, {
-                        opacity: 0.16,
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, 0)
-                    .set(descNode, {
-                        top: 0
-                    }, 0)
-                    .to(descNode, RV_DURATION / 3 * 2, {
-                        opacity: 1,
-                        ease: RV_SWIFT_IN_OUT_EASE
-                    }, RV_DURATION / 3)
+                    .to(
+                        el,
+                        (RV_DURATION / 3) * 2,
+                        {
+                            height: fullHeight,
+                            ease: RV_SWIFT_IN_OUT_EASE,
+                        },
+                        0
+                    )
+                    .to(
+                        wkidImage,
+                        (RV_DURATION / 3) * 2,
+                        {
+                            opacity: 0.16,
+                            ease: RV_SWIFT_IN_OUT_EASE,
+                        },
+                        0
+                    )
+                    .set(
+                        descNode,
+                        {
+                            top: 0,
+                        },
+                        0
+                    )
+                    .to(
+                        descNode,
+                        (RV_DURATION / 3) * 2,
+                        {
+                            opacity: 1,
+                            ease: RV_SWIFT_IN_OUT_EASE,
+                        },
+                        RV_DURATION / 3
+                    )
                     .reverse();
             }
 

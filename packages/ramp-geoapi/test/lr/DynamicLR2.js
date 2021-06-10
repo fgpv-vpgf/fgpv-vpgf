@@ -10,14 +10,12 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test Child Raster',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer',                
+        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
         tolerance: 5,
-        state: {"opacity":1,"visibility":true,"boundingBox":false,"query":true,"snapshot":false},
-        layerEntries: [
-            {"index":0}
-        ]
+        state: { opacity: 1, visibility: true, boundingBox: false, query: true, snapshot: false },
+        layerEntries: [{ index: 0 }],
     };
 
     var layerRec = api.layer.createDynamicRecord(config1);
@@ -35,8 +33,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
-        
+        console.log('enhanced loaded');
+
         const proxyLeaf0 = layerRec.getChildProxy(0);
 
         console.log('proxy leaf 0', proxyLeaf0);
@@ -44,10 +42,10 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('feature count - sb undefined', proxyLeaf0.featureCount);
         console.log('geometry type - sb undefined', proxyLeaf0.geometryType);
 
-        console.log('leaf 0 visible, should be false', proxyLeaf0.visibility);                   
-        console.log('layer proxy visible -- sb false', proxy.visibility);                
+        console.log('leaf 0 visible, should be false', proxyLeaf0.visibility);
+        console.log('layer proxy visible -- sb false', proxy.visibility);
         proxyLeaf0.setVisibility(true);
-        console.log('leaf 0 visible, should be true', proxyLeaf0.visibility);                    
+        console.log('leaf 0 visible, should be true', proxyLeaf0.visibility);
         console.log('layer proxy visible -- sb true', proxy.visibility);
 
         console.log('leaf 0 name -- sb aafc_crop_spatial_density_wheat.tif ', proxyLeaf0.name);
@@ -57,7 +55,5 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         console.log('offscale test - sb false, flase', layerRec.isOffScale(0, 20000));
 
         console.log('leaf 0 symbology -- sb three squares ', proxyLeaf0.symbology);
-
     }
-
 });

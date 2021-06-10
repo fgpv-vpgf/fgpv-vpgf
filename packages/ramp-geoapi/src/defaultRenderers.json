@@ -6,20 +6,10 @@
             "symbol": {
                 "type": "esriSMS",
                 "style": "esriSMSCircle",
-                "color": [
-                    67,
-                    100,
-                    255,
-                    200
-                ],
+                "color": [67, 100, 255, 200],
                 "size": 7,
                 "outline": {
-                    "color": [
-                        0,
-                        0,
-                        0,
-                        255
-                    ],
+                    "color": [0, 0, 0, 255],
                     "width": 1
                 }
             }
@@ -32,12 +22,7 @@
             "symbol": {
                 "type": "esriSLS",
                 "style": "esriSLSSolid",
-                "color": [
-                    90,
-                    90,
-                    90,
-                    200
-                ],
+                "color": [90, 90, 90, 200],
                 "width": 2
             }
         }
@@ -49,21 +34,11 @@
             "symbol": {
                 "type": "esriSFS",
                 "style": "esriSFSSolid",
-                "color": [
-                    76,
-                    76,
-                    125,
-                    200
-                ],
+                "color": [76, 76, 125, 200],
                 "outline": {
                     "type": "esriSLS",
                     "style": "esriSLSSolid",
-                    "color": [
-                        110,
-                        110,
-                        110,
-                        255
-                    ],
+                    "color": [110, 110, 110, 255],
                     "width": 1
                 }
             }
@@ -76,21 +51,11 @@
             "symbol": {
                 "type": "esriSFS",
                 "style": "esriSFSSolid",
-                "color": [
-                    255,
-                    0,
-                    0,
-                    64
-                ],
+                "color": [255, 0, 0, 64],
                 "outline": {
                     "type": "esriSLS",
                     "style": "esriSLSSolid",
-                    "color": [
-                        240,
-                        128,
-                        128,
-                        255
-                    ],
+                    "color": [240, 128, 128, 255],
                     "width": 1
                 }
             }

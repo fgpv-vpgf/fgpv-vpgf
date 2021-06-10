@@ -40,7 +40,7 @@ function StepperFactory($q) {
          * @return {Object}            this for chaining
          */
         reset() {
-            this.steps.forEach(step => {
+            this.steps.forEach((step) => {
                 this._configureStep(step, false, false);
                 this._reset(step);
             });
@@ -130,10 +130,12 @@ function StepperFactory($q) {
                 $q((resolve, reject) => {
                     this._resolveCancelPromise = resolve;
                     rejectCancelPromise = reject;
-                }).then(() => {
-                    isMoveCanceled = true;
-                    this._think(currentStep, false);
-                }).catch(() => {});
+                })
+                    .then(() => {
+                        isMoveCanceled = true;
+                        this._think(currentStep, false);
+                    })
+                    .catch(() => {});
 
                 // TODO: switch to $q.race when we update to Angular 1.5+
                 // wraps regular promise in $q since Promise doesn't have `finally`

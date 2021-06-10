@@ -73,7 +73,11 @@
 
                 // add not md-focused because if, it is overwritten and focus background-color is not applied
                 .md-button:not(.md-focused) {
-                    background: radial-gradient(ellipse at center, rgba(255,255,255,1) 30%,rgba(255,255,255,0.32) 100%);
+                    background: radial-gradient(
+                        ellipse at center,
+                        rgba(255, 255, 255, 1) 30%,
+                        rgba(255, 255, 255, 0.32) 100%
+                    );
                 }
             }
         }
@@ -132,8 +136,10 @@
             border-bottom: 1px solid $divider-color-light;
             display: flex;
 
-            h4, h5, h6 {
-                color: darken(#00BCD4, 20%);
+            h4,
+            h5,
+            h6 {
+                color: darken(#00bcd4, 20%);
             }
 
             @include include-size(rv-gt-sm) {
@@ -153,9 +159,13 @@
             .rv-sub-subhead {
                 margin: 0;
 
-                h1, h2, h3,
-                h4, h5, h6 {
-                    color: darken(#00BCD4, 30%);
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                    color: darken(#00bcd4, 30%);
                 }
             }
 

@@ -7,20 +7,17 @@
  * and there exists a top level property in the config named 'googleAPIKey', then
  * a request to Google's geolocation API is made.
  */
-angular
-    .module('app.geo')
-    .factory('locateService', locateService);
+angular.module('app.geo').factory('locateService', locateService);
 
 function locateService($http, $translate, gapiService, configService, errorService) {
-
     let apiURL;
     const location = {};
     const service = {
-        find
+        find,
     };
 
     // check for the googleAPIkey on every config reload
-    configService.onEveryConfigLoad(conf => {
+    configService.onEveryConfigLoad((conf) => {
         if (conf.services.googleAPIKey) {
             apiURL = `https://www.googleapis.com/geolocation/v1/geolocate?key=${conf.services.googleAPIKey}`;
         } else {
@@ -42,8 +39,10 @@ function locateService($http, $translate, gapiService, configService, errorServi
         const lods = configService.getSync.map.selectedBasemap.lods;
 
         // get reprojected point and zoom to it
-        const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference,
-            [parseFloat(location.longitude), parseFloat(location.latitude)]);
+        const geoPt = gapiService.gapi.proj.localProjectPoint(4326, map.spatialReference, [
+            parseFloat(location.longitude),
+            parseFloat(location.latitude),
+        ]);
         const zoomPt = gapiService.gapi.proj.Point(geoPt[0], geoPt[1], map.spatialReference);
 
         // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
@@ -58,10 +57,7 @@ function locateService($http, $translate, gapiService, configService, errorServi
      */
     function find() {
         const onFailedBrowserCB = () =>
-            _apiLocate(
-                geolocate,
-                () => errorService.display({ textContent: $translate.instant('geoLocation.error') })
-            );
+            _apiLocate(geolocate, () => errorService.display({ textContent: $translate.instant('geoLocation.error') }));
 
         if (location.latitude) {
             geolocate(location);
@@ -79,14 +75,11 @@ function locateService($http, $translate, gapiService, configService, errorServi
      */
     function _browserLocate(onSuccess, onFailure) {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                gp => {
-                    location.latitude = gp.coords.latitude;
-                    location.longitude = gp.coords.longitude;
-                    onSuccess(location);
-                },
-                onFailure
-            );
+            navigator.geolocation.getCurrentPosition((gp) => {
+                location.latitude = gp.coords.latitude;
+                location.longitude = gp.coords.longitude;
+                onSuccess(location);
+            }, onFailure);
         } else {
             onFailure();
         }
@@ -101,10 +94,10 @@ function locateService($http, $translate, gapiService, configService, errorServi
      */
     function _apiLocate(onSuccess, onFailure) {
         if (typeof apiURL !== 'undefined') {
-            $http.post(apiURL).then(apiResponse => {
+            $http.post(apiURL).then((apiResponse) => {
                 geolocate({
                     latitude: apiResponse.data.location.lat,
-                    longitude: apiResponse.data.location.lng
+                    longitude: apiResponse.data.location.lng,
                 });
             }, onFailure);
         } else {

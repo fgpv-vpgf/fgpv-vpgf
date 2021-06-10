@@ -10,20 +10,18 @@ const templateUrl = require('./visibility-menu.html');
  * TODO: add description
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvTocVisibilityMenu', rvTocVisibilityMenu);
+angular.module('app.ui').directive('rvTocVisibilityMenu', rvTocVisibilityMenu);
 
 function rvTocVisibilityMenu() {
     const directive = {
         restrict: 'E',
         templateUrl,
         scope: {
-            disabled: '='
+            disabled: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -35,22 +33,18 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
 
     self.appID = appInfo.id;
 
-    self.showAllLegendEntries = () =>
-        toggleLegendEntries();
-    self.hideAllLegendEntries = () =>
-        toggleLegendEntries(false);
+    self.showAllLegendEntries = () => toggleLegendEntries();
+    self.hideAllLegendEntries = () => toggleLegendEntries(false);
 
     events.$on(events.rvMapLoaded, () => {
         //wire in a hook to any map to toggleLegendEntries
         configService.getSync.map.instance.toggleLegendEntries = (value = true) => {
             toggleLegendEntries(value);
-        }
+        };
     });
 
-    self.isAllLegendEntriesVisible = () =>
-        getLegendEntriesVisibility();
-    self.isAllLegendEntriesHidden = () =>
-        getLegendEntriesVisibility(false);
+    self.isAllLegendEntriesVisible = () => getLegendEntriesVisibility();
+    self.isAllLegendEntriesHidden = () => getLegendEntriesVisibility(false);
 
     /***/
 
@@ -68,14 +62,17 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
         // set visibility on all interactive legend blocks, but do not set visibility on children of LegendSets;
         // if we do set visibility on LegendSet's children, the last child in the set will be selected as opposed to the first one;
         const mapConfig = configService.getSync.map;
-        mapConfig.legendBlocks
-            .walk(_walkAction, _walkDecision);
+        mapConfig.legendBlocks.walk(_walkAction, _walkDecision);
 
         // TODO: think about if this should toggle visiblity of legend blocks whose controls are disabled/userdisabled
         function _walkAction(block) {
             if (block.isInteractive && !block.hidden) {
-                if (block.symbologyStack && block.symbologyStack.toggleList && block.symbologyStack.toggleList.length > 1) {
-                    block.symbologyStack.toggleList.forEach(toggle => {
+                if (
+                    block.symbologyStack &&
+                    block.symbologyStack.toggleList &&
+                    block.symbologyStack.toggleList.length > 1
+                ) {
+                    block.symbologyStack.toggleList.forEach((toggle) => {
                         toggle.wasSelected = true;
                         toggle.isSelected = value;
                     });
@@ -105,23 +102,29 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
         // find all interactive legendblocks whose visibility controls are not system disabled and aggregate their visibility
         const mapConfig = configService.getSync.map;
         const isAllVisible = mapConfig.legendBlocks
-            .walk(block => {
+            .walk((block) => {
                 if (!block.isInteractive || block.hidden) {
                     return null;
                 }
 
                 // TODO: the logic is not entirely correct as a group with only legend info blocks and disabled controls still have visiblity
                 // this causes the visibility menu not disable options correctly
-                if (block.symbologyStack && block.symbologyStack.toggleList && block.symbologyStack.toggleList.length > 1) {
-                    return block.isControlSystemDisabled('visibility') ? null : value ? block.fullyVisible : !block.fullyInvisible;
+                if (
+                    block.symbologyStack &&
+                    block.symbologyStack.toggleList &&
+                    block.symbologyStack.toggleList.length > 1
+                ) {
+                    return block.isControlSystemDisabled('visibility')
+                        ? null
+                        : value
+                        ? block.fullyVisible
+                        : !block.fullyInvisible;
                 } else {
                     return block.isControlSystemDisabled('visibility') ? null : block.visibility;
                 }
             })
-            .filter(isVisible =>
-                isVisible !== null)
-            .every(isVisible =>
-                isVisible === value);
+            .filter((isVisible) => isVisible !== null)
+            .every((isVisible) => isVisible === value);
 
         return isAllVisible;
     }

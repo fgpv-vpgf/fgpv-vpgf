@@ -23,19 +23,19 @@ import RColor from 'rcolor';
  * | x       | x               | control is visible and is locked to modifications                              |
  *
  */
-angular
-    .module('app.core')
-    .factory('ConfigObject', ConfigObjectFactory);
+angular.module('app.core').factory('ConfigObject', ConfigObjectFactory);
 
 // eslint-disable-next-line max-statements
 function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
-
     const ref = {
         legendElementCounter: 0,
-        walkFunction
+        walkFunction,
     };
 
-    const { Layer: { Types: layerTypes }, Service: { Types: serviceTypes } } = Geo;
+    const {
+        Layer: { Types: layerTypes },
+        Service: { Types: serviceTypes },
+    } = Geo;
 
     const TYPES = {
         legend: {
@@ -44,28 +44,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             GROUP: 'legendGroup',
             SET: 'legendSet',
             STRUCTURED: 'structured',
-            AUTOPOPULATE: 'autopopulate'
-        }
+            AUTOPOPULATE: 'autopopulate',
+        },
     };
 
     // These are layer default values for controls, disabledControls, and state
     const DEFAULTS = {
         legend: {
             [TYPES.legend.GROUP]: {
-                controls: [
-                    'opacity',
-                    'visibility',
-                    'query',
-
-                    'symbology',
-                    'reload',
-                    'remove',
-                    'settings',
-                    'interval'
-                ],
+                controls: ['opacity', 'visibility', 'query', 'symbology', 'reload', 'remove', 'settings', 'interval'],
                 disabledControls: [],
-                userDisabledControls: []
-            }
+                userDisabledControls: [],
+            },
         },
         layer: {
             [Geo.Layer.Types.ESRI_FEATURE]: {
@@ -75,7 +65,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     boundingBox: false,
                     query: true,
                     snapshot: false,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -91,10 +81,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'settings',
                     'data',
                     'symbology',
-                    'interval'
+                    'interval',
                 ],
                 disabledControls: [],
-                userDisabledControls: []
+                userDisabledControls: [],
             },
             [Geo.Layer.Types.OGC_WMS]: {
                 state: {
@@ -103,7 +93,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     boundingBox: false,
                     query: true,
                     snapshot: false,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -120,7 +110,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     // 'data',
                     'symbology',
                     'styles',
-                    'interval'
+                    'interval',
                 ],
                 disabledControls: [],
                 userDisabledControls: [],
@@ -128,8 +118,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     state: {},
                     controls: [],
                     disabledControls: [],
-                    userDisabledControls: []
-                }
+                    userDisabledControls: [],
+                },
             },
             [Geo.Layer.Types.OGC_WFS]: {
                 state: {
@@ -137,7 +127,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     visibility: true,
                     boundingBox: false,
                     query: true,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -150,10 +140,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'reload',
                     'remove',
                     'settings',
-                    'data'
+                    'data',
                 ],
                 disabledControls: [],
-                userDisabledControls: []
+                userDisabledControls: [],
             },
             [Geo.Layer.Types.ESRI_DYNAMIC]: {
                 state: {
@@ -162,7 +152,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     boundingBox: false,
                     query: true,
                     snapshot: false,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -178,7 +168,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'settings',
                     'data',
                     'symbology',
-                    'interval'
+                    'interval',
                 ],
                 disabledControls: [],
                 userDisabledControls: [],
@@ -191,7 +181,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                         boundingBox: false,
                         query: true,
                         snapshot: false,
-                        userAdded: false
+                        userAdded: false,
                     },
                     controls: [
                         'opacity',
@@ -207,11 +197,11 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                         'settings',
                         'data',
                         'symbology',
-                        'interval'
+                        'interval',
                     ],
                     disabledControls: [],
-                    userDisabledControls: []
-                }
+                    userDisabledControls: [],
+                },
             },
             [Geo.Layer.Types.ESRI_IMAGE]: {
                 state: {
@@ -220,7 +210,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     boundingBox: false,
                     query: false,
                     snapshot: false,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -235,10 +225,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'remove',
                     'settings',
                     // 'data',
-                    'symbology'
+                    'symbology',
                 ],
                 disabledControls: [],
-                userDisabledControls: []
+                userDisabledControls: [],
             },
             [Geo.Layer.Types.ESRI_TILE]: {
                 state: {
@@ -247,7 +237,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     boundingBox: false,
                     query: false,
                     snapshot: false,
-                    userAdded: false
+                    userAdded: false,
                 },
                 controls: [
                     'opacity',
@@ -262,12 +252,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     'remove',
                     'settings',
                     // 'data',
-                    'symbology'
+                    'symbology',
                 ],
                 disabledControls: [],
-                userDisabledControls: []
-            }
-        }
+                userDisabledControls: [],
+            },
+        },
     };
 
     let mApi = null;
@@ -278,7 +268,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *
          * @param {Object} source a well-formed layer state object
          */
-        constructor (source) {
+        constructor(source) {
             this._opacity = source.opacity;
             this._visibility = source.visibility;
             this._boundingBox = source.boundingBox;
@@ -290,35 +280,57 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             // TODO: decide if we want to preserve any settings (apart from snapshot) through the layer reload
         }
 
-        get opacity () {            return this._opacity; }
-        set opacity (value) {
+        get opacity() {
+            return this._opacity;
+        }
+        set opacity(value) {
             this._opacity = value;
             $rootScope.$applyAsync();
         }
 
-        get visibility () {         return this._visibility; }
-        set visibility (value) {
+        get visibility() {
+            return this._visibility;
+        }
+        set visibility(value) {
             this._visibility = value;
             $rootScope.$applyAsync();
         }
 
-        get boundingBox () {        return this._boundingBox; }
-        set boundingBox (value) {   this._boundingBox = value; }
+        get boundingBox() {
+            return this._boundingBox;
+        }
+        set boundingBox(value) {
+            this._boundingBox = value;
+        }
 
-        get query () {              return this._query; }
-        set query (value) {
+        get query() {
+            return this._query;
+        }
+        set query(value) {
             this._query = value;
             $rootScope.$applyAsync();
         }
 
-        get snapshot () {           return this._snapshot; }
-        set snapshot (value) {      this._snapshot = value; }
+        get snapshot() {
+            return this._snapshot;
+        }
+        set snapshot(value) {
+            this._snapshot = value;
+        }
 
-        get userAdded () {          return this._userAdded; }
-        set userAdded (value) {     this._userAdded = value; }
+        get userAdded() {
+            return this._userAdded;
+        }
+        set userAdded(value) {
+            this._userAdded = value;
+        }
 
-        get hovertips() { return this._hovertips; }
-        set hovertips(value) { this._hovertips = value; }
+        get hovertips() {
+            return this._hovertips;
+        }
+        set hovertips(value) {
+            this._hovertips = value;
+        }
 
         get JSON() {
             return {
@@ -326,7 +338,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 visibility: this.visibility,
                 boundingBox: this.boundingBox,
                 query: this.query,
-                snapshot: this.snapshot
+                snapshot: this.snapshot,
             };
         }
     }
@@ -340,21 +352,35 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @param {Object} parentSource [optional={}] already defaulted config of an immediate parent; needed only for dynamic layres (possibly wms as well)
      * @return {Object} a copy of the original `ownSource` config with state, controls, disabledControls and userDisabledControls applied
      */
-    function applyLayerNodeDefaults(ownSource =
-        { state: {}, controls: [], disabledControls: [], userDisabledControls: [] },
-    ownDefaults, parentSource = {}) {
+    function applyLayerNodeDefaults(
+        ownSource = { state: {}, controls: [], disabledControls: [], userDisabledControls: [] },
+        ownDefaults,
+        parentSource = {}
+    ) {
         const ownSourceCopy = angular.copy(ownSource);
 
         ownSourceCopy.state = _defaultState(ownSourceCopy.state, ownDefaults.state, parentSource.state);
 
-        ownSourceCopy.controls = _defaultControls(ownSourceCopy.controls,
-            ownDefaults.controls, ownDefaults.controls, parentSource.controls);
+        ownSourceCopy.controls = _defaultControls(
+            ownSourceCopy.controls,
+            ownDefaults.controls,
+            ownDefaults.controls,
+            parentSource.controls
+        );
 
-        ownSourceCopy.disabledControls = _defaultControls(ownSourceCopy.disabledControls,
-            ownDefaults.disabledControls, ownDefaults.controls, parentSource.disabledControls);
+        ownSourceCopy.disabledControls = _defaultControls(
+            ownSourceCopy.disabledControls,
+            ownDefaults.disabledControls,
+            ownDefaults.controls,
+            parentSource.disabledControls
+        );
 
-        ownSourceCopy.userDisabledControls = _defaultControls(ownSourceCopy.userDisabledControls,
-            ownDefaults.userDisabledControls, ownDefaults.controls, parentSource.userDisabledControls);
+        ownSourceCopy.userDisabledControls = _defaultControls(
+            ownSourceCopy.userDisabledControls,
+            ownDefaults.userDisabledControls,
+            ownDefaults.controls,
+            parentSource.userDisabledControls
+        );
 
         return ownSourceCopy;
 
@@ -373,15 +399,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @return {Object} defaulted state object
          */
         function _defaultState(state = {}, stateDefaults, parentState = {}) {
-            const properies = [
-                'opacity', 'visibility', 'boundingBox', 'query', 'snapshot', 'userAdded'
-            ];
+            const properies = ['opacity', 'visibility', 'boundingBox', 'query', 'snapshot', 'userAdded'];
 
-            properies.forEach(propName => {
+            properies.forEach((propName) => {
                 if (typeof state[propName] === 'undefined') {
-                    state[propName] = typeof parentState[propName] !== 'undefined' ?
-                        parentState[propName] :
-                        stateDefaults[propName];
+                    state[propName] =
+                        typeof parentState[propName] !== 'undefined' ? parentState[propName] : stateDefaults[propName];
                 }
             });
 
@@ -441,7 +464,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     function _getFilterDefintion(columns) {
         let defs = [];
 
-        columns.forEach(column => {
+        columns.forEach((column) => {
             if (typeof column.filter !== 'undefined' && column.filter.type && column.filter.value) {
                 defs = _getColumnFilterDefintion(defs, column);
             }
@@ -499,7 +522,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         return defs;
     }
 
-
     class FilterNode {
         constructor(source = {}) {
             this._source = source;
@@ -509,19 +531,27 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._static = source.static || false;
         }
 
-        get type () { return this._type; }
+        get type() {
+            return this._type;
+        }
 
-        get value () { return this._value; }
-        set value (value) { this._value = value; }
+        get value() {
+            return this._value;
+        }
+        set value(value) {
+            this._value = value;
+        }
 
-        get static () { return this._static; }
+        get static() {
+            return this._static;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 type: this.type,
                 value: this.value,
-                static: this.static
-            }
+                static: this.static,
+            };
         }
     }
 
@@ -533,22 +563,38 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._title = source.title;
             this._description = source.description;
             this._visible = typeof source.visible !== 'undefined' ? source.visible : true;
-            this._width = (source.width && source.width < 100) ? 100 : source.width;
+            this._width = source.width && source.width < 100 ? 100 : source.width;
             this._sort = source.sort;
             this._searchable = typeof source.searchable !== 'undefined' ? source.searchable : true;
             this._filter = new FilterNode(source.filter);
         }
 
-        get data () { return this._data; }
-        get title () { return this._title; }
-        get description () { return this._description; }
-        get visible () { return this._visible; }
-        get width () { return this._width; }
-        get sort () { return this._sort; }
-        get searchable () { return this._searchable; }
-        get filter () { return this._filter; }
+        get data() {
+            return this._data;
+        }
+        get title() {
+            return this._title;
+        }
+        get description() {
+            return this._description;
+        }
+        get visible() {
+            return this._visible;
+        }
+        get width() {
+            return this._width;
+        }
+        get sort() {
+            return this._sort;
+        }
+        get searchable() {
+            return this._searchable;
+        }
+        get filter() {
+            return this._filter;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 data: this.data,
                 title: this.title,
@@ -557,8 +603,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 width: this.width,
                 sort: this.sort,
                 searchable: this.searchable,
-                filter: this.filter.JSON
-            }
+                filter: this.filter.JSON,
+            };
         }
     }
 
@@ -574,44 +620,77 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._filterByExtent = source.filterByExtent || false;
             this._applyMap = source.applyMap || false;
             this._applied = source.applyMap || false;
-            this._columns = source.columns ?
-                source.columns.map(columnsSource =>
-                    (new ColumnNode(columnsSource))) :
-                [];
-            this._searchStrictMatch = source.searchStrictMatch || false
+            this._columns = source.columns ? source.columns.map((columnsSource) => new ColumnNode(columnsSource)) : [];
+            this._searchStrictMatch = source.searchStrictMatch || false;
             this._printEnabled = source.printEnabled || false;
         }
 
-        get title () { return this._title; }
-        get description () { return this._description; }
+        get title() {
+            return this._title;
+        }
+        get description() {
+            return this._description;
+        }
 
-        get maximize () { return this._maximize; }
-        set maximize (value) { this._maximize = value; }
+        get maximize() {
+            return this._maximize;
+        }
+        set maximize(value) {
+            this._maximize = value;
+        }
 
-        get search () { return this._search; }
+        get search() {
+            return this._search;
+        }
 
-        get lazyFilter () { return this._lazyFilter; }
+        get lazyFilter() {
+            return this._lazyFilter;
+        }
 
-        get showFilter () { return this._showFilter; }
-        set showFilter (value) { this._showFilter = value; }
+        get showFilter() {
+            return this._showFilter;
+        }
+        set showFilter(value) {
+            this._showFilter = value;
+        }
 
-        get filterByExtent () { return this._filterByExtent; }
-        set filterByExtent (value) { this._filterByExtent = value; }
+        get filterByExtent() {
+            return this._filterByExtent;
+        }
+        set filterByExtent(value) {
+            this._filterByExtent = value;
+        }
 
-        get applyMap () { return this._applyMap; }
-        set applyMap (value) { this._applyMap = value; }
+        get applyMap() {
+            return this._applyMap;
+        }
+        set applyMap(value) {
+            this._applyMap = value;
+        }
 
-        get columns () { return this._columns; }
-        set columns (value) { this._columns = value; }
+        get columns() {
+            return this._columns;
+        }
+        set columns(value) {
+            this._columns = value;
+        }
 
-        get applied () { return this._applied; }
-        set applied (value) { this._applied = value; }
+        get applied() {
+            return this._applied;
+        }
+        set applied(value) {
+            this._applied = value;
+        }
 
-        get searchStrictMatch () { return this._searchStrictMatch}
+        get searchStrictMatch() {
+            return this._searchStrictMatch;
+        }
 
-        get printEnabled() { return this._printEnabled }
+        get printEnabled() {
+            return this._printEnabled;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 title: this.title,
                 description: this.description,
@@ -622,8 +701,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 showFilter: this.showFilter,
                 columns: this.columns.JSON,
                 searchStrictMatch: this.searchStrictMatch,
-                printEnabled: this.printEnabled
-            }
+                printEnabled: this.printEnabled,
+            };
         }
     }
 
@@ -639,7 +718,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         delete column.sort;
         delete column.width;
 
-        switch (fields.find(field => field.name === column.data).type) {
+        switch (fields.find((field) => field.name === column.data).type) {
             case 'esriFieldTypeString':
                 column.filter.type = 'string';
                 break;
@@ -658,8 +737,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *
          * @param {Object} source a well-formed layer config object
          */
-        constructor (source) {
-
+        constructor(source) {
             this._source = source;
             this._id = source.id;
             this._layerType = source.layerType;
@@ -667,13 +745,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._url = source.url;
             this._metadataUrl = source.metadataUrl;
             this._catalogueUrl = source.catalogueUrl;
-            this._extent = source.extent ?
-                gapiService.gapi.Map.getExtentFromJson(source.extent) :
-                undefined;
+            this._extent = source.extent ? gapiService.gapi.Map.getExtentFromJson(source.extent) : undefined;
             this._refreshInterval = typeof source.refreshInterval !== 'undefined' ? source.refreshInterval : 0;
             this._expectedResponseTime = source.expectedResponseTime !== undefined ? source.expectedResponseTime : 4000;
-            this._suppressGetCapabilities = source.suppressGetCapabilities !== undefined ? source.suppressGetCapabilities : false;
-            this._enableStructuredDelete = typeof source.enableStructuredDelete === 'boolean' ? source.enableStructuredDelete : false;
+            this._suppressGetCapabilities =
+                source.suppressGetCapabilities !== undefined ? source.suppressGetCapabilities : false;
+            this._enableStructuredDelete =
+                typeof source.enableStructuredDelete === 'boolean' ? source.enableStructuredDelete : false;
             const defaults = DEFAULTS.layer[this.layerType];
 
             const defaultedSource = applyLayerNodeDefaults(source, defaults);
@@ -693,24 +771,44 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             }
         }
 
-        get source () {                 return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get id () {                     return this._id; }
-        get layerType () {              return this._layerType; }
+        get id() {
+            return this._id;
+        }
+        get layerType() {
+            return this._layerType;
+        }
 
-        get name () {                   return this._name; }
-        set name (value) {
+        get name() {
+            return this._name;
+        }
+        set name(value) {
             this._name = value;
             $rootScope.$applyAsync();
         }
 
-        get url () {                    return this._url; }
-        get metadataUrl () {            return this._metadataUrl; }
-        get catalogueUrl () {           return this._catalogueUrl; }
-        get extent () {                 return this._extent; }
+        get url() {
+            return this._url;
+        }
+        get metadataUrl() {
+            return this._metadataUrl;
+        }
+        get catalogueUrl() {
+            return this._catalogueUrl;
+        }
+        get extent() {
+            return this._extent;
+        }
 
-        get refreshInterval () {        return this._refreshInterval; }
-        set refreshInterval (value) {   this._refreshInterval = value; }
+        get refreshInterval() {
+            return this._refreshInterval;
+        }
+        set refreshInterval(value) {
+            this._refreshInterval = value;
+        }
 
         /**
          * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
@@ -718,31 +816,53 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *
          * @memberof LayerNode
          */
-        get expectedResponseTime () {        return this._expectedResponseTime; }
-        set expectedResponseTime (value) {   this._expectedResponseTime = value; }
+        get expectedResponseTime() {
+            return this._expectedResponseTime;
+        }
+        set expectedResponseTime(value) {
+            this._expectedResponseTime = value;
+        }
 
-        get suppressGetCapabilities() { return this._suppressGetCapabilities; }
+        get suppressGetCapabilities() {
+            return this._suppressGetCapabilities;
+        }
 
-        get initialFilteredQuery() { return this._initialFilteredQuery; }
-        set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
-        get toggleSymbology() { return this._toggleSymbology; }
+        get initialFilteredQuery() {
+            return this._initialFilteredQuery;
+        }
+        set initialFilteredQuery(value) {
+            this._initialFilteredQuery = value;
+        }
+        get toggleSymbology() {
+            return this._toggleSymbology;
+        }
 
         _hovertipEnabled = false;
-        get hovertipEnabled () {        return this._hovertipEnabled; }
-        set hovertipEnabled (value) {   this._hovertipEnabled = value; }
+        get hovertipEnabled() {
+            return this._hovertipEnabled;
+        }
+        set hovertipEnabled(value) {
+            this._hovertipEnabled = value;
+        }
 
-        get enableStructuredDelete () { return this._enableStructuredDelete; }
+        get enableStructuredDelete() {
+            return this._enableStructuredDelete;
+        }
         /**
          * @return {Array} an array of control names which are visible in UI;
          * if a control name is not specified here, its value is blocked from modification
          */
-        get controls () { return this._controls; }
+        get controls() {
+            return this._controls;
+        }
         /**
          * @return {Array} an array of control names whose values are immutable;
          * this can be used to block a control which is already visible (in the `controls` array), so it becomes a static indicator of the current state value;
          * specifying a control which is not visibile (not in the `controls` array) will not have any effect
          */
-        get disabledControls () { return this._disabledControls; }
+        get disabledControls() {
+            return this._disabledControls;
+        }
         /**
          * @return {Array} an array of control names whose values are blocked from modification by the user;
          * they can be changed by the system in some circumstances;
@@ -750,12 +870,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * one use example is opacity on dynamic children whose parent layer is not a true dynamic - the child opacity
          * control is blocked to the user, but is still availabe to the system as child opacity will just reflect the opacity of the layer itself;
          */
-        get userDisabledControls () {   return this._userDisabledControls; }
-        get state () {                  return this._state; }
+        get userDisabledControls() {
+            return this._userDisabledControls;
+        }
+        get state() {
+            return this._state;
+        }
 
-        get details () {                return this._details; }
+        get details() {
+            return this._details;
+        }
 
-        applyBookmark (value) {
+        applyBookmark(value) {
             this._state = new InitialLayerSettings(value.state);
             this._source.state = value.state;
         }
@@ -776,13 +902,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 disabledControls: this.disabledControls,
                 enableStructuredDelete: this.enableStructuredDelete,
                 state: this.state.JSON,
-                details: this.details
+                details: this.details,
             };
         }
     }
 
     class BasicLayerNode extends LayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
         }
 
@@ -792,7 +918,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     class FeatureLayerNode extends LayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._nameField = source.nameField;
@@ -811,20 +937,38 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         _hovertipEnabled = true;
 
-        get nameField () { return this._nameField; }
-        set nameField (value) { this._nameField = value; }
+        get nameField() {
+            return this._nameField;
+        }
+        set nameField(value) {
+            this._nameField = value;
+        }
 
-        get tooltipField () { return this._tooltipField; }
-        set tooltipField (value) { this._tooltipField = value; }
+        get tooltipField() {
+            return this._tooltipField;
+        }
+        set tooltipField(value) {
+            this._tooltipField = value;
+        }
 
-        get outfields () { return this._outfields; }
+        get outfields() {
+            return this._outfields;
+        }
 
-        get tolerance () { return this._tolerance; }
-        get table () { return this._table; }
+        get tolerance() {
+            return this._tolerance;
+        }
+        get table() {
+            return this._table;
+        }
 
-        get queryUrl () { return this._queryUrl; }
+        get queryUrl() {
+            return this._queryUrl;
+        }
 
-        get customRenderer () { return this._customRenderer; }
+        get customRenderer() {
+            return this._customRenderer;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
@@ -833,14 +977,14 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 outfields: this.outfields,
                 tolerance: this.tolerance,
                 table: this.table.JSON,
-                customRenderer: this.customRenderer
+                customRenderer: this.customRenderer,
             });
         }
     }
 
     // abstract
     class LayerEntryNode {
-        constructor (source) {
+        constructor(source) {
             this._source = source;
 
             this._index = source.index;
@@ -855,37 +999,57 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._userDisabledControls = source.userDisabledControls;
         }
 
-        get source () { return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get index () { return this._index; }
-        get name () { return this._name; }
-        get controls () { return this._controls; }
-        get disabledControls () { return this._disabledControls; }
-        get userDisabledControls () { return this._userDisabledControls; }
-        get indent () { return this._indent; }
-        get state () { return this._state; }
+        get index() {
+            return this._index;
+        }
+        get name() {
+            return this._name;
+        }
+        get controls() {
+            return this._controls;
+        }
+        get disabledControls() {
+            return this._disabledControls;
+        }
+        get userDisabledControls() {
+            return this._userDisabledControls;
+        }
+        get indent() {
+            return this._indent;
+        }
+        get state() {
+            return this._state;
+        }
 
-        get initialFilteredQuery() { return this._initialFilteredQuery; }
-        set initialFilteredQuery(value) { this._initialFilteredQuery = value; }
+        get initialFilteredQuery() {
+            return this._initialFilteredQuery;
+        }
+        set initialFilteredQuery(value) {
+            this._initialFilteredQuery = value;
+        }
 
-        applyBookmark (value) {
+        applyBookmark(value) {
             this._state = new InitialLayerSettings(value.state);
             this._source.state = value.state;
         }
 
-        get JSON () {
+        get JSON() {
             return {
                 index: this.index,
                 name: this.name,
                 state: this.state.JSON,
                 controls: this.controls,
-                disabledControls: this.disabledControls
-            }
+                disabledControls: this.disabledControls,
+            };
         }
     }
 
     class WMSLayerEntryNode extends LayerEntryNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._level = source.level;
@@ -896,60 +1060,80 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._currentStyle = source.currentStyle;
         }
 
-        get level () { return this._level; }
-        get desc () { return this._desc; }
-        get id () { return this._id; }
+        get level() {
+            return this._level;
+        }
+        get desc() {
+            return this._desc;
+        }
+        get id() {
+            return this._id;
+        }
 
-        get layerType () { return layerTypes.OGC_WMS; }
+        get layerType() {
+            return layerTypes.OGC_WMS;
+        }
 
-        get allStyles () { return this._allStyles; }
-        get styleToURL () { return this._styleToURL; }
+        get allStyles() {
+            return this._allStyles;
+        }
+        get styleToURL() {
+            return this._styleToURL;
+        }
 
-        get currentStyle () { return this._currentStyle; }
-        set currentStyle (value) { this._currentStyle = value; }
+        get currentStyle() {
+            return this._currentStyle;
+        }
+        set currentStyle(value) {
+            this._currentStyle = value;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 id: this.id,
                 allStyles: this.allStyles,
                 styleToURL: this.styleToURL,
-                currentStyle: this.currentStyle
+                currentStyle: this.currentStyle,
             });
         }
     }
 
     class WMSLayerNode extends LayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
-            this._layerEntries = source.layerEntries.map(layerEntry =>
-                (new WMSLayerEntryNode(layerEntry)));
+            this._layerEntries = source.layerEntries.map((layerEntry) => new WMSLayerEntryNode(layerEntry));
             this._featureInfoMimeType = source.featureInfoMimeType;
-            this._legendMimeType = source.legendMimeType || "image/png";
+            this._legendMimeType = source.legendMimeType || 'image/png';
         }
 
-        get layerEntries () { return this._layerEntries; }
+        get layerEntries() {
+            return this._layerEntries;
+        }
         /**
          * @param {Array} value an array of WMSLayerEntryNode layer entries
          */
-        set layerEntries (value = []) {
+        set layerEntries(value = []) {
             this._layerEntries = value;
         }
-        get featureInfoMimeType () { return this._featureInfoMimeType; }
-        get legendMimeType () { return this._legendMimeType; }
+        get featureInfoMimeType() {
+            return this._featureInfoMimeType;
+        }
+        get legendMimeType() {
+            return this._legendMimeType;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
-                layerEntries: this.layerEntries.map(layerEntry =>
-                    layerEntry.JSON),
+                layerEntries: this.layerEntries.map((layerEntry) => layerEntry.JSON),
                 featureInfoMimeType: this.featureInfoMimeType,
-                legendMimeType: this.legendMimeType
+                legendMimeType: this.legendMimeType,
             });
         }
     }
 
     class FileLayerNode extends FeatureLayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
             this._fileType = source.fileType;
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
@@ -957,51 +1141,61 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._fieldMetadata = source.fieldMetadata;
         }
 
-        get fileType () { return this._fileType; }
+        get fileType() {
+            return this._fileType;
+        }
 
-        get colour () { return this._colour; }
-        set colour (value) { this._colour = value; }
+        get colour() {
+            return this._colour;
+        }
+        set colour(value) {
+            this._colour = value;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 fileType: this.fileType,
-                colour: this.colour
+                colour: this.colour,
             });
         }
     }
 
     class WFSLayerNode extends FeatureLayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source); // when a regular source isn't enough, call for super-source
             this._xyInAttribs = source.xyInAttribs;
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
             this._fieldMetadata = source.fieldMetadata;
         }
 
-        get xyInAttribs () { return this._xyInAttribs; }
+        get xyInAttribs() {
+            return this._xyInAttribs;
+        }
 
-        get colour () { return this._colour; }
-        set colour (value) { this._colour = value; }
+        get colour() {
+            return this._colour;
+        }
+        set colour(value) {
+            this._colour = value;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 xyInAttribs: this.xyInAttribs,
-                colour: this.colour
+                colour: this.colour,
             });
         }
     }
 
     class DynamicLayerEntryNode extends LayerEntryNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._nameField = source.nameField;
             this._outfields = source.outfields || '*';
             this._stateOnly = source.stateOnly;
             this._fieldMetadata = source.fieldMetadata;
-            this._extent = source.extent ?
-                gapiService.gapi.Map.getExtentFromJson(source.extent) :
-                undefined;
+            this._extent = source.extent ? gapiService.gapi.Map.getExtentFromJson(source.extent) : undefined;
 
             this.isLayerEntry = true;
             this._table = new TableNode(source.table);
@@ -1012,14 +1206,28 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             }
         }
 
-        get nameField () { return this._nameField; }
-        set nameField (value) { this._nameField = value; }
+        get nameField() {
+            return this._nameField;
+        }
+        set nameField(value) {
+            this._nameField = value;
+        }
 
-        get outfields () { return this._outfields; }
-        get stateOnly () { return this._stateOnly; }
-        get extent () { return this._extent; }
-        get table () { return this._table; }
-        get layerType () { return layerTypes.ESRI_DYNAMIC; }
+        get outfields() {
+            return this._outfields;
+        }
+        get stateOnly() {
+            return this._stateOnly;
+        }
+        get extent() {
+            return this._extent;
+        }
+        get table() {
+            return this._table;
+        }
+        get layerType() {
+            return layerTypes.ESRI_DYNAMIC;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
@@ -1027,17 +1235,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 outfields: this.outfields,
                 stateOnly: this.stateOnly,
                 extent: this.extent,
-                table: this.table.JSON
+                table: this.table.JSON,
             });
         }
     }
 
     class DynamicLayerNode extends LayerNode {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
-            this._layerEntries = source.layerEntries.map(layerEntry =>
-                (new DynamicLayerEntryNode(layerEntry)));
+            this._layerEntries = source.layerEntries.map((layerEntry) => new DynamicLayerEntryNode(layerEntry));
             this._tolerance = source.tolerance;
             this._table = new TableNode(source.table);
 
@@ -1045,23 +1252,37 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._imageFormat = source.imageFormat || 'png32';
         }
 
-        get layerEntries () { return this._layerEntries; }
+        get layerEntries() {
+            return this._layerEntries;
+        }
         /**
          * @param {Array} value an array of DynamicLayerEntryNode layer entries
          */
-        set layerEntries (value = []) {
+        set layerEntries(value = []) {
             this._layerEntries = value;
         }
-        get tolerance () { return this._tolerance; }
-        get table () { return this._table; }
+        get tolerance() {
+            return this._tolerance;
+        }
+        get table() {
+            return this._table;
+        }
 
-        get queryUrl () { return this._queryUrl; }
+        get queryUrl() {
+            return this._queryUrl;
+        }
 
         _singleEntryCollapse = false;
-        set singleEntryCollapse (value) {   this._singleEntryCollapse = value; }
-        get singleEntryCollapse () {        return this._singleEntryCollapse; }
+        set singleEntryCollapse(value) {
+            this._singleEntryCollapse = value;
+        }
+        get singleEntryCollapse() {
+            return this._singleEntryCollapse;
+        }
 
-        get imageFormat() { return this._imageFormat; }
+        get imageFormat() {
+            return this._imageFormat;
+        }
 
         _isResolved = false;
         /**
@@ -1073,10 +1294,14 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * for all layer entries (specified in the config and autopopulated from the subgroups). New layer entries are dynamically created and
          * added to the layer definition.
          */
-        get isResolved () {        return this._isResolved; }
-        set isResolved (value) {   this._isResolved = value; }
+        get isResolved() {
+            return this._isResolved;
+        }
+        set isResolved(value) {
+            this._isResolved = value;
+        }
 
-        applyBookmark (value) {
+        applyBookmark(value) {
             super.applyBookmark(value);
 
             // errored dynamic layers will have no children array bookmarked; use config value
@@ -1084,8 +1309,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 return;
             }
 
-            value.layerEntries.forEach(layerEntryBookmark => {
-                const existingLayerEntry = this.layerEntries.find(lr => lr.index === layerEntryBookmark.index);
+            value.layerEntries.forEach((layerEntryBookmark) => {
+                const existingLayerEntry = this.layerEntries.find((lr) => lr.index === layerEntryBookmark.index);
                 if (existingLayerEntry) {
                     existingLayerEntry.applyBookmark(layerEntryBookmark);
                 } else {
@@ -1094,14 +1319,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             });
         }
 
-        get JSON () {
+        get JSON() {
             return angular.merge(super.JSON, {
                 imageFormat: this.imageFormat,
-                layerEntries: this.layerEntries.map(layerEntry =>
-                    layerEntry.JSON),
+                layerEntries: this.layerEntries.map((layerEntry) => layerEntry.JSON),
                 tolerance: this.tolerance,
                 table: this.table.JSON,
-                isResolved: this.isResolved
+                isResolved: this.isResolved,
             });
         }
     }
@@ -1111,18 +1335,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class LodSet
      */
     class LodSet {
-        constructor ({ id, lods }) {
+        constructor({ id, lods }) {
             this._id = id;
             this._lods = lods;
         }
 
-        get id () { return this._id; }
-        get lods () { return this._lods; }
+        get id() {
+            return this._id;
+        }
+        get lods() {
+            return this._lods;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 id: this.id,
-                lods: this.lods
+                lods: this.lods,
             };
         }
     }
@@ -1132,7 +1360,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class ExtentSet
      */
     class ExtentSet {
-        constructor (source) {
+        constructor(source) {
             this._source = source;
 
             this._id = source.id;
@@ -1143,24 +1371,34 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._maximum = source.maximum ? this._parseExtent(source.maximum) : this._full;
         }
 
-        get id () { return this._id; }
-        get spatialReference () { return this._spatialReference; }
+        get id() {
+            return this._id;
+        }
+        get spatialReference() {
+            return this._spatialReference;
+        }
 
         /**
          * Returns the default extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get default () { return this._default; }
+        get default() {
+            return this._default;
+        }
         /**
          * Returns the full extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get full () { return this._full; }
+        get full() {
+            return this._full;
+        }
         /**
          * Returns the maximum extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get maximum () { return this._maximum; }
+        get maximum() {
+            return this._maximum;
+        }
 
         /**
          * Converts JSON representation of an extent to Esri extent object.
@@ -1168,46 +1406,50 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @param {Object} extent JSON representation of the extent in the form of { xmin: <Number>, xmax: <Number>, ymin: <Number>, ymax: <Number>, spatialReference: { wkid: <Number> }}
          * @return {Object} returns Esri extent object
          */
-        _parseExtent (extent) {
+        _parseExtent(extent) {
             return angular.extend({}, extent, { spatialReference: this._spatialReference });
         }
 
-        get JSON () {
+        get JSON() {
             return {
                 id: this.id,
                 spatialReference: this.spatialReference,
                 // default, full, and maximum cannot change during runtime, so taking the source when serializing
                 default: this._source.default,
                 full: this._source.full || null,
-                maximum: this._source.maximum || null
+                maximum: this._source.maximum || null,
             };
         }
     }
 
     class Attribution {
-        constructor (source = {}) {
+        constructor(source = {}) {
             angular.merge(this._text, source.text);
             angular.merge(this._logo, source.logo);
         }
 
         _text = {
             enabled: true,
-            value: null
-        }
+            value: null,
+        };
 
         _logo = {
             enabled: true,
             value: null,
-            link: null
+            link: null,
+        };
+
+        get text() {
+            return this._text;
+        }
+        get logo() {
+            return this._logo;
         }
 
-        get text () { return this._text; }
-        get logo () { return this._logo; }
-
-        get JSON () {
+        get JSON() {
             return {
                 text: this.text,
-                logo: this.logo
+                logo: this.logo,
             };
         }
     }
@@ -1217,8 +1459,21 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Basemap
      */
     class Basemap {
-        constructor ({ id, name, description, typeSummary, layers, thumbnailUrl = null, attribution, opacity = 1,
-            altText, zoomLevels = {} }, tileSchema) {
+        constructor(
+            {
+                id,
+                name,
+                description,
+                typeSummary,
+                layers,
+                thumbnailUrl = null,
+                attribution,
+                opacity = 1,
+                altText,
+                zoomLevels = {},
+            },
+            tileSchema
+        ) {
             this._id = id;
             this._name = name;
             this._description = description;
@@ -1236,36 +1491,62 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         _isSelected = false;
 
-        get id () {             return this._id; }
+        get id() {
+            return this._id;
+        }
 
-        get name () {           return this._name; }
-        set name (value) {
+        get name() {
+            return this._name;
+        }
+        set name(value) {
             this._name = value;
             $rootScope.$applyAsync();
         }
 
-        get description () {    return this._description; }
-        set description (value) {
+        get description() {
+            return this._description;
+        }
+        set description(value) {
             this._description = value;
             $rootScope.$applyAsync();
         }
 
-        get typeSummary () {    return this._typeSummary; }
-        get layers () {         return this._layers; }
-        get url () {            return this._url; }
-        get thumbnailUrl () {   return this._thumbnailUrl; }
-        get attribution () {    return this._attribution; }
-        get tileSchema () {     return this._tileSchema; }
-        get opacity () {        return this._opacity; }
-        get altText () {        return this._altText; }
-        get zoomLevels () {     return this._zoomLevels; }
+        get typeSummary() {
+            return this._typeSummary;
+        }
+        get layers() {
+            return this._layers;
+        }
+        get url() {
+            return this._url;
+        }
+        get thumbnailUrl() {
+            return this._thumbnailUrl;
+        }
+        get attribution() {
+            return this._attribution;
+        }
+        get tileSchema() {
+            return this._tileSchema;
+        }
+        get opacity() {
+            return this._opacity;
+        }
+        get altText() {
+            return this._altText;
+        }
+        get zoomLevels() {
+            return this._zoomLevels;
+        }
 
-        get isSelected () {     return this._isSelected; }
-        select () {
+        get isSelected() {
+            return this._isSelected;
+        }
+        select() {
             this._isSelected = true;
             return this;
         }
-        deselect () {
+        deselect() {
             this._isSelected = false;
             return this;
         }
@@ -1274,7 +1555,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * Returns an array containing levels of details for the current basemap
          * @return {Array} an array containing levels of details for the current basemap.
          */
-        get lods () { return this._tileSchema.lodSet.lods; }
+        get lods() {
+            return this._tileSchema.lodSet.lods;
+        }
 
         /**
          * Returns the wkid of the basemap projection.
@@ -1283,39 +1566,51 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *       This property will be undefined if using a non-wkid basemap.
          * @return {Number} wkid of the basemap projection
          */
-        get wkid () { return this.spatialReference.wkid; }
+        get wkid() {
+            return this.spatialReference.wkid;
+        }
 
         /**
          * Returns the spatial reference of the basemap tile schema.
          * @return {Object} spatial reference
          */
-        get spatialReference () { return this._tileSchema.extentSet.spatialReference; }
+        get spatialReference() {
+            return this._tileSchema.extentSet.spatialReference;
+        }
 
         /**
          * Returns the default extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get default () { return this._tileSchema.extentSet.default; }
+        get default() {
+            return this._tileSchema.extentSet.default;
+        }
 
         /**
          * Returns the tile schema id.
          * @return {String} the tile schema id
          */
-        get tileSchemaId () { return this._tileSchema.id; }
+        get tileSchemaId() {
+            return this._tileSchema.id;
+        }
 
         /**
          * Returns the full extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get full () { return this._tileSchema.extentSet.full; }
+        get full() {
+            return this._tileSchema.extentSet.full;
+        }
 
         /**
          * Returns the maximum extent as an Esri extent object.
          * @return {Object} Esri extent object
          */
-        get maximum () { return this._tileSchema.extentSet.maximum; }
+        get maximum() {
+            return this._tileSchema.extentSet.maximum;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 id: this.id,
                 name: this.name,
@@ -1326,7 +1621,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 tileSchemaId: this.tileSchemaId,
                 layers: this.layers,
                 attribution: this.attribution.JSON,
-                zoomLevels: this.zoomLevels
+                zoomLevels: this.zoomLevels,
             };
         }
     }
@@ -1336,7 +1631,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class TileSchema
      */
     class TileSchema {
-        constructor ({ id, lodSetId, name, overviewUrl, hasNorthPole }, extentSet, lodSet) {
+        constructor({ id, lodSetId, name, overviewUrl, hasNorthPole }, extentSet, lodSet) {
             this._id = id;
             this._name = name;
             this._lodSetId = lodSetId;
@@ -1349,15 +1644,27 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._hasNorthPole = hasNorthPole || false;
         }
 
-        get name () { return this._name; }
-        get id () { return this._id; }
+        get name() {
+            return this._name;
+        }
+        get id() {
+            return this._id;
+        }
 
-        get overviewUrl () { return this._overviewUrl; }
+        get overviewUrl() {
+            return this._overviewUrl;
+        }
 
-        get extentSet () { return this._extentSet; }
-        get lodSet () { return this._lodSet; }
+        get extentSet() {
+            return this._extentSet;
+        }
+        get lodSet() {
+            return this._lodSet;
+        }
 
-        get hasNorthPole() { return this._hasNorthPole; }
+        get hasNorthPole() {
+            return this._hasNorthPole;
+        }
 
         /**
          * Create a blank basemap from a basemap with the same tile schema.
@@ -1368,37 +1675,43 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @return {Basemap} returns a copy of the provided basemap with opacity dialed all the way to 0 to make it appear blank
          */
         makeBlankBasemap(basemap) {
-            const blank = $.extend(true, {}, basemap)
-            const layers = blank.layers.map(lyr => { lyr.opacity = 0; return lyr; })
-            const blankBasemap = new Basemap({
-                name: 'basemap.blank.title',
-                description: 'basemap.blank.desc',
-                id: `blank_basemap_${basemap.id}`,
-                layers: layers,
-                thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-                // blank maps have no attributions
-                attribution: {
-                    text: {
-                        enabled: false
+            const blank = $.extend(true, {}, basemap);
+            const layers = blank.layers.map((lyr) => {
+                lyr.opacity = 0;
+                return lyr;
+            });
+            const blankBasemap = new Basemap(
+                {
+                    name: 'basemap.blank.title',
+                    description: 'basemap.blank.desc',
+                    id: `blank_basemap_${basemap.id}`,
+                    layers: layers,
+                    thumbnailUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+                    // blank maps have no attributions
+                    attribution: {
+                        text: {
+                            enabled: false,
+                        },
+                        logo: {
+                            enabled: false,
+                        },
                     },
-                    logo: {
-                        enabled: false
-                    }
+                    opacity: 0,
                 },
-                opacity: 0
-            }, this);
+                this
+            );
 
             return blankBasemap;
         }
 
         // TODO add overviewUrl object to this?
-        get JSON () {
+        get JSON() {
             return {
                 id: this.id,
                 name: this.name,
                 extentSetId: this.extentSet.id,
                 lodSetId: this.lodSet.id,
-                hasNorthPole: this.hasNorthPole
+                hasNorthPole: this.hasNorthPole,
             };
         }
     }
@@ -1408,7 +1721,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._id = `${this.entryType}_${++ref.legendElementCounter}`;
         }
 
-        get id () { return this._id; }
+        get id() {
+            return this._id;
+        }
     }
 
     /**
@@ -1416,30 +1731,36 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class VisibilitySet
      */
     class VisibilitySet extends LegendElement {
-        constructor (visibilitySetSource) {
+        constructor(visibilitySetSource) {
             super();
-            this._exclusiveVisibility = visibilitySetSource.exclusiveVisibility.map(childConfig =>
-                _makeChildObject(childConfig));
+            this._exclusiveVisibility = visibilitySetSource.exclusiveVisibility.map((childConfig) =>
+                _makeChildObject(childConfig)
+            );
             this._collapse = visibilitySetSource.collapse === true;
 
             this._walk = ref.walkFunction.bind(this);
         }
 
-        get exclusiveVisibility () { return this._exclusiveVisibility; }
-        get collapse () { return this._collapse; }
+        get exclusiveVisibility() {
+            return this._exclusiveVisibility;
+        }
+        get collapse() {
+            return this._collapse;
+        }
 
-        get entryType () { return TYPES.legend.SET; }
+        get entryType() {
+            return TYPES.legend.SET;
+        }
 
-        walk (...args) {
+        walk(...args) {
             return this._walk(...args);
         }
 
         get JSON() {
             return {
-                exclusiveVisibility: this.exclusiveVisibility.map(child =>
-                    child.JSON),
+                exclusiveVisibility: this.exclusiveVisibility.map((child) => child.JSON),
                 collapse: this.collapse,
-                entryType: this.entryType
+                entryType: this.entryType,
             };
         }
     }
@@ -1449,7 +1770,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Entry
      */
     class Entry extends LegendElement {
-        constructor (entrySource) {
+        constructor(entrySource) {
             super();
             this._layerId = entrySource.layerId;
             this._controlledIds = entrySource.controlledIds || [];
@@ -1461,33 +1782,56 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._symbologyExpanded = entrySource.symbologyExpanded;
             this._hidden = entrySource.hidden === true;
-
         }
 
         static ICONS = 'icons';
         static IMAGES = 'images';
 
-        get layerId () {        return this._layerId; }
-        get controlledIds () {  return this._controlledIds; }
-        get entryIndex () {     return this._entryIndex; }
-        get entryId () {        return this._entryId; }
-        get coverIcon () {      return this._coverIcon; }
-        get description () {    return this._description; }
-        get symbologyStack () { return this._symbologyStack; }
+        get layerId() {
+            return this._layerId;
+        }
+        get controlledIds() {
+            return this._controlledIds;
+        }
+        get entryIndex() {
+            return this._entryIndex;
+        }
+        get entryId() {
+            return this._entryId;
+        }
+        get coverIcon() {
+            return this._coverIcon;
+        }
+        get description() {
+            return this._description;
+        }
+        get symbologyStack() {
+            return this._symbologyStack;
+        }
 
-        get symbologyRenderStyle () { return this._symbologyRenderStyle; }
-        set symbologyRenderStyle (value) { this._symbologyRenderStyle = value; }
+        get symbologyRenderStyle() {
+            return this._symbologyRenderStyle;
+        }
+        set symbologyRenderStyle(value) {
+            this._symbologyRenderStyle = value;
+        }
 
-        get symbologyExpanded () { return this._symbologyExpanded; }
+        get symbologyExpanded() {
+            return this._symbologyExpanded;
+        }
 
         /**
          * Specifies if the legend block should be hidden from the UI.
          *
          * @return {Boolean} if true, the legend block will not be rendered in legend UI
          */
-        get hidden () { return this._hidden; }
+        get hidden() {
+            return this._hidden;
+        }
 
-        get entryType () {              return TYPES.legend.NODE; }
+        get entryType() {
+            return TYPES.legend.NODE;
+        }
 
         get JSON() {
             return {
@@ -1502,7 +1846,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 symbologyRenderStyle: this.symbologyRenderStyle,
                 symbologyExpanded: this.symbologyExpanded,
                 hidden: this.hidden,
-                entryType: this.entryType
+                entryType: this.entryType,
             };
         }
     }
@@ -1512,25 +1856,21 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Entry
      */
     class EntryGroup extends LegendElement {
-        constructor (entryGroupSource, type) {
+        constructor(entryGroupSource, type) {
             super();
             this._name = entryGroupSource.name;
-            this._children = entryGroupSource.children.map(childConfig =>
-                _makeChildObject(childConfig));
+            this._children = entryGroupSource.children.map((childConfig) => _makeChildObject(childConfig));
 
-            this._controls = angular.isArray(entryGroupSource.controls) ? common.intersect(
-                entryGroupSource.controls,
-                DEFAULTS.legend[TYPES.legend.GROUP].controls) :
-                DEFAULTS.legend[TYPES.legend.GROUP].controls;
+            this._controls = angular.isArray(entryGroupSource.controls)
+                ? common.intersect(entryGroupSource.controls, DEFAULTS.legend[TYPES.legend.GROUP].controls)
+                : DEFAULTS.legend[TYPES.legend.GROUP].controls;
 
-            this._disabledControls = angular.isArray(entryGroupSource.disabledControls) ? common.intersect(
-                entryGroupSource.disabledControls,
-                DEFAULTS.legend[TYPES.legend.GROUP].controls) :
-                DEFAULTS.legend[TYPES.legend.GROUP].disabledControls;
-            this._userDisabledControls = angular.isArray(entryGroupSource.userDisabledControls) ? common.intersect(
-                entryGroupSource.userDisabledControls,
-                DEFAULTS.legend[TYPES.legend.GROUP].controls) :
-                [];
+            this._disabledControls = angular.isArray(entryGroupSource.disabledControls)
+                ? common.intersect(entryGroupSource.disabledControls, DEFAULTS.legend[TYPES.legend.GROUP].controls)
+                : DEFAULTS.legend[TYPES.legend.GROUP].disabledControls;
+            this._userDisabledControls = angular.isArray(entryGroupSource.userDisabledControls)
+                ? common.intersect(entryGroupSource.userDisabledControls, DEFAULTS.legend[TYPES.legend.GROUP].controls)
+                : [];
 
             this._expanded = typeof entryGroupSource.expanded !== 'undefined' ? entryGroupSource.expanded : true;
             this._hidden = entryGroupSource.hidden === true;
@@ -1538,36 +1878,51 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._walk = ref.walkFunction.bind(this);
         }
 
-        get name () { return this._name; }
-        get children () { return this._children; }
-        get controls () { return this._controls; }
-        get disabledControls () { return this._disabledControls; }
-        get userDisabledControls () { return this._userDisabledControls; }
-        get expanded () { return this._expanded; }
+        get name() {
+            return this._name;
+        }
+        get children() {
+            return this._children;
+        }
+        get controls() {
+            return this._controls;
+        }
+        get disabledControls() {
+            return this._disabledControls;
+        }
+        get userDisabledControls() {
+            return this._userDisabledControls;
+        }
+        get expanded() {
+            return this._expanded;
+        }
 
         /**
          * Specifies if the legend group should be hidden from the UI.
          *
          * @return {Boolean} if true, the legend group will not be rendered in legend UI
          */
-        get hidden () { return this._hidden; }
+        get hidden() {
+            return this._hidden;
+        }
 
-        get entryType () { return TYPES.legend.GROUP; }
+        get entryType() {
+            return TYPES.legend.GROUP;
+        }
 
-        walk (...args) {
+        walk(...args) {
             return this._walk(...args);
         }
 
         get JSON() {
             return {
                 name: this.name,
-                children: this.children.map(child =>
-                    child.JSON),
+                children: this.children.map((child) => child.JSON),
                 controls: this.controls,
                 disabledControls: this.disabledControls,
                 expanded: this.expanded,
                 hidden: this.hidden,
-                entryType: this.entryType
+                entryType: this.entryType,
             };
         }
     }
@@ -1577,7 +1932,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class InfoSection
      */
     class InfoSection extends LegendElement {
-        constructor (entrySource) {
+        constructor(entrySource) {
             super();
             this._infoType = entrySource.infoType;
             this._content = entrySource.content || entrySource.layerName || '';
@@ -1587,20 +1942,37 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._symbologyStack = entrySource.symbologyStack || null; // symbology stack defaults to null and then the service definition symbols should be used
             this._symbologyRenderStyle = entrySource.symbologyRenderStyle || Entry.ICONS;
             this._symbologyExpanded = entrySource.symbologyExpanded;
-            this._export =  typeof entrySource.export !== 'undefined' ? entrySource.export : true;
-
+            this._export = typeof entrySource.export !== 'undefined' ? entrySource.export : true;
         }
 
-        get infoType () {               return this._infoType; }
-        get content () {                return this._content; }
-        get description () {            return this._description; }
-        get coverIcon () {      return this._coverIcon; }
-        get symbologyStack () {         return this._symbologyStack; }
-        get symbologyRenderStyle () {   return this._symbologyRenderStyle; }
-        get symbologyExpanded() {       return this._symbologyExpanded; }
-        get export () {                 return this._export; }
+        get infoType() {
+            return this._infoType;
+        }
+        get content() {
+            return this._content;
+        }
+        get description() {
+            return this._description;
+        }
+        get coverIcon() {
+            return this._coverIcon;
+        }
+        get symbologyStack() {
+            return this._symbologyStack;
+        }
+        get symbologyRenderStyle() {
+            return this._symbologyRenderStyle;
+        }
+        get symbologyExpanded() {
+            return this._symbologyExpanded;
+        }
+        get export() {
+            return this._export;
+        }
 
-        get entryType () { return TYPES.legend.INFO; }
+        get entryType() {
+            return TYPES.legend.INFO;
+        }
 
         get JSON() {
             return {
@@ -1612,7 +1984,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 symbologyStack: this.symbologyStack,
                 symbologyRenderStyle: this.symbologyRenderStyle,
                 symbologyExpanded: this.symbologyExpanded,
-                export: this.export
+                export: this.export,
             };
         }
     }
@@ -1623,7 +1995,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Legend
      */
     class Legend {
-        constructor (legendSource, layersSource) {
+        constructor(legendSource, layersSource) {
             this._type = legendSource.type;
             this._reorderable = false;
 
@@ -1638,28 +2010,25 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     .sort((a, b) => {
                         if (sortGroups[a.layerType] < sortGroups[b.layerType]) {
                             return -1;
-                        } else if ((sortGroups[a.layerType] > sortGroups[b.layerType])) {
+                        } else if (sortGroups[a.layerType] > sortGroups[b.layerType]) {
                             return 1;
                         }
 
                         return 0;
                     })
-                    .map(layerDefinition =>
-                        ({
-                            layerId: layerDefinition.id,
-                            // in auto legend, default wms symbology to images;
-                            symbologyRenderStyle:
-                                layerDefinition.layerType === layerTypes.OGC_WMS ?
-                                    Entry.IMAGES : Entry.ICONS
-                        }));
-
+                    .map((layerDefinition) => ({
+                        layerId: layerDefinition.id,
+                        // in auto legend, default wms symbology to images;
+                        symbologyRenderStyle:
+                            layerDefinition.layerType === layerTypes.OGC_WMS ? Entry.IMAGES : Entry.ICONS,
+                    }));
             } else {
                 rootChildren = legendSource.root.children;
             }
 
             this._root = new EntryGroup({
-                name: 'I\'m root',
-                children: rootChildren
+                name: "I'm root",
+                children: rootChildren,
             });
 
             function _removeControlOption(controlsArray = [], controlName = '') {
@@ -1667,8 +2036,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             }
         }
 
-        get type () { return this._type; }
-        get root () { return this._root; }
+        get type() {
+            return this._type;
+        }
+        get root() {
+            return this._root;
+        }
 
         /**
          * Inserts a child into the root group of the legend config.
@@ -1678,7 +2051,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * @param {LegendElement} child a legendElement child to be inserted
          * @param {Number} [position=0] to be inserted at
          */
-        addChild (child, position = 0) {
+        addChild(child, position = 0) {
             this._root.children.splice(position, 0, child);
             if (mApi) {
                 mApi.ui.configLegend._configSnippets = this._root.children;
@@ -1688,17 +2061,17 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON() {
             return {
                 type: this.type,
-                root: this.root.JSON
+                root: this.root.JSON,
             };
         }
     }
 
-    function _makeChildObject (childConfig) {
+    function _makeChildObject(childConfig) {
         const LEGEND_TYPE_TO_CLASS = {
             [TYPES.legend.INFO]: InfoSection,
             [TYPES.legend.NODE]: Entry,
             [TYPES.legend.GROUP]: EntryGroup,
-            [TYPES.legend.SET]: VisibilitySet
+            [TYPES.legend.SET]: VisibilitySet,
         };
         const childType = _detectChildType(childConfig);
 
@@ -1718,18 +2091,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
     }
 
     class ComponentBase {
-        constructor (source = { enabled: true }) {
+        constructor(source = { enabled: true }) {
             this._source = source;
 
             this._enabled = source.enabled;
         }
 
-        get enabled () { return this._enabled; }
+        get enabled() {
+            return this._enabled;
+        }
 
-        get body () { return this._body; }
-        set body (value) {
+        get body() {
+            return this._body;
+        }
+        set body(value) {
             if (this._body) {
-                console.warn('Component\' body is already set');
+                console.warn("Component' body is already set");
             } else {
                 this._body = value;
             }
@@ -1737,13 +2114,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
         get JSON() {
             return {
-                enabled: this.enabled
+                enabled: this.enabled,
             };
         }
     }
 
     class GeoSearchComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._showGraphic = source.showGraphic;
@@ -1751,57 +2128,71 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._enabled = source.enabled;
         }
 
-        get showGraphic () { return this._showGraphic; }
-        get showInfo () { return this._showInfo; }
-        get enabled () { return this._enabled; }
+        get showGraphic() {
+            return this._showGraphic;
+        }
+        get showInfo() {
+            return this._showInfo;
+        }
+        get enabled() {
+            return this._enabled;
+        }
 
-        set enabled (val) { this._enabled = val; }
+        set enabled(val) {
+            this._enabled = val;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 showGraphic: this.showGraphic,
                 showInfo: this.showInfo,
-                enabled: this.enabled
+                enabled: this.enabled,
             });
         }
     }
 
     class MouseInfoComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._spatialReference = source.spatialReference;
         }
 
-        get spatialReference () { return this._spatialReference; }
+        get spatialReference() {
+            return this._spatialReference;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
-                spatialReference: this.spatialReference
+                spatialReference: this.spatialReference,
             });
         }
     }
 
     class NorthArrowComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
             this._arrowIcon = source.arrowIcon;
             this._poleIcon = source.poleIcon;
         }
 
-        get arrowIcon () { return this._arrowIcon; }
-        get poleIcon () { return this._poleIcon; }
+        get arrowIcon() {
+            return this._arrowIcon;
+        }
+        get poleIcon() {
+            return this._poleIcon;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 arrowIcon: this._arrowIcon,
-                poleIcon: this._poleIcon
+                poleIcon: this._poleIcon,
             });
         }
     }
 
     class OverviewMapComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             this._maximizeButton = source.maximizeButton;
@@ -1810,45 +2201,57 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._initiallyExpanded = typeof source.initiallyExpanded !== 'undefined' ? source.initiallyExpanded : true;
         }
 
-        get maximizeButton () { return this._maximizeButton; }
-        get layerType () { return this._layerType; }
-        get expandFactor () { return this._expandFactor; }
-        get initiallyExpanded () { return this._initiallyExpanded; }
+        get maximizeButton() {
+            return this._maximizeButton;
+        }
+        get layerType() {
+            return this._layerType;
+        }
+        get expandFactor() {
+            return this._expandFactor;
+        }
+        get initiallyExpanded() {
+            return this._initiallyExpanded;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 maximizeButton: this.maximizeButton,
                 layerType: this.layerType,
                 expandFactor: this.expandFactor,
-                initiallyExpanded: this.initiallyExpanded
+                initiallyExpanded: this.initiallyExpanded,
             });
         }
     }
 
     class ScaleBarComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
         }
 
-        get attachTo () { return 'bottom-right'; }
-        get scalebarUnit () { return 'dual'; }
+        get attachTo() {
+            return 'bottom-right';
+        }
+        get scalebarUnit() {
+            return 'dual';
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 attachTo: this.attachTo,
-                scalebarUnit: this.scalebarUnit
+                scalebarUnit: this.scalebarUnit,
             });
         }
     }
 
     class BasemapComponent extends ComponentBase {
-        constructor (source) {
+        constructor(source) {
             super(source);
         }
     }
 
     class Components {
-        constructor (componentsSource) {
+        constructor(componentsSource) {
             this._source = componentsSource;
 
             this._geoSearch = new GeoSearchComponent(componentsSource.geoSearch);
@@ -1859,12 +2262,24 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._basemap = new BasemapComponent(componentsSource.basemap);
         }
 
-        get geoSearch () { return this._geoSearch; }
-        get mouseInfo () { return this._mouseInfo; }
-        get northArrow () { return this._northArrow; }
-        get overviewMap () { return this._overviewMap; }
-        get scaleBar () { return this._scaleBar; }
-        get basemap () { return this._basemap; }
+        get geoSearch() {
+            return this._geoSearch;
+        }
+        get mouseInfo() {
+            return this._mouseInfo;
+        }
+        get northArrow() {
+            return this._northArrow;
+        }
+        get overviewMap() {
+            return this._overviewMap;
+        }
+        get scaleBar() {
+            return this._scaleBar;
+        }
+        get basemap() {
+            return this._basemap;
+        }
 
         get JSON() {
             return {
@@ -1873,13 +2288,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 northArrow: this.northArrow.JSON,
                 overviewMap: this.overviewMap.JSON,
                 scaleBar: this.scaleBar.JSON,
-                basemap: this.basemap.JSON
+                basemap: this.basemap.JSON,
             };
         }
     }
 
     class SearchService {
-        constructor (source) {
+        constructor(source) {
             if (!source.settings) {
                 source.settings = {};
             }
@@ -1887,22 +2302,28 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 categories: source.settings.categories || [],
                 sortOrder: source.settings.sortOrder || [],
                 maxResults: source.settings.maxResults || 100,
-                officialOnly: !!source.settings.officialOnly
+                officialOnly: !!source.settings.officialOnly,
             };
 
             this._disabledSearches = source.disabledSearches;
             this._serviceUrls = source.serviceUrls;
         }
 
-        get settings () { return this._settings; }
-        get disabledSearches () { return this._disabledSearches; }
-        get serviceUrls () { return this._serviceUrls; }
+        get settings() {
+            return this._settings;
+        }
+        get disabledSearches() {
+            return this._disabledSearches;
+        }
+        get serviceUrls() {
+            return this._serviceUrls;
+        }
 
         get JSON() {
             return {
                 settings: this.settings,
                 disabledSearches: this.disabledSearches,
-                serviceUrls: this.serviceUrls
+                serviceUrls: this.serviceUrls,
             };
         }
     }
@@ -1912,36 +2333,60 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class ExportComponent
      */
     class ExportComponent {
-        constructor (source = { value: '', isSelectable: false, isSelected: false, isVisible: false }) {
+        constructor(source = { value: '', isSelectable: false, isSelected: false, isVisible: false }) {
             this._isSelected = source.isSelected;
             this._isSelectable = source.isSelectable;
             this._isVisible = source.isVisible;
             this._value = source.value;
         }
 
-        get isSelected () {         return this._isSelected; }
-        set isSelected (value) {    this._isSelected = value; }
-        get isSelectable () {       return this._isSelectable; }
-        set isSelectable (value) {  this._isSelectable = value; }
-        get isVisible () {          return this._isVisible; }
-        set isVisible (value) {     this._isVisible = value; }
-        get value () {              return this._value; }
-        set value (value) {         this._value = value; }
+        get isSelected() {
+            return this._isSelected;
+        }
+        set isSelected(value) {
+            this._isSelected = value;
+        }
+        get isSelectable() {
+            return this._isSelectable;
+        }
+        set isSelectable(value) {
+            this._isSelectable = value;
+        }
+        get isVisible() {
+            return this._isVisible;
+        }
+        set isVisible(value) {
+            this._isVisible = value;
+        }
+        get value() {
+            return this._value;
+        }
+        set value(value) {
+            this._value = value;
+        }
 
         _generators = [];
         _graphicOrder = null;
 
-        get generators () { return this._generators; }
-        set generators(value = []) { this._generators = value; }
-        get graphicOrder () { return this._graphicOrder; }
-        set graphicOrder(value = null) { this._graphicOrder = value; }
+        get generators() {
+            return this._generators;
+        }
+        set generators(value = []) {
+            this._generators = value;
+        }
+        get graphicOrder() {
+            return this._graphicOrder;
+        }
+        set graphicOrder(value = null) {
+            this._graphicOrder = value;
+        }
 
         get JSON() {
             return {
                 isSelected: this.isSelected,
                 isSelectable: this.isSelectable,
                 isVisible: this.isVisible,
-                value: this.value
+                value: this.value,
             };
         }
     }
@@ -1951,7 +2396,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class LegendExportComponent
      */
     class LegendExportComponent extends ExportComponent {
-        constructor (source) {
+        constructor(source) {
             super(source);
 
             // apply legend export component defaults
@@ -1959,9 +2404,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 ...{
                     showInfoSymbology: false,
                     showControlledSymbology: false,
-                    columnWidth: 350
+                    columnWidth: 350,
                 },
-                ...source
+                ...source,
             };
 
             this._showInfoSymbology = source.showInfoSymbology;
@@ -1969,19 +2414,29 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._columnWidth = source.columnWidth;
         }
 
-        get showInfoSymbology () {      return this._showInfoSymbology; }
-        set showInfoSymbology (value) { this._showInfoSymbology = value; }
+        get showInfoSymbology() {
+            return this._showInfoSymbology;
+        }
+        set showInfoSymbology(value) {
+            this._showInfoSymbology = value;
+        }
 
-        get showControlledSymbology () {      return this._showControlledSymbology; }
-        set showControlledSymbology (value) { this._showControlledSymbology = value; }
+        get showControlledSymbology() {
+            return this._showControlledSymbology;
+        }
+        set showControlledSymbology(value) {
+            this._showControlledSymbology = value;
+        }
 
-        get columnWidth () { return this._columnWidth }
+        get columnWidth() {
+            return this._columnWidth;
+        }
 
         get JSON() {
             return angular.merge(super.JSON, {
                 showInfoSymbology: this.showInfoSymbology,
                 showControlledSymbology: this.showControlledSymbology,
-                columnWidth: this.columnWidth
+                columnWidth: this.columnWidth,
             });
         }
     }
@@ -1991,7 +2446,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class ExportService
      */
     class ExportService {
-        constructor (source) {
+        constructor(source) {
             this._title = new ExportComponent(source.title);
             this._title.isVisible = false; // rendered export title should not be visible in the ui
             this._map = new ExportComponent(source.map);
@@ -2003,14 +2458,30 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._cleanCanvas = typeof source.cleanCanvas === 'undefined' ? false : source.cleanCanvas;
         }
 
-        get title () { return this._title; }
-        get map () { return this._map; }
-        get mapElements () { return this._mapElements; }
-        get legend () { return this._legend; }
-        get footnote () { return this._footnote; }
-        get timestamp () { return this._timestamp; }
-        get timeout () { return this._timeout; }
-        get cleanCanvas () { return this._cleanCanvas; }
+        get title() {
+            return this._title;
+        }
+        get map() {
+            return this._map;
+        }
+        get mapElements() {
+            return this._mapElements;
+        }
+        get legend() {
+            return this._legend;
+        }
+        get footnote() {
+            return this._footnote;
+        }
+        get timestamp() {
+            return this._timestamp;
+        }
+        get timeout() {
+            return this._timeout;
+        }
+        get cleanCanvas() {
+            return this._cleanCanvas;
+        }
 
         get JSON() {
             return {
@@ -2021,7 +2492,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 footnote: this.footnote.JSON,
                 timestamp: this.timestamp.JSON,
                 timeout: this.timeout,
-                cleanCanvas: this.cleanCanvas
+                cleanCanvas: this.cleanCanvas,
             };
         }
     }
@@ -2031,7 +2502,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Services
      */
     class Services {
-        constructor (source) {
+        constructor(source) {
             this._proxyUrl = source.proxyUrl;
             this._corsEverywhere = source.corsEverywhere;
             this._exportMapUrl = source.exportMapUrl;
@@ -2041,23 +2512,47 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._geolocation = source.geolocation;
             this._coordInfo = source.coordInfo;
             this._print = source.print;
-            this._search = new SearchService(source.search || {}) // source.search;
+            this._search = new SearchService(source.search || {}); // source.search;
             this._export = new ExportService(source.export || {});
             this._rcsEndpoint = source.rcsEndpoint;
         }
 
-        get proxyUrl () { return this._proxyUrl; }
-        get corsEverywhere () { return this._corsEverywhere; }
-        get exportMapUrl () { return this._exportMapUrl; }
-        get esriLibUrl () { return this._esriLibUrl; }
-        get geometryUrl () { return this._geometryUrl; }
-        get googleAPIKey () { return this._googleAPIKey; }
-        get geolocation () { return this._geolocation; }
-        get coordInfo () { return this._coordInfo; }
-        get print () { return this._print; }
-        get search () { return this._search; }
-        get export () { return this._export; }
-        get rcsEndpoint () { return this._rcsEndpoint; }
+        get proxyUrl() {
+            return this._proxyUrl;
+        }
+        get corsEverywhere() {
+            return this._corsEverywhere;
+        }
+        get exportMapUrl() {
+            return this._exportMapUrl;
+        }
+        get esriLibUrl() {
+            return this._esriLibUrl;
+        }
+        get geometryUrl() {
+            return this._geometryUrl;
+        }
+        get googleAPIKey() {
+            return this._googleAPIKey;
+        }
+        get geolocation() {
+            return this._geolocation;
+        }
+        get coordInfo() {
+            return this._coordInfo;
+        }
+        get print() {
+            return this._print;
+        }
+        get search() {
+            return this._search;
+        }
+        get export() {
+            return this._export;
+        }
+        get rcsEndpoint() {
+            return this._rcsEndpoint;
+        }
 
         get JSON() {
             return {
@@ -2072,7 +2567,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 print: this.print,
                 search: this.search,
                 export: this.export,
-                rcsEndpoint: this.rcsEndpoint
+                rcsEndpoint: this.rcsEndpoint,
             };
         }
     }
@@ -2088,9 +2583,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._scale = scale;
         }
 
-        get x () {      return this._x; }
-        get y () {      return this._y; }
-        get scale () {  return this._scale; }
+        get x() {
+            return this._x;
+        }
+        get y() {
+            return this._y;
+        }
+        get scale() {
+            return this._scale;
+        }
     }
 
     /**
@@ -2098,21 +2599,17 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      * @class Map
      */
     class Map {
-        constructor (mapSource) {
+        constructor(mapSource) {
             this._source = mapSource;
 
-            this._extentSets = mapSource.extentSets.map(extentSetSource =>
-                (new ExtentSet(extentSetSource)));
+            this._extentSets = mapSource.extentSets.map((extentSetSource) => new ExtentSet(extentSetSource));
 
-            this._lodSets = mapSource.lodSets.map(lodSetSource =>
-                (new LodSet(lodSetSource)));
+            this._lodSets = mapSource.lodSets.map((lodSetSource) => new LodSet(lodSetSource));
 
-            this._tileSchemas = mapSource.tileSchemas.map(tileSchemaSource => {
-                const extentSet = this._extentSets.find(extentSet =>
-                    extentSet.id === tileSchemaSource.extentSetId)
+            this._tileSchemas = mapSource.tileSchemas.map((tileSchemaSource) => {
+                const extentSet = this._extentSets.find((extentSet) => extentSet.id === tileSchemaSource.extentSetId);
 
-                const lodSet = this._lodSets.find(lodSet =>
-                    lodSet.id === tileSchemaSource.lodSetId);
+                const lodSet = this._lodSets.find((lodSet) => lodSet.id === tileSchemaSource.lodSetId);
 
                 const tileSchema = new TileSchema(tileSchemaSource, extentSet, lodSet);
 
@@ -2120,9 +2617,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             });
 
             // TODO: if basemaps are optional, here we need to generate a blank basemap for every tileSchema
-            this._basemaps = mapSource.baseMaps.map(basemapSource => {
-                const tileSchema = this._tileSchemas.find(tileSchema =>
-                    tileSchema.id === basemapSource.tileSchemaId);
+            this._basemaps = mapSource.baseMaps.map((basemapSource) => {
+                const tileSchema = this._tileSchemas.find((tileSchema) => tileSchema.id === basemapSource.tileSchemaId);
 
                 const basemap = new Basemap(basemapSource, tileSchema);
 
@@ -2131,9 +2627,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
             // making a blank basemap;
             // find a first basemap in this tileschema and create a copy settign its opacity to 0
-            this._tileSchemas.forEach(tileSchema => {
-                const basemap = mapSource.baseMaps.find(basemapSource =>
-                    tileSchema.id === basemapSource.tileSchemaId);
+            this._tileSchemas.forEach((tileSchema) => {
+                const basemap = mapSource.baseMaps.find(
+                    (basemapSource) => tileSchema.id === basemapSource.tileSchemaId
+                );
 
                 if (basemap) {
                     const blankBasemap = tileSchema.makeBlankBasemap(basemap);
@@ -2142,11 +2639,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             });
 
             // calling select on a basemap only marks it as `selected`; to actually change the displayed basemap, call `changeBasemap` on `geoService`
-            (mapSource.initialBasemapId ?
-                this._basemaps.find(basemap =>
-                    basemap.id === mapSource.initialBasemapId) :
-                this._basemaps[0])
-                .select();
+            (mapSource.initialBasemapId
+                ? this._basemaps.find((basemap) => basemap.id === mapSource.initialBasemapId)
+                : this._basemaps[0]
+            ).select();
 
             this._layers = mapSource.layers;
             this._legend = new Legend(mapSource.legend, this._layers);
@@ -2154,17 +2650,35 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._components = new Components(mapSource.components);
         }
 
-        get source () { return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get tileSchemas () { return this._tileSchemas; }
-        get basemaps () { return this._basemaps; }
-        get extentSets () { return this._extentSets; }
-        get lodSets () { return this._lodSets; }
-        get layers () { return this._layers; }
-        get legend () { return this._legend; }
-        get components () { return this._components; }
+        get tileSchemas() {
+            return this._tileSchemas;
+        }
+        get basemaps() {
+            return this._basemaps;
+        }
+        get extentSets() {
+            return this._extentSets;
+        }
+        get lodSets() {
+            return this._lodSets;
+        }
+        get layers() {
+            return this._layers;
+        }
+        get legend() {
+            return this._legend;
+        }
+        get components() {
+            return this._components;
+        }
 
-        get selectedBasemap () { return this._basemaps.find(basemap => basemap.isSelected); }
+        get selectedBasemap() {
+            return this._basemaps.find((basemap) => basemap.isSelected);
+        }
 
         // --- //
 
@@ -2177,28 +2691,49 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         _legendMappings = {};
         _highlightLayer = null;
 
-        get layerRecords () {           return this._layerRecords; }
-        get layerBlueprints () {        return this._layerBlueprints; }
-        get boundingBoxRecords () {     return this._boundingBoxRecords; }
-        get legendBlocks () {           return this._legendBlocks; }
-        set legendBlocks (lb) {         this._legendBlocks = lb; $rootScope.$applyAsync(); }
-        get legendMappings () {         return this._legendMappings; }
+        get layerRecords() {
+            return this._layerRecords;
+        }
+        get layerBlueprints() {
+            return this._layerBlueprints;
+        }
+        get boundingBoxRecords() {
+            return this._boundingBoxRecords;
+        }
+        get legendBlocks() {
+            return this._legendBlocks;
+        }
+        set legendBlocks(lb) {
+            this._legendBlocks = lb;
+            $rootScope.$applyAsync();
+        }
+        get legendMappings() {
+            return this._legendMappings;
+        }
 
-        get highlightLayer () {         return this._highlightLayer; }
-        set highlightLayer (value) {    this._highlightLayer = value; }
+        get highlightLayer() {
+            return this._highlightLayer;
+        }
+        set highlightLayer(value) {
+            this._highlightLayer = value;
+        }
 
-        get instance () {               return this._instance; }
+        get instance() {
+            return this._instance;
+        }
 
         // this indicates that the map finished loading the initial basemap and data layers can be safely added
-        get isLoaded () {               return this._isLoaded; }
-        set isLoaded (value) {          this._isLoaded = value; }
+        get isLoaded() {
+            return this._isLoaded;
+        }
+        set isLoaded(value) {
+            this._isLoaded = value;
+        }
 
         storeMapReference(instance) {
-
             // Begin hooking API into instance functions -------------------------------
             events.$on(events.rvApiMapAdded, (_, mapInstance) => {
-
-                mapInstance.zoomChanged = Observable.create(subscriber => {
+                mapInstance.zoomChanged = Observable.create((subscriber) => {
                     // trigger zoomChanged observable on rvExtentChange event and when levelChange is true
                     // fixes https://github.com/fgpv-vpgf/fgpv-vpgf/issues/3617
                     events.$on(events.rvExtentChange, (_, d) => {
@@ -2208,30 +2743,32 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     });
                 });
 
-                mapInstance.boundsChanged = Observable.create(subscriber => {
+                mapInstance.boundsChanged = Observable.create((subscriber) => {
                     events.$on(events.rvExtentChange, (_, d) => {
                         try {
                             const apiExtent = extentToApi(d.extent);
                             subscriber.next(apiExtent);
-                        } catch(error) {
+                        } catch (error) {
                             // errors generally happen if the map view is enormous (e.g. earth wraparound, north pole in middle, etc)
                             // TODO we will have a discussion on best way to handle the error case. warning for now
-                            console.warn('unable to convert extent to API format (lat-long co-ords). boundsChanged observable was not fired.');
+                            console.warn(
+                                'unable to convert extent to API format (lat-long co-ords). boundsChanged observable was not fired.'
+                            );
                         }
                     });
                 });
 
-                mapInstance.click = Observable.create(subscriber => {
+                mapInstance.click = Observable.create((subscriber) => {
                     events.$on(events.rvClick, (_, d) => subscriber.next(d));
                 });
 
                 // add this to avoid issues with projection changes
                 // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2547
-                mapInstance.extentChanged = Observable.create(subscriber => {
+                mapInstance.extentChanged = Observable.create((subscriber) => {
                     events.$on(events.rvExtentChange, (_, d) => subscriber.next(d.extent));
                 });
 
-                mapInstance.centerChanged = Observable.create(subscriber => {
+                mapInstance.centerChanged = Observable.create((subscriber) => {
                     // note do not use `instance` here, as it will scope to old maps if projection change happens
                     events.$on(events.rvExtentChange, (_, d) => {
                         const centerXY = d.extent.getCenter();
@@ -2239,10 +2776,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     });
                 });
 
-                mapInstance.filterChanged = Observable.create(subscriber => {
+                mapInstance.filterChanged = Observable.create((subscriber) => {
                     events.$on(events.rvFilterChanged, (_, params) => {
                         subscriber.next(params);
-                    })
+                    });
                 });
             });
 
@@ -2261,8 +2798,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         }
 
         _startPoint = null;
-        get startPoint () {         return this._startPoint; }
-        set startPoint (value) {    this._startPoint = value; }
+        get startPoint() {
+            return this._startPoint;
+        }
+        set startPoint(value) {
+            this._startPoint = value;
+        }
 
         /**
          * Resets all previously created map constructs like layer records, legend blocks, and legend mappings.
@@ -2270,7 +2811,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *
          * @function reset
          */
-        reset () {
+        reset() {
             // remove all previosly createad layer constructs
             this._layerBlueprints = [];
             this._layerRecords = [];
@@ -2281,10 +2822,10 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._highlightLayer = null;
         }
 
-        applyBookmark (value) {
+        applyBookmark(value) {
             // apply new basemap
             this.selectedBasemap.deselect();
-            this._basemaps.find(basemap => basemap.id === value.basemap).select();
+            this._basemaps.find((basemap) => basemap.id === value.basemap).select();
 
             // apply starting point
             this.startPoint = new StartPoint(value);
@@ -2292,8 +2833,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             // filter out layers that are not present in the bookmark preserving the bookmark layer order
             // this loop will also drop any bookmark information onto the raw config objects.
             const filteredConfigLayers = value.bookmarkLayers
-                .map(bookmarkedLayer => {
-                    const matchingConfigLayer = this._layers.find(layer => layer.id === bookmarkedLayer.id);
+                .map((bookmarkedLayer) => {
+                    const matchingConfigLayer = this._layers.find((layer) => layer.id === bookmarkedLayer.id);
                     if (matchingConfigLayer) {
                         // this is a raw config layer object, not the fancy typed layer object (defined in this file)
                         // we sneak on our bookmark information, so it can easily be
@@ -2302,7 +2843,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     }
                     return matchingConfigLayer;
                 })
-                .filter(a => a);    // FIXME: layers added through API will be undefined in the array
+                .filter((a) => a); // FIXME: layers added through API will be undefined in the array
 
             // only apply the filtered layer list to the config if we are in autopopulate legend.
             // we run the above loop regardless to ensure any bookmark data gets tacked on the raw config items.
@@ -2324,9 +2865,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 lodSets: this.lodSets.JSON,
                 // FIXME: write serialization functions for legend objects; will be used in full state restore
                 // legend: this.legendBlocks.map(legendBlock => legendBlock.JSON),
-                layers: this.layerRecords.map(layerRecord => layerRecord.JSON),
+                layers: this.layerRecords.map((layerRecord) => layerRecord.JSON),
                 tileSchemas: this.tileSchemas.JSON,
-                basemaps: this.basemaps.JSON
+                basemaps: this.basemaps.JSON,
             };
         }
     }
@@ -2339,24 +2880,36 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._layers = source.layers !== false;
         }
 
-        get sideMenu () {   return this._sideMenu; }
-        get geoSearch () {  return this._geoSearch; }
-        get basemap () {    return this._basemap; }
-        get layers () {     return this._layers; }
+        get sideMenu() {
+            return this._sideMenu;
+        }
+        get geoSearch() {
+            return this._geoSearch;
+        }
+        get basemap() {
+            return this._basemap;
+        }
+        get layers() {
+            return this._layers;
+        }
 
-        set geoSearch(geoSearch) { this._geoSearch = geoSearch; }
+        set geoSearch(geoSearch) {
+            this._geoSearch = geoSearch;
+        }
 
-        get enabled () {    return this.sideMenu || this.geoSearch || this.layers || this.basemap; }
-        get sideMenuOnly () {
+        get enabled() {
+            return this.sideMenu || this.geoSearch || this.layers || this.basemap;
+        }
+        get sideMenuOnly() {
             return this.sideMenu && !this.geoSearch && !this.layers && !this.basemap;
         }
 
-        get JSON () {
+        get JSON() {
             return {
                 sideMenu: this.sideMenu,
                 geoSearch: this.geoSearch,
                 basemap: this.basemap,
-                layers: this.layers
+                layers: this.layers,
             };
         }
     }
@@ -2369,27 +2922,26 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor(source = {}) {
             this._source = source;
             this._zoom = source.zoom || 'buttons';
-            this._extra = angular.isArray(source.extra) ?
-                common.intersect(source.extra, NavBar.EXTRA_AVAILABLE_ITEMS) :
-                angular.copy(NavBar.EXTRA_ITEMS_DEFAULT);
+            this._extra = angular.isArray(source.extra)
+                ? common.intersect(source.extra, NavBar.EXTRA_AVAILABLE_ITEMS)
+                : angular.copy(NavBar.EXTRA_ITEMS_DEFAULT);
         }
 
-        get zoom () { return this._zoom; }
-        get extra () { return this._extra; }
+        get zoom() {
+            return this._zoom;
+        }
+        get extra() {
+            return this._extra;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 zoom: this.zoom,
-                extra: this.extra
-            }
+                extra: this.extra,
+            };
         }
 
-        static EXTRA_ITEMS_DEFAULT = [
-            'fullscreen',
-            'geoLocator',
-            'home',
-            'help'
-        ];
+        static EXTRA_ITEMS_DEFAULT = ['fullscreen', 'geoLocator', 'home', 'help'];
 
         static EXTRA_AVAILABLE_ITEMS = [
             'history',
@@ -2401,7 +2953,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             'geoLocator',
             'basemap',
             'sideMenu',
-            'layers'
+            'layers',
         ];
     }
 
@@ -2414,30 +2966,16 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._source = source;
             this._logo = source.logo === true;
 
-            this._items = angular.isArray(source.items) ?
-                source.items.map(subItems => common.intersect(subItems, SideMenu.AVAILABLE_ITEMS)) :
-                angular.copy(SideMenu.ITEMS_DEFAULT);
+            this._items = angular.isArray(source.items)
+                ? source.items.map((subItems) => common.intersect(subItems, SideMenu.AVAILABLE_ITEMS))
+                : angular.copy(SideMenu.ITEMS_DEFAULT);
         }
 
         static ITEMS_DEFAULT = [
-            [
-                'layers',
-                'basemap'
-            ],
-            [
-                'fullscreen',
-                'export',
-                'share',
-                'touch',
-                'help',
-                'about'
-            ],
-            [
-                'language'
-            ],
-            [
-                'plugins'
-            ]
+            ['layers', 'basemap'],
+            ['fullscreen', 'export', 'share', 'touch', 'help', 'about'],
+            ['language'],
+            ['plugins'],
         ];
 
         static AVAILABLE_ITEMS = [
@@ -2451,19 +2989,25 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             'touch',
             'help',
             'language',
-            'plugins'
+            'plugins',
         ];
 
-        get source () { return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get logo () { return this._logo; }
-        get items () { return this._items; }
+        get logo() {
+            return this._logo;
+        }
+        get items() {
+            return this._items;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 logo: this.logo,
-                items: this.items
-            }
+                items: this.items,
+            };
         }
     }
 
@@ -2480,16 +3024,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._small = source.small === true;
         }
 
-        get large () { return this._large; }
-        get medium () { return this._medium; }
-        get small () { return this._small; }
+        get large() {
+            return this._large;
+        }
+        get medium() {
+            return this._medium;
+        }
+        get small() {
+            return this._small;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 large: this.large,
                 medium: this.medium,
-                small: this.small
-            }
+                small: this.small,
+            };
         }
     }
 
@@ -2504,21 +3054,29 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._id = source.id;
             this._large = this._id ? source.large : false;
             this._medium = this._id ? source.medium : false;
-            this._small = this._id ? source.small : false ;
+            this._small = this._id ? source.small : false;
         }
 
-        get id () { return this._id; }
-        get large () { return this._large; }
-        get medium () { return this._medium; }
-        get small () { return this._small; }
+        get id() {
+            return this._id;
+        }
+        get large() {
+            return this._large;
+        }
+        get medium() {
+            return this._medium;
+        }
+        get small() {
+            return this._small;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 id: this.id,
                 large: this.large,
                 medium: this.medium,
-                small: this.small
-            }
+                small: this.small,
+            };
         }
     }
 
@@ -2532,11 +3090,13 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._folderName = helpSource.folderName;
         }
 
-        get folderName () { return this._folderName; }
+        get folderName() {
+            return this._folderName;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
-                folderName: this.folderName
+                folderName: this.folderName,
             };
         }
     }
@@ -2552,13 +3112,17 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._folderName = aboutSource.folderName;
         }
 
-        get content() { return this._content; }
-        get folderName() { return this._folderName; }
+        get content() {
+            return this._content;
+        }
+        get folderName() {
+            return this._folderName;
+        }
 
         get JSON() {
             return {
                 content: this.content,
-                folderName: this.folderName
+                folderName: this.folderName,
             };
         }
     }
@@ -2570,14 +3134,18 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._failureImageUrl = source.failureImageUrl;
         }
 
-        get failureMessage () { return this._failureMessage; }
-        get failureImageUrl () { return this._failureImageUrl; }
+        get failureMessage() {
+            return this._failureMessage;
+        }
+        get failureImageUrl() {
+            return this._failureImageUrl;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 failureMessage: this.failureMessage,
-                failureImageUrl: this.failureImageUrl
-            }
+                failureImageUrl: this.failureImageUrl,
+            };
         }
     }
 
@@ -2592,16 +3160,22 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._isOpen = new LegendIsOpen(uiLegendSource.isOpen);
         }
 
-        get reorderable () {    return this._reorderable; }
-        get allowImport () {    return this._allowImport; }
-        get isOpen () {         return this._isOpen; }
+        get reorderable() {
+            return this._reorderable;
+        }
+        get allowImport() {
+            return this._allowImport;
+        }
+        get isOpen() {
+            return this._isOpen;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 reorderable: this.reorderable,
                 allowImport: this.allowImport,
-                isOpen: this.isOpen.JSON
-            }
+                isOpen: this.isOpen.JSON,
+            };
         }
     }
 
@@ -2632,22 +3206,48 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._about = new About(uiSource.about);
         }
 
-        get source () {                 return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get appBar () {                 return this._appBar; }
-        get navBar () {                 return this._navBar; }
-        get logoUrl () {                return this._logoUrl; }
-        get failureFeedback() {         return this._failureFeedback; }
-        get title () {                  return this._title; }
-        get restrictNavigation () {     return this._restrictNavigation; }
-        get sideMenu () {               return this._sideMenu; }
-        get legend () {                 return this._legend; }
-        get help () {                   return this._help; }
-        get fullscreen () {             return this._fullscreen; }
-        get tableIsOpen () {            return this._tableIsOpen; }
-        get about() {                   return this._about; }
+        get appBar() {
+            return this._appBar;
+        }
+        get navBar() {
+            return this._navBar;
+        }
+        get logoUrl() {
+            return this._logoUrl;
+        }
+        get failureFeedback() {
+            return this._failureFeedback;
+        }
+        get title() {
+            return this._title;
+        }
+        get restrictNavigation() {
+            return this._restrictNavigation;
+        }
+        get sideMenu() {
+            return this._sideMenu;
+        }
+        get legend() {
+            return this._legend;
+        }
+        get help() {
+            return this._help;
+        }
+        get fullscreen() {
+            return this._fullscreen;
+        }
+        get tableIsOpen() {
+            return this._tableIsOpen;
+        }
+        get about() {
+            return this._about;
+        }
 
-        get JSON () {
+        get JSON() {
             return {
                 appBar: this.appBar.JSON,
                 navBar: this.navBar.JSON,
@@ -2660,8 +3260,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 help: this.help.JSON,
                 fullscreen: this.fullscreen,
                 tableIsOpen: this.tableIsOpen.JSON,
-                about: this.about.JSON
-            }
+                about: this.about.JSON,
+            };
         }
     }
 
@@ -2674,7 +3274,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          *
          * @param {Object} configSource vanilla json config object loaded into the app by the ConfigService
          */
-        constructor (configSource) {
+        constructor(configSource) {
             this._source = configSource;
 
             this._version = configSource.version;
@@ -2693,8 +3293,8 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                 this.map.legend.type === TYPES.legend.AUTOPOPULATE && this.ui.legend._reorderable;
 
             // set geoSearch.enable to false if it was false initialy or does not have all services
-            this.map.components.geoSearch.enabled = this.map.components.geoSearch.enabled
-                && hasAllSearchServices(this.services.search);
+            this.map.components.geoSearch.enabled =
+                this.map.components.geoSearch.enabled && hasAllSearchServices(this.services.search);
 
             let optionName;
 
@@ -2703,8 +3303,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
 
                 this.ui.appBar.geoSearch = false;
 
-                this.ui.sideMenu.items.forEach(section =>
-                    common.removeFromArray(section, optionName));
+                this.ui.sideMenu.items.forEach((section) => common.removeFromArray(section, optionName));
 
                 common.removeFromArray(this.ui.navBar.extra, optionName);
             }
@@ -2713,8 +3312,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             if (!screenfull.enabled) {
                 optionName = 'fullscreen';
 
-                this.ui.sideMenu.items.forEach(section =>
-                    common.removeFromArray(section, optionName));
+                this.ui.sideMenu.items.forEach((section) => common.removeFromArray(section, optionName));
 
                 common.removeFromArray(this.ui.navBar.extra, optionName);
             }
@@ -2723,14 +3321,12 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             if (!this.ui.help.folderName) {
                 common.removeFromArray(this.ui.navBar.extra, 'help');
 
-                this.ui.sideMenu.items.forEach(section =>
-                    common.removeFromArray(section, 'help'));
+                this.ui.sideMenu.items.forEach((section) => common.removeFromArray(section, 'help'));
             }
 
             // remove `about` option if about content or about folder is not provided
             if (!this.ui.about.folderName && !this.ui.about.content) {
-                this.ui.sideMenu.items.forEach(section =>
-                    common.removeFromArray(section, 'about'));
+                this.ui.sideMenu.items.forEach((section) => common.removeFromArray(section, 'about'));
             }
 
             /**
@@ -2742,23 +3338,27 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
              * @returns   {boolean}    True if it has all the required geo services, false otherwise
              */
             function hasAllSearchServices(search) {
-                const GEOSERVICES = new Set([  // required geo search services
+                const GEOSERVICES = new Set([
+                    // required geo search services
                     'geoNames',
                     'geoLocation',
                     'geoSuggest',
                     'provinces',
-                    'types'
+                    'types',
                 ]);
 
                 // check if the number of all required search services is correct
-                if (typeof search === 'undefined' || typeof search.serviceUrls === 'undefined'
-                    || Object.keys(search.serviceUrls).length < GEOSERVICES.length) {
+                if (
+                    typeof search === 'undefined' ||
+                    typeof search.serviceUrls === 'undefined' ||
+                    Object.keys(search.serviceUrls).length < GEOSERVICES.length
+                ) {
                     return false;
                 }
 
                 // check if the serives match what were required
                 for (let service of GEOSERVICES) {
-                    if (! search.serviceUrls.hasOwnProperty(service)) {
+                    if (!search.serviceUrls.hasOwnProperty(service)) {
                         return false;
                     }
                 }
@@ -2771,30 +3371,46 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
          * Returns orignal JSON source of the config object.
          * @return {Object} original json config object
          */
-        get source () { return this._source; }
+        get source() {
+            return this._source;
+        }
 
-        get version () { return this._version; }
-        get language () { return this._language; }
-        get languages () { return this._languages; }
-        get plugins () { return this._plugins; }
+        get version() {
+            return this._version;
+        }
+        get language() {
+            return this._language;
+        }
+        get languages() {
+            return this._languages;
+        }
+        get plugins() {
+            return this._plugins;
+        }
 
-        get ui () { return this._ui; }
-        get services () { return this._services; }
-        get map () { return this._map; }
+        get ui() {
+            return this._ui;
+        }
+        get services() {
+            return this._services;
+        }
+        get map() {
+            return this._map;
+        }
 
-        applyBookmark (value) {
+        applyBookmark(value) {
             this.map.applyBookmark(value);
         }
 
-        get JSON () {
+        get JSON() {
             return {
                 version: this.version,
                 language: this.language,
                 languages: this.languages,
                 ui: this.ui.JSON,
                 services: this.services.JSON,
-                map: this.map.JSON
-            }
+                map: this.map.JSON,
+            };
         }
     }
 
@@ -2808,23 +3424,24 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
      */
     function walkFunction(action, decision = null) {
         // roll in the results into a flat array
-        return [].concat.apply([], (this.children || this.exclusiveVisibility).map((child, index) => {
-            if (child.entryType === TYPES.legend.GROUP ||
-                child.entryType === TYPES.legend.SET) {
+        return [].concat.apply(
+            [],
+            (this.children || this.exclusiveVisibility).map((child, index) => {
+                if (child.entryType === TYPES.legend.GROUP || child.entryType === TYPES.legend.SET) {
+                    const actionResult = action(child, index, this);
+                    const walkResult = [];
+                    const proceed = decision ? decision(child, index, this) : true;
 
-                const actionResult = action(child, index, this);
-                const walkResult = [];
-                const proceed = decision ? decision(child, index, this) : true;
+                    if (proceed) {
+                        walkResult.push.apply(walkResult, child.walk(action, decision));
+                    }
 
-                if (proceed) {
-                    walkResult.push.apply(walkResult, child.walk(action, decision));
+                    return [].concat(actionResult, walkResult);
+                } else {
+                    return action(child, index, this);
                 }
-
-                return [].concat(actionResult, walkResult);
-            } else {
-                return action(child, index, this);
-            }
-        }));
+            })
+        );
     }
 
     return {
@@ -2835,7 +3452,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             Entry,
             InfoSection,
             EntryGroup,
-            VisibilitySet
+            VisibilitySet,
         },
 
         layers: {
@@ -2847,7 +3464,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             FileLayerNode,
 
             DynamicLayerEntryNode,
-            WMSLayerEntryNode
+            WMSLayerEntryNode,
         },
 
         Basemap,
@@ -2857,6 +3474,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         createColumnNode,
 
         TYPES,
-        DEFAULTS
+        DEFAULTS,
     };
 }

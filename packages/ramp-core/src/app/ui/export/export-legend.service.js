@@ -6,7 +6,7 @@ const LEGEND_MARGIN = {
     t: 20,
     r: 20,
     b: 20,
-    l: 20
+    l: 20,
 };
 const SECTION_SPACING = 10; // horizontal spacing between legend sections
 
@@ -33,12 +33,12 @@ angular.module('app.ui').service('exportLegendService', exportLegendService);
 
 function exportLegendService($q, $rootElement, appInfo, LegendBlock, configService, gapiService, graphicsService) {
     const service = {
-        generate
+        generate,
     };
 
     const ref = {
         showToast: angular.noop,
-        hasOmittedImage: false
+        hasOmittedImage: false,
     };
 
     return service;
@@ -56,7 +56,14 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
      * @param {Function} showToast a function display a toast notifcation for the user
      * @return {Promise} promise with resolves with a canvas containing the legend
      */
-    async function generate(availableHeight = 500, availableWidth = 1500, preferredSectionWidth = 500, numColumns = 0, legendBlocks = null, showToast) {
+    async function generate(
+        availableHeight = 500,
+        availableWidth = 1500,
+        preferredSectionWidth = 500,
+        numColumns = 0,
+        legendBlocks = null,
+        showToast
+    ) {
         // I think this todo is done.
         // TODO: break item names when they overflow even if there are no spaces in the name
 
@@ -83,7 +90,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         const sectionInfo = {
             count: numColumns || Math.floor(availableWidth / preferredSectionWidth) || 1, // section count should never be 0
             width: 0,
-            height: 0
+            height: 0,
         };
 
         let svgLegend; // object containing arrays of svg elements
@@ -95,7 +102,11 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
             sectionInfo.count = sectionsUsed || sectionInfo.count;
             sectionInfo.width = getSectionWidth();
             legendDataCopy = angular.copy(
-                await extractLegendTree(legendBlocks || configService.getSync.map.legendBlocks, sectionInfo.width, availableWidth)
+                await extractLegendTree(
+                    legendBlocks || configService.getSync.map.legendBlocks,
+                    sectionInfo.width,
+                    availableWidth
+                )
             );
 
             legendSection.clear();
@@ -122,11 +133,11 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         hiddenNode.remove();
 
         const localCanvas = document.createElement('canvas'); // create canvas element
-        const generationPromise = new Promise(resolve => {
+        const generationPromise = new Promise((resolve) => {
             canvg(localCanvas, legend.node.outerHTML, {
                 ignoreAnimation: true,
                 ignoreMouse: true,
-                renderCallback: () => resolve(localCanvas)
+                renderCallback: () => resolve(localCanvas),
             });
         });
 
@@ -167,9 +178,9 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         const lineStoreSet = svgLegend.lines; // use a group line set from svgLegend
 
         // moves legend items from an array to a set
-        svgLegend.items.forEach(svg => itemStoreSet.add(svg));
+        svgLegend.items.forEach((svg) => itemStoreSet.add(svg));
 
-        svgLegend.items.forEach(svg => {
+        svgLegend.items.forEach((svg) => {
             // wrap the legend at elements previously marked
             // NOTE: svg.remember('self') retrieves the item that spawned the svg
             // it is a direct reference so the 'splitBefore' added by geoApi can be seen
@@ -259,13 +270,13 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
         const itemStore = [];
         const lineSet = container.set();
 
-        items.forEach(item => makeLegendElement(item));
+        items.forEach((item) => makeLegendElement(item));
 
         return {
             container,
             height: runningHeight,
             items: itemStore,
-            lines: lineSet
+            lines: lineSet,
         };
 
         /**
@@ -287,7 +298,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                 }
                 // Need to keep a height on the item for geoApi calculations
                 item.height = 0;
-                item.items.forEach(i => {
+                item.items.forEach((i) => {
                     makeInfoItem(i);
                     item.height += i.height;
                 });
@@ -308,7 +319,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
             makeHeader(layer, 18);
 
-            layer.items.forEach(item => {
+            layer.items.forEach((item) => {
                 if (item.hasOwnProperty('items')) {
                     makeGroup(item);
                 } else {
@@ -336,7 +347,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
             const startHeight = runningHeight;
             runningIndent++;
 
-            group.items.forEach(item => {
+            group.items.forEach((item) => {
                 makeLegendElement(item);
             });
 
@@ -369,13 +380,10 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                 'font-family': 'Roboto',
                 'font-weight': 'normal',
                 'font-size': 14,
-                anchor: 'start'
+                anchor: 'start',
             };
 
-            const imageItem = legendItem
-                .group()
-                .svg(svgcode)
-                .first();
+            const imageItem = legendItem.group().svg(svgcode).first();
             const imageItemViewbox = imageItem.viewbox();
 
             /// Use the narrower width as the bound for the image
@@ -457,7 +465,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                     'font-family': 'Roboto',
                     'font-weight': 'normal',
                     'font-size': size,
-                    anchor: 'start'
+                    anchor: 'start',
                 })
                 .remember('self', item)
                 .move(runningIndent * indentD, runningHeight); // TODO: add gutter;
@@ -486,18 +494,18 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
     function extractLegendTree(legendBlock, sectionWidth, availableWidth) {
         // `TYPE_TO_SYMBOLOGY` functions return promises
         const TYPE_TO_SYMBOLOGY = {
-            [LegendBlock.TYPES.NODE]: entry =>
+            [LegendBlock.TYPES.NODE]: (entry) =>
                 Promise.resolve({
                     name: entry.name,
-                    items: _cleanSymbologyStack(entry.symbologyStack.stack)
+                    items: _cleanSymbologyStack(entry.symbologyStack.stack),
                 }),
-            [LegendBlock.TYPES.GROUP]: async entry => ({
+            [LegendBlock.TYPES.GROUP]: async (entry) => ({
                 name: entry.name,
-                items: await extractLegendTree(entry, sectionWidth, availableWidth)
+                items: await extractLegendTree(entry, sectionWidth, availableWidth),
             }),
             [LegendBlock.TYPES.SET]: () => Promise.resolve(null),
             // eslint-disable-next-line complexity
-            [LegendBlock.TYPES.INFO]: async entry => {
+            [LegendBlock.TYPES.INFO]: async (entry) => {
                 if (entry.infoType === 'image') {
                     const svgCode = await _cleanImage(entry.content);
                     return {
@@ -505,7 +513,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                         items: [{ name: '', svgcode: svgCode }],
                         blockType: LegendBlock.TYPES.INFO,
                         infoType: entry.infoType,
-                        height: $(svgCode).height()
+                        height: $(svgCode).height(),
                     };
                 } else {
                     const content = entry.layerName || entry.content;
@@ -516,7 +524,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                             name: removeMd(content),
                             items: _cleanSymbologyStack(entry.symbologyStack.stack) || [],
                             blockType: LegendBlock.TYPES.INFO,
-                            infoType: entry.infoType
+                            infoType: entry.infoType,
                         };
                     }
 
@@ -528,7 +536,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                             name: entry.layerName || entry.content,
                             items: entry.symbologyStack.stack || [],
                             blockType: LegendBlock.TYPES.INFO,
-                            infoType: entry.infoType
+                            infoType: entry.infoType,
                         });
                     }
 
@@ -566,16 +574,14 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                         items: [
                             {
                                 name: '',
-                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${height}" width="${correctedWidth}"><image height="${height}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${
-                                    img.src
-                                }"></image></svg>`
-                            }
+                                svgcode: `<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="${height}" width="${correctedWidth}"><image height="${height}" width="${correctedWidth}" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${img.src}"></image></svg>`,
+                            },
                         ].concat(_cleanSymbologyStack(entry.symbologyStack.stack) || []),
                         blockType: LegendBlock.TYPES.INFO,
-                        infoType: entry.infoType
+                        infoType: entry.infoType,
                     });
                 }
-            }
+            },
         };
 
         // TODO: decide if symbology from the duplicated layer should be included in the export image
@@ -584,14 +590,14 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
         /**
          * Traverses the legendBlock object and builds a list of items to include in the legend export.
-         * 
+         *
          * @function iterateLegendBlock
-         * @param {*} legendBlock 
+         * @param {*} legendBlock
          * @return {Array} A list of legendBlock entries and null values
          */
         function iterateLegendBlock(legendBlock) {
             let returnVal = [];
-            legendBlock.entries.forEach((entry) => { 
+            legendBlock.entries.forEach((entry) => {
                 returnVal.push(_showBlock(entry) ? TYPE_TO_SYMBOLOGY[entry.blockType](entry) : null);
                 if (entry.blockType !== LegendBlock.TYPES.GROUP && entry.entries) {
                     returnVal = returnVal.concat(iterateLegendBlock(entry));
@@ -602,12 +608,12 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
         let titleBefore = false;
 
-        return Promise.all(legendTreeData).then(data =>
+        return Promise.all(legendTreeData).then((data) =>
             data
                 // filter out nulls
-                .filter(a => a !== null)
+                .filter((a) => a !== null)
                 // filter out non-info blocks with no symbology
-                .filter(entry => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
+                .filter((entry) => entry.blockType === LegendBlock.TYPES.INFO || entry.items.length > 0)
                 // clear out titles where everything below it (or in between another title) has been removed
                 // The two reverses let us filter backwards, making detection of bad titles easier.
                 .reverse()
@@ -660,8 +666,8 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
         const {
             services: {
-                export: { cleanCanvas }
-            }
+                export: { cleanCanvas },
+            },
         } = configService.getSync;
 
         // if `cleanCanvas` is not set, do nothing
@@ -669,7 +675,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
             return stack;
         }
 
-        const cleaneddStack = stack.map(symbologyItem => {
+        const cleaneddStack = stack.map((symbologyItem) => {
             const { name, image, svgcode } = symbologyItem;
 
             // it's already base 64, hence won't taint the canvas
@@ -680,10 +686,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
             } else {
                 const draw = graphicsService.createSvg(100, 100).svg(svgcode);
                 // get the image from the svg and its bounding box
-                const bbox = draw
-                    .select('image')
-                    .get(0)
-                    .bbox();
+                const bbox = draw.select('image').get(0).bbox();
 
                 // create a placeholder box of the same size and fill it with grey
                 // TODO: add a note in it that it can't be exported
@@ -695,7 +698,7 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
                 return {
                     name,
                     image,
-                    svgcode: placeholder.svg()
+                    svgcode: placeholder.svg(),
                 };
             }
         });
@@ -717,8 +720,8 @@ function exportLegendService($q, $rootElement, appInfo, LegendBlock, configServi
 
         const {
             services: {
-                export: { cleanCanvas }
-            }
+                export: { cleanCanvas },
+            },
         } = configService.getSync;
 
         let dataUrl = imgUrl;

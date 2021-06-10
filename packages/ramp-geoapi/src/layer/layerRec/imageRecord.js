@@ -23,7 +23,7 @@ class ImageRecord extends layerRecord.LayerRecord {
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+    constructor(layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         // handles placeholder symbol, possibly other things
@@ -31,14 +31,16 @@ class ImageRecord extends layerRecord.LayerRecord {
         this._featClasses['0'] = new placeholderFC.PlaceholderFC(this, this.name);
     }
 
-    get layerType () { return shared.clientLayerType.ESRI_IMAGE; }
+    get layerType() {
+        return shared.clientLayerType.ESRI_IMAGE;
+    }
 
     /**
      * Triggers when the layer loads.
      *
      * @function onLoad
      */
-    onLoad () {
+    onLoad() {
         const loadPromises = super.onLoad();
 
         const fc = new basicFC.BasicFC(this, '0', this.config);
@@ -53,5 +55,5 @@ class ImageRecord extends layerRecord.LayerRecord {
 }
 
 module.exports = () => ({
-    ImageRecord
+    ImageRecord,
 });

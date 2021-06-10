@@ -33,25 +33,16 @@ describe('rvContentPane0', () => {
     describe('rvContentPane', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
 
             // pane's content is correct
-            expect(directiveElement.find('.rv-content')
-                    .text()
-                    .trim())
-                .toBe('Dog Guts');
+            expect(directiveElement.find('.rv-content').text().trim()).toBe('Dog Guts');
 
             // no close button
-            expect(directiveElement.find('.rv-header > md-button')
-                    .length)
-                .toBe(0);
+            expect(directiveElement.find('.rv-header > md-button').length).toBe(0);
 
             // there should be only two children in the header
-            expect(directiveElement.find('.rv-header')
-                    .children()
-                    .length)
-                .toBe(2);
+            expect(directiveElement.find('.rv-header').children().length).toBe(2);
         });
     });
 });
@@ -94,14 +85,12 @@ describe('rvContentPane1', () => {
     describe('rvContentPane', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
 
             directiveScope.self.closePanel();
 
             // check if the close panel function is called
-            expect(scope.close)
-                .toHaveBeenCalled();
+            expect(scope.close).toHaveBeenCalled();
         });
     });
 });
@@ -113,7 +102,7 @@ describe('rvContentPane2', () => {
 
     // mock part of the controller required by rvLayerGroupToggleButton directive
     const fakeController = {
-        closePanel: () => {}
+        closePanel: () => {},
     };
 
     beforeEach(() => {
@@ -137,8 +126,7 @@ describe('rvContentPane2', () => {
             `
         );
 
-        directiveElement.data('$rvPanelController',
-            fakeController);
+        directiveElement.data('$rvPanelController', fakeController);
         directiveElement = $compile(directiveElement)(scope);
         scope.$digest();
 
@@ -150,20 +138,15 @@ describe('rvContentPane2', () => {
     describe('rvContentPane', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
 
             directiveScope.self.closePanel();
 
             // check if the close panel function is called on the fakeController
-            expect(fakeController.closePanel)
-                .toHaveBeenCalled();
+            expect(fakeController.closePanel).toHaveBeenCalled();
 
             // there should be four children in the header: title, spacer, close button, and extra header md-button
-            expect(directiveElement.find('.rv-header')
-                    .children()
-                    .length)
-                .toBe(4);
+            expect(directiveElement.find('.rv-header').children().length).toBe(4);
         });
     });
 });

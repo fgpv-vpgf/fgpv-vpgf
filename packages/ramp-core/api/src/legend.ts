@@ -79,7 +79,7 @@ class BaseLegend {
      * @param {string} layerId - the layerId for the layer that the `LegendGroup` or `LegendItem` corresponds to.
      */
     getById(layerId: string): LegendItem | LegendGroup | undefined {
-        return this._children.find(item => item.id === layerId);
+        return this._children.find((item) => item.id === layerId);
     }
 
     /**
@@ -133,7 +133,6 @@ class BaseLegend {
     get elementRemoved(): Observable<LegendItem> {
         return this._elementRemoved.asObservable();
     }
-
 }
 
 /**
@@ -202,10 +201,12 @@ export class ConfigLegend extends BaseLegend {
      * configLegend.configSnippets = [{...}, ... , {...}];
      * ```
      */
-    set configSnippets(snippets: Array<JSON>) { // TODO: add code to fix children array
+    set configSnippets(snippets: Array<JSON>) {
+        // TODO: add code to fix children array
         if (snippets) {
             const structure = this._legendStructure.JSON;
-            if (this._type === 'structured') {    // use constant
+            if (this._type === 'structured') {
+                // use constant
                 this._configSnippets = snippets;
                 structure.root.children = snippets;
                 this._mapInstance.instance.setLegendConfig(structure);
@@ -328,9 +329,9 @@ class BaseItem {
         this._opacityChanged = new Subject();
         this._queryableChanged = new Subject();
 
-        this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
-        this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
-        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
+        this._visibilityChanged.subscribe((visibility) => (this._visibility = visibility));
+        this._opacityChanged.subscribe((opacity) => (this._opacity = opacity));
+        this._queryableChanged.subscribe((queryable) => (this._queryable = queryable));
     }
 
     /** Returns the item's id */
@@ -372,9 +373,9 @@ class BaseItem {
     }
 
     /**
-    * Emits whenever the item visibility is changed.
-    * @event visibilityChanged
-    */
+     * Emits whenever the item visibility is changed.
+     * @event visibilityChanged
+     */
     get visibilityChanged(): Observable<boolean> {
         return this._visibilityChanged.asObservable();
     }
@@ -457,7 +458,7 @@ class BaseItem {
      * Does nothing if "reload" is not part of `BaseItem's` `_availableControls`.
      */
     reload(): void {
-        if (this._availableControls.includes(AvailableControls.Reload) ) {
+        if (this._availableControls.includes(AvailableControls.Reload)) {
             this._mapInstance.instance.reloadAPILegendBlock(this._legendBlock);
         }
     }
@@ -497,7 +498,11 @@ class BaseItem {
      * @param control name of the control
      */
     _controlAvailable(control: AvailableControls) {
-        return this._legendBlock.state !== 'rv-error' && this._availableControls.includes(control) && !this._legendBlock.isControlDisabled(control);
+        return (
+            this._legendBlock.state !== 'rv-error' &&
+            this._availableControls.includes(control) &&
+            !this._legendBlock.isControlDisabled(control)
+        );
     }
 }
 
@@ -536,7 +541,7 @@ export class LegendItem extends BaseItem {
      */
     toggleSymbologies(indices: Array<number>): void {
         if (this._availableControls.includes(AvailableControls.Symbology)) {
-            indices.forEach(index => {
+            indices.forEach((index) => {
                 // check if index is valid
                 if (index < 0 || index >= this._legendBlock.symbologyStack.stack.length) {
                     return;
@@ -598,7 +603,6 @@ export class LegendItem extends BaseItem {
  * They can nest `LegendItems` or other `LegendGroups`.
  */
 export class LegendGroup extends BaseItem {
-
     /** @ignore */
     _children: Array<LegendGroup | LegendItem> = [];
 
@@ -648,32 +652,41 @@ export class LegendGroup extends BaseItem {
      * @ignore
      */
     _initSettings(legendBlock: any): void {
-        legendBlock.entries.filter((entry: any) => !entry.hidden).forEach((entry: any) => {
+        legendBlock.entries
+            .filter((entry: any) => !entry.hidden)
+            .forEach((entry: any) => {
+                // if a corresponding child already exists, reinit settings
+                let childExists = false;
+                this._children.forEach((child) => {
+                    if (
+                        child._legendBlock._layerRecordId === entry._layerRecordId &&
+                        child._legendBlock._blockConfig._entryIndex === entry._blockConfig._entryIndex
+                    ) {
+                        if (entry.parent.entries.indexOf(entry) === this._children.indexOf(child)) {
+                            child._initSettings(entry);
+                            childExists = true;
+                        }
+                    }
+                });
 
-            // if a corresponding child already exists, reinit settings
-            let childExists = false;
-            this._children.forEach(child => {
-                if (child._legendBlock._layerRecordId === entry._layerRecordId && child._legendBlock._blockConfig._entryIndex === entry._blockConfig._entryIndex) {
-                    if (entry.parent.entries.indexOf(entry) === this._children.indexOf(child)) {
-                        child._initSettings(entry);
-                        childExists = true;
+                // otherwise create new LegendGroup/LegendItem and push to child array
+                if (!childExists) {
+                    if (
+                        (entry.blockConfig.entryType === LegendTypes.Group ||
+                            entry.blockConfig.entryType == LegendTypes.Set) &&
+                        !entry.collapsed
+                    ) {
+                        this._children.push(new LegendGroup(this._mapInstance, entry));
+                    } else {
+                        // it's a collapsed dynamic layer or a node/infoSection
+                        this._children.push(new LegendItem(this._mapInstance, entry));
                     }
                 }
             });
 
-            // otherwise create new LegendGroup/LegendItem and push to child array
-            if (!childExists) {
-                if ((entry.blockConfig.entryType === LegendTypes.Group || entry.blockConfig.entryType == LegendTypes.Set) && !entry.collapsed) {
-                    this._children.push(new LegendGroup(this._mapInstance, entry));
-                } else { // it's a collapsed dynamic layer or a node/infoSection
-                    this._children.push(new LegendItem(this._mapInstance, entry));
-                }
-            }
-        });
-
         this._legendBlock = legendBlock;
         this._type = legendBlock.blockConfig.entryType;
-        this._availableControls = legendBlock.availableControls
+        this._availableControls = legendBlock.availableControls;
 
         this._id = legendBlock.id;
 
@@ -682,7 +695,7 @@ export class LegendGroup extends BaseItem {
         this._opacity = legendBlock.opacity;
         this._queryable = legendBlock.query;
 
-        this.children.forEach(child => {
+        this.children.forEach((child) => {
             child.visibilityChanged.subscribe(() => {
                 if (this.visibility !== this._legendBlock.visibility) {
                     this._visibilityChanged.next(this._legendBlock.visibility);
@@ -722,7 +735,7 @@ enum AvailableControls {
     Remove = 'remove',
     Settings = 'settings',
     Data = 'data',
-    Symbology = 'symbology'
+    Symbology = 'symbology',
 }
 
 interface LegendStructure {

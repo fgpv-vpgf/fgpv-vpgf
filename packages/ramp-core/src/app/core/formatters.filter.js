@@ -60,9 +60,7 @@ function autolink() {
      */
     function autolink(items, options = {}) {
         // item must be a string
-        const results = Array.isArray(items) ?
-            items.map(process) :
-            process(items);
+        const results = Array.isArray(items) ? items.map(process) : process(items);
 
         return results;
 
@@ -78,8 +76,9 @@ function autolink() {
             // check if we need to use linkify html or linkify string
             const html = /<(?=.*? .*?\/ ?>|br|hr|input|!--|wbr)[a-z]+.*?>|<([a-z]+).*?<\/\1>/; // https://regex101.com/r/cX0eP2/1
             const opts = angular.extend(defaultOptions, options);
-            return (html.test(item)) ?
-                linkifyHtml((item || '').toString(), opts) : linkifyStr((item || '').toString(), opts);
+            return html.test(item)
+                ? linkifyHtml((item || '').toString(), opts)
+                : linkifyStr((item || '').toString(), opts);
         }
     }
 }
@@ -131,8 +130,7 @@ function picture() {
         function process(item) {
             // check if it is a picture
             const isPicture = /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item);
-            return isPicture ?
-                `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
+            return isPicture ? `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
         }
     }
 }
@@ -146,7 +144,7 @@ function markdown($sce) {
         pedantic: false,
         sanitize: true,
         smartLists: true,
-        smartypants: false
+        smartypants: false,
     };
 
     return markdown;

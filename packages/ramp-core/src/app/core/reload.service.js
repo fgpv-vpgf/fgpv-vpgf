@@ -6,9 +6,7 @@
  * @description reloadService manages state through map reloads
  *
  */
-angular
-    .module('app.core')
-    .factory('reloadService', reloadService);
+angular.module('app.core').factory('reloadService', reloadService);
 
 function reloadService(events, bookmarkService, geoService, configService, stateManager, exportService) {
     const service = {
@@ -20,7 +18,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
         loadWithBookmark,
         changeProjection,
 
-        reloadConfig
+        reloadConfig,
     };
 
     return service;
@@ -50,7 +48,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
         }
 
         // modify the original config
-        configService.getAsync.then(config => {
+        configService.getAsync.then((config) => {
             bookmarkService.parseBookmark(bookmark);
 
             // loading a bookmark after initialization, reload the map
@@ -64,9 +62,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
         const bookmark = bookmarkService.getBookmark(startPoint);
         bookmarkService.parseBookmark(bookmark);
 
-        geoService
-            .destroyMap()
-            .assembleMap();
+        geoService.destroyMap().assembleMap();
 
         events.$broadcast(events.rvProjectiontChanged);
     }
@@ -85,7 +81,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
 
         geoService.destroyMap();
 
-        configService.getAsync.then(config => {
+        configService.getAsync.then((config) => {
             bookmarkService.parseBookmark(bookmark);
             bookmarkService.adjustRcsLanguage(lang);
             geoService.assembleMap();
@@ -122,7 +118,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
             // to steal some of that logic / mess with additionalKeys param
 
             // modify the original config
-            configService.getAsync.then(config => {
+            configService.getAsync.then((config) => {
                 bookmarkService.parseBookmark(bookmark);
 
                 // remove any rcs definitions from the bookmark so the map doesn't
@@ -132,7 +128,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
 
                 if (additionalKeys.length > 0) {
                     // toss any items that are not in additionalKeys
-                    rcsLayers = rcsLayers.filter(rcsL => additionalKeys.indexOf(rcsL.id.split('.')[1]) > -1);
+                    rcsLayers = rcsLayers.filter((rcsL) => additionalKeys.indexOf(rcsL.id.split('.')[1]) > -1);
                 }
 
                 if (rcsLayers.length > 0) {
@@ -147,7 +143,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
                             keys = additionalKeys;
                         } else {
                             // grab the native rcs key (layer ids are in form rcs.nativeKey.lang) from bookmark
-                            keys = rcsLayers.map(rcsL => rcsL.id.split('.')[1]);
+                            keys = rcsLayers.map((rcsL) => rcsL.id.split('.')[1]);
                         }
 
                         // shove the rcs layers back in the bookmark so that info is available when
@@ -165,9 +161,7 @@ function reloadService(events, bookmarkService, geoService, configService, state
                     service.bookmarkBlocking = false;
                 } else {
                     // loading a bookmark after initialization, reload the map
-                    geoService
-                        .destroyMap()
-                        .assembleMap();
+                    geoService.destroyMap().assembleMap();
                 }
             });
         }
