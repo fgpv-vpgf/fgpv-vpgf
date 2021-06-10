@@ -1,4 +1,11 @@
-<md-sidenav rv-trap-focus class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left">
+<md-sidenav
+    rv-trap-focus
+    class="site-sidenav md-sidenav-left md-whiteframe-z2"
+    md-component-id="left"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ self.uiConfig.title || 'sidenav.title' | translate }}"
+>
     <header class="rv-sidemenu-header">
         <div class="app-logo" ng-class="{ 'rv-no-logo': !self.uiConfig.sideMenu.logo }">
             <div ng-if="self.uiConfig.sideMenu.logo">
