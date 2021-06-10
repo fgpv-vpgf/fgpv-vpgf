@@ -253,7 +253,7 @@ function rvInitMap(
 
         let x = 0;
         let y = 0;
-        let hasShiftMultiplier = 1;
+        let movementMultiplier = 1;
         for (let i = 0; i < keyMap.length; i++) {
             switch (keyMap[i]) {
                 // enter key is pressed - trigger identify
@@ -268,7 +268,11 @@ function rvInitMap(
                     break;
                 // shift key pressed - pan distance increased
                 case keyNames.SHIFT:
-                    hasShiftMultiplier = 2;
+                    movementMultiplier = 2;
+                    break;
+                // ctrl key pressed - pan distance decreased
+                case keyNames.CTRL:
+                    movementMultiplier = 0.25;
                     break;
                 // left arrow key pressed
                 case keyNames.LEFT_ARROW:
@@ -310,8 +314,8 @@ function rvInitMap(
         // result in x = 0 so no animation is run)
         if (x !== 0 || y !== 0) {
             animationInterval = $interval(() => {
-                mapPntCntr.x += hasShiftMultiplier * x;
-                mapPntCntr.y += hasShiftMultiplier * y;
+                mapPntCntr.x += movementMultiplier * x;
+                mapPntCntr.y += movementMultiplier * y;
                 mapInstance.centerAt(mapPntCntr);
                 events.$broadcast(events.rvKeyboardMove, mapPntCntr);
             }, 40);

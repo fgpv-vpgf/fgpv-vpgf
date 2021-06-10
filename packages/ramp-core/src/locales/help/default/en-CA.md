@@ -15,6 +15,8 @@ The following navigation controls can be found in the bottom right corner of the
 
 You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
 
+If you are panning the map using arrow keys, you can press SHIFT or CTRL to pan the map faster or slower (respectively).
+
 Note that the map __must be__ focused for key binding to work. The map has focus when there is a blue border around it.
 
 
