@@ -312,9 +312,17 @@ function Controller(
             const legendBlockId = legendMapping[0].legendBlockId;
 
             // find that legend block
-            const legendBlock = self.config.map.legendBlocks
+            let legendBlock = self.config.map.legendBlocks
                 .walk((entry, index, parentEntry) => (entry.id === legendBlockId ? entry : null))
                 .filter((a) => a !== null)[0];
+
+            // check if this is a dynamic layer. If so, then use the `dynamicIndex` attribute
+            // to find the specified sublayer.
+            if (legendBlock.blockType === 'group') {
+                legendBlock = legendBlock.entries.find((entry) => {
+                    return entry.itemIndex === self.config.ui.tableIsOpen.dynamicIndex;
+                });
+            }
 
             // open the datatable if the legend block is found
             if (legendBlock) {
