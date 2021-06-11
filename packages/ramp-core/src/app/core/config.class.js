@@ -2502,12 +2502,14 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._source = source;
 
             this._id = source.id;
+            this._dynamicIndex = this._id ? source.dynamicIndex : undefined;
             this._large = this._id ? source.large : false;
             this._medium = this._id ? source.medium : false;
             this._small = this._id ? source.small : false ;
         }
 
         get id () { return this._id; }
+        get dynamicIndex() { return this._dynamicIndex; }
         get large () { return this._large; }
         get medium () { return this._medium; }
         get small () { return this._small; }
@@ -2515,6 +2517,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get JSON () {
             return {
                 id: this.id,
+                dynamicIndex: this.dynamicIndex,
                 large: this.large,
                 medium: this.medium,
                 small: this.small
