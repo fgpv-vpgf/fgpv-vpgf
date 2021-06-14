@@ -95,9 +95,9 @@ export interface esriMouseEvent extends MouseEvent {
         y: number;
         x: number;
         spatialReference: {
-            wkid: number,
-            latestWkid: number,
-            wkt: string
+            wkid: number;
+            latestWkid: number;
+            wkt: string;
         };
     };
 }

@@ -16,7 +16,10 @@ export default class BackToCart {
      * Adds a button to RAMP's side menu
      */
     activateButton(): void {
-        this.button = this.api.mapI.addPluginButton(BackToCart.prototype.translations[this._RV.getCurrentLang()], this.onMenuItemClick());
+        this.button = this.api.mapI.addPluginButton(
+            BackToCart.prototype.translations[this._RV.getCurrentLang()],
+            this.onMenuItemClick()
+        );
     }
 
     /**
@@ -82,7 +85,7 @@ export default interface BackToCart {
 
 BackToCart.prototype.translations = {
     'en-CA': 'Back to Cart',
-    'fr-CA': 'Retour au panier'
+    'fr-CA': 'Retour au panier',
 };
 
 (<any>window).backToCart = BackToCart;

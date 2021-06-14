@@ -12,15 +12,15 @@ function queryAgolItemBuilder(esriBundle) {
      * @returns {Object} promise for JSON response from service
      */
     return (url, id, token) => {
-       // request item info
+        // request item info
         const idReq = esriBundle.esriRequest({
             url: `${url}sharing/rest/content/items/${id}`,
             content: {
                 token: token,
-                f: 'json'
+                f: 'json',
             },
             callbackParamName: 'callback',
-            handleAs: 'json'
+            handleAs: 'json',
         });
 
         // request data info
@@ -28,63 +28,65 @@ function queryAgolItemBuilder(esriBundle) {
             url: `${url}sharing/rest/content/items/${id}/data`,
             content: {
                 token: token,
-                f: 'json'
+                f: 'json',
             },
             callbackParamName: 'callback',
-            handleAs: 'json'
+            handleAs: 'json',
         });
 
         // standard json request with error checking
         // wrap in promise to contain dojo deferred
         return new Promise((resolve, reject) => {
-            idReq.then(idResult => {
-
-                if (idResult.error) {
-                    reject(idResult.error);
-                } else {
-                    dataReq.then (dataResult => {
-                        if (dataResult.error) {
-                            reject(dataResult.error);
-                        } else {
-                            // if id is type app, call again with map id to get information about the map
-                            // add this information then resolve
-                            const type = (dataResult.hasOwnProperty('appItemId')) ? 'app' : 'map';
-
-                            if (type === 'app') {
-                                idResult.appData = dataResult;
-
-                                // request map data info
-                                id = dataResult.map.itemId
-                                const mapReq = esriBundle.esriRequest({
-                                    url: `${url}sharing/rest/content/items/${id}/data`,
-                                    content: {
-                                        token: token,
-                                        f: 'json'
-                                    },
-                                    callbackParamName: 'callback',
-                                    handleAs: 'json'
-                                });
-
-                                mapReq.then(mapResult => {
-                                    if (mapResult.error) {
-                                        reject(mapResult.error);
-                                    } else {
-                                        idResult.mapData = mapResult;
-                                        resolve(idResult);
-                                    }
-                                })
+            idReq.then(
+                (idResult) => {
+                    if (idResult.error) {
+                        reject(idResult.error);
+                    } else {
+                        dataReq.then((dataResult) => {
+                            if (dataResult.error) {
+                                reject(dataResult.error);
                             } else {
-                                idResult.mapData = dataResult;
-                                resolve(idResult);
+                                // if id is type app, call again with map id to get information about the map
+                                // add this information then resolve
+                                const type = dataResult.hasOwnProperty('appItemId') ? 'app' : 'map';
+
+                                if (type === 'app') {
+                                    idResult.appData = dataResult;
+
+                                    // request map data info
+                                    id = dataResult.map.itemId;
+                                    const mapReq = esriBundle.esriRequest({
+                                        url: `${url}sharing/rest/content/items/${id}/data`,
+                                        content: {
+                                            token: token,
+                                            f: 'json',
+                                        },
+                                        callbackParamName: 'callback',
+                                        handleAs: 'json',
+                                    });
+
+                                    mapReq.then((mapResult) => {
+                                        if (mapResult.error) {
+                                            reject(mapResult.error);
+                                        } else {
+                                            idResult.mapData = mapResult;
+                                            resolve(idResult);
+                                        }
+                                    });
+                                } else {
+                                    idResult.mapData = dataResult;
+                                    resolve(idResult);
+                                }
                             }
-                        }
-                    })
+                        });
+                    }
+                },
+                (error) => {
+                    reject(error);
                 }
-            }, error => {
-                reject(error);
-            });
+            );
         });
-    }
+    };
 }
 
 function queryAgolTokenBuilder(esriBundle) {
@@ -106,30 +108,33 @@ function queryAgolTokenBuilder(esriBundle) {
                 password: password,
                 expiration: 1, // token life in minutes
                 clientid: `ref.${window.location.href}`, // application the token is associated with
-                f: 'json'
+                f: 'json',
             },
             callbackParamName: 'callback',
-            handleAs: 'json'
+            handleAs: 'json',
         });
 
         // wrap in promise to contain dojo deferred
         return new Promise((resolve, reject) => {
-            tokenReq.then(reqResult => {
-                if (reqResult.error) {
-                    reject(reqResult.error);
-                } else {
-                    resolve(reqResult);
+            tokenReq.then(
+                (reqResult) => {
+                    if (reqResult.error) {
+                        reject(reqResult.error);
+                    } else {
+                        resolve(reqResult);
+                    }
+                },
+                (error) => {
+                    reject(error);
                 }
-            }, error => {
-                reject(error);
-            });
+            );
         });
-    }
+    };
 }
 
-module.exports = esriBundle => {
+module.exports = (esriBundle) => {
     return {
         queryItem: queryAgolItemBuilder(esriBundle),
-        queryToken: queryAgolTokenBuilder(esriBundle)
+        queryToken: queryAgolTokenBuilder(esriBundle),
     };
 };

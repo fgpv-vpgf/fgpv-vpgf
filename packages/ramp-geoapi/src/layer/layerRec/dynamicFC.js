@@ -16,7 +16,7 @@ class DynamicFC extends attribFC.AttribFC {
      * @param {Object} layerPackage  a layer package object from the attribute module for this feature class
      * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, layerPackage, config) {
+    constructor(parent, idx, layerPackage, config) {
         super(parent, idx, layerPackage, config);
 
         this.opacity = config.state.opacity;
@@ -30,17 +30,25 @@ class DynamicFC extends attribFC.AttribFC {
         // then update when layer loads
         this._scaleSet = {
             minScale: 0,
-            maxScale: 0
+            maxScale: 0,
         };
     }
 
-    get highlightFeature () { return this._highlightFeature; }
-    set highlightFeature (value) { this._highlightFeature = value; }
+    get highlightFeature() {
+        return this._highlightFeature;
+    }
+    set highlightFeature(value) {
+        this._highlightFeature = value;
+    }
 
-    get supportsOpacity () { return this._parent._isTrueDynamic; }
+    get supportsOpacity() {
+        return this._parent._isTrueDynamic;
+    }
 
-    get opacity () { return this._opacity; }
-    set opacity (value) {
+    get opacity() {
+        return this._opacity;
+    }
+    set opacity(value) {
         // avoid parent/child update loops by only doing work if value changed
         if (this._opacity !== value) {
             this._opacity = value;
@@ -67,12 +75,16 @@ class DynamicFC extends attribFC.AttribFC {
      * @function getScaleSet
      * @returns {Object} scale set for the feature class
      */
-    getScaleSet () {
+    getScaleSet() {
         return this._scaleSet;
     }
 
-    get featureCount () { return this._fcount; }
-    set featureCount (value) { this._fcount = value; }
+    get featureCount() {
+        return this._fcount;
+    }
+    set featureCount(value) {
+        this._fcount = value;
+    }
 
     /**
      * Applies visibility to feature class by manipulating the parent record.
@@ -80,7 +92,7 @@ class DynamicFC extends attribFC.AttribFC {
      * @function setVisibility
      * @param {Boolean} value the new visibility setting
      */
-    setVisibility (value) {
+    setVisibility(value) {
         // update visible layers array
         const eLayer = this._parent._layer;
         const visDelay = this._parent._visDelay;
@@ -136,7 +148,6 @@ class DynamicFC extends attribFC.AttribFC {
             };
 
             setTimeout(refreshCheck, 50);
-
         }
     }
 
@@ -146,7 +157,7 @@ class DynamicFC extends attribFC.AttribFC {
      * @function getVisibility
      * @returns {Boolean} visibility of the feature class
      */
-    getVisibility () {
+    getVisibility() {
         // TODO extend this function to other FC's?  do they need it?
         return this._parent._layer.visibleLayers.indexOf(parseInt(this._idx)) > -1;
     }
@@ -157,7 +168,7 @@ class DynamicFC extends attribFC.AttribFC {
      * @function setDefinitionQuery
      * @param {String} query a valid definition query
      */
-    setDefinitionQuery (query) {
+    setDefinitionQuery(query) {
         const l = this._parent._layer;
 
         // get layerDefinitions from layer, or init an empty array
@@ -174,15 +185,14 @@ class DynamicFC extends attribFC.AttribFC {
      * @function applyFilterToLayer
      * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
      */
-    applyFilterToLayer (exclusions = []) {
+    applyFilterToLayer(exclusions = []) {
         // TODO do we need a check incase this FC is targeting a RasterLayer?
         //      i think as is the UI will turn off anything that would call this function.
         const sql = this.filter.getCombinedSql(exclusions);
         this.setDefinitionQuery(sql);
     }
-
 }
 
 module.exports = () => ({
-    DynamicFC
+    DynamicFC,
 });

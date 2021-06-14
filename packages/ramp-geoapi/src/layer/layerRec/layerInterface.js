@@ -10,102 +10,171 @@
 // with real ones once we know the flavour of interface we want.
 
 class LayerInterface {
-
     /**
      * @param {Object} source     object that provides info to the interface. usually a LayerRecord or FeatureClass
      */
-    constructor (source) {
+    constructor(source) {
         this._source = source;
 
         // TODO revisit isPlaceholder after grand refactor
         this._isPlaceholder = true;
     }
 
-    get isPlaceholder () { return this._isPlaceholder; } // returns Boolean
+    get isPlaceholder() {
+        return this._isPlaceholder;
+    } // returns Boolean
 
     // the symbology for the layer
-    get symbology () { return undefined; } // returns Array
+    get symbology() {
+        return undefined;
+    } // returns Array
 
     // can be group or node name
-    get name () { return undefined; } // returns String
+    get name() {
+        return undefined;
+    } // returns String
 
-    get itemIndex () { return undefined; } // returns String
+    get itemIndex() {
+        return undefined;
+    } // returns String
 
     // these are needed for the type flag
-    get layerType () { return undefined; } // returns String
-    get parentLayerType () { return undefined; } // returns String
-    get geometryType () { return undefined; } // returns String
-    get oidField () { return undefined; } // returns String
-    get featureCount () { return undefined; } // returns Integer
-    get loadedFeatureCount () { return undefined; } // returns Integer
-    get extent () { return undefined; } // returns Object (Esri Extent)
+    get layerType() {
+        return undefined;
+    } // returns String
+    get parentLayerType() {
+        return undefined;
+    } // returns String
+    get geometryType() {
+        return undefined;
+    } // returns String
+    get oidField() {
+        return undefined;
+    } // returns String
+    get featureCount() {
+        return undefined;
+    } // returns Integer
+    get loadedFeatureCount() {
+        return undefined;
+    } // returns Integer
+    get extent() {
+        return undefined;
+    } // returns Object (Esri Extent)
 
     // layer states
-    get state () { return undefined; } // returns String
-    get isActiveState () { return false; } // returns String
+    get state() {
+        return undefined;
+    } // returns String
+    get isActiveState() {
+        return false;
+    } // returns String
 
     // these return the current values of the corresponding controls
-    get visibility () { return undefined; } // returns Boolean
-    get opacity () { return undefined; } // returns Decimal
-    get query () { return undefined; } // returns Boolean
-    get snapshot () { return undefined; } // returns Boolean
-    get highlightFeature () { return undefined; } // returns Boolean
+    get visibility() {
+        return undefined;
+    } // returns Boolean
+    get opacity() {
+        return undefined;
+    } // returns Decimal
+    get query() {
+        return undefined;
+    } // returns Boolean
+    get snapshot() {
+        return undefined;
+    } // returns Boolean
+    get highlightFeature() {
+        return undefined;
+    } // returns Boolean
 
     // fetches attributes for use in the datatable
-    get formattedAttributes () { return undefined; } // returns Promise of Object
+    get formattedAttributes() {
+        return undefined;
+    } // returns Promise of Object
 
-    get attribs () { return undefined; } // returns Promise of Object
+    get attribs() {
+        return undefined;
+    } // returns Promise of Object
 
-    get queryUrl () { return undefined; } // returns String
+    get queryUrl() {
+        return undefined;
+    } // returns String
 
-    get filter ()  { return undefined; } // returns Filter object, for valid proxies
+    get filter() {
+        return undefined;
+    } // returns Filter object, for valid proxies
 
     // returns a feature name of an attribute set
-    getFeatureName () { return undefined; } // returns String
+    getFeatureName() {
+        return undefined;
+    } // returns String
 
     // formats an attribute to standard details
-    attributesToDetails () { return undefined; } // returns Array
+    attributesToDetails() {
+        return undefined;
+    } // returns Array
 
     // these set values to the corresponding controls
 
     // param: boolean
-    setVisibility () { return undefined; }
+    setVisibility() {
+        return undefined;
+    }
 
     // param: numeric (between 0 and 1)
-    setOpacity () { return undefined; }
+    setOpacity() {
+        return undefined;
+    }
 
     // param: boolean
-    setQuery () { return undefined; }
+    setQuery() {
+        return undefined;
+    }
 
     // param: integer, object
-    fetchGraphic () { return undefined; } // returns promise that resolves with object containing graphics info
+    fetchGraphic() {
+        return undefined;
+    } // returns promise that resolves with object containing graphics info
 
     // param: esriMap
-    zoomToBoundary () { return undefined; } // returns promise that resolves after zoom completes
+    zoomToBoundary() {
+        return undefined;
+    } // returns promise that resolves after zoom completes
 
     // param: esriMap, array of lods, boolean, optional boolean
-    zoomToScale () { return undefined; } // returns promise that resolves after zoom completes
+    zoomToScale() {
+        return undefined;
+    } // returns promise that resolves after zoom completes
 
     // param: Integer, esriMap, Object {x: Numeric, y: Numeric}
-    zoomToGraphic () { return undefined; } // returns promise that resolves after zoom completes
+    zoomToGraphic() {
+        return undefined;
+    } // returns promise that resolves after zoom completes
 
     // param: string
-    setDefinitionQuery () { return undefined; }
+    setDefinitionQuery() {
+        return undefined;
+    }
 
     // param: spatialReference object
-    validateProjection () { return undefined; } // returns Boolean
+    validateProjection() {
+        return undefined;
+    } // returns Boolean
 
     // param: integer
-    isOffScale () { return undefined; } // returns Object {offScale: Boolean, zoomIn: Boolean}
+    isOffScale() {
+        return undefined;
+    } // returns Object {offScale: Boolean, zoomIn: Boolean}
 
-    abortAttribLoad () { return undefined; }
+    abortAttribLoad() {
+        return undefined;
+    }
 
     // updates what this interface is pointing to, in terms of layer data source.
     // often, the interface starts with a placeholder to avoid errors and return
     // defaults. This update happens after a layer has loaded, and new now want
     // the interface reading off the real FC.
     // TODO docs
-    updateSource (newSource) {
+    updateSource(newSource) {
         this._source = newSource;
     }
 
@@ -113,7 +182,7 @@ class LayerInterface {
     // other "convert" functions use method due to common commands,
     // but they are not forReal. this flag lets us skip things that
     // should ONLY be applied for real graphics layer
-    convertToGraphicsLayer (layerRecord, forReal = true) {
+    convertToGraphicsLayer(layerRecord, forReal = true) {
         this._source = layerRecord;
         this._isPlaceholder = false;
 
@@ -130,7 +199,7 @@ class LayerInterface {
         }
     }
 
-    convertToSingleLayer (layerRecord) {
+    convertToSingleLayer(layerRecord) {
         this.convertToGraphicsLayer(layerRecord, false);
 
         newProp(this, 'symbology', standardGetSymbology);
@@ -151,7 +220,7 @@ class LayerInterface {
         this.isOffScale = standardIsOffScale;
     }
 
-    convertToFeatureLayer (layerRecord) {
+    convertToFeatureLayer(layerRecord) {
         this.convertToSingleLayer(layerRecord);
 
         newProp(this, 'snapshot', featureGetSnapshot);
@@ -173,7 +242,7 @@ class LayerInterface {
         this.abortAttribLoad = featureAbortAttribLoad;
     }
 
-    convertToDynamicLeaf (dynamicFC) {
+    convertToDynamicLeaf(dynamicFC) {
         this._source = dynamicFC;
         this._isPlaceholder = false;
 
@@ -217,7 +286,7 @@ class LayerInterface {
         this.abortAttribLoad = dynamicLeafAbortAttribLoad;
     }
 
-    convertToPlaceholder (placeholderFC) {
+    convertToPlaceholder(placeholderFC) {
         this._source = placeholderFC;
         this._isPlaceholder = true;
 
@@ -232,7 +301,6 @@ class LayerInterface {
     //      removes zoomToScale method, as this method will fail if called directly on a
     //      dynamic layer proxy. As is, nothing should ever make that call. But we can
     //      do this to be safe.
-
 }
 
 /**
@@ -248,7 +316,7 @@ function newProp(target, propName, getter) {
     Object.defineProperty(target, propName, {
         get: getter,
         enumerable: true,
-        configurable: true
+        configurable: true,
     });
 }
 
@@ -378,9 +446,9 @@ function standardGetAttribs() {
 }
 
 function dynamicLeafGetAttribs() {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
 
-     // TODO code-wise this looks identical to standardGetAttribs.
+    // TODO code-wise this looks identical to standardGetAttribs.
     //      however in this case, ._source is a DynamicFC, not a LayerRecord.
     //      This is safer. Deleting this would avoid the duplication. Decide.
     return this._source.getAttribs();
@@ -577,28 +645,28 @@ function dynamicLeafSetDefinitionQuery(query) {
 }
 
 function standardValidateProjection(spatialReference) {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
     return this._source.validateProjection(spatialReference);
 }
 
 function standardIsOffScale(mapScale) {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
     return this._source.isOffScale(mapScale);
 }
 
 function dynamicLeafIsOffScale(mapScale) {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
     return this._source.isOffScale(mapScale);
 }
 
 // TODO maybe expose a property instead of using the private var
 function standardGetItemIndex() {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
     return this._source._defaultFC;
 }
 
 function dynamicLeafGetItemIndex() {
-     /* jshint validthis: true */
+    /* jshint validthis: true */
     return this._source._idx;
 }
 
@@ -623,5 +691,5 @@ function dynamicLeafAbortAttribLoad() {
 }
 
 module.exports = () => ({
-    LayerInterface
+    LayerInterface,
 });

@@ -32,7 +32,7 @@ function geosearchService(
         GSservice = new appInfo.features.geoSearch.GeoSearchUI({
             language,
             excludeTypes,
-            settings
+            settings,
         });
     });
 
@@ -62,13 +62,13 @@ function geosearchService(
 
         zoomTo,
         zoomScale,
-        zoomSearchExtent
+        zoomSearchExtent,
     };
 
     const ref = {
         mainPanel: referenceService.panels.shell.find('[rv-state=main]'),
 
-        runningRequestCount: 0 // used to track the latest query and discard results from previous ones if they resolve after an older query
+        runningRequestCount: 0, // used to track the latest query and discard results from previous ones if they resolve after an older query
     };
 
     events.$on(events.rvApiPreMapAdded, (_, api) => {
@@ -131,7 +131,7 @@ function geosearchService(
             service.mApi.panels.geoSearch.element.css({
                 opacity: 0,
                 'pointer-events': 'none',
-                bottom: 0
+                bottom: 0,
             });
 
             return $q.resolve();
@@ -143,7 +143,7 @@ function geosearchService(
         // only run query if a different search term is entered
         if (service.searchValue && service.searchValue !== service.lastSearchValue) {
             return GSservice.query(`${service.searchValue}*`).then(
-                data => {
+                (data) => {
                     // store data for current search term
                     service.lastSearchValue = service.searchValue;
                     service.savedResults = data;
@@ -154,7 +154,7 @@ function geosearchService(
                     service.mApi.panels.geoSearch.element.css({
                         opacity: 1,
                         'pointer-events': '',
-                        bottom: ''
+                        bottom: '',
                     });
                     service.serviceError = false;
 
@@ -169,14 +169,14 @@ function geosearchService(
                     // return data for optional processing further down the promise chain
                     return data;
                 },
-                _ => {
+                (_) => {
                     service.searchResults = [];
                     service.isLoading = false;
                     service.isResultsVisible = true;
                     service.serviceError = true;
                 }
             );
-        // otherwise the unfiltered data is already saved for the current search term
+            // otherwise the unfiltered data is already saved for the current search term
         } else {
             // hide loading indicator
             service.isLoading = false;
@@ -184,7 +184,7 @@ function geosearchService(
             service.mApi.panels.geoSearch.element.css({
                 opacity: 1,
                 'pointer-events': '',
-                bottom: ''
+                bottom: '',
             });
             service.serviceError = false;
 
@@ -224,7 +224,7 @@ function geosearchService(
     function filter(data) {
         if (queryParams.extent) {
             data = data.filter(
-                r =>
+                (r) =>
                     !(
                         r.bbox[0] > queryParams.extent[2] ||
                         r.bbox[2] < queryParams.extent[0] ||
@@ -234,10 +234,10 @@ function geosearchService(
             );
         }
         if (queryParams.province && queryParams.province !== '...') {
-            data = data.filter(r => r.location.province && r.location.province.name === queryParams.province);
+            data = data.filter((r) => r.location.province && r.location.province.name === queryParams.province);
         }
         if (queryParams.type && queryParams.type !== '...') {
-            data = data.filter(r => r.type.name === queryParams.type);
+            data = data.filter((r) => r.type.name === queryParams.type);
         }
         return data;
     }
@@ -301,7 +301,7 @@ function geosearchService(
             // proportion and in the end good values for min and max. If we use points
             // the results are bad, especially in LCC
             const projExtent = gapiService.gapi.proj.localProjectExtent(extent, {
-                wkid: 4326
+                wkid: 4326,
             });
 
             extent = [projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1].join(',');
@@ -324,7 +324,7 @@ function geosearchService(
      */
     function getProvinces() {
         return new Promise(
-            resolve => {
+            (resolve) => {
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the
                     // rvApiReady event is broadcasted, so this is a valid way to check
@@ -353,7 +353,7 @@ function geosearchService(
      */
     function getTypes() {
         return new Promise(
-            resolve => {
+            (resolve) => {
                 if (geoService.isMapReady) {
                     // isMapReady gets set to true only before the
                     // rvApiReady event is broadcasted, so this is a valid way to check
@@ -396,7 +396,7 @@ function geosearchService(
 
         // set extent from bbox
         const latlongExtent = gapi.Map.Extent(...bbox, {
-            wkid: 4326
+            wkid: 4326,
         });
 
         // reproject extent
@@ -408,10 +408,7 @@ function geosearchService(
         // zoom to location (expand the bbox to include all the area)
         geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
             // get reprojected point and create point
-            const geoPt = gapi.proj.localProjectPoint(4326, mapSR, [
-                parseFloat(position[0]),
-                parseFloat(position[1])
-            ]);
+            const geoPt = gapi.proj.localProjectPoint(4326, mapSR, [parseFloat(position[0]), parseFloat(position[1])]);
             const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
 
             // show pin on the map

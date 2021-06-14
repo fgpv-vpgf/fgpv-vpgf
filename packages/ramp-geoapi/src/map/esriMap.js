@@ -3,7 +3,6 @@ const basemap = require('./basemap.js');
 const mapPrint = require('./print.js');
 
 function esriMap(esriBundle, geoApi) {
-
     const printModule = mapPrint(esriBundle);
 
     let basemapErrored = false;
@@ -13,18 +12,36 @@ function esriMap(esriBundle, geoApi) {
     let overviewExpand = null;
 
     class Map {
-
-        static get Extent () { return esriBundle.Extent; }
+        static get Extent() {
+            return esriBundle.Extent;
+        }
 
         // TODO when jshint parses instance fields properly we can change this from a property to a field
-        get _passthroughBindings () { return [
-            'addLayer', 'centerAndZoom', 'centerAt', 'destroy', 'disableKeyboardNavigation', 'getLevel',
-            'getScale', 'on', 'removeLayer', 'reorderLayer', 'reposition', 'resize', 'setExtent',
-            'setMapCursor', 'setScale', 'setZoom', 'toMap', 'toScreen'
-        ]; }
-        get _passthroughProperties () { return [
-            'attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'
-        ]; } // TODO when jshint parses instance fields properly we can change this from a property to a field
+        get _passthroughBindings() {
+            return [
+                'addLayer',
+                'centerAndZoom',
+                'centerAt',
+                'destroy',
+                'disableKeyboardNavigation',
+                'getLevel',
+                'getScale',
+                'on',
+                'removeLayer',
+                'reorderLayer',
+                'reposition',
+                'resize',
+                'setExtent',
+                'setMapCursor',
+                'setScale',
+                'setZoom',
+                'toMap',
+                'toScreen',
+            ];
+        }
+        get _passthroughProperties() {
+            return ['attribution', 'extent', 'graphicsLayerIds', 'height', 'layerIds', 'spatialReference', 'width'];
+        } // TODO when jshint parses instance fields properly we can change this from a property to a field
 
         /*
          * Option params
@@ -40,14 +57,14 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} domNode  the DOM node where the map will be created
          * @param {Object} opts     options object for the map (see above)
          */
-        constructor (domNode, opts) {
-
-            this._passthroughBindings.forEach(bindingName =>
-                this[bindingName] = (...args) => this._map[bindingName](...args));
-            this._passthroughProperties.forEach(propName => {
+        constructor(domNode, opts) {
+            this._passthroughBindings.forEach(
+                (bindingName) => (this[bindingName] = (...args) => this._map[bindingName](...args))
+            );
+            this._passthroughProperties.forEach((propName) => {
                 const descriptor = {
                     enumerable: true,
-                    get: () => this._map[propName]
+                    get: () => this._map[propName],
                 };
                 Object.defineProperty(this, propName, descriptor);
             });
@@ -55,7 +72,7 @@ function esriMap(esriBundle, geoApi) {
             this._map = new esriBundle.Map(domNode, {
                 extent: Map.getExtentFromJson(opts.extent),
                 lods: opts.lods,
-                fitExtent: true
+                fitExtent: true,
             });
             if (opts.proxyUrl) {
                 this.proxy = opts.proxyUrl;
@@ -69,9 +86,9 @@ function esriMap(esriBundle, geoApi) {
 
             if (opts.basemaps) {
                 basemaps = opts.basemaps;
-                basemaps.forEach(bm => {
-                    bm._layers.forEach(l => this.checkCorsException(l.url));
-                })
+                basemaps.forEach((bm) => {
+                    bm._layers.forEach((l) => this.checkCorsException(l.url));
+                });
             } else {
                 throw new Error('The basemaps option is required to and at least one basemap must be defined');
             }
@@ -80,7 +97,7 @@ function esriMap(esriBundle, geoApi) {
                 this.scalebar = new esriBundle.Scalebar({
                     map: this._map,
                     attachTo: opts.scalebar.attachTo,
-                    scalebarUnit: opts.scalebar.scalebarUnit
+                    scalebarUnit: opts.scalebar.scalebarUnit,
                 });
                 this.scalebar.show();
             }
@@ -108,7 +125,6 @@ function esriMap(esriBundle, geoApi) {
 
             this.zoomPromise = Promise.resolve();
             this.zoomCounter = 0;
-
         }
 
         checkCorsException(url) {
@@ -129,7 +145,7 @@ function esriMap(esriBundle, geoApi) {
             this.basemapGallery = basemap.initBasemaps(esriBundle, basemaps, this._map);
             if (overviewExpand !== null) {
                 this.basemapGallery.on('selection-change', () => {
-                    if (this.defaultOverview) this.resetOverviewMap(overviewExpand)
+                    if (this.defaultOverview) this.resetOverviewMap(overviewExpand);
                 });
                 this.basemapGallery.on('error', () => {
                     this.overviewMap.destroy();
@@ -138,15 +154,19 @@ function esriMap(esriBundle, geoApi) {
             }
         }
 
-        printLocal (options) { return printModule.printLocal(this._map, options); }
-        printServer (options) { return printModule.printServer(this._map, options); }
+        printLocal(options) {
+            return printModule.printLocal(this._map, options);
+        }
+        printServer(options) {
+            return printModule.printServer(this._map, options);
+        }
 
         /**
          * Select a basemap which has been loaded in the basemapGallery
          *
          * @param {Object|String} value either an object with an id field or a string
          */
-        selectBasemap (value) {
+        selectBasemap(value) {
             if (typeof value === 'object') {
                 value = value.id;
             }
@@ -158,7 +178,7 @@ function esriMap(esriBundle, geoApi) {
          *
          * @param {Object|String} value either an object with an id field or a string
          */
-        removeBasemap (value) {
+        removeBasemap(value) {
             if (typeof value === 'object') {
                 value = value.id;
             }
@@ -170,7 +190,7 @@ function esriMap(esriBundle, geoApi) {
          *
          * @param {Object} basemapConfig a basemap JSON snippet
          */
-        addBasemap (basemapConfig) {
+        addBasemap(basemapConfig) {
             const basemapToAdd = basemap.createBasemap(esriBundle, basemapConfig);
             this.basemapGallery.add(basemapToAdd);
         }
@@ -182,7 +202,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} extentJson that follows config spec
          * @return {Object} an ESRI Extent object
          */
-        static getExtentFromJson (extentJson) {
+        static getExtentFromJson(extentJson) {
             return esriBundle.Extent(extentJson);
         }
 
@@ -193,7 +213,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} extent the extent to enhance
          * @returns {Extent} extent cast in Extent prototype, and in map spatial reference
          */
-        enhanceConfigExtent (extent) {
+        enhanceConfigExtent(extent) {
             const realExtent = Map.getExtentFromJson(extent);
 
             if (geoApi.proj.isSpatialRefEqual(this._map.spatialReference, extent.spatialReference)) {
@@ -210,11 +230,12 @@ function esriMap(esriBundle, geoApi) {
          * @function zoomToLatLong
          * @param {Object} location is a location object, containing geometries in the form of { longitude: <Number>, latitude: <Number> }
          */
-        zoomToPoint ({ longitude, latitude }) {
-
+        zoomToPoint({ longitude, latitude }) {
             // get reprojected point and zoom to it
-            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference,
-                [parseFloat(longitude), parseFloat(latitude)]);
+            const geoPt = geoApi.proj.localProjectPoint(4326, this._map.spatialReference, [
+                parseFloat(longitude),
+                parseFloat(latitude),
+            ]);
             const zoomPt = geoApi.proj.Point(geoPt[0], geoPt[1], this._map.spatialReference);
 
             // give preference to the layer closest to a 50k scale ratio which is ideal for zoom
@@ -230,14 +251,19 @@ function esriMap(esriBundle, geoApi) {
          * @private
          * @return {Promise} resolves when map is done zooming
          */
-        zoomToExtent (extent) {
+        zoomToExtent(extent) {
             // TODO add some caching? make sure it will get wiped if we end up changing projections
             //      or use wkid as caching key?
 
             const projRawExtent = geoApi.proj.localProjectExtent(extent, this._map.spatialReference);
 
-            const projFancyExtent = esriBundle.Extent(projRawExtent.x0, projRawExtent.y0,
-                projRawExtent.x1, projRawExtent.y1, projRawExtent.sr);
+            const projFancyExtent = esriBundle.Extent(
+                projRawExtent.x0,
+                projRawExtent.y0,
+                projRawExtent.x1,
+                projRawExtent.y1,
+                projRawExtent.sr
+            );
 
             return this._map.setExtent(projFancyExtent, true);
         }
@@ -250,8 +276,8 @@ function esriMap(esriBundle, geoApi) {
          * @param  {Number} scale   scale value to search for in the levels of detail
          * @return {Object}         the level of detail object closest to the scale
          */
-        static findClosestLOD (lods, scale) {
-            const diffs = lods.map(lod => Math.abs(lod.scale - scale));
+        static findClosestLOD(lods, scale) {
+            const diffs = lods.map((lod) => Math.abs(lod.scale - scale));
             const lodIdx = diffs.indexOf(Math.min(...diffs));
             return lods[lodIdx];
         }
@@ -263,7 +289,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} opts options to apply to north arrow calculation
          * @returns {String} map rotation angle (in degree) in string format
          */
-        getNorthArrowAngle (opts) {
+        getNorthArrowAngle(opts) {
             // get center point in longitude and use bottom value for latitude for default point
             const bottomCenter = { x: (this._map.extent.xmin + this._map.extent.xmax) / 2, y: this._map.extent.ymin };
             // get point if specified by caller else get default
@@ -275,18 +301,18 @@ function esriMap(esriBundle, geoApi) {
                 const pointA = { x: -96, y: 90 };
 
                 // set info on longitude and latitude
-                const dLon = (pointB.x - pointA.x) * Math.PI / 180;
-                const lat1 = pointA.y * Math.PI / 180;
-                const lat2 = pointB.y * Math.PI / 180;
+                const dLon = ((pointB.x - pointA.x) * Math.PI) / 180;
+                const lat1 = (pointA.y * Math.PI) / 180;
+                const lat2 = (pointB.y * Math.PI) / 180;
 
                 // calculate bearing
                 const y = Math.sin(dLon) * Math.cos(lat2);
                 const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-                const bearing = Math.atan2(y, x) * 180 / Math.PI;
+                const bearing = (Math.atan2(y, x) * 180) / Math.PI;
 
                 // return angle (180 is pointiong north)
                 return ((bearing + 360) % 360).toFixed(1);
-            } catch(error) {
+            } catch (error) {
                 return '180.0';
             }
         }
@@ -302,14 +328,18 @@ function esriMap(esriBundle, geoApi) {
          *                               - ratio: measure for 1 pixel in earth distance
          *                               - units: array of units [metric, imperial]
          */
-        getScaleRatio (mapWidth = 0) {
+        getScaleRatio(mapWidth = 0) {
             const map = this._map;
 
             // get left and right maximum value point to calculate distance from
-            const pointA = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
-                    { x: map.extent.xmin, y: (map.extent.ymin + map.extent.ymax) / 2 });
-            const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326',
-                    { x: map.extent.xmax, y: (map.extent.ymin + map.extent.ymax) / 2 });
+            const pointA = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326', {
+                x: map.extent.xmin,
+                y: (map.extent.ymin + map.extent.ymax) / 2,
+            });
+            const pointB = geoApi.proj.localProjectPoint(map.spatialReference, 'EPSG:4326', {
+                x: map.extent.xmax,
+                y: (map.extent.ymin + map.extent.ymax) / 2,
+            });
 
             // Haversine formula to calculate distance
             const R = 6371e3; // earth radius in meters
@@ -319,18 +349,18 @@ function esriMap(esriBundle, geoApi) {
             const deltaPhy = (pointB.y - pointA.y) * rad; // radiant
             const deltaLambda = (pointB.x - pointA.x) * rad; // radiant
 
-            const a = Math.sin(deltaPhy / 2) * Math.sin(deltaPhy / 2) +
-                        Math.cos(phy1) * Math.cos(phy2) *
-                        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+            const a =
+                Math.sin(deltaPhy / 2) * Math.sin(deltaPhy / 2) +
+                Math.cos(phy1) * Math.cos(phy2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const d = (R * c);
+            const d = R * c;
 
             // set map / image width (if mapWidth = 0, use map.width)
             const width = mapWidth ? mapWidth : map.width;
 
             // get unit from distance, set distance and ratio (earth size for 1 pixel)
-            const units = [(d > 1000) ? 'km' : 'm', (d > 1600) ? 'mi' : 'ft'];
-            const distance = (d > 1000) ? d / 1000 : d;
+            const units = [d > 1000 ? 'km' : 'm', d > 1600 ? 'mi' : 'ft'];
+            const distance = d > 1000 ? d / 1000 : d;
             const ratio = distance / width;
 
             return { distance, ratio, units };
@@ -350,8 +380,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {Numeric} len      length of the adjusted range, if adjusted
          * @return {Array}           two element array of Numeric, containing result max and min values
          */
-        static clipExtentCoords (mid, max, min, mapMax, mapMin, len) {
-
+        static clipExtentCoords(mid, max, min, mapMax, mapMin, len) {
             if (mid > mapMax) {
                 [max, min] = [mapMax, mapMax - len];
             } else if (mid < mapMin) {
@@ -370,7 +399,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} maxExtent   an ESRI extent indicating the boundary of the map
          * @return {Object}            an object with two properties. adjusted - boolean, true if extent was adjusted. newExtent - object, adjusted ESRI extent
          */
-        static enforceBoundary (extent, maxExtent) {
+        static enforceBoundary(extent, maxExtent) {
             // clone extent
             const newExtent = esriBundle.Extent(extent.toJson());
 
@@ -383,18 +412,30 @@ function esriMap(esriBundle, geoApi) {
             const width = Math.min(extent.getWidth(), maxExtent.getWidth());
             const center = extent.getCenter();
 
-            [newExtent.xmax, newExtent.xmin] =
-                this.clipExtentCoords(center.x, newExtent.xmax, newExtent.xmin, maxExtent.xmax, maxExtent.xmin, width);
-            [newExtent.ymax, newExtent.ymin] =
-                this.clipExtentCoords(center.y, newExtent.ymax, newExtent.ymin, maxExtent.ymax, maxExtent.ymin, height);
+            [newExtent.xmax, newExtent.xmin] = this.clipExtentCoords(
+                center.x,
+                newExtent.xmax,
+                newExtent.xmin,
+                maxExtent.xmax,
+                maxExtent.xmin,
+                width
+            );
+            [newExtent.ymax, newExtent.ymin] = this.clipExtentCoords(
+                center.y,
+                newExtent.ymax,
+                newExtent.ymin,
+                maxExtent.ymax,
+                maxExtent.ymin,
+                height
+            );
 
             return {
                 newExtent,
-                adjusted: !extent.contains(newExtent) // true if we adjusted the extent
+                adjusted: !extent.contains(newExtent), // true if we adjusted the extent
             };
         }
 
-        initOverviewMap (expandFactor, baseLayer) {
+        initOverviewMap(expandFactor, baseLayer) {
             if (basemapErrored) {
                 basemapErrored = false;
                 return;
@@ -404,14 +445,14 @@ function esriMap(esriBundle, geoApi) {
             const opts = {
                 map: this._map,
                 expandFactor,
-                visible: true
+                visible: true,
             };
             if (baseLayer) {
                 opts.baseLayer = baseLayer;
             }
 
             let hasBaseLayer = false;
-            Object.keys(opts.map._layers).forEach(id => {
+            Object.keys(opts.map._layers).forEach((id) => {
                 const layer = opts.map._layers[id];
                 if (layer._basemapGalleryLayerType === 'basemap') {
                     hasBaseLayer = true;
@@ -423,7 +464,7 @@ function esriMap(esriBundle, geoApi) {
                 this.overviewMap.startup();
             }
         }
-        resetOverviewMap (expandFactor) {
+        resetOverviewMap(expandFactor) {
             if (this.overviewMap) {
                 this.overviewMap.destroy();
             }
@@ -438,7 +479,7 @@ function esriMap(esriBundle, geoApi) {
          * @function shiftZoom
          * @param  {number} byValue a number of zoom levels to shift by
          */
-        shiftZoom (byValue) {
+        shiftZoom(byValue) {
             this.zoomCounter += byValue;
             // when using keys for navigation esri throws an internal exception which cannot be caught when `centerAt` is called right after `setZoom`
             // so far, we could not reproduce it by calling these two functions manually in the console, so there must be another factor involved
@@ -468,7 +509,7 @@ function esriMap(esriBundle, geoApi) {
          * @param {String} key  name of the default property
          * @param {Any} [value] optional value to set for the specified default property
          */
-        mapDefault (key, value) {
+        mapDefault(key, value) {
             if (typeof value === 'undefined') {
                 return esriBundle.esriConfig.defaults.map[key];
             } else {
@@ -486,14 +527,16 @@ function esriMap(esriBundle, geoApi) {
          * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
          * @return {Promise}                resolves after the map is done moving
          */
-        moveToOffsetExtent (targetExtent, offsetFraction) {
+        moveToOffsetExtent(targetExtent, offsetFraction) {
             const currentExtent = this.extent;
 
             let xOffset = currentExtent.getWidth() * -offsetFraction.x;
             let yOffset = currentExtent.getHeight() * offsetFraction.y;
 
-            if (currentExtent.getWidth() < targetExtent.getWidth() ||
-                currentExtent.getHeight() < targetExtent.getHeight()) {
+            if (
+                currentExtent.getWidth() < targetExtent.getWidth() ||
+                currentExtent.getHeight() < targetExtent.getHeight()
+            ) {
                 // the target extent doesn't fit in the current extent,
                 // offset the target extent using provided fractions
 
@@ -510,28 +553,47 @@ function esriMap(esriBundle, geoApi) {
         /**
          * Set proxy service URL to avoid same origin issues.
          */
-        set proxy (proxyUrl) { esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl; }
-        get proxy () { return esriBundle.esriConfig.defaults.io.proxyUrl; }
+        set proxy(proxyUrl) {
+            esriBundle.esriConfig.defaults.io.proxyUrl = proxyUrl;
+        }
+        get proxy() {
+            return esriBundle.esriConfig.defaults.io.proxyUrl;
+        }
 
-        set basemapGallery (val) { this._basemapGallery = val; }
-        get basemapGallery () { return this._basemapGallery; }
+        set basemapGallery(val) {
+            this._basemapGallery = val;
+        }
+        get basemapGallery() {
+            return this._basemapGallery;
+        }
 
-        set scalebar (val) { this._scalebar = val; }
-        get scalebar () { return this._scalebar; }
+        set scalebar(val) {
+            this._scalebar = val;
+        }
+        get scalebar() {
+            return this._scalebar;
+        }
 
-        set overviewMap (val) { this._overviewMap = val; }
-        get overviewMap () { return this._overviewMap; }
+        set overviewMap(val) {
+            this._overviewMap = val;
+        }
+        get overviewMap() {
+            return this._overviewMap;
+        }
 
         // TODO an alternate approach: store opts.lods in the constructor and return that here.
         //      need to consider impact (it could be .__tileInfo adjusts to current basemap, thus
         //      preventing us from zooming to lods that have no tiles)
-        get lods () { return this._map.__tileInfo.lods; }
+        get lods() {
+            return this._map.__tileInfo.lods;
+        }
 
         // use of the following property is unsupported by ramp team.
         // it is provided for plugin developers who want to write advanced geo functions
         // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
-        get esriMap () { return this._map; }
-
+        get esriMap() {
+            return this._map;
+        }
     }
 
     return Map;

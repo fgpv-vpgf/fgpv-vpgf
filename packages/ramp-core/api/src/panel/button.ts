@@ -15,7 +15,10 @@ export default class Button extends Element {
      */
     set element(innerButton: string | HTMLElement | JQuery<HTMLElement>) {
         if (!this.elemSet) {
-            this._btnElem[0].insertAdjacentHTML("beforeend", (<any>innerButton).prevObject ? (<any>innerButton).first().html() : (<any>innerButton));
+            this._btnElem[0].insertAdjacentHTML(
+                'beforeend',
+                (<any>innerButton).prevObject ? (<any>innerButton).first().html() : <any>innerButton
+            );
             super.elem = this._btnElem;
             this.elemSet = true;
         } else {
@@ -31,7 +34,7 @@ export default class Button extends Element {
         this._btnElem = $(`<md-button class="primary md-button md-raised" type="button">`);
 
         if (tooltip) {
-            this._btnElem[0].insertAdjacentHTML("afterbegin", `<md-tooltip>${tooltip}</md-tooltip>`);
+            this._btnElem[0].insertAdjacentHTML('afterbegin', `<md-tooltip>${tooltip}</md-tooltip>`);
         }
 
         if (innerButton) {

@@ -7,7 +7,4 @@
  * It's useful if we need to change the name of the global registry.
  *
  */
-angular
-    .module('app.core')
-    .constant('api', window.RAMP)
-    .constant('LEGACY_API', {});
+angular.module('app.core').constant('api', window.RAMP).constant('LEGACY_API', {});

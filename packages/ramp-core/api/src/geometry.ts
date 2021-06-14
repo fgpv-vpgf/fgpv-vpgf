@@ -155,7 +155,7 @@ export class XYBounds {
             xmax: this.northEast.x,
             ymax: this.southWest.y,
             ymin: this.northEast.y,
-            spatialReference: { wkid: 4326 }
+            spatialReference: { wkid: 4326 },
         };
         return (<any>window).RAMP.GAPI.Map.getExtentFromJson(extentObj);
     }
@@ -512,7 +512,7 @@ export class MultiPoint extends BaseGeometry {
      */
     toArray(): Array<Array<number>> {
         // using private underscore property to avoid copying the array
-        return this._pointArray.map(p => p.toArray());
+        return this._pointArray.map((p) => p.toArray());
     }
 }
 
@@ -631,7 +631,7 @@ export class MultiLineString extends BaseGeometry {
      */
     toArray(): Array<Array<Array<number>>> {
         // using private underscore property to avoid copying the array
-        return this._lineArray.map(l => l.toArray());
+        return this._lineArray.map((l) => l.toArray());
     }
 }
 
@@ -712,7 +712,7 @@ export class Polygon extends BaseGeometry {
              */
             toArray(): Array<Array<number>> {
                 // using private underscore property to avoid copying the array
-                return this._pointArray.map(p => p.toArray());
+                return this._pointArray.map((p) => p.toArray());
             }
         };
     }
@@ -753,7 +753,7 @@ export class Polygon extends BaseGeometry {
 
         if (elements[0] !== undefined && elements[0] instanceof Array && !isXYLiteral(elements[0])) {
             // single ring added
-            elements.forEach(element => {
+            elements.forEach((element) => {
                 this._ringArray.push(new this.LinearRing(<Array<Point | XY | XYLiteral>>element));
             });
         } else if (elements[0] !== undefined) {
@@ -788,7 +788,7 @@ export class Polygon extends BaseGeometry {
      */
     toArray(): Array<Array<Array<number>>> {
         // using private underscore property to avoid copying the array
-        return this._ringArray.map(r => r.toArray());
+        return this._ringArray.map((r) => r.toArray());
     }
 }
 
@@ -849,7 +849,7 @@ export class MultiPolygon extends BaseGeometry {
             const subId = index < 10 ? '0' + index : index;
             const newId = id + '-' + subId;
 
-            const points = polygon.ringArray.map(ring => ring.pointArray);
+            const points = polygon.ringArray.map((ring) => ring.pointArray);
             this._polygonArray.push(new Polygon(newId, points, opts));
         });
     }
@@ -874,7 +874,7 @@ export class MultiPolygon extends BaseGeometry {
      */
     toArray(): Array<Array<Array<Array<number>>>> {
         // using private underscore property to avoid copying the array
-        return this._polygonArray.map(p => p.toArray());
+        return this._polygonArray.map((p) => p.toArray());
     }
 }
 
@@ -1026,7 +1026,7 @@ class PolygonStyleOptions extends StyleOptions {
 /** Guarantees functions with a parameter of type `XY | XYLiteral` to be of type XY. */
 export function XYLiteral(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
     const originalMethod = descriptor.value;
-    descriptor.value = function(maybeXY: XY | XYLiteral): XY {
+    descriptor.value = function (maybeXY: XY | XYLiteral): XY {
         return originalMethod.apply(this, [isXYLiteral(maybeXY) ? new XY(maybeXY[0], maybeXY[1]) : maybeXY]);
     };
     return descriptor;
@@ -1039,9 +1039,9 @@ export interface Extent {
     ymax: number;
     ymin: number;
     spatialReference: {
-        wkid: number,
-        latestWkid: number,
-        wkt: string
+        wkid: number;
+        latestWkid: number;
+        wkt: string;
     };
     getCenter: Function;
 }

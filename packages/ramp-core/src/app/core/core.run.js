@@ -1,8 +1,4 @@
-angular
-    .module('app.core')
-    .run(debugBlock)
-    .run(apiBlock)
-    .run(runBlock);
+angular.module('app.core').run(debugBlock).run(apiBlock).run(runBlock);
 
 /**
  * @function runBlock
@@ -13,7 +9,6 @@ angular
  * The `runBlock` triggers config and locale file loading, sets language of the app.
  */
 function runBlock($rootScope, $rootElement, reloadService, events, configService, appInfo, LEGACY_API) {
-
     // initialize config service
     configService.initialize();
 
@@ -61,7 +56,7 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
         const preMapService = {
             initialBookmark,
             restoreSession,
-            start
+            start,
         };
 
         if (window.RV && window.RV.getMap) {
@@ -117,7 +112,6 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
             reloadService.bookmarkBlocking = false;
             $rootScope.$broadcast(events.rvBookmarkInit);
         }
-
     }
 
     /**
@@ -144,9 +138,21 @@ function runBlock($rootScope, $rootElement, reloadService, events, configService
  *
  * `apiBlock` sets up language and RCS calls for the global API
  */
-function apiBlock($rootScope, geoService, configService, events,
-    bookmarkService, gapiService, reloadService, appInfo, stateManager, detailService, mapToolService, $mdSidenav, LEGACY_API) {
-
+function apiBlock(
+    $rootScope,
+    geoService,
+    configService,
+    events,
+    bookmarkService,
+    gapiService,
+    reloadService,
+    appInfo,
+    stateManager,
+    detailService,
+    mapToolService,
+    $mdSidenav,
+    LEGACY_API
+) {
     const service = {
         setLanguage,
         panelVisibility,
@@ -164,9 +170,11 @@ function apiBlock($rootScope, geoService, configService, events,
         convertDDToDMS: mapToolService.convertDDToDMS,
         setMapCursor,
         projectGeometry,
-        toggleSideNav: val => { $mdSidenav('left')[val](); },
-        reInitialize: bookmark => reloadService.reloadConfig(bookmark),
-        getConfig
+        toggleSideNav: (val) => {
+            $mdSidenav('left')[val]();
+        },
+        reInitialize: (bookmark) => reloadService.reloadConfig(bookmark),
+        getConfig,
     };
 
     if (window.RV && window.RV.getMap) {
@@ -189,7 +197,7 @@ function apiBlock($rootScope, geoService, configService, events,
 
     function panelVisibility(panelName, isVisible = true) {
         // Prevent some panels from being opened by this API method as they have more complex opening logic.
-        if (isVisible && !!['sideMetadata', 'sideSettings', 'table', 'mainDetails'].find(x => x === panelName)) {
+        if (isVisible && !!['sideMetadata', 'sideSettings', 'table', 'mainDetails'].find((x) => x === panelName)) {
             console.warn(`You cannot open ${panelName} via this API method.`);
             return;
         }
@@ -257,7 +265,9 @@ function apiBlock($rootScope, geoService, configService, events,
      */
     function centerAndZoom(x, y, spatialReference, zoom) {
         const coords = gapiService.gapi.proj.localProjectPoint(
-            spatialReference, geoService.mapObject.spatialReference, { x: x, y: y }
+            spatialReference,
+            geoService.mapObject.spatialReference,
+            { x: x, y: y }
         );
         const zoomPoint = gapiService.gapi.proj.Point(coords.x, coords.y, geoService.mapObject.spatialReference);
 
@@ -273,7 +283,10 @@ function apiBlock($rootScope, geoService, configService, events,
      * @param {Array}  extent                   The extent to set
      */
     function setExtent(extent) {
-        configService.getSync.map.instance.setExtent(configService.getSync.map.instance.enhanceConfigExtent(extent), true);
+        configService.getSync.map.instance.setExtent(
+            configService.getSync.map.instance.enhanceConfigExtent(extent),
+            true
+        );
     }
 
     /**

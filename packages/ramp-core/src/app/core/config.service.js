@@ -32,9 +32,7 @@ import geoapi from 'ramp-geoapi';
  * - ready: checks if the service is ready to use
  *
  */
-angular
-    .module('app.core')
-    .factory('configService', configService);
+angular.module('app.core').factory('configService', configService);
 
 function configService($q, $rootElement, $http, $translate, events, gapiService, errorService, ConfigObject, Geo) {
     const DEFAULT_LANGS = ['en-CA', 'fr-CA'];
@@ -43,7 +41,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         NEW: 0,
         LOADING: 1,
         LOADED: 2,
-        UPDATING: 3
+        UPDATING: 3,
     };
 
     let _loadingState = States.NEW;
@@ -68,7 +66,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false indicates an exteral config
          */
-        parseSync () {
+        parseSync() {
             return this.parseAsJson() || this.parseAsGlobalObject();
         }
 
@@ -77,7 +75,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false otherwise
          */
-        parseAsJson () {
+        parseAsJson() {
             try {
                 this.config = JSON.parse(this.configAttr);
             } catch (e) {
@@ -91,7 +89,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {boolean}   true if config was populated, false otherwise
          */
-        parseAsGlobalObject () {
+        parseAsGlobalObject() {
             if (window.hasOwnProperty(this.configAttr)) {
                 this.config = window[this.configAttr];
             }
@@ -114,7 +112,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             this._config = new ConfigObject.ConfigObject(conf);
         }
 
-        get config() { return this._config; }
+        get config() {
+            return this._config;
+        }
 
         /**
          * Sets RCS keys on the config object and initiates the RCS download.
@@ -122,7 +122,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @param {Array}  keys          array of RCS keys (String) to be added
          * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          */
-        setRcsKeys (keys, bookmarkInfo) {
+        setRcsKeys(keys, bookmarkInfo) {
             this._rcsKeys = keys;
             this.processRCS(bookmarkInfo);
         }
@@ -133,13 +133,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @param  {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          * @return {Promise}              resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
-        processRCS (bookmarkInfo) {
+        processRCS(bookmarkInfo) {
             if (this._rcsKeys.length === 0) {
                 return this.config;
             }
 
             if (typeof this.rcsEndpoint === 'undefined') {
-                throw new Error('RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property');
+                throw new Error(
+                    'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
+                );
             }
 
             const endpoint = this.rcsEndpoint.endsWith('/') ? this.rcsEndpoint : this.rcsEndpoint + '/';
@@ -154,7 +156,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             }
 
             return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
-                resp => {
+                (resp) => {
                     const result = [];
 
                     // there is an array of layer configs in resp.data.
@@ -162,7 +164,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                     // FIXME may want to consider a more flexible approach than just assuming RCS
                     // always returns nothing but a single layer per key.  Being able to inject any
                     // part of the config via would be more robust
-                    resp.data.forEach(layerEntry => {
+                    resp.data.forEach((layerEntry) => {
                         // if the key is wrong rcs will return null
                         if (layerEntry) {
                             let layer = layerEntry.layers[0];
@@ -174,7 +176,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                             if (bookmarkInfo) {
                                 // matches rcs.(layerid).(lang1) to rcs.(layerid).(lang2)
                                 const re = /^rcs\.(.*)\..*$/;
-                                const bmMatch = bookmarkInfo.find(bml => bml.id.match(re)[1] === layer.id.match(re)[1]);
+                                const bmMatch = bookmarkInfo.find(
+                                    (bml) => bml.id.match(re)[1] === layer.id.match(re)[1]
+                                );
                                 if (bmMatch) {
                                     layer.bookmarkData = bmMatch;
                                 }
@@ -189,13 +193,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                     }
 
                     return this.config;
-            },  resp => {
+                },
+                (resp) => {
                     const toast = {
                         textContent: $translate.instant('config.service.rcs.error'),
-                        action: $translate.instant('config.service.rcs.action')
+                        action: $translate.instant('config.service.rcs.action'),
                     };
                     errorService.display(toast);
-            });
+                }
+            );
         }
 
         /**
@@ -203,39 +209,44 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          *
          * @return  {Promise}   Resolves when the configuration is ready (and RCS is loaded)
          */
-        get promise () {
+        get promise() {
             // prevent creating multiple promises, if one is in progress just return it.
             if (!this._promise) {
-                this._promise = new Promise(resolve => {
+                this._promise = new Promise((resolve) => {
                     if (typeof this.config === 'object' || this.parseSync()) {
                         resolve(this.config);
                     } else {
-                        $http
-                            .get(this.configAttr.replace('[lang]', this.language))
-                            .then(r => {
-                                this.config = r.data;
-                                resolve(this.config)
-                            });
+                        $http.get(this.configAttr.replace('[lang]', this.language)).then((r) => {
+                            this.config = r.data;
+                            resolve(this.config);
+                        });
                     }
                 }).then(() => this.processRCS());
             }
             return this._promise;
         }
-
     }
 
     class ConfigService {
-        get remoteConfig() { return _remoteConfig; }
-        get loadingState() { return _loadingState; }
+        get remoteConfig() {
+            return _remoteConfig;
+        }
+        get loadingState() {
+            return _loadingState;
+        }
         get getSync() {
             if (_loadingState < States.LOADED) {
-                throw new Error('Attempted to access config synchronously before loading completed.  Either use the promise based API or wait for rvReady.');
+                throw new Error(
+                    'Attempted to access config synchronously before loading completed.  Either use the promise based API or wait for rvReady.'
+                );
             }
             return getConfigByLanguage(currentLang()).config;
         }
-        get getAsync() { return getConfigByLanguage(currentLang()).promise; }
+        get getAsync() {
+            return getConfigByLanguage(currentLang()).promise;
+        }
 
-        initialize () {
+        initialize() {
             _initialize();
         }
 
@@ -243,7 +254,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * reinitial when a new config file is loaded
          * @function  reInitialize
          */
-        reInitialize () {
+        reInitialize() {
             _loadingState = States.NEW;
             _initialize();
         }
@@ -257,19 +268,21 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @param {Array}  keys          array of RCS keys (String) to be added
          * @param {Array}  bookmarkInfo  optional array of bookmark layer objects for the rcs keys. used if the rcs layers will need bookmark adjustments applied after download
          */
-        rcsAddKeys (keys, bookmarkInfo = []) {
-            configList.forEach(conf => { conf.setRcsKeys(keys, bookmarkInfo); });
+        rcsAddKeys(keys, bookmarkInfo = []) {
+            configList.forEach((conf) => {
+                conf.setRcsKeys(keys, bookmarkInfo);
+            });
         }
 
         /**
          * Sets the current language to the supplied value and broadcasts config initialization event, since this is a new config object.
          * @param {String} lang language value to be set
          */
-        setLang (lang) {
+        setLang(lang) {
             $translate.use(lang);
 
             // update the language attribute of the root element for accessibility reasons
-            $rootElement.attr('lang', lang.substr(0,2))
+            $rootElement.attr('lang', lang.substr(0, 2));
 
             // only broadcast when config is ready
             getConfigByLanguage(lang).promise.then(() => {
@@ -282,7 +295,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @function  getLang
          * @returns  {function}    function tha returns the current language
          */
-        getLang () {
+        getLang() {
             return currentLang();
         }
 
@@ -291,12 +304,12 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * but the config is already in a loaded state
          * @param {Function} listener an event handler to be triggered on config changes
          */
-        onEveryConfigLoad (listener) {
+        onEveryConfigLoad(listener) {
             if (_loadingState >= States.LOADED) {
                 listener(getConfigByLanguage(currentLang()).config);
             }
             // check for any duplicate listeners
-            if (!this.listeners.map(l => l.toString()).includes(listener.toString())) {
+            if (!this.listeners.map((l) => l.toString()).includes(listener.toString())) {
                 this.listeners.push(listener);
             }
             return () => {
@@ -311,12 +324,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         constructor() {
             this.listeners = [];
             events.$on(events.rvCfgInitialized, () => {
-                this.listeners.forEach(l => l(
-                    getConfigByLanguage(currentLang()).config)
-                );
+                this.listeners.forEach((l) => l(getConfigByLanguage(currentLang()).config));
             });
         }
-
     }
 
     return new ConfigService();
@@ -324,7 +334,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
     /***************/
 
     function getConfigByLanguage(lang) {
-        return configList.find(c => c.language === lang);
+        return configList.find((c) => c.language === lang);
     }
 
     /**
@@ -336,22 +346,22 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
      */
     function configLoader(configAttr, svcAttr, langs) {
         _loadingState = States.LOADING;
-        configList = [];    // empty previous configs
+        configList = []; // empty previous configs
 
         // create initial config objects
-        langs.forEach(lang => {
+        langs.forEach((lang) => {
             let defConfigAttr;
             if (!configAttr) {
-                 defConfigAttr = generateDefaultConfig(lang.slice(0,2));
+                defConfigAttr = generateDefaultConfig(lang.slice(0, 2));
             }
             configList.push(new Config(configAttr || defConfigAttr, svcAttr, lang));
         });
 
         // load first config, other configs will be loaded as needed
-        configList[0].promise.then(config => {
+        configList[0].promise.then((config) => {
             let dojoUrl = (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.35/init.js';
             // initialize gapi and store a return promise
-            if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== "") {
+            if (typeof config.services._esriLibUrl !== 'undefined' && config.services._esriLibUrl !== '') {
                 dojoUrl = config.services._esriLibUrl;
             }
 
@@ -380,9 +390,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
 
         // TODO: consider alternate to appending '-CA' if language code has a length of two. 'es' should be 'es-ES' but now
         // would be 'es-CA'. Work around is to set lang to 'es-ES' so we don't append anything to the end.
-        languages = $rootElement.attr('rv-langs') ? angular.fromJson($rootElement.attr('rv-langs')) : [document.documentElement.lang]
-            .map(l => l.length === 2 ? l + '-CA' : l)
-            .filter(l => l);
+        languages = $rootElement.attr('rv-langs')
+            ? angular.fromJson($rootElement.attr('rv-langs'))
+            : [document.documentElement.lang].map((l) => (l.length === 2 ? l + '-CA' : l)).filter((l) => l);
 
         if (languages.length === 0) {
             languages = DEFAULT_LANGS;
@@ -395,7 +405,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
         $translate.use(languages[0]);
 
         // set the language attribute of the root element for accessibility reasons
-        $rootElement.attr('lang', languages[0].substr(0,2))
+        $rootElement.attr('lang', languages[0].substr(0, 2));
 
         if (!configAttr) {
             languages = DEFAULT_LANGS;
@@ -418,7 +428,9 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 deregisterReadyListener = events.$on(events.rvApiReady, () => {
                     deregisterReadyListener();
                     deregisterBookmarkListener();
-                    configList.forEach(conf => { conf.setRcsKeys(keys); });
+                    configList.forEach((conf) => {
+                        conf.setRcsKeys(keys);
+                    });
                 });
 
                 // if we have a bookmark, abort loading from the rcs tags.
@@ -427,7 +439,6 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                     deregisterReadyListener();
                     deregisterBookmarkListener();
                 });
-
             } catch (e) {
                 console.error('configService', 'RCS key retrieval failed with error', e);
             }
@@ -440,7 +451,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
      * @return {String} the current language string
      */
     function currentLang() {
-        return ($translate.proposedLanguage() || $translate.use());
+        return $translate.proposedLanguage() || $translate.use();
     }
 
     /**
@@ -451,125 +462,123 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
      */
     function generateDefaultConfig(lang) {
         const DEFAULT_CONFIG = {
-            "ui": {
-                "navBar": {
-                    "zoom": "buttons",
-                    "extra": [
-                        "fullscreen",
-                        "geoLocator",
-                        "home",
-                        "help"
-                    ]
+            ui: {
+                navBar: {
+                    zoom: 'buttons',
+                    extra: ['fullscreen', 'geoLocator', 'home', 'help'],
                 },
-                "sideMenu": {
-                    "logo": true
+                sideMenu: {
+                    logo: true,
                 },
-                "help": {
-                    "folderName": "default"
-                }
+                help: {
+                    folderName: 'default',
+                },
             },
-            "version": "2.0",
-            "language": lang,
-            "services": {
-                "export": { "legend": {} }
+            version: '2.0',
+            language: lang,
+            services: {
+                export: { legend: {} },
             },
-            "map": {
-                "initialBasemapId": "baseNrCan",
-                "components": {
-                    "geoSearch": {
-                        "enabled": false,
-                        "showGraphic": false,
-                        "showInfo": false
+            map: {
+                initialBasemapId: 'baseNrCan',
+                components: {
+                    geoSearch: {
+                        enabled: false,
+                        showGraphic: false,
+                        showInfo: false,
                     },
-                    "mouseInfo": {
-                        "enabled": false,
-                        "spatialReference": {
-                            "wkid": Geo.SpatialReference.WEB_MERCATOR.wkids[1]
-                        }
-                    },
-                    "northArrow": {
-                        "enabled": true
-                    },
-                    "basemap": {
-                        "enabled": true
-                    },
-                    "overviewMap": {
-                        "enabled": true,
-                        "layerType": "imagery"
-                    },
-                    "scaleBar": {
-                        "enabled": true
-                    }
-                },
-                "extentSets": [
-                    {
-                        "id": "EXT_NRCAN_Lambert_3978",
-                        "default": {
-                            "xmax": 3549492,
-                            "xmin": -2681457,
-                            "ymax": 3482193,
-                            "ymin": -883440
+                    mouseInfo: {
+                        enabled: false,
+                        spatialReference: {
+                            wkid: Geo.SpatialReference.WEB_MERCATOR.wkids[1],
                         },
-                        "spatialReference": {
-                            "wkid": Geo.SpatialReference.CAN_ATLAS_LAMBERT.latestWkid
-                        }
-                    }
-                ],
-                "lodSets": [
-                    {
-                        "id": "LOD_NRCAN_Lambert_3978",
-                        "lods": [
-                            {"level": 0, "resolution": 38364.660062653464, "scale": 145000000},
-                            {"level": 1, "resolution": 22489.62831258996, "scale": 85000000},
-                            {"level": 2, "resolution": 13229.193125052918, "scale": 50000000},
-                            {"level": 3, "resolution": 7937.5158750317505, "scale": 30000000},
-                            {"level": 4, "resolution": 4630.2175937685215, "scale": 17500000},
-                            {"level": 5, "resolution": 2645.8386250105837, "scale": 10000000},
-                            {"level": 6, "resolution": 1587.5031750063501, "scale": 6000000},
-                            {"level": 7, "resolution": 926.0435187537042, "scale": 3500000},
-                            {"level": 8, "resolution": 529.1677250021168, "scale": 2000000},
-                            {"level": 9, "resolution": 317.50063500127004, "scale": 1200000},
-                            {"level": 10, "resolution": 185.20870375074085, "scale": 700000},
-                            {"level": 11, "resolution": 111.12522225044451, "scale": 420000},
-                            {"level": 12, "resolution": 66.1459656252646, "scale": 250000},
-                            {"level": 13, "resolution": 38.36466006265346, "scale": 145000},
-                            {"level": 14, "resolution": 22.48962831258996, "scale": 85000},
-                            {"level": 15, "resolution": 13.229193125052918, "scale": 50000},
-                            {"level": 16, "resolution": 7.9375158750317505, "scale": 30000},
-                            {"level": 17, "resolution": 4.6302175937685215, "scale": 17500}
-                        ]
-                    }
-                ],
-                "legend": {
-                    "type": "autopopulate"
+                    },
+                    northArrow: {
+                        enabled: true,
+                    },
+                    basemap: {
+                        enabled: true,
+                    },
+                    overviewMap: {
+                        enabled: true,
+                        layerType: 'imagery',
+                    },
+                    scaleBar: {
+                        enabled: true,
+                    },
                 },
-                "layers": [],
-                "tileSchemas": [
+                extentSets: [
                     {
-                        "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
-                        "name": "Lambert Maps",
-                        "extentSetId": "EXT_NRCAN_Lambert_3978",
-                        "lodSetId": "LOD_NRCAN_Lambert_3978",
-                        "hasNorthPole": true
-                    }
+                        id: 'EXT_NRCAN_Lambert_3978',
+                        default: {
+                            xmax: 3549492,
+                            xmin: -2681457,
+                            ymax: 3482193,
+                            ymin: -883440,
+                        },
+                        spatialReference: {
+                            wkid: Geo.SpatialReference.CAN_ATLAS_LAMBERT.latestWkid,
+                        },
+                    },
                 ],
-                "baseMaps": [
+                lodSets: [
                     {
-                        "id": "baseNrCan",
-                        "name": lang === 'fr' ? "Carte de base du Canada" : "Canada Base Map",
-                        "description": lang === 'fr' ? "Une carte du Canada" : "A map of Canada",
-                        "layers": [
-                            {
-                                "id": "CBCT",
-                                "layerType": "esriFeature",
-                                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/" + (lang === 'fr' ? "CBCT" : "CBMT") + "3978/MapServer"
-                            }
+                        id: 'LOD_NRCAN_Lambert_3978',
+                        lods: [
+                            { level: 0, resolution: 38364.660062653464, scale: 145000000 },
+                            { level: 1, resolution: 22489.62831258996, scale: 85000000 },
+                            { level: 2, resolution: 13229.193125052918, scale: 50000000 },
+                            { level: 3, resolution: 7937.5158750317505, scale: 30000000 },
+                            { level: 4, resolution: 4630.2175937685215, scale: 17500000 },
+                            { level: 5, resolution: 2645.8386250105837, scale: 10000000 },
+                            { level: 6, resolution: 1587.5031750063501, scale: 6000000 },
+                            { level: 7, resolution: 926.0435187537042, scale: 3500000 },
+                            { level: 8, resolution: 529.1677250021168, scale: 2000000 },
+                            { level: 9, resolution: 317.50063500127004, scale: 1200000 },
+                            { level: 10, resolution: 185.20870375074085, scale: 700000 },
+                            { level: 11, resolution: 111.12522225044451, scale: 420000 },
+                            { level: 12, resolution: 66.1459656252646, scale: 250000 },
+                            { level: 13, resolution: 38.36466006265346, scale: 145000 },
+                            { level: 14, resolution: 22.48962831258996, scale: 85000 },
+                            { level: 15, resolution: 13.229193125052918, scale: 50000 },
+                            { level: 16, resolution: 7.9375158750317505, scale: 30000 },
+                            { level: 17, resolution: 4.6302175937685215, scale: 17500 },
                         ],
-                        "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
-                    }
-                ]
-            }
-        }
+                    },
+                ],
+                legend: {
+                    type: 'autopopulate',
+                },
+                layers: [],
+                tileSchemas: [
+                    {
+                        id: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                        name: 'Lambert Maps',
+                        extentSetId: 'EXT_NRCAN_Lambert_3978',
+                        lodSetId: 'LOD_NRCAN_Lambert_3978',
+                        hasNorthPole: true,
+                    },
+                ],
+                baseMaps: [
+                    {
+                        id: 'baseNrCan',
+                        name: lang === 'fr' ? 'Carte de base du Canada' : 'Canada Base Map',
+                        description: lang === 'fr' ? 'Une carte du Canada' : 'A map of Canada',
+                        layers: [
+                            {
+                                id: 'CBCT',
+                                layerType: 'esriFeature',
+                                url:
+                                    'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/' +
+                                    (lang === 'fr' ? 'CBCT' : 'CBMT') +
+                                    '3978/MapServer',
+                            },
+                        ],
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978',
+                    },
+                ],
+            },
+        };
         return JSON.stringify(DEFAULT_CONFIG);
     }
 }

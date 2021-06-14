@@ -97,7 +97,7 @@ export class Map {
 
     set boundsChanged(observable: Observable<geo.XYBounds>) {
         this.boundsChangedObj = observable;
-        this.boundsChangedObj.subscribe(xyBounds => {
+        this.boundsChangedObj.subscribe((xyBounds) => {
             this.setBounds(xyBounds, false);
         });
     }
@@ -328,16 +328,16 @@ function initObservables(this: Map) {
     const esriMapElement = this.mapDiv.find('.rv-esri-map')[0];
 
     this.doubleClick = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'dblclick').pipe(
-        map(evt => new MouseEvent(evt, this))
+        map((evt) => new MouseEvent(evt, this))
     );
     this.mouseMove = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousemove').pipe(
         map((evt: esriMouseEvent) => new MouseEvent(evt, this)),
         distinctUntilChanged((x, y) => x.equals(y))
     );
     this.mouseDown = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mousedown').pipe(
-        map(evt => new MouseEvent(evt, this))
+        map((evt) => new MouseEvent(evt, this))
     );
     this.mouseUp = fromEvent<MouseEvent | esriMouseEvent>(esriMapElement, 'mouseup').pipe(
-        map(evt => new MouseEvent(evt, this))
+        map((evt) => new MouseEvent(evt, this))
     );
 }

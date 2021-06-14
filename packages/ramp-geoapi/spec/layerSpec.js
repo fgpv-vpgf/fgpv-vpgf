@@ -6,18 +6,24 @@ describe('Layer', () => {
     let layer;
     const mockEsri = {
         FeatureLayer: Object,
-        SpatialReference: Object
+        SpatialReference: Object,
     };
     const mockGapi = {
         proj: {
             getProjection: () => Promise.resolve(null),
-            projectGeojson: () => { return; },
+            projectGeojson: () => {
+                return;
+            },
             checkProj: () => {
                 return { lookupPromise: Promise.resolve(null) };
-            }
+            },
         },
         shared: { generateUUID: () => 'layer0' },
-        events: { wrapEvents: () => { return; } }
+        events: {
+            wrapEvents: () => {
+                return;
+            },
+        },
     };
     beforeEach(() => {
         layer = layerBuilder(mockEsri, mockGapi);
@@ -32,11 +38,9 @@ describe('Layer', () => {
             expect(args[1]).toEqual('EPSG:54004');
             expect(args[2]).toEqual('EPSG:4326');
             done();
-        })
-        .catch(e => {
+        }).catch((e) => {
             fail(`Exception was thrown: ${e}`);
             done();
         });
     });
-
 });

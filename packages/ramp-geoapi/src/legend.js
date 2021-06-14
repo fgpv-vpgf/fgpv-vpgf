@@ -19,10 +19,12 @@ function allComb(M, N) {
         C[m] = [];
         for (let n = 0; n <= m; ++n) {
             // if this would place more than the max number of true or false values we don't need this part of the array
-            if (n > maxTrue || (m - n) > maxFalse) { continue; }
+            if (n > maxTrue || m - n > maxFalse) {
+                continue;
+            }
 
-            const a = n > 0 ? C[m - 1][n - 1].map(x => x.concat(true)) : [];
-            const b = m > n ? C[m - 1][n].map(x => x.concat(false)) : [];
+            const a = n > 0 ? C[m - 1][n - 1].map((x) => x.concat(true)) : [];
+            const b = m > n ? C[m - 1][n].map((x) => x.concat(false)) : [];
 
             C[m][n] = a.concat(b);
         }
@@ -41,7 +43,7 @@ function allComb(M, N) {
  */
 function assignLayerSplits(layers, splitPoints) {
     layers[0].splitBefore = false;
-    splitPoints.forEach((split, i) => layers[i + 1].splitBefore = split);
+    splitPoints.forEach((split, i) => (layers[i + 1].splitBefore = split));
     return layers;
 }
 
@@ -65,7 +67,7 @@ function packLayersIntoExactSections(layers, sections) {
     let bestPerm = null;
     const heights = Array(sections);
 
-    permutations.forEach(perm => {
+    permutations.forEach((perm) => {
         heights.fill(0);
         let curSec = 0;
         layers.forEach((l, i) => {
@@ -127,8 +129,7 @@ function splitLayer(layer, chunkSize, splitCount) {
     const splitSizes = Array(splitCount).fill(0);
 
     function traverse(items) {
-        items.forEach(item => {
-
+        items.forEach((item) => {
             if (splitCount === 1) {
                 return;
             }
@@ -198,7 +199,7 @@ function findOptimalSplit(layer, splitCount) {
     }
 
     // apply split to the splits that result in the minimum of whitespace
-    minSplits.forEach(split => split.splitBefore = true);
+    minSplits.forEach((split) => (split.splitBefore = true));
     return layer;
 }
 
@@ -214,8 +215,8 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
     assignLayerSplits(layers, Array(layers.length - 1).fill(true));
     const bestSectionUsage = {}; // maps number of sections used to best height achieved
     bestSectionUsage[layers.length] = {
-        height: Math.max(...layers.map(l => l.height)),
-        segments: Array(layers.length)
+        height: Math.max(...layers.map((l) => l.height)),
+        segments: Array(layers.length),
     };
     bestSectionUsage[layers.length].segments.fill(1);
 
@@ -224,11 +225,11 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
         const oldSegments = bestSectionUsage[curSectionsUsed].segments;
         const normalizedLayers = oldSegments.map((seg, i) => layers[i].height / seg);
         const worstLayerIndex = normalizedLayers.indexOf(Math.max(...normalizedLayers));
-        const newSegments = oldSegments.map((seg, i) => i === worstLayerIndex ? seg + 1 : seg);
+        const newSegments = oldSegments.map((seg, i) => (i === worstLayerIndex ? seg + 1 : seg));
         ++curSectionsUsed;
         bestSectionUsage[curSectionsUsed] = {
             height: Math.max(...newSegments.map((seg, i) => layers[i].height / seg)),
-            segments: newSegments
+            segments: newSegments,
         };
     }
     while (curSectionsUsed > layers.length) {
@@ -252,7 +253,9 @@ function allocateLayersToSections(layers, sectionsAvailable, mapHeight) {
 function makeLegend(layerList, sectionsAvailable, mapHeight) {
     if (layerList.length > TOO_MANY_LAYERS) {
         const layersPerSection = Math.ceil(layerList.length / sectionsAvailable);
-        const splitPoints = Array(layerList.length - 1).fill(0).map((v, i) => (i + 1) % layersPerSection === 0); // I don't know why the useless fill is necessary
+        const splitPoints = Array(layerList.length - 1)
+            .fill(0)
+            .map((v, i) => (i + 1) % layersPerSection === 0); // I don't know why the useless fill is necessary
         assignLayerSplits(layerList, splitPoints);
         return { layers: layerList, sectionsUsed: sectionsAvailable };
     }

@@ -10,9 +10,7 @@ const templateUrl = require('./details.html');
  * Where are multiple data items, displays a selector list on the left side, letting the user to select the item.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetails', rvDetails);
+angular.module('app.ui').directive('rvDetails', rvDetails);
 
 function rvDetails() {
     const directive = {
@@ -21,7 +19,7 @@ function rvDetails() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -36,8 +34,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
     self.selectItem = selectItem;
     self.expandPanel = detailService.expandPanel;
 
-    self.getSectionNode = () =>
-        $element.find('.rv-details');
+    self.getSectionNode = () => $element.find('.rv-details');
 
     /**
      * Find and return a details item whose proxy object matches the proxy of the previously selected item.
@@ -49,8 +46,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
      */
     function findPreviouslySelected(items) {
         // get selected item if there is a match
-        return items.find(item =>
-            item.requester.proxy === self.selectedLayerProxy);
+        return items.find((item) => item.requester.proxy === self.selectedLayerProxy);
     }
 
     /**
@@ -99,7 +95,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
-                deregisterFirstResultWatch = $scope.$watch(_waitForFirstResult, result => {
+                deregisterFirstResultWatch = $scope.$watch(_waitForFirstResult, (result) => {
                     // check if the result returned is an object and a successfully detected first data point
                     if (typeof result === 'object' && result) {
                         // if the user already selected an item, do not override the selection
@@ -107,7 +103,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
                             selectItem(result);
                         }
                         deregisterFirstResultWatch();
-                    // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
+                        // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
                     } else if (typeof result === 'boolean' && !result) {
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
                         deregisterFirstResultWatch();
@@ -116,12 +112,14 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             }
 
             detailService.mApi.panels.details.open();
-            detailService.mApi.panels.details.header.title = self.display.selectedItem ? self.display.selectedItem.requester.proxy.name : (self.display.isLoading ? 'details.label.searching' : 'details.label.noresult');
+            detailService.mApi.panels.details.header.title = self.display.selectedItem
+                ? self.display.selectedItem.requester.proxy.name
+                : self.display.isLoading
+                ? 'details.label.searching'
+                : 'details.label.noresult';
 
             // wrap symbology returned by the proxy into a symbology stack object
-            newValue.forEach(item =>
-                (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
-
+            newValue.forEach((item) => (item.requester.symbologyStack = new SymbologyStack(item.requester.proxy)));
         } else if (oldValue) {
             selectItem(null);
         }
@@ -134,7 +132,7 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
          * @return {Object | Boolean} data for a first item that has completed loading, OR the loading status of the entire query
          */
         function _waitForFirstResult() {
-            const searchFirstResult = self.display.data.find(item => item.data.length > 0);
+            const searchFirstResult = self.display.data.find((item) => item.data.length > 0);
             const isLoading = self.display.isLoading;
             // return an object representing the first data point clicked if found, otherwise return a boolean representing if loading is done
             // reason for this is that angular executes this function being watched until it returns the same result twice, compared using ===

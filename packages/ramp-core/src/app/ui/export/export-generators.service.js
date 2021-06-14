@@ -38,10 +38,10 @@ function exportGenerators(
     // TODO: add proper documentation for these functions
     // the legend generator takes an object currently supporting: width, height, numColumns, and legendBlocks (which is a copy (and potentially modified version) of the legendBlock structure on the map)
     const allGenerators = {
-        title: value => titleGenerator(showToast, value),
+        title: (value) => titleGenerator(showToast, value),
         mapSVG: () => mapSVGGenerator(),
-        mapImage: value => mapImageGenerator(showToast, value || configService.getSync.services.export.map.value),
-        legend: configurationSettings =>
+        mapImage: (value) => mapImageGenerator(showToast, value || configService.getSync.services.export.map.value),
+        legend: (configurationSettings) =>
             legendGenerator(
                 showToast,
                 Object.assign({}, configService.getSync.services.export.legend.value, configurationSettings)
@@ -49,8 +49,8 @@ function exportGenerators(
         northArrow: () => northarrowGenerator(),
         scaleBar: () => scalebarGenerator(),
         timestamp: () => timestampGenerator(),
-        footNote: value => footnoteGenerator(showToast, value),
-        htmlMarkup: value => htmlMarkupGenerator(showToast, value)
+        footNote: (value) => footnoteGenerator(showToast, value),
+        htmlMarkup: (value) => htmlMarkupGenerator(showToast, value),
     };
 
     const service = {
@@ -71,7 +71,7 @@ function exportGenerators(
 
         customMarkupGenerator: htmlMarkupGenerator,
 
-        allGenerators
+        allGenerators,
     };
 
     return service;
@@ -85,7 +85,7 @@ function exportGenerators(
      * @return {Promise} generator output wrapped in a promise in the form of { graphic, value }
      */
     function wrapOutput(graphicPromise, value) {
-        return graphicPromise.then(graphic => ({ graphic, value }));
+        return graphicPromise.then((graphic) => ({ graphic, value }));
     }
 
     // GENERATORS START
@@ -115,7 +115,7 @@ function exportGenerators(
             'font-family': 'Roboto',
             'font-weight': 'normal',
             'font-size': 35,
-            anchor: 'start'
+            anchor: 'start',
         });
 
         const textBox = titleSvg.bbox();
@@ -182,8 +182,8 @@ function exportGenerators(
             map: { instance: mapInstance },
             services: {
                 exportMapUrl,
-                export: { cleanCanvas }
-            }
+                export: { cleanCanvas },
+            },
         } = configService.getSync;
 
         let isGenerateCanceled = false; // the server print job was cancelled
@@ -228,7 +228,7 @@ function exportGenerators(
          *                  value {Object} - a modified value passed from the ExportComponent
          */
         function wrapLocalOutput() {
-            const outputPromise = localGeneratorPromise.then(canvas => {
+            const outputPromise = localGeneratorPromise.then((canvas) => {
                 // we only want to show this message if the local output is included in the final export image
                 if (hasOmittedImage) {
                     showToast('error.image.tainted', { action: '', hideDelay: 5000 });
@@ -250,24 +250,24 @@ function exportGenerators(
                     .element(esriRoot)
                     .find('img:visible')
                     .toArray()
-                    .filter(img => img.nodeName === 'IMG') // IE11 selects SVG Image elements even tough they have different nodeNames; filter them out
-                    .map(img =>
+                    .filter((img) => img.nodeName === 'IMG') // IE11 selects SVG Image elements even tough they have different nodeNames; filter them out
+                    .map((img) =>
                         graphicsService
                             .imageLoader(img.src, 10000)
-                            .then(corsImg => ({
+                            .then((corsImg) => ({
                                 imgSource: img,
                                 imgItem: corsImg,
-                                error: false
+                                error: false,
                             }))
-                            .catch(error => ({
+                            .catch((error) => ({
                                 imgSource: img,
                                 imgItem: img,
-                                error
+                                error,
                             }))
                     );
 
                 // need to wait for all images to load, so they can be added to the canvas in the correct order
-                Promise.all(imagePromises).then(data => {
+                Promise.all(imagePromises).then((data) => {
                     // eslint-disable-next-line complexity
                     data.forEach(({ imgSource, imgItem, error }) => {
                         // image loading might error for other reasons than CORS - timeout, server connectivity, etc.
@@ -301,7 +301,7 @@ function exportGenerators(
 
                     return {
                         top: elementRect.top - containerRect.top,
-                        left: elementRect.left - containerRect.left
+                        left: elementRect.left - containerRect.left,
                     };
                 }
             });
@@ -313,7 +313,7 @@ function exportGenerators(
             // create a promise and start generating the export map image
             const serverPrintPromise = $q((resolve, reject) => {
                 serverPrint(exportMapUrl)
-                    .then(data => resolve(data))
+                    .then((data) => resolve(data))
                     .catch(reject);
 
                 // set up the timeout and cancel the export generation when it expires
@@ -338,17 +338,17 @@ function exportGenerators(
                 url: exportMapUrl,
                 format: 'png32',
                 width: exportSize.width,
-                height: exportSize.height
+                height: exportSize.height,
             });
 
             const wrapperPromise = $q((resolve, reject) => {
                 $q.resolve(serverPromise)
-                    .then(data => {
+                    .then((data) => {
                         // timeout expiring should not have any effect after this point, but cancel anyway
                         common.$timeout.cancel(timeoutHandle);
                         resolve(data);
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         // stop; the promise has been rejected already
                         if (isGenerateCanceled) {
                             return;
@@ -369,16 +369,18 @@ function exportGenerators(
                         } else {
                             // stop the timeout and ask the user if she wants to retry
                             common.$timeout.cancel(timeoutHandle);
-                            showToast('error.service.timeout', { action: 'retry', hideDelay: 5000 }).then(response => {
-                                if (response === 'ok') {
-                                    // promise resolves with 'ok' when user clicks 'retry'
-                                    console.log('exportGeneratorsService', `trying print task again`);
-                                    // run the cycle again, starting the timeout anew
-                                    resolve(serverGenerate());
-                                } else {
-                                    reject(error);
+                            showToast('error.service.timeout', { action: 'retry', hideDelay: 5000 }).then(
+                                (response) => {
+                                    if (response === 'ok') {
+                                        // promise resolves with 'ok' when user clicks 'retry'
+                                        console.log('exportGeneratorsService', `trying print task again`);
+                                        // run the cycle again, starting the timeout anew
+                                        resolve(serverGenerate());
+                                    } else {
+                                        reject(error);
+                                    }
                                 }
-                            });
+                            );
                         }
                     });
             });
@@ -449,7 +451,7 @@ function exportGenerators(
             'font-size': 12,
             x: 0,
             y: 0,
-            anchor: 'start'
+            anchor: 'start',
         };
 
         // set label and pixel length for metric
@@ -498,7 +500,7 @@ function exportGenerators(
             // add approx to warn user about using scale bar as a ruler (scalebar is always approximative)
             return {
                 label: `${parseFloat(bar.toFixed(1)).toString()}${unit} ${$translate.instant('export.label.approx')}`,
-                width: `${Math.floor((bar * 120) / scaleRatio)}`
+                width: `${Math.floor((bar * 120) / scaleRatio)}`,
             };
         }
     }
@@ -524,10 +526,7 @@ function exportGenerators(
         // create an svg node to draw a timestamp on
         const containerSvg = graphicsService.createSvg();
 
-        const arrowSvg = containerSvg
-            .group()
-            .svg(arrowSCG)
-            .first();
+        const arrowSvg = containerSvg.group().svg(arrowSCG).first();
         const arrowViewBox = arrowSvg.viewbox();
         const arrowSizeRatio = arrowViewBox.width / arrowViewBox.height;
 
@@ -578,7 +577,7 @@ function exportGenerators(
 
         const footnoteSvg = containerSvg.textflow(footnoteText, exportSize.width).attr({
             'font-family': 'Roboto',
-            anchor: 'start'
+            anchor: 'start',
         });
 
         const textBox = footnoteSvg.bbox();
@@ -616,7 +615,7 @@ function exportGenerators(
             .text(timestampString)
             .attr({
                 'font-family': 'Roboto',
-                anchor: 'start'
+                anchor: 'start',
             })
             .leading(1)
             .cx(containerWidth / 2);
@@ -654,7 +653,7 @@ function exportGenerators(
         valueNode.css({
             position: 'absolute',
             top: '-9999px',
-            left: ' -9999px'
+            left: ' -9999px',
         });
         const body = angular.element('body');
 
@@ -683,7 +682,7 @@ function exportGenerators(
             position: 'bottom rv-flex-global',
             textContent: $translate.instant(`export.${textContent}`),
             action: action !== '' ? $translate.instant(`export.${action}`) : action,
-            hideDelay
+            hideDelay,
         };
 
         return $mdToast.show($mdToast.simple(options));

@@ -12,8 +12,8 @@ const ROW_BUTTONS = {
             label: 'filter.tooltip.description',
             tooltip: 'filter.tooltip.description',
             action: angular.noop,
-            enabled: true
-        }
+            enabled: true,
+        },
     },
     zoom: {
         name: 'rv-zoom-marker',
@@ -21,12 +21,12 @@ const ROW_BUTTONS = {
         self: {
             isFunction: angular.isFunction,
             icon: 'action:zoom_in',
-            label: zoom => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
-            tooltip: zoom => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
+            label: (zoom) => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
+            tooltip: (zoom) => `filter.tooltip.${zoom ? 'zoom' : 'nozoom'}`,
             action: angular.noop,
-            enabled: true
-        }
-    }
+            enabled: true,
+        },
+    },
 };
 
 // actual button template
@@ -42,8 +42,7 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
 
     </md-button>`;
 
-const TABLE_UPDATE_TEMPALATE =
-    `<md-toast class="table-toast">
+const TABLE_UPDATE_TEMPALATE = `<md-toast class="table-toast">
         <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
         <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
         <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
@@ -63,10 +62,7 @@ let index; // keep the current selected cell information
  * The `rvTableDefault` directive is a filters and datatable panel component.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvTableDefault', rvTableDefault)
-    .controller('ToastCtrl', ToastController);
+angular.module('app.ui').directive('rvTableDefault', rvTableDefault).controller('ToastCtrl', ToastController);
 
 /**
  * `rvTableDefault` directive displays the datatable with layer data.
@@ -74,10 +70,29 @@ angular
  * @function rvTableDefault
  * @return {object} directive body
  */
-function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $translate, referenceService, layoutService,
-    detailService, $rootElement, $filter, keyNames, $sanitize, debounceService, configService, SymbologyStack,
-    tableService, events, ConfigObject, $mdToast, common) {
-
+function rvTableDefault(
+    $timeout,
+    $q,
+    stateManager,
+    $compile,
+    geoService,
+    $translate,
+    referenceService,
+    layoutService,
+    detailService,
+    $rootElement,
+    $filter,
+    keyNames,
+    $sanitize,
+    debounceService,
+    configService,
+    SymbologyStack,
+    tableService,
+    events,
+    ConfigObject,
+    $mdToast,
+    common
+) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -85,7 +100,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
         link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -96,7 +111,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
      * @param  {Object} scope directive scope
      * @param  {Object} el    node element
      */
-    function link(scope, el) { // scope, el, attr, ctrl) {
+    function link(scope, el) {
+        // scope, el, attr, ctrl) {
 
         const self = scope.self;
         let containerNode;
@@ -109,17 +125,17 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
         // columns type with filters information
         const columnTypes = {
             string: {
-                init: () => ({ value: '', static: false })
+                init: () => ({ value: '', static: false }),
             },
             selector: {
-                init: () => ({ value: [], static: false })
+                init: () => ({ value: [], static: false }),
             },
             number: {
-                init: () => ({ min: '', max: '', static: false })
+                init: () => ({ min: '', max: '', static: false }),
             },
             date: {
-                init: () => ({ min: null, max: null, static: false })
-            }
+                init: () => ({ min: null, max: null, static: false }),
+            },
         };
 
         /**
@@ -136,7 +152,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 onZoomClick,
                 onDetailsClick,
                 onTableSort,
-                onTableProcess
+                onTableProcess,
             };
 
             self.noData = false;
@@ -149,9 +165,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             const displayData = stateManager.display.table.data;
 
             // forced delay of a 100 to prevent the loading indicator from flickering if the table is created too fast; it's annoying; it means that switching tables takes at least 100ms no matter how small the table is; in majority of cases it should take more than 100ms to get data and create a table anyway;
-            const forcedDelay = $q(fulfill =>
-                $timeout(() => fulfill(requestId), 100)
-            );
+            const forcedDelay = $q((fulfill) => $timeout(() => fulfill(requestId), 100));
 
             // create a new table node
             const tableNode = angular.element('<table class="display nowrap rv-data-table"></table>');
@@ -161,12 +175,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             initButtons();
 
             // returns array of column info where .data field has any period characters escaped
-            const escapedColumns = columns => {
+            const escapedColumns = (columns) => {
                 // deep copy so we don't change the displayData.columns array.
                 // that array is used in other places, and messing with it will
                 // break things.
                 const copyArray = angular.copy(columns);
-                copyArray.forEach(column => {
+                copyArray.forEach((column) => {
                     column.data = column.data.replace(/\./g, '\\.');
                 });
 
@@ -177,12 +191,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             const order = initColumns();
 
             // define pre-deformatting function for date columns
-            $.fn.dataTable.ext.order['date-pre'] = d => parseInt(d.replace(/\D/g, ''));
+            $.fn.dataTable.ext.order['date-pre'] = (d) => parseInt(d.replace(/\D/g, ''));
 
             // Reset datatable to initial state if all sorts are removed
             // See: https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2119
             // Modified from: https://datatables.net/plug-ins/api/fnSortNeutral
-            $.fn.dataTable.Api.register('fnSortNeutral()', oSettings => {
+            $.fn.dataTable.Api.register('fnSortNeutral()', (oSettings) => {
                 /* Remove any current sorting */
                 oSettings.aaSorting = [];
 
@@ -201,30 +215,60 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
 
             // ignore accents when searching if in strict matching mode
             if (!strictMatching) {
-                $.fn.dataTable.ext.ofnSearch['string'] = data => {
-                    return !data ?
-                        '' :
-                        typeof data === 'string' ?
-                            data
-                            .replace(/\n/g, ' ')
-                            .replace(/[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g, 'a')
-                            .replace(/[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g, 'e')
-                            .replace(/[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g, 'i')
-                            .replace(/[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g, 'o')
-                            .replace(/[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g, 'u')
-                            .replace(/[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g, 'A')
-                            .replace(/[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g, 'E')
-                            .replace(/[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g, 'I')
-                            .replace(/[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g, 'O')
-                            .replace(/[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g, 'U')
-                            .replace(/ç/g, 'c')
-                            .replace(/Ç/g, 'C')
-                            .replace(/æ/g, 'ae')
-                            .replace(/œ/g, 'oe')
-                            .replace(/ñ/g, 'n')
-                            .replace(/[ýÿ]/g, 'y') :
-                            data;
-                }
+                $.fn.dataTable.ext.ofnSearch['string'] = (data) => {
+                    return !data
+                        ? ''
+                        : typeof data === 'string'
+                        ? data
+                              .replace(/\n/g, ' ')
+                              .replace(
+                                  /[\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250]/g,
+                                  'a'
+                              )
+                              .replace(
+                                  /[\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD]/g,
+                                  'e'
+                              )
+                              .replace(
+                                  /[\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131]/g,
+                                  'i'
+                              )
+                              .replace(
+                                  /[\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275]/g,
+                                  'o'
+                              )
+                              .replace(
+                                  /[\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289]/g,
+                                  'u'
+                              )
+                              .replace(
+                                  /[\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F]/g,
+                                  'A'
+                              )
+                              .replace(
+                                  /[\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E]/g,
+                                  'E'
+                              )
+                              .replace(
+                                  /[\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197]/g,
+                                  'I'
+                              )
+                              .replace(
+                                  /[\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C]/g,
+                                  'O'
+                              )
+                              .replace(
+                                  /[\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244]/g,
+                                  'U'
+                              )
+                              .replace(/ç/g, 'c')
+                              .replace(/Ç/g, 'C')
+                              .replace(/æ/g, 'ae')
+                              .replace(/œ/g, 'oe')
+                              .replace(/ñ/g, 'n')
+                              .replace(/[ýÿ]/g, 'y')
+                        : data;
+                };
             }
 
             self.table = tableNode
@@ -244,12 +288,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     // need to remove autoWidth because we can have autoWidth and fix columns at the same time (if so, columns are note well displayed)
                     autoWidth: false, // without autoWidth, few columns will be stretched to fill available width, and many columns will cause the table to scroll horizontally
                     scroller: {
-                        displayBuffer: 10 // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
+                        displayBuffer: 10, // we tend to have fat tables which are hard to draw -> use small buffer https://datatables.net/reference/option/scroller.displayBuffer.
                         // see key-focus event to see why we put 10
                     }, // turn on virtual scroller extension
                     colReorder: {
                         fixedColumnsLeft: displayData.columns.length, // disable drag and drop for all columns, only allow reordering from settings
-                        realtime: false// we need this to know when reorder is done
+                        realtime: false, // we need this to know when reorder is done
                     },
                     /*select: true,*/ // allow row select,
                     buttons: [
@@ -261,8 +305,8 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             exportOptions: {
                                 // columns: exportColumns(displayData.columns), TODO
                                 columns: ':not(.rv-filter-noexport)', // need to use class if we want to dynamicly show/hide columns
-                                orthogonal: null // use real data, not renderer
-                            }
+                                orthogonal: null, // use real data, not renderer
+                            },
                         },
                         {
                             extend: 'csvHtml5',
@@ -270,14 +314,14 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             exportOptions: {
                                 // columns: exportColumns(displayData.columns), TODO: remove export part?
                                 columns: ':not(.rv-filter-noexport)', // need to use class if we want to dynamicly show/hide columns
-                                orthogonal: null // use real data, not renderer
+                                orthogonal: null, // use real data, not renderer
                             },
                             // allow for accented characters to export correctly
                             charset: 'UTF-16LE',
-                            bom: true
-                        }
+                            bom: true,
+                        },
                     ],
-                    oLanguage: oLang
+                    oLanguage: oLang,
                 });
 
             /**
@@ -293,7 +337,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 ROW_BUTTONS.zoom.self.enabled = isZoomEnabled;
 
                 // assign callbacks to row buttons
-                ROW_BUTTONS.details.self.action = row => {
+                ROW_BUTTONS.details.self.action = (row) => {
                     const currentLayout = layoutService.currentLayout();
                     if (currentLayout === 'small' || currentLayout === 'medium') {
                         onDetailsClick(row, true);
@@ -305,7 +349,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 ROW_BUTTONS.zoom.self.action = onZoomClick;
 
                 // make new common scopes for row buttons
-                Object.values(ROW_BUTTONS).forEach(button => {
+                Object.values(ROW_BUTTONS).forEach((button) => {
                     const buttonScope = scope.$new(true);
                     buttonScope.self = button.self;
 
@@ -333,12 +377,11 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     // now we are able to restore filters when reloading layers
                     if (config.columns.length === 0) {
                         config.columns = displayData.columns
-                            .filter(column =>
-                                column.data !== 'rvSymbol' && column.data !== 'rvInteractive')
-                            .map(col => new ConfigObject.createColumnNode(col, displayData.fields));
+                            .filter((column) => column.data !== 'rvSymbol' && column.data !== 'rvInteractive')
+                            .map((col) => new ConfigObject.createColumnNode(col, displayData.fields));
                     }
 
-                    const initialFilters = config.columns.map(column => column.filter.value).filter(a => a);
+                    const initialFilters = config.columns.map((column) => column.filter.value).filter((a) => a);
 
                     // update apply on map button based on whether the current filters are already applied if intended to
                     tableService.filter.isApplied = stateManager.display.table.data.filter.isApplied =
@@ -350,11 +393,13 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     // set width to 100px because we have the oid, the details and zoom to button. If it is
                     // another type of field, set width to be the title.
                     displayData.columns.forEach((column, index) => {
-                        const field = displayData.fields.find(field => field.name === column.data);
+                        const field = displayData.fields.find((field) => field.name === column.data);
                         // if field is undefine it is an interactive or symbol column
                         if (typeof field !== 'undefined') {
                             // set position if not defined
-                            if (column.position === -1) { column.position = index; }
+                            if (column.position === -1) {
+                                column.position = index;
+                            }
 
                             if (field.type === 'esriFieldTypeString') {
                                 const width = getColumnWidth(column.title, field.length, 250);
@@ -367,7 +412,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                                 column.type = 'number';
                             } else if (field.type === 'esriFieldTypeDate') {
                                 // convert each date cell to a better format
-                                displayData.rows.forEach(r => { r[field.name] = $filter('dateTimeZone')(r[field.name]) });
+                                displayData.rows.forEach((r) => {
+                                    r[field.name] = $filter('dateTimeZone')(r[field.name]);
+                                });
                                 const width = getColumnWidth(column.title, 0, 400, 375);
                                 column.width = `${width}px`;
                                 column.type = 'date';
@@ -415,7 +462,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 if (length) {
                     // some layer like http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6
                     // can have length = 2147483647 and it make the function crash
-                    length = (length < fieldLength) ? length : fieldLength;
+                    length = length < fieldLength ? length : fieldLength;
 
                     // generate a string with that much characters and get width
                     let metricsContent = getTextWidth(Array(length).join('x'));
@@ -484,16 +531,15 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             }
 
             /**
-            * Customize table information (title, size, description, apply filters and global search).
-            * @function customizeTable
-            * @private
-            * @param {Object} config    configuration file for table
-            */
+             * Customize table information (title, size, description, apply filters and global search).
+             * @function customizeTable
+             * @private
+             * @param {Object} config    configuration file for table
+             */
             // eslint-disable-next-line complexity
             function customizeTable(config = {}) {
                 // set title and description
-                displayData.filter.title = config.title ?
-                    config.title : self.display.requester.name;
+                displayData.filter.title = config.title ? config.title : self.display.requester.name;
                 displayData.filter.description = config.description ? config.description : '';
 
                 // check if we need to open in maximize or default view
@@ -513,36 +559,38 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 if (config.applyMap) {
                     // set isApplied to hide apply filters on map button
                     tableService.filter.isApplied = true;
-                    filters.data.filter.isApplied = tableService.filter.isApplied;  // set on layer so it can persist when we change layer
+                    filters.data.filter.isApplied = tableService.filter.isApplied; // set on layer so it can persist when we change layer
 
                     // prevent entering to this block again
                     config.applyMap = false;
                 }
 
                 // update filter flag (if data is filtered)
-                tableService.filter.isMapFiltered = query ? query !== "" : false;
-                filters.data.filter.isMapFiltered = tableService.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+                tableService.filter.isMapFiltered = query ? query !== '' : false;
+                filters.data.filter.isMapFiltered = tableService.filter.isMapFiltered; // set on layer so it can persist when we change layer
                 filters.requester.legendEntry.filter = tableService.filter.isMapFiltered;
             }
 
             /**
-            * Customize columns information (position, title, width, display, sort order, filter).
-            * @function customizeColumns
-            * @private
-            * @param {Object} config    configuration file for columns
-            * @return {Array} order    columns order array
-            */
+             * Customize columns information (position, title, width, display, sort order, filter).
+             * @function customizeColumns
+             * @private
+             * @param {Object} config    configuration file for columns
+             * @return {Array} order    columns order array
+             */
             function customizeColumns(config = {}) {
                 // check if colums configuration exist. If so use it to set columns
                 const order = [];
                 if (config.columns && config.columns.length > 0) {
                     // create an array for columns (add symbol and interactive column first)
-                    const columns = [displayData.columns.find(column => column.data === 'rvSymbol'),
-                    displayData.columns.find(column => column.data === 'rvInteractive')];
+                    const columns = [
+                        displayData.columns.find((column) => column.data === 'rvSymbol'),
+                        displayData.columns.find((column) => column.data === 'rvInteractive'),
+                    ];
 
-                    config.columns.forEach(configCol => {
+                    config.columns.forEach((configCol) => {
                         // find the data column who match the one in the config file
-                        const column = displayData.columns.find(col => configCol.data === col.data);
+                        const column = displayData.columns.find((col) => configCol.data === col.data);
 
                         // set position from the position in the configuration file array
                         column.position = columns.length;
@@ -573,7 +621,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         }
 
                         // set searchable (if false, data is there but not part of the filtering)
-                        column.searchable = (typeof configCol.searchable === 'undefined') || configCol.searchable;
+                        column.searchable = typeof configCol.searchable === 'undefined' || configCol.searchable;
 
                         // customize filter
                         customizeFilter(configCol, column);
@@ -587,12 +635,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             }
 
             /**
-            * Customize filter information (type, default value and if it is static or not).
-            * @function customizeFilter
-            * @private
-            * @param {Object} config    configuration file for filter
-            * @param {Object} column    column to apply the filter to
-            */
+             * Customize filter information (type, default value and if it is static or not).
+             * @function customizeFilter
+             * @private
+             * @param {Object} config    configuration file for filter
+             * @param {Object} column    column to apply the filter to
+             */
             function customizeFilter(config, column) {
                 // set filter type, value and if it can be modified
                 // if there is no filter properties, do not create the filter so set it to undefined
@@ -611,7 +659,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             const values = config.filter.value.split(',');
                             column.filter.min = values[0];
                             column.filter.max = values[1];
-                        } else if(column.type === 'date') {
+                        } else if (column.type === 'date') {
                             const dates = getDateFilter(config);
                             column.filter.min = dates.min;
                             column.filter.max = dates.max;
@@ -622,18 +670,19 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                     if (config.filter.static) {
                         column.filter.static = config.filter.static;
                     }
-                } else { column.filter = undefined; }
+                } else {
+                    column.filter = undefined;
+                }
             }
 
             /**
-            * Get min/max dates
-            * @function getDateFilter
-            * @private
-            * @param {Object} config    configuration file for filter
-            * @return {Object} dates {min: ,max:}
-            */
-           function getDateFilter(config) {
-
+             * Get min/max dates
+             * @function getDateFilter
+             * @private
+             * @param {Object} config    configuration file for filter
+             * @return {Object} dates {min: ,max:}
+             */
+            function getDateFilter(config) {
                 const type = typeof config.filter.value;
                 let dates = { min: null, max: null };
 
@@ -652,7 +701,6 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         dates.max = new Date(timeMax);
                     }
                     return dates;
-
                 } else if (type === 'object') {
                     // expect an object of type
                     dates.min = config.filter.value.min;
@@ -669,7 +717,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
              */
             function onTableInit() {
                 // turn off loading indicator after the table initialized or the forced delay whichever takes longer; cancel loading timeout as well
-                forcedDelay.then(requestId => {
+                forcedDelay.then((requestId) => {
                     // do not init table with older request ids
                     if (requestId !== stateManager.display.table.requestId) {
                         return;
@@ -696,7 +744,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         // focus on close button when table open (wcag requirement)
                         // at the same time it solve a problem because when focus is on menu button, even if focus is on the
                         // table cell it goes inside the menu and loop through it at the same time as we navigate the table
-                        $rootElement.find('[type=\'table\'] button.rv-close').rvFocus({ delay: 100 });
+                        $rootElement.find("[type='table'] button.rv-close").rvFocus({ delay: 100 });
 
                         // set table is initialize. Things that need to be done only once will be avoid at the next creation
                         displayData.filter.isInit = true;
@@ -715,11 +763,18 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                         self.table.scroller.measure();
 
                         // wrap the title inside a span so when we need to change it when global search is focused, there is no impact on the filters
-                        angular.element(tableService.getTable().header()).find('th').each((i, el) => {
-                            const title = el.innerHTML;
-                            el.innerHTML = '';
-                            el.appendChild(angular.element(`<span title="${title}" data-rv-column="${title}">${title}</span>`)[0]);
-                        });
+                        angular
+                            .element(tableService.getTable().header())
+                            .find('th')
+                            .each((i, el) => {
+                                const title = el.innerHTML;
+                                el.innerHTML = '';
+                                el.appendChild(
+                                    angular.element(
+                                        `<span title="${title}" data-rv-column="${title}">${title}</span>`
+                                    )[0]
+                                );
+                            });
 
                         // fired event to create filters
                         events.$broadcast(events.rvTableReady);
@@ -742,7 +797,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                                         parent: referenceService.panes.table,
                                         position: 'bottom rv-flex-global',
                                         hideDelay: false,
-                                        controller: 'ToastCtrl'
+                                        controller: 'ToastCtrl',
                                     });
                                 }
                             }, refreshInterval * 60000);
@@ -760,11 +815,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
              */
             function onTableDraw() {
                 // find all the button placeholders
-                Object.values(ROW_BUTTONS).forEach(button => {
-
+                Object.values(ROW_BUTTONS).forEach((button) => {
                     // set the disabled argument value
-                    button.disabledArg = (button.name === 'rv-zoom-marker') ?
-                        '!self.enabled || !self.visibility' : '';
+                    button.disabledArg = button.name === 'rv-zoom-marker' ? '!self.enabled || !self.visibility' : '';
 
                     // and replace when with properly compiled directives
                     tableNode.find(button.name).each((index, item) => {
@@ -817,8 +870,10 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
             function setkeytable() {
                 // check if we need to intialize the variable. We can't do this inside the init event
                 // because draw is fired before
-                self.tableBody = (typeof self.tableBody === 'undefined') ?
-                    $rootElement.find('.dataTables_scrollBody') : self.tableBody;
+                self.tableBody =
+                    typeof self.tableBody === 'undefined'
+                        ? $rootElement.find('.dataTables_scrollBody')
+                        : self.tableBody;
 
                 // when redraw focus is lost, put back focus on current cell
                 if (typeof index !== 'undefined') {
@@ -826,7 +881,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 }
 
                 // set current cell index when user click a cell
-                self.tableBody.on('click', 'td', event => {
+                self.tableBody.on('click', 'td', (event) => {
                     index = self.table.cell(event.currentTarget).index();
                 });
 
@@ -835,39 +890,39 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                  *
                  * // handle keyboard navigation
                  *  self.tableBody.on('keydown', 'td', event => {
-                    *  // get index value of currrent cell
-                    *  index = self.table.cell(event.currentTarget).index();
-                    *
-                    * if (!index) {
-                    *  return;
-                    * }
-                    *
-                    * // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
-                    * // get the number of columns
-                    * const indexes = self.table.rows().indexes();
-                    * const indexOf = indexes.indexOf(index.row);
-                    * const columns = self.table.columns()[0].length - 1;
-                    *
-                    * let node;
-                    * // if try to move before first column, stay on it
-                    * if (event.keyCode === keyNames.LEFT_ARROW) {
-                    *      node = self.table.cell(index.row, (index.column !== 0) ? index.column - 1 : 0).node();
-                    *      node.rvFocus();
-                    * } else if (event.keyCode === keyNames.RIGHT_ARROW) {
-                    *  // if try to move after last column, stay on it
-                    *      node = self.table.cell(index.row, (index.column !== columns) ?
-                    *          index.column + 1 : index.column).node();
-                    *          node.rvFocus();
-                    * } else if (event.keyCode === keyNames.UP_ARROW) {
-                    *      node = self.table.cell(indexes[indexOf - 1], index.column).node();
-                    *      node.rvFocus();
-                    * } else if (event.keyCode === keyNames.DOWN_ARROW) {
-                    *      node = self.table.cell(indexes[indexOf + 1], index.column).node();
-                    *      node.rvFocus();
-                    * }
-                    *
-                    * // set index values. It will be use to blur the cell on mouse scroll
-                    * index = self.table.cell(node).index();
+                 *  // get index value of currrent cell
+                 *  index = self.table.cell(event.currentTarget).index();
+                 *
+                 * if (!index) {
+                 *  return;
+                 * }
+                 *
+                 * // get arrays of rows indexes (specifically if reordered) and the index where it is in the arrays
+                 * // get the number of columns
+                 * const indexes = self.table.rows().indexes();
+                 * const indexOf = indexes.indexOf(index.row);
+                 * const columns = self.table.columns()[0].length - 1;
+                 *
+                 * let node;
+                 * // if try to move before first column, stay on it
+                 * if (event.keyCode === keyNames.LEFT_ARROW) {
+                 *      node = self.table.cell(index.row, (index.column !== 0) ? index.column - 1 : 0).node();
+                 *      node.rvFocus();
+                 * } else if (event.keyCode === keyNames.RIGHT_ARROW) {
+                 *  // if try to move after last column, stay on it
+                 *      node = self.table.cell(index.row, (index.column !== columns) ?
+                 *          index.column + 1 : index.column).node();
+                 *          node.rvFocus();
+                 * } else if (event.keyCode === keyNames.UP_ARROW) {
+                 *      node = self.table.cell(indexes[indexOf - 1], index.column).node();
+                 *      node.rvFocus();
+                 * } else if (event.keyCode === keyNames.DOWN_ARROW) {
+                 *      node = self.table.cell(indexes[indexOf + 1], index.column).node();
+                 *      node.rvFocus();
+                 * }
+                 *
+                 * // set index values. It will be use to blur the cell on mouse scroll
+                 * index = self.table.cell(node).index();
                  * });
                  */
             }
@@ -879,10 +934,12 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
              */
             function onTableSort(e, settings) {
                 // reset sort values
-                stateManager.display.table.data.columns.forEach(item => { item.sort = 'none'; });
+                stateManager.display.table.data.columns.forEach((item) => {
+                    item.sort = 'none';
+                });
 
                 // update sort column from the last sort, use value from statemanager because interactive column may have been added
-                settings.aLastSort.forEach(item => {
+                settings.aLastSort.forEach((item) => {
                     stateManager.display.table.data.columns[item.col].sort = item.dir;
                 });
 
@@ -922,8 +979,9 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
              */
             function onDetailsClick(rowNumber, useDialog = false) {
                 const data = self.table.row(rowNumber).data();
-                const layerRecord = configService.getSync.map.layerRecords.find(lr =>
-                    lr.config.id === requester.legendEntry.layerRecordId);
+                const layerRecord = configService.getSync.map.layerRecords.find(
+                    (lr) => lr.config.id === requester.legendEntry.layerRecordId
+                );
 
                 // get object id from row data
                 const objId = data[displayData.oidField];
@@ -938,17 +996,17 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                             name: proxy.getFeatureName(objId, data),
                             data: layerRecord.attributesToDetails(data, displayData.fields),
                             oid: objId,
-                            symbology: [{ svgcode: data.rvSymbol }]
-                        }
+                            symbology: [{ svgcode: data.rvSymbol }],
+                        },
                     ],
                     requestId: -1,
                     requester: {
-                        proxy
-                    }
+                        proxy,
+                    },
                 };
 
                 const details = {
-                    data: [detailsObj]
+                    data: [detailsObj],
                 };
 
                 if (useDialog) {
@@ -970,12 +1028,11 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
                 // it's not possble to return a compiled directive from the `render` function since directives compile directly into dom nodes
                 // first, button placeholder nodes are rendered as part of the cell data
                 // then, on `draw.dt`, these placeholders are replaced with proper compiled button directives
-                const interactiveColumnExist = displayData.columns.find(column =>
-                    column.data === 'rvInteractive');
+                const interactiveColumnExist = displayData.columns.find((column) => column.data === 'rvInteractive');
 
                 interactiveColumnExist.render = (data, type, row, meta) => {
-                    const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS).map(button =>
-                        `<${button.name} row="${meta.row}"></${button.name}>`)
+                    const buttonPlaceholdersTemplate = Object.values(ROW_BUTTONS)
+                        .map((button) => `<${button.name} row="${meta.row}"></${button.name}>`)
                         .join('');
                     return `<div class="rv-wrapper">${buttonPlaceholdersTemplate}</div>`;
                 };
@@ -989,7 +1046,7 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
         function destroyTable() {
             if (self.table) {
                 // close the settings panel to allow for the new table loading to be viewed
-                self.tableService.isSettingOpen = false
+                self.tableService.isSettingOpen = false;
 
                 // destroy table with all events
                 self.table.destroy(true); // https://datatables.net/reference/api/destroy()
@@ -1021,8 +1078,19 @@ function rvTableDefault($timeout, $q, stateManager, $compile, geoService, $trans
  * it also watches for dispaly data changes and re-creates the table when it does change.
  * @function Controller
  */
-function Controller($rootScope, $scope, $timeout, $translate, tocService, stateManager, events,
-    tableService, configService, appInfo, debounceService) {
+function Controller(
+    $rootScope,
+    $scope,
+    $timeout,
+    $translate,
+    tocService,
+    stateManager,
+    events,
+    tableService,
+    configService,
+    appInfo,
+    debounceService
+) {
     'ngInject';
     const self = this;
 
@@ -1050,7 +1118,8 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
                 if (property === 'active') {
                     isFullyOpen = value;
 
-                    if (value && deferredAction) { // if fully opened and table creation was deferred, call it
+                    if (value && deferredAction) {
+                        // if fully opened and table creation was deferred, call it
                         deferredAction();
                         deferredAction = null;
                     }
@@ -1059,29 +1128,38 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
         });
 
         // watch tableService onCreate to make a new table
-        $scope.$watch(() => tableService.filterTimeStamps.onCreated, val => {
-            if (val !== null) {
-                if (isFullyOpen) {
-                    self.createTable(getDToLang());
-                } else {
-                    // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
-                    // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
-                    deferredAction = () => self.createTable(getDToLang());
+        $scope.$watch(
+            () => tableService.filterTimeStamps.onCreated,
+            (val) => {
+                if (val !== null) {
+                    if (isFullyOpen) {
+                        self.createTable(getDToLang());
+                    } else {
+                        // we have to deferr table creating until after the panel fully opens, we if try to create the table while the animation is in progress, it freezes as all calculations that Datatables is doing blocks ui;
+                        // this means when the panel first opens, it will take 300ms longer to display any table then upon subsequent table creation when the panel is already open and the user just switches between layers;
+                        deferredAction = () => self.createTable(getDToLang());
+                    }
                 }
             }
-        });
+        );
 
-        $scope.$watch(() => tableService.filterTimeStamps.onDeleted, val => {
-            if (val !== null) {
-                self.destroyTable();
+        $scope.$watch(
+            () => tableService.filterTimeStamps.onDeleted,
+            (val) => {
+                if (val !== null) {
+                    self.destroyTable();
+                }
             }
-        });
+        );
 
-        $scope.$watch(() => tableService.filterTimeStamps.onChanged, val => {
-            if (val !== null) {
-                self.table.draw();
+        $scope.$watch(
+            () => tableService.filterTimeStamps.onChanged,
+            (val) => {
+                if (val !== null) {
+                    self.table.draw();
+                }
             }
-        });
+        );
 
         // wait for print event and print the table
         $scope.$on(events.rvDataPrint, () => {
@@ -1112,7 +1190,6 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
          * @private
          */
         function setDToLang() {
-
             const newLang = getDToLang();
             let oLang = self.table.context[0].oLanguage;
 
@@ -1144,25 +1221,28 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
                 sInfoPostFix: 'postfix',
                 sLoadingRecords: 'loadrec',
                 sZeroRecords: 'zerorecords',
-                sEmptyTable: 'emptytable'
+                sEmptyTable: 'emptytable',
             };
             const oPaginateSrc = {
                 sFirst: 'first',
                 sPrevious: 'previous',
                 sNext: 'next',
-                sLast: 'last'
+                sLast: 'last',
             };
             const oAriaSrc = {
                 sSortAscending: 'sortasc',
-                sSortDescending: 'sortdsc'
+                sSortDescending: 'sortdsc',
             };
             const oLang = { oPaginate: {}, oAria: {} };
-            Object.keys(oLangSrc).forEach(key =>
-                (oLang[key] = $translate.instant(`filter.default.label.${oLangSrc[key]}`)));
-            Object.keys(oPaginateSrc).forEach(key =>
-                (oLang.oPaginate[key] = $translate.instant(`filter.default.label.${oPaginateSrc[key]}`)));
-            Object.keys(oAriaSrc).forEach(key =>
-                (oLang.oAria[key] = $translate.instant(`filter.default.aria.${oAriaSrc[key]}`)));
+            Object.keys(oLangSrc).forEach(
+                (key) => (oLang[key] = $translate.instant(`filter.default.label.${oLangSrc[key]}`))
+            );
+            Object.keys(oPaginateSrc).forEach(
+                (key) => (oLang.oPaginate[key] = $translate.instant(`filter.default.label.${oPaginateSrc[key]}`))
+            );
+            Object.keys(oAriaSrc).forEach(
+                (key) => (oLang.oAria[key] = $translate.instant(`filter.default.aria.${oAriaSrc[key]}`))
+            );
 
             languageObjects[lang] = oLang;
 
@@ -1186,7 +1266,7 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
                 // TODO: make it work when new language is added
                 const info = self.table.table().container().getElementsByClassName('dataTables_info')[0];
                 const infos = info.innerText.split(' ');
-                const index = (configService.getSync.language === 'en-CA') ? 1 : 3;
+                const index = configService.getSync.language === 'en-CA' ? 1 : 3;
                 infos[index] = scroll.page().start + 1;
                 infos[index + 2] = scroll.page().end + 1;
                 info.innerText = infos.join(' ');
@@ -1208,7 +1288,9 @@ function Controller($rootScope, $scope, $timeout, $translate, tocService, stateM
     function triggerTableButton(index) {
         // setting panel need to be close for datatable to export or print
         const setting = tableService.isSettingOpen;
-        if (setting) { tableService.isSettingOpen = false; }
+        if (setting) {
+            tableService.isSettingOpen = false;
+        }
 
         // see `buttons` array in the DataTable constructor object in the directive above
         const button = self.table.button(index);

@@ -42,14 +42,13 @@ export default class Element {
      * Sets the element content. Use this if `elementBody` was undefined when initalizing this class.
      */
     set elem(element: JQuery<HTMLElement>) {
-
         if (this._element) {
             this._element.html(element.html());
         } else {
             this._element = element;
         }
         this.elem.attr('id', this.elem.attr('id') || 'PanelElem' + Math.round(Math.random() * 100000000).toString());
-        this.elem.addClass("elem");
+        this.elem.addClass('elem');
 
         if (this.panel) {
             try {

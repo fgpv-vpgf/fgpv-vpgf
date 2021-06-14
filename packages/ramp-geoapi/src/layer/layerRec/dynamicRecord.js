@@ -19,8 +19,12 @@ class DynamicRecord extends attribRecord.AttribRecord {
         return ['visibleAtMapScale', 'visible', 'spatialReference', 'layerInfos', 'supportsDynamicLayers'];
     }
 
-    get layerType() { return shared.clientLayerType.ESRI_DYNAMIC; }
-    get isTrueDynamic() { return this._isTrueDynamic; }
+    get layerType() {
+        return shared.clientLayerType.ESRI_DYNAMIC;
+    }
+    get isTrueDynamic() {
+        return this._isTrueDynamic;
+    }
 
     /**
      * Create a layer record with the appropriate geoApi layer type.
@@ -65,14 +69,13 @@ class DynamicRecord extends attribRecord.AttribRecord {
         this._visDelay = {
             lastIdx: -1,
             parentToggle: false,
-            parentValue: false
+            parentValue: false,
         };
 
         // trickery. no code here ever uses this, because a dynamic record has no concept of a default feature class
         // (whereas the other Records do). However, since we use the value as a unique key for tracking bounding
         // boxes, and a dynamic record can have a bounding box at the root level, we need to return a value.
         this._defaultFC = 'X';
-
     }
 
     /**
@@ -117,7 +120,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
             tProxy.convertToPlaceholder(pfc);
             this._proxies[strIdx] = tProxy;
             return tProxy;
-
         }
     }
 
@@ -148,7 +150,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // to the same value. but we dont want to trigger a number of opacity change requests,
         // so we do some trickery here.
 
-        Object.keys(this._featClasses).forEach(idx => {
+        Object.keys(this._featClasses).forEach((idx) => {
             const fc = this._featClasses[idx];
             if (fc) {
                 // important: must use the private ._opacity property here,
@@ -183,7 +185,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         const dummyState = {
             opacity: 1,
             visibility: false,
-            query: false
+            query: false,
         };
 
         // subfunction to clone a layerEntries config object.
@@ -193,7 +195,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         //  but is being done as a quick n dirty workaround. At a later time,
         // the guts of this function can be re-examined for a better,
         // less hardcoded solution.
-        const cloneConfig = origConfig => {
+        const cloneConfig = (origConfig) => {
             const clone = {};
 
             // direct copies, no defaulting
@@ -214,7 +216,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 clone.state = {
                     visiblity: origConfig.visiblity,
                     opacity: origConfig.opacity,
-                    query: origConfig.query
+                    query: origConfig.query,
                 };
             } else {
                 clone.state = Object.assign({}, dummyState);
@@ -230,10 +232,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // collate any relevant overrides from the config.
         const subConfigs = {};
 
-        this.config.layerEntries.forEach(le => {
+        this.config.layerEntries.forEach((le) => {
             subConfigs[le.index.toString()] = {
                 config: cloneConfig(le),
-                defaulted: this._configIsComplete
+                defaulted: this._configIsComplete,
             };
         });
 
@@ -241,7 +243,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // if it does not exist or is not defaulted, will do that first
         // id param is an integer in string format
         const fetchSubConfig = (id, serverName = '') => {
-
             if (subConfigs[id]) {
                 const subC = subConfigs[id];
                 if (!subC.defaulted) {
@@ -262,12 +263,12 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 const configSeed = {
                     name: serverName,
                     index: parseInt(id),
-                    stateOnly: true
+                    stateOnly: true,
                 };
                 const newConfig = cloneConfig(configSeed);
                 subConfigs[id] = {
                     config: newConfig,
-                    defaulted: true
+                    defaulted: true,
                 };
                 return newConfig;
             }
@@ -292,16 +293,18 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 const treeGroup = {
                     entryIndex: layerInfo.id,
                     name: subC.name,
-                    childs: []
+                    childs: [],
                 };
                 treeArray.push(treeGroup);
 
                 // process the kids in the group.
                 // store the child leaves in the internal variable
-                layerInfo.subLayerIds.forEach(slid => {
-                    processLayerInfo(this._layer.layerInfos.find(li => li.id === slid), treeGroup.childs);
+                layerInfo.subLayerIds.forEach((slid) => {
+                    processLayerInfo(
+                        this._layer.layerInfos.find((li) => li.id === slid),
+                        treeGroup.childs
+                    );
                 });
-
             } else {
                 // leaf sublayer. make placeholders, add leaf to the tree
 
@@ -325,13 +328,16 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
         // process the child layers our config is interested in, and all their children.
         if (this.config.layerEntries) {
-            this.config.layerEntries.forEach(le => {
-                processLayerInfo(this._layer.layerInfos.find(li => li.id === le.index), this._childTree);
+            this.config.layerEntries.forEach((le) => {
+                processLayerInfo(
+                    this._layer.layerInfos.find((li) => li.id === le.index),
+                    this._childTree
+                );
             });
         }
 
         // converts server layer type string to client layer type string
-        const serverLayerTypeToClientLayerType = serverType => {
+        const serverLayerTypeToClientLayerType = (serverType) => {
             switch (serverType) {
                 case 'Feature Layer':
                     return shared.clientLayerType.ESRI_FEATURE;
@@ -345,8 +351,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
 
         // process each leaf we walked to in the processLayerInfo loop above
         // idx is a string
-        leafsToInit.forEach(idx => {
-
+        leafsToInit.forEach((idx) => {
             const subC = subConfigs[idx].config;
             const attribPackage = this._apiRef.attribs.loadServerAttribs(this._layer.url, idx, subC.outfields);
             const dFC = new dynamicFC.DynamicFC(this, idx, attribPackage, subC);
@@ -363,8 +368,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
             loadPromises.push(dFC.loadSymbology());
 
             // update asynchronous values
-            const pLD = dFC.getLayerData()
-                .then(ld => {
+            const pLD = dFC
+                .getLayerData()
+                .then((ld) => {
                     dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
 
                     // if we didn't have an extent defined on the config, use the layer extent
@@ -379,10 +385,10 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     dFC.nameField = subC.nameField || ld.nameField || '';
 
                     // check the config for any custom field aliases, and add the alias as a property if it exists
-                    ld.fields.forEach(field => {
-                        const layerConfig = this.config.source.layerEntries.find(r => r.index == idx);
+                    ld.fields.forEach((field) => {
+                        const layerConfig = this.config.source.layerEntries.find((r) => r.index == idx);
                         if (layerConfig && layerConfig.fieldMetadata) {
-                            const clientAlias = layerConfig.fieldMetadata.find(f => f.data === field.name);
+                            const clientAlias = layerConfig.fieldMetadata.find((f) => f.data === field.name);
                             field.clientAlias = clientAlias ? clientAlias.alias : undefined;
                         }
                     });
@@ -394,7 +400,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                         dFC.geomType = ld.geometryType;
                         dFC.oidField = ld.oidField;
 
-                        return this.getFeatureCount(idx).then(fc => {
+                        return this.getFeatureCount(idx).then((fc) => {
                             dFC.featureCount = fc;
                         });
                     } else {
@@ -405,7 +411,6 @@ class DynamicRecord extends attribRecord.AttribRecord {
                     dFC.layerType = shared.clientLayerType.UNRESOLVED;
                 });
             loadPromises.push(pLD);
-
         });
 
         // TODO careful now, as the dynamicFC.DynamicFC constructor also appears to be setting visibility on the parent.
@@ -415,8 +420,12 @@ class DynamicRecord extends attribRecord.AttribRecord {
             // use _featClasses as it contains keys that exist on the server and are
             // potentially visible in the client.
             const initVis = Object.keys(this._featClasses)
-                .filter(fcId => { return fetchSubConfig(fcId).config.state.visibility; })
-                .map(fcId => { return parseInt(fcId); });
+                .filter((fcId) => {
+                    return fetchSubConfig(fcId).config.state.visibility;
+                })
+                .map((fcId) => {
+                    return parseInt(fcId);
+                });
 
             if (initVis.length === 0) {
                 initVis.push(-1); // esri code for set all to invisible
@@ -435,7 +444,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 callbackParamName: 'callback',
                 handleAs: 'json',
             });
-            const setTitle = defService.then(serviceResult => {
+            const setTitle = defService.then((serviceResult) => {
                 this.name = serviceResult.mapName;
             });
             loadPromises.push(setTitle);
@@ -586,7 +595,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
      * @param {String}  childIndex  index of the child layer to target
      * @param {Array} [exclusions]  list of any filters to not apply. omission includes all filters
      */
-    applyFilterToLayer (childIndex, exclusions = []) {
+    applyFilterToLayer(childIndex, exclusions = []) {
         this._featClasses[childIndex].applyFilterToLayer(exclusions);
     }
 
@@ -670,28 +679,27 @@ class DynamicRecord extends attribRecord.AttribRecord {
         if (!shared.layerLoaded(this.state)) {
             opts.layerIds = []; // quick quit
         } else {
-            opts.layerIds = this._layer.visibleLayers
-                .filter(leafIndex => {
-                    // Determine whether the leaf has `stateOnly` set to true in the config.
-                    const isStateOnly = this.initialConfig.layerEntries.some(entry => {
-                        return entry.index === leafIndex && entry.stateOnly;
-                    });
-
-                    if (leafIndex === -1) {
-                        // this is marker for nothing is visible. get rid of it
-                        return false;
-                    } else {
-                        const fc = this._featClasses[leafIndex];
-                        if (fc) {
-                            // keep if it is queryable, on-scale, and is not state only.
-                            return fc.queryable && !isStateOnly && !fc.isOffScale(opts.map.getScale()).offScale;
-                        } else {
-                            // we dont have a feature class for this id.
-                            //  it is likely a a group or something visible but not active
-                            return false;
-                        }
-                    }
+            opts.layerIds = this._layer.visibleLayers.filter((leafIndex) => {
+                // Determine whether the leaf has `stateOnly` set to true in the config.
+                const isStateOnly = this.initialConfig.layerEntries.some((entry) => {
+                    return entry.index === leafIndex && entry.stateOnly;
                 });
+
+                if (leafIndex === -1) {
+                    // this is marker for nothing is visible. get rid of it
+                    return false;
+                } else {
+                    const fc = this._featClasses[leafIndex];
+                    if (fc) {
+                        // keep if it is queryable, on-scale, and is not state only.
+                        return fc.queryable && !isStateOnly && !fc.isOffScale(opts.map.getScale()).offScale;
+                    } else {
+                        // we dont have a feature class for this id.
+                        //  it is likely a a group or something visible but not active
+                        return false;
+                    }
+                }
+            });
         }
 
         // if there are no layerIds to inspect, don't hit the server
@@ -703,7 +711,7 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // if there are filter queries on the layer, apply them in the identify task
         opts.layerDefinitions = [];
 
-        opts.layerIds.forEach(leafIndex => {
+        opts.layerIds.forEach((leafIndex) => {
             let childProxy = this.getChildProxy(leafIndex);
             opts.layerDefinitions[leafIndex] = childProxy.filter.getCombinedSql();
             const identifyResult = new shared.IdentifyResult(childProxy);
@@ -715,65 +723,64 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // TODO verify if 0 is valid click tolerance. if so, need to address falsy logic.
         opts.tolerance = opts.tolerance || this.clickTolerance || 5;
 
-        const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts)
-            .then(clickResults => {
-                const hitIndexes = []; // sublayers that we got results for
+        const identifyPromise = this._apiRef.layer.serverLayerIdentify(this._layer, opts).then((clickResults) => {
+            const hitIndexes = []; // sublayers that we got results for
 
-                // transform attributes of click results into {name,data} objects
-                // one object per identified feature
-                //
-                // each feature will have its attributes converted into a table
-                // placeholder for now until we figure out how to signal the panel that
-                // we want to make a nice table
-                clickResults.forEach(ele => {
-                    // NOTE: the identify service returns aliased field names, so no need to look them up here.
-                    //       however, this means we need to un-alias the data when doing field lookups.
-                    // NOTE: ele.layerId is what we would call featureIdx
-                    hitIndexes.push(ele.layerId);
+            // transform attributes of click results into {name,data} objects
+            // one object per identified feature
+            //
+            // each feature will have its attributes converted into a table
+            // placeholder for now until we figure out how to signal the panel that
+            // we want to make a nice table
+            clickResults.forEach((ele) => {
+                // NOTE: the identify service returns aliased field names, so no need to look them up here.
+                //       however, this means we need to un-alias the data when doing field lookups.
+                // NOTE: ele.layerId is what we would call featureIdx
+                hitIndexes.push(ele.layerId);
 
-                    // get metadata about this sublayer
-                    this.getLayerData(ele.layerId).then(lData => {
-                        const identifyResult = identifyResults[ele.layerId];
+                // get metadata about this sublayer
+                this.getLayerData(ele.layerId).then((lData) => {
+                    const identifyResult = identifyResults[ele.layerId];
 
-                        if (lData.supportsFeatures) {
-                            const unAliasAtt = attribFC.AttribFC.unAliasAttribs(ele.feature.attributes, lData.fields);
-                            const objId = unAliasAtt[lData.oidField];
-                            const objIdStr = objId.toString();
+                    if (lData.supportsFeatures) {
+                        const unAliasAtt = attribFC.AttribFC.unAliasAttribs(ele.feature.attributes, lData.fields);
+                        const objId = unAliasAtt[lData.oidField];
+                        const objIdStr = objId.toString();
 
-                            // TODO: traditionally, we did not pass fields into attributesToDetails as data was
-                            //      already aliased from the server. now, since we are extracting field type as
-                            //      well, this means things like date formatting might not be applied to
-                            //      identify results. examine the impact of providing the fields parameter
-                            //      to data that is already aliased.
-                            let svg = this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer);
+                        // TODO: traditionally, we did not pass fields into attributesToDetails as data was
+                        //      already aliased from the server. now, since we are extracting field type as
+                        //      well, this means things like date formatting might not be applied to
+                        //      identify results. examine the impact of providing the fields parameter
+                        //      to data that is already aliased.
+                        let svg = this._apiRef.symbology.getGraphicIcon(unAliasAtt, lData.renderer);
 
-                            identifyResult.data.push({
-                                name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
-                                data: this.attributesToDetails(ele.feature.attributes, lData.fields),
-                                oid: unAliasAtt[lData.oidField],
-                                symbology: [{
-                                    svgcode: svg
-                                }]
-                            });
-
-                        }
-
-                        identifyResult.isLoading = false;
-                    });
-                });
-
-                // set the rest of the entries to loading false
-                identifyResults.forEach(identifyResult => {
-                    if (hitIndexes.indexOf(identifyResult.requester.proxy.itemIndex) === -1) {
-                        identifyResult.isLoading = false;
+                        identifyResult.data.push({
+                            name: this.getFeatureName(ele.layerId, objIdStr, unAliasAtt),
+                            data: this.attributesToDetails(ele.feature.attributes, lData.fields),
+                            oid: unAliasAtt[lData.oidField],
+                            symbology: [
+                                {
+                                    svgcode: svg,
+                                },
+                            ],
+                        });
                     }
-                });
 
+                    identifyResult.isLoading = false;
+                });
             });
 
+            // set the rest of the entries to loading false
+            identifyResults.forEach((identifyResult) => {
+                if (hitIndexes.indexOf(identifyResult.requester.proxy.itemIndex) === -1) {
+                    identifyResult.isLoading = false;
+                }
+            });
+        });
+
         return {
-            identifyResults: identifyResults.filter(identifyResult => identifyResult), // collapse sparse array
-            identifyPromise
+            identifyResults: identifyResults.filter((identifyResult) => identifyResult), // collapse sparse array
+            identifyPromise,
         };
     }
 
@@ -792,14 +799,13 @@ class DynamicRecord extends attribRecord.AttribRecord {
         // will not use FC classes, as we also need group names
 
         const intIdx = parseInt(childIndex);
-        return this._layer.layerInfos.find(li => li.id === intIdx).name;
+        return this._layer.layerInfos.find((li) => li.id === intIdx).name;
     }
 
     // TODO we may want version of layerRecord.zoomToBoundary that targets a child index.
     //      alternately this might go on the proxy and then we go direct from there.
-
 }
 
 module.exports = () => ({
-    DynamicRecord
+    DynamicRecord,
 });

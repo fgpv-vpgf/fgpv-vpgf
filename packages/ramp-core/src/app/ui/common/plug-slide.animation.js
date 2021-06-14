@@ -29,17 +29,15 @@ const animationTypes = { slide: makeSlideAnim, fade: makeFadeAnim };
 
 // register animations, loops through directions and types
 directions.forEach((direction, index) =>
-    Object.keys(animationTypes).forEach(type => {
+    Object.keys(animationTypes).forEach((type) => {
         module
-            .animation(`.rv-plug-${type}-${direction}`,
-                animationBuilder(type, index, false))
-            .animation(`.rv-plug-${type}-${direction}-grand`,
-                animationBuilder(type, index, true));
-    }));
+            .animation(`.rv-plug-${type}-${direction}`, animationBuilder(type, index, false))
+            .animation(`.rv-plug-${type}-${direction}-grand`, animationBuilder(type, index, true));
+    })
+);
 
 // stationary fade animation
-module
-    .animation('.rv-plug-fade', animationBuilder('fade', 4, false));
+module.animation('.rv-plug-fade', animationBuilder('fade', 4, false));
 
 // TODO: add option to change duration through an attribute
 // TODO: add option to add delay before animation starts through an attribute
@@ -63,22 +61,22 @@ function animationBuilder(type, direction, grand) {
             enter: func($rootElement, direction, false, grand),
             leave: func($rootElement, direction, true, grand),
             addClass: ngShowHideWrapper(true, func, $rootElement, direction, grand),
-            removeClass: ngShowHideWrapper(false, func, $rootElement, direction, grand)
+            removeClass: ngShowHideWrapper(false, func, $rootElement, direction, grand),
         };
     };
 }
 
 /**
-* Creates Fade animations
-*
-* @function  makeFadeAnim
-* @param  {Object}   $rootElement
-* @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
-* @param  {Bool}     reverse     whether to reverse the animation direction
-* @param  {Bool}     grand       type of shift (see top comment)
-* @param  {Object}   element     plug node
-* @param  {Function} callback    callback from angular
-*/
+ * Creates Fade animations
+ *
+ * @function  makeFadeAnim
+ * @param  {Object}   $rootElement
+ * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
+ * @param  {Bool}     reverse     whether to reverse the animation direction
+ * @param  {Bool}     grand       type of shift (see top comment)
+ * @param  {Object}   element     plug node
+ * @param  {Function} callback    callback from angular
+ */
 function makeFadeAnim($rootElement, direction, reverse, grand) {
     return (element, callback) => {
         let duration = RV_PLUG_SLIDE_DURATION;
@@ -88,20 +86,20 @@ function makeFadeAnim($rootElement, direction, reverse, grand) {
             x: shift.x,
             y: shift.y,
             z: 0,
-            opacity: 0
+            opacity: 0,
         };
 
         let end = {
             x: '0%',
             y: '0%',
             z: 0,
-            opacity: 1
+            opacity: 1,
         };
 
         let config = {
             ease: RV_SWIFT_IN_OUT_EASE,
             onComplete: cleanup(element, callback),
-            clearProps: 'transform,opacity' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
+            clearProps: 'transform,opacity', // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
         };
 
         buildTween(element, callback, duration, reverse, start, end, config);
@@ -109,16 +107,16 @@ function makeFadeAnim($rootElement, direction, reverse, grand) {
 }
 
 /**
-* Creates Slide animations
-*
-* @function makeSlideAnim
-* @param  {Object}   $rootElement
-* @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
-* @param  {Bool}     reverse     whether to reverse the animation direction
-* @param  {Bool}     grand       type of shift (see top comment)
-* @param  {Object}   element     plug node
-* @param  {Function} callback    callback from angular
-*/
+ * Creates Slide animations
+ *
+ * @function makeSlideAnim
+ * @param  {Object}   $rootElement
+ * @param  {Number}   direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
+ * @param  {Bool}     reverse     whether to reverse the animation direction
+ * @param  {Bool}     grand       type of shift (see top comment)
+ * @param  {Object}   element     plug node
+ * @param  {Function} callback    callback from angular
+ */
 function makeSlideAnim($rootElement, direction, reverse, grand) {
     return (element, callback) => {
         let duration = RV_PLUG_SLIDE_DURATION;
@@ -127,19 +125,19 @@ function makeSlideAnim($rootElement, direction, reverse, grand) {
         let start = {
             x: shift.x,
             y: shift.y,
-            z: 0
+            z: 0,
         };
 
         let end = {
             x: '0%',
             y: '0%',
-            z: 0
+            z: 0,
         };
 
         let config = {
             ease: RV_SWIFT_IN_OUT_EASE,
             onComplete: cleanup(element, callback),
-            clearProps: 'transform' // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
+            clearProps: 'transform', // http://tiny.cc/dbuh4x; http://tiny.cc/wbuh4x
         };
 
         buildTween(element, callback, duration, reverse, start, end, config);
@@ -147,41 +145,47 @@ function makeSlideAnim($rootElement, direction, reverse, grand) {
 }
 
 /**
-* Retrieves the panel size of an element, based on animation direction
-*
-* @function getPanelSize
-* @param  {Object}  element     plug node
-* @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
-* @return {Number}  size        size of relevant dimension
-*/
+ * Retrieves the panel size of an element, based on animation direction
+ *
+ * @function getPanelSize
+ * @param  {Object}  element     plug node
+ * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
+ * @return {Number}  size        size of relevant dimension
+ */
 function getPanelSize(element, direction) {
-    if (direction % 2 === 0) { // Down, Up
+    if (direction % 2 === 0) {
+        // Down, Up
         return element.find(RV_PANEL_SELECTOR).outerHeight(true);
-    } else { // Left, Right
+    } else {
+        // Left, Right
         return element.find(RV_PANEL_SELECTOR).outerWidth(true);
     }
 }
 
 /**
-* Calculates the delta needed for a grand animation
-*
-* @function deltaHelper
-* @param  {Object}  $rootElement
-* @param  {Object}  element      plug node
-* @param  {Number}  direction    direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
-* @return {Number}  delta        amount the panel should move
-*/
+ * Calculates the delta needed for a grand animation
+ *
+ * @function deltaHelper
+ * @param  {Object}  $rootElement
+ * @param  {Object}  element      plug node
+ * @param  {Number}  direction    direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
+ * @return {Number}  delta        amount the panel should move
+ */
 function deltaHelper($rootElement, element, direction) {
     let delta = 10;
 
-    if (direction === 0) { // DOWN
+    if (direction === 0) {
+        // DOWN
         delta += element.position().top + getPanelSize(element, direction);
-    } else if (direction === 1) { // RIGHT
+    } else if (direction === 1) {
+        // RIGHT
         delta += element.position().left + getPanelSize(element, direction);
-    } else if (direction === 2) { // UP
+    } else if (direction === 2) {
+        // UP
         // not adding on to 10 because there is no drop shadow above the panel
         delta = $rootElement.outerHeight(true) - element.position().top;
-    } else { // LEFT
+    } else {
+        // LEFT
         delta += $rootElement.outerWidth(true) - element.position().left;
     }
 
@@ -189,33 +193,33 @@ function deltaHelper($rootElement, element, direction) {
 }
 
 /**
-* Calculates the amount to translate the panel
-*
-* @function calculateShift
-* @param  {Object}  $rootElement
-* @param  {Object}  element     plug node
-* @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
-* @param  {Bool}    grand       type of shift (see top comment)
-* @return {Object}  shift       amount to move the panel
-*/
+ * Calculates the amount to translate the panel
+ *
+ * @function calculateShift
+ * @param  {Object}  $rootElement
+ * @param  {Object}  element     plug node
+ * @param  {Number}  direction   direction of movement (0 - down, 1 - right, 2 - up, 3 - left, 4 - stationary)
+ * @param  {Bool}    grand       type of shift (see top comment)
+ * @return {Object}  shift       amount to move the panel
+ */
 function calculateShift($rootElement, element, direction, grand) {
     const shift = {
         x: 0,
-        y: 0
+        y: 0,
     };
 
     const travel = {
         0: 'y',
         1: 'x',
         2: 'y',
-        3: 'x'
+        3: 'x',
     };
 
     const modifier = {
         0: '-',
         1: '-',
         2: '',
-        3: ''
+        3: '',
     };
 
     if (direction !== 4) {
@@ -229,12 +233,12 @@ function calculateShift($rootElement, element, direction, grand) {
 }
 
 /**
-* Deletes the element's current animation sequence and calls angulars callback
-*
-* @function cleanup
-* @param  {Object}   element    plug node
-* @param  {Function} callback   callback from angular
-*/
+ * Deletes the element's current animation sequence and calls angulars callback
+ *
+ * @function cleanup
+ * @param  {Object}   element    plug node
+ * @param  {Function} callback   callback from angular
+ */
 function cleanup(element, callback) {
     return () => {
         delete sequences[element.data(RV_PLUG_SLIDE_ID_DATA)];
@@ -254,7 +258,7 @@ function ngShowHideWrapper(addClass, func, $rootElement, direction, grand) {
         // both `ng-hide` and `ng-show` use `ng-hide` css class
         const action = {
             true: func($rootElement, direction, true, grand),
-            false: func($rootElement, direction, false, grand)
+            false: func($rootElement, direction, false, grand),
         };
 
         // pick the action to perform;
@@ -264,17 +268,17 @@ function ngShowHideWrapper(addClass, func, $rootElement, direction, grand) {
 }
 
 /**
-* Handles building the animation tween
-*
-* @function buildTween
-* @param  {Object}   element    plug node
-* @param  {Function} callback   callback from angular
-* @param  {Number}   duration   length of animation in seconds
-* @param  {Bool}     reverse    whether to reverse the animation direction
-* @param  {Object}   start      beginning state for the animation
-* @param  {Object}   end        end state for the animation
-* @param  {Object}   config     additional flags for the actual end state
-*/
+ * Handles building the animation tween
+ *
+ * @function buildTween
+ * @param  {Object}   element    plug node
+ * @param  {Function} callback   callback from angular
+ * @param  {Number}   duration   length of animation in seconds
+ * @param  {Bool}     reverse    whether to reverse the animation direction
+ * @param  {Object}   start      beginning state for the animation
+ * @param  {Object}   end        end state for the animation
+ * @param  {Object}   config     additional flags for the actual end state
+ */
 function buildTween(element, callback, duration, reverse, start, end, config) {
     // Check if a sequence is already tied to the element, if so reverse it.
     // (if the animation still exists it must be ongoing)
@@ -286,9 +290,12 @@ function buildTween(element, callback, duration, reverse, start, end, config) {
 
     // Build and store the tween
     let id = counter++;
-    sequences[id] = animSrv.fromTo(element.find(RV_PANEL_SELECTOR), duration,
+    sequences[id] = animSrv.fromTo(
+        element.find(RV_PANEL_SELECTOR),
+        duration,
         reverse ? end : start,
-        angular.extend({}, reverse ? start : end, config));
+        angular.extend({}, reverse ? start : end, config)
+    );
 
     element.data(RV_PLUG_SLIDE_ID_DATA, id);
 }

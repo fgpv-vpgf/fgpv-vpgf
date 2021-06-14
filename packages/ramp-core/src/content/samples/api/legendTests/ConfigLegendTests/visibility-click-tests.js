@@ -1,40 +1,43 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RAMP.mapAdded.subscribe(mapi => {
-
+    RAMP.mapAdded.subscribe((mapi) => {
         // make sure our legend gets populated properly before moving on with tests
         let legendPopulated = new Promise(function (resolve, reject) {
             const childrenLoaded = setInterval(() => {
-                if (mapi.ui.configLegend.children.length === 2 && mapi.ui.configLegend.children[0].children.length === 3 && mapi.ui.configLegend.children[1].children.length === 3) {
+                if (
+                    mapi.ui.configLegend.children.length === 2 &&
+                    mapi.ui.configLegend.children[0].children.length === 3 &&
+                    mapi.ui.configLegend.children[1].children.length === 3
+                ) {
                     resolve('Legend sucessfully populated');
                 }
             }, 1000);
         });
 
-
-        legendPopulated.then(value => {
+        legendPopulated.then((value) => {
             let legend = mapi.ui.configLegend;
             let count = 0;
-            legend.click.subscribe(val => { count++; document.getElementById('count').innerHTML = count.toString(); });
+            legend.click.subscribe((val) => {
+                count++;
+                document.getElementById('count').innerHTML = count.toString();
+            });
 
-            $("#CollapseGroups").click(function () {
+            $('#CollapseGroups').click(function () {
                 legend.collapseGroups();
             });
 
-            $("#ExpandGroups").click(function () {
+            $('#ExpandGroups').click(function () {
                 legend.expandGroups();
             });
 
-            $("#HideAll").click(function () {
+            $('#HideAll').click(function () {
                 legend.hideAll();
             });
 
-            $("#ShowAll").click(function () {
+            $('#ShowAll').click(function () {
                 legend.showAll();
             });
-
-
         });
     });
 

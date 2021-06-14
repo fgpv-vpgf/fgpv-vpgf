@@ -7,7 +7,7 @@ describe('rvHelp', () => {
     function mockTranslate($provide) {
         $provide.service('$translate', () => {
             return {
-                use: () => {}
+                use: () => {},
             };
         });
     }
@@ -36,8 +36,15 @@ describe('rvHelp', () => {
 
     beforeEach(() => {
         // mock the module with bardjs
-        bard.appModule('app.ui.common', 'app.ui.help', mockTranslate, mockTranslates,
-            mockDialog, mocklayoutService, mockSideNavigationService);
+        bard.appModule(
+            'app.ui.common',
+            'app.ui.help',
+            mockTranslate,
+            mockTranslates,
+            mockDialog,
+            mocklayoutService,
+            mockSideNavigationService
+        );
 
         // inject angular services
         bard.inject('$compile', '$rootScope', 'helpService');
@@ -48,25 +55,20 @@ describe('rvHelp', () => {
         scope = $rootScope.$new();
 
         // create new element; set morph speed to 0 to speed up tests
-        directiveElement = $compile(angular.element(
-                '<div rv-help="test"></div>'))
-            (scope);
+        directiveElement = $compile(angular.element('<div rv-help="test"></div>'))(scope);
         scope.$digest();
     });
 
     describe('rvHelp', () => {
         it('should be created successfully', () => {
             // check that directive element exists
-            expect(directiveElement)
-                .toBeDefined();
+            expect(directiveElement).toBeDefined();
 
             // check that directive attribute value is set correctly
-            expect(directiveElement.attr('rv-help'))
-                .toEqual('test');
+            expect(directiveElement.attr('rv-help')).toEqual('test');
 
             // check that the element is registered
-            expect(helpService.register)
-                .toHaveBeenCalled();
+            expect(helpService.register).toHaveBeenCalled();
         });
     });
 });

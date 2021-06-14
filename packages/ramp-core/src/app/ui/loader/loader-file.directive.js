@@ -4,7 +4,6 @@ import 'colourpicker';
 import Flow from '@flowjs/ng-flow/dist/ng-flow-standalone';
 window.Flow = Flow;
 
-
 const templateUrl = require('./loader-file.html');
 
 /**
@@ -16,9 +15,7 @@ const templateUrl = require('./loader-file.html');
  * The `rv-loader-file` directive creates a stepper interface for loading local files with geodata and turning them into layers.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLoaderFile', rvLoaderFile);
+angular.module('app.ui').directive('rvLoaderFile', rvLoaderFile);
 
 function rvLoaderFile() {
     const directive = {
@@ -27,15 +24,27 @@ function rvLoaderFile() {
         scope: {},
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
 }
 
 // eslint-disable-next-line max-statements
-function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootElement, $element,
-    keyNames, layerSource, legendService, appInfo) {
+function Controller(
+    $scope,
+    $q,
+    $timeout,
+    $http,
+    stateManager,
+    Stepper,
+    $rootElement,
+    $element,
+    keyNames,
+    layerSource,
+    legendService,
+    appInfo
+) {
     'ngInject';
     const self = this;
 
@@ -45,7 +54,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
     self.common = {
         toggleLayers,
         isAllLayersSelected,
-        onDynamicLayerSection
+        onDynamicLayerSection,
     };
 
     // create three steps: upload data, select data type, and configure layer
@@ -57,16 +66,14 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             isCompleted: false,
             onContinue: uploadOnContinue,
             onCancel: () => {
-                uploadReset();  // reset upload progress bar
+                uploadReset(); // reset upload progress bar
                 onCancel(self.upload.step);
             },
-            onKeypress: event => {
+            onKeypress: (event) => {
                 const upload = self.upload;
                 // prevent enter presses from triggering upload if the input value is not validated
                 if (event.keyCode === keyNames.ENTER) {
-                    if (upload.form.$valid &&
-                        upload.step.isContinueEnabled &&
-                        !upload.step.isThinking) {
+                    if (upload.form.$valid && upload.step.isContinueEnabled && !upload.step.isThinking) {
                         // check if enter key have been pressed and call the next step if so
                         uploadOnContinue();
                     }
@@ -76,7 +83,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                     }
                 }
             },
-            reset: uploadReset
+            reset: uploadReset,
         },
         form: null,
         file: null,
@@ -93,7 +100,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
         httpProgress: false, // shows progress loading file using $http
         progress: 0,
-        fileStatus: null
+        fileStatus: null,
     };
 
     self.select = {
@@ -105,13 +112,13 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             onContinue: selectOnContinue,
             onCancel: () => {
                 selectReset();
-                onCancel(self.select.step)
+                onCancel(self.select.step);
             },
-            reset: selectReset
+            reset: selectReset,
         },
         selectResetValidation,
         form: null,
-        selection: null
+        selection: null,
     };
 
     self.configure = {
@@ -122,46 +129,42 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             isCompleted: false,
             onContinue: configureOnContinue,
             onCancel: () => onCancel(self.configure.step),
-            reset: configureReset
+            reset: configureReset,
         },
         configureResetValidation,
         colourPickerSettings: {
             theme: 'bootstrap',
-            position: 'top right'
+            position: 'top right',
         },
         fields: null,
-        form: null
+        form: null,
     };
 
     // a list of supported service types.
     self.serviceOptions = [
         {
-            name: "featurelayer"
+            name: 'featurelayer',
         },
         {
-            name: "dynamicservice"
+            name: 'dynamicservice',
         },
         {
-            name: "tileservice"
+            name: 'tileservice',
         },
         {
-            name: "imageservice"
+            name: 'imageservice',
         },
         {
-            name: "wfs"
+            name: 'wfs',
         },
         {
-            name: "wms"
-        }
+            name: 'wms',
+        },
     ];
     self.layerBlueprint = null;
 
     const stepper = new Stepper();
-    stepper
-        .addSteps(self.upload.step)
-        .addSteps(self.select.step)
-        .addSteps(self.configure.step)
-        .start(); // activate stepper on the first step
+    stepper.addSteps(self.upload.step).addSteps(self.select.step).addSteps(self.configure.step).start(); // activate stepper on the first step
 
     /***/
 
@@ -196,8 +199,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         const selectedLayers = self.layerBlueprint.config.layerEntries;
         const availableLayers = self.layerBlueprint.layers;
 
-        return (!some && selectedLayers.length === availableLayers.length) ||
-               (some && selectedLayers.length !== 0 && selectedLayers.length !== availableLayers.length);
+        return (
+            (!some && selectedLayers.length === availableLayers.length) ||
+            (some && selectedLayers.length !== 0 && selectedLayers.length !== availableLayers.length)
+        );
     }
 
     /**
@@ -263,24 +268,30 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
         // a file was provided, so we can load it before moving on to the next step.
         if (connect.fileUrl.match(/.*(.zip|.csv|.json)/g)) {
-            loaderPromise = _loadFile(self.upload.fileUrl).then(arrayBuffer =>
-                isFileUploadAborted ?
-                    $q.reject({ reason: 'abort', message: 'User canceled file upload.' }) :
-                    onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(() => (self.upload.httpProgress = false))
-            ).catch(error => {
-                if (error.reason === 'abort') {
-                    console.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
-                    return;
-                }
+            loaderPromise = _loadFile(self.upload.fileUrl)
+                .then((arrayBuffer) =>
+                    isFileUploadAborted
+                        ? $q.reject({ reason: 'abort', message: 'User canceled file upload.' })
+                        : onLayerBlueprintReady(self.upload.fileUrl, arrayBuffer).then(
+                              () => (self.upload.httpProgress = false)
+                          )
+                )
+                .catch((error) => {
+                    if (error.reason === 'abort') {
+                        console.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
+                        return;
+                    }
 
-                console.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
-                toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
-            });
+                    console.error('loaderFileDirective', 'problem retrieving file link with error', error.message);
+                    toggleErrorMessage(self.upload.form, 'fileUrl', 'upload-error', false);
+                });
         }
 
         // add some delay before going to the next step
-        stepper.moveToStep(1, $timeout(() =>
-            loaderPromise, 300));
+        stepper.moveToStep(
+            1,
+            $timeout(() => loaderPromise, 300)
+        );
 
         /**
          * Tries to load a file specified using $http service.
@@ -290,32 +301,33 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
          * @return {Promise} a promise resolving with file arraybuffer if successful
          */
         function _loadFile(url) {
-            const promise = $http.get(url, {
-                responseType: 'arraybuffer',
-                eventHandlers: {
-                    progress: event => {
-                        if (!isFileUploadAborted && event.lengthComputable) {
-                            const units = event.loaded < 1048576 ? 'KB' : 'MB';
+            const promise = $http
+                .get(url, {
+                    responseType: 'arraybuffer',
+                    eventHandlers: {
+                        progress: (event) => {
+                            if (!isFileUploadAborted && event.lengthComputable) {
+                                const units = event.loaded < 1048576 ? 'KB' : 'MB';
 
-                            let loaded = Math.round(event.loaded / (units === 'KB' ? 1024 : 1048576));
-                            const total = Math.ceil(event.total / 1048576);
+                                let loaded = Math.round(event.loaded / (units === 'KB' ? 1024 : 1048576));
+                                const total = Math.ceil(event.total / 1048576);
 
-                            self.upload.fileStatus = `${loaded}${units} / ${total}MB`;
+                                self.upload.fileStatus = `${loaded}${units} / ${total}MB`;
 
-                            if (units === 'KB') {
-                                loaded = loaded / 1024;
+                                if (units === 'KB') {
+                                    loaded = loaded / 1024;
+                                }
+
+                                self.upload.progress = Math.round((loaded / total) * 100);
                             }
-
-                            self.upload.progress = Math.round((loaded / total) * 100);
-                        }
-                    }
-                }
-            }).then(response =>
-                response.data
-            ).catch(error => {
-                console.log(error);
-                return $q.reject({ reason: 'error', message: 'Cannot retrieve file data' });
-            });
+                        },
+                    },
+                })
+                .then((response) => response.data)
+                .catch((error) => {
+                    console.log(error);
+                    return $q.reject({ reason: 'error', message: 'Cannot retrieve file data' });
+                });
 
             return promise;
         }
@@ -341,12 +353,11 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
             // to cancel the file upload, stop the file reader
             // after `abort` is called, `onabort` event is fired which rejects `_readFile` promise
-            self.upload.fileUploadAbort = () =>
-                reader.abort();
+            self.upload.fileUploadAbort = () => reader.abort();
 
-            const readerPromise = _readFile(reader, file.file, _updateProgress).then(arrayBuffer =>
-                    onLayerBlueprintReady(file.name, arrayBuffer)
-                ).catch(error => {
+            const readerPromise = _readFile(reader, file.file, _updateProgress)
+                .then((arrayBuffer) => onLayerBlueprintReady(file.name, arrayBuffer))
+                .catch((error) => {
                     if (error.reason === 'abort') {
                         console.log('loaderFileDirective', 'file upload has been aborted by the user', error.message);
                         return;
@@ -358,8 +369,10 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
 
             // add some delay before going to the next step
             // explicitly move to step 1 (select); if the current step is not 0 (upload), drag-dropping a file may advance farther than needed when using just `stepper.nextStep()`
-            stepper.moveToStep(1, $timeout(() =>
-                readerPromise, 300));
+            stepper.moveToStep(
+                1,
+                $timeout(() => readerPromise, 300)
+            );
         }
 
         /**
@@ -372,18 +385,14 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
          */
         function _readFile(reader, file, progressCallback) {
             const dataPromise = $q((resolve, reject) => {
-
                 reader.onerror = () => {
                     console.error('layerBlueprint', 'failed to read a file');
                     reject({ reason: 'error', message: 'Failed to read a file' });
                 };
-                reader.onload = () =>
-                    resolve(reader.result);
-                reader.onprogress = event =>
-                    progressCallback(event, reader);
+                reader.onload = () => resolve(reader.result);
+                reader.onprogress = (event) => progressCallback(event, reader);
 
-                reader.onabort = event =>
-                    reject({ reason: 'abort', message: 'User canceled file upload.' });
+                reader.onabort = (event) => reject({ reason: 'abort', message: 'User canceled file upload.' });
 
                 reader.readAsArrayBuffer(file);
             });
@@ -398,7 +407,6 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
          * @param  {Object} event ProgressEvent object
          */
         function _updateProgress(event, reader) {
-
             // indicates if the resource concerned by the ProgressEvent has a length that can be calculated.
             if (event.lengthComputable) {
                 const percentLoaded = Math.round((event.loaded / event.total) * 100);
@@ -421,8 +429,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
      * @return {Promise} layerBlueprint ready promise
      */
     function onLayerBlueprintReady(name, arrayBuffer) {
-
-        const layerBlueprintPromise = layerSource.fetchFileInfo(name, arrayBuffer)
+        const layerBlueprintPromise = layerSource
+            .fetchFileInfo(name, arrayBuffer)
             .then(({ options: layerBlueprintOptions, preselectedIndex }) => {
                 self.layerBlueprintOptions = layerBlueprintOptions;
                 self.layerBlueprint = layerBlueprintOptions[preselectedIndex];
@@ -449,7 +457,8 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
     function fileReset() {
         const upload = self.upload;
 
-        if (upload.file) { // if there is a file in the queue
+        if (upload.file) {
+            // if there is a file in the queue
             upload.file.cancel(); // removes the file from the upload queue
             upload.file = null; // kill reference as well
             upload.progress = 0; // reset progress bar to 0; otherwise, it will try to animate from 100 to 0 next time progress event happens
@@ -506,23 +515,26 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
             // now that we have a good idea of what type of service we're looking at, we can validate it
 
             loaderPromise = layerSource
-            // maps served over https can only accept https enabled services to avoid mixed content issues.
-            .fetchServiceInfo(self.isHTTPS ? connect.fileUrl.replace('http:', 'https:') : connect.fileUrl, self.select.selection)
-            .then((options) => {
-                self.layerBlueprint = options[0];
+                // maps served over https can only accept https enabled services to avoid mixed content issues.
+                .fetchServiceInfo(
+                    self.isHTTPS ? connect.fileUrl.replace('http:', 'https:') : connect.fileUrl,
+                    self.select.selection
+                )
+                .then((options) => {
+                    self.layerBlueprint = options[0];
 
-                validationPromise = self.layerBlueprint.validate();
-                validationPromise.then(() => {
-                    stepper.nextStep();
+                    validationPromise = self.layerBlueprint.validate();
+                    validationPromise.then(() => {
+                        stepper.nextStep();
 
-                    // initialize colour picker
-                    $element.find('.rv_colourpicker').colourPicker();
+                        // initialize colour picker
+                        $element.find('.rv_colourpicker').colourPicker();
+                    });
+                })
+                .catch((error) => {
+                    toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                    return $q.reject(error);
                 });
-            })
-            .catch(error => {
-                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
-                return $q.reject(error);
-            });
         } else {
             // validate files
             // incorrectly picking GeoJSON results in syntax error, must be caught here
@@ -534,16 +546,18 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
                 return;
             }
 
-            validationPromise.then(() => {
-                stepper.nextStep();
+            validationPromise
+                .then(() => {
+                    stepper.nextStep();
 
-                // initialize colour picker
-                $element.find('.rv_colourpicker').colourPicker();
-            }).catch(error => {
-                console.error('loaderFileDirective', 'file type is wrong', error);
-                toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
-                // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
-            });
+                    // initialize colour picker
+                    $element.find('.rv_colourpicker').colourPicker();
+                })
+                .catch((error) => {
+                    console.error('loaderFileDirective', 'file type is wrong', error);
+                    toggleErrorMessage(self.select.form, 'dataType', 'wrong', false);
+                    // TODO: display a meaningful error message why the file doesn't validate (malformed csv, zip with pictures of cats, etc.)
+                });
         }
     }
 
@@ -565,7 +579,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         // TODO: generalize resetting custom form validation
         select.selectResetValidation();
 
-        uploadReset();  // reset the upload progress bar
+        uploadReset(); // reset the upload progress bar
     }
 
     /**
@@ -616,13 +630,15 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         // generation might fail because file data is invalid
         const layerRecordPromise = self.layerBlueprint.makeLayerRecord();
 
-        layerRecordPromise.then(() => {
-            legendService.importLayerBlueprint(self.layerBlueprint);
-            closeLoaderFile();
-        }).catch(error => {
-            console.warn('loaderFileDirective', 'file is invalid ', error);
-            self.configure.form.$setValidity('invalid', false);
-        });
+        layerRecordPromise
+            .then(() => {
+                legendService.importLayerBlueprint(self.layerBlueprint);
+                closeLoaderFile();
+            })
+            .catch((error) => {
+                console.warn('loaderFileDirective', 'file is invalid ', error);
+                self.configure.form.$setValidity('invalid', false);
+            });
     }
 
     /**
@@ -633,7 +649,7 @@ function Controller($scope, $q, $timeout, $http, stateManager, Stepper, $rootEle
         // reset the loader after closing the panel
         self.layerBlueprint = null;
         stepper.reset().start();
-        appInfo.mapi.panels.fileLoader.close({'destroy': false});
+        appInfo.mapi.panels.fileLoader.close({ destroy: false });
 
         // there is a bug with Firefox and Safari on a Mac. They don't focus back to add layer when close
         $timeout(() => {

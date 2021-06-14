@@ -1,5 +1,4 @@
 @mixin tooltip {
-
     %rv-tooltip-base {
         opacity: 0;
         transition: opacity $swift-ease-in-duration / 2 $swift-ease-in-out-timing-function;

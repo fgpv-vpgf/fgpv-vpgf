@@ -1,23 +1,22 @@
 /* global bard, layerRegistry, $q */
 
 xdescribe('layerRegistry', () => {
-
     // make a fake map object
     const geoState = {
         mapService: {
             mapObject: {
                 addLayer: angular.noop,
                 removeLayer: angular.noop,
-                getScale: () => 0
-            }
-        }
+                getScale: () => 0,
+            },
+        },
     };
 
     const currentConfig = {
         layers: [],
         legend: {
-            type: 'autopopulate'
-        }
+            type: 'autopopulate',
+        },
     };
 
     // fake gapi service
@@ -26,19 +25,18 @@ xdescribe('layerRegistry', () => {
             return {
                 gapi: {
                     events: {
-                        wrapEvents: angular.noop
-                    }
-                }
+                        wrapEvents: angular.noop,
+                    },
+                },
             };
         });
     }
 
     function mockTranslateService($provide) {
-        $provide.service('$translate', $q => () => $q.resolve());
+        $provide.service('$translate', ($q) => () => $q.resolve());
     }
 
     beforeEach(() => {
-
         bard.appModule('app.geo', mockGapiService, mockTranslateService);
 
         // inject services
@@ -50,52 +48,43 @@ xdescribe('layerRegistry', () => {
         const tempLayer = {
             id: 'sausages',
             setVisibility: () => {},
-            setOpacity: () => {}
+            setOpacity: () => {},
         };
         const tempConfig = {
             url: 'http://www.sausagelayer.com/2', // <- feature layer has index
             layerType: 'esriFeature',
             options: {
                 opacity: {
-                    value: 0.5
+                    value: 0.5,
                 },
                 visibility: {
-                    value: 'on'
-                }
-            }
+                    value: 'on',
+                },
+            },
         };
         const lr = layerRegistry(geoState, currentConfig); // create an instance of layerRegistry
 
         lr.registerLayer(tempLayer, tempConfig, $q.resolve());
 
         // layer is now in registry
-        expect(lr.layers.sausages)
-            .toBeDefined();
-        expect(lr.layers.sausages.layer)
-            .toBeDefined();
-        expect(lr.layers.sausages.layer.id)
-            .toBe('sausages');
-        expect(lr.layers.sausages.state)
-            .toBeDefined();
-        expect(lr.layers.sausages.state.url)
-            .toBe('http://www.sausagelayer.com');
-        expect(lr.layers.sausages.state.featureIdx)
-            .toBe('2');
+        expect(lr.layers.sausages).toBeDefined();
+        expect(lr.layers.sausages.layer).toBeDefined();
+        expect(lr.layers.sausages.layer.id).toBe('sausages');
+        expect(lr.layers.sausages.state).toBeDefined();
+        expect(lr.layers.sausages.state.url).toBe('http://www.sausagelayer.com');
+        expect(lr.layers.sausages.state.featureIdx).toBe('2');
 
         // TODO: fix legend check
         // expect(lr.legend).toContain('sausages');
 
-        expect(lr.layers.sausages.state.options)
-            .toBeDefined();
-        expect(lr.layers.sausages.state.options.visibility.value)
-            .toBe('on');
+        expect(lr.layers.sausages.state.options).toBeDefined();
+        expect(lr.layers.sausages.state.options.visibility.value).toBe('on');
 
         // check if the layer is removed correctly ...
         lr.removeLayer('sausages'); // should remove layer
 
         // from `layers` object ...
-        expect(lr.layers.sausages)
-            .not.toBeDefined();
+        expect(lr.layers.sausages).not.toBeDefined();
 
         // and from `legend` as well
         // TODO: fix legend check
@@ -136,43 +125,43 @@ xdescribe('layerRegistry', () => {
         const tempLayer = {
             id: 'sausages',
             setVisibility: () => {},
-            setOpacity: () => {}
+            setOpacity: () => {},
         };
         const tempConfig = {
             url: 'http://www.sausagelayer.com/',
             layerType: 'esriFeature',
             options: {
                 opacity: {
-                    value: 0.5
+                    value: 0.5,
                 },
                 visibility: {
-                    value: 'on'
-                }
-            }
+                    value: 'on',
+                },
+            },
         };
         const tempAttribPromise = {
             layerId: 'sausages',
             0: {
-                getAttribs: () => $q.resolve({
-                    features: [{
-                        attributes: {
-                            abc: '123'
-                        }
-                    }]
-                }),
-                layerData: $q.resolve()
-            }
+                getAttribs: () =>
+                    $q.resolve({
+                        features: [
+                            {
+                                attributes: {
+                                    abc: '123',
+                                },
+                            },
+                        ],
+                    }),
+                layerData: $q.resolve(),
+            },
         };
 
         const lr = layerRegistry(geoState, currentConfig);
         lr.registerLayer(tempLayer, tempConfig, tempAttribPromise);
 
-        lr.layers.sausages.getAttributes(0)
-            .then(bundledAttributes => {
-                expect(bundledAttributes.rows)
-                    .toBeDefined();
-                expect(bundledAttributes.columns)
-                    .toBeDefined();
-            });
+        lr.layers.sausages.getAttributes(0).then((bundledAttributes) => {
+            expect(bundledAttributes.rows).toBeDefined();
+            expect(bundledAttributes.columns).toBeDefined();
+        });
     });
 });

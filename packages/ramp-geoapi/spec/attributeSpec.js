@@ -10,35 +10,41 @@ describe('Attribute', () => {
             x.minScale = 0;
             x.maxScale = 0;
             x.extent = {
-                xmin: -1.5698060093899999E7,
+                xmin: -1.5698060093899999e7,
                 ymin: 5113378.755999997,
                 xmax: -5857565.7676,
-                ymax: 1.79468918812E7,
+                ymax: 1.79468918812e7,
                 spatialReference: {
                     wkid: 102100,
-                    latestWkid: 3857
-                }
+                    latestWkid: 3857,
+                },
             };
             x.drawingInfo = {
-                renderer: { }
+                renderer: {},
             };
             x.fields = [
                 {
                     name: 'OBJECTID',
                     type: 'esriFieldTypeOID',
                     alias: 'OBJECTID',
-                    domain: null
-                }
+                    domain: null,
+                },
             ];
             return Promise.resolve(x);
-        }
+        },
     };
     const fakeGapi = {
         symbology: {
-            rendererToLegend: () => { return; },
-            enhanceRenderer: () => { return; },
-            cleanRenderer: () => { return; }
-        }
+            rendererToLegend: () => {
+                return;
+            },
+            enhanceRenderer: () => {
+                return;
+            },
+            cleanRenderer: () => {
+                return;
+            },
+        },
     };
     let attribute;
     beforeEach(() => {
@@ -53,19 +59,21 @@ describe('Attribute', () => {
         });
 
         it('should throw an error given just a number as input', () => {
-            expect(function () { attribute.getLayerIndex('1'); }).toThrowError();
+            expect(function () {
+                attribute.getLayerIndex('1');
+            }).toThrowError();
         });
 
         it('should skim the last number off the URL given a valid input', () => {
-            expect(attribute.getLayerIndex(
-                'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/1')
+            expect(
+                attribute.getLayerIndex(
+                    'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer/1'
+                )
             ).toEqual(1);
         });
-
     });
 
     describe('loadServerAttribs', () => {
-
         // FIXME need to test it in a different way since the attributes of the renderer fomr the layer was missing
 
         // it('should work for a Feature Layer requesting all attributes', (done) => {
@@ -103,28 +111,28 @@ describe('Attribute', () => {
         // });
 
         it('should work for a non-Feature Layer', (done) => {
-            spyOn(fakeBundle, 'esriRequest').and.callFake(x => {
+            spyOn(fakeBundle, 'esriRequest').and.callFake((x) => {
                 x.type = 'Non-Feature Layer';
                 x.geometryType = '';
                 x.minScale = 0;
                 x.maxScale = 0;
-                x.extent = { };
+                x.extent = {};
                 return Promise.resolve(x);
             });
             const mapURL = 'http://maps-cartes.ec.gc.ca/arcgis/rest/services/Common/CommonGIS_AuxMerc/MapServer';
             const res = attribute.loadServerAttribs(mapURL, '1');
             expect(res.featureIdx).toEqual('1');
-            res.layerData.then(x => {
-                expect(x.layerType).toEqual('Non-Feature Layer');
-                expect(x.supportsFeatures).toBe(false);
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
+            res.layerData
+                .then((x) => {
+                    expect(x.layerType).toEqual('Non-Feature Layer');
+                    expect(x.supportsFeatures).toBe(false);
+                    done();
+                })
+                .catch((e) => {
+                    fail(`Exception was thrown ${e}`);
+                    done();
+                });
         });
-
     });
 
     describe('loadFileAttribs', () => {
@@ -134,40 +142,41 @@ describe('Attribute', () => {
                 graphics: {
                     map: () => {
                         const arr = [
-                           {
-                               attributes: { OBJECTID: 'one' }
-                           },
-                           {
-                               attributes: { OBJECTID: 'two' }
-                           }
+                            {
+                                attributes: { OBJECTID: 'one' },
+                            },
+                            {
+                                attributes: { OBJECTID: 'two' },
+                            },
                         ];
                         return arr;
-                    }
+                    },
                 },
-                fields: { },
+                fields: {},
                 geometryType: 'esriGeometryPolygon',
                 minScale: 0,
                 maxScale: 0,
                 renderer: {
-                    toJson: () => { return; }
-                }
+                    toJson: () => {
+                        return;
+                    },
+                },
             };
             const res = attribute.loadFileAttribs(layer);
             expect(res.featureIdx).toEqual('0');
-            res.layerData.then(x => {
-                expect(x.layerType).toEqual('Feature Layer');
-                expect(x.geometryType).toEqual('esriGeometryPolygon');
-                expect(x.minScale).toEqual(0);
-                expect(x.maxScale).toEqual(0);
-                expect(x.oidField).toEqual('OBJECTID');
-                done();
-            })
-            .catch(e => {
-                fail(`Exception was thrown ${e}`);
-                done();
-            });
+            res.layerData
+                .then((x) => {
+                    expect(x.layerType).toEqual('Feature Layer');
+                    expect(x.geometryType).toEqual('esriGeometryPolygon');
+                    expect(x.minScale).toEqual(0);
+                    expect(x.maxScale).toEqual(0);
+                    expect(x.oidField).toEqual('OBJECTID');
+                    done();
+                })
+                .catch((e) => {
+                    fail(`Exception was thrown ${e}`);
+                    done();
+                });
         });
-
     });
-
 });

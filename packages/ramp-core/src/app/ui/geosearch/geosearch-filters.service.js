@@ -6,12 +6,9 @@
  * The `geosearchFiltersService` is responsible for passing filter state to the geoSearch module and keeping them synced.
  *
  */
-angular
-    .module('app.ui')
-    .factory('geosearchFiltersService', geosearchFiltersService);
+angular.module('app.ui').factory('geosearchFiltersService', geosearchFiltersService);
 
 function geosearchFiltersService($translate, events, configService, geoService, geosearchService) {
-
     const service = {
         provinces: [], // filter drop downs will be empty until province and type lists are loaded
         types: [],
@@ -22,27 +19,26 @@ function geosearchFiltersService($translate, events, configService, geoService, 
 
         setProvince,
         setType,
-        setVisible
+        setVisible,
     };
 
     const ref = {
-        extentChangeListener: angular.noop
+        extentChangeListener: angular.noop,
     };
 
     // geoSearch service fails if you call `getProvinces` or `getTypes` before config is ready; need to wait for config;
     // TODO: change geoSearch external functions return promises to be trully async, and not just fail.
-    configService.onEveryConfigLoad(config => {
+    configService.onEveryConfigLoad((config) => {
         if (config.map.components.geoSearch.enabled) {
             init();
         }
     });
 
-
     events.$on(events.rvLanguageChanged, () => {
         // on language change clear the filters
         geosearchService.setProvince(undefined);
         geosearchService.setType(undefined);
-    })
+    });
 
     return service;
 
@@ -73,7 +69,6 @@ function geosearchFiltersService($translate, events, configService, geoService, 
      * @param {Boolean} visibleOnly specifies that only items from the current extent should be included in the query
      */
     function setVisible(visibleOnly) {
-
         if (visibleOnly) {
             //
             ref.extentChangeListener = events.$on(events.rvExtentChange, setExtentParameter);
@@ -93,9 +88,7 @@ function geosearchFiltersService($translate, events, configService, geoService, 
          * @private
          */
         function setExtentParameter() {
-            const targetExtentValue = geoService.validateExtent(1.15) ?
-                (visibleOnly ? 'visible' : 'canada') :
-                'canada';
+            const targetExtentValue = geoService.validateExtent(1.15) ? (visibleOnly ? 'visible' : 'canada') : 'canada';
 
             console.log('geosearchFiltersService', 'setting isvisible to', visibleOnly, targetExtentValue);
 
@@ -113,22 +106,22 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         // add loading label to the filters drop downs while their content is loading
         service.provinces = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
         service.types = [{ name: $translate.instant('geosearch.loadingfilters.label') }];
-        configService.getAsync.then(config => {
-            geosearchService.getProvinces().then(values => {
+        configService.getAsync.then((config) => {
+            geosearchService.getProvinces().then((values) => {
                 service.provinces = values;
                 service.provinceIndexes = Array.from(Array(service.provinces.length), (prov, idx) => idx);
 
                 // sort the province filters in alphabetical order
-                service.provinces.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
+                service.provinces.sort((provA, provB) => (provA.name > provB.name ? 1 : -1));
             });
-            geosearchService.getTypes().then(values => {
+            geosearchService.getTypes().then((values) => {
                 const disabledSearches = configService.getSync.services.search.disabledSearches || [];
-                service.types = values.filter(x => !disabledSearches.includes(x.code))
+                service.types = values.filter((x) => !disabledSearches.includes(x.code));
                 service.typeIndexes = Array.from(Array(service.types.length), (type, idx) => idx);
 
                 // sort the type filters in alphabetical order
-                service.types.sort((provA, provB) => (provA.name > provB.name) ? 1 : -1);
+                service.types.sort((provA, provB) => (provA.name > provB.name ? 1 : -1));
             });
-        })
+        });
     }
 }

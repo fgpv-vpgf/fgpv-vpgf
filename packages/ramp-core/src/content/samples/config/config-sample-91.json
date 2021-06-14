@@ -3,12 +3,7 @@
         "title": "Custom Title",
         "navBar": {
             "zoom": "buttons",
-            "extra": [
-                "fullscreen",
-                "geoLocator",
-                "home",
-                "help"
-            ]
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
         },
         "sideMenu": {
             "logo": true
@@ -42,10 +37,7 @@
             }
         },
         "search": {
-            "disabledSearches": [
-                "NTS",
-                "FSA"
-            ],
+            "disabledSearches": ["NTS", "FSA"],
             "serviceUrls": {
                 "geoNames": "http://geogratis.gc.ca/services/geoname/en/geonames.json",
                 "geoLocation": "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
@@ -88,9 +80,11 @@
             "type": "structured",
             "root": {
                 "name": "root",
-                "children": [{
+                "children": [
+                    {
                         "layerId": "0",
-                        "symbologyStack": [{
+                        "symbologyStack": [
+                            {
                                 "image": "data:image/png;base64,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",
                                 "text": "Pipleline Start: Mexico",
                                 "sqlQuery": "(FrmCountry = 'Mexico')"
@@ -110,13 +104,16 @@
                     },
                     {
                         "name": "SuperGroup",
-                        "children": [{
+                        "children": [
+                            {
                                 "layerId": "1",
-                                "symbologyStack": [{
+                                "symbologyStack": [
+                                    {
                                         "image": "http://i.imgur.com/GLFe2mB.png",
                                         "text": "British Columbia",
                                         "sqlQuery": "(Province_Territory = 'British Columbia')"
-                                    }, {
+                                    },
+                                    {
                                         "image": "https://i.imgur.com/4fHLsIB.gif",
                                         "text": "Alberta",
                                         "sqlQuery": "(Province_Territory = 'Alberta')"
@@ -186,38 +183,49 @@
                             },
                             {
                                 "layerId": "2",
-                                "symbologyStack": [{
-                                    "image": "https://i.imgur.com/egRzj0y.jpg",
-                                    "text": "Units of Measurement - Tonnes",
-                                    "sqlQuery": "(Units = 'tonnes')"
-                                }, {
-                                    "image": "https://i.imgur.com/d7N3bIb.jpg",
-                                    "text": "Mammoth"
-                                }, {
-                                    "image": "https://i.imgur.com/2ri7j.jpg",
-                                    "text": "Baby Elephant"
-                                }],
+                                "symbologyStack": [
+                                    {
+                                        "image": "https://i.imgur.com/egRzj0y.jpg",
+                                        "text": "Units of Measurement - Tonnes",
+                                        "sqlQuery": "(Units = 'tonnes')"
+                                    },
+                                    {
+                                        "image": "https://i.imgur.com/d7N3bIb.jpg",
+                                        "text": "Mammoth"
+                                    },
+                                    {
+                                        "image": "https://i.imgur.com/2ri7j.jpg",
+                                        "text": "Baby Elephant"
+                                    }
+                                ],
                                 "symbologyRenderStyle": "icons"
                             },
                             {
                                 "name": "SubGroup",
-                                "children": [{
-                                    "layerId": "3",
-                                    "symbologyStack": [{
-                                        "image": "https://i.imgur.com/Yoiu6JK.jpg",
-                                        "text": "Lakes",
-                                        "sqlQuery": "(station_name__nom_station LIKE '%LAKE%')"
-                                    }, {
-                                        "image": "https://i.imgur.com/hMo1bw7.jpg",
-                                        "text": "Not Lakes",
-                                        "sqlQuery": "(NOT station_name__nom_station LIKE '%LAKE%')"
-                                    }]
-                                }]
+                                "children": [
+                                    {
+                                        "layerId": "3",
+                                        "symbologyStack": [
+                                            {
+                                                "image": "https://i.imgur.com/Yoiu6JK.jpg",
+                                                "text": "Lakes",
+                                                "sqlQuery": "(station_name__nom_station LIKE '%LAKE%')"
+                                            },
+                                            {
+                                                "image": "https://i.imgur.com/hMo1bw7.jpg",
+                                                "text": "Not Lakes",
+                                                "sqlQuery": "(NOT station_name__nom_station LIKE '%LAKE%')"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
-                    }, {
+                    },
+                    {
                         "layerId": "4",
-                        "symbologyStack": [{
+                        "symbologyStack": [
+                            {
                                 "image": "https://i.imgur.com/uAo3o6l.jpg",
                                 "text": "Left Eye",
                                 "sqlQuery": "(name = 'Left Eye')"
@@ -236,7 +244,8 @@
                     },
                     {
                         "layerId": "5",
-                        "symbologyStack": [{
+                        "symbologyStack": [
+                            {
                                 "image": "https://i.imgur.com/PdwYKNb.jpg",
                                 "text": "Plutonic",
                                 "sqlQuery": "(Type_de_roche = 'Plutonique')"
@@ -265,7 +274,8 @@
                     },
                     {
                         "layerId": "6",
-                        "symbologyStack": [{
+                        "symbologyStack": [
+                            {
                                 "image": "http://fgpv.cloudapp.net/demo/__assets__/step3.gif",
                                 "text": "Scale Rank: 3-5",
                                 "sqlQuery": "(scalerank >= 3 AND scalerank <= 5)"
@@ -280,7 +290,8 @@
                 ]
             }
         },
-        "layers": [{
+        "layers": [
+            {
                 "id": "0",
                 "name": "Feature Layer, New Stack",
                 "layerType": "esriFeature",
@@ -294,10 +305,12 @@
                 "url": "http://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer",
                 "tolerance": 20,
                 "singleEntryCollapse": true,
-                "layerEntries": [{
-                    "index": 0,
-                    "name": "Dynamic Layer, Overridden Stack"
-                }]
+                "layerEntries": [
+                    {
+                        "index": 0,
+                        "name": "Dynamic Layer, Overridden Stack"
+                    }
+                ]
             },
             {
                 "id": "2",
@@ -349,7 +362,8 @@
                 }
             }
         ],
-        "extentSets": [{
+        "extentSets": [
+            {
                 "id": "EXT_NRCAN_Lambert_3978",
                 "default": {
                     "xmax": 3549492,
@@ -375,9 +389,11 @@
                 }
             }
         ],
-        "lodSets": [{
+        "lodSets": [
+            {
                 "id": "LOD_NRCAN_Lambert_3978",
-                "lods": [{
+                "lods": [
+                    {
                         "level": 0,
                         "resolution": 38364.660062653464,
                         "scale": 145000000
@@ -471,7 +487,8 @@
             },
             {
                 "id": "LOD_ESRI_World_AuxMerc_3857",
-                "lods": [{
+                "lods": [
+                    {
                         "level": 0,
                         "resolution": 19567.87924099992,
                         "scale": 73957190.948944
@@ -579,7 +596,8 @@
                 ]
             }
         ],
-        "tileSchemas": [{
+        "tileSchemas": [
+            {
                 "id": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
                 "name": "Lambert Maps",
                 "extentSetId": "EXT_NRCAN_Lambert_3978",
@@ -593,16 +611,19 @@
                 "lodSetId": "LOD_ESRI_World_AuxMerc_3857"
             }
         ],
-        "baseMaps": [{
+        "baseMaps": [
+            {
                 "id": "baseNrCan",
                 "name": "Canada Base Map - Transportation (CBMT)",
                 "description": "The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
                 "altText": "altText - The Canada Base Map - Transportation (CBMT)",
-                "layers": [{
-                    "id": "CBMT",
-                    "layerType": "esriFeature",
-                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "CBMT",
+                        "layerType": "esriFeature",
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
                 "attribution": {
                     "text": {
@@ -619,11 +640,13 @@
                 "name": "Canada Base Map - Simple",
                 "description": "Canada Base Map - Simple",
                 "altText": "altText - Canada base map - Simple",
-                "layers": [{
-                    "id": "SMR",
-                    "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "SMR",
+                        "layerType": "esriFeature",
+                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
             },
             {
@@ -631,11 +654,13 @@
                 "name": "Canada Base Map - Elevation (CBME)",
                 "description": "The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.",
                 "altText": "altText - Canada Base Map - Elevation (CBME)",
-                "layers": [{
-                    "id": "CBME_CBCE_HS_RO_3978",
-                    "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "CBME_CBCE_HS_RO_3978",
+                        "layerType": "esriFeature",
+                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
             },
             {
@@ -643,11 +668,13 @@
                 "name": "Canada Base Map - Transportation (CBMT)",
                 "description": " The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.",
                 "altText": "altText - Canada Base Map - Transportation (CBMT)",
-                "layers": [{
-                    "id": "CBMT_CBCT_GEOM_3978",
-                    "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "CBMT_CBCT_GEOM_3978",
+                        "layerType": "esriFeature",
+                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
             },
             {
@@ -655,7 +682,8 @@
                 "name": "World Imagery",
                 "description": "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
                 "altText": "altText - World Imagery",
-                "layers": [{
+                "layers": [
+                    {
                         "id": "World_Imagery",
                         "layerType": "esriFeature",
                         "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
@@ -674,11 +702,13 @@
                 "name": "World Physical Map",
                 "description": "This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.",
                 "altText": "altText - World Physical Map",
-                "layers": [{
-                    "id": "World_Physical_Map",
-                    "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "World_Physical_Map",
+                        "layerType": "esriFeature",
+                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             },
             {
@@ -686,11 +716,13 @@
                 "name": "World Shaded Relief",
                 "description": "This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.",
                 "altText": "altText - World Shaded Relief",
-                "layers": [{
-                    "id": "World_Shaded_Relief",
-                    "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "World_Shaded_Relief",
+                        "layerType": "esriFeature",
+                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             },
             {
@@ -698,11 +730,13 @@
                 "name": "World Street Map",
                 "description": "This worldwide street map presents highway-level data for the world.",
                 "altText": "altText - ESWorld Street Map",
-                "layers": [{
-                    "id": "World_Street_Map",
-                    "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "World_Street_Map",
+                        "layerType": "esriFeature",
+                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             },
             {
@@ -710,11 +744,13 @@
                 "name": "World Terrain Base",
                 "description": "This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.",
                 "altText": "altText - World Terrain Base",
-                "layers": [{
-                    "id": "World_Terrain_Base",
-                    "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "World_Terrain_Base",
+                        "layerType": "esriFeature",
+                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             },
             {
@@ -722,11 +758,13 @@
                 "name": "World Topographic Map",
                 "description": "This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.",
                 "altText": "altText - World Topographic Map",
-                "layers": [{
-                    "id": "World_Topo_Map",
-                    "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
-                }],
+                "layers": [
+                    {
+                        "id": "World_Topo_Map",
+                        "layerType": "esriFeature",
+                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+                    }
+                ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
             }
         ]

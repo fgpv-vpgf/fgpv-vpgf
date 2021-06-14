@@ -10,9 +10,7 @@
  * Previously, both the button and the svg icon would gain focus while tabbing in IE 11 making the user tab twice to get to the
  * next button.
  */
-angular
-    .module('material.components.icon')
-    .decorator('mdIconDirective', mdIconDirectiveDecorator);
+angular.module('material.components.icon').decorator('mdIconDirective', mdIconDirectiveDecorator);
 
 function mdIconDirectiveDecorator($delegate) {
     'ngInject';

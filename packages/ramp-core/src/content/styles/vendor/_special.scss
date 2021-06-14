@@ -3,7 +3,8 @@
 
 // to avoid IE11 vertical scrollbar to overlapp content in full screen mode
 // reference: https://github.com/twbs/bootstrap/issues/18543
-html, body {
+html,
+body {
     -ms-overflow-style: scrollbar;
 }
 
@@ -30,7 +31,7 @@ md-tooltip {
     height: rem(10);
     overflow: scroll;
     position: absolute;
-    top: - rem(999);
+    top: -rem(999);
 }
 
 md-sidenav {
@@ -51,7 +52,6 @@ md-menu-content {
     font-family: $font-family;
 
     md-menu-item {
-
         md-icon {
             width: rem(2.4);
         }
@@ -60,19 +60,19 @@ md-menu-content {
             padding-right: rem(1.6) !important;
         }
 
-        &[rv-right-icon="none"] .md-button {
+        &[rv-right-icon='none'] .md-button {
             padding-left: rem(1.6) + rem(4);
         }
 
         &[type='radio'],
         &[type='checkbox'] {
             &.md-indent {
-                .md-button[aria-checked="true"] {
+                .md-button[aria-checked='true'] {
                     padding-left: rem(1.6) !important;
                 }
 
                 // indent menu items which are not selected
-                .md-button[aria-checked="false"] {
+                .md-button[aria-checked='false'] {
                     padding-left: rem(1.6) + rem(2.4) + rem(1.6) !important;
                 }
             }
@@ -83,7 +83,6 @@ md-menu-content {
         max-height: rem(40);
         // hide divider if it's the first or the last item in the menu
         md-menu-divider {
-
             &:first-child,
             &:last-child {
                 display: none;
@@ -92,7 +91,6 @@ md-menu-content {
     }
 
     &.rv-dense {
-
         md-menu-divider {
             margin: rem(0.4) 0 !important;
         }
@@ -136,10 +134,9 @@ md-select-menu {
 
     &[multiple] {
         md-option {
-
             &:before {
                 position: absolute;
-                content: "";
+                content: '';
                 background-color: transparent;
                 width: rem(0.5);
                 left: 0;
@@ -149,11 +146,11 @@ md-select-menu {
             }
 
             // selection indicator
-            &[selected="selected"] {
+            &[selected='selected'] {
                 color: black;
 
                 // the colour md-buttons get on hover
-                background-color: rgba(158,158,158,0.2);
+                background-color: rgba(158, 158, 158, 0.2);
 
                 &:before {
                     background-color: $accent-color;
@@ -187,7 +184,7 @@ md-select-menu {
             display: flex;
             align-items: center;
 
-            .md-container  {
+            .md-container {
                 margin-left: $select-option-padding * (2 / 3);
             }
 
@@ -197,7 +194,7 @@ md-select-menu {
 
             &:before {
                 position: absolute;
-                content: "";
+                content: '';
                 background-color: transparent;
                 width: rem(0.5);
                 left: 0;
@@ -207,11 +204,11 @@ md-select-menu {
             }
 
             // selection indicator
-            &[checked="checked"] {
+            &[checked='checked'] {
                 color: black;
 
                 // the colour md-buttons get on hover
-                background-color: rgba(158,158,158,0.2);
+                background-color: rgba(158, 158, 158, 0.2);
 
                 &:before {
                     background-color: $accent-color;
@@ -248,8 +245,9 @@ md-select-menu {
 
     // all angular material components rendered outside of the viewer should be visible
     // all aria maked nodes should display default behaviour
-    > [class*="md-"],
-    .fgpv, [is=rv-map] {
+    > [class*='md-'],
+    .fgpv,
+    [is='rv-map'] {
         visibility: visible;
     }
 }

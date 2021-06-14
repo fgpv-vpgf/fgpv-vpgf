@@ -12,13 +12,13 @@ function rvFailureImage(configService) {
     const directive = {
         restrict: 'E',
         scope: {
-            message: '='
+            message: '=',
         },
         link,
         templateUrl,
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -28,7 +28,7 @@ function rvFailureImage(configService) {
 
         self.failureMessage = 'toc.error.resource.loadfailed';
 
-        configService.onEveryConfigLoad(config => {
+        configService.onEveryConfigLoad((config) => {
             self.failureImageUrl = config.ui.failureFeedback.failureImageUrl;
             if (typeof self.message !== 'undefined') {
                 self.failureMessage = self.message;

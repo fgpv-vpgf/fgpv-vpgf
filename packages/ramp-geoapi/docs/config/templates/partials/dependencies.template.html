@@ -2,11 +2,9 @@
 
 <h3>Dependencies</h3>
 <ul>
-{%- for dependency in doc.dependencies %}
-  <li>
-  {$ dependency | myInternalRouteUrl(doc) $}
-  </li>
-{%- endfor %}
+    {%- for dependency in doc.dependencies %}
+    <li>{$ dependency | myInternalRouteUrl(doc) $}</li>
+    {%- endfor %}
 </ul>
 
 {%- endif %}

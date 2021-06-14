@@ -7,18 +7,28 @@
  * extent (if enabled).
  *
  */
-angular
-    .module('app.ui')
-    .factory('tableService', tableService);
+angular.module('app.ui').factory('tableService', tableService);
 
-function tableService(stateManager, geoService, $rootScope, $q, gapiService, debounceService, $rootElement, $timeout,
-    referenceService, layerRegistry, configService, Geo, events) {
-
+function tableService(
+    stateManager,
+    geoService,
+    $rootScope,
+    $q,
+    gapiService,
+    debounceService,
+    $rootElement,
+    $timeout,
+    referenceService,
+    layerRegistry,
+    configService,
+    Geo,
+    events
+) {
     // timestamps can be watched for key changes to filter data
     const filterTimeStamps = {
         onCreated: null,
         onChanged: null,
-        onDeleted: null
+        onDeleted: null,
     };
 
     // a list of valid oidField values after filtering is complete
@@ -34,7 +44,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             isActive: false,
             isApplied: true,
             isMapFiltered: false,
-            isOpen: true
+            isOpen: true,
         },
         setTable,
         getTable,
@@ -50,7 +60,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         isFeatureLayer: false,
         isDynamicLayer: false,
         isSettingOpen: false,
-        isGlobalSearch: false
+        isGlobalSearch: false,
     };
 
     // active table for global search to link to
@@ -70,7 +80,8 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @param   {Boolean}   value   true if extent filtering is enabled, false otherwise
      */
     function setActive(value) {
-        if (filterTimeStamps.onCreated !== null) { // ignore if no DataTable is active
+        if (filterTimeStamps.onCreated !== null) {
+            // ignore if no DataTable is active
             service.filter.isActive = value;
             stateManager.display.table.data.filter.isActive = value; // set on layer so it can persist when we change layer
 
@@ -90,7 +101,6 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @private
      */
     function init() {
-
         events.$on(events.rvSymbDefinitionQueryChanged, () => {
             if (filterTimeStamps.onCreated !== null) {
                 filteredState().then(() => {
@@ -102,16 +112,19 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         $rootScope.$on('extentChange', debounceService.registerDebounce(onExtentChange, 300, false));
 
         // DataTable is either being created or destroyed
-        $rootScope.$watch(() => stateManager.display.table.data, (val, prevVal) => {
-            // triggered on DataTable panel close or switching from one layer to another
-            if ((val === null && prevVal && prevVal.rows) || (val && val.rows && prevVal && prevVal.rows)) {
-                onDestroy();
+        $rootScope.$watch(
+            () => stateManager.display.table.data,
+            (val, prevVal) => {
+                // triggered on DataTable panel close or switching from one layer to another
+                if ((val === null && prevVal && prevVal.rows) || (val && val.rows && prevVal && prevVal.rows)) {
+                    onDestroy();
+                }
+                // triggered on DataTable panel open
+                if (val && val.rows) {
+                    onCreate();
+                }
             }
-            // triggered on DataTable panel open
-            if (val && val.rows) {
-                onCreate();
-            }
-        });
+        );
     }
 
     /**
@@ -129,17 +142,21 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // reset all filters state to false (they will be populated by the loading table)
         filtersObject = table.columns().dataSrc();
-        filtersObject.each(el => {
+        filtersObject.each((el) => {
             service.filters[el] = false;
         });
 
         // recompute oidColNum for data table filter since it may not be first index
-        oidColNum = stateManager.display.table.data.columns.findIndex(col =>
-            col.data === stateManager.display.table.data.oidField);
+        oidColNum = stateManager.display.table.data.columns.findIndex(
+            (col) => col.data === stateManager.display.table.data.oidField
+        );
 
         // add a DataTable filter which only accepts rows with oidField values in the validOIDs list
-        $.fn.dataTable.ext.searchTemp.push((settings, data) =>
-            validOIDs !== undefined && validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1);
+        $.fn.dataTable.ext.searchTemp.push(
+            (settings, data) =>
+                validOIDs !== undefined &&
+                validOIDs.indexOf(parseInt(data[settings._colReorder.fnTranspose(oidColNum)])) !== -1
+        );
     }
 
     /**
@@ -166,20 +183,20 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // set isApplied to hide apply filters on map button
         service.filter.isApplied = true;
-        filters.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
+        filters.data.filter.isApplied = service.filter.isApplied; // set on layer so it can persist when we change layer
 
         // reset global search ($watch in filters-search.directive will remove the value)
         stateManager.display.table.data.filter.globalSearch = '_reset_';
 
         // reset all filters state to false
-        filtersObject.each(el => {
+        filtersObject.each((el) => {
             service.filters[el] = false;
         });
 
         // reset all filters value to default
         let defs = [];
         let filter = false;
-        filters.data.columns.forEach(column => {
+        filters.data.columns.forEach((column) => {
             // skip columns with no filter
             if (typeof column.filter !== 'undefined') {
                 if (!column.filter.static) {
@@ -207,7 +224,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         const layerConfig = filters.requester.legendEntry.proxyWrapper.layerConfig;
 
         // store the reset filter values
-        layerConfig.table.columns.forEach(column => {
+        layerConfig.table.columns.forEach((column) => {
             if (typeof column.filter !== 'undefined') {
                 if (!column.filter.static) {
                     if (column.filter.type === 'selector') {
@@ -223,14 +240,15 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // remove filter flag if filter by extent is not active (data is not filtered)
         service.filter.isMapFiltered = false;
-        filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+        filters.data.filter.isMapFiltered = service.filter.isMapFiltered; // set on layer so it can persist when we change layer
 
-        let config = configService.getSync.map.layerRecords.find(item =>
-            item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
+        let config = configService.getSync.map.layerRecords.find(
+            (item) => item.config.id === filters.requester.legendEntry.layerRecordId
+        ).initialConfig;
 
         // TODO: Modify when filtering capabilities added for other layers such as WMS
         if (config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-            config = config.layerEntries.find(item => item.index === layerConfig.index)
+            config = config.layerEntries.find((item) => item.index === layerConfig.index);
         }
 
         config.table.applyMap = false;
@@ -242,14 +260,17 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         config.initialFilteredQuery = defs.join(' AND ');
 
         // get filters configuration and check if static field were used. If so, filters can't be remove and flag need to stay
-        stateManager.display.table.requester.legendEntry.filter =
-            service.filter.isMapFiltered || filter;
+        stateManager.display.table.requester.legendEntry.filter = service.filter.isMapFiltered || filter;
 
         // if filter by extent is enable, manually trigger the on extentChange event to refresh the table
-        if (service.filter.isActive) { onExtentChange(); }
+        if (service.filter.isActive) {
+            onExtentChange();
+        }
 
         // redraw table to clear filters (use timeout for redraw so processing can show)
-        $timeout(() => { table.search('').draw(); }, 100);
+        $timeout(() => {
+            table.search('').draw();
+        }, 100);
 
         // set layer defintion query
         setDefinitionExpression(filters.requester.legendEntry, defs);
@@ -265,11 +286,11 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // set isApplied to hide apply filters on map button
         service.filter.isApplied = true;
-        filters.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
+        filters.data.filter.isApplied = service.filter.isApplied; // set on layer so it can persist when we change layer
 
         // loop trought all the filters to construct the array queries
         let defs = [];
-        filters.data.columns.forEach(column => {
+        filters.data.columns.forEach((column) => {
             // skip columns with no filter
             if (typeof column.filter !== 'undefined') {
                 defs = getFilterDefintion(defs, column);
@@ -283,7 +304,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         if (defs.length === 0) {
             // store the reset filter values
-            layerConfig.table.columns.forEach(column => {
+            layerConfig.table.columns.forEach((column) => {
                 if (typeof column.filter !== 'undefined') {
                     if (column.filter.type === 'selector') {
                         column.filter.value = [];
@@ -298,14 +319,15 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // set filter flag accordingly (if data is filtered)
         service.filter.isMapFiltered = defs.length > 0;
-        filters.data.filter.isMapFiltered = service.filter.isMapFiltered;  // set on layer so it can persist when we change layer
+        filters.data.filter.isMapFiltered = service.filter.isMapFiltered; // set on layer so it can persist when we change layer
 
-        let config = configService.getSync.map.layerRecords.find(item =>
-            item.config.id === filters.requester.legendEntry.layerRecordId).initialConfig;
+        let config = configService.getSync.map.layerRecords.find(
+            (item) => item.config.id === filters.requester.legendEntry.layerRecordId
+        ).initialConfig;
 
         // TODO: Modify when filtering capabilities added for other layers such as WMS
         if (config.layerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-            config = config.layerEntries.find(item => item.index === layerConfig.index)
+            config = config.layerEntries.find((item) => item.index === layerConfig.index);
         }
 
         // most recent 'filters' were applied (either no filters and no changes or updated filters applied)
@@ -336,7 +358,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             let val = column.filter.value.replace(/'/g, /''/);
             if (configTable.lazyFilter) {
                 const filterVal = `*${val}`;
-                val = filterVal.split(" ").join("*");
+                val = filterVal.split(' ').join('*');
             }
             if (val !== '') {
                 defs.push(`UPPER(${column.name}) LIKE \'${val.replace(/\*/g, '%').toUpperCase()}%\'`);
@@ -344,7 +366,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         }
 
         if (column.type === 'selector') {
-            const val =  column.filter.value.join(`' , '`);
+            const val = column.filter.value.join(`' , '`);
             if (val !== '') {
                 defs.push(`UPPER(${column.name}) IN (\'${val.toUpperCase()}\')`);
             }
@@ -416,7 +438,9 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
             // need to recalculate scroller space because user may have switch from default to full view inside setting panel
             // need a timeout, if not measure occurs when datatable is not displayed and it fails
-            $timeout(() => { activeTable.scroller.measure(); }, 0);
+            $timeout(() => {
+                activeTable.scroller.measure();
+            }, 0);
         }
     }
 
@@ -438,16 +462,18 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         let val = `^${value.replace(/\*/g, '.*')}.*$`;
         if (configTable.lazyFilter) {
             const filterVal = `[\\w,\\s]*${value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}`;
-            val = filterVal.split(" ").join("[\\w,\\s]*");
+            val = filterVal.split(' ').join('[\\w,\\s]*');
         }
         const table = service.getTable();
-        $timeout(() => { table.column(`${column}:name`).search(val, true, false).draw(); }, 100);
+        $timeout(() => {
+            table.column(`${column}:name`).search(val, true, false).draw();
+        }, 100);
 
         // keep filter state to know when to show apply map button
         setFiltersState(column, value);
 
         // keep filter value to reapply when table reopens
-        configTable.columns.find(filter => column === filter.data).filter.value = value;
+        configTable.columns.find((filter) => column === filter.data).filter.value = value;
 
         // changes made to filter, show Apply Map button
         configTable.applyMap = configTable.applied = false;
@@ -462,13 +488,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function onFilterSelectorChange(column, values) {
         // join the values by | for or and remove all ". They are use to split the values
-        const value = (values.length > 0) ? values.join('|').replace(/"/g, '') : '';
+        const value = values.length > 0 ? values.join('|').replace(/"/g, '') : '';
         onFilterStringChange(column, value);
 
         const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
-        configTable.columns.find(filter => column === filter.data).filter.value = values;
+        configTable.columns.find((filter) => column === filter.data).filter.value = values;
 
         // changes made to filter, show Apply Map button
         configTable.applyMap = configTable.applied = false;
@@ -491,12 +517,14 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // redraw table to filter (filters for range number are added on the table itself in table-definition.directive)
         // use timeout for redraw so processing can show
-        $timeout(() => { service.getTable().draw(); }, 100);
+        $timeout(() => {
+            service.getTable().draw();
+        }, 100);
 
         const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
-        configTable.columns.find(filter => column === filter.data).filter.value = `${min},${max}`;
+        configTable.columns.find((filter) => column === filter.data).filter.value = `${min},${max}`;
 
         // changes made to filter, show Apply Map button
         configTable.applyMap = configTable.applied = false;
@@ -519,14 +547,16 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // redraw table to filter (filters for range date are added on the table itself in table-definition.directive)
         // use timeout for redraw so processing can show
-        $timeout(() => { service.getTable().draw(); }, 100);
+        $timeout(() => {
+            service.getTable().draw();
+        }, 100);
 
         const configTable = stateManager.display.table.requester.legendEntry.proxyWrapper.layerConfig.table;
 
         // keep filter value when reloading layer
-        configTable.columns.find(filter => column === filter.data).filter.value = {
+        configTable.columns.find((filter) => column === filter.data).filter.value = {
             min: min,
-            max: max
+            max: max,
         };
 
         // changes made to filter, show Apply Map button
@@ -555,7 +585,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
             let flag = false;
 
-            filtersObject.each(el => {
+            filtersObject.each((el) => {
                 // check if another field have a filter. If so, show Apply Map
                 if (service.filters[el]) {
                     flag = true;
@@ -570,7 +600,7 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             }
         }
 
-        stateManager.display.table.data.filter.isApplied = service.filter.isApplied;  // set on layer so it can persist when we change layer
+        stateManager.display.table.data.filter.isApplied = service.filter.isApplied; // set on layer so it can persist when we change layer
     }
 
     /**
@@ -594,11 +624,12 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      */
     function onCreate() {
         // recompute oidColNum for data table filter since it may not be first index
-        oidColNum = stateManager.display.table.data.columns.findIndex(col =>
-            col.data === stateManager.display.table.data.oidField);
+        oidColNum = stateManager.display.table.data.columns.findIndex(
+            (col) => col.data === stateManager.display.table.data.oidField
+        );
 
         // set filter flag
-        service.filter.isActive = stateManager.display.table.requester.legendEntry.filters
+        service.filter.isActive = stateManager.display.table.requester.legendEntry.filters;
 
         // set filter extent and apply map button from table information
         const filter = stateManager.display.table.data.filter;
@@ -616,8 +647,8 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         // user added layer from server support definition expression and time defintion
         const layer = layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId);
         const layerType = layer.initialConfig.layerType; // stateManager.display.table.requester.legendEntry.layerType;
-        service.isFeatureLayer = (layerType === Geo.Layer.Types.ESRI_FEATURE && layer.dataSource() === 'esri');
-        service.isDynamicLayer = (layerType === Geo.Layer.Types.ESRI_DYNAMIC);
+        service.isFeatureLayer = layerType === Geo.Layer.Types.ESRI_FEATURE && layer.dataSource() === 'esri';
+        service.isDynamicLayer = layerType === Geo.Layer.Types.ESRI_DYNAMIC;
 
         filteredState().then(() => {
             filterTimeStamps.onCreated = Date.now();
@@ -647,22 +678,27 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
      * @private
      */
     function onExtentChange() {
-        if (!service.filter.isActive || !stateManager.display.table.requester) { // filter by extent disabled or no DataTable is active - ignore
+        if (!service.filter.isActive || !stateManager.display.table.requester) {
+            // filter by extent disabled or no DataTable is active - ignore
             return;
         }
 
-        const layer =
-            layerRegistry.getLayerRecord(stateManager.display.table.requester.legendEntry.layerRecordId)._layer;
+        const layer = layerRegistry.getLayerRecord(
+            stateManager.display.table.requester.legendEntry.layerRecordId
+        )._layer;
 
         // wait until layer has finished updating before filtering
-        const stopUpdateWatcher = $rootScope.$watch(() => layer.updating, updating => {
-            if (!updating) {
-                filteredState().then(() => {
-                    filterTimeStamps.onChanged = Date.now();
-                });
-                stopUpdateWatcher(); // remove watcher
+        const stopUpdateWatcher = $rootScope.$watch(
+            () => layer.updating,
+            (updating) => {
+                if (!updating) {
+                    filteredState().then(() => {
+                        filterTimeStamps.onChanged = Date.now();
+                    });
+                    stopUpdateWatcher(); // remove watcher
+                }
             }
-        });
+        );
     }
 
     /**
@@ -677,11 +713,13 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
 
         // we're not filtering by either symbology or extent, so resolve with all oid's as valid
         if (!service.filter.isActive && typeof legendBlock.symbDefinitionQuery !== 'string') {
-            validOIDs = stateManager.display.table.data.rows.map(row => parseInt(row[stateManager.display.table.data.oidField]));
+            validOIDs = stateManager.display.table.data.rows.map((row) =>
+                parseInt(row[stateManager.display.table.data.oidField])
+            );
             return $q.resolve();
         }
 
-        return queryMapserver().then(oids => (validOIDs = oids));
+        return queryMapserver().then((oids) => (validOIDs = oids));
     }
 
     /**
@@ -706,10 +744,14 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
         }
 
         // query the layer itself instead of making a mapserver request
-        if (legEntry.parentLayerType === 'esriFeature' && legEntry.layerType === 'esriFeature' && layerRecId.dataSource() !== 'esri') {
-            queryOpts.featureLayer = layerRecId._layer;         // file based layer
+        if (
+            legEntry.parentLayerType === 'esriFeature' &&
+            legEntry.layerType === 'esriFeature' &&
+            layerRecId.dataSource() !== 'esri'
+        ) {
+            queryOpts.featureLayer = layerRecId._layer; // file based layer
         } else {
-            queryOpts.url = legEntry.proxyWrapper.queryUrl;        // server based layer
+            queryOpts.url = legEntry.proxyWrapper.queryUrl; // server based layer
         }
 
         // only include oidField values after previous mapserver query resulted in a exceededTransferLimit exception
@@ -723,7 +765,6 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             queryOpts.where = ''; // this is needed for our string concatenation below, else its undefined
         }
 
-
         if (filterBySymbology) {
             if (legEntry.symbDefinitionQuery === '1=2' && queryOpts.featureLayer !== undefined) {
                 // if this is an invisible file based layer
@@ -733,17 +774,18 @@ function tableService(stateManager, geoService, $rootScope, $q, gapiService, deb
             queryOpts.where += `(${legEntry.symbDefinitionQuery})`;
         }
 
-        return gapiService.gapi.query.queryGeometry(queryOpts).then(featureSet => {
+        return gapiService.gapi.query.queryGeometry(queryOpts).then((featureSet) => {
             // save an array of OID's returned by the query
-            const validOIDs = featureSet.features.map(feat => parseInt(feat.attributes[state.data.oidField]));
+            const validOIDs = featureSet.features.map((feat) => parseInt(feat.attributes[state.data.oidField]));
             // transfer limit exceeded - call query again until all data is retrieved
             if (featureSet.exceededTransferLimit) {
                 // get the last oidField value to use as a starting point for another query
                 // TODO: Using the assumption that oidField values are sorted. If this turns out to be not the case,
                 // see the available ESRI methods orderByFields or start (would need to expose in geoAPI first)
                 const lastOID = featureSet.features[featureSet.features.length - 1].attributes[state.data.oidField];
-                return queryMapserver(lastOID).then(oIDs => validOIDs.concat(oIDs)); // merge recursive list with own results
-            } else { // either query did not trigger an exceededTransferLimit exception, or this marks the end of the result set
+                return queryMapserver(lastOID).then((oIDs) => validOIDs.concat(oIDs)); // merge recursive list with own results
+            } else {
+                // either query did not trigger an exceededTransferLimit exception, or this marks the end of the result set
                 return validOIDs;
             }
         });

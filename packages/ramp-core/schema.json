@@ -31,7 +31,8 @@
                     "description": "a well known type projection definition"
                 }
             },
-            "anyOf": [{
+            "anyOf": [
+                {
                     "required": ["wkid"]
                 },
                 {
@@ -72,7 +73,8 @@
                     "description": "a well known type projection definition"
                 }
             },
-            "anyOf": [{
+            "anyOf": [
+                {
                     "required": ["wkid"]
                 },
                 {
@@ -363,15 +365,7 @@
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": [
-                    "opacity",
-                    "visibility",
-                    "symbology",
-                    "query",
-                    "reload",
-                    "remove",
-                    "settings"
-                ]
+                "enum": ["opacity", "visibility", "symbology", "query", "reload", "remove", "settings"]
             },
             "uniqueItems": true,
             "description": "A list of all controls to be enabled on the specified group"
@@ -537,15 +531,20 @@
                 "children": {
                     "type": "array",
                     "items": {
-                        "oneOf": [{
-                            "$ref": "#/definitions/entryGroup"
-                        }, {
-                            "$ref": "#/definitions/visibilitySet"
-                        }, {
-                            "$ref": "#/definitions/entry"
-                        }, {
-                            "$ref": "#/definitions/infoSection"
-                        }]
+                        "oneOf": [
+                            {
+                                "$ref": "#/definitions/entryGroup"
+                            },
+                            {
+                                "$ref": "#/definitions/visibilitySet"
+                            },
+                            {
+                                "$ref": "#/definitions/entry"
+                            },
+                            {
+                                "$ref": "#/definitions/infoSection"
+                            }
+                        ]
                     },
                     "minItems": 1
                 },
@@ -570,11 +569,14 @@
                 "exclusiveVisibility": {
                     "type": "array",
                     "items": {
-                        "oneOf": [{
-                            "$ref": "#/definitions/entryGroup"
-                        }, {
-                            "$ref": "#/definitions/entry"
-                        }]
+                        "oneOf": [
+                            {
+                                "$ref": "#/definitions/entryGroup"
+                            },
+                            {
+                                "$ref": "#/definitions/entry"
+                            }
+                        ]
                     },
                     "minItems": 1
                 }
@@ -599,10 +601,7 @@
                         "description": "An SQL where clause by which the map and datatable attributes can be filtered. All the query results for the symbologyStack should cover all attributes for that layer."
                     }
                 },
-                "required": [
-                    "image",
-                    "text"
-                ],
+                "required": ["image", "text"],
                 "additionalProperties": false
             },
             "minItems": 1
@@ -663,7 +662,8 @@
             "additionalProperties": false
         },
         "infoSection": {
-            "oneOf": [{
+            "oneOf": [
+                {
                     "type": "object",
                     "properties": {
                         "infoType": {
@@ -766,11 +766,14 @@
             "required": ["infoType", "content"]
         },
         "mapLegend": {
-            "oneOf": [{
-                "$ref": "#/definitions/legendAuto"
-            }, {
-                "$ref": "#/definitions/legendStructured"
-            }]
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/legendAuto"
+                },
+                {
+                    "$ref": "#/definitions/legendStructured"
+                }
+            ]
         },
         "legendAuto": {
             "type": "object",
@@ -1543,7 +1546,8 @@
             "additionalProperties": false
         },
         "layerNode": {
-            "oneOf": [{
+            "oneOf": [
+                {
                     "$ref": "#/definitions/basicLayerNode"
                 },
                 {
@@ -1683,7 +1687,19 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["layers", "basemap", "geoSearch", "about", "fullscreen", "export", "share", "touch", "help", "language", "plugins"]
+                "enum": [
+                    "layers",
+                    "basemap",
+                    "geoSearch",
+                    "about",
+                    "fullscreen",
+                    "export",
+                    "share",
+                    "touch",
+                    "help",
+                    "language",
+                    "plugins"
+                ]
             }
         },
 
@@ -1737,7 +1753,18 @@
             "uniqueItems": true,
             "items": {
                 "type": "string",
-                "enum": ["geoLocator", "marquee", "home", "history", "basemap", "help", "fullscreen", "geoSearch", "sideMenu", "layers"]
+                "enum": [
+                    "geoLocator",
+                    "marquee",
+                    "home",
+                    "history",
+                    "basemap",
+                    "help",
+                    "fullscreen",
+                    "geoSearch",
+                    "sideMenu",
+                    "layers"
+                ]
             }
         },
 
@@ -1814,7 +1841,8 @@
                     "description": "The folder which contains the content for the about section"
                 }
             },
-            "oneOf": [{
+            "oneOf": [
+                {
                     "required": ["content"]
                 },
                 {

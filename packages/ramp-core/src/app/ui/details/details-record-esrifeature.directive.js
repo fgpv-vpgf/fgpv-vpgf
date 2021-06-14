@@ -24,11 +24,11 @@ function rvDetailsRecordEsrifeature() {
         templateUrl,
         scope: {
             item: '=',
-            mapPoint: '='
+            mapPoint: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -55,7 +55,7 @@ function Controller($scope, appInfo, events, mapService, configService) {
     });
 
     // watch for selected item changes; reset the highlight;
-    $scope.$watch('self.item', newValue => {
+    $scope.$watch('self.item', (newValue) => {
         if (typeof newValue !== 'undefined') {
             oidsAll = [];
             oidsToHighlight = [];
@@ -124,7 +124,7 @@ function Controller($scope, appInfo, events, mapService, configService) {
 
         if (oids.length > 0 && appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Highlight)) {
             mapService.clearHighlight();
-            oids.forEach(oid => _drawFeatureHighlight(oid));
+            oids.forEach((oid) => _drawFeatureHighlight(oid));
         } else if (self.mapPoint && appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Marker)) {
             mapService.clearHighlight();
             mapService.addMarkerHighlight(self.mapPoint, appInfo.mapi.layers.identifyMode.includes(IdentifyMode.Haze));

@@ -6,14 +6,11 @@
  * @description debounce JavaScript methods
  *
  */
-angular
-    .module('app.core')
-    .factory('debounceService', debounceService);
+angular.module('app.core').factory('debounceService', debounceService);
 
 function debounceService($rootScope, $timeout, $q) {
-
     const service = {
-        registerDebounce
+        registerDebounce,
     };
 
     return service;
@@ -40,11 +37,12 @@ function debounceService($rootScope, $timeout, $q) {
         return (...args) => {
             if (!bouncing) {
                 // create a promise every time the function is not bouncing
-                bouncePromise = $q(resolve =>
-                    (resolveBouncePromise = resolve));
+                bouncePromise = $q((resolve) => (resolveBouncePromise = resolve));
 
                 // fire function before bouncing
-                if (before) { resolveBouncePromise(fn(...args)); }
+                if (before) {
+                    resolveBouncePromise(fn(...args));
+                }
                 if (!skipApply) {
                     $rootScope.$applyAsync(); // applyAsync during the next digest cycle
                 }
@@ -54,7 +52,9 @@ function debounceService($rootScope, $timeout, $q) {
             $timeout.cancel(timeoutHandle);
             timeoutHandle = $timeout(() => {
                 // fire function when bouncing is done
-                if (!before) { resolveBouncePromise(fn(...args)); } // pass any arguments to the registered function
+                if (!before) {
+                    resolveBouncePromise(fn(...args));
+                } // pass any arguments to the registered function
                 bouncing = false;
             }, delay); // stop bouncing
 

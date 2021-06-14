@@ -35,14 +35,14 @@ function LegendBlockFactory(
 
         get map() {
             return configService.getSync.map;
-        }
+        },
     };
 
     const TYPES = {
         INFO: 'info',
         NODE: 'node',
         GROUP: 'group',
-        SET: 'set'
+        SET: 'set',
     };
 
     /**
@@ -79,7 +79,7 @@ function LegendBlockFactory(
             // for WFS layers proxy resolves when the layer record is made and "loaded"
             // for other layer types proxy resolves when the layer record is made (layer is not necessarily loaded at this point)
             this._proxyPromise
-                .then(proxy => {
+                .then((proxy) => {
                     this._proxy = proxy;
 
                     // This will apply initial state values from the layer config object to the layer proxy object.
@@ -92,7 +92,7 @@ function LegendBlockFactory(
                     this._updateApiLayerOpacity(this);
                     this._updateApiLayerQueryable(this);
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.error(`Layer proxy failed to resolve for "${this.layerConfig.id}"`, error);
                     // if the proxy fails to resolve (layer data failed to load, etc.), set status to `rv-error`
                     this._lastState = Geo.Layer.States.ERROR;
@@ -307,7 +307,6 @@ function LegendBlockFactory(
             this._layerConfig.state.boundingBox = value;
         }
 
-
         /**
          * Layer config object persists through layer reload (corresponding layer record and legend blocks are destroyed),
          * the changed snapshot value will be processed in geoApi on the subsequent generation of layer records.
@@ -466,7 +465,7 @@ function LegendBlockFactory(
                     // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
                     // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
                     // of both the id and index to find the correct layer
-                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
+                    layer = appInfo.mapi.layers.allLayers.find((l) => l._layerProxy === this.proxy);
                 } else {
                     layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
@@ -490,7 +489,7 @@ function LegendBlockFactory(
                     // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
                     // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
                     // of both the id and index to find the correct layer
-                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
+                    layer = appInfo.mapi.layers.allLayers.find((l) => l._layerProxy === this.proxy);
                 } else {
                     layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
@@ -515,7 +514,7 @@ function LegendBlockFactory(
                     // TODO: find a better way to find the dynamic ConfigLayer than directly comparing geoApi proxies
                     // potentially can add a 'layerId' to the proxy which will allow for an easy comparison
                     // of both the id and index to find the correct layer
-                    layer = appInfo.mapi.layers.allLayers.find(l => l._layerProxy === this.proxy);
+                    layer = appInfo.mapi.layers.allLayers.find((l) => l._layerProxy === this.proxy);
                 } else {
                     layer = appInfo.mapi.layers.getLayersById(this._layerConfig.id)[0];
                 }
@@ -739,7 +738,7 @@ function LegendBlockFactory(
             // wait for the layer to load before trying to make a bounding box or validate the projection
             const deregisterWatch = $rootScope.$watch(
                 () => this.proxyWrapper.state,
-                state => {
+                (state) => {
                     if (state === Geo.Layer.States.LOADED) {
                         // this is the first chance to properly create bounding box for this legend node
                         // since it's created on demand and cannot be created by geoapi when creating layerRecord
@@ -778,7 +777,7 @@ function LegendBlockFactory(
          * @function synchronizeControlledProxyWrappers
          */
         synchronizeControlledProxyWrappers() {
-            this._controlledProxyWrappers.forEach(proxyWrapper => {
+            this._controlledProxyWrappers.forEach((proxyWrapper) => {
                 proxyWrapper.visibility = this.visibility;
                 proxyWrapper.opacity = this.opacity;
             });
@@ -817,7 +816,7 @@ function LegendBlockFactory(
                 return Geo.Layer.States.BAD_PROJECTION;
             }
 
-            const allStates = this._allProxyWrappers.map(proxyWrapper => proxyWrapper.state);
+            const allStates = this._allProxyWrappers.map((proxyWrapper) => proxyWrapper.state);
             const combinedState = this._aggregateStates(allStates);
 
             return combinedState;
@@ -830,7 +829,7 @@ function LegendBlockFactory(
                 'rv-loaded': () => super.template,
                 'rv-refresh': () => super.template,
                 'rv-error': () => 'error',
-                'rv-bad-projection': () => 'bad-projection'
+                'rv-bad-projection': () => 'bad-projection',
             };
 
             return stateToTemplate[this.state]();
@@ -890,12 +889,11 @@ function LegendBlockFactory(
             return this.proxyWrapper.visibility;
         }
         set visibility(value) {
-
             if (this.isControlSystemDisabled('visibility')) {
                 return;
             }
 
-            this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.visibility = value));
+            this._allProxyWrappers.forEach((proxyWrapper) => (proxyWrapper.visibility = value));
 
             updateLegendElementVisibility(this);
 
@@ -931,7 +929,7 @@ function LegendBlockFactory(
                 return;
             }
 
-            this._allProxyWrappers.forEach(proxyWrapper => (proxyWrapper.opacity = value));
+            this._allProxyWrappers.forEach((proxyWrapper) => (proxyWrapper.opacity = value));
 
             updateLegendElementOpacity(this);
         }
@@ -972,10 +970,12 @@ function LegendBlockFactory(
             if (!this._bboxProxy) {
                 // no cached bounding box found
                 this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
-
-            } else if (!gapiService.gapi.proj.isSpatialRefEqual(
-                this._bboxProxy.spatialReference, ref.map.selectedBasemap.spatialReference)) {
-
+            } else if (
+                !gapiService.gapi.proj.isSpatialRefEqual(
+                    this._bboxProxy.spatialReference,
+                    ref.map.selectedBasemap.spatialReference
+                )
+            ) {
                 // cached bbox projection not compatible
                 this._bboxProxy = layerRegistry.removeBoundingBoxRecord(this.bboxId);
                 this._bboxProxy = layerRegistry.registerBoundingBoxRecord(this.bboxId, this.proxyWrapper.extent);
@@ -999,9 +999,13 @@ function LegendBlockFactory(
         set boundingBox(value) {
             if (!value && !this._bboxProxy) {
                 return;
-            } else if (!this._bboxProxy || !gapiService.gapi.proj.isSpatialRefEqual(
-                this._bboxProxy.spatialReference, ref.map.selectedBasemap.spatialReference)) {
-
+            } else if (
+                !this._bboxProxy ||
+                !gapiService.gapi.proj.isSpatialRefEqual(
+                    this._bboxProxy.spatialReference,
+                    ref.map.selectedBasemap.spatialReference
+                )
+            ) {
                 this._makeBbox();
             }
 
@@ -1119,7 +1123,7 @@ function LegendBlockFactory(
 
         // FIXME this can probably move directly into geoApi
         getSymbol(featureAttrs) {
-            return this.formattedData.then(attrSet =>
+            return this.formattedData.then((attrSet) =>
                 gapiService.gapi.symbology.getGraphicIcon(featureAttrs, attrSet.renderer)
             );
         }
@@ -1267,10 +1271,12 @@ function LegendBlockFactory(
         }
 
         synchronizeControlledEntries() {
-            this._activeEntries.filter(entry => entry.controlled).forEach(controlledEntry => {
-                controlledEntry.visibility = this.visibility;
-                controlledEntry.opacity = this.opacity;
-            });
+            this._activeEntries
+                .filter((entry) => entry.controlled)
+                .forEach((controlledEntry) => {
+                    controlledEntry.visibility = this.visibility;
+                    controlledEntry.opacity = this.opacity;
+                });
         }
 
         _entries = [];
@@ -1332,7 +1338,7 @@ function LegendBlockFactory(
                 'rv-bad-projection': () => {
                     _removeReload();
                     return 'bad-projection';
-                }
+                },
             };
 
             return stateToTemplate[this.state]();
@@ -1391,7 +1397,7 @@ function LegendBlockFactory(
         }
 
         get visibility() {
-            return this._observableEntries.some(entry => entry.visibility);
+            return this._observableEntries.some((entry) => entry.visibility);
         }
         set visibility(value) {
             if (this.isControlSystemDisabled('visibility')) {
@@ -1400,7 +1406,7 @@ function LegendBlockFactory(
 
             if (value) {
                 // Toggle each child entry's visibility on
-                this._activeEntries.forEach(entry => {
+                this._activeEntries.forEach((entry) => {
                     // If a child is a group propogate the toggled value
                     // This allows show all to effect all child groups
                     if (entry.blockType === 'group') {
@@ -1419,7 +1425,7 @@ function LegendBlockFactory(
                 });
                 this._toggled = false;
             } else {
-                this._activeEntries.forEach(entry => {
+                this._activeEntries.forEach((entry) => {
                     entry.oldVisibility = entry.visibility;
                     if (entry.visibility) {
                         // Don't set the visibility if it doesn't change
@@ -1439,7 +1445,7 @@ function LegendBlockFactory(
          * @return {Boolean} `true` is all observed legend blocks are set to be queriable; `false` otherwise;
          */
         get query() {
-            return this._observableEntries.some(entry => entry.query);
+            return this._observableEntries.some((entry) => entry.query);
         }
         /**
          * @param {Boolean} value zxxzcs
@@ -1450,7 +1456,7 @@ function LegendBlockFactory(
                 return;
             }
 
-            this._activeEntries.forEach(entry => (entry.query = value));
+            this._activeEntries.forEach((entry) => (entry.query = value));
 
             updateLegendElementQueryable(this);
 
@@ -1483,7 +1489,7 @@ function LegendBlockFactory(
                 value = entries[0].opacity;
                 // Check that they have the same opacity and if it has all the same opacity if it's a group
                 this._sameOpacity = entries.every(
-                    entry =>
+                    (entry) =>
                         entry.opacity === value && (entry._sameOpacity === undefined || entry._sameOpacity === true)
                 );
             }
@@ -1495,7 +1501,7 @@ function LegendBlockFactory(
                 return;
             }
 
-            this._activeEntries.forEach(entry => (entry.opacity = value));
+            this._activeEntries.forEach((entry) => (entry.opacity = value));
 
             updateLegendElementOpacity(this);
 
@@ -1518,7 +1524,7 @@ function LegendBlockFactory(
         // active entries do not include hidden nodes
         get _activeEntries() {
             return this.entries.filter(
-                entry =>
+                (entry) =>
                     entry.blockType === TYPES.SET ||
                     entry.blockType === TYPES.GROUP ||
                     (entry.blockType === TYPES.NODE && !entry.hidden)
@@ -1527,7 +1533,7 @@ function LegendBlockFactory(
         get _observableEntries() {
             // observable entries are a subset of active entries which are not controlled blocks and are rendered in the UI
             // when calculating group opacity or visibility, exclude controlled layers as they might have locked opacity specified in the config
-            return this._activeEntries.filter(entry => !entry.controlled);
+            return this._activeEntries.filter((entry) => !entry.controlled);
         }
 
         addEntry(entry, position = this._entries.length) {
@@ -1557,7 +1563,7 @@ function LegendBlockFactory(
                 !this.hidden &&
                 this.opacity !== 0 &&
                 (this.state === Geo.Layer.States.REFRESH || this.state === Geo.Layer.States.LOADED) &&
-                this.entries.some(entry => entry.isVisibleOnExport)
+                this.entries.some((entry) => entry.isVisibleOnExport)
             );
         }
     }
@@ -1602,7 +1608,7 @@ function LegendBlockFactory(
             // find a new entry selected in the visibility group by a user;
             // it must differ from the already selected entry tracked by the visibility group
             const newlySelectedEntry =
-                this._activeEntries.find(entry => entry.visibility && entry !== this._selectedEntry) || null;
+                this._activeEntries.find((entry) => entry.visibility && entry !== this._selectedEntry) || null;
 
             // if found, hide the tracked entry, and keep the reference to the new one
             if (newlySelectedEntry) {
@@ -1612,7 +1618,7 @@ function LegendBlockFactory(
                 this._selectedEntry = newlySelectedEntry;
             }
 
-            const anyVisible = this._activeEntries.some(entry => entry.visibility);
+            const anyVisible = this._activeEntries.some((entry) => entry.visibility);
 
             // if this visiblity set is collapsed and has active entries,
             // hide all other entries except the selection one (or the first of active entreis if the selection is null)
@@ -1620,7 +1626,7 @@ function LegendBlockFactory(
                 const collapsedEntry = this._selectedEntry || this._activeEntries[0];
                 collapsedEntry.hidden = false;
 
-                this._activeEntries.forEach(entry => {
+                this._activeEntries.forEach((entry) => {
                     if (entry !== collapsedEntry) {
                         entry.hidden = true;
                     }
@@ -1632,7 +1638,7 @@ function LegendBlockFactory(
 
         set visibility(value) {
             if (!value) {
-                this._activeEntries.forEach(entry => (entry.visibility = value));
+                this._activeEntries.forEach((entry) => (entry.visibility = value));
             } else if (!this.visibility && this._activeEntries.length > 0) {
                 // setting the set's visibility to true when one of the entries is already visible has no effect
                 // `this.visibility` will be `false` if there is no visible entries, so turning visiblity on
@@ -1647,7 +1653,7 @@ function LegendBlockFactory(
         }
 
         get _activeEntries() {
-            return this.entries.filter(entry => entry.blockType === TYPES.GROUP || entry.blockType === TYPES.NODE);
+            return this.entries.filter((entry) => entry.blockType === TYPES.GROUP || entry.blockType === TYPES.NODE);
         }
 
         get entries() {
@@ -1697,7 +1703,7 @@ function LegendBlockFactory(
         }
 
         get isVisibleOnExport() {
-            return !this.hidden && this.opacity !== 0 && this.entries.some(entry => entry.isVisibleOnExport);
+            return !this.hidden && this.opacity !== 0 && this.entries.some((entry) => entry.isVisibleOnExport);
         }
     }
 
@@ -1710,7 +1716,7 @@ function LegendBlockFactory(
 
         ProxyWrapper,
 
-        TYPES
+        TYPES,
     };
 
     return service;
@@ -1825,10 +1831,15 @@ function LegendBlockFactory(
      * @return {String} the aggregated state of the states supplied
      */
     function aggregateStates(states) {
-        const stateNames = [Geo.Layer.States.ERROR, Geo.Layer.States.BAD_PROJECTION, Geo.Layer.States.LOADING,
-            Geo.Layer.States.REFRESH, Geo.Layer.States.LOADED];
+        const stateNames = [
+            Geo.Layer.States.ERROR,
+            Geo.Layer.States.BAD_PROJECTION,
+            Geo.Layer.States.LOADING,
+            Geo.Layer.States.REFRESH,
+            Geo.Layer.States.LOADED,
+        ];
 
-        const stateValues = stateNames.map(name => states.indexOf(name) !== -1);
+        const stateValues = stateNames.map((name) => states.indexOf(name) !== -1);
 
         return stateNames[stateValues.indexOf(true)];
     }

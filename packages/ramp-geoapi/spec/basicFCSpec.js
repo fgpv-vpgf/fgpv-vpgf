@@ -6,11 +6,13 @@ describe('BasicFC', () => {
     const parent = {
         _layer: {
             minScale: 10,
-            maxScale: 5
+            maxScale: 5,
         },
         _apiRef: {
             symbology: {
-                generatePlaceholderSymbology: (x) => { return x; },
+                generatePlaceholderSymbology: (x) => {
+                    return x;
+                },
                 mapServerToLocalLegend: () => {
                     const x = {
                         layers: [
@@ -18,16 +20,16 @@ describe('BasicFC', () => {
                                 legend: [
                                     Promise.resolve({
                                         label: 'la',
-                                        svgcode: '1'
-                                    })
-                                ]
-                            }
-                        ]
+                                        svgcode: '1',
+                                    }),
+                                ],
+                            },
+                        ],
                     };
                     return Promise.resolve(x);
-                }
-            }
-        }
+                },
+            },
+        },
     };
     const config = {
         name: 'cname',
@@ -36,8 +38,8 @@ describe('BasicFC', () => {
                 returnGeometry: true,
                 outFields: ['*'],
                 geometry: 'point',
-                spatialRelationship: 'intersects'
-            }
+                spatialRelationship: 'intersects',
+            },
         },
         extent: {
             xmin: -95,
@@ -45,9 +47,9 @@ describe('BasicFC', () => {
             xmax: -94.5,
             ymax: 49.5,
             spatialReference: {
-                wkid: 4326
-            }
-        }
+                wkid: 4326,
+            },
+        },
     };
     let basicFC;
     beforeEach(() => {
@@ -68,7 +70,7 @@ describe('BasicFC', () => {
                 returnGeometry: false,
                 outFields: ['DUID'],
                 geometry: 'line',
-                spatialRelationship: 'union'
+                spatialRelationship: 'union',
             };
             basicFC.queryable = fakeQuery;
             const res = basicFC.queryable;
@@ -77,7 +79,6 @@ describe('BasicFC', () => {
             expect(res.geometry).toEqual('line');
             expect(res.spatialRelationship).toEqual('union');
         });
-
     });
 
     describe('getScaleSet', () => {
@@ -86,7 +87,6 @@ describe('BasicFC', () => {
             expect(res.minScale).toEqual(10);
             expect(res.maxScale).toEqual(5);
         });
-
     });
 
     describe('isOffScale', () => {
@@ -107,7 +107,6 @@ describe('BasicFC', () => {
             expect(res.offScale).not.toBeTruthy();
             expect(res.zoomIn).not.toBeTruthy();
         });
-
     });
 
     describe('getVisibility', () => {
@@ -116,12 +115,13 @@ describe('BasicFC', () => {
             const res = basicFC.getVisibility();
             expect(res).toBeTruthy();
         });
-
     });
 
     describe('loadSymbology', () => {
         it('should throw error if URL is undefined', () => {
-            expect(function () { basicFC.loadSymbology(); }).toThrowError();
+            expect(function () {
+                basicFC.loadSymbology();
+            }).toThrowError();
         });
 
         it('should work if URL is not undefined', (done) => {
@@ -131,13 +131,10 @@ describe('BasicFC', () => {
                 expect(basicFC.symbology[0].svgcode).toEqual('1');
                 expect(basicFC.symbology[0].name).toEqual('la');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
         });
-
     });
-
 });

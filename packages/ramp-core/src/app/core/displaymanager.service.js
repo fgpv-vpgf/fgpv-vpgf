@@ -1,4 +1,3 @@
-
 /**
  * @module displayManager
  * @memberof app.common
@@ -8,14 +7,12 @@
  * The `displayManager` factory handles the display of dynamically retrieved or constructed data like layer metadata, attributes, details, or settings.
  *
  */
-angular
-    .module('app.core')
-    .factory('displayManager', displayManager);
+angular.module('app.core').factory('displayManager', displayManager);
 
 function displayManager($timeout, $q, $rootElement, configService, events, appInfo) {
     const service = {
         toggleDisplayPanel,
-        clearDisplayPanel
+        clearDisplayPanel,
     };
 
     // wire in a hook to toggle details panel, this makes it available on the API
@@ -29,7 +26,7 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
     let requestIdCounter = 1;
 
     // to avoid circular references, stateManger instantiates displayManager by passing its own service to the init function
-    return sm => {
+    return (sm) => {
         stateManager = sm;
 
         return service;
@@ -86,10 +83,7 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
         const requestId = ++requestIdCounter;
         // if specified panel is open ...
         // and the requester id is not undefined or matches to the previous requester id ...
-        if (panel.isOpen &&
-            typeof requester.id !== 'undefined' &&
-            display.requester.id === requester.id) {
-
+        if (panel.isOpen && typeof requester.id !== 'undefined' && display.requester.id === requester.id) {
             panel.close();
         } else {
             // cancel previous data retrieval timeout
@@ -111,7 +105,10 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
             // whenever a panel is opened (or updated) create a focus link between the element which triggered the
             // panel change to the first focusable element in the panel.
             animationPromise.then(() => {
-                const sourceEl = $rootElement.find(`[legend-block-id="${requester.id}"] button`).filter(':visible').first();
+                const sourceEl = $rootElement
+                    .find(`[legend-block-id="${requester.id}"] button`)
+                    .filter(':visible')
+                    .first();
                 $(sourceEl).link($rootElement.find(`[rv-state="${panelName}"]`));
             });
 
@@ -120,7 +117,7 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
             display.requestId = requestId;
             return $q
                 .resolve(dataPromise)
-                .then(value => {
+                .then((value) => {
                     const data = typeof value.data !== 'undefined' ? value.data : value;
                     const isLoaded = typeof value.isLoaded !== 'undefined' ? value.isLoaded : true;
 
@@ -131,7 +128,7 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
                         panel.open();
                     }
                 })
-                .catch(err => {
+                .catch((err) => {
                     $timeout.cancel(display.loadingTimeout);
                     display.isLoading = false;
                     display.data = null;
@@ -173,22 +170,26 @@ function displayManager($timeout, $q, $rootElement, configService, events, appIn
             // in some cases you might not want to turn off the loading indicator from tocService toggle function
             // with the table panel for example: fetching data for the table takes time, but generating the actual table also takes time; so you want to turn off the loading indicator from table panel
             // when `isLoaded` promise resolves, the loading indicator is removed if the resolved value is not false
-            $q
-                .resolve(isLoaded)
-                .then(value => {
-                    if (display.requestId === requestId && value === true) {
-                        display.isLoading = false;
+            $q.resolve(isLoaded).then((value) => {
+                if (display.requestId === requestId && value === true) {
+                    display.isLoading = false;
 
-                        // cancel loading indicator timeout if any
-                        $timeout.cancel(display.loadingTimeout);
-                    } else {
-                        console.log('displayManager', `${displayName}: data rejected for request id ` +
-                            `${requestId} - any loading in progress or panel has been closed.`);
-                    }
-                });
+                    // cancel loading indicator timeout if any
+                    $timeout.cancel(display.loadingTimeout);
+                } else {
+                    console.log(
+                        'displayManager',
+                        `${displayName}: data rejected for request id ` +
+                            `${requestId} - any loading in progress or panel has been closed.`
+                    );
+                }
+            });
         } else {
-            console.log('displayManager', `${displayName}: data rejected for request id ${requestId} - ` +
-                `any loading in progress or panel has been closed.```);
+            console.log(
+                'displayManager',
+                `${displayName}: data rejected for request id ${requestId} - ` +
+                    `any loading in progress or panel has been closed.```
+            );
         }
     }
 

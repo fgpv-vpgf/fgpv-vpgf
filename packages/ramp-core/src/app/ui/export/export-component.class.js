@@ -37,7 +37,7 @@ function ExportComponentFactory($q, graphicsService) {
                 graphicPosition = null,
                 isVisible = true,
                 isSelectable = true,
-                isSelected = true
+                isSelected = true,
             }
         ) {
             let validToSelect = typeof value !== 'string' || value.length !== 0; // if value is a string and empty, the component would become unselectable
@@ -56,7 +56,7 @@ function ExportComponentFactory($q, graphicsService) {
                 graphicPosition: graphicPosition || generators.map(() => ({ justify: 'center', align: 'center' })),
                 isVisible,
                 isSelectable: isSelectable && validToSelect,
-                isSelected: isSelected && validToSelect
+                isSelected: isSelected && validToSelect,
             };
 
             this._graphic = null;
@@ -94,7 +94,7 @@ function ExportComponentFactory($q, graphicsService) {
 
         get isGenerating() {
             // Checks if the component is blocking image saving. If this component is included but the generation hasn't completed yet, it's blocking.
-            return this._config.isSelected && this._graphics.filter(v => v).length !== this._config.generators.length;
+            return this._config.isSelected && this._graphics.filter((v) => v).length !== this._config.generators.length;
         }
 
         get isSelectable() {
@@ -142,7 +142,7 @@ function ExportComponentFactory($q, graphicsService) {
 
                                     // get the height of the tallest component graphic
                                     const maximumHeight = Math.max(
-                                        ...this._graphics.filter(v => v).map(_g => (_g ? _g.height : 0))
+                                        ...this._graphics.filter((v) => v).map((_g) => (_g ? _g.height : 0))
                                     );
 
                                     // create a base canvas with that height and the width of the map image
@@ -171,7 +171,7 @@ function ExportComponentFactory($q, graphicsService) {
                                                     graphicPosition.align,
                                                     graphic.height,
                                                     baseGraphic.height
-                                                )
+                                                ),
                                             ]);
 
                                             return map;

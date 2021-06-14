@@ -38,14 +38,18 @@ function mapServiceFactory(
 
         zoomToFeature,
 
-        checkForBadZoom
+        checkForBadZoom,
     };
 
     let mApi = null;
     events.$on(events.rvApiMapAdded, (_, api) => (mApi = api));
-    const triggerFilterChanged = debounceService.registerDebounce((fcParam) => {
-        events.$broadcast(events.rvFilterChanged, fcParam)
-    }, 500, false);
+    const triggerFilterChanged = debounceService.registerDebounce(
+        (fcParam) => {
+            events.$broadcast(events.rvFilterChanged, fcParam);
+        },
+        500,
+        false
+    );
 
     // wire in a hook to zoom to feature
     // this makes it available on the API
@@ -176,10 +180,7 @@ function mapServiceFactory(
      */
     function makeMap() {
         const gapi = gapiService.gapi;
-        const {
-            map: mapConfig,
-            services: servicesConfig
-        } = configService.getSync;
+        const { map: mapConfig, services: servicesConfig } = configService.getSync;
 
         // dom node to build the map on; need to be specified only the first time the map is created and stored for reuse;
         const mapNode = referenceService.mapNode;
@@ -190,7 +191,7 @@ function mapServiceFactory(
             overviewMap: mapConfig.components.overviewMap,
             extent: _getStartExtent(mapConfig, mapNode),
             lods: mapConfig.selectedBasemap.lods,
-            tileSchema: mapConfig.selectedBasemap.tileSchema
+            tileSchema: mapConfig.selectedBasemap.tileSchema,
         };
 
         // TODO: convert service section of the config to typed objects
@@ -208,23 +209,25 @@ function mapServiceFactory(
         // correct chain of commands being executed
         let fakeGeoJSON = {
             type: 'FeatureCollection',
-            features: [{
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [-100, 50]
+            features: [
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [-100, 50],
+                    },
+                    properties: {
+                        key: 'value',
+                    },
                 },
-                properties: {
-                    key: 'value'
-                }
-            }]
+            ],
         };
 
         // avoid private variable
         const res = gapiService.gapi.layer.makeGeoJsonLayer(fakeGeoJSON, {
-            targetSR: mapInstance._map.extent.spatialReference
+            targetSR: mapInstance._map.extent.spatialReference,
         });
-        res.then(esriLayer => {
+        res.then((esriLayer) => {
             firstBasemapFlag = true;
             fakeFileLayer = esriLayer;
             mapInstance.addLayer(esriLayer);
@@ -274,7 +277,7 @@ function mapServiceFactory(
             xmax: mapConfig.startPoint.x + xOffset,
             ymin: mapConfig.startPoint.y - yOffset,
             ymax: mapConfig.startPoint.y + yOffset,
-            spatialReference: mapConfig.selectedBasemap.default.spatialReference
+            spatialReference: mapConfig.selectedBasemap.default.spatialReference,
         };
     }
 
@@ -299,16 +302,17 @@ function mapServiceFactory(
         // project bookmark point to the map's spatial reference
         const coords = gapiService.gapi.proj.localProjectPoint(
             sourceBasemap.default.spatialReference,
-            targetBasemap.default.spatialReference, {
+            targetBasemap.default.spatialReference,
+            {
                 x: extentCenter.x,
-                y: extentCenter.y
+                y: extentCenter.y,
             }
         );
 
         return {
             x: coords.x,
             y: coords.y,
-            scale: targetZoomLod.scale
+            scale: targetZoomLod.scale,
         };
     }
 
@@ -328,7 +332,7 @@ function mapServiceFactory(
         let isFeatureMousedOver = false;
 
         shellService.setLoadingFlag({
-            id: 'map-init'
+            id: 'map-init',
         });
 
         events.$on(events.rvFeatureMouseOver, (event, value) => {
@@ -357,7 +361,7 @@ function mapServiceFactory(
             will be down.
         */
         gapi.events.wrapEvents(mapConfig.instance, {
-            'layer-add': res => {
+            'layer-add': (res) => {
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
                     // remove the fake file layer from the map now
                     mapConfig.instance.removeLayer(fakeFileLayer);
@@ -378,7 +382,7 @@ function mapServiceFactory(
 
                 shellService.clearLoadingFlag(res.layer.id, 300);
             },
-            'layer-remove': res => {
+            'layer-remove': (res) => {
                 if (fakeFileLayer && res.layer.id === fakeFileLayer.id) {
                     fakeFileLayer = null;
 
@@ -392,7 +396,7 @@ function mapServiceFactory(
                     // for the basemap layer (only the first time a basemap layer is added)
                     $http
                         .get(mapConfig.selectedBasemap.url + '?f=json')
-                        .then(response => {
+                        .then((response) => {
                             // response returned but its an error response since invalid URL, so initalize map
                             if (!response || typeof response.data.error !== 'undefined') {
                                 firstBasemapFlag = false;
@@ -410,7 +414,7 @@ function mapServiceFactory(
                             //      and better than first data layer disappearing.
                             // An alternate solution could be to try a library like axios instead of $http and see if it
                             // behaves better.
-                            setTimeout(()=> {
+                            setTimeout(() => {
                                 if (firstBasemapFlag) {
                                     firstBasemapFlag = false;
                                     _initMap();
@@ -420,7 +424,7 @@ function mapServiceFactory(
                 }
             },
             // eslint-disable-next-line max-statements
-            'extent-change': data => {
+            'extent-change': (data) => {
                 // remove highlighted features and the haze when the map is panned, zoomed, etc.
                 if (angular.isObject(data.delta) && (data.delta.x !== 0 || data.delta.y !== 0 || data.levelChange)) {
                     clearHighlight(false);
@@ -448,17 +452,16 @@ function mapServiceFactory(
                 //      get raised.
                 const fcParam = {
                     filterType: 'extent',
-                    extent: data.extent
+                    extent: data.extent,
                 };
 
                 triggerFilterChanged(fcParam);
-
             },
-            'mouse-move': data => events.$broadcast(events.rvMouseMove, data.mapPoint),
+            'mouse-move': (data) => events.$broadcast(events.rvMouseMove, data.mapPoint),
             'update-start': () => {
                 shellService.setLoadingFlag({
                     id: 'map-update',
-                    initDelay: 100
+                    initDelay: 100,
                 });
             },
             'update-end': () => {
@@ -467,7 +470,7 @@ function mapServiceFactory(
             'zoom-start': () => {
                 events.$broadcast(events.rvMapZoomStart);
             },
-            click: clickEvent => {
+            click: (clickEvent) => {
                 const areGraphicsHighlighted = mapConfig.highlightLayer.graphics.length > 0;
 
                 // if not hovering, and something is highlighted, clear the haze and quit without running identify
@@ -489,7 +492,7 @@ function mapServiceFactory(
 
                 // if the identify mode doesn't have `query`, results will not be piped to the API
                 identifyService.identify(clickEvent);
-            }
+            },
         });
 
         /**
@@ -557,10 +560,10 @@ function mapServiceFactory(
      * @return {Promise} a promise resolving after map completes extent change
      */
     function zoomToFeature(proxy, oid, externalOffset = undefined) {
-        const offset = (externalOffset !== undefined) ? externalOffset : mApi.panels.panelOffset;
+        const offset = externalOffset !== undefined ? externalOffset : mApi.panels.panelOffset;
         const peekFactor = 0.4;
         // if either of the offsets is greater than 80%, peek at the map instead of offsetting the map extent
-        if (Math.abs(offset.x) > peekFactor || Math.abs(offset.y) > peekFactor || (offset.x === 0 && offset.y === 0) ) {
+        if (Math.abs(offset.x) > peekFactor || Math.abs(offset.y) > peekFactor || (offset.x === 0 && offset.y === 0)) {
             offset.x = offset.y = 0;
             referenceService.peekAtMap();
         } else {
@@ -577,7 +580,7 @@ function mapServiceFactory(
             const graphiBundlePromise = proxy.fetchGraphic(oid, {
                 map,
                 geom: true,
-                attribs: true
+                attribs: true,
             });
             service.addGraphicHighlight(graphiBundlePromise, true);
         });
@@ -602,13 +605,13 @@ function mapServiceFactory(
             const toast = {
                 textContent: $translate.instant('toc.boundaryZoom.badzoom'),
                 action: $translate.instant('toc.boundaryZoom.undo'),
-                parent: referenceService.panels.shell
+                parent: referenceService.panels.shell,
             };
 
             // promise resolves with 'ok' when user clicks 'undo'
             errorService
                 .display(toast)
-                .then(response => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {}));
+                .then((response) => (response === 'ok' ? map.setExtent(checkResult.newExtent, true) : () => {}));
         }
     }
 }

@@ -27,7 +27,7 @@ function mdDialog($delegate, $q) {
      * @return     {Promise}    resolves to undefined when the opening dialog animation is complete
      */
     function show(opts) {
-        return $q(resolve => {
+        return $q((resolve) => {
             opts.focusOnOpen = opts.focusOnOpen === false ? false : true;
 
             const originalOnShowing = opts.onShowing;
@@ -48,10 +48,7 @@ function mdDialog($delegate, $q) {
                 element.find('.md-dialog-focus-trap').remove();
 
                 // keep focus within the dialog
-                element
-                    .find('md-dialog')
-                    .attr('rv-trap-focus', '')
-                    .removeAttr('tabindex');
+                element.find('md-dialog').attr('rv-trap-focus', '').removeAttr('tabindex');
 
                 // rv-focus attribute in dialogs bypasses default focus to close behaviour
                 const rvFocus = element.find('[rv-focus]');

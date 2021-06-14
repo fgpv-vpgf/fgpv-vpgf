@@ -1,5 +1,10 @@
 <!-- TODO: add proper loading message or animation to the loading splash -->
-<div class="rv-loading-screen" layout layout-align="center center" ng-class="{ 'rv-loaded': self.geoService.isMapReady }">
+<div
+    class="rv-loading-screen"
+    layout
+    layout-align="center center"
+    ng-class="{ 'rv-loaded': self.geoService.isMapReady }"
+>
     <div class="rv-loading-section rv-left"></div>
     <div class="rv-loading-section rv-right"></div>
     <div class="rv-spinner google-spin-wrapper">
@@ -7,15 +12,19 @@
     </div>
 </div>
 
-<div class="rv-esri-map" rv-init-map rv-overview-toggle tabindex="0"
+<div
+    class="rv-esri-map"
+    rv-init-map
+    rv-overview-toggle
+    tabindex="0"
     aria-label="{{ 'geo.aria.mapdescription' | translate }}"
-    aria-describedby="rv-crosshairs-description"></div>
+    aria-describedby="rv-crosshairs-description"
+></div>
 
 <!-- crossharis are centered relative to the rv-shell; if the inner shell is not center aligned, crosshairs can appear off-center -->
 <rv-crosshairs class="rv-crosshairs"></rv-crosshairs>
 
 <div class="rv-inner-shell">
-
     <div class="rv-map-coordinates rv-lg">
         <span></span>
         <span></span>
@@ -51,23 +60,23 @@
     <!--div ng-class="{ active: self.active }" ui-view="detailsPlug"></div-->
 
     <!--div ng-class="{ active: self.active }" ui-view="geoSearchPlug"></div-->
-
 </div>
 
 <div class="rv-focus-dialog-content">
     <div class="md-dialog-container">
         <md-dialog>
             <md-dialog-content class="md-dialog-content" role="document">
-                <h2 class="md-title ng-binding">{{ 'focus.dialog.press' | translate }}
+                <h2 class="md-title ng-binding">
+                    {{ 'focus.dialog.press' | translate }}
                     <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.enter' | translate }}</div>
                     {{ 'focus.dialog.toactivate' | translate }}
-                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}
-                    </div>
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
                 </h2>
 
                 <div class="md-dialog-content-body">
                     {{ 'focus.dialog.main' | translate }}
-                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div> +
+                    <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div>
+                    +
                     <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
                 </div>
             </md-dialog-content>
@@ -79,4 +88,8 @@
 
 <rv-basemap></rv-basemap>
 
-<md-progress-linear class="rv-progress-bottom" md-mode="indeterminate" ng-show="self.shellService.isLoading"></md-progress-linear>
+<md-progress-linear
+    class="rv-progress-bottom"
+    md-mode="indeterminate"
+    ng-show="self.shellService.isLoading"
+></md-progress-linear>

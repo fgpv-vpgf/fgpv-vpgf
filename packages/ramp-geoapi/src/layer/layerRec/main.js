@@ -67,5 +67,5 @@ module.exports = () => ({
     GraphicsRecord: graphicsRecord.GraphicsRecord,
     ImageRecord: imageRecord.ImageRecord,
     TileRecord: tileRecord.TileRecord,
-    WmsRecord: wmsRecord.WmsRecord
+    WmsRecord: wmsRecord.WmsRecord,
 });

@@ -4,7 +4,6 @@ let disabledArrows: boolean;
 import { Observable, Subject } from 'rxjs';
 
 export class InternalsFocusManager {
-
     constructor(list: JQuery<HTMLElement>, clicked: boolean = false) {
         ifm = this;
         this.list = list;
@@ -65,7 +64,6 @@ export class InternalsFocusManager {
         return this._focusOut.asObservable();
     }
 
-
     /**Sets focus to appropriate item on keydown*/
     onKeydown(event: any) {
         let focusOut = false;
@@ -92,7 +90,6 @@ export class InternalsFocusManager {
             ifm.highlightItem();
         }
 
-
         function highlightNext() {
             unhighlightItem();
             ifm.setNextItem();
@@ -104,10 +101,11 @@ export class InternalsFocusManager {
                 // if arrow keys are not disabled for this list, and list IS horizontal
                 // navigate through list, hightlighting items
                 event.preventDefault();
-                if (disabledArrows === false &&
+                if (
+                    disabledArrows === false &&
                     ifm.isHorizontal &&
-                    ((isInputActive &&
-                        selectionStart === 0) || !isInputActive)) {
+                    ((isInputActive && selectionStart === 0) || !isInputActive)
+                ) {
                     highlightPrev();
                 }
                 break;
@@ -115,10 +113,11 @@ export class InternalsFocusManager {
                 // if arrow keys are not disabled for this list, and list is NOT horizontal
                 // navigate through list, hightlighting items
                 event.preventDefault();
-                if (disabledArrows === false &&
+                if (
+                    disabledArrows === false &&
                     !ifm.isHorizontal &&
-                    ((isInputActive &&
-                        selectionStart === 0) || !isInputActive)) {
+                    ((isInputActive && selectionStart === 0) || !isInputActive)
+                ) {
                     highlightPrev();
                 }
                 break;
@@ -126,10 +125,11 @@ export class InternalsFocusManager {
                 // if arrow keys are not disabled for this list, and list IS horizontal
                 // navigate through list, hightlighting items
                 event.preventDefault();
-                if (disabledArrows === false &&
+                if (
+                    disabledArrows === false &&
                     ifm.isHorizontal &&
-                    ((isInputActive &&
-                        selectionStart === length) || !isInputActive)) {
+                    ((isInputActive && selectionStart === length) || !isInputActive)
+                ) {
                     highlightNext();
                 }
                 break;
@@ -137,10 +137,11 @@ export class InternalsFocusManager {
                 // if arrow keys are not disabled for this list, and list is NOT horizontal
                 // navigate through list, hightlighting items
                 event.preventDefault();
-                if (disabledArrows === false &&
+                if (
+                    disabledArrows === false &&
                     !ifm.isHorizontal &&
-                    ((isInputActive &&
-                        selectionStart === length) || !isInputActive)) {
+                    ((isInputActive && selectionStart === length) || !isInputActive)
+                ) {
                     highlightNext();
                 }
                 break;
@@ -154,8 +155,8 @@ export class InternalsFocusManager {
                 // tab: if focused on list, focus out to next viewer element
                 // if foused on item, tab through its objects
                 event.preventDefault();
-                const activeElement = document.activeElement !== null ? document.activeElement.nodeName : null
-                if (event.shiftKey && activeElement !== "BUTTON" && activeElement !== "INPUT") {
+                const activeElement = document.activeElement !== null ? document.activeElement.nodeName : null;
+                if (event.shiftKey && activeElement !== 'BUTTON' && activeElement !== 'INPUT') {
                     backtab = true;
                     focusOut = true;
                 } else if (ifm.highlightedItem === ifm.list) {
@@ -178,7 +179,6 @@ export class InternalsFocusManager {
             }
         }
     }
-
 
     /**
      * Sets focus to the clicked item
@@ -222,7 +222,6 @@ export class InternalsFocusManager {
         const item = this.highlightedItem;
         item[0].classList.add('highlighted');
         this.buttonInputFocus(0);
-
     }
 
     /**Focus on this list, removing any focuses/highlights from list items.*/
@@ -321,9 +320,11 @@ export class InternalsFocusManager {
         switch (event.keyCode) {
             case 9:
                 event.preventDefault();
-                if (!event.shiftKey && event.currentTarget !== ifm.buttonsAndInputs[0] ||
-                    event.shiftKey && event.currentTarget === ifm.buttonsAndInputs[0] ||
-                    ifm.buttonsAndInputs.length === 1) {
+                if (
+                    (!event.shiftKey && event.currentTarget !== ifm.buttonsAndInputs[0]) ||
+                    (event.shiftKey && event.currentTarget === ifm.buttonsAndInputs[0]) ||
+                    ifm.buttonsAndInputs.length === 1
+                ) {
                     // make sure this doesn't exit out on a backtab for last button
                     // or forward tab for first button
                     ifm.focusOut();
@@ -344,8 +345,10 @@ export class InternalsFocusManager {
             const parentOffsetLeft = this.scrollableParent.offset().left;
             const childLeft = this.highlightedItem.position().left;
 
-            if (childOffsetRight !== undefined && (childOffsetRight > parentOffsetRight || childOffsetLeft < parentOffsetLeft)) {
-
+            if (
+                childOffsetRight !== undefined &&
+                (childOffsetRight > parentOffsetRight || childOffsetLeft < parentOffsetLeft)
+            ) {
                 if (prev === true && this.highlightedItem[0] === this.items[0]) {
                     this.scrollableParent.scrollLeft(0);
                 } else {

@@ -10,20 +10,18 @@ const templateUrl = require('./expand-menu.html');
  * TODO: add description
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvTocExpandMenu', rvTocExpandMenu);
+angular.module('app.ui').directive('rvTocExpandMenu', rvTocExpandMenu);
 
 function rvTocExpandMenu() {
     const directive = {
         restrict: 'E',
         templateUrl,
         scope: {
-            disabled: '='
+            disabled: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -35,22 +33,18 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
 
     self.appID = appInfo.id;
 
-    self.expandAllLegendEntries = () =>
-        toggleLegendGroupEntries();
-    self.collapseAllLegendEntries = () =>
-        toggleLegendGroupEntries(false);
+    self.expandAllLegendEntries = () => toggleLegendGroupEntries();
+    self.collapseAllLegendEntries = () => toggleLegendGroupEntries(false);
 
     events.$on(events.rvMapLoaded, () => {
         //wire in a hook to any map to toggleLegendEntries
         configService.getSync.map.instance.toggleLegendGroupEntries = (value = true) => {
             toggleLegendGroupEntries(value);
-        }
+        };
     });
 
-    self.isAllLegendEntriesExpanded = () =>
-        getLegendGroupEntriesExpandState();
-    self.isAllLegendEntriesCollapsed = () =>
-        getLegendGroupEntriesExpandState(false);
+    self.isAllLegendEntriesExpanded = () => getLegendGroupEntriesExpandState();
+    self.isAllLegendEntriesCollapsed = () => getLegendGroupEntriesExpandState(false);
 
     /***/
 
@@ -66,9 +60,9 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
         }
 
         const mapConfig = configService.getSync.map;
-        mapConfig.legendBlocks.walk(block => {
+        mapConfig.legendBlocks.walk((block) => {
             if (block.blockType === LegendBlock.TYPES.GROUP) {
-                (block.expanded = value);
+                block.expanded = value;
             }
         });
     }
@@ -87,12 +81,9 @@ function Controller(LegendBlock, geoService, appInfo, configService, events) {
 
         const mapConfig = configService.getSync.map;
         const isAllExpanded = configService.getSync.map.legendBlocks
-            .walk(block =>
-                block.blockType === LegendBlock.TYPES.GROUP ? block.expanded : null)
-            .filter(expanded =>
-                expanded !== null)
-            .every(expanded =>
-                expanded === value);
+            .walk((block) => (block.blockType === LegendBlock.TYPES.GROUP ? block.expanded : null))
+            .filter((expanded) => expanded !== null)
+            .every((expanded) => expanded === value);
 
         return isAllExpanded;
     }

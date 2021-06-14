@@ -153,15 +153,13 @@ const KEY_CODES = {
     230: 'GNOME_COMPOSE_KEY',
     233: 'XF86FORWARD',
     234: 'XF86BACK',
-    255: 'TOGGLE_TOUCHPAD'
+    255: 'TOGGLE_TOUCHPAD',
 };
 
 const KEY_NAMES = {};
 
 // create a key names object for the reverse lookup
-Object.entries(KEY_CODES)
-    .forEach(([code, name]) =>
-        (KEY_NAMES[name] = parseInt(code)));
+Object.entries(KEY_CODES).forEach(([code, name]) => (KEY_NAMES[name] = parseInt(code)));
 
 /**
  * @name keyCodes
@@ -179,7 +177,4 @@ Object.entries(KEY_CODES)
  *
  * The list of keynames.
  */
-angular
-    .module('app.core')
-    .constant('keyCodes', KEY_CODES)
-    .constant('keyNames', KEY_NAMES);
+angular.module('app.core').constant('keyCodes', KEY_CODES).constant('keyNames', KEY_NAMES);

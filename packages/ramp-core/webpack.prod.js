@@ -9,7 +9,7 @@ const ZipPlugin = require('zip-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = function (env = {}) {
     return Merge(CommonConfig(env), {
@@ -17,11 +17,13 @@ module.exports = function (env = {}) {
         mode: 'production',
 
         plugins: [
-            new CopyPlugin([{
-                context: 'src/locales/help/default',
-                from: '**/*',
-                to: 'help'
-            }]),
+            new CopyPlugin([
+                {
+                    context: 'src/locales/help/default',
+                    from: '**/*',
+                    to: 'help',
+                },
+            ]),
 
             new ZipPlugin({
                 path: path.resolve(__dirname, 'dist'),
@@ -31,8 +33,8 @@ module.exports = function (env = {}) {
 
             new SriPlugin({
                 hashFuncNames: ['sha256', 'sha384'],
-                enabled: true
-            })
+                enabled: true,
+            }),
         ],
         optimization: {
             minimizer: [
@@ -40,20 +42,16 @@ module.exports = function (env = {}) {
                     sourceMap: true,
                     terserOptions: {
                         compress: {
-                            pure_funcs: [
-                                'console.log',
-                                'console.debug',
-                                'console.info'
-                            ]
-                        }
-                    }
+                            pure_funcs: ['console.log', 'console.debug', 'console.info'],
+                        },
+                    },
                 }),
                 new OptimizeCSSAssetsPlugin({
                     cssProcessorOptions: {
-                        map: { inline: false }
-                    }
-                })
-            ]
-        }
+                        map: { inline: false },
+                    },
+                }),
+            ],
+        },
     });
-}
+};

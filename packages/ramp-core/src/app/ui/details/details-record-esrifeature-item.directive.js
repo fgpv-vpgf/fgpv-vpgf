@@ -13,7 +13,15 @@ const templateUrl = require('./details-record-esrifeature-item.html');
  */
 angular.module('app.ui').directive('rvDetailsRecordEsrifeatureItem', rvDetailsRecordEsrifeatureItem);
 
-function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailService, $translate, events, $compile, $timeout) {
+function rvDetailsRecordEsrifeatureItem(
+    SymbologyStack,
+    stateManager,
+    detailService,
+    $translate,
+    events,
+    $compile,
+    $timeout
+) {
     const directive = {
         restrict: 'E',
         templateUrl,
@@ -23,12 +31,12 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
             solorecord: '=',
             toggleHighlight: '=',
             initHighlight: '=',
-            findFeature: '='
+            findFeature: '=',
         },
         link: link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -43,7 +51,7 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         let includedColumns = [];
         if (self.requester.proxy._source.config) {
             const tableColumns = self.requester.proxy._source.config.table.columns;
-            includedColumns = tableColumns.map(col => col.data);
+            includedColumns = tableColumns.map((col) => col.data);
         }
         let excludedColumns = ['SHAPE', 'Shape', 'rvSymbol', 'rvInteractive']; // anything that should be hidden by default
         if (stateManager.display.details.hidden) {
@@ -59,21 +67,21 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
         // pre-filter the columns used by the datagrid out of the returned data
         // if there specific columns for the table set by the config use them
         if (includedColumns.length) {
-            self.item.data = self.item.data.filter(column => includedColumns.indexOf(column.field) > -1);
+            self.item.data = self.item.data.filter((column) => includedColumns.indexOf(column.field) > -1);
         }
         // filter out any items hidden in the table
-        self.item.data = self.item.data.filter(column => excludedColumns.indexOf(column.field) === -1);
+        self.item.data = self.item.data.filter((column) => excludedColumns.indexOf(column.field) === -1);
 
         if (self.requester.proxy._source.config) {
             self.details = self.requester.proxy._source.config.details;
         }
 
         if (self.details && self.details.template) {
-            detailService.getTemplate(self.requester.proxy._source.layerId, self.details.template).then(template => {
+            detailService.getTemplate(self.requester.proxy._source.layerId, self.details.template).then((template) => {
                 if (self.details.parser) {
                     detailService
                         .getParser(self.requester.proxy._source.layerId, self.details.parser)
-                        .then(parseFunction => {
+                        .then((parseFunction) => {
                             // TODO: maybe instead of passing just the language, pass the full config
                             self.layer = eval(`${parseFunction}(self.item.data, self.lang);`);
 
@@ -101,14 +109,14 @@ function rvDetailsRecordEsrifeatureItem(SymbologyStack, stateManager, detailServ
 
         // set an attribute field to check for list of objects representing hyperlinks
         if (self.item && self.item.data) {
-            self.item.data.forEach(data => {
+            self.item.data.forEach((data) => {
                 // check if data is an array of objects with href and title attributes
                 if (Array.isArray(data.value)) {
-                    data.listOfLinks = data.value.every(d => d.href && d.title) ? true : false;
+                    data.listOfLinks = data.value.every((d) => d.href && d.title) ? true : false;
                 } else {
                     data.listOfLinks = false;
                 }
-            })
+            });
         }
 
         // wrap raw symbology item into a symbology stack object

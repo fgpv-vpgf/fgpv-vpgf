@@ -19,8 +19,8 @@
             color: $secondary-text-color;
             width: 100%;
             padding: {
-                left: rem(2.0);
-                right: rem(2.0);
+                left: rem(2);
+                right: rem(2);
             }
             md-icon {
                 display: block;
@@ -46,17 +46,18 @@
             background-color: rgba(white, 0.86);
             z-index: 1; // to overlay close button
             opacity: 0;
-            transition: visibility 0s linear $swift-ease-in-duration, opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
+            transition: visibility 0s linear $swift-ease-in-duration,
+                opacity $swift-ease-in-duration $swift-ease-in-out-timing-function;
 
             &:before {
                 position: absolute;
-                content: "";
+                content: '';
                 top: rem(0.8);
                 bottom: 0;
                 border: rem(0.3) dashed $secondary-text-color;
                 right: rem(0.8);
                 left: rem(0.8);
-                background: linear-gradient(rgba(#FFFFFF, 0.05), rgba($primary-color-light, 0.3));
+                background: linear-gradient(rgba(#ffffff, 0.05), rgba($primary-color-light, 0.3));
             }
         }
     }

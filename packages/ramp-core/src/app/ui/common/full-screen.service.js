@@ -16,14 +16,12 @@ const FULL_SCREEN_Z_INDEX = 50;
  * Provides ability to place this viewer into fullscreen mode, and whether it is actively in fullscreen mode.
  */
 
-angular
-    .module('app.ui')
-    .factory('fullScreenService', fullScreenService);
+angular.module('app.ui').factory('fullScreenService', fullScreenService);
 
 function fullScreenService($rootElement, configService, $interval, events, $timeout) {
     const service = {
         toggle,
-        isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body'))
+        isExpanded: () => screenfull.isFullscreen && $(screenfull.element).is(angular.element('body')),
     };
 
     let lastChangedElement = $rootElement;
@@ -39,7 +37,7 @@ function fullScreenService($rootElement, configService, $interval, events, $time
     document.addEventListener('MSFullscreenChange', exitFullScreenHandler);
 
     events.$on(events.rvMapLoaded, (_, i) => {
-        configService.getSync.map.instance.fullscreen = fs => {
+        configService.getSync.map.instance.fullscreen = (fs) => {
             if ((service.isExpanded() && !fs) || (!service.isExpanded() && fs)) {
                 service.toggle();
             }
@@ -54,8 +52,14 @@ function fullScreenService($rootElement, configService, $interval, events, $time
      * @function exitFullScreenHandler
      */
     function exitFullScreenHandler() {
-        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-            $timeout(() => { // give browser some time to complete full screen in case exited immediately
+        if (
+            !document.fullscreenElement &&
+            !document.webkitIsFullScreen &&
+            !document.mozFullScreen &&
+            !document.msFullscreenElement
+        ) {
+            $timeout(() => {
+                // give browser some time to complete full screen in case exited immediately
                 _exitFullScreen();
             }, 500);
         }
@@ -188,5 +192,4 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         }
         f = null;
     }
-
 }

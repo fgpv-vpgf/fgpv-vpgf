@@ -8,26 +8,46 @@ const esriMap = require('../src/map/esriMap.js');
 // A class that mocks the ESRI bundle
 class FakeEsri {
     constructor() {
-        this._esriConfig = { defaults: { io: {} } }
+        this._esriConfig = { defaults: { io: {} } };
     }
     get esriConfig() {
         return this._esriConfig;
     }
     Extent() {
-        if (arguments.length === 1 ) {
-            return { xmin: arguments[0].xmin, ymin: arguments[0].ymin, xmax: arguments[0].xmax, ymax: arguments[0].ymax,
-            spatialReference: { wkid: arguments[0].wkid } };
+        if (arguments.length === 1) {
+            return {
+                xmin: arguments[0].xmin,
+                ymin: arguments[0].ymin,
+                xmax: arguments[0].xmax,
+                ymax: arguments[0].ymax,
+                spatialReference: { wkid: arguments[0].wkid },
+            };
         } else {
-            return { xmin: arguments[0], ymin: arguments[1], xmax: arguments[2], ymax: arguments[3],
-                spatialReference: { wkid: 3978 } };
+            return {
+                xmin: arguments[0],
+                ymin: arguments[1],
+                xmax: arguments[2],
+                ymax: arguments[3],
+                spatialReference: { wkid: 3978 },
+            };
         }
     }
-    Map() { return {
-        setExtent: () => { return Promise.resolve('done'); } };
+    Map() {
+        return {
+            setExtent: () => {
+                return Promise.resolve('done');
+            },
+        };
     }
-    BasemapGallery() { return { add: () => {}, startup: () => {}, on: () => {} }; }
-    BasemapLayer() { return {}; }
-    Basemap() { return {}; }
+    BasemapGallery() {
+        return { add: () => {}, startup: () => {}, on: () => {} };
+    }
+    BasemapLayer() {
+        return {};
+    }
+    Basemap() {
+        return {};
+    }
 }
 
 describe('ESRI Map', () => {
@@ -37,9 +57,9 @@ describe('ESRI Map', () => {
         proj: {
             localProjectExtent: () => {
                 return jsonExtent;
-            }
-        }
-    }
+            },
+        },
+    };
 
     const jsonExtent = {
         uid: 'gray',
@@ -49,19 +69,24 @@ describe('ESRI Map', () => {
         xmax: 3549492,
         ymax: 3482193,
         spatialReference: {
-            wkid: 3978
-        }
+            wkid: 3978,
+        },
     };
 
     const mapConfig = {
         basemaps: [{ _layers: ['random url'] }],
         extent: jsonExtent,
-        lods: []
+        lods: [],
     };
 
     function fakeEsriExtent(json) {
-        return { xmin: json.xmin, ymin: json.ymin, xmax: json.xmax, ymax: json.ymax,
-            spatialReference: { wkid: json.wkid } };
+        return {
+            xmin: json.xmin,
+            ymin: json.ymin,
+            xmax: json.xmax,
+            ymax: json.ymax,
+            spatialReference: { wkid: json.wkid },
+        };
     }
 
     const Map = esriMap(fakeEsri, fakeGeoApi);
@@ -98,10 +123,9 @@ describe('ESRI Map', () => {
     it('should zoom the map to an extent', (done) => {
         const mapObj = new Map(fakeEsri, mapConfig);
         const result = mapObj.zoomToExtent(Map.getExtentFromJson(jsonExtent));
-        result.then(value => {
+        result.then((value) => {
             expect(value).toBe('done');
             done();
-        })
+        });
     });
-
 });

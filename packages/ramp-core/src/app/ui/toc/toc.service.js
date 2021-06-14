@@ -7,17 +7,30 @@
  *
  *
  */
-angular
-    .module('app.ui')
-    .factory('tocService', tocService);
+angular.module('app.ui').factory('tocService', tocService);
 
-function tocService($q, $rootScope, $mdToast, $translate, referenceService, stateManager, geoService, metadataService, errorService, LegendBlock, configService, legendService, layerRegistry, Geo, events) {
-
+function tocService(
+    $q,
+    $rootScope,
+    $mdToast,
+    $translate,
+    referenceService,
+    stateManager,
+    geoService,
+    metadataService,
+    errorService,
+    LegendBlock,
+    configService,
+    legendService,
+    layerRegistry,
+    Geo,
+    events
+) {
     let panel;
     const service = {
         // method called by the options and flags set on the layer item
         actions: {
-            toggleLayerTablePanel
+            toggleLayerTablePanel,
         },
 
         toggleSettings,
@@ -27,23 +40,23 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         removeLayer,
         reloadLayer,
 
-        validMetadata: false
+        validMetadata: false,
     };
 
     const ref = {
-        selectedLegendBlockLog: {}
+        selectedLegendBlockLog: {},
     };
 
     // name mapping between true panel names and their short names
     const panelSwitch = {
         metadata: {
             panel: 'sideMetadata',
-            action: toggleMetadata
+            action: toggleMetadata,
         },
         settings: {
             panel: 'sideSettings',
-            action: toggleSettings
-        }
+            action: toggleSettings,
+        },
     };
 
     let errorToast;
@@ -66,13 +79,13 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         // wire in a hook to any map for removing a layer. this makes it available on the API
         configService.getSync.map.instance.removeApiLayer = (id, index, showToast = false) => {
             const legendBlocks = configService.getSync.map.legendBlocks;
-            let layerToRemove = legendBlocks.walk(l => l.layerRecordId === id ? l : null).filter(a => a);
+            let layerToRemove = legendBlocks.walk((l) => (l.layerRecordId === id ? l : null)).filter((a) => a);
 
             // TODO: fix this, will only remove 1 instance from legend if there are multiple legend blocks referencing it  ?
             if (layerToRemove.length > 0) {
                 if (index !== undefined) {
                     // in cases of dynamic, if index specified, remove only that child, otherwise we choose to remove entire group below
-                    layerToRemove = layerToRemove.find(l => l.itemIndex === index);
+                    layerToRemove = layerToRemove.find((l) => l.itemIndex === index);
                 } else {
                     // removing the first instance, whether it be the legend group or node
                     layerToRemove = layerToRemove[0];
@@ -85,7 +98,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
                 // layer is not in legend (or does not exist), try simply removing layer record
                 layerRegistry.removeLayerRecord(id);
             }
-        }
+        };
 
         //wire in a hook to any map for removing a layer using the given LegendBlock
         configService.getSync.map.instance.removeAPILegendBlock = (legendBlock) => {
@@ -100,17 +113,17 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         //wire in a hook to any map for toggling Metadata for any given legendBlock
         configService.getSync.map.instance.toggleMetadata = (legendBlock) => {
             service.toggleMetadata(legendBlock);
-        }
+        };
 
         //wire in a hook to any map for toggling settings for any given legendBlock
         configService.getSync.map.instance.toggleSettings = (legendBlock) => {
             service.toggleSettings(legendBlock);
-        }
+        };
 
         // wire in a hook to any map for toggling settings for any given legendBlock
         configService.getSync.map.instance.toggleDataTable = (legendBlock) => {
             service.toggleLayerTablePanel(legendBlock);
-        }
+        };
     });
 
     return service;
@@ -146,8 +159,9 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
      */
     function reloadLayer(legendBlock, interval = false) {
         // get table configuration and check if static field were used. If so, table can't be remove and flag need to stay
-        const layerRecord = configService.getSync.map.layerRecords.find(item =>
-            item.config.id === legendBlock.layerRecordId);
+        const layerRecord = configService.getSync.map.layerRecords.find(
+            (item) => item.config.id === legendBlock.layerRecordId
+        );
 
         const tableConfig = layerRecord ? layerRecord.initialConfig.tableConfig : null;
         // update filter flag
@@ -165,63 +179,72 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         if (openPanel) {
             const panel = panelSwitch[openPanel.name].panel;
             panel.close();
-        } else {    // open panel not being reloaded, close any open panel
+        } else {
+            // open panel not being reloaded, close any open panel
             mApi.panels.settings.close();
             mApi.panels.metadata.close();
         }
-        legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(block => {
-            if (openPanel) {
-                const findBlock = block
-                    .walk(entry =>
-                        entry.id === openPanel.requester.id ?
-                            entry : null)
-                    .filter(a => a)[0];
+        legendService.reloadBoundLegendBlocks(legendBlock.layerRecordId, openPanel).then(
+            (block) => {
+                if (openPanel) {
+                    const findBlock = block
+                        .walk((entry) => (entry.id === openPanel.requester.id ? entry : null))
+                        .filter((a) => a)[0];
 
-                if (findBlock) {        // open panel not reloaded, close any open panel
-                    mApi.panels.settings.close();
-                    mApi.panels.metadata.close();
-                    return;
+                    if (findBlock) {
+                        // open panel not reloaded, close any open panel
+                        mApi.panels.settings.close();
+                        mApi.panels.metadata.close();
+                        return;
+                    }
+
+                    // for the table, panel data is columns, rows, etc. instead of the actual entry
+                    // thus, we need to take the legend entry in those cases
+                    // for settings and metadata, if data exists it is the correct entry
+                    const node = openPanel.data
+                        ? openPanel.data
+                        : openPanel.requester.legendEntry
+                        ? openPanel.requester.legendEntry
+                        : legendBlock;
+
+                    // find reloaded legend block
+                    // if there are multiple instances of the same layer, reloading any record other than the first one will still
+                    // return the first legend block and open the panel for that one instead (they are identical though)
+                    legendBlock = block
+                        .walk((entry) =>
+                            (
+                                node.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC
+                                    ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex
+                                    : entry.layerRecordId === node.layerRecordId
+                            )
+                                ? entry
+                                : null
+                        )
+                        .filter((a) => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
+
+                    if (openPanel.name === 'settings') {
+                        toggleSettings(legendBlock);
+                    } else if (openPanel.name === 'metadata') {
+                        toggleMetadata(legendBlock);
+                    }
                 }
 
-                // for the table, panel data is columns, rows, etc. instead of the actual entry
-                // thus, we need to take the legend entry in those cases
-                // for settings and metadata, if data exists it is the correct entry
-                const node = openPanel.data ?
-                    openPanel.data :
-                    openPanel.requester.legendEntry ?
-                        openPanel.requester.legendEntry : legendBlock;
-
-                // find reloaded legend block
-                // if there are multiple instances of the same layer, reloading any record other than the first one will still
-                // return the first legend block and open the panel for that one instead (they are identical though)
-                legendBlock = block
-                    .walk(entry =>
-                        (node.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC ? entry.blockConfig.entryIndex === node.blockConfig.entryIndex :
-                            entry.layerRecordId === node.layerRecordId) ?
-                            entry : null)
-                    .filter(a => a && a._isDynamicRoot === node._isDynamicRoot)[0]; // filter out hidden dynamic root if any
-
-                if (openPanel.name === 'settings') {
-                    toggleSettings(legendBlock);
-                } else if (openPanel.name === 'metadata') {
-                    toggleMetadata(legendBlock);
+                // clear the state for the datatable to match the refreshed legend
+                const fs = legendBlock.proxyWrapper ? legendBlock.proxyWrapper.filterState : undefined;
+                if (fs !== undefined) {
+                    fs.setSql(fs.coreFilterTypes.SYMBOL, '');
                 }
-            }
 
-            // clear the state for the datatable to match the refreshed legend
-            const fs = legendBlock.proxyWrapper ? legendBlock.proxyWrapper.filterState : undefined;
-            if (fs !== undefined) {
-                fs.setSql(fs.coreFilterTypes.SYMBOL, '');
+                // fire layer reloaded observable if layer can be found
+                let layer = findApiLayerFromLegendBlock(legendBlock);
+                if (layer) {
+                    mApi.layers._reload.next(layer, interval);
+                }
+            },
+            (layerName) => {
+                console.error('Failed to reload layer:', layerName);
             }
-
-            // fire layer reloaded observable if layer can be found
-            let layer = findApiLayerFromLegendBlock(legendBlock);
-            if (layer) {
-                mApi.layers._reload.next(layer, interval);
-            }
-        }, (layerName) => {
-            console.error('Failed to reload layer:', layerName);
-        });
+        );
     }
 
     /**
@@ -238,7 +261,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
         // need to check all children in case of dynamic where a child table is open but parent is removed
         if (legendBlock.blockType === LegendBlock.TYPES.GROUP || legendBlock.blockType === LegendBlock.TYPES.SET) {
-            legendBlock.walk(block => mApi.ui.configLegend._elementRemoved.next(block));
+            legendBlock.walk((block) => mApi.ui.configLegend._elementRemoved.next(block));
         } else {
             mApi.ui.configLegend._elementRemoved.next(legendBlock);
         }
@@ -267,7 +290,8 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         legendBlock.isSelected = false;
 
         // create notification toast
-        const undoToast = $mdToast.simple()
+        const undoToast = $mdToast
+            .simple()
             .textContent($translate.instant('toc.label.state.remove'))
             .action($translate.instant('toc.label.action.remove'))
             .parent($rootElement.find('.mainToc').first())
@@ -275,9 +299,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
 
         if (showToast) {
             // promise resolves with 'ok' when user clicks 'undo'
-            $mdToast.show(undoToast)
-                .then(response =>
-                    response === 'ok' ? _restoreLegendBlock() : resolve());
+            $mdToast.show(undoToast).then((response) => (response === 'ok' ? _restoreLegendBlock() : resolve()));
         } else {
             resolve();
         }
@@ -288,38 +310,41 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     }
 
     /**
-    * Find any open panels matching the legendBlock
-    * @private
-    * @function _findOpenPanel
-    * @param {Object} panelSwitch name mapping between true panel names and their short names
-    * @param {LegendBlock} legendBlock legend block to be searched for open panel
-    * @return {Object} requester, data and name of open panel (if any)
-    */
+     * Find any open panels matching the legendBlock
+     * @private
+     * @function _findOpenPanel
+     * @param {Object} panelSwitch name mapping between true panel names and their short names
+     * @param {LegendBlock} legendBlock legend block to be searched for open panel
+     * @return {Object} requester, data and name of open panel (if any)
+     */
     function _findOpenPanel(panelSwitch, legendBlock) {
-        return Object.keys(panelSwitch)
-            .map(panelName => {
-                const panelDisplay = stateManager.display[panelName];
-                if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
-                    return {
-                        requester: panelDisplay.requester,
-                        data: panelDisplay.data,
-                        name: panelName
-                    };
-                }
-                else if (panelDisplay.requester && legendBlock.entries) {
-                    // walk through the children of the current block to see if there's an open panel being removed
-                    return legendBlock
-                        .walk(lb => lb.id === panelDisplay.requester.id ? lb.id : null)
-                        .filter(a => a)[0] ? {
+        return (
+            Object.keys(panelSwitch)
+                .map((panelName) => {
+                    const panelDisplay = stateManager.display[panelName];
+                    if (panelDisplay.requester && panelDisplay.requester.id === legendBlock.id) {
+                        return {
                             requester: panelDisplay.requester,
                             data: panelDisplay.data,
-                            name: panelName
-                        } : null;
-                } else {
-                    return null;
-                }
-            })
-            .filter(a => a !== null)[0] || null;
+                            name: panelName,
+                        };
+                    } else if (panelDisplay.requester && legendBlock.entries) {
+                        // walk through the children of the current block to see if there's an open panel being removed
+                        return legendBlock
+                            .walk((lb) => (lb.id === panelDisplay.requester.id ? lb.id : null))
+                            .filter((a) => a)[0]
+                            ? {
+                                  requester: panelDisplay.requester,
+                                  data: panelDisplay.data,
+                                  name: panelName,
+                              }
+                            : null;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter((a) => a !== null)[0] || null
+        );
     }
 
     // TODO: rename to something like `setVisibility` to make it clearer what this does
@@ -337,11 +362,11 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     }
 
     /**
-    * Zoom to layer visibility scale and set layer visible
-    * @private
-    * @function zoomLayerScale
-    * @param {Object} entry layer object to zoom to scale to.
-    */
+     * Zoom to layer visibility scale and set layer visible
+     * @private
+     * @function zoomLayerScale
+     * @param {Object} entry layer object to zoom to scale to.
+     */
     function zoomLayerScale(entry) {
         // zoom to layer visibility scale
         geoService.zoomToScale(entry, entry.options.offscale.value);
@@ -351,10 +376,10 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     }
 
     /**
-    * Zoom to bounding box of a layer (wrapper function to the same function in layerRegistry)
-    * @function zoomToBoundary
-    * @param {Object} legendEntry layer entry in the legend
-    */
+     * Zoom to bounding box of a layer (wrapper function to the same function in layerRegistry)
+     * @function zoomToBoundary
+     * @param {Object} legendEntry layer entry in the legend
+     */
     function zoomToBoundary(legendEntry) {
         geoService.zoomToBoundary(legendEntry.id);
     }
@@ -369,7 +394,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
         mApi.panels.settings.header.title = `${settings}: ${legendBlock.name}`;
         const requester = {
             id: legendBlock.id,
-            name: legendBlock.name
+            name: legendBlock.name,
         };
 
         // send to display manager method
@@ -392,40 +417,42 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
      *          state = false => pane not visible}.
      */
     function toggleMetadata(legendBlock, value = true) {
-
         let metadataPanel = mApi.panels.metadata;
         let metadata = configService.getLang() === 'en-CA' ? 'Metadata' : 'Métadonnées';
         metadataPanel.header.title = `${metadata}: ${legendBlock.name}`;
 
         const requester = {
             id: legendBlock.id,
-            name: legendBlock.name
+            name: legendBlock.name,
         };
 
         const dataPromise = $q((resolve, reject) => {
-            metadataService.loadFromURL(legendBlock.metadataUrl).then(mdata => {
-                const metadataPackage = {
-                    metadata: mdata,
-                    metadataUrl: legendBlock.metadataUrl,
-                    catalogueUrl: legendBlock.catalogueUrl
-                };
+            metadataService
+                .loadFromURL(legendBlock.metadataUrl)
+                .then((mdata) => {
+                    const metadataPackage = {
+                        metadata: mdata,
+                        metadataUrl: legendBlock.metadataUrl,
+                        catalogueUrl: legendBlock.catalogueUrl,
+                    };
 
-                service.validMetadata = true;
-                referenceService.panes.metadata.find('md-toast').remove();      // remove any lingering toast message from before
-                legendBlock.metadataPackage = metadataPackage;
-                resolve(metadataPackage);
-            }).catch(error => {
-                service.validMetadata = false;
-                referenceService.panes.metadata.find('rv-metadata-content').empty();        // empty the panels contents
+                    service.validMetadata = true;
+                    referenceService.panes.metadata.find('md-toast').remove(); // remove any lingering toast message from before
+                    legendBlock.metadataPackage = metadataPackage;
+                    resolve(metadataPackage);
+                })
+                .catch((error) => {
+                    service.validMetadata = false;
+                    referenceService.panes.metadata.find('rv-metadata-content').empty(); // empty the panels contents
 
-                errorService.display({
-                    textContent: $translate.instant('toc.error.resource.loadfailed'),
-                    parent: referenceService.panes.metadata
+                    errorService.display({
+                        textContent: $translate.instant('toc.error.resource.loadfailed'),
+                        parent: referenceService.panes.metadata,
+                    });
+
+                    // display manager will stop the progress bar when datapromise is rejected
+                    reject(error);
                 });
-
-                // display manager will stop the progress bar when datapromise is rejected
-                reject(error);
-            });
         });
 
         // send to display manager method
@@ -440,20 +467,23 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
      * @param  {String} displayName type of the display data (layer toggle name: 'settings', 'metadata', 'table')
      */
     function watchPanelState(displayName) {
-        $rootScope.$watch(() => stateManager.display[displayName].requester, (newRequester, oldRequester) => {
-            if (newRequester !== null) {
-                // deselect layer from the old requester if layer ids don't match
-                if (oldRequester !== null && oldRequester.id !== newRequester.id) {
+        $rootScope.$watch(
+            () => stateManager.display[displayName].requester,
+            (newRequester, oldRequester) => {
+                if (newRequester !== null) {
+                    // deselect layer from the old requester if layer ids don't match
+                    if (oldRequester !== null && oldRequester.id !== newRequester.id) {
+                        setTocEntrySelectedState(oldRequester.id, false);
+                    }
+
+                    // select the new layer
+                    setTocEntrySelectedState(newRequester.id);
+                } else if (oldRequester !== null) {
+                    // deselect the old layer since the panel is closed as the newRequester is null
                     setTocEntrySelectedState(oldRequester.id, false);
                 }
-
-                // select the new layer
-                setTocEntrySelectedState(newRequester.id);
-            } else if (oldRequester !== null) {
-                // deselect the old layer since the panel is closed as the newRequester is null
-                setTocEntrySelectedState(oldRequester.id, false);
             }
-        });
+        );
     }
 
     /**
@@ -465,9 +495,7 @@ function tocService($q, $rootScope, $mdToast, $translate, referenceService, stat
     function setTocEntrySelectedState(id, value = true) {
         const legendBlocks = configService.getSync.map.legendBlocks;
 
-        const block = legendBlocks
-            .walk(lb => lb.id === id ? lb : null)
-            .filter(a => a)[0];
+        const block = legendBlocks.walk((lb) => (lb.id === id ? lb : null)).filter((a) => a)[0];
 
         // there should always be a block with the provided id, but check anyway in case it was remove or something
         if (!block) {

@@ -9,7 +9,6 @@ const shared = require('./shared.js')();
  * @class TileRecord
  */
 class TileRecord extends layerRecord.LayerRecord {
-
     /**
      * Create a layer record with the appropriate geoApi layer type.  Layer config
      * should be fully merged with all layer options defined (i.e. this constructor
@@ -20,7 +19,7 @@ class TileRecord extends layerRecord.LayerRecord {
      * @param {Object} esriLayer     an optional pre-constructed layer
      * @param {Function} epsgLookup  an optional lookup function for EPSG codes (see geoService for signature)
      */
-    constructor (layerClass, apiRef, config, esriLayer, epsgLookup) {
+    constructor(layerClass, apiRef, config, esriLayer, epsgLookup) {
         super(layerClass, apiRef, config, esriLayer, epsgLookup);
 
         // handles placeholder symbol, possibly other things
@@ -29,11 +28,11 @@ class TileRecord extends layerRecord.LayerRecord {
     }
 
     /**
-    * Triggers when the layer loads.
-    *
-    * @function onLoad
-    */
-    onLoad () {
+     * Triggers when the layer loads.
+     *
+     * @function onLoad
+     */
+    onLoad() {
         const loadPromises = super.onLoad();
 
         const fc = new basicFC.BasicFC(this, '0', this.config);
@@ -46,10 +45,11 @@ class TileRecord extends layerRecord.LayerRecord {
         });
     }
 
-    get layerType () { return shared.clientLayerType.ESRI_TILE; }
-
+    get layerType() {
+        return shared.clientLayerType.ESRI_TILE;
+    }
 }
 
 module.exports = () => ({
-    TileRecord
+    TileRecord,
 });

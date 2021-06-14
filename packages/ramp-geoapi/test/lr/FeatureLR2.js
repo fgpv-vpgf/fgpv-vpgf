@@ -21,8 +21,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             visibility: true,
             boundingBox: false,
             query: true,
-            snapshot: false
-        }
+            snapshot: false,
+        },
     };
 
     var layerRec = api.layer.createFeatureRecord(config1);
@@ -40,9 +40,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     }, 1000);
 
     function afterLoadTests() {
-        console.log('enhanced loaded')
+        console.log('enhanced loaded');
 
         console.log('symbology - sb 5 elements', proxy.symbology);
-
     }
 });

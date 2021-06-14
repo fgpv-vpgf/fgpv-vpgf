@@ -18,9 +18,7 @@ let animSrv;
  * <div class="rv-toggle-slide" ng-if="value"></div>
  * ```
  */
-angular
-    .module('app.ui')
-    .animation('.rv-toggle-slide', toggleOpenBuilder());
+angular.module('app.ui').animation('.rv-toggle-slide', toggleOpenBuilder());
 
 // TODO: add option to change duration through an attribute
 
@@ -29,10 +27,10 @@ function toggleOpenBuilder() {
         enter: toggleOpen,
         leave: toggleClose,
         addClass: ngShowHideBootstrap(true),
-        removeClass: ngShowHideBootstrap(false)
+        removeClass: ngShowHideBootstrap(false),
     };
 
-    return animationService => {
+    return (animationService) => {
         'ngInject';
 
         animSrv = animationService;
@@ -52,21 +50,33 @@ function toggleOpenBuilder() {
 
         const animation = animSrv.timeLineLite();
 
-        animation.fromTo(element, RV_TOGGLE_SLIDE_DURATION, {
-            height: 0
-        }, {
-            height: targetHeight,
-            ease: RV_SWIFT_IN_OUT_EASE
-        }).fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
-            opacity: 0
-        }, {
-            opacity: 1,
-            ease: RV_SWIFT_IN_OUT_EASE,
-            onComplete: () => {
-                element.css('height', 'auto');
-                callback();
-            }
-        });
+        animation
+            .fromTo(
+                element,
+                RV_TOGGLE_SLIDE_DURATION,
+                {
+                    height: 0,
+                },
+                {
+                    height: targetHeight,
+                    ease: RV_SWIFT_IN_OUT_EASE,
+                }
+            )
+            .fromTo(
+                element,
+                RV_TOGGLE_OPACITY_DURATION,
+                {
+                    opacity: 0,
+                },
+                {
+                    opacity: 1,
+                    ease: RV_SWIFT_IN_OUT_EASE,
+                    onComplete: () => {
+                        element.css('height', 'auto');
+                        callback();
+                    },
+                }
+            );
     }
 
     /**
@@ -78,16 +88,23 @@ function toggleOpenBuilder() {
     function toggleClose(element, callback) {
         const animation = animSrv.timeLineLite();
 
-        animation.fromTo(element, RV_TOGGLE_OPACITY_DURATION, {
-            opacity: 1
-        }, {
-            opacity: 0,
-            ease: RV_SWIFT_IN_OUT_EASE
-        }).to(element, RV_TOGGLE_SLIDE_DURATION, {
-            height: 0,
-            ease: RV_SWIFT_IN_OUT_EASE,
-            onComplete: () => callback()
-        });
+        animation
+            .fromTo(
+                element,
+                RV_TOGGLE_OPACITY_DURATION,
+                {
+                    opacity: 1,
+                },
+                {
+                    opacity: 0,
+                    ease: RV_SWIFT_IN_OUT_EASE,
+                }
+            )
+            .to(element, RV_TOGGLE_SLIDE_DURATION, {
+                height: 0,
+                ease: RV_SWIFT_IN_OUT_EASE,
+                onComplete: () => callback(),
+            });
     }
 
     /**
@@ -102,7 +119,7 @@ function toggleOpenBuilder() {
             // both `ng-hide` and `ng-show` use `ng-hide` css class
             const action = {
                 false: toggleOpen,
-                true: toggleClose
+                true: toggleClose,
             };
 
             // pick the action to perform;
@@ -119,8 +136,6 @@ function toggleOpenBuilder() {
     function getTargetHeight(element) {
         // reset height to default if animating from hidden element as it's initial height can be 0 set by preceding hide animation
 
-        return element
-            .css('height', 'auto')
-            .prop('clientHeight');
+        return element.css('height', 'auto').prop('clientHeight');
     }
 }

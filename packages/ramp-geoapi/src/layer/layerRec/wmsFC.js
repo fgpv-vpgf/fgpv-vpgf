@@ -19,9 +19,8 @@ function getWMSLayerTitle(wmsLayer, wmsLayerId) {
     // returns sublayer that has matching id or null if not found.
     // written as function to allow recursion
     const crawlSubLayers = (subLayerInfos, wmsLayerId) => {
-
         // we use .some to allow the search to stop when we find something
-        subLayerInfos.some(layerInfo => {
+        subLayerInfos.some((layerInfo) => {
             // wms ids are stored in .name
             if (layerInfo.name === wmsLayerId) {
                 // found it. save it and exit the search
@@ -52,37 +51,39 @@ function getWMSLayerTitle(wmsLayer, wmsLayerId) {
  * @class WmsFC
  */
 class WmsFC extends basicFC.BasicFC {
-
     /**
      * Download or refresh the internal symbology for the FC.
      *
      * @function loadSymbology
      * @returns {Promise}         resolves when symbology has been downloaded
      */
-    loadSymbology () {
-        const configLayerEntries =  this._parent.config.layerEntries;
+    loadSymbology() {
+        const configLayerEntries = this._parent.config.layerEntries;
         const gApi = this._parent._apiRef;
         const legendArray = gApi.layer.ogc
-            .getLegendUrls(this._parent._layer, configLayerEntries.map(le => {
-                return {
-                    id: le.id,
-                    styleToURL: le.styleToURL,
-                    currentStyle: le.currentStyle
-                }
-            }))
+            .getLegendUrls(
+                this._parent._layer,
+                configLayerEntries.map((le) => {
+                    return {
+                        id: le.id,
+                        styleToURL: le.styleToURL,
+                        currentStyle: le.currentStyle,
+                    };
+                })
+            )
             .map((imageUri, idx) => {
-
                 const symbologyItem = {
                     name: null,
-                    svgcode: null
+                    svgcode: null,
                 };
 
                 // config specified name || server specified name || config id
-                const name = configLayerEntries[idx].name ||
+                const name =
+                    configLayerEntries[idx].name ||
                     getWMSLayerTitle(this._parent._layer, configLayerEntries[idx].id) ||
                     configLayerEntries[idx].id;
 
-                gApi.symbology.generateWMSSymbology(name, imageUri).then(data => {
+                gApi.symbology.generateWMSSymbology(name, imageUri).then((data) => {
                     symbologyItem.name = data.name;
                     symbologyItem.svgcode = data.svgcode;
                 });
@@ -95,5 +96,5 @@ class WmsFC extends basicFC.BasicFC {
 }
 
 module.exports = () => ({
-    WmsFC
+    WmsFC,
 });

@@ -10,8 +10,8 @@ const geometryTypes = {
     LINESTRING: 'LineString',
     MULTILINESTRING: 'MultiLineString',
     POLYGON: 'Polygon',
-    MULTIPOLYGON: 'MultiPolygon'
-}
+    MULTIPOLYGON: 'MultiPolygon',
+};
 
 const pointStyles = {
     CIRCLE: 'esriSMSCircle',
@@ -19,16 +19,16 @@ const pointStyles = {
     DIAMOND: 'esriSMSDiamond',
     SQUARE: 'esriSMSSquare',
     X: 'esriSMSX',
-    TRIANGLE: 'esriSMSTriangle'
-}
+    TRIANGLE: 'esriSMSTriangle',
+};
 const lineStyles = {
     DASH: 'esriSLSDash',
     DASHDOT: 'esriSLSDashDot',
     DASHDOTDOT: 'esriSLSDashDotDot',
     DOT: 'esriSLSDot',
     NULL: 'esriSLSNull',
-    SOLID: 'esriSLSSolid'
-}
+    SOLID: 'esriSLSSolid',
+};
 const fillStyles = {
     BDIAG: 'backwarddiagonal',
     CROSS: 'cross',
@@ -37,12 +37,12 @@ const fillStyles = {
     HORIZONTAL: 'horizontal',
     NULL: 'none',
     SOLID: 'solid',
-    VERTICAL: 'vertical'
-}
+    VERTICAL: 'vertical',
+};
 
 const llSR = {
-    wkid: 4326
-}
+    wkid: 4326,
+};
 
 /**
  * @class GraphicsRecord
@@ -56,7 +56,7 @@ class GraphicsRecord extends root.Root {
      * @param {Object} apiRef           object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {String} name             name and id of the layer.
      */
-    constructor (esriBundle, apiRef, name) {
+    constructor(esriBundle, apiRef, name) {
         super();
 
         this._bundle = esriBundle;
@@ -69,24 +69,30 @@ class GraphicsRecord extends root.Root {
         this._hoverEvent = new shared.FakeEvent();
     }
 
-    get layerId () { return this._id; }
+    get layerId() {
+        return this._id;
+    }
 
-    get name () { return this._name; }
-    set name (value) {
+    get name() {
+        return this._name;
+    }
+    set name(value) {
         this._name = value;
         this._id = value;
     }
 
-    get layerType () { return shared.clientLayerType.ESRI_GRAPHICS; }
+    get layerType() {
+        return shared.clientLayerType.ESRI_GRAPHICS;
+    }
 
-    get visibility () {
+    get visibility() {
         if (this._layer) {
             return this._layer.visible;
         } else {
             return true; // TODO what should a proper default be? example of this situation??
         }
     }
-    set visibility (value) {
+    set visibility(value) {
         if (this._layer) {
             this._layer.setVisibility(value);
         }
@@ -94,14 +100,14 @@ class GraphicsRecord extends root.Root {
         // TODO do we need an ELSE case here?
     }
 
-    get opacity () {
+    get opacity() {
         if (this._layer) {
             return this._layer.opacity;
         } else {
             return 1; // TODO what should a proper default be? example of this situation??
         }
     }
-    set opacity (value) {
+    set opacity(value) {
         if (this._layer) {
             this._layer.setOpacity(value);
         }
@@ -112,7 +118,9 @@ class GraphicsRecord extends root.Root {
     // use of the following property is unsupported by ramp team.
     // it is provided for plugin developers who want to write advanced geo functions
     // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
-    get esriLayer () { return this._layer; }
+    get esriLayer() {
+        return this._layer;
+    }
 
     /**
      * Attach record event handlers to common layer events
@@ -120,7 +128,7 @@ class GraphicsRecord extends root.Root {
      * @function bindEvents
      * @param {Object} layer the api layer object
      */
-    bindEvents (layer) {
+    bindEvents(layer) {
         // TODO optional refactor.  Rather than making the events object in the parameter,
         //      do it as a variable, and only add mouse-over, mouse-out events if we are
         //      in an app configuration that will use it. May save a bit of processing
@@ -129,8 +137,8 @@ class GraphicsRecord extends root.Root {
         // TODO apply johann update here
         this._apiRef.events.wrapEvents(layer, {
             // wrapping the function calls to keep `this` bound correctly
-            'mouse-over': e => this.onMouseOver(e),
-            'mouse-out': e => this.onMouseOut(e)
+            'mouse-over': (e) => this.onMouseOver(e),
+            'mouse-out': (e) => this.onMouseOut(e),
         });
     }
 
@@ -140,7 +148,7 @@ class GraphicsRecord extends root.Root {
      * @function addHoverListener
      * @param {Function} listenerCallback function to call when a hover event happens
      */
-    addHoverListener (listenerCallback) {
+    addHoverListener(listenerCallback) {
         return this._hoverEvent.addListener(listenerCallback);
     }
 
@@ -150,7 +158,7 @@ class GraphicsRecord extends root.Root {
      * @function removeHoverListener
      * @param {Function} listenerCallback function to not call when a hover event happens
      */
-    removeHoverListener (listenerCallback) {
+    removeHoverListener(listenerCallback) {
         this._hoverEvent.removeListener(listenerCallback);
     }
 
@@ -160,7 +168,7 @@ class GraphicsRecord extends root.Root {
      * @function getProxy
      * @returns {Object} the proxy interface for the layer
      */
-    getProxy () {
+    getProxy() {
         if (!this._rootProxy) {
             this._rootProxy = new layerInterface.LayerInterface(this);
             this._rootProxy.convertToGraphicsLayer(this);
@@ -174,12 +182,12 @@ class GraphicsRecord extends root.Root {
      * @function onMouseOver
      * @param {Object} standard mouse event object
      */
-    onMouseOver (e) {
+    onMouseOver(e) {
         const showBundle = {
             type: 'mouseOver',
             point: e.screenPoint,
             target: e.target,
-            graphic: e.graphic
+            graphic: e.graphic,
         };
 
         // tell anyone listening we moused into something
@@ -192,11 +200,11 @@ class GraphicsRecord extends root.Root {
      * @function onMouseOut
      * @param {Object} standard mouse event object
      */
-    onMouseOut (e) {
+    onMouseOut(e) {
         // tell anyone listening we moused out
         const outBundle = {
             type: 'mouseOut',
-            target: e.target
+            target: e.target,
         };
         this._hoverEvent.fireEvent(outBundle);
     }
@@ -213,9 +221,9 @@ class GraphicsRecord extends root.Root {
         // to a format that our internal libraries can use, then call the
         // appropriate _add function to get it on the map.
 
-        const geometries = Array.isArray(geo) ? geo : [ geo ];
+        const geometries = Array.isArray(geo) ? geo : [geo];
 
-        geometries.forEach(geometry => {
+        geometries.forEach((geometry) => {
             const id = geometry.id;
             const geomArray = geometry.toArray();
             if (geometry.type === geometryTypes.POINT) {
@@ -229,7 +237,6 @@ class GraphicsRecord extends root.Root {
             } else if (geometry.type === geometryTypes.MULTILINESTRING) {
                 this._addMultiLine(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.POLYGON) {
-
                 this._addPolygon(geomArray, spatialReference, id, geometry.styleOptions);
             } else if (geometry.type === geometryTypes.MULTIPOLYGON) {
                 // the esri js api doesnt have a concept of multipolygon, so we combine all the polygons
@@ -258,7 +265,7 @@ class GraphicsRecord extends root.Root {
         const point = new this._bundle.Point({
             x: projPt[0],
             y: projPt[1],
-            spatialReference
+            spatialReference,
         });
 
         let symbol, marker;
@@ -287,15 +294,15 @@ class GraphicsRecord extends root.Root {
                     color: [0, 0, 0],
                     width: 1,
                     type: 'esriSLS',
-                    style: 'esriSLSSolid'
-                }
-            }
+                    style: 'esriSLSSolid',
+                },
+            };
             symbol = new this._bundle.SimpleMarkerSymbol(options);
             marker = new this._bundle.Graphic(point, symbol);
         }
 
         marker.geometry.apiId = id;
-        marker.geometry.geomType = "esriGeometryPoint"; // trickery for the zooming
+        marker.geometry.geomType = 'esriGeometryPoint'; // trickery for the zooming
         this._layer.add(marker);
     }
 
@@ -311,9 +318,9 @@ class GraphicsRecord extends root.Root {
      * @param {Object} opts                      options to apply to points
      */
     _addMultiPoint(coords, spatialReference, icon, id, opts) {
-        const llPoints =  new this._bundle.Multipoint({
+        const llPoints = new this._bundle.Multipoint({
             points: coords,
-            spatialReference: llSR
+            spatialReference: llSR,
         });
 
         const projPoints = this._apiRef.proj.localProjectGeometry(spatialReference, llPoints);
@@ -343,9 +350,9 @@ class GraphicsRecord extends root.Root {
                     color: [0, 0, 0],
                     width: 1,
                     type: 'esriSLS',
-                    style: 'esriSLSSolid'
-                }
-            }
+                    style: 'esriSLSSolid',
+                },
+            };
             symbol = new this._bundle.SimpleMarkerSymbol(options);
             marker = new this._bundle.Graphic(points, symbol);
         }
@@ -381,7 +388,7 @@ class GraphicsRecord extends root.Root {
     _addMultiLine(paths, spatialReference, id, opts) {
         const llLine = new this._bundle.Polyline({
             paths: paths,
-            spatialReference: llSR
+            spatialReference: llSR,
         });
 
         const projLine = this._apiRef.proj.localProjectGeometry(spatialReference, llLine);
@@ -396,9 +403,9 @@ class GraphicsRecord extends root.Root {
                 color: [0, 0, 0],
                 width: 1,
                 type: 'esriSLS',
-                style: 'esriSLSSolid'
-            }
-        }
+                style: 'esriSLSSolid',
+            },
+        };
         const marker = new this._bundle.Graphic({ symbol: symbol });
         marker.setGeometry(lines);
 
@@ -419,7 +426,7 @@ class GraphicsRecord extends root.Root {
     _addPolygon(rings, spatialReference, id, opts) {
         const llPoly = new this._bundle.Polygon({
             rings,
-            spatialReference: llSR
+            spatialReference: llSR,
         });
 
         const projPoly = this._apiRef.proj.localProjectGeometry(spatialReference, llPoly);
@@ -453,7 +460,7 @@ class GraphicsRecord extends root.Root {
     removeGeometry(index) {
         const graphic = this._layer.graphics[index];
         this._layer.remove(graphic);
-    };
+    }
 
     /**
      * Check to see if text provided is a valid image / data URL based on extension type or format.
@@ -464,8 +471,12 @@ class GraphicsRecord extends root.Root {
      * @returns {Boolean}                        true if valid image extension
      */
     _isUrl(text) {
-        return !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
-            !!text.match(/^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i);
+        return (
+            !!text.match(/\.(jpeg|jpg|gif|png|swf|svg)$/) ||
+            !!text.match(
+                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+            )
+        );
     }
 
     /**
@@ -477,7 +488,7 @@ class GraphicsRecord extends root.Root {
      */
     getGraphicsBoundingBox(graphics) {
         return this._apiRef.proj.graphicsUtils.graphicsExtent(graphics);
-    };
+    }
 
     /**
      * Will attempt to zoom the map view so the a graphic is prominent.
@@ -488,15 +499,14 @@ class GraphicsRecord extends root.Root {
      * @param {Object} offsetFraction   an object with decimal properties `x` and `y` indicating percentage of offsetting on each axis
      * @return {Promise}                resolves after the map is done moving
      */
-    zoomToGraphic (apiId, map, offsetFraction) {
-
+    zoomToGraphic(apiId, map, offsetFraction) {
         // TODO this is a hacky re-write of the standard attribFC.zoomToGraphic.
         // we need a function quickly, so doing it this way.
         // the proper way would be to build in a nice zoom to graphic as part of
         // the api, and clean up the logic here or somehow merge logic with attribFC (a larger task)
 
         // find graphic by api id
-        const targGraphic = this._layer.graphics.find(g => g.geometry.apiId === apiId);
+        const targGraphic = this._layer.graphics.find((g) => g.geometry.apiId === apiId);
 
         if (targGraphic) {
             const gapi = this._apiRef;
@@ -520,7 +530,6 @@ class GraphicsRecord extends root.Root {
                 // we have zoomed to our graphic. now position our map
                 return map.moveToOffsetExtent(extent, offsetFraction);
             });
-
         } else {
             // TODO handle error correctly
             console.warn(`could not find graphic ${apiId}`);
@@ -530,5 +539,5 @@ class GraphicsRecord extends root.Root {
 }
 
 module.exports = () => ({
-    GraphicsRecord
+    GraphicsRecord,
 });

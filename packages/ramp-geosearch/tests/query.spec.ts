@@ -11,32 +11,34 @@ describe('The query router', () => {
     });
 
     describe('returns an NTS query class', () => {
-        xit("when given a partial NTS query", () => {
+        xit('when given a partial NTS query', () => {
             expect(query('064D')).toEqual(jasmine.any(Q.NTSQuery));
         });
 
-        it("when given a full NTS query", () => {
+        it('when given a full NTS query', () => {
             expect(query('064D02')).toEqual(jasmine.any(Q.NTSQuery));
         });
     });
 
     describe('returns an FSA query class', () => {
-        xit("when given a valid FSA", () => {
+        xit('when given a valid FSA', () => {
             expect(query('L5L')).toEqual(jasmine.any(Q.FSAQuery));
         });
 
-        it("when given a postal code", () => {
+        it('when given a postal code', () => {
             expect(query('L5L 2R7')).toEqual(jasmine.any(Q.FSAQuery));
         });
     });
 
     describe('returns a normal query class', () => {
-        it("when given a name", () => {
+        it('when given a name', () => {
             expect(query('Milton')).toEqual(jasmine.any(Q.Query));
         });
 
-        xit("with a promise rejection when given an incomplete query", done => {
-            query('L5').onComplete.then(() => done.fail('onComplete promise should have rejected')).catch(() => done());
+        xit('with a promise rejection when given an incomplete query', (done) => {
+            query('L5')
+                .onComplete.then(() => done.fail('onComplete promise should have rejected'))
+                .catch(() => done());
         });
     });
 });

@@ -5,72 +5,100 @@ const ogcModule = require('../src/layer/ogc.js');
 
 // A class that mocks the Deferred class from dojo
 class Deferred {
-    constructor () {}
+    constructor() {}
 }
 
 // A class that mocks the SpatialReference class from Esri
 class FakeSpatialReference {
-    constructor () {
+    constructor() {
         this._wkid = 113;
     }
 
-    get wkid () { return this._wkid; }
-    set wkid (id) { this._wkid = id; }
+    get wkid() {
+        return this._wkid;
+    }
+    set wkid(id) {
+        this._wkid = id;
+    }
 }
 
 // A class that mocks the Extent class from Esri
 class FakeExtent {
-    constructor () {
+    constructor() {
         this._xmin = 0;
         this._xmax = 1;
         this._ymin = 0;
         this._ymax = 2;
     }
 
-    get xmin () { return this._xmin; }
-    get xmax () { return this._xmax; }
-    get ymin () { return this._ymin; }
-    get ymax () { return this._ymax; }
-    expand (num) {
+    get xmin() {
+        return this._xmin;
+    }
+    get xmax() {
+        return this._xmax;
+    }
+    get ymin() {
+        return this._ymin;
+    }
+    get ymax() {
+        return this._ymax;
+    }
+    expand(num) {
         return num;
     }
 }
 
 // A class that mocks the Map class from Esri
 class FakeMap {
-    constructor () {
+    constructor() {
         this._extent = new FakeExtent();
         this._spatRef = new FakeSpatialReference();
         this._width = 1;
         this._height = 2;
     }
 
-    get spatialReference () { return this._spatRef; }
-    get extent () { return this._extent; }
-    get width () { return this._width; }
-    get height () { return this._height; }
+    get spatialReference() {
+        return this._spatRef;
+    }
+    get extent() {
+        return this._extent;
+    }
+    get width() {
+        return this._width;
+    }
+    get height() {
+        return this._height;
+    }
 }
 
 // A class that mocks the WMSLayerInfo class from Esir
 class FakeWMSLayerInfo {
-    constructor (name, legendURL) {
-        this._name =  name;
+    constructor(name, legendURL) {
+        this._name = name;
         this._subLayers = [];
         this._lengendUrl = legendURL;
     }
 
-    get name () { return this._name; }
-    set name (val) { this._name = val; }
-    get subLayers () { return this._subLayers; }
-    get legendURL () { return this._lengendUrl; }
-    addSubLayers (layerInfo) {
+    get name() {
+        return this._name;
+    }
+    set name(val) {
+        this._name = val;
+    }
+    get subLayers() {
+        return this._subLayers;
+    }
+    get legendURL() {
+        return this._lengendUrl;
+    }
+    addSubLayers(layerInfo) {
         this._subLayers.push(layerInfo);
     }
 }
 
 // A class that mocks the WMSLayer class from Esri
 class FakeWMSLayer {
-    constructor () {
+    constructor() {
         this._version = '1.3';
         this._imageFormat = 'JPEG';
         this._map = new FakeMap();
@@ -79,40 +107,68 @@ class FakeWMSLayer {
         this._layerInfos = [];
     }
 
-    get version () { return this._version; }
-    get spatialReferences () { return this._spatRef; }
-    get imageFormat () { return this._imageFormat; }
-    get url () { return this._url; }
-    get layerInfos () { return this._layerInfos; }
+    get version() {
+        return this._version;
+    }
+    get spatialReferences() {
+        return this._spatRef;
+    }
+    get imageFormat() {
+        return this._imageFormat;
+    }
+    get url() {
+        return this._url;
+    }
+    get layerInfos() {
+        return this._layerInfos;
+    }
 
-    set version (val) { this._version = val; }
+    set version(val) {
+        this._version = val;
+    }
 
-    getMap () { return this._map; }
-    addLayerInfo (layerInfo) { this._layerInfos.push(layerInfo); }
+    getMap() {
+        return this._map;
+    }
+    addLayerInfo(layerInfo) {
+        this._layerInfos.push(layerInfo);
+    }
 }
 
 // A class that mocks the screenPoint class from Esri
 class ScreenPoint {
-    constructor (x, y) {
+    constructor(x, y) {
         this._x = x;
         this._y = y;
     }
 
-    get x () { return this._x; }
-    set x (val) { this._x = val; }
-    get y () { return this._y; }
-    set y (val) { this._y = val; }
+    get x() {
+        return this._x;
+    }
+    set x(val) {
+        this._x = val;
+    }
+    get y() {
+        return this._y;
+    }
+    set y(val) {
+        this._y = val;
+    }
 }
 
 // A class that mocks the map click event class from Esri
 class FakeClickEvent {
-    constructor () {
+    constructor() {
         this._screenPoint = new ScreenPoint(1, 2);
     }
 
-    set screenPoint (point) { this._screenPoint = point; }
+    set screenPoint(point) {
+        this._screenPoint = point;
+    }
 
-    get screenPoint () { return this._screenPoint; }
+    get screenPoint() {
+        return this._screenPoint;
+    }
 }
 
 describe('ogc', () => {
@@ -122,8 +178,11 @@ describe('ogc', () => {
         const fakeClickEventObject = new FakeClickEvent();
         const layerList = ['street', 'traffic', 'transit'];
         const mimeType = 'JPEG';
-        const fakeBundle = { // mock-up esri bundle
-            esriRequest: (data) => { return data; }
+        const fakeBundle = {
+            // mock-up esri bundle
+            esriRequest: (data) => {
+                return data;
+            },
         };
 
         beforeEach(() => {
@@ -132,34 +191,43 @@ describe('ogc', () => {
 
         it('should handle click events for WMS layers', (done) => {
             const layers = layerList.join(',');
-            const featureInfoBuilder = ogc.getFeatureInfo(fakeWMSLayerObject,
-            fakeClickEventObject, layerList, mimeType);
+            const featureInfoBuilder = ogc.getFeatureInfo(
+                fakeWMSLayerObject,
+                fakeClickEventObject,
+                layerList,
+                mimeType
+            );
 
             // testing the return values in the promise
-            featureInfoBuilder.then(val => {
-                expect(val.url).toEqual('www.wmslayer.com');
-                expect(val.content.I).toEqual(fakeClickEventObject.screenPoint.x);
-                expect(val.content.J).toEqual(fakeClickEventObject.screenPoint.y);
-                expect(val.content.FORMAT).toEqual(fakeWMSLayerObject.imageFormat);
-                expect(val.content.VERSION).toEqual(fakeWMSLayerObject.version);
-                expect(val.content.LAYERS).toEqual(layers);
-                expect(val.content.INFO_FORMAT).toEqual(mimeType);
-                done();
-            }).catch(e => {
-                fail(`Exception was thrown: ${e}`);
-                done();
-            });
+            featureInfoBuilder
+                .then((val) => {
+                    expect(val.url).toEqual('www.wmslayer.com');
+                    expect(val.content.I).toEqual(fakeClickEventObject.screenPoint.x);
+                    expect(val.content.J).toEqual(fakeClickEventObject.screenPoint.y);
+                    expect(val.content.FORMAT).toEqual(fakeWMSLayerObject.imageFormat);
+                    expect(val.content.VERSION).toEqual(fakeWMSLayerObject.version);
+                    expect(val.content.LAYERS).toEqual(layers);
+                    expect(val.content.INFO_FORMAT).toEqual(mimeType);
+                    done();
+                })
+                .catch((e) => {
+                    fail(`Exception was thrown: ${e}`);
+                    done();
+                });
         });
     });
 
     describe('parseCapabilities', () => {
         let ogc;
         const wmsEndpoint = 'www.endpoint.io';
-        const fakeBundle = { // mock-up esri bundle
+        const fakeBundle = {
+            // mock-up esri bundle
             dojoQuery: () => {
                 return [];
             },
-            esriRequest: function (data) { return new Deferred(data); }
+            esriRequest: function (data) {
+                return new Deferred(data);
+            },
         };
 
         beforeEach(() => {
@@ -170,14 +238,16 @@ describe('ogc', () => {
             const metadataPromise = ogc.parseCapabilities(wmsEndpoint);
 
             // calling the promise to see the values
-            metadataPromise.then(val => {
-                expect(val.layers).not.toBe(undefined);
-                expect(val.queryTypes).not.toBe(undefined);
-                done();
-            }).catch(e => {
-                fail(`Exception was thrown: ${e}`);
-                done();
-            });
+            metadataPromise
+                .then((val) => {
+                    expect(val.layers).not.toBe(undefined);
+                    expect(val.queryTypes).not.toBe(undefined);
+                    done();
+                })
+                .catch((e) => {
+                    fail(`Exception was thrown: ${e}`);
+                    done();
+                });
         });
     });
 
@@ -189,24 +259,25 @@ describe('ogc', () => {
             {
                 id: 'street',
                 styleToURL: {
-                    'default': 'www.street.io'
+                    default: 'www.street.io',
                 },
-                currentStyle: 'default'
+                currentStyle: 'default',
             },
             {
                 id: 'traffic',
                 styleToURL: {
-                    'default': 'www.traffic.io'
+                    default: 'www.traffic.io',
                 },
-                currentStyle: 'default'
+                currentStyle: 'default',
             },
             {
                 id: 'transit',
                 styleToURL: {
-                    'default': 'www.transit.io'
+                    default: 'www.transit.io',
                 },
-                currentStyle: 'default'
-            }];
+                currentStyle: 'default',
+            },
+        ];
 
         // layerInfos that belong to the layer in layerList
         const street = new FakeWMSLayerInfo('street', 'www.street.io');

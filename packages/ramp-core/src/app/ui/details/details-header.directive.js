@@ -9,9 +9,7 @@ const templateUrl = require('./details-header.html');
  * The `rvDetailsHeader` directive provides a custom header for details panel.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvDetailsHeader', rvDetailsHeader);
+angular.module('app.ui').directive('rvDetailsHeader', rvDetailsHeader);
 
 /**
  * `rvDetailsHeader` directive body.
@@ -25,11 +23,11 @@ function rvDetailsHeader() {
         templateUrl,
         scope: {
             headerTitle: '=',
-            selectedItem: '='
+            selectedItem: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

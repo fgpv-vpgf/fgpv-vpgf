@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 import { PanelEvent } from 'api/events';
 import Map from 'api/map';
-import { ConfigLegend } from 'api/legend'
+import { ConfigLegend } from 'api/legend';
 
 /**
  * Each map instance contains one ToolTip instance which handles the addition of new tooltips and the event streams
@@ -33,7 +33,7 @@ class ToolTip {
         const tt = {
             screenPosition,
             content,
-            toolTip: null
+            toolTip: null,
         };
 
         this._added.next(tt);
@@ -269,11 +269,17 @@ export class BasemapGroup {
 
     /** Creates a `Basemap` using the provided config snippet and if it is initially active (default false). */
     addBasemap(basemapConfig: JSONBasemap, active?: boolean): Basemap | undefined {
-        if (this._basemapsArray.find(basemap => basemap.id === basemapConfig.id)) {
+        if (this._basemapsArray.find((basemap) => basemap.id === basemapConfig.id)) {
             return;
         }
 
-        const newBasemap: Basemap = new Basemap(basemapConfig.id, basemapConfig.name, basemapConfig.layers, basemapConfig.description || '', this._mapInstance);
+        const newBasemap: Basemap = new Basemap(
+            basemapConfig.id,
+            basemapConfig.name,
+            basemapConfig.layers,
+            basemapConfig.description || '',
+            this._mapInstance
+        );
         this._basemapsArray.push(newBasemap);
         this._mapInstance.instance.appendBasemap(basemapConfig);
 
@@ -308,7 +314,7 @@ export class BasemapGroup {
             this._mapInstance.instance.deleteBasemap(basemap);
 
             const id = basemap.id;
-            const index = this._basemapsArray.findIndex(basemap => basemap.id === id);
+            const index = this._basemapsArray.findIndex((basemap) => basemap.id === id);
             this._basemapsArray.splice(index, 1);
 
             this._basemapRemoved.next(basemap);
@@ -335,7 +341,7 @@ export class BasemapGroup {
      * Note: IDs 1234 and '1234' are equivalent. Either can be used to look up basemaps.
      */
     getBasemapById(id: number | string): Basemap | undefined {
-        return this._basemapsArray.find(basemap => basemap.id === id.toString());
+        return this._basemapsArray.find((basemap) => basemap.id === id.toString());
     }
 }
 
@@ -354,7 +360,6 @@ export class UI {
 
     constructor(mapInstance: Map) {
         this._mapI = mapInstance;
-
     }
 
     get tooltip(): ToolTip {
@@ -363,7 +368,7 @@ export class UI {
 
     get anchors(): anchorPoints {
         return {
-            CONTEXT_MAP: this._mapI.div.find('div.esriOverviewMap')
+            CONTEXT_MAP: this._mapI.div.find('div.esriOverviewMap'),
         };
     }
 
@@ -387,15 +392,15 @@ function isBasemapObject(basemapOrId: Basemap | string | number): basemapOrId is
 }
 
 interface ScreenPosition {
-    x: number,
-    y: number
+    x: number;
+    y: number;
 }
 
 interface anchorPoints {
     /**
      * The contextual map found in the top right corner of the viewer.
      */
-    CONTEXT_MAP: JQuery<HTMLElement>
+    CONTEXT_MAP: JQuery<HTMLElement>;
 }
 
 interface JSONBasemap {

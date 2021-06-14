@@ -42,15 +42,15 @@ function exportComponentsService(
     const initialExportConfig: InitialExportConfig = {
         title: {
             generators: [exportGenerators.titleGenerator],
-            isVisible: false
+            isVisible: false,
         },
         map: {
             generators: [
                 exportGenerators.mapDummyGenerator,
                 exportGenerators.mapSVGGenerator,
-                exportGenerators.mapImageGenerator
+                exportGenerators.mapImageGenerator,
             ],
-            graphicOrder: [0, 2, 1]
+            graphicOrder: [0, 2, 1],
         },
         mapElements: {
             generators: [exportGenerators.scalebarGenerator, exportGenerators.northarrowGenerator],
@@ -58,27 +58,27 @@ function exportComponentsService(
             graphicPosition: [
                 {
                     justify: 'start',
-                    align: 'center'
+                    align: 'center',
                 },
                 {
                     justify: 'end',
-                    align: 'center'
-                }
-            ]
+                    align: 'center',
+                },
+            ],
         },
         legend: {
-            generators: [exportGenerators.legendGenerator]
+            generators: [exportGenerators.legendGenerator],
         },
         footnote: {
-            generators: [exportGenerators.footnoteGenerator]
+            generators: [exportGenerators.footnoteGenerator],
         },
         timestamp: {
             generators: [exportGenerators.timestampGenerator],
-            isVisible: false
+            isVisible: false,
         },
         htmlMarkup: {
-            generators: [exportGenerators.htmlMarkupGenerator]
-        }
+            generators: [exportGenerators.htmlMarkupGenerator],
+        },
     };
 
     // indicates the order of the components, top to bottom
@@ -89,7 +89,7 @@ function exportComponentsService(
 
         init,
         update,
-        get
+        get,
     };
 
     return service;
@@ -104,7 +104,7 @@ function exportComponentsService(
     function update(timeout: number, showToast = angular.noop) {
         const promise = init().then(() =>
             $q.all(
-                service.items!.map(item => item.generate(exportSizesService.selectedOption, timeout, showToast, true))
+                service.items!.map((item) => item.generate(exportSizesService.selectedOption, timeout, showToast, true))
             )
         );
 
@@ -126,7 +126,7 @@ function exportComponentsService(
             service.items = [];
 
             initPromise = configService.getAsync.then((config: any) => {
-                componentOrder.forEach(id => {
+                componentOrder.forEach((id) => {
                     const exportComponent = config.services.export[id];
 
                     // add generators and graphic orders to the export component configs
@@ -152,6 +152,6 @@ function exportComponentsService(
      * @return {ExportComponent} component with the specified id
      */
     function get(id: string): ExportComponent {
-        return service.items!.find(c => c.id === id);
+        return service.items!.find((c) => c.id === id);
     }
 }

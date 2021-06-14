@@ -1,6 +1,6 @@
 const templateUrls = {
     main: require('./main-panel.html'),
-    side: require('./side-panel.html')
+    side: require('./side-panel.html'),
 };
 
 /**
@@ -14,9 +14,7 @@ const templateUrls = {
  * HTML example:
  * <rv-panel type="main" close-button="false"></rv-panel>
  */
-angular
-    .module('app.ui')
-    .directive('rvPanel', rvPanel);
+angular.module('app.ui').directive('rvPanel', rvPanel);
 
 function rvPanel(referenceService, stateManager, debounceService) {
     const directive = {
@@ -25,12 +23,12 @@ function rvPanel(referenceService, stateManager, debounceService) {
             return templateUrls[attr.type];
         },
         scope: {
-            closeButton: '@closeButton'
+            closeButton: '@closeButton',
         },
         controller: angular.noop,
         controllerAs: 'self',
         bindToController: true,
-        link
+        link,
     };
 
     return directive;

@@ -9,9 +9,7 @@ const templateUrl = require('./geosearch-bottom-filters.html');
  * The `rvGeosearchBottomFilters` directive handles 'show only results from the current extent' filter.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvGeosearchBottomFilters', rvGeosearchBottomFilters);
+angular.module('app.ui').directive('rvGeosearchBottomFilters', rvGeosearchBottomFilters);
 
 /**
  * `rvGeosearchBottomFilters` directive body.
@@ -24,11 +22,11 @@ function rvGeosearchBottomFilters() {
         restrict: 'E',
         templateUrl,
         scope: {
-            onUpdate: '='
+            onUpdate: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -56,10 +54,13 @@ function Controller(geosearchFiltersService, debounceService) {
      * @return {Function} debounced onUpdate function
      */
     function onUpdateDebounceBuilder() {
-        return debounceService.registerDebounce(() => {
-
-            self.service.setVisible(self.visibleOnly);
-            self.onUpdate(self.visibleOnly);
-        }, 300, false);
+        return debounceService.registerDebounce(
+            () => {
+                self.service.setVisible(self.visibleOnly);
+                self.onUpdate(self.visibleOnly);
+            },
+            300,
+            false
+        );
     }
 }

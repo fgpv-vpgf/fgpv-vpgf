@@ -11,9 +11,7 @@ const templateUrl = require('./settings-content.html');
  * DOM insertion.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvSettingsContent', rvSettingsContent);
+angular.module('app.ui').directive('rvSettingsContent', rvSettingsContent);
 
 /**
  * `rvSettingsContent` directive body.
@@ -26,12 +24,12 @@ function rvSettingsContent(layerRegistry) {
         restrict: 'E',
         templateUrl,
         scope: {
-            block: '='
+            block: '=',
         },
         link,
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -63,7 +61,6 @@ function rvSettingsContent(layerRegistry) {
          * @return {LegendBlock|null} a LegendBlock group or null if the parent doesn't exist
          */
         function findParentBlock(block, control) {
-
             const parent = block.visualParent;
 
             // the root of the legend doesn't have a parent or any visual representation, ignore it
@@ -92,7 +89,7 @@ function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
     self.includeRefreshInterval = () => {
         const layerRecord = layerRegistry.getLayerRecord(self.block.layerRecordId);
         return layerRecord ? layerRecord.dataSource() === 'esri' : false;
-    }
+    };
 
     /**
      * @function checkAvailableControls
@@ -129,6 +126,8 @@ function Controller(common, Geo, LegendBlock, tocService, layerRegistry) {
      * @return {Boolean} true if some sublayer has more than 1 style (only for WMS)
      */
     function checkStylesLength() {
-        return self.block.proxyWrapper.layerConfig.layerEntries.some(entry => entry.allStyles && entry.allStyles.length > 1);
+        return self.block.proxyWrapper.layerConfig.layerEntries.some(
+            (entry) => entry.allStyles && entry.allStyles.length > 1
+        );
     }
 }

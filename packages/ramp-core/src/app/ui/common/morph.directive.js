@@ -24,9 +24,7 @@ const RV_SWIFT_IN_OUT_EASE = window.Power1.easeInOut;
  *
  * `rv-morph` should not be applied to elements that are animated by different means (ngAnimate or other CSS animations), this may interfere with applying of CSS classes.
  */
-angular
-    .module('app.ui')
-    .directive('rvMorph', rvMorph);
+angular.module('app.ui').directive('rvMorph', rvMorph);
 
 /**
  * `rvMorph` directive body.
@@ -38,7 +36,7 @@ angular
 function rvMorph(stateManager, animationService) {
     const directive = {
         restrict: 'A',
-        link: linkFunc
+        link: linkFunc,
     };
 
     return directive;
@@ -60,12 +58,10 @@ function rvMorph(stateManager, animationService) {
         scope.$watch(`stateManager.state.${attr.rvMorph}.morph`, (newClass, oldClass) => {
             // replace old class name with new on the element to get a morph target
             classReg = new RegExp('(^| )' + oldClass + '($| )', 'i');
-            toClass = el.attr('class')
-                .replace(classReg, '$1' + newClass + '$2');
+            toClass = el.attr('class').replace(classReg, '$1' + newClass + '$2');
 
             // animate only on class change
             if (newClass !== oldClass) {
-
                 // skip morph
                 if (stateManager.state[attr.rvMorph].morphSkip) {
                     el.removeClass(oldClass).addClass(newClass);
@@ -78,10 +74,9 @@ function rvMorph(stateManager, animationService) {
                             // Remove old class from the element after morph is completed.
                             el.removeClass(oldClass);
                             callback();
-                        }
+                        },
                     });
                 }
-
             } else {
                 el.addClass(newClass);
             }

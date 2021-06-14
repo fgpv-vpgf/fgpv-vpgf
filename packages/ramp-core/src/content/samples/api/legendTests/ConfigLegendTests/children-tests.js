@@ -1,8 +1,7 @@
 $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
-    RAMP.mapAdded.subscribe(mapi => {
-
+    RAMP.mapAdded.subscribe((mapi) => {
         // make sure our legend gets populated properly before moving on with tests
         let legendPopulated = new Promise(function (resolve, reject) {
             const childrenLoaded = setInterval(() => {
@@ -12,34 +11,33 @@ $.getScript('../../../../rv-main.js', function () {
             }, 1000);
         });
 
-        legendPopulated.then(value => {
+        legendPopulated.then((value) => {
             let legend = mapi.ui.configLegend;
             let legendItem = legend.children[1];
 
-            $("#Children").click(function () {
+            $('#Children').click(function () {
                 let children = '';
                 let count = 0;
-                legend.children.forEach(child => { count += 1; children += `${count}. `+ child.name + "\n"; }
-                );
-                $("textarea#ChildrenOut").val(children);
+                legend.children.forEach((child) => {
+                    count += 1;
+                    children += `${count}. ` + child.name + '\n';
+                });
+                $('textarea#ChildrenOut').val(children);
             });
 
-            $("#ByID").click(function () {
+            $('#ByID').click(function () {
                 let node = legend.getById('node_1');
-                $("textarea#ByIDOut").val("ID: "+ node.id + "\nName: " + node.name + "\nType: " + node.type);
+                $('textarea#ByIDOut').val('ID: ' + node.id + '\nName: ' + node.name + '\nType: ' + node.type);
             });
 
-
-            $("#Position").click(function () {
+            $('#Position').click(function () {
                 legend.updateLayerPosition(legendItem, 0);
                 if (legendItem === legend.children[0]) {
                     legendItem = legend.children[1];
-                }
-                else{
+                } else {
                     legendItem = legend.children[0];
                 }
             });
-
         });
     });
 

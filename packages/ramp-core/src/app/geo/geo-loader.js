@@ -5,7 +5,7 @@ import './identify.service.js';
 import './init-map.directive.js';
 import './layer-blueprint.class.ts';
 import './layer-registry.service.js';
-import './legend-block.class.js'
+import './legend-block.class.js';
 import './legend.service.js';
 import './locate.service.js';
 import './map-tools.service.js';

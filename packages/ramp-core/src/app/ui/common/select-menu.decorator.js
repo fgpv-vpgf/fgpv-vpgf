@@ -2,9 +2,7 @@
  * @module mdSelectMenuDirective
  * @memberof material.components.select
  */
-angular
-    .module('material.components.select')
-    .decorator('mdSelectMenuDirective', mdSelectMenuDirective);
+angular.module('material.components.select').decorator('mdSelectMenuDirective', mdSelectMenuDirective);
 
 function mdSelectMenuDirective($delegate, appInfo) {
     'ngInject';
@@ -13,7 +11,7 @@ function mdSelectMenuDirective($delegate, appInfo) {
     const originalCompile = mdSelectMenuDirective.compile; // store reference to its compile function
     mdSelectMenuDirective.compile = decorateCompile(originalCompile); // decorate compile function
 
-    return ([mdSelectMenuDirective]);
+    return [mdSelectMenuDirective];
 
     /**
      * Decorates the original menu compile functions.

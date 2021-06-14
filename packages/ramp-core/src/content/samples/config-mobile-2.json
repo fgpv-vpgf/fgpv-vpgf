@@ -3,12 +3,7 @@
         "fullscreen": true,
         "navBar": {
             "zoom": "buttons",
-            "extra": [
-                "fullscreen",
-                "geoLocator",
-                "home",
-                "help"
-            ]
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
         },
         "about": {
             "folderName": "indexOne"
@@ -419,13 +414,8 @@
                     {
                         "name": "superGroup",
                         "expanded": true,
-                        "controls": [
-                            "visibility",
-                            "settings"
-                        ],
-                        "disabledControls": [
-                            "visibility"
-                        ],
+                        "controls": ["visibility", "settings"],
+                        "disabledControls": ["visibility"],
                         "children": [
                             {
                                 "layerId": "esri_tile",
@@ -439,9 +429,7 @@
                             },
                             {
                                 "layerId": "ecogeofull",
-                                "controlledIds": [
-                                    "powerplant100mw-12"
-                                ]
+                                "controlledIds": ["powerplant100mw-12"]
                             },
                             {
                                 "infoType": "unboundLayer",
@@ -505,9 +493,7 @@
                     {
                         "name": "A Group with a Visibility Set",
                         "expanded": true,
-                        "controls": [
-                            "visibility"
-                        ],
+                        "controls": ["visibility"],
                         "children": [
                             {
                                 "exclusiveVisibility": [
@@ -565,14 +551,7 @@
                 "id": "powerplant100mw-electric",
                 "name": "Electric Transmission Line",
                 "layerType": "esriFeature",
-                "controls": [
-                    "opacity",
-                    "metadata",
-                    "boundaryZoom",
-                    "refresh",
-                    "reload",
-                    "settings"
-                ],
+                "controls": ["opacity", "metadata", "boundaryZoom", "refresh", "reload", "settings"],
                 "state": {
                     "visibility": true
                 },
@@ -633,9 +612,7 @@
                 "state": {
                     "opacity": 0.4
                 },
-                "disabledControls": [
-                    "opacity"
-                ],
+                "disabledControls": ["opacity"],
                 "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
                 "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/12"
             },
@@ -699,9 +676,7 @@
                 "layerEntries": [
                     {
                         "index": 8,
-                        "controls": [
-                            "opacity"
-                        ]
+                        "controls": ["opacity"]
                     },
                     {
                         "index": 7,

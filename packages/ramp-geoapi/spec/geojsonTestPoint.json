@@ -3,8 +3,8 @@
     "features": [
         {
             "type": "Feature",
-            "geometry": {"type": "Point", "coordinates": [-100,50]},
-            "properties": {"key": "value"}
+            "geometry": { "type": "Point", "coordinates": [-100, 50] },
+            "properties": { "key": "value" }
         }
     ]
 }

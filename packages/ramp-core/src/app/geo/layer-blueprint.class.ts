@@ -29,10 +29,10 @@ function mixins<A, B, C, D, E>(
     CtorE: Constructor<E>
 ): Constructor<A & B & C & D & E>;
 function mixins<T>(...Ctors: Constructor<T>[]): Constructor<T> {
-    class Class { }
+    class Class {}
 
-    Ctors.forEach(Ctor => {
-        Object.getOwnPropertyNames(Ctor.prototype).forEach(name => {
+    Ctors.forEach((Ctor) => {
+        Object.getOwnPropertyNames(Ctor.prototype).forEach((name) => {
             (<any>Class).prototype[name] = Ctor.prototype[name];
         });
     });
@@ -71,8 +71,15 @@ angular.module('app.geo').factory('LayerBlueprint', LayerBlueprint);
 
 LayerBlueprint.$inject = ['$http', '$q', 'Geo', 'gapiService', 'ConfigObject', 'appInfo', 'configService'];
 
-function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigObject: any, appInfo: any, configService: any) {
-
+function LayerBlueprint(
+    $http: any,
+    $q: any,
+    Geo: any,
+    gapiService: any,
+    ConfigObject: any,
+    appInfo: any,
+    configService: any
+) {
     /**
      * The base class for the mixins. This just declares what base properties are available across mixins.
      *
@@ -124,9 +131,11 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
         // WFS layer overrides this since it has a special loading behaviour
         async loadData(): Promise<any> {
             // TODO: change type 'any' here if possible
-            const [error, response] = await to<any>($http.get(this.config.url, {
-                responseType: 'blob'
-            }));
+            const [error, response] = await to<any>(
+                $http.get(this.config.url, {
+                    responseType: 'blob',
+                })
+            );
 
             if (!response) {
                 console.error(`File data failed to load for "${this.config.id}"`, error);
@@ -136,12 +145,11 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             const reader = new FileReader();
 
             return $q((resolve: any, reject: any) => {
-                reader.onerror = error => {
+                reader.onerror = (error) => {
                     console.error(`File data failed to load for "${this.config.id}"`, error);
                     reject({ reason: 'error', message: 'Failed to read file' });
                 };
-                reader.onload = () =>
-                    resolve(reader.result);
+                reader.onload = () => resolve(reader.result);
 
                 reader.readAsArrayBuffer(response.data);
             });
@@ -564,7 +572,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
          */
         validate(): any {
             // WFS layer data is not encoded as a byte array, it's pure JSON
-            return super.validate(Geo.Service.Types.GeoJSON, false).then(validationResult => {
+            return super.validate(Geo.Service.Types.GeoJSON, false).then((validationResult) => {
                 this.setFieldsOptions(validationResult);
                 return validationResult;
             });
@@ -601,7 +609,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             limit: number = 1000,
             wfsData: WFSData = {
                 type: 'FeatureCollection',
-                features: []
+                features: [],
             }
         ): Promise<any> {
             let newQueryMap: QueryMap = { startindex: startindex.toString(), limit: limit.toString() };
@@ -612,7 +620,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
                 // get the total number of records
                 newQueryMap = {
                     f: 'json',
-                    resulttype: 'hits'
+                    resulttype: 'hits',
                 };
             }
 
@@ -652,7 +660,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
                     // suggest porting this block to geoApi.
                     // for now, easier to modify as early as possible in the transformation
 
-                    wfsData.features.forEach(f => {
+                    wfsData.features.forEach((f) => {
                         const p = f.geometry.coordinates;
                         f.properties.rvInternalCoordX = p[0];
                         f.properties.rvInternalCoordY = p[1];
@@ -891,12 +899,14 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
             // service types used for loading file-layers through config
             [Geo.Service.Types.CSV]: CSVSource,
             [Geo.Service.Types.GeoJSON]: GeoJSONSource,
-            [Geo.Service.Types.Shapefile]: ShapefileSource
+            [Geo.Service.Types.Shapefile]: ShapefileSource,
         };
 
         // if 'fileType' is a property, then we know we are dealing with a file based layer.
         // the layerType for these will still be 'esriFeature' but we need to know which type of file it is using 'fileType'
-        const serviceSource = new constructors[rawConfig.fileType ? rawConfig.fileType : rawConfig.layerType](rawConfig);
+        const serviceSource = new constructors[rawConfig.fileType ? rawConfig.fileType : rawConfig.layerType](
+            rawConfig
+        );
         return serviceSource;
     }
 
@@ -914,7 +924,7 @@ function LayerBlueprint($http: any, $q: any, Geo: any, gapiService: any, ConfigO
 
         makeBlueprint,
 
-        UrlWrapper
+        UrlWrapper,
     };
 
     return service;

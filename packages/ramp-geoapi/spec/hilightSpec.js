@@ -24,7 +24,7 @@ function FakeGraphicLayer() {
     this.addMarker = 'marker';
     this.addHilight = 'hilight';
     this.clearHilight = 'clear';
-    this.add = g => {
+    this.add = (g) => {
         this.graphics.push(g);
     };
     this.clear = () => {
@@ -35,7 +35,9 @@ function FakeGraphicLayer() {
 // A class that mocks the hilight from geoApi
 function FakeHilight() {
     this.geomToGraphic = () => {};
-    this.cloneLayerGraphic = ()=> { return new FakeGraphic(); };
+    this.cloneLayerGraphic = () => {
+        return new FakeGraphic();
+    };
 }
 
 // A class that mocks the Symbology class from geoApi
@@ -45,7 +47,9 @@ function FakeGeoApiSymbol() {
 
 // A class that mocks the Proj class from geoApi
 function FakeProj() {
-    this.isSpatialRefEqual = () => { return false; };
+    this.isSpatialRefEqual = () => {
+        return false;
+    };
     this.localProjectGeometry = () => {};
 }
 
@@ -85,7 +89,9 @@ function FakeGraphic(properties) {
     } else {
         this.geometry = 'point';
     }
-    this.getLayer = () => { return new FakeLayer(); };
+    this.getLayer = () => {
+        return new FakeLayer();
+    };
     this.setGeometry = (geometry) => {
         this.geometry = geometry;
     };
@@ -100,9 +106,12 @@ function FakeJsonUtils() {
 
 describe('hilight', () => {
     describe('graphicBuilder', () => {
-        const fakeBundle = { // mock-up esri bundle
-            Graphic: (properties) => { return new FakeGraphic(properties); },
-            symbolJsonUtils: new FakeJsonUtils()
+        const fakeBundle = {
+            // mock-up esri bundle
+            Graphic: (properties) => {
+                return new FakeGraphic(properties);
+            },
+            symbolJsonUtils: new FakeJsonUtils(),
         };
         let fakeGeometryObject;
         let fakeSymbolObject;
@@ -126,13 +135,17 @@ describe('hilight', () => {
 
     describe('get graphicBuilder', () => {
         const fakeBundle = {
-            Graphic: (properties) => { return new FakeGraphic(properties); },
-            GraphicsLayer: () => { return new FakeGraphicLayer(); }
+            Graphic: (properties) => {
+                return new FakeGraphic(properties);
+            },
+            GraphicsLayer: () => {
+                return new FakeGraphicLayer();
+            },
         };
         const fakeGeoApi = {
             proj: new FakeProj(),
             symbology: new FakeGeoApiSymbol(),
-            hilight: new FakeHilight()
+            hilight: new FakeHilight(),
         };
         const spatialReference = 'UTM';
         let hilight;
@@ -149,8 +162,8 @@ describe('hilight', () => {
                     graphic: new FakeGraphic(),
                     source: 'server',
                     layerFC: new FakeGeoApiLayerFC(),
-                    featureIdx: 0
-                }
+                    featureIdx: 0,
+                },
             ];
             const graphicLayer = hilight.getUnboundGraphics(graphicBundles, spatialReference);
 
@@ -167,8 +180,8 @@ describe('hilight', () => {
                     graphic: new FakeGraphic(),
                     source: 'local',
                     layerFC: new FakeGeoApiLayerFC(),
-                    featureIdx: 0
-                }
+                    featureIdx: 0,
+                },
             ];
             const graphicLayer = hilight.getUnboundGraphics(graphicBundles, spatialReference);
 
@@ -180,10 +193,15 @@ describe('hilight', () => {
 
     describe('hilightBuilder', () => {
         let hilight;
-        const fakeBundle = { // mock-up esri bundle
+        const fakeBundle = {
+            // mock-up esri bundle
             // ES6 doesn't work for Graphic
-            Graphic: function (properties) { return new FakeGraphic(properties); },
-            GraphicsLayer: (properties) => { return new FakeGraphicLayer(properties); }
+            Graphic: function (properties) {
+                return new FakeGraphic(properties);
+            },
+            GraphicsLayer: (properties) => {
+                return new FakeGraphicLayer(properties);
+            },
         };
 
         beforeEach(() => {

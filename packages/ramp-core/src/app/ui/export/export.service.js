@@ -34,12 +34,12 @@ function exportService(
 ) {
     const service = {
         open,
-        close
+        close,
     };
 
     // wire in a hook to any map for exporting.  this makes it available on the API
     events.$on(events.rvMapLoaded, (_, i) => {
-        configService.getSync.map.instance.export = fileType => {
+        configService.getSync.map.instance.export = (fileType) => {
             if (fileType && fileType !== 'png' && fileType !== 'jpg')
                 throw new Error(`Invalid or unsupported file type ${fileType}.`);
             service.open(null, fileType);
@@ -71,7 +71,7 @@ function exportService(
         $mdDialog.show({
             locals: {
                 shellNode,
-                fileType
+                fileType,
             },
             controller: ExportController,
             controllerAs: 'self',
@@ -84,7 +84,7 @@ function exportService(
             clickOutsideToClose: true,
             fullscreen: true,
             onRemoving: $mdToast.hide,
-            onShowing: (scope, element) => (scope.element = element.find(EXPORT_CLASS)) // store dialog DOM node for reference
+            onShowing: (scope, element) => (scope.element = element.find(EXPORT_CLASS)), // store dialog DOM node for reference
         });
     }
 
@@ -108,7 +108,7 @@ function exportService(
         const self = this;
 
         const ref = {
-            timeout: configService.getSync.services.export.timeout
+            timeout: configService.getSync.services.export.timeout,
         };
 
         self.isError = false;
@@ -138,9 +138,9 @@ function exportService(
                     left: `${(component.offset[0] / base.graphic.width) * 100}%`,
                     top: `${(component.offset[1] / base.graphic.height) * 100}%`,
                     width: `${(component.graphic.width / base.graphic.width) * 100}%`,
-                    height: `${(component.graphic.height / base.graphic.height) * 100}%`
+                    height: `${(component.graphic.height / base.graphic.height) * 100}%`,
                 };
-            }
+            },
         };
 
         // functions
@@ -174,13 +174,16 @@ function exportService(
                 // NOTE: `angular.copy()` doesn't seem to work properly, so we use this other method instead (found here: https://stackoverflow.com/a/44782052)
                 // const promises = standIn({
                 const promises = appInfo.features.export.generateExportStack({
-                    legendBlocks: Object.assign(Object.create(Object.getPrototypeOf(configService.getSync.map.legendBlocks)), configService.getSync.map.legendBlocks),
-                    mapSize: self.exportSizes.selectedOption
+                    legendBlocks: Object.assign(
+                        Object.create(Object.getPrototypeOf(configService.getSync.map.legendBlocks)),
+                        configService.getSync.map.legendBlocks
+                    ),
+                    mapSize: self.exportSizes.selectedOption,
                 });
 
                 // RAMP-side; accepts a list of promises from the plugin
                 promises.map((pr, index) =>
-                    pr.then(component => {
+                    pr.then((component) => {
                         self.exportPlugin.components[index] = { offset: [0, 0], ...component }; // apply the default offset of 0,0
                         $rootScope.$applyAsync();
                     })
@@ -227,7 +230,7 @@ function exportService(
          */
         function updateComponents() {
             self.lastUsedSizeOption = self.exportSizes.selectedOption;
-            exportComponentsService.update(ref.timeout, showToast).catch(error => {
+            exportComponentsService.update(ref.timeout, showToast).catch((error) => {
                 self.errorMessage = error.timeout ? 'export.error.timeout' : 'export.error.cantgenerate';
                 self.isGenerateError = true;
             });
@@ -249,7 +252,7 @@ function exportService(
                 return true;
             }
 
-            return self.exportComponents.items.some(item => item.isGenerating);
+            return self.exportComponents.items.some((item) => item.isGenerating);
         }
 
         /**
@@ -285,7 +288,7 @@ function exportService(
                 return undefined;
             }
 
-            return self.exportComponents.items.some(item => item.isSelectable);
+            return self.exportComponents.items.some((item) => item.isSelectable);
         }
 
         /**
@@ -303,7 +306,7 @@ function exportService(
                 position: 'bottom rv-flex-global',
                 textContent: $translate.instant(`export.${textContent}`),
                 action: action !== '' ? $translate.instant(`export.${action}`) : action,
-                hideDelay
+                hideDelay,
             };
 
             return $mdToast.show($mdToast.simple(options));
@@ -345,17 +348,17 @@ function exportService(
                 // do not colour in though - plugin might want to have some transparent sections in the image
                 canvas = graphicsService.createCanvas(components[0].graphic.width, components[0].graphic.height);
 
-                exportGraphics = components.map(c => c.graphic);
-                graphicOffsets = components.map(c => c.offset);
+                exportGraphics = components.map((c) => c.graphic);
+                graphicOffsets = components.map((c) => c.offset);
             } else {
                 // if not, get generated graphics from the export components
                 exportGraphics = self.exportComponents.items
-                    .filter(component => component.isSelected && component.graphic.height > 0)
-                    .map(component => component.graphic)
-                    .filter(g => g);
+                    .filter((component) => component.isSelected && component.graphic.height > 0)
+                    .map((component) => component.graphic)
+                    .filter((g) => g);
 
                 // extract graphic heights
-                const graphicHeights = exportGraphics.map(graphic => graphic.height);
+                const graphicHeights = exportGraphics.map((graphic) => graphic.height);
 
                 // find the total height of the legend image including the gutters between component graphics
                 const totalHeight = graphicHeights.reduce(
@@ -365,7 +368,7 @@ function exportService(
 
                 // figure out offsets for individual graphics assuming they are arranged vertically one after another
                 let runningHeight = EXPORT_IMAGE_GUTTER;
-                graphicOffsets = graphicHeights.map(h => {
+                graphicOffsets = graphicHeights.map((h) => {
                     runningHeight += h + EXPORT_IMAGE_GUTTER;
                     return [EXPORT_IMAGE_GUTTER, runningHeight];
                 });
@@ -422,7 +425,7 @@ function exportService(
                     // ... and it's synchronous!
                     FileSaver.saveAs(canvas.msToBlob(), `${fileName}.${self.fileType}`);
                 } else {
-                    canvas.toBlob(blob => {
+                    canvas.toBlob((blob) => {
                         FileSaver.saveAs(blob, `${fileName}.${self.fileType}`);
                     });
                 }

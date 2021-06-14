@@ -8,7 +8,7 @@ function getLayerTypeBuilder(esriBundle) {
      * @param  {Object} layer an ESRI API layer object
      * @return {String} layer type
      */
-    return layer => {
+    return (layer) => {
         if (layer instanceof esriBundle.FeatureLayer) {
             return 'FeatureLayer';
         } else if (layer instanceof esriBundle.WmsLayer) {
@@ -33,7 +33,7 @@ function getLayerTypeBuilder(esriBundle) {
  */
 function generateUUID() {
     let d = Date.now();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
         // do math!
         /*jslint bitwise: true */
         const r = (d + Math.random() * 16) % 16 | 0;
@@ -69,7 +69,7 @@ function convertImageToCanvas(url, canvas = null, crossOrigin = true) {
             // return canvas
             resolve(canvas);
         });
-        image.addEventListener('error', error => reject(error));
+        image.addEventListener('error', (error) => reject(error));
     });
 
     // set image source to the one generated from the print task
@@ -94,11 +94,11 @@ function convertImagetoDataURL(imageUri, imageType = 'image/png') {
     }
 
     const loadingPromise = convertImageToCanvas(imageUri)
-        .then(canvas => {
+        .then((canvas) => {
             // Converting image to dataURL
             return canvas.toDataURL(imageType);
         })
-        .catch(error => {
+        .catch((error) => {
             console.error('Failed to load crossorigin image', imageUri, error);
             return imageUri;
         });
@@ -106,9 +106,9 @@ function convertImagetoDataURL(imageUri, imageType = 'image/png') {
     return loadingPromise;
 }
 
-module.exports = esriBundle => ({
+module.exports = (esriBundle) => ({
     getLayerType: getLayerTypeBuilder(esriBundle),
     generateUUID,
     convertImageToCanvas,
-    convertImagetoDataURL
+    convertImagetoDataURL,
 });

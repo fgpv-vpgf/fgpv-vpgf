@@ -1,5 +1,4 @@
 export declare module RV {
-
     /**
      * This event is fired when a new map instance is created.
      * @event map_added
@@ -22,7 +21,7 @@ export declare module RV {
     export class Map extends MVCObject {
         /** Creates a new map inside of the given HTML container, which is typically a DIV element.
          * If opts is a string then it is considered to be a url to a json config snippet of a map.
-        */
+         */
         constructor(mapDiv: HTMLElement, opts?: Object | JSON | string);
 
         /** Loads a partial config snippet (schema validated). Does not load layers.
@@ -77,18 +76,18 @@ export declare module RV {
         layers: LAYER.LayerGroup;
 
         /** Returns the position displayed at the center of the map.  */
-        setCenter(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
-        setZoom(zoom: number) : void;
+        setCenter(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral): void;
+        setZoom(zoom: number): void;
         /** Changes the center of the map to the given XY. If the change is less than both the width and height of the map, the transition will be smoothly animated. */
-        panTo(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral) : void;
+        panTo(xy: RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral): void;
         /** Changes the center of the map by the given distance in pixels. If the distance is less than both the width and height of the map, the transition will be smoothly animated.  */
-        panBy(x: number, y: number) : void;
+        panBy(x: number, y: number): void;
         getZoom(): number;
         getDiv(): HTMLElement;
         getCenter(): RV.GEOMETRY.XY;
         getBounds(): RV.GEOMETRY.XYBounds;
         /** Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode. */
-        fullscreen(enabled: boolean) : void;
+        fullscreen(enabled: boolean): void;
 
         /**
          * This event is fired when the viewport boundary changes.
@@ -132,7 +131,6 @@ export declare module RV {
          */
         mouseup: Event;
 
-
         /**
          * This event is fired when the users mouse moves over the map, but does not fire for movement over panels or other map controls.
          * @event mousemove
@@ -169,7 +167,7 @@ export declare module RV {
          * m.set('k', 1);
          * m.changed.should.have.been.calledOnce;
          * ```
-        */
+         */
         changed(...args: any[]): void;
         /** Notify all observers of a change on this property. This notifies both objects that are bound to the object's property as well as the object that it is bound to. */
         notify(key: string): MVCObject;
@@ -197,7 +195,7 @@ export declare module RV {
         /** Returns a reference to the underlying Array. Warning: if the Array is mutated, no events will be fired by this object. */
         getArray(): Array<A>;
         /** Returns the element at the specified index. */
-        getAt(i:number): A;
+        getAt(i: number): A;
         /** Returns the number of elements in this array. */
         getLength(): number;
         /** Inserts an element at the specified index. */
@@ -207,9 +205,9 @@ export declare module RV {
         /** Adds one element to the end of the array and returns the new length of the array. */
         push(elem: A): number;
         /** Removes an element from the specified index. */
-        removeAt(i:number): A;
+        removeAt(i: number): A;
         /** Sets an element at the specified index. */
-        setAt(i:number, elem: A): void;
+        setAt(i: number, elem: A): void;
 
         /**
          * This event is fired when insertAt() is called. The event passes the index that was passed to insertAt().
@@ -234,7 +232,6 @@ export declare module RV {
         set_at: Event;
     }
 
-
     /**
      * ### BaseGeometry
      * Geometry types extend `BaseGeometry`, such as `Point`, `MultiPoint`, `LineString`, and `MultiLineString`.
@@ -244,16 +241,15 @@ export declare module RV {
      * `XY` and `XYBounds` are used and will be converted into their respective instance classes automatically.
      */
     export module GEOMETRY {
-
         /** A XYBounds instance represents a rectangle in geographical coordinates. */
         export class XYBounds {
             /** Constructs a rectangle from the points at its south-west and north-east corners. */
             constructor(sw?: XY | XYLiteral, ne?: XY | XYLiteral);
             /** Returns true if the given x,y decimal degrees is in this bounds. */
             contains(xy: XY | XYLiteral): boolean;
-            equals(other:XYBounds | XYBoundsLiteral): boolean;
+            equals(other: XYBounds | XYBoundsLiteral): boolean;
             /** Extends this bounds to contain the given point. */
-            extend(point:XY|XYLiteral): XYBounds;
+            extend(point: XY | XYLiteral): XYBounds;
             /** Computes the center of this XYBounds. */
             getCenter(): XY;
             /** Returns the north-east corner of this bounds. */
@@ -265,11 +261,11 @@ export declare module RV {
             /** Returns if the bounds are empty. */
             isEmpty(): boolean;
             /** Converts to JSON representation. This function is intended to be used via JSON.stringify. */
-            toJSON(): XYBoundsLiteral
+            toJSON(): XYBoundsLiteral;
             /** Converts to string. */
             toString(): string;
             /** Returns a string of the form "x_lo,y_lo,x_hi,y_hi" for this bounds, where "lo" corresponds to the southwest corner of the bounding box, while "hi" corresponds to the northeast corner of that box. */
-            toUrlValue(precision?:number): string;
+            toUrlValue(precision?: number): string;
             /** Extends this bounds to contain the union of this and the given bounds. */
             union(other: XYBounds | XYBoundsLiteral): XYBounds;
         }
@@ -297,11 +293,11 @@ export declare module RV {
             y: number;
         }
 
-        export class XY  {
+        export class XY {
             /** Creates a XY object representing a geographic point. */
             constructor(y: number, x: number);
             /** Comparison function. */
-            equals(other:XY): boolean;
+            equals(other: XY): boolean;
             /** Returns y in deciamal degrees. */
             y(): number;
             /** Returns the longitude in degrees. */
@@ -352,7 +348,7 @@ export declare module RV {
             /** Constructs a MultiPoint from the given XYs or XYLiterals. */
             constructor(id: string | number, elements: Array<RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral>);
             /** Returns an array of the contained XYs. A new array is returned each time getArray() is called. */
-            getArray(): Array<RV.GEOMETRY.XY>
+            getArray(): Array<RV.GEOMETRY.XY>;
             /** Returns the n-th contained XY. */
             getAt(n: number): RV.GEOMETRY.XY;
             /** Returns the number of contained XYs. */
@@ -411,11 +407,14 @@ export declare module RV {
         /** A MultiLineString geometry contains a number of LineStrings. */
         export class MultiLineString extends RV.GEOMETRY.BaseGeometry {
             /** Constructs a MultiLineString from the given LineStrings or arrays of positions. */
-            constructor(id: string | number, elements: Array<LineString | Array<RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral>>);
+            constructor(
+                id: string | number,
+                elements: Array<LineString | Array<RV.GEOMETRY.XY | RV.GEOMETRY.XYLiteral>>
+            );
             /** Returns an array of the contained LineStrings. A new array is returned each time getArray() is called. */
             getArray(): Array<LineString>;
             /** Returns the n-th contained LineString. */
-            getAt(n:number): Array<LineString>;
+            getAt(n: number): Array<LineString>;
             /** Returns the number of contained XYs. */
             getLength(): number;
             /** Returns the string "MultiLineString". */
@@ -479,7 +478,6 @@ export declare module RV {
      *
      */
     export module LAYER {
-
         export interface DataItem {
             name: string;
             value: string | number;
@@ -612,7 +610,7 @@ export declare module RV {
              * layerDefs[3] = "STATE_NAME='Kansas' and POP2007>25000";
              * dynamicMapServiceLayer.setLayerDefinitions(layerDefs);
              * ```
-            */
+             */
             setLayerDefinitions(layerDefinitions: Array<string>): void;
 
             /**
@@ -805,7 +803,6 @@ export declare module RV {
      * <br>
      */
     export module UI {
-
         /**
          * Defines a basemap which is selectable from the basemap panel once added to the map. For example:
          *
@@ -1001,7 +998,6 @@ export declare module RV {
         }
 
         export class LegendEntry {
-
             constructor(id: string, title?: string);
             /** Displayed as the entry title in the legend.  */
             setTitle(title: string): void;
@@ -1032,13 +1028,23 @@ export declare module RV {
      */
     export module EVENT {
         /** Cross browser event handler registration. This listener is removed by calling removeListener(handle) for the handle that is returned by this function. */
-        export function addDomListener(instance: Object, eventName: string, handler: Function, capture?: boolean): MapsEventListener;
+        export function addDomListener(
+            instance: Object,
+            eventName: string,
+            handler: Function,
+            capture?: boolean
+        ): MapsEventListener;
         /** Wrapper around addDomListener that removes the listener after the first event. */
-        export function addDomListenerOnce(instance: Object, eventName: string, handler: Function, capture?: boolean): MapsEventListener;
+        export function addDomListenerOnce(
+            instance: Object,
+            eventName: string,
+            handler: Function,
+            capture?: boolean
+        ): MapsEventListener;
         /** Adds the given listener function to the given event name for the given object instance. Returns an identifier for this listener that can be used with removeListener(). */
         export function addListener(instance: Object, eventName: string, handler: Function): MapsEventListener;
         /** Like addListener, but the handler removes itself after handling the first event. */
-        export function addListenerOnce(instance:Object, eventName:string, handler:Function): MapsEventListener;
+        export function addListenerOnce(instance: Object, eventName: string, handler: Function): MapsEventListener;
         /** Removes all listeners for all events for the given instance. */
         export function clearInstanceListeners(instance: Object): void;
         /** Removes all listeners for the given event for the given instance. */

@@ -1,70 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Image Layer Test Page</title>
-    <style>
-        .layerTile { position: absolute; }
-    </style>
-</head>
-<body>
-    <div id="map" style="height:90%; width: 100%;"></div>
-    <p id="mess" />
-    <script src="../../dist/geoapi.js"></script>
-    <script>
-        // http://localhost:6002/test/testClass.html
+    <head>
+        <meta charset="utf-8" />
+        <title>Image Layer Test Page</title>
+        <style>
+            .layerTile {
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map" style="height: 90%; width: 100%"></div>
+        <p id="mess" />
+        <script src="../../dist/geoapi.js"></script>
+        <script>
+            // http://localhost:6002/test/testClass.html
 
-        geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-            // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
+            geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
+                // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
-            var config1 = {
-                id: 'dog',
-                name: 'Image Test',
-                url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/LCV_AAFC_CLASSIFIED_30M_1995/ImageServer',
-                
-                metadataUrl: 'http://www.github.com',
-                layerType: 'esriImage',
-                controls: ['visibility', 'opacity', 'boundingBox', 'query'],
-                state: {
-                    opacity: 1,
-                    visibility: true,
-                    boundingBox: false,
-                    query: true
-                }
-            };
+                var config1 = {
+                    id: 'dog',
+                    name: 'Image Test',
+                    url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/LCV_AAFC_CLASSIFIED_30M_1995/ImageServer',
 
-            var lods = [
-                { "level": 15, "resolution": 13.229193125052918, "scale": 50000 },
-                { "level": 16, "resolution": 7.9375158750317505, "scale": 30000 },
-                { "level": 17, "resolution": 4.6302175937685215, "scale": 17500 } ];
+                    metadataUrl: 'http://www.github.com',
+                    layerType: 'esriImage',
+                    controls: ['visibility', 'opacity', 'boundingBox', 'query'],
+                    state: {
+                        opacity: 1,
+                        visibility: true,
+                        boundingBox: false,
+                        query: true,
+                    },
+                };
 
-            var layerRec = api.layer.createImageRecord(config1);
-            console.log('layer PROOF ', layerRec);
-            var proxy = layerRec.getProxy();
-            console.log('proxy PROOF ', proxy);
+                var lods = [
+                    { level: 15, resolution: 13.229193125052918, scale: 50000 },
+                    { level: 16, resolution: 7.9375158750317505, scale: 30000 },
+                    { level: 17, resolution: 4.6302175937685215, scale: 17500 },
+                ];
 
-            // hack to wait for layer to load
+                var layerRec = api.layer.createImageRecord(config1);
+                console.log('layer PROOF ', layerRec);
+                var proxy = layerRec.getProxy();
+                console.log('proxy PROOF ', proxy);
 
-            var to = setInterval(() => {
-                if (layerRec.state === 'rv-loaded') {
-                    clearInterval(to);
-                    afterLoadTests();
-                }
-            }, 1000);
+                // hack to wait for layer to load
 
-            function afterLoadTests() {
-                console.log('enhanced loaded')
+                var to = setInterval(() => {
+                    if (layerRec.state === 'rv-loaded') {
+                        clearInterval(to);
+                        afterLoadTests();
+                    }
+                }, 1000);
 
-                layerRec.getVisibleScales().then(vs => {
-                    console.log('visible scale set - sb 0,0', vs);
-                });
+                function afterLoadTests() {
+                    console.log('enhanced loaded');
 
-                console.log('feature count - sb undefined', proxy.featureCount);
+                    layerRec.getVisibleScales().then((vs) => {
+                        console.log('visible scale set - sb 0,0', vs);
+                    });
 
-                console.log('queryable, should be true', proxy.query);
-                console.log('root layer type - sb image', proxy.layerType);
+                    console.log('feature count - sb undefined', proxy.featureCount);
 
-/*
+                    console.log('queryable, should be true', proxy.query);
+                    console.log('root layer type - sb image', proxy.layerType);
+
+                    /*
                 layerRec.isOffScale(20000).then(offscale => {
                     console.log('offscale test - sb false, flase', offscale);
                 });
@@ -79,12 +82,8 @@
                 });
                 
 */
-
-            }
-
-
-
-        });
-    </script>
-</body>
+                }
+            });
+        </script>
+    </body>
 </html>

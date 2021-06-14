@@ -39,13 +39,19 @@ export class GeoSearch {
             maxResults,
             officialOnly,
             geoNameUrl,
-            geoLocateUrl
+            geoLocateUrl,
         };
 
         this.config.types.filterValidTypes(uConfig.excludeTypes);
     }
 
-    ui(resultHandler?: (results: defs.NameResultList) => HTMLElement, featureHandler?: (results: defs.queryFeatureResults) => HTMLElement, input?: HTMLInputElement, resultContainer?: HTMLElement, featureContainer?: HTMLElement) {
+    ui(
+        resultHandler?: (results: defs.NameResultList) => HTMLElement,
+        featureHandler?: (results: defs.queryFeatureResults) => HTMLElement,
+        input?: HTMLInputElement,
+        resultContainer?: HTMLElement,
+        featureContainer?: HTMLElement
+    ) {
         // bind scope of provided iterator to this class, or set to internal resultIterator implementation for default behaviour
         this.resultHandler = resultHandler ? resultHandler.bind(this) : this.defaultResultHandler;
         this.featureHandler = featureHandler ? featureHandler.bind(this) : this.defaultFeatureHandler;
@@ -81,9 +87,11 @@ export class GeoSearch {
     defaultResultHandler(results: defs.NameResultList): HTMLElement {
         const ul = document.createElement('ul');
 
-        results.reverse().forEach(r => {
+        results.reverse().forEach((r) => {
             const li = document.createElement('li');
-            li.innerHTML = `${r.name} (${r.type})${r.location ? ', ' + r.location : ''}, ${r.province} @ lat: ${r.LatLon.lat}, lon: ${r.LatLon.lon}`;
+            li.innerHTML = `${r.name} (${r.type})${r.location ? ', ' + r.location : ''}, ${r.province} @ lat: ${
+                r.LatLon.lat
+            }, lon: ${r.LatLon.lon}`;
             ul.appendChild(li);
         });
 
@@ -98,7 +106,7 @@ export class GeoSearch {
         } else if (defs.isNTSResult(fR)) {
             output = `${fR.nts} - NTS located in ${fR.location} @ lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`;
         } else {
-            output = `lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`
+            output = `lat: ${fR.LatLon.lat}, lon: ${fR.LatLon.lon}`;
         }
 
         const p = document.createElement('p');
@@ -120,21 +128,23 @@ export class GeoSearch {
                 this.featureContainer.removeChild(this.featureContainer.firstChild);
             }
 
-            this.query(qValue).onComplete.then(q => {
-                if (q.featureResults) {
-                    this.featureContainer.appendChild(this.featureHandler(q.featureResults));
-                }
+            this.query(qValue)
+                .onComplete.then((q) => {
+                    if (q.featureResults) {
+                        this.featureContainer.appendChild(this.featureHandler(q.featureResults));
+                    }
 
-                this.resultContainer.appendChild(this.resultHandler(q.results));
-            }).catch(err => {
-                const p = document.createElement('p');
-                p.innerHTML = err;
-                this.resultContainer.appendChild(p);
-            });
+                    this.resultContainer.appendChild(this.resultHandler(q.results));
+                })
+                .catch((err) => {
+                    const p = document.createElement('p');
+                    p.innerHTML = err;
+                    this.resultContainer.appendChild(p);
+                });
         }
     }
 
-    get htmlElem(): DocumentFragment  {
+    get htmlElem(): DocumentFragment {
         return this.docFrag;
     }
 
@@ -145,7 +155,6 @@ export class GeoSearch {
 
 export { Q, Provinces, Types, defs as Defs };
 
-
-if ((<any>window)) {
+if (<any>window) {
     (<any>window).GeoSearch = GeoSearch;
 }

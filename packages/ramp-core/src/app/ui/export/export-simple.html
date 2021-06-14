@@ -58,9 +58,9 @@
                 >
                     {{ 'export.download' | translate }}
                 </md-button>
-                <md-tooltip ng-if="self.exportSizes.isCustomOptionSelected() && self.isDownloadBlocked()">{{
-                    'export.custom.note2' | translate
-                }}</md-tooltip>
+                <md-tooltip ng-if="self.exportSizes.isCustomOptionSelected() && self.isDownloadBlocked()"
+                    >{{ 'export.custom.note2' | translate }}</md-tooltip
+                >
             </div>
         </md-dialog-actions>
     </form>

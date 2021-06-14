@@ -10,7 +10,7 @@ export const layerTypes = {
     ESRI_FEATURE: 'esriFeature',
     ESRI_IMAGE: 'esriImage',
     ESRI_TILE: 'esriTile',
-    OGC_WMS: 'ogcWms'
+    OGC_WMS: 'ogcWms',
 };
 
 /**
@@ -77,10 +77,10 @@ export class BaseLayer {
         this._queryableChanged = new Subject();
         this._bufferChanged = new Subject();
 
-        this._nameChanged.subscribe(name => (this._name = name || ''));
-        this._opacityChanged.subscribe(opacity => (this._opacity = opacity));
-        this._visibilityChanged.subscribe(visibility => (this._visibility = visibility));
-        this._queryableChanged.subscribe(queryable => (this._queryable = queryable));
+        this._nameChanged.subscribe((name) => (this._name = name || ''));
+        this._opacityChanged.subscribe((opacity) => (this._opacity = opacity));
+        this._visibilityChanged.subscribe((visibility) => (this._visibility = visibility));
+        this._queryableChanged.subscribe((queryable) => (this._queryable = queryable));
 
         this._attributeArray = [];
         this._attributesAdded = new BehaviorSubject(this._attributeArray);
@@ -128,9 +128,11 @@ export class BaseLayer {
 
         if (typeof attributeKey !== 'undefined') {
             if (noAttribs) {
-                console.warn('An attempt was made to get an attribute when no attributes have been downloaded. Consider calling apiLayer.fetchAttributes() first, and respect its observable to know when download is finished.');
+                console.warn(
+                    'An attempt was made to get an attribute when no attributes have been downloaded. Consider calling apiLayer.fetchAttributes() first, and respect its observable to know when download is finished.'
+                );
             }
-            return this._attributeArray.find(el => (<any>el)[this._primaryAttributeKey] === attributeKey);
+            return this._attributeArray.find((el) => (<any>el)[this._primaryAttributeKey] === attributeKey);
         } else {
             if (noAttribs) {
                 this.fetchAttributes();
@@ -142,7 +144,7 @@ export class BaseLayer {
     }
 
     /** Forces an attribute download. Function implementation in subclasses. */
-    fetchAttributes(): void { }
+    fetchAttributes(): void {}
 
     /** Sets the attribute object to value provided using the attributeKey. */
     setAttributes(attributeKey: number, value: Object): void;
@@ -154,7 +156,7 @@ export class BaseLayer {
     setAttributes(attributeKey: number, valueOrFieldName: Object | string, value?: string | number): void {
         if (typeof valueOrFieldName === 'string') {
             let attribValue: Object | undefined = this._attributeArray.find(
-                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+                (attrib) => (<any>attrib)[this._primaryAttributeKey] === attributeKey
             );
 
             if (typeof attribValue !== 'undefined') {
@@ -165,19 +167,19 @@ export class BaseLayer {
             }
         } else {
             let index: number = this._attributeArray.findIndex(
-                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+                (attrib) => (<any>attrib)[this._primaryAttributeKey] === attributeKey
             );
 
             if (index !== -1) {
                 const oldValue: Object = Object.assign({}, this._attributeArray[index]);
 
-                Object.keys(this._attributeArray[index]).forEach(key => {
+                Object.keys(this._attributeArray[index]).forEach((key) => {
                     (<any>this._attributeArray[index])[key] = (<any>valueOrFieldName)[key];
                 });
 
                 this._attributesChanged.next({
                     attributesBeforeChange: oldValue,
-                    attributesAfterChange: this._attributeArray[index]
+                    attributesAfterChange: this._attributeArray[index],
                 });
             }
         }
@@ -402,19 +404,21 @@ export class BaseLayer {
 
         if (typeof attributeKey !== 'undefined') {
             if (this instanceof ConfigLayer) {
-                console.warn('Single key removal of attributes is not recommended for config layers due to the potential for synchronization issues');
+                console.warn(
+                    'Single key removal of attributes is not recommended for config layers due to the potential for synchronization issues'
+                );
             }
 
             let allAttribs: Array<Object> = this.getAttributes();
 
             let index: number = this._attributeArray.findIndex(
-                attrib => (<any>attrib)[this._primaryAttributeKey] === attributeKey
+                (attrib) => (<any>attrib)[this._primaryAttributeKey] === attributeKey
             );
 
             if (index !== -1) {
                 const oldValue: Object = Object.assign({}, this._attributeArray[index]);
 
-                Object.keys(this._attributeArray[index]).forEach(key => {
+                Object.keys(this._attributeArray[index]).forEach((key) => {
                     (<any>this._attributeArray[index])[key] = undefined;
                 });
 
@@ -423,7 +427,7 @@ export class BaseLayer {
                 this._attributesRemoved.next([oldValue]);
             }
         } else {
-            const copyAttribs: Array<Object> = this._attributeArray.map(a => Object.assign({}, a));
+            const copyAttribs: Array<Object> = this._attributeArray.map((a) => Object.assign({}, a));
 
             this._viewerLayer.cleanUpAttribs();
 
@@ -435,7 +439,9 @@ export class BaseLayer {
     // use of the following property is unsupported by ramp team.
     // it is provided for plugin developers who want to write advanced geo functions
     // and wish to directly consume the esri api objects AT THEIR OWN RISK !!!  :'O  !!!
-    get esriLayer () { return this._viewerLayer.esriLayer; }
+    get esriLayer() {
+        return this._viewerLayer.esriLayer;
+    }
 
     // /** Exports the layer to a GeoJSON object.
     //  *
@@ -492,14 +498,13 @@ export class ConfigLayer extends BaseLayer {
         if (attribs) {
             attribs
                 .then((attrib: AttribObject) => {
-
                     // the attributes were previously downloaded, do not reupdate the array and do not trigger `attributes_added`
                     if (this._attributeArray.length > 0) {
                         return;
                     }
 
                     // attributes not previously downloaded, after forcing the download, populates the array and triggers event
-                    Object.keys(attrib.oidIndex).forEach(id => {
+                    Object.keys(attrib.oidIndex).forEach((id) => {
                         const index: number = (<any>attrib.oidIndex)[id];
                         const attribs = attrib.features[index].attributes;
 
@@ -610,19 +615,19 @@ export class ConfigLayer extends BaseLayer {
             this._layerProxy._source._parent.initialConfig._layerEntries.forEach((layerEntry: any) => {
                 layerEntry._table._columns.forEach((column: any) => {
                     configHeaders[column.data] = column.title;
-                })
-            })
+                });
+            });
 
             this._layerProxy._source._layerPackage.layerData.then((value: any) => {
                 const fields = value.fields || [];
                 for (let field of fields) {
                     // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
                     this.attributeHeaders[field.name] = {
-                        'id': field.name,
-                        'name': configHeaders[field.name] || field.alias || field.name
-                    }
+                        id: field.name,
+                        name: configHeaders[field.name] || field.alias || field.name,
+                    };
                 }
-            })
+            });
         }
         //create column headings for non-dynamic layers
         else {
@@ -637,12 +642,11 @@ export class ConfigLayer extends BaseLayer {
                 for (let field of this._layerProxy._source._layer.fields) {
                     // for 'name' field, config column titles take precedence over alias which takes precedence over field.name
                     this.attributeHeaders[field.name] = {
-                        'id': field.name,
-                        'name': configHeaders[field.name] || field.alias || field.name
-                    }
+                        id: field.name,
+                        name: configHeaders[field.name] || field.alias || field.name,
+                    };
                 }
             }
-
         }
 
         this._id = layerRecord.config.id;
@@ -691,15 +695,15 @@ export class SimpleLayer extends BaseLayer {
         this._geometryAdded = new Subject();
         this._geometryRemoved = new Subject();
 
-        this._geometryAdded.subscribe(geoArray => {
-            geoArray.forEach(geometry => {
-                geometry._hoverRemoved.subscribe(geoId => {
+        this._geometryAdded.subscribe((geoArray) => {
+            geoArray.forEach((geometry) => {
+                geometry._hoverRemoved.subscribe((geoId) => {
                     this._mapInstance.instance.removeHover(geoId);
                 });
             });
         });
 
-        this._visibilityChanged.subscribe(visibility => {
+        this._visibilityChanged.subscribe((visibility) => {
             if (!visibility) {
                 this._mapInstance.instance.hoverRemoveOnToggle(this._id);
             }
@@ -777,8 +781,8 @@ export class SimpleLayer extends BaseLayer {
 
         const geometriesAdded: Array<BaseGeometry> = [];
 
-        geometries.forEach(geometry => {
-            const index = this._geometryArray.findIndex(geo => geo.id === geometry.id);
+        geometries.forEach((geometry) => {
+            const index = this._geometryArray.findIndex((geo) => geo.id === geometry.id);
 
             if (index === -1) {
                 const spatialReference = this._mapInstance.instance.spatialReference;
@@ -803,7 +807,7 @@ export class SimpleLayer extends BaseLayer {
     removeGeometry(ids?: Array<string> | string): void {
         if (typeof ids !== 'undefined') {
             if (typeof ids === 'string') {
-                const index: number = this._geometryArray.findIndex(geo => geo.id === ids);
+                const index: number = this._geometryArray.findIndex((geo) => geo.id === ids);
 
                 if (index !== -1) {
                     const oldValue: BaseGeometry = this._geometryArray[index];
@@ -819,8 +823,8 @@ export class SimpleLayer extends BaseLayer {
                 }
             } else {
                 const geometriesRemoved: Array<BaseGeometry> = [];
-                ids.forEach(id => {
-                    const index: number = this._geometryArray.findIndex(geo => geo.id === id);
+                ids.forEach((id) => {
+                    const index: number = this._geometryArray.findIndex((geo) => geo.id === id);
 
                     if (index !== -1) {
                         const oldValue: BaseGeometry = this._geometryArray[index];
@@ -843,7 +847,7 @@ export class SimpleLayer extends BaseLayer {
         } else {
             const copyGeometry: Array<BaseGeometry> = this._geometryArray;
 
-            this._geometryArray.forEach(geo => {
+            this._geometryArray.forEach((geo) => {
                 if (geo.hover) {
                     geo._hoverRemoved.next(geo._id);
                 }
@@ -902,7 +906,7 @@ export class LayerGroup {
         IdentifyMode.Marker,
         IdentifyMode.Highlight,
         IdentifyMode.Haze,
-        IdentifyMode.Details
+        IdentifyMode.Details,
     ];
 
     _layerAdded: Subject<BaseLayer>;
@@ -1096,9 +1100,9 @@ export class LayerGroup {
     /** Checks whether the given layer is in the group using the provided layer itself, or by id. */
     contains(layerOrId: BaseLayer | string | number): boolean {
         if (isLayerObject(layerOrId)) {
-            return this._layersArray.find(layer => layer === layerOrId) !== undefined;
+            return this._layersArray.find((layer) => layer === layerOrId) !== undefined;
         } else {
-            return this._layersArray.find(layer => layer.id === layerOrId.toString()) !== undefined;
+            return this._layersArray.find((layer) => layer.id === layerOrId.toString()) !== undefined;
         }
     }
 
@@ -1109,7 +1113,7 @@ export class LayerGroup {
      * Note: For dynamic layers, all of its children have the same id.
      */
     getLayersById(id: number | string): Array<BaseLayer> {
-        return this._layersArray.filter(layer => layer.id === id.toString());
+        return this._layersArray.filter((layer) => layer.id === id.toString());
     }
 
     /** Returns all layers of a given type.
@@ -1121,12 +1125,12 @@ export class LayerGroup {
      * ```
      */
     getLayersByType(type: ConfigLayer | SimpleLayer): Array<BaseLayer> {
-        return this._layersArray.filter(layer => layer instanceof <any>type);
+        return this._layersArray.filter((layer) => layer instanceof <any>type);
     }
 
     /** Sets the buffer size of all layers to be used when identifying. */
     setAllBuffers(tolerance: number | undefined): void {
-        this._layersArray.forEach(layer => (layer.identifyBuffer = tolerance));
+        this._layersArray.forEach((layer) => (layer.identifyBuffer = tolerance));
     }
 
     // /** Exports the layers in the group to a GeoJSON object.
@@ -1238,5 +1242,5 @@ export enum IdentifyMode {
      * Display the identify results in the details panel.
      * This option only works in conjunction with the `Query` option. Without `Query`, there will be no results to display in the details panel.
      */
-    Details = 'details'
+    Details = 'details',
 }

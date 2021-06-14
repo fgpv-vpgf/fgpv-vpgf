@@ -2,8 +2,8 @@ const mapInstances = {};
 
 class MapInstance {
     id: string;
-    queues: { [key:number]: Array<() => void>; }; // queue function list waiting to be executed
-    legacyFunctions: { [key:string]: (...args: any[]) => any };
+    queues: { [key: number]: Array<() => void> }; // queue function list waiting to be executed
+    legacyFunctions: { [key: string]: (...args: any[]) => any };
     deprecatedWarning: boolean = false;
 
     constructor(id: string) {
@@ -19,11 +19,11 @@ class MapInstance {
         Object.keys(this.queues)
             .sort()
             .reverse()
-            .forEach(key => {
+            .forEach((key) => {
                 let k = parseInt(key);
-                this.queues[k].forEach(qItem => qItem());
+                this.queues[k].forEach((qItem) => qItem());
                 delete this.queues[k];
-            })
+            });
     }
 
     /**
@@ -35,20 +35,24 @@ class MapInstance {
      */
     queue(action: string, priority: number, ...args: any[]) {
         if (!this.deprecatedWarning) {
-            console.error('This api is deprecated and will be removed in a future release. Please use the new api located at window.RAMP');
+            console.error(
+                'This api is deprecated and will be removed in a future release. Please use the new api located at window.RAMP'
+            );
             this.deprecatedWarning = true;
         }
 
         // ramp has defined the legacy function, call immediately
         if (this.legacyFunctions[action]) {
-            return new Promise(resolve => resolve(this.legacyFunctions[action](...args)));
+            return new Promise((resolve) => resolve(this.legacyFunctions[action](...args)));
         }
 
         // ramp is not yet ready, queue the function call
         this.queues[priority] = this.queues[priority] || [];
 
-        return new Promise(resolve => {
-            this.queues[priority].push(() => this.legacyFunctions[action] && resolve(this.legacyFunctions[action](...args)));
+        return new Promise((resolve) => {
+            this.queues[priority].push(
+                () => this.legacyFunctions[action] && resolve(this.legacyFunctions[action](...args))
+            );
         });
     }
 
@@ -145,7 +149,7 @@ class MapInstance {
     getMap: (id: string) => {
         (<any>mapInstances)[id] = (<any>mapInstances)[id] || new MapInstance(id);
         return (<any>mapInstances)[id];
-    }
+    },
 };
 
 console.warn('The RAMP viewers legacy API is deprecated and will be removed in a future release.');

@@ -28,20 +28,28 @@ const TEMPLATE = `
  *
  * Overview expanded state is maintained during projection changes
  */
-angular
-    .module('app.layout')
-    .directive('rvOverviewToggle', rvOverviewToggle);
+angular.module('app.layout').directive('rvOverviewToggle', rvOverviewToggle);
 
-function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate, animationService, events, configService, referenceService, errorService) {
+function rvOverviewToggle(
+    $compile,
+    $rootScope,
+    geoService,
+    $timeout,
+    $translate,
+    animationService,
+    events,
+    configService,
+    referenceService,
+    errorService
+) {
     const directive = {
         restrict: 'A',
-        link: link
+        link: link,
     };
 
     return directive;
 
     function link(scope, el) {
-
         // events.$on(events.rvApiReady, init);
         // events.$on(events.rvBasemapChange, init);
 
@@ -59,7 +67,7 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate
         const self = scope.self;
         self.overviewActive = true;
 
-        configService.getAsync.then(config => {
+        configService.getAsync.then((config) => {
             if (config.map.components.overviewMap.enabled) {
                 self.overviewActive = config.map.components.overviewMap.initiallyExpanded;
             }
@@ -81,19 +89,31 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate
             const overviewAnimation = animationService.timeLineLite({
                 paused: true,
                 onComplete: animationCompleted,
-                onReverseComplete: () => animationCompleted(true)
+                onReverseComplete: () => animationCompleted(true),
             });
 
             overviewAnimation
-                .to(ovwContainer, 0.3, {
-                    width: 40,
-                    height: 40,
-                    ease: RV_SWIFT_IN_OUT_EASE }, 0)
-                .to(overviewCompiledTemplate, 0.3, { // rotate toggle icon
-                    top: '-=3',
-                    right: '-=3',
-                    directionalRotation: '225_ccw'
-                }, 0);
+                .to(
+                    ovwContainer,
+                    0.3,
+                    {
+                        width: 40,
+                        height: 40,
+                        ease: RV_SWIFT_IN_OUT_EASE,
+                    },
+                    0
+                )
+                .to(
+                    overviewCompiledTemplate,
+                    0.3,
+                    {
+                        // rotate toggle icon
+                        top: '-=3',
+                        right: '-=3',
+                        directionalRotation: '225_ccw',
+                    },
+                    0
+                );
 
             if (self.overviewActive) {
                 ovwContainer.css({ width: 200, height: 200 });
@@ -116,12 +136,9 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate
                 $timeout.cancel(timeoutPromise); // cancel existing timeout if present
 
                 // $timeout workaround to prevent event collision with ESRI
-                timeoutPromise = $timeout(() =>
-                    overviewMapMap.setExtent(overviewMapMap.extent), 500);
+                timeoutPromise = $timeout(() => overviewMapMap.setExtent(overviewMapMap.extent), 500);
 
-                return !isReversed ?
-                    ovwContainer.addClass('rv-minimized') :
-                    ovwContainer.removeClass('rv-minimized');
+                return !isReversed ? ovwContainer.addClass('rv-minimized') : ovwContainer.removeClass('rv-minimized');
             }
 
             /**
@@ -152,9 +169,9 @@ function rvOverviewToggle($compile, $rootScope, geoService, $timeout, $translate
             const toast = {
                 textContent: $translate.instant('basemap.broken'),
                 action: $translate.instant('basemap.close'),
-                parent: referenceService.panels.shell
+                parent: referenceService.panels.shell,
             };
-            errorService.display(toast)
+            errorService.display(toast);
         }
     }
 }

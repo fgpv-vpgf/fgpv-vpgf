@@ -7,7 +7,7 @@ const templateUrl = {
     switch: require('./templates/legend-control-switch.html'),
     input: require('./templates/legend-control-input.html'),
     select: require('./templates/legend-control-select.html'),
-    'toggle-button': require('./templates/legend-control-toggle-button.html')
+    'toggle-button': require('./templates/legend-control-toggle-button.html'),
 };
 
 /**
@@ -29,9 +29,7 @@ const templateUrl = {
  * If the `persist` attribute is set, the directive will be displayed empty if the corresponding control object is undefined.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLegendControl', rvLegendControl);
+angular.module('app.ui').directive('rvLegendControl', rvLegendControl);
 
 function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
     const directive = {
@@ -42,14 +40,14 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
             block: '=',
             node: '=',
             valueParentBlock: '=',
-            name: '@'
+            name: '@',
         },
         link: {
-            pre: link
+            pre: link,
         },
-        controller: () => { },
+        controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -79,7 +77,8 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
          */
         function notifyApiClick(block) {
             let legendItem;
-            if (appInfo.mapi) {  // make sure the item clicked is a node, and not group or other
+            if (appInfo.mapi) {
+                // make sure the item clicked is a node, and not group or other
                 legendItem = appInfo.mapi.ui.configLegend.getById(block.id);
                 if (legendItem) {
                     appInfo.mapi.ui.configLegend._click.next(legendItem);
@@ -87,11 +86,12 @@ function rvLegendControl(LegendElementFactory, Geo, LegendBlock, appInfo) {
             }
 
             let layer;
-            if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {  // make sure the item clicked is a node, and not group or other
+            if (appInfo.mapi && block.blockType === LegendBlock.TYPES.NODE) {
+                // make sure the item clicked is a node, and not group or other
                 if (block.parentLayerType === Geo.Layer.Types.ESRI_DYNAMIC) {
-                    layer = appInfo.mapi.layers.allLayers.find(l =>
-                        l.id === block.layerRecordId &&
-                        l.layerIndex === parseInt(block.itemIndex));
+                    layer = appInfo.mapi.layers.allLayers.find(
+                        (l) => l.id === block.layerRecordId && l.layerIndex === parseInt(block.itemIndex)
+                    );
                 } else {
                     layer = appInfo.mapi.layers.getLayersById(block.layerRecordId)[0];
                 }

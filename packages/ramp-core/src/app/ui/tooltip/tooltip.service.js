@@ -16,9 +16,7 @@ const DEFAULT_HOVERTIP_TEMPLATE = `
  * @description
  * The `tooltipService` service handles creating and positioning or maptips, anchor and hover ones.
  */
-angular
-    .module('app.ui')
-    .factory('tooltipService', tooltipService);
+angular.module('app.ui').factory('tooltipService', tooltipService);
 
 function tooltipService($rootScope, $compile, $q, configService, referenceService, events) {
     let activeTooltips = [];
@@ -40,7 +38,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * @param {Object} scope scope for the tooltip directive; this scope is also available on the content template
          * @param {String} templateName [optional = 'hover'] the name of the tooltip outer template
          */
-        constructor (movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
+        constructor(movementStrategy, collisionStrategy, content, scope, templateName = 'hover') {
             this._movementStrategy = movementStrategy;
             this._collisionStrategy = collisionStrategy;
             this._templateName = templateName;
@@ -65,7 +63,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * @function _resetOffset
          * @private
          */
-        _resetOffset () {
+        _resetOffset() {
             this._runningOffset = { x: 0, y: 0 };
         }
 
@@ -76,7 +74,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * @private
          * @param {Object} dimensions tooltips dimensions object in the form of { width: <Number>, height: <Nubmer> }
          */
-        _updateDimensions (dimensions) {
+        _updateDimensions(dimensions) {
             this._dimensions.width = dimensions.width;
             this._dimensions.height = dimensions.height;
 
@@ -85,7 +83,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
             // set the appropriate offset based on the specified tooltip position
             if (this._dimensions.width > 0 || this._dimensions.height > 0) {
-                const tipAndOptions = activeTooltips.find(tt => tt.toolTip === this);
+                const tipAndOptions = activeTooltips.find((tt) => tt.toolTip === this);
                 if (tipAndOptions) {
                     const tooltip = tipAndOptions.toolTip;
                     const position = tipAndOptions.position;
@@ -97,10 +95,16 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                                 tooltip.offset(0, -this._dimensions.height - 19.5 - 1);
                                 break;
                             case 'left':
-                                tooltip.offset(this._dimensions.width / 2 + 22.5 / 2 + 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
+                                tooltip.offset(
+                                    this._dimensions.width / 2 + 22.5 / 2 + 1,
+                                    -this._dimensions.height / 2 - 19.5 / 2 - 1
+                                );
                                 break;
                             case 'right':
-                                tooltip.offset(-this._dimensions.width / 2 - 22.5 / 2 - 1, -this._dimensions.height / 2 - 19.5 / 2 - 1);
+                                tooltip.offset(
+                                    -this._dimensions.width / 2 - 22.5 / 2 - 1,
+                                    -this._dimensions.height / 2 - 19.5 / 2 - 1
+                                );
                                 break;
                             default:
                                 tooltip.offset(0, this._dimensions.height / 2 - 19.5 + 1);
@@ -115,7 +119,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          *
          * @return {Object} tolltip's node
          */
-        get node () {
+        get node() {
             return this._node;
         }
 
@@ -150,7 +154,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                 left: this._originPoint.x - this._dimensions.width / 2,
                 right: this._originPoint.x + this._dimensions.width / 2,
                 top: this._originPoint.y - this._dimensions.height - this._mouseGap,
-                bottom: this._originPoint.y - this._mouseGap
+                bottom: this._originPoint.y - this._mouseGap,
             };
 
             if (includeRunningOffset) {
@@ -175,7 +179,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             this._runningOffset.y += yOffset;
 
             const collisionOffset = this._collisionStrategy.checkCollisions(this);
-            const tipAndOptions = activeTooltips.find(tt => tt.toolTip === this);
+            const tipAndOptions = activeTooltips.find((tt) => tt.toolTip === this);
 
             //when using the geometry api switch left and right/top and bottom when the tooltip is near the edge
             if (tipAndOptions) {
@@ -183,20 +187,20 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                 if (collisionOffset.x !== 0) {
                     switch (position) {
                         case 'left':
-                            collisionOffset.x = this._dimensions.width + 22.5 + 1
+                            collisionOffset.x = this._dimensions.width + 22.5 + 1;
                             break;
                         case 'right':
-                            collisionOffset.x = - this._dimensions.width - 22.5 - 1
+                            collisionOffset.x = -this._dimensions.width - 22.5 - 1;
                             break;
                     }
                 }
                 if (collisionOffset.y !== 0) {
                     switch (position) {
                         case 'top':
-                            collisionOffset.y = this._dimensions.height + 1
+                            collisionOffset.y = this._dimensions.height + 1;
                             break;
                         case 'bottom':
-                            collisionOffset.y = - this._dimensions.height - 19.5 - 1
+                            collisionOffset.y = -this._dimensions.height - 19.5 - 1;
                             break;
                     }
                 }
@@ -207,10 +211,12 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                 collisionOffset.y = this._dimensions.height + this._mouseGap * 2;
             }
 
-            this._node.css('transform', `translate(
+            this._node.css(
+                'transform',
+                `translate(
                 ${-this._runningOffset.x + collisionOffset.x}px,
-                ${-this._runningOffset.y + collisionOffset.y}px)`);
-
+                ${-this._runningOffset.y + collisionOffset.y}px)`
+            );
         }
 
         /**
@@ -230,8 +236,8 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             const bounds = this.getBounds(false);
 
             this._node.css({
-                left: `${ bounds.left }px`,
-                top: `${ bounds.top }px`
+                left: `${bounds.left}px`,
+                top: `${bounds.top}px`,
             });
 
             if (resetOffset) {
@@ -252,7 +258,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         enablePointerEvents() {
             this._node.css({
                 'pointer-events': 'auto',
-                'z-index': -1
+                'z-index': -1,
             });
         }
 
@@ -262,12 +268,12 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * @function destroy
          *
          */
-        destroy () {
+        destroy() {
             this._movementStrategy.deRegister(this);
             this._node.remove();
         }
 
-        refresh () {
+        refresh() {
             this._scope.$apply();
         }
     }
@@ -282,7 +288,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * Creates an instance of ContainInside Collision strategy.
          * @param {Object} targetContainer a target container the tooltip should be kept inside of (at the moment this should be tooltips parent container)
          */
-        constructor (targetContainer) {
+        constructor(targetContainer) {
             this._targetContainer = targetContainer;
         }
 
@@ -299,11 +305,9 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             const itemBounds = item.getBounds();
 
             const collisionOffset = {
-                x:  Math.min(0, targetContainerBounds.width - itemBounds.right) ||
-                    Math.max(0, 0 - itemBounds.left),
-                y:  Math.min(0, targetContainerBounds.height - itemBounds.bottom) ||
-                    Math.max(0, 0 - itemBounds.top)
-             };
+                x: Math.min(0, targetContainerBounds.width - itemBounds.right) || Math.max(0, 0 - itemBounds.left),
+                y: Math.min(0, targetContainerBounds.height - itemBounds.bottom) || Math.max(0, 0 - itemBounds.top),
+            };
 
             // tooltip direction
             // const direction = 'top';
@@ -322,7 +326,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * Creates an TooltipStrategy instance.
          * @function constructor
          */
-        constructor () {
+        constructor() {
             this._items = [];
         }
 
@@ -367,9 +371,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
 
             // tracks map pan
             $rootScope.$on(events.rvMapPan, (event, movementOffset) => {
-
-                this._items.forEach(item =>
-                    item.offset(movementOffset.x, movementOffset.y));
+                this._items.forEach((item) => item.offset(movementOffset.x, movementOffset.y));
 
                 removeHoverTooltip();
 
@@ -390,7 +392,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
          * @function constructor
          * @param {Object} targetContainer a DOM node over which mouse movements should be tracked
          */
-        constructor (targetContainer) {
+        constructor(targetContainer) {
             super();
 
             this._targetContainer = targetContainer;
@@ -425,14 +427,14 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         _mouseMoveHandler(event) {
             const targetContainerBounds = this._targetContainer[0].getBoundingClientRect();
 
-            this._items.forEach(item => {
+            this._items.forEach((item) => {
                 const itemOriginPoint = item.getOriginPoint();
 
                 item.offset(
                     itemOriginPoint.x - (event.clientX - targetContainerBounds.left),
-                    itemOriginPoint.y - (event.clientY - targetContainerBounds.top));
+                    itemOriginPoint.y - (event.clientY - targetContainerBounds.top)
+                );
             });
-
         }
 
         /**
@@ -469,7 +471,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
     const ref = {
         hoverTooltip: null, // there can only be one hoverTooltip
         followMapStrategy: null,
-        followMouseStrategy: null
+        followMouseStrategy: null,
     };
 
     const service = {
@@ -478,25 +480,24 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         addHover,
         removeHoverTooltip,
         removeHover,
-        refreshHoverTooltip
+        refreshHoverTooltip,
     };
-
 
     const deRegisterRVReady = $rootScope.$on(events.rvReady, init);
 
     // wire in a hook to any map for removing a tooltip when a Hover is removed
     events.$on(events.rvMapLoaded, () => {
         // remove hovertip with that geometry id if it exists
-        configService.getSync.map.instance.removeHover = geoId => {
-            const index = activeTooltips.findIndex(tt => tt.geoId === geoId);
+        configService.getSync.map.instance.removeHover = (geoId) => {
+            const index = activeTooltips.findIndex((tt) => tt.geoId === geoId);
             if (index !== -1) {
                 activeTooltips[index].toolTip.destroy();
                 activeTooltips.splice(index, 1);
             }
-        }
+        };
 
         // remove all open hovertips for layer whose visibility was toggled
-        configService.getSync.map.instance.hoverRemoveOnToggle = slId => {
+        configService.getSync.map.instance.hoverRemoveOnToggle = (slId) => {
             const idxToRemove = [];
             activeTooltips.forEach((tt, idx) => {
                 if (tt.simpleLayerId === slId) {
@@ -505,15 +506,15 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
                 }
             });
 
-            idxToRemove.reverse().forEach(idx => {
+            idxToRemove.reverse().forEach((idx) => {
                 activeTooltips.splice(idx, 1);
             });
-        }
+        };
     });
 
     // if the map is being zoomed, close any open tooltips to avoid mispositioning
     events.$on(events.rvMapZoomStart, () => {
-        activeTooltips.forEach(tt => {
+        activeTooltips.forEach((tt) => {
             tt.toolTip.destroy();
         });
         activeTooltips = [];
@@ -597,7 +598,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
         const movementStrategy = !keepOpen && followCursor ? ref.followMouseStrategy : ref.followMapStrategy;
 
         let toolTip;
-        if (!activeTooltips.find(tt => tt.geoId === geoId)) {
+        if (!activeTooltips.find((tt) => tt.geoId === geoId)) {
             toolTip = new Tooltip(movementStrategy, ref.containInsideStrategy, content, tooltipScope);
 
             activeTooltips.push({ toolTip, keepOpen, geoId, simpleLayerId, position });
@@ -634,7 +635,7 @@ function tooltipService($rootScope, $compile, $q, configService, referenceServic
             }
         });
 
-        idxToRemove.reverse().forEach(idx => {
+        idxToRemove.reverse().forEach((idx) => {
             activeTooltips.splice(idx, 1);
         });
     }

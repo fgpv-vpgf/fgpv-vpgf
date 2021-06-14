@@ -1,8 +1,7 @@
 import { Point, XY } from 'api/geometry';
 import { SimpleLayer } from 'api/layers';
 
-angular.module('app.ui')
-    .directive('rvNorthArrow', rvNorthArrow);
+angular.module('app.ui').directive('rvNorthArrow', rvNorthArrow);
 
 /**
  * `rvNorthArrow` directive body. Displays the north arrow on the map.
@@ -12,12 +11,12 @@ angular.module('app.ui')
 function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolService, $compile, gapiService, $mdIcon) {
     const directive = {
         restrict: 'E',
-        link
+        link,
     };
 
     return directive;
 
-    function link (scope, element) {
+    function link(scope, element) {
         const self = scope.self;
 
         $rootScope.$on(events.rvApiReady, () => {
@@ -35,10 +34,18 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                         map.instance.addLayer(layerRecord._layer);
 
                         // create north pole as point object and add to north pole layer
-                        $mdIcon('flag').then(flagIcon => {
+                        $mdIcon('flag').then((flagIcon) => {
                             const northPoleLayer = new SimpleLayer(layerRecord, map);
-                            const poleSource = mapConfig.northArrow.poleIcon || flagIcon.getElementsByTagName('path')[0].getAttribute('d');
-                            let northPole = new Point('northPole', new XY(-96, 90), {xOffset: 7, yOffset: 7, style: 'ICON', icon: poleSource, colour: [255, 0, 0]});
+                            const poleSource =
+                                mapConfig.northArrow.poleIcon ||
+                                flagIcon.getElementsByTagName('path')[0].getAttribute('d');
+                            let northPole = new Point('northPole', new XY(-96, 90), {
+                                xOffset: 7,
+                                yOffset: 7,
+                                style: 'ICON',
+                                icon: poleSource,
+                                colour: [255, 0, 0],
+                            });
                             northPoleLayer.addGeometry(northPole);
                         });
                     }
@@ -62,7 +69,8 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
                 const north = mapToolService.northArrow();
                 let northArrowTemplate = '';
 
-                if (!north.projectionSupported) { // hide the north arrow if projection is not supported
+                if (!north.projectionSupported) {
+                    // hide the north arrow if projection is not supported
                     element.css('display', 'none');
                 } else {
                     // remove any excessive icons
@@ -96,7 +104,12 @@ function rvNorthArrow(configService, $rootScope, $rootElement, events, mapToolSe
          * @return {boolean} true iff source is svg
          */
         function _isSVG(source) {
-            const ext = source.includes('data:image/') ? source.split(/data:image\//).pop().slice(0, 3) : source.split(/[\s.]+/).pop();
+            const ext = source.includes('data:image/')
+                ? source
+                      .split(/data:image\//)
+                      .pop()
+                      .slice(0, 3)
+                : source.split(/[\s.]+/).pop();
 
             return ext === 'svg';
         }

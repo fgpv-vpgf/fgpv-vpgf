@@ -4,7 +4,6 @@
  * This class contains a custom angular controller to enable the opening of the details panel, and the zoom functionality.
  */
 export class DetailsAndZoomButtons {
-
     constructor(panelManager: any) {
         this.panelManager = panelManager;
         this.mapApi = panelManager.mapApi;
@@ -23,7 +22,7 @@ export class DetailsAndZoomButtons {
             // opens the details panel corresponding to the row where the details button is found
             this.openDetails = function (oid) {
                 let data = proxy.formattedAttributes.then(function (attribs) {
-                    const attributes = attribs.rows.find(attrib => {
+                    const attributes = attribs.rows.find((attrib) => {
                         if (attrib[that.oidField] === oid) {
                             return attrib;
                         }
@@ -36,14 +35,16 @@ export class DetailsAndZoomButtons {
                     // fake the array of objects containing attribute name, domain, type and alias
                     // this array - 'dataObj' is consumed by attributesToDetails
                     for (let key in attributes) {
-                        const fieldData = attribs.fields.find(r => r.name === key);
+                        const fieldData = attribs.fields.find((r) => r.name === key);
                         let attribObj = {
-                            alias: that.currentTableLayer.attributeHeaders[key] ? that.currentTableLayer.attributeHeaders[key]['name'] : '',
-                            clientAlias: (fieldData && fieldData.clientAlias) ? fieldData.clientAlias : undefined,
+                            alias: that.currentTableLayer.attributeHeaders[key]
+                                ? that.currentTableLayer.attributeHeaders[key]['name']
+                                : '',
+                            clientAlias: fieldData && fieldData.clientAlias ? fieldData.clientAlias : undefined,
                             name: key,
                             domain: null,
-                            type: null
-                        }
+                            type: null,
+                        };
 
                         // set the esriFieldType depending on the type of the value
                         if (key === proxy.oidField) {
@@ -60,20 +61,22 @@ export class DetailsAndZoomButtons {
                     // fake the details object that is used by identify, so that the details panel is opened
                     let detailsObj = {
                         isLoading: false,
-                        data: [{
-                            name: proxy.getFeatureName(oid, attributes),
-                            data: proxy.attributesToDetails(attributes, dataObj),
-                            oid: attributes[proxy.oidField],
-                            symbology: [{ svgcode: symbology }]
-                        }],
+                        data: [
+                            {
+                                name: proxy.getFeatureName(oid, attributes),
+                                data: proxy.attributesToDetails(attributes, dataObj),
+                                oid: attributes[proxy.oidField],
+                                symbology: [{ svgcode: symbology }],
+                            },
+                        ],
                         requestId: -1,
                         requester: {
-                            proxy: proxy
-                        }
-                    }
+                            proxy: proxy,
+                        },
+                    };
                     let details = {
-                        data: [detailsObj]
-                    }
+                        data: [detailsObj],
+                    };
 
                     map.toggleDetailsPanel(details);
                 });
@@ -83,7 +86,10 @@ export class DetailsAndZoomButtons {
             this.zoomToFeature = function (oid) {
                 const map = that.mapApi.mapI;
                 //set appropriate offset for point before zooming
-                let offset = (that.panelManager.maximized || that.panelManager.isMobile()) ? { x: 0, y: 0 } : { x: 0.10416666666666667, y: 0.24464094319399785 };
+                let offset =
+                    that.panelManager.maximized || that.panelManager.isMobile()
+                        ? { x: 0, y: 0 }
+                        : { x: 0.10416666666666667, y: 0.24464094319399785 };
                 map.zoomToFeature(proxy, oid, offset);
             };
         });

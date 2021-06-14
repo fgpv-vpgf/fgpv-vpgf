@@ -2,7 +2,7 @@ import Map from 'api/map';
 import * as GEO from 'api/geometry';
 import { ConfigLayer, SimpleLayer } from 'api/layers';
 import { Subject } from 'rxjs';
-import * as $ from "jquery";
+import * as $ from 'jquery';
 
 const mapInstances: Array<Map> = [];
 
@@ -20,51 +20,59 @@ class RAMP {
         $.getScript(url);
     }
     /** Returns the map class */
-    get Map(): typeof Map { return Map; }
-    get mapInstances(): Array<Map> { return mapInstances; }
+    get Map(): typeof Map {
+        return Map;
+    }
+    get mapInstances(): Array<Map> {
+        return mapInstances;
+    }
     /** Contains all geography related classes. */
-    get GEO() { return GEO };
+    get GEO() {
+        return GEO;
+    }
 
     /** Returns the different layer classes */
     get LAYERS(): Object {
         return {
             ConfigLayer,
-            SimpleLayer
-        }
+            SimpleLayer,
+        };
     }
 
     mapById(id: string): Map | undefined {
-        return this.mapInstances.find(mi => mi.id === id);
+        return this.mapInstances.find((mi) => mi.id === id);
     }
 }
 
 const RAMPInstance = new RAMP();
 interface EnhancedWindow extends Window {
-    RAMP: RAMP
-};
+    RAMP: RAMP;
+}
 
 (<EnhancedWindow>window).RAMP = (<EnhancedWindow>window).RAMP ? (<EnhancedWindow>window).RAMP : RAMPInstance;
 
-RAMPInstance.mapAdded.subscribe(mapInstance => {
-    let index: number = mapInstances.findIndex(map => map.id === mapInstance.id);
+RAMPInstance.mapAdded.subscribe((mapInstance) => {
+    let index: number = mapInstances.findIndex((map) => map.id === mapInstance.id);
 
     if (index !== -1) {
-        console.warn("Any references to an older map instance may be out of date now, they will need to be updated to continue using the API.")
+        console.warn(
+            'Any references to an older map instance may be out of date now, they will need to be updated to continue using the API.'
+        );
         mapInstances[index] = mapInstance;
     } else {
         mapInstances.push(mapInstance);
     }
 });
 
-(<any>jQuery).expr.filters.offscreen = function(el: any) {
+(<any>jQuery).expr.filters.offscreen = function (el: any) {
     const elem = <any>jQuery(el);
     const position = elem.position();
     const rvShell = <any>jQuery('rv-shell').first();
 
     return (
-        (position.left + <any>elem.width()) > (rvShell.width()) ||
-        (position.left + <any>elem.width()) < 0 ||
-        (position.top + <any>elem.height()) > (rvShell.height()) ||
-        (position.top + <any>elem.height()) < 0
-           );
-  };
+        position.left + <any>elem.width() > rvShell.width() ||
+        position.left + <any>elem.width() < 0 ||
+        position.top + <any>elem.height() > rvShell.height() ||
+        position.top + <any>elem.height() < 0
+    );
+};

@@ -26,7 +26,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             opacity: 1,
             visibility: true,
             boundingBox: false,
-            query: true
+            query: true,
         },
         layerEntries: [
             {
@@ -37,24 +37,24 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                     opacity: 1,
                     visibility: true,
                     boundingBox: false,
-                    query: true
+                    query: true,
                 },
                 stateOnly: false,
-                name: 'Hamhocks'
+                name: 'Hamhocks',
             },
-            { 
+            {
                 index: 2,
                 name: 'doggguts',
                 state: {
                     opacity: 0,
-                    visibility: true,                            
-                    query: false
+                    visibility: true,
+                    query: false,
                 },
-                stateOnly: true
-            }
-        ]
+                stateOnly: true,
+            },
+        ],
     };
-    
+
     var mapOpts = {
         extent: {
             xmax: -5007771.626060756,
@@ -63,8 +63,8 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             ymin: 5022907.964742964,
             spatialReference: {
                 wkid: 102100,
-                latestWkid: 3857
-            }
+                latestWkid: 3857,
+            },
         },
         lods: [
             { level: 0, resolution: 19567.87924099992, scale: 73957190.948944 },
@@ -87,24 +87,25 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
             { level: 17, resolution: 0.14929107082380833, scale: 564.248588 },
             { level: 18, resolution: 0.07464553541190416, scale: 282.124294 },
             { level: 19, resolution: 0.03732276770595208, scale: 141.062147 },
-            { level: 20, resolution: 0.01866138385297604, scale: 70.5310735 }
+            { level: 20, resolution: 0.01866138385297604, scale: 70.5310735 },
         ],
         basemaps: [
             {
-                id: "baseEsriWorld",
-                name: "World Imagery",
-                description: "World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.",
-                altText: "altText - World Imagery",
+                id: 'baseEsriWorld',
+                name: 'World Imagery',
+                description:
+                    'World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.',
+                altText: 'altText - World Imagery',
                 layers: [
-                {
-                    id: "World_Imagery",
-                    layerType: "esriFeature",
-                    url: "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
-                }
+                    {
+                        id: 'World_Imagery',
+                        layerType: 'esriFeature',
+                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer',
+                    },
                 ],
-                tileSchemaId: "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
-            }
-        ]
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+            },
+        ],
     };
 
     var layerRec = api.layer.createDynamicRecord(config1);
@@ -131,21 +132,18 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
 
         var leaf2proxy = layerRec.getChildProxy(2);
         var leaf3proxy = layerRec.getChildProxy(3);
-        
+
         // remember, we are not using completeConfig swtich, so things get defaulted
         console.log('leaf 3 visible, should be false', leaf3proxy.visibility);
         console.log('leaf 2 visible, should be false', leaf2proxy.visibility);
-        
+
         console.log('layer proxy visible -- sb false', proxy.visibility);
-        
+
         leaf3proxy.setVisibility(true);
         console.log('layer proxy visible -- sb true', proxy.visibility);
         console.log('leaf 3 visible -- sb true', leaf3proxy.visibility);
-    
+
         leaf3proxy.zoomToBoundary(map);
         leaf3proxy.zoomToScale(map, mapOpts.lods, true);
-
     }
-
 });
-

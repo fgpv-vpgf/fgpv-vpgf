@@ -15,5 +15,5 @@ angular.module('app.core', [
     'pascalprecht.translate',
     'dotjem.angular.tree',
     'flow',
-    angularDragula(angular)
+    angularDragula(angular),
 ]);

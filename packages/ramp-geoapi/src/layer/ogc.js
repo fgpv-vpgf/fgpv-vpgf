@@ -25,7 +25,7 @@ function getFeatureInfoBuilder(esriBundle) {
 
         // result return type is text unless we have a fancy case
         const customReturnType = {
-            'application/json': 'json'
+            'application/json': 'json',
         };
 
         const returnType = customReturnType[mimeType] || 'text';
@@ -35,7 +35,7 @@ function getFeatureInfoBuilder(esriBundle) {
         } else if (esriMap.spatialReference.wkid) {
             wkid = esriMap.spatialReference.wkid;
         } else {
-            console.error('No valid wkid/epsg code found for WMS service. Identify request will likely fail.')
+            console.error('No valid wkid/epsg code found for WMS service. Identify request will likely fail.');
         }
         if (wmsLayer.version === '1.3' || wmsLayer.version === '1.3.0') {
             req = { CRS: 'EPSG:' + wkid, I: intX, J: intY, STYLES: '', FORMAT: wmsLayer.imageFormat };
@@ -56,30 +56,31 @@ function getFeatureInfoBuilder(esriBundle) {
             HEIGHT: esriMap.height,
             QUERY_LAYERS: layers,
             LAYERS: layers,
-            INFO_FORMAT: mimeType
+            INFO_FORMAT: mimeType,
         };
 
         // apply any custom parameters (ignore styles for the moment)
         if (wmsLayer.customLayerParameters) {
-            Object.keys(wmsLayer.customLayerParameters).forEach(key => {
+            Object.keys(wmsLayer.customLayerParameters).forEach((key) => {
                 if (key.toLowerCase() !== 'styles') {
                     settings[key] = wmsLayer.customLayerParameters[key];
                 }
             });
         }
 
-        Object.keys(settings).forEach(key => req[key] = settings[key]);
+        Object.keys(settings).forEach((key) => (req[key] = settings[key]));
 
-        return Promise.resolve(esriBundle.esriRequest({
-            url: wmsLayer.url.split('?')[0],
-            content: req,
-            handleAs: returnType
-        }));
+        return Promise.resolve(
+            esriBundle.esriRequest({
+                url: wmsLayer.url.split('?')[0],
+                content: req,
+                handleAs: returnType,
+            })
+        );
     };
 }
 
 function parseCapabilitiesBuilder(esriBundle) {
-
     const query = esriBundle.dojoQuery;
 
     /**
@@ -98,10 +99,11 @@ function parseCapabilitiesBuilder(esriBundle) {
      * @return {Promise} a promise resolving with a metadata object (as specified above)
      */
     return (wmsEndpoint) => {
-        const reqPromise = new Promise(resolve => {
+        const reqPromise = new Promise((resolve) => {
             getCapabilities()
-                .then(data => resolve(data)) // if successful, pass straight back
-                .catch(() => { // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
+                .then((data) => resolve(data)) // if successful, pass straight back
+                .catch(() => {
+                    // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
                     console.error('Get capabilities failed; trying the second time;');
                     resolve(getCapabilities());
                 });
@@ -135,17 +137,17 @@ function parseCapabilitiesBuilder(esriBundle) {
         // also have a list of all styles and the current style
         // recursively called on all child <Layer> nodes
         function getLayers(xmlNode) {
-            if (! xmlNode) {
+            if (!xmlNode) {
                 return [];
             }
-            return query('> Layer', xmlNode).map(layer => {
+            return query('> Layer', xmlNode).map((layer) => {
                 const nameNode = getImmediateChild(layer, 'Name');
                 const titleNode = getImmediateChild(layer, 'Title');
 
                 const allStyles = [];
                 const styleToURL = {};
                 const styles = getImmediateChildren(layer, 'Style');
-                styles.forEach(style => {
+                styles.forEach((style) => {
                     const name = getImmediateChild(style, 'Name').textContent;
                     allStyles.push(name);
 
@@ -162,8 +164,9 @@ function parseCapabilitiesBuilder(esriBundle) {
                     queryable: layer.getAttribute('queryable') === '1',
                     layers: getLayers(layer),
                     allStyles: allStyles,
-                    styleToURL, styleToURL,
-                    currentStyle: allStyles[0]
+                    styleToURL,
+                    styleToURL,
+                    currentStyle: allStyles[0],
                 };
             });
         }
@@ -176,18 +179,19 @@ function parseCapabilitiesBuilder(esriBundle) {
                 url += '?service=WMS&version=1.3&request=GetCapabilities';
             }
 
-            return Promise.resolve(new esriBundle.esriRequest({
-                url,
-                handleAs: 'xml'
-            }).promise);
+            return Promise.resolve(
+                new esriBundle.esriRequest({
+                    url,
+                    handleAs: 'xml',
+                }).promise
+            );
         }
 
-        return reqPromise.then(data => ({
+        return reqPromise.then((data) => ({
             layers: getLayers(query('Capability', data)[0]),
-            queryTypes: query('GetFeatureInfo > Format', data).map(node => node.textContent)
+            queryTypes: query('GetFeatureInfo > Format', data).map((node) => node.textContent),
         }));
     };
-
 }
 
 /**
@@ -198,7 +202,7 @@ function parseCapabilitiesBuilder(esriBundle) {
  * @param {Map} urlMap a Map of sublayer names to legend urls
  */
 function crawlLayerInfos(layerInfos, urlMap) {
-    layerInfos.forEach(li => {
+    layerInfos.forEach((li) => {
         if (li.name) {
             urlMap.set(li.name, li.legendURL);
         }
@@ -219,23 +223,23 @@ function getLegendUrls(wmsLayer, layerList) {
     const liMap = new Map();
     crawlLayerInfos(wmsLayer.layerInfos, liMap);
 
-    const legendURLs = layerList.map(l =>
+    const legendURLs = layerList.map((l) =>
         typeof l.styleToURL !== 'undefined' ? l.styleToURL[l.currentStyle] : undefined
     );
     legendURLs.forEach((entry, index) => {
         if (!entry) {
-            legendURLs[index] = liMap.get(layerList[index].id)
+            legendURLs[index] = liMap.get(layerList[index].id);
         }
     });
 
     return legendURLs;
 }
 
-module.exports = esriBundle => {
+module.exports = (esriBundle) => {
     return {
         WmsLayer: esriBundle.WmsLayer,
         getFeatureInfo: getFeatureInfoBuilder(esriBundle),
         parseCapabilities: parseCapabilitiesBuilder(esriBundle),
-        getLegendUrls
+        getLegendUrls,
     };
 };

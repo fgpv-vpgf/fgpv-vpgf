@@ -4,9 +4,7 @@
  * Used to establish default settings on table open as well as table behaviour.
  */
 export class ConfigManager {
-
     constructor(baseLayer: any, panelManager: any) {
-
         //init ConfigManager properties
         this.baseLayer = baseLayer;
         this.panelManager = panelManager;
@@ -15,15 +13,19 @@ export class ConfigManager {
         this.columnConfigs = {};
         const layerEntries = this.baseLayer._viewerLayer._childTree;
 
-        if (this.baseLayer.table.title !== this.panelManager.legendBlock.name &&
-            layerEntries !== undefined) {
+        if (this.baseLayer.table.title !== this.panelManager.legendBlock.name && layerEntries !== undefined) {
             // if these titles are not the same, and the baseLayer has layer entries
             // look for the layer entry with the matching name and set ITS table config as the table config
             let that = this;
-            layerEntries.forEach(entry => {
-                if (entry.proxyWrapper !== undefined && entry.proxyWrapper.name === this.panelManager.legendBlock.name) {
-                    this.tableConfig = entry.proxyWrapper.layerConfig.source.table !== undefined ?
-                        entry.proxyWrapper.layerConfig.source.table : that.baseLayer.table;
+            layerEntries.forEach((entry) => {
+                if (
+                    entry.proxyWrapper !== undefined &&
+                    entry.proxyWrapper.name === this.panelManager.legendBlock.name
+                ) {
+                    this.tableConfig =
+                        entry.proxyWrapper.layerConfig.source.table !== undefined
+                            ? entry.proxyWrapper.layerConfig.source.table
+                            : that.baseLayer.table;
                 } else {
                     this.tableConfig = that.baseLayer.table;
                 }
@@ -45,7 +47,7 @@ export class ConfigManager {
 
         // populate array of column configs
         if (this.tableConfig.columns) {
-            this.tableConfig.columns.forEach(column => {
+            this.tableConfig.columns.forEach((column) => {
                 this.columnConfigs[column.data] = new ColumnConfigManager(this, column);
             });
         }
@@ -72,7 +74,7 @@ export class ConfigManager {
      * Return whether global search is enabled/disabled according to config (default is enabled)
      */
     get globalSearchEnabled(): boolean {
-        return (this.searchEnabled !== undefined) ? this.searchEnabled : true;
+        return this.searchEnabled !== undefined ? this.searchEnabled : true;
     }
 
     /**
@@ -86,7 +88,10 @@ export class ConfigManager {
      * Gets default search parameter for global search if defined in the config.
      */
     get defaultGlobalSearch(): string {
-        const searchText = this.tableConfig.search === undefined || this.tableConfig.search.value === undefined ? '' : this.tableConfig.search.value;
+        const searchText =
+            this.tableConfig.search === undefined || this.tableConfig.search.value === undefined
+                ? ''
+                : this.tableConfig.search.value;
         return searchText;
     }
 
@@ -100,28 +105,28 @@ export class ConfigManager {
      * Return whether lazy filter is enabled for the table as defined in config, if undefined defaults to false.
      */
     get lazyFilterEnabled(): boolean {
-        return (this.tableConfig.lazyFilter !== undefined) ? this.tableConfig.lazyFilter : false;
+        return this.tableConfig.lazyFilter !== undefined ? this.tableConfig.lazyFilter : false;
     }
 
     /**
      * Return whether strict match is enabled when searching in the table as defined in config, if undefined defaults to false.
      */
     get searchStrictMatchEnabled(): boolean {
-        return (this.tableConfig.searchStrictMatch !== undefined) ? this.tableConfig.searchStrictMatch : false;
+        return this.tableConfig.searchStrictMatch !== undefined ? this.tableConfig.searchStrictMatch : false;
     }
 
     /**
      * Returns if the default filters are applied to the map. If undefined defaults to false
      */
     get applyMap(): boolean {
-        return (this.tableConfig.applyMap !== undefined) ? this.tableConfig.applyMap : false;
+        return this.tableConfig.applyMap !== undefined ? this.tableConfig.applyMap : false;
     }
 
     /**
      * Returns if the column filters are displayed on the table. If undefined default to true.
      */
     get showFilter(): boolean {
-        return (this.tableConfig.showFilter !== undefined) ? this.tableConfig.showFilter : true;
+        return this.tableConfig.showFilter !== undefined ? this.tableConfig.showFilter : true;
     }
 
     /**
@@ -130,8 +135,8 @@ export class ConfigManager {
     get filteredAttributes(): any[] {
         let filteredAttributes = [];
         if (this.tableConfig.columns !== undefined) {
-            this.tableConfig.columns.forEach(column => {
-                filteredAttributes.push(column.data)
+            this.tableConfig.columns.forEach((column) => {
+                filteredAttributes.push(column.data);
             });
         }
         return filteredAttributes;
@@ -154,7 +159,7 @@ export class ColumnConfigManager {
      * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
      */
     get width(): any {
-        return (this.column !== undefined) ? this.column.width : undefined;
+        return this.column !== undefined ? this.column.width : undefined;
     }
 
     /**
@@ -162,7 +167,7 @@ export class ColumnConfigManager {
      * If table needs to be filled up, disregards this width (respects table fill) ..i.e this is the minwidth
      */
     get sort(): any {
-        return (this.column !== undefined) ? this.column.sort : undefined;
+        return this.column !== undefined ? this.column.sort : undefined;
     }
 
     /**
@@ -194,7 +199,9 @@ export class ColumnConfigManager {
      * Set up on table create
      */
     get isFilterStatic(): boolean {
-        if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.static === undefined)) {
+        if (
+            !(this.column === undefined || this.column.filter === undefined || this.column.filter.static === undefined)
+        ) {
             return this.column.filter.static;
         }
         return false;
@@ -204,7 +211,9 @@ export class ColumnConfigManager {
      * Returns the column filter value that is seen on tabl open.
      */
     get value(): any {
-        if (!(this.column === undefined || this.column.filter === undefined || this.column.filter.value === undefined)) {
+        if (
+            !(this.column === undefined || this.column.filter === undefined || this.column.filter.value === undefined)
+        ) {
             return this.column.filter.value;
         }
         return undefined;
@@ -221,7 +230,6 @@ export interface ConfigManager {
     searchEnabled: boolean;
     printEnabled: boolean;
 }
-
 
 export interface ColumnConfigManager {
     column: any;

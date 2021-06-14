@@ -30,7 +30,7 @@ export default class TableBuilder {
             }
         });
 
-        this.mapApi.ui.configLegend.elementRemoved.subscribe(legendBlock => {
+        this.mapApi.ui.configLegend.elementRemoved.subscribe((legendBlock) => {
             if (legendBlock === this.panelManager.legendBlock) {
                 this.panelManager.panel.close();
             }
@@ -39,7 +39,11 @@ export default class TableBuilder {
         // toggle the enhancedTable if toggleDataTable is called from Legend API
         this.mapApi.ui.configLegend.dataTableToggled.subscribe(({ apiLayer, legendBlock }) => {
             // Open the table if its closed, never been created or this is a different layer (by comparing API layers, instead of legendBlocks, since reload changes legendBlock)
-            if (this.panelManager.panel.isClosed || !this.panelManager.panelStateManager || this.panelManager.panelStateManager.baseLayer !== apiLayer) {
+            if (
+                this.panelManager.panel.isClosed ||
+                !this.panelManager.panelStateManager ||
+                this.panelManager.panelStateManager.baseLayer !== apiLayer
+            ) {
                 // creates a 'loader' panel to be opened if data hasn't loaded after 200ms
                 this.deleteLoaderPanel();
                 this.loadingPanel = new PanelLoader(this.mapApi, legendBlock);
@@ -79,7 +83,7 @@ export default class TableBuilder {
                 this.openTable(layer);
             } else {
                 // if layer was not created, subscribe to layer added observable
-                this.layerAdded = this.mapApi.layers.layerAdded.subscribe(l => {
+                this.layerAdded = this.mapApi.layers.layerAdded.subscribe((l) => {
                     if (l.id === legendBlock.layerRecordId) {
                         // if matching layer is found, call this function again so that enhancedTable can be created
                         this.findMatchingLayer(legendBlock);
@@ -100,7 +104,7 @@ export default class TableBuilder {
         this.attributeHeaders = baseLayer.attributeHeaders;
         if (attrs.length === 0) {
             // make sure all attributes are added before creating the table (otherwise table displays without SVGs)
-            this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe(attr => {
+            this.mapApi.layers.attributesAdded.pipe(take(1)).subscribe((attr) => {
                 if (attr.attributes.length > 0) {
                     this.configManager = new ConfigManager(baseLayer, this.panelManager);
                     this.panelManager.configManager = this.configManager;
@@ -115,7 +119,7 @@ export default class TableBuilder {
 
             this.createTable({
                 attributes: attrs,
-                layer: baseLayer
+                layer: baseLayer,
             });
         }
     }
@@ -137,15 +141,15 @@ export default class TableBuilder {
         let cols: Array<any> = [];
         const layerProxy = attrBundle.layer._layerProxy;
 
-        layerProxy.formattedAttributes.then(a => {
-
+        layerProxy.formattedAttributes.then((a) => {
             // get column order according to the config if defined
             // else get default columns
-            const columns = Object.keys(this.configManager.columnConfigs).length > 0 ?
-                ['rvInteractive', 'rvSymbol', ...Object.keys(this.configManager.columnConfigs)] :
-                Object.keys(a.rows[0]);
+            const columns =
+                Object.keys(this.configManager.columnConfigs).length > 0
+                    ? ['rvInteractive', 'rvSymbol', ...Object.keys(this.configManager.columnConfigs)]
+                    : Object.keys(a.rows[0]);
 
-            columns.forEach(columnName => {
+            columns.forEach((columnName) => {
                 if (
                     columnName === 'rvSymbol' ||
                     columnName === 'rvInteractive' ||
@@ -167,28 +171,37 @@ export default class TableBuilder {
                         minWidth: column.width,
                         maxWidth: column.width,
                         headerName: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
-                        headerTooltip: this.attributeHeaders[columnName] ? this.attributeHeaders[columnName]['name'] : '',
+                        headerTooltip: this.attributeHeaders[columnName]
+                            ? this.attributeHeaders[columnName]['name']
+                            : '',
                         field: columnName,
                         filterParams: <FilterParameters>{},
                         filter: 'agTextColumnFilter',
                         floatingFilterComponentParams: { suppressFilterButton: true, mapApi: this.mapApi },
                         floatingFilterComponent: undefined,
                         cellRenderer: function (cell) {
-                            const translated = $(`<span>{{ 'plugins.enhancedTable.table.complexValue' | translate }}</span>`);
+                            const translated = $(
+                                `<span>{{ 'plugins.enhancedTable.table.complexValue' | translate }}</span>`
+                            );
                             self.mapApi.$compile(translated);
-                            return cell.value || !isNaN(cell.value) ? (typeof cell.value === 'object' ? translated[0] : cell.value) : '';
+                            return cell.value || !isNaN(cell.value)
+                                ? typeof cell.value === 'object'
+                                    ? translated[0]
+                                    : cell.value
+                                : '';
                         },
                         suppressSorting: false,
                         suppressFilter: column.searchDisabled,
                         sort: column.sort,
                         suppressMovable: true,
-                        hide: column.column !== undefined && column.column.visible !== undefined ? !column.column.visible : false
+                        hide:
+                            column.column !== undefined && column.column.visible !== undefined
+                                ? !column.column.visible
+                                : false,
                     };
 
-
-
                     // set up floating filters and column header
-                    const fieldInfo = a.fields.find(field => field.name === columnName);
+                    const fieldInfo = a.fields.find((field) => field.name === columnName);
                     if (fieldInfo) {
                         const isSelector = column.isSelector;
                         const isStatic = column.isFilterStatic;
@@ -198,9 +211,21 @@ export default class TableBuilder {
                             // floating filters of type number, date, text
                             // text can be of type text or selector
                             if (NUMBER_TYPES.indexOf(fieldInfo.type) > -1) {
-                                setUpNumberFilter(colDef, isStatic, column.value, this.tableOptions, this.panelManager.panelStateManager);
+                                setUpNumberFilter(
+                                    colDef,
+                                    isStatic,
+                                    column.value,
+                                    this.tableOptions,
+                                    this.panelManager.panelStateManager
+                                );
                             } else if (fieldInfo.type === DATE_TYPE) {
-                                setUpDateFilter(colDef, isStatic, this.mapApi, column.value, this.panelManager.panelStateManager);
+                                setUpDateFilter(
+                                    colDef,
+                                    isStatic,
+                                    this.mapApi,
+                                    column.value,
+                                    this.panelManager.panelStateManager
+                                );
                             } else if (fieldInfo.type === TEXT_TYPE && attrBundle.layer.table !== undefined) {
                                 if (isSelector) {
                                     setUpSelectorFilter(
@@ -233,7 +258,7 @@ export default class TableBuilder {
             });
             (<any>Object).assign(this.tableOptions, {
                 columnDefs: cols,
-                rowData: attrBundle.attributes
+                rowData: attrBundle.attributes,
             });
 
             // Show toast on layer refresh is refresh interval is set
@@ -274,7 +299,7 @@ function setUpSymbolsAndInteractive(columnName: string, colDef: any, cols: any, 
             };
             colDef.cellStyle = function (cell) {
                 return {
-                    paddingTop: '7px'
+                    paddingTop: '7px',
                 };
             };
         } else if (columnName === 'rvInteractive') {
@@ -317,7 +342,7 @@ function setUpHeaderComponent(colDef, mApi, tableOptions) {
     colDef.headerComponent = CustomHeader;
     colDef.headerComponentParams = {
         mapApi: mApi,
-        tableOptions
+        tableOptions,
     };
 }
 
@@ -349,7 +374,7 @@ interface ColumnDefinition {
     maxWidth?: number;
     width?: number;
     field: string;
-    headerComponent?: { new(): CustomHeader };
+    headerComponent?: { new (): CustomHeader };
     headerComponentParams?: HeaderComponentParams;
     filter: string;
     filterParams?: any;
@@ -391,8 +416,8 @@ TableBuilder.prototype.tableOptions = {
     suppressDragLeaveHidesColumns: true,
     ensureDomOrder: true,
     defaultColDef: {
-        width: 100
-    }
+        width: 100,
+    },
 };
 
 TableBuilder.prototype.id = 'fancyTable';
@@ -401,15 +426,15 @@ TableBuilder.prototype._name = 'enhancedTable';
 TableBuilder.prototype.translations = {
     'en-CA': {
         search: {
-            placeholder: 'Search table'
+            placeholder: 'Search table',
         },
         table: {
             filter: {
                 clear: 'Clear filters',
-                apply: 'Apply filters to map'
+                apply: 'Apply filters to map',
             },
             hideColumns: 'Hide columns',
-            complexValue: 'Complex Value'
+            complexValue: 'Complex Value',
         },
         menu: {
             split: 'Split View',
@@ -422,39 +447,39 @@ TableBuilder.prototype.translations = {
                 show: 'Show column filters',
                 textHeader: 'Text filter mode',
                 lazy: 'Contains...',
-                startsWith: 'Begins with...'
-            }
+                startsWith: 'Begins with...',
+            },
         },
         detailsAndZoom: {
             details: 'Details',
-            zoom: 'Zoom To Feature'
+            zoom: 'Zoom To Feature',
         },
         columnFilters: {
             selector: 'selection',
             date: {
                 min: 'date min',
-                max: 'date max'
+                max: 'date max',
             },
-            text: 'text'
+            text: 'text',
         },
         columnHeader: {
             sortAsc: 'Ascending sort',
             sortDsc: 'Descending sort',
             reorderLeft: 'Shift column left',
-            reorderRight: 'Shift column right'
-        }
+            reorderRight: 'Shift column right',
+        },
     },
     'fr-CA': {
         search: {
-            placeholder: 'Texte à rechercher'
+            placeholder: 'Texte à rechercher',
         },
         table: {
             filter: {
                 clear: 'Effacer les filtres',
-                apply: 'Appliquer des filtres à la carte' // TODO: Add official French translation
+                apply: 'Appliquer des filtres à la carte', // TODO: Add official French translation
             },
             hideColumns: 'Masquer les colonnes', // TODO: Add Official French translation
-            complexValue: 'Valeur Complexes'
+            complexValue: 'Valeur Complexes',
         },
         menu: {
             split: 'Diviser la vue',
@@ -467,28 +492,29 @@ TableBuilder.prototype.translations = {
                 show: 'Afficher les filtres',
                 textHeader: 'Mode filtre de texte',
                 lazy: 'Contient...',
-                startsWith: 'Commence avec...'
-            }
+                startsWith: 'Commence avec...',
+            },
         },
         detailsAndZoom: {
             details: 'Détails',
-            zoom: "Zoom à l'élément"
+            zoom: "Zoom à l'élément",
         },
         columnFilters: {
             selector: 'sélection',
             date: {
                 min: 'date min',
-                max: 'date max'
+                max: 'date max',
             },
-            text: 'texte'
+            text: 'texte',
         },
-        columnHeader: { // TODO: Add Official French translation
+        columnHeader: {
+            // TODO: Add Official French translation
             sortAsc: 'Tri ascendant',
             sortDsc: 'Tri descendant',
             reorderLeft: 'Déplacer la colonne à gauche',
-            reorderRight: 'Déplacer la colonne à droite'
-        }
-    }
+            reorderRight: 'Déplacer la colonne à droite',
+        },
+    },
 };
 
 (<any>window).enhancedTable = TableBuilder;

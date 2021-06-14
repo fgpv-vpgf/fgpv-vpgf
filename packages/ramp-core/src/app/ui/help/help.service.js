@@ -18,10 +18,7 @@ const templateUrl = require('./help-summary.html');
  * The `highlightFilter` filter, highlights a phrase in the supplied text.
  *
  */
-angular
-    .module('app.ui')
-    .service('helpService', helpService)
-    .filter('highlight', highlightFilter);
+angular.module('app.ui').service('helpService', helpService).filter('highlight', highlightFilter);
 
 // TODO: this needs to be moved into a separate into ui/common folder
 function highlightFilter($sce) {
@@ -56,7 +53,7 @@ function highlightFilter($sce) {
             let childNode;
             let nextNode;
             // document, document fragment, or element recurse search
-            if ([1, 9, 11].find(n => n === node.nodeType)) {
+            if ([1, 9, 11].find((n) => n === node.nodeType)) {
                 childNode = node.firstChild;
                 while (childNode) {
                     nextNode = childNode.nextSibling;
@@ -117,7 +114,7 @@ function helpService($mdDialog, events, configService, referenceService) {
         setDrawn,
         clearDrawn,
 
-        open
+        open,
     };
 
     // wire in a hook to open help dialog.
@@ -148,7 +145,7 @@ function helpService($mdDialog, events, configService, referenceService) {
             parent: referenceService.panels.shell,
             disableParentScroll: false,
             clickOutsideToClose: true,
-            fullscreen: false
+            fullscreen: false,
         });
     }
 
@@ -223,7 +220,7 @@ function helpService($mdDialog, events, configService, referenceService) {
             const mdLocation = `help/${foldername}/${configService.getSync.language}.md`;
             $http
                 .get(mdLocation)
-                .then(r => {
+                .then((r) => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
                     // followed by the section header, exactly 2 spaces, then up to but not including a double space
                     // note that the {2,} below is used as the double line deparator since each double new line is actually 6
@@ -245,18 +242,12 @@ function helpService($mdDialog, events, configService, referenceService) {
                             header: section[1],
                             // parse markdown on info section only. Note that the split/splice/join removes the header
                             // and is a workaround for not being able to put info section into its own regex grouping like the header
-                            info: marked(
-                                section[0]
-                                    .split('\n')
-                                    .splice(2)
-                                    .join('\n'),
-                                { renderer }
-                            ),
-                            isExpanded: false
+                            info: marked(section[0].split('\n').splice(2).join('\n'), { renderer }),
+                            isExpanded: false,
                         });
                     }
                 })
-                .catch(error => {
+                .catch((error) => {
                     self.hasNoHelp = true;
                     console.warn(error);
                 });
@@ -282,7 +273,7 @@ function helpService($mdDialog, events, configService, referenceService) {
          * @param {String} value search string
          */
         function onSearchTermChange(value) {
-            self.sections.forEach(section => (section.isExpanded = value ? true : false));
+            self.sections.forEach((section) => (section.isExpanded = value ? true : false));
         }
     }
 }

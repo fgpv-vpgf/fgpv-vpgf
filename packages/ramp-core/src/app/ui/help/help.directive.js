@@ -7,22 +7,21 @@
  * The `rvHelp` directive marks what items are highlighted on the help screen
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvHelp', rvHelp);
+angular.module('app.ui').directive('rvHelp', rvHelp);
 
 function rvHelp(helpService) {
     const directive = {
         restrict: 'A',
         scope: false,
-        link: link
+        link: link,
     };
 
     return directive;
 
     /*********/
 
-    function link(scope, element, attr) { // , ctrl) {
+    function link(scope, element, attr) {
+        // , ctrl) {
         const obj = { getCoords: getCoords, key: attr.rvHelp.toString() };
         helpService.register(obj);
 
@@ -36,7 +35,7 @@ function rvHelp(helpService) {
                     x: 0,
                     y: 0,
                     width: 0,
-                    height: 0
+                    height: 0,
                 };
             } else {
                 result = {
@@ -44,7 +43,7 @@ function rvHelp(helpService) {
                     x: offset.left - parseInt(element.css('margin-left')) - parseInt(element.css('border-left')),
                     y: offset.top - parseInt(element.css('margin-top')) - parseInt(element.css('border-top')),
                     width: element.outerWidth(true),
-                    height: element.outerHeight(true)
+                    height: element.outerHeight(true),
                 };
             }
 

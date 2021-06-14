@@ -79,8 +79,7 @@
         "legend": {
             "type": "autopopulate"
         },
-        "layers": [
-        ],
+        "layers": [],
         "extentSets": [
             {
                 "id": "EXT_NRCAN_Lambert_3978",

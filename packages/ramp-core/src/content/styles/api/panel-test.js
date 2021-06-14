@@ -1,69 +1,70 @@
-$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css') );
+$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../../rv-styles.css'));
 
 $.getScript('../../../../rv-main.js', function () {
+    angular.module('app').controller('BasicDemoCtrl', function DemoCtrl($mdDialog) {
+        var originatorEv;
 
-  angular
-  .module('app')
-  .controller('BasicDemoCtrl', function DemoCtrl($mdDialog) {
-    var originatorEv;
+        this.openMenu = function ($mdMenu, ev) {
+            originatorEv = ev;
+            $mdMenu.open(ev);
+        };
 
-    this.openMenu = function($mdMenu, ev) {
-      originatorEv = ev;
-      $mdMenu.open(ev);
-    };
+        this.notificationsEnabled = true;
+        this.toggleNotifications = function () {
+            this.notificationsEnabled = !this.notificationsEnabled;
+        };
 
-    this.notificationsEnabled = true;
-    this.toggleNotifications = function() {
-      this.notificationsEnabled = !this.notificationsEnabled;
-    };
+        this.importFile = function () {
+            $mdDialog.show(
+                $mdDialog
+                    .alert()
+                    .targetEvent(originatorEv)
+                    .clickOutsideToClose(true)
+                    .parent('body')
+                    .title('Ok, importing a file')
+                    .textContent('Not really, just a test :)')
+                    .ok('Great, thanks')
+            );
 
-    this.importFile = function() {
-      $mdDialog.show(
-        $mdDialog.alert()
-          .targetEvent(originatorEv)
-          .clickOutsideToClose(true)
-          .parent('body')
-          .title('Ok, importing a file')
-          .textContent('Not really, just a test :)')
-          .ok('Great, thanks')
-      );
+            originatorEv = null;
+        };
 
-      originatorEv = null;
-    };
+        this.importService = function () {
+            $mdDialog.show(
+                $mdDialog
+                    .alert()
+                    .targetEvent(originatorEv)
+                    .clickOutsideToClose(true)
+                    .parent('body')
+                    .title('Ok, importing a service')
+                    .textContent('Not really, just a test :)')
+                    .ok('Great, thanks')
+            );
+        };
+    });
 
-    this.importService = function() {
-      $mdDialog.show(
-        $mdDialog.alert()
-          .targetEvent(originatorEv)
-          .clickOutsideToClose(true)
-          .parent('body')
-          .title('Ok, importing a service')
-          .textContent('Not really, just a test :)')
-          .ok('Great, thanks')
-      );
-    };
-  });
+    angular.module('app').controller('DemoCtrl', function ($scope) {
+        $scope.user = {
+            title: 'Developer',
+            email: 'ipsum@lorem.com',
+            firstName: '',
+            lastName: '',
+            company: 'Google',
+            address: '1600 Amphitheatre Pkwy',
+            city: 'Mountain View',
+            state: 'CA',
+            biography:
+                'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
+            postalCode: '94043',
+        };
 
-    angular
-        .module('app')
-        .controller('DemoCtrl', function($scope) {
-            $scope.user = {
-                title: 'Developer',
-                email: 'ipsum@lorem.com',
-                firstName: '',
-                lastName: '',
-                company: 'Google',
-                address: '1600 Amphitheatre Pkwy',
-                city: 'Mountain View',
-                state: 'CA',
-                biography: 'Loves kittens, snowboarding, and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
-                postalCode: '94043'
-            };
-
-            $scope.states = ('AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY').split(' ').map(function(state) {
-                return {abbrev: state};
-            });
-        });
+        $scope.states =
+            'AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'
+                .split(' ')
+                .map(function (state) {
+                    return { abbrev: state };
+                });
+    });
 
     //first append map to body
     $('body').append(`
@@ -74,13 +75,12 @@ $.getScript('../../../../rv-main.js', function () {
     new RAMP.Map(document.getElementById('fgpmap'), '../../../config.rcs.[lang].json');
 
     //once map is added
-    RAMP.mapAdded.subscribe(mapi => {
+    RAMP.mapAdded.subscribe((mapi) => {
+        //creating Panel + opening
+        let panel0 = mapi.panels.create('panel0');
+        panel0.position([432, 0], [700, 500]);
 
-      //creating Panel + opening
-      let panel0 = mapi.panels.create('panel0');
-      panel0.position([432, 0], [700, 500]);
-
-      $(`<style>
+        $(`<style>
           .rv-medium #panel0 {
             width: 100% !important;
             height: 100% !important;
@@ -96,15 +96,15 @@ $.getScript('../../../../rv-main.js', function () {
             width: auto;
           }
         </style>
-      `).appendTo("head");
+      `).appendTo('head');
 
-      closeBtn = new panel0.button('X');
-      closeBtn.element.css('float', 'right');
-      closeBtn.element.on('click', function(evt) {
-        console.error('close btn clicked', evt);
-      });
+        closeBtn = new panel0.button('X');
+        closeBtn.element.css('float', 'right');
+        closeBtn.element.on('click', function (evt) {
+            console.error('close btn clicked', evt);
+        });
 
-      menuButton = new panel0.container(`
+        menuButton = new panel0.container(`
   <div ng-controller="BasicDemoCtrl as ctrl" class="menu-demo-container" style="display: inline;" layout-align="center center" layout="column">
     <md-menu>
       <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="ctrl.openMenu($mdMenu, $event)">
@@ -129,16 +129,23 @@ $.getScript('../../../../rv-main.js', function () {
 
       `);
 
-      panel0.controls = [new panel0.button('T'), menuButton, new panel0.container('<h2 style="font-weight: normal;display:inline;vertical-align: middle;">Hello, World!</h2>'), closeBtn];
-      panel0.content = new panel0.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">`);
-      panel0.open();
+        panel0.controls = [
+            new panel0.button('T'),
+            menuButton,
+            new panel0.container(
+                '<h2 style="font-weight: normal;display:inline;vertical-align: middle;">Hello, World!</h2>'
+            ),
+            closeBtn,
+        ];
+        panel0.content = new panel0.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">`);
+        panel0.open();
 
-      //creating Panel + opening
-      let panel1 = mapi.panels.create('panel1');
-      panel1.position([710, 0], [1200, 500]);
+        //creating Panel + opening
+        let panel1 = mapi.panels.create('panel1');
+        panel1.position([710, 0], [1200, 500]);
 
-      panel1.controls = [new panel1.button('X')];
-      panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">
+        panel1.controls = [new panel1.button('X')];
+        panel1.content = new panel1.container(`<div ng-controller="DemoCtrl" layout="column" class="md-inline-form">
           <div>
             <md-input-container>
               <label>Title</label>

@@ -9,7 +9,7 @@ function makeFakeLayer(x) {
             return makeFakeEvent(e);
         },
         target: x.target,
-        spatialReference: { wkid: x.sr }
+        spatialReference: { wkid: x.sr },
     };
 }
 
@@ -17,7 +17,7 @@ function makeFakeEvent() {
     return {
         error: undefined,
         info: null,
-        target: '1'
+        target: '1',
     };
 }
 
@@ -32,19 +32,22 @@ describe('events wrapping', () => {
     it('should properly convert to the right dojo name', () => {
         const myevent = events();
         spyOn(sampleLayer, 'on');
-        myevent.wrapEvents(sampleLayer, { updateEnd: () => {
-            console.log('Hi');
-        } });
+        myevent.wrapEvents(sampleLayer, {
+            updateEnd: () => {
+                console.log('Hi');
+            },
+        });
         expect(sampleLayer.on.calls.mostRecent().args[0]).toEqual('update-end');
     });
 
     it('should trigger a layer event', (done) => {
         const myevent = events();
         spyOn(sampleLayer, 'on').and.callThrough();
-        myevent.wrapEvents(sampleLayer, { updateEnd: (x) => {
-            expect(x.target).toEqual(x.layer);
-            done();
-        }
+        myevent.wrapEvents(sampleLayer, {
+            updateEnd: (x) => {
+                expect(x.target).toEqual(x.layer);
+                done();
+            },
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
     });
@@ -52,10 +55,11 @@ describe('events wrapping', () => {
     it('should trigger a non-layer event', (done) => {
         const myevent = events();
         spyOn(sampleLayer, 'on').and.callThrough();
-        myevent.wrapEvents(sampleLayer, { click: () => {
-            expect(sampleLayer.on).toHaveBeenCalled();
-            done();
-        }
+        myevent.wrapEvents(sampleLayer, {
+            click: () => {
+                expect(sampleLayer.on).toHaveBeenCalled();
+                done();
+            },
         });
         sampleLayer.on.calls.mostRecent().args[1](makeFakeEvent(sampleData));
     });

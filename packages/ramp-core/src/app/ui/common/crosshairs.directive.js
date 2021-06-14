@@ -18,7 +18,7 @@ function rvCrosshairs($rootElement, events, tooltipService) {
         scope: {},
         controller: () => {},
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;
@@ -82,7 +82,7 @@ function rvCrosshairs($rootElement, events, tooltipService) {
                 const outEvt = new MouseEvent('mouseout', {
                     view: window,
                     bubbles: true,
-                    cancelable: true
+                    cancelable: true,
                 });
                 hoverElement.dispatchEvent(outEvt);
             }
@@ -100,7 +100,7 @@ function rvCrosshairs($rootElement, events, tooltipService) {
                 bubbles: true,
                 cancelable: true,
                 clientX: x,
-                clientY: y - 60 // offset the tooltip above the crosshairs
+                clientY: y - 60, // offset the tooltip above the crosshairs
             });
             hoverElement.dispatchEvent(overEvt);
         });

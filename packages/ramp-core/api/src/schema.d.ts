@@ -6,663 +6,838 @@
  */
 
 export type SideMenuButtons = (
-  | "layers"
-  | "basemap"
-  | "geoSearch"
-  | "about"
-  | "fullscreen"
-  | "export"
-  | "share"
-  | "touch"
-  | "help"
-  | "language"
-  | "plugins"
+    | 'layers'
+    | 'basemap'
+    | 'geoSearch'
+    | 'about'
+    | 'fullscreen'
+    | 'export'
+    | 'share'
+    | 'touch'
+    | 'help'
+    | 'language'
+    | 'plugins'
 )[];
 /**
  * Specifies the location/content of the about section
  */
 export type About = {
-  [k: string]: any;
+    [k: string]: any;
 };
 export type SpatialReferenceNode = {
-  [k: string]: any;
+    [k: string]: any;
 };
 /**
  * A list of all controls to be enabled on the specified layer
  */
 export type LegendEntryControls = (
-  | "opacity"
-  | "visibility"
-  | "boundingBox"
-  | "query"
-  | "snapshot"
-  | "metadata"
-  | "boundaryZoom"
-  | "refresh"
-  | "reload"
-  | "remove"
-  | "settings"
-  | "data"
-  | "styles"
+    | 'opacity'
+    | 'visibility'
+    | 'boundingBox'
+    | 'query'
+    | 'snapshot'
+    | 'metadata'
+    | 'boundaryZoom'
+    | 'refresh'
+    | 'reload'
+    | 'remove'
+    | 'settings'
+    | 'data'
+    | 'styles'
 )[];
 export type LayerNode =
-  | BasicLayerNode
-  | FeatureLayerNode
-  | FileLayerNode
-  | WfsLayerNode
-  | WmsLayerNode
-  | DynamicLayerNode;
+    | BasicLayerNode
+    | FeatureLayerNode
+    | FileLayerNode
+    | WfsLayerNode
+    | WmsLayerNode
+    | DynamicLayerNode;
 export type SymbologyStack = {
-  /**
-   * Either a data URI or a URL to a source that supports CORS headers.
-   */
-  image: string;
-  text: string;
-  /**
-   * An SQL where clause by which the map and datatable attributes can be filtered. All the query results for the symbologyStack should cover all attributes for that layer.
-   */
-  sqlQuery?: string;
+    /**
+     * Either a data URI or a URL to a source that supports CORS headers.
+     */
+    image: string;
+    text: string;
+    /**
+     * An SQL where clause by which the map and datatable attributes can be filtered. All the query results for the symbologyStack should cover all attributes for that layer.
+     */
+    sqlQuery?: string;
 }[];
 export type InfoSection =
-  | {
-      infoType?: "title";
-      content?: string;
-      /**
-       * Indicates if the legend item should show up in the export legend.
-       */
-      export?: boolean;
-    }
-  | {
-      infoType?: "image";
-      content?: string;
-      /**
-       * Indicates if the legend item should show up in the export legend.
-       */
-      export?: boolean;
-    }
-  | {
-      infoType?: "unboundLayer";
-      /**
-       * Name to display in legend
-       */
-      content?: string;
-      /**
-       * [deprecated] Name to display in legend. Use `content` instead.
-       */
-      layerName?: string;
-      /**
-       * An optional icon, if present it will be used to primarily represent the unbound layer
-       */
-      coverIcon?: string;
-      /**
-       * Optional description displayed above the symbology stack.
-       */
-      description?: string;
-      symbologyStack?: SymbologyStack;
-      /**
-       * An optional style, describes how the symbology stack should be rendered
-       */
-      symbologyRenderStyle?: "icons" | "images";
-      /**
-       * Indicates if symbology stack is expand by default
-       */
-      symbologyExpanded?: boolean;
-      /**
-       * Indicates if the legend item should show up in the export legend.
-       */
-      export?: boolean;
-    }
-  | {
-      infoType?: "text";
-      content?: string;
-      /**
-       * Indicates if the legend item should show up in the export legend.
-       */
-      export?: boolean;
-    };
+    | {
+          infoType?: 'title';
+          content?: string;
+          /**
+           * Indicates if the legend item should show up in the export legend.
+           */
+          export?: boolean;
+      }
+    | {
+          infoType?: 'image';
+          content?: string;
+          /**
+           * Indicates if the legend item should show up in the export legend.
+           */
+          export?: boolean;
+      }
+    | {
+          infoType?: 'unboundLayer';
+          /**
+           * Name to display in legend
+           */
+          content?: string;
+          /**
+           * [deprecated] Name to display in legend. Use `content` instead.
+           */
+          layerName?: string;
+          /**
+           * An optional icon, if present it will be used to primarily represent the unbound layer
+           */
+          coverIcon?: string;
+          /**
+           * Optional description displayed above the symbology stack.
+           */
+          description?: string;
+          symbologyStack?: SymbologyStack;
+          /**
+           * An optional style, describes how the symbology stack should be rendered
+           */
+          symbologyRenderStyle?: 'icons' | 'images';
+          /**
+           * Indicates if symbology stack is expand by default
+           */
+          symbologyExpanded?: boolean;
+          /**
+           * Indicates if the legend item should show up in the export legend.
+           */
+          export?: boolean;
+      }
+    | {
+          infoType?: 'text';
+          content?: string;
+          /**
+           * Indicates if the legend item should show up in the export legend.
+           */
+          export?: boolean;
+      };
 /**
  * A list of all controls to be enabled on the specified group
  */
 export type LegendGroupControls = (
-  | "opacity"
-  | "visibility"
-  | "symbology"
-  | "query"
-  | "reload"
-  | "remove"
-  | "settings"
+    | 'opacity'
+    | 'visibility'
+    | 'symbology'
+    | 'query'
+    | 'reload'
+    | 'remove'
+    | 'settings'
 )[];
 
 export interface FgpvConfigSchema {
-  /**
-   * The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer.
-   */
-  version: "2.0" | "2.1" | "2.2" | "2.3";
-  /**
-   * ISO 639-1 code indicating the language of strings in the schema file
-   */
-  language?: "en" | "fr" | "es";
-  /**
-   * A set of service endpoints used by the viewer
-   */
-  ui?: {
     /**
-     * Indicates viewer takes up entire viewport
+     * The schema version used to validate the configuration file.  The schema should enumerate the list of versions accepted by this version of the viewer.
      */
-    fullscreen?: boolean;
+    version: '2.0' | '2.1' | '2.2' | '2.3';
     /**
-     * UI theme of the viewer
+     * ISO 639-1 code indicating the language of strings in the schema file
      */
-    theme?: "default";
+    language?: 'en' | 'fr' | 'es';
     /**
-     * An optional image to be used in the place of the default viewer logo
+     * A set of service endpoints used by the viewer
      */
-    logoUrl?: string;
-    failureFeedback?: {
-      [k: string]: any;
-    };
-    /**
-     * An optional title to be used in the place of the default viewer title
-     */
-    title?: string;
-    /**
-     * Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }.
-     */
-    appBar?: {
-      /**
-       * Shows the side menu button in the main app toolbar.
-       */
-      sideMenu?: boolean;
-      /**
-       * Shows the geosearch button in the main app toolbar. The button will be hidden if geosearch component is disabled or no search service URLs are provided.
-       */
-      geoSearch?: boolean;
-      /**
-       * Shows the basemap selector button in the main app toolbar.
-       */
-      basemap?: boolean;
-      /**
-       * Shows the layers button in the main app toolbar.
-       */
-      layers?: boolean;
-    };
-    navBar?: NavBarNode;
-    sideMenu?: SideMenuNode;
-    /**
-     * Will restrict the user from panning beyond the maximum extent.
-     */
-    restrictNavigation?: boolean;
-    about?: About;
-    help?: Help;
-    legend?: LegendUI;
-    /**
-     * Specifies whether the table panel is opened by default on initial loading of the map for small, medium, and large viewports
-     */
-    tableIsOpen?: {
-      /**
-       * The id of the layer for referencing within the viewer
-       */
-      id: string;
-      /**
-       * Whether the table panel is opened by default on initial loading of the map for large viewports
-       */
-      large?: boolean;
-      /**
-       * Whether the table panel is opened by default on initial loading of the map for medium viewports
-       */
-      medium?: boolean;
-      /**
-       * Whether the table panel is opened by default on initial loading of the map for small viewports
-       */
-      small?: boolean;
-    };
-    [k: string]: any;
-  };
-  /**
-   * A set of config snippets correponding to the plugins loaded onto the viewer
-   */
-  plugins?: {
-    [k: string]: any;
-  };
-  /**
-   * A set of service endpoints used by the viewer
-   */
-  services?: {
-    /**
-     * An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers.
-     */
-    proxyUrl?: string;
-    /**
-     * A boolean indicating that all services are CORS enabled.  This is mutually exclusive with proxyUrl.
-     */
-    corsEverywhere?: boolean;
-    /**
-     * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous
-     */
-    exportMapUrl?: string;
-    /**
-     * A URL to an ESRI ArcGIS geometry service REST endpoint.
-     */
-    geometryUrl?: string;
-    /**
-     * Google API key to enable geo location and share link shortening.
-     */
-    googleAPIKey?: string;
-    /**
-     * ESRI JavaSCript API endpoint. Note, we can't use a version greater than v3.22
-     */
-    esriLibUrl?: string;
-    /**
-     * FIXME
-     */
-    geolocation?: {
-      [k: string]: any;
-    };
-    /**
-     * FIXME
-     */
-    coordInfo?: {
-      [k: string]: any;
-    };
-    /**
-     * FIXME
-     */
-    print?: {
-      [k: string]: any;
-    };
-    search?: SearchService;
-    /**
-     * Export properties
-     */
-    export?: {
-      /**
-       * Title of the export graphic.
-       */
-      title?: {
+    ui?: {
         /**
-         * Indicates if the component is selected and included in the export graphic.
+         * Indicates viewer takes up entire viewport
          */
-        isSelected?: boolean;
+        fullscreen?: boolean;
         /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
+         * UI theme of the viewer
          */
-        isSelectable?: boolean;
+        theme?: 'default';
         /**
-         * Value to be passed to the generation function of this export component.
+         * An optional image to be used in the place of the default viewer logo
          */
-        value?: string;
-      };
-      /**
-       * Map component.
-       */
-      map?: {
+        logoUrl?: string;
+        failureFeedback?: {
+            [k: string]: any;
+        };
         /**
-         * Indicates if the component is selected and included in the export graphic.
+         * An optional title to be used in the place of the default viewer title
          */
-        isSelected?: boolean;
+        title?: string;
         /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
+         * Provides configuration to the main app toolbar. If not supplied, the default appbar controls are displayed. To completely hide the toolbar, provide the following: { sideMenu: false, geoSearch: false, layers: false }.
          */
-        isSelectable?: boolean;
+        appBar?: {
+            /**
+             * Shows the side menu button in the main app toolbar.
+             */
+            sideMenu?: boolean;
+            /**
+             * Shows the geosearch button in the main app toolbar. The button will be hidden if geosearch component is disabled or no search service URLs are provided.
+             */
+            geoSearch?: boolean;
+            /**
+             * Shows the basemap selector button in the main app toolbar.
+             */
+            basemap?: boolean;
+            /**
+             * Shows the layers button in the main app toolbar.
+             */
+            layers?: boolean;
+        };
+        navBar?: NavBarNode;
+        sideMenu?: SideMenuNode;
         /**
-         * Value to be passed to the generation function of this export component.
+         * Will restrict the user from panning beyond the maximum extent.
          */
-        value?: string;
-      };
-      /**
-       * North arrow and scalebar component.
-       */
-      mapElements?: {
+        restrictNavigation?: boolean;
+        about?: About;
+        help?: Help;
+        legend?: LegendUI;
         /**
-         * Indicates if the component is selected and included in the export graphic.
+         * Specifies whether the table panel is opened by default on initial loading of the map for small, medium, and large viewports
          */
-        isSelected?: boolean;
-        /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
-         */
-        isSelectable?: boolean;
-        /**
-         * Value to be passed to the generation function of this export component.
-         */
-        value?: string;
-      };
-      /**
-       * Legend component.
-       */
-      legend?: {
-        /**
-         * Indicates if the component is selected and included in the export graphic.
-         */
-        isSelected?: boolean;
-        /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
-         */
-        isSelectable?: boolean;
-        /**
-         * Value to be passed to the generation function of this export component.
-         */
-        value?: string;
-        /**
-         * Indicates whether symbology from info sections should be included in export legend
-         */
-        showInfoSymbology?: boolean;
-        /**
-         * Indicates whether symbology from controlled layers should be included in export legend
-         */
-        showControlledSymbology?: boolean;
-        /**
-         * Value in pixels to be used as the column width for the export legend.
-         */
-        columnWidth?: number;
-      };
-      /**
-       * Foot notice to add to exported map
-       */
-      footnote?: {
-        /**
-         * Indicates if the component is selected and included in the export graphic.
-         */
-        isSelected?: boolean;
-        /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
-         */
-        isSelectable?: boolean;
-        /**
-         * Value to be passed to the generation function of this export component.
-         */
-        value?: string;
-      };
-      /**
-       * Timestamp component.
-       */
-      timestamp?: {
-        /**
-         * Indicates if the component is selected and included in the export graphic.
-         */
-        isSelected?: boolean;
-        /**
-         * Indicates if the component can be included or excluded from the export graphic by the user.
-         */
-        isSelectable?: boolean;
-        /**
-         * Value to be passed to the generation function of this export component.
-         */
-        value?: string;
-      };
-      /**
-       * A timeout delay in milliseconds after which the export image generation is considered to have failed. Defaults to 120sec.
-       */
-      timeout?: number;
-      /**
-       * If set to true the export will omit layers and images that would cause issues with saving. If set to false users may need to save by right-clicking and selecting save image.
-       */
-      cleanCanvas?: boolean;
-    };
-  };
-  /**
-   * Core map properties (extent sets, levels of detail)
-   */
-  map?: {
-    /**
-     * The default, full and maximum extents of the map
-     */
-    extentSets?: ExtentSetNode[];
-    /**
-     * The levels of detail (zoom scales) available for the map
-     */
-    lodSets?: LodSetNode[];
-    /**
-     * A unique combination of an LoD and an extent set (each basemap must fit into a tile schema)
-     */
-    tileSchemas: TileSchemaNode[];
-    components?: {
-      geoSearch?: {
-        enabled?: boolean;
-        showGraphic?: boolean;
-        showInfo?: boolean;
+        tableIsOpen?: {
+            /**
+             * The id of the layer for referencing within the viewer
+             */
+            id: string;
+            /**
+             * Whether the table panel is opened by default on initial loading of the map for large viewports
+             */
+            large?: boolean;
+            /**
+             * Whether the table panel is opened by default on initial loading of the map for medium viewports
+             */
+            medium?: boolean;
+            /**
+             * Whether the table panel is opened by default on initial loading of the map for small viewports
+             */
+            small?: boolean;
+        };
         [k: string]: any;
-      };
-      mouseInfo?: {
-        spatialReference?: SpatialReferenceNode;
-        [k: string]: any;
-      };
-      northArrow?: {
-        [k: string]: any;
-      };
-      overviewMap?: {
-        enabled?: boolean;
-        expandFactor?: number;
-        [k: string]: any;
-      };
-      scaleBar?: {
-        [k: string]: any;
-      };
-      basemap?: {
-        [k: string]: any;
-      };
     };
     /**
-     * Initial basemap to load. If not supplied viewer will select any basemap.
+     * A set of config snippets correponding to the plugins loaded onto the viewer
      */
-    initialBasemapId?: string;
+    plugins?: {
+        [k: string]: any;
+    };
     /**
-     * A list of basemaps to be made available via the basemap selector.
+     * A set of service endpoints used by the viewer
      */
-    baseMaps: BaseMapNode[];
+    services?: {
+        /**
+         * An optional proxy to be used for dealing with same-origin issues.  URL must either be a relative path on the same server or an absolute path on a server which sets CORS headers.
+         */
+        proxyUrl?: string;
+        /**
+         * A boolean indicating that all services are CORS enabled.  This is mutually exclusive with proxyUrl.
+         */
+        corsEverywhere?: boolean;
+        /**
+         * An ESRI service endpoint for generating map images.  Should point directly to an endpoint that can be consumed by ESRI PrintTask. NOTE: The PrintTask service has to be asynchronous
+         */
+        exportMapUrl?: string;
+        /**
+         * A URL to an ESRI ArcGIS geometry service REST endpoint.
+         */
+        geometryUrl?: string;
+        /**
+         * Google API key to enable geo location and share link shortening.
+         */
+        googleAPIKey?: string;
+        /**
+         * ESRI JavaSCript API endpoint. Note, we can't use a version greater than v3.22
+         */
+        esriLibUrl?: string;
+        /**
+         * FIXME
+         */
+        geolocation?: {
+            [k: string]: any;
+        };
+        /**
+         * FIXME
+         */
+        coordInfo?: {
+            [k: string]: any;
+        };
+        /**
+         * FIXME
+         */
+        print?: {
+            [k: string]: any;
+        };
+        search?: SearchService;
+        /**
+         * Export properties
+         */
+        export?: {
+            /**
+             * Title of the export graphic.
+             */
+            title?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+            };
+            /**
+             * Map component.
+             */
+            map?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+            };
+            /**
+             * North arrow and scalebar component.
+             */
+            mapElements?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+            };
+            /**
+             * Legend component.
+             */
+            legend?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+                /**
+                 * Indicates whether symbology from info sections should be included in export legend
+                 */
+                showInfoSymbology?: boolean;
+                /**
+                 * Indicates whether symbology from controlled layers should be included in export legend
+                 */
+                showControlledSymbology?: boolean;
+                /**
+                 * Value in pixels to be used as the column width for the export legend.
+                 */
+                columnWidth?: number;
+            };
+            /**
+             * Foot notice to add to exported map
+             */
+            footnote?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+            };
+            /**
+             * Timestamp component.
+             */
+            timestamp?: {
+                /**
+                 * Indicates if the component is selected and included in the export graphic.
+                 */
+                isSelected?: boolean;
+                /**
+                 * Indicates if the component can be included or excluded from the export graphic by the user.
+                 */
+                isSelectable?: boolean;
+                /**
+                 * Value to be passed to the generation function of this export component.
+                 */
+                value?: string;
+            };
+            /**
+             * A timeout delay in milliseconds after which the export image generation is considered to have failed. Defaults to 120sec.
+             */
+            timeout?: number;
+            /**
+             * If set to true the export will omit layers and images that would cause issues with saving. If set to false users may need to save by right-clicking and selecting save image.
+             */
+            cleanCanvas?: boolean;
+        };
+    };
     /**
-     * Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers.
+     * Core map properties (extent sets, levels of detail)
      */
-    layers?: LayerNode[];
-    /**
-     * A structured or automatically generated legend
-     */
-    legend?: LegendAuto | LegendStructured;
-    [k: string]: any;
-  };
+    map?: {
+        /**
+         * The default, full and maximum extents of the map
+         */
+        extentSets?: ExtentSetNode[];
+        /**
+         * The levels of detail (zoom scales) available for the map
+         */
+        lodSets?: LodSetNode[];
+        /**
+         * A unique combination of an LoD and an extent set (each basemap must fit into a tile schema)
+         */
+        tileSchemas: TileSchemaNode[];
+        components?: {
+            geoSearch?: {
+                enabled?: boolean;
+                showGraphic?: boolean;
+                showInfo?: boolean;
+                [k: string]: any;
+            };
+            mouseInfo?: {
+                spatialReference?: SpatialReferenceNode;
+                [k: string]: any;
+            };
+            northArrow?: {
+                [k: string]: any;
+            };
+            overviewMap?: {
+                enabled?: boolean;
+                expandFactor?: number;
+                [k: string]: any;
+            };
+            scaleBar?: {
+                [k: string]: any;
+            };
+            basemap?: {
+                [k: string]: any;
+            };
+        };
+        /**
+         * Initial basemap to load. If not supplied viewer will select any basemap.
+         */
+        initialBasemapId?: string;
+        /**
+         * A list of basemaps to be made available via the basemap selector.
+         */
+        baseMaps: BaseMapNode[];
+        /**
+         * Layer list in the order which they should be added to the map.  NOTE: ESRI JSAPI v3 cannot draw imagery layers over feature layers.
+         */
+        layers?: LayerNode[];
+        /**
+         * A structured or automatically generated legend
+         */
+        legend?: LegendAuto | LegendStructured;
+        [k: string]: any;
+    };
 }
 /**
  * Provides configuration to the nav bar. If not supplied the default nav bar buttons are shown.
  */
 export interface NavBarNode {
-  zoom: "all" | "buttons" | "slider";
-  extra?: (
-    | "geoLocator"
-    | "marquee"
-    | "home"
-    | "history"
-    | "basemap"
-    | "help"
-    | "fullscreen"
-    | "geoSearch"
-    | "sideMenu"
-    | "layers"
-  )[];
+    zoom: 'all' | 'buttons' | 'slider';
+    extra?: (
+        | 'geoLocator'
+        | 'marquee'
+        | 'home'
+        | 'history'
+        | 'basemap'
+        | 'help'
+        | 'fullscreen'
+        | 'geoSearch'
+        | 'sideMenu'
+        | 'layers'
+    )[];
 }
 /**
  * Specifies which options are available in the left side menu.
  */
 export interface SideMenuNode {
-  /**
-   * Indicates if the logo should be shown in the left side menu.
-   */
-  logo?: boolean;
-  items?: SideMenuButtons[];
+    /**
+     * Indicates if the logo should be shown in the left side menu.
+     */
+    logo?: boolean;
+    items?: SideMenuButtons[];
 }
 /**
  * Specifies details for the Help section
  */
 export interface Help {
-  /**
-   * Help folder name which contains the help description and images
-   */
-  folderName: string;
+    /**
+     * Help folder name which contains the help description and images
+     */
+    folderName: string;
 }
 /**
  * Specifies options for the legend like reordering, importing, etc.
  */
 export interface LegendUI {
-  /**
-   * Specifies if the items in the legend can be reordered; structured legend ignores this property.
-   */
-  reorderable?: boolean;
-  /**
-   * Specifies if the user-added layers are allowed.
-   */
-  allowImport?: boolean;
-  /**
-   * Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports
-   */
-  isOpen?: {
     /**
-     * Whether the legend is opened by default on initial loading of the map for large viewports
+     * Specifies if the items in the legend can be reordered; structured legend ignores this property.
      */
-    large?: boolean;
+    reorderable?: boolean;
     /**
-     * Whether the legend is opened by default on initial loading of the map for medium viewports
+     * Specifies if the user-added layers are allowed.
      */
-    medium?: boolean;
+    allowImport?: boolean;
     /**
-     * Whether the legend is opened by default on initial loading of the map for small viewports
+     * Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports
      */
-    small?: boolean;
-  };
+    isOpen?: {
+        /**
+         * Whether the legend is opened by default on initial loading of the map for large viewports
+         */
+        large?: boolean;
+        /**
+         * Whether the legend is opened by default on initial loading of the map for medium viewports
+         */
+        medium?: boolean;
+        /**
+         * Whether the legend is opened by default on initial loading of the map for small viewports
+         */
+        small?: boolean;
+    };
 }
 /**
  * Search properties including ability to disable certain types of searches (NTS, FSA, SCALE, and/or LAT/LNG), modify default GeoSearch settings (filtering, sorting, etc.), and to set service endpoint urls
  */
 export interface SearchService {
-  /**
-   * Configuration settings related to GeoSearch
-   */
-  settings?: {
     /**
-     * Filter the search results based on the type of the geographical names. Allowed values can be found here (if using the Canadian GeoNames Search Service API): http://geogratis.gc.ca/services/geoname/en/codes/concise.
+     * Configuration settings related to GeoSearch
      */
-    categories?: string[];
+    settings?: {
+        /**
+         * Filter the search results based on the type of the geographical names. Allowed values can be found here (if using the Canadian GeoNames Search Service API): http://geogratis.gc.ca/services/geoname/en/codes/concise.
+         */
+        categories?: string[];
+        /**
+         * The sort order of the defined 'categories'. Any missing categories are appended to the bottom of the sorted list. The results can still be sorted through this option even if there are no categories being filtered.
+         */
+        sortOrder?: string[];
+        /**
+         * The maximum number of results to return per request. The Canadian GeoNames Search Service API has a 1000 search limit which will be used as an upper limit of results returned unless another service is being used with a higher limit. The default is 100 results.
+         */
+        maxResults?: number;
+        /**
+         * Whether to return only official names for the geographic names. Default is false which will return both official names and formerly official names.
+         */
+        officialOnly?: boolean;
+    };
     /**
-     * The sort order of the defined 'categories'. Any missing categories are appended to the bottom of the sorted list. The results can still be sorted through this option even if there are no categories being filtered.
+     * Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG
      */
-    sortOrder?: string[];
+    disabledSearches?: ('NTS' | 'FSA' | 'LAT/LNG' | 'SCALE')[];
     /**
-     * The maximum number of results to return per request. The Canadian GeoNames Search Service API has a 1000 search limit which will be used as an upper limit of results returned unless another service is being used with a higher limit. The default is 100 results.
+     * Service endpoint urls
      */
-    maxResults?: number;
-    /**
-     * Whether to return only official names for the geographic names. Default is false which will return both official names and formerly official names.
-     */
-    officialOnly?: boolean;
-  };
-  /**
-   * Disable specific types of searches including NTS, FSA, SCALE, or LAT/LNG
-   */
-  disabledSearches?: ("NTS" | "FSA" | "LAT/LNG" | "SCALE")[];
-  /**
-   * Service endpoint urls
-   */
-  serviceUrls: {
-    /**
-     * Endpoint url for geoNames service
-     */
-    geoNames: string;
-    /**
-     * Endpoint url for geoLocation service
-     */
-    geoLocation: string;
-    /**
-     * Endpoint url for geoSuggest service
-     */
-    geoSuggest: string;
-    /**
-     * Endpoint url for provinces service
-     */
-    provinces: string;
-    /**
-     * Endpoint url for types service
-     */
-    types: string;
-  };
+    serviceUrls: {
+        /**
+         * Endpoint url for geoNames service
+         */
+        geoNames: string;
+        /**
+         * Endpoint url for geoLocation service
+         */
+        geoLocation: string;
+        /**
+         * Endpoint url for geoSuggest service
+         */
+        geoSuggest: string;
+        /**
+         * Endpoint url for provinces service
+         */
+        provinces: string;
+        /**
+         * Endpoint url for types service
+         */
+        types: string;
+    };
 }
 export interface ExtentSetNode {
-  id: string;
-  /**
-   * The projection for the given extents
-   */
-  spatialReference:
-    | {
-        [k: string]: any;
-      }
-    | {
-        [k: string]: any;
-      }
-    | {
-        [k: string]: any;
-      }
-    | {
-        [k: string]: any;
-      }
-    | {
-        [k: string]: any;
-      };
-  /**
-   * The default (starting) extent.
-   */
-  default: {
-    xmin: number;
-    ymin: number;
-    xmax: number;
-    ymax: number;
-  };
-  /**
-   * The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied.
-   */
-  full?: {
-    xmin: number;
-    ymin: number;
-    xmax: number;
-    ymax: number;
-  };
-  /**
-   * The maximum extent; full or default extents will be used if not supplied.
-   */
-  maximum?: {
-    xmin: number;
-    ymin: number;
-    xmax: number;
-    ymax: number;
-  };
+    id: string;
+    /**
+     * The projection for the given extents
+     */
+    spatialReference:
+        | {
+              [k: string]: any;
+          }
+        | {
+              [k: string]: any;
+          }
+        | {
+              [k: string]: any;
+          }
+        | {
+              [k: string]: any;
+          }
+        | {
+              [k: string]: any;
+          };
+    /**
+     * The default (starting) extent.
+     */
+    default: {
+        xmin: number;
+        ymin: number;
+        xmax: number;
+        ymax: number;
+    };
+    /**
+     * The full extent (should give good view of the whole map, not necessarily the maximum extent); default will be used if not supplied.
+     */
+    full?: {
+        xmin: number;
+        ymin: number;
+        xmax: number;
+        ymax: number;
+    };
+    /**
+     * The maximum extent; full or default extents will be used if not supplied.
+     */
+    maximum?: {
+        xmin: number;
+        ymin: number;
+        xmax: number;
+        ymax: number;
+    };
 }
 export interface LodSetNode {
-  id: string;
-  /**
-   * Level of details for a specific tile schema
-   */
-  lods: {
-    level: number;
-    resolution: number;
-    scale: number;
-  }[];
+    id: string;
+    /**
+     * Level of details for a specific tile schema
+     */
+    lods: {
+        level: number;
+        resolution: number;
+        scale: number;
+    }[];
 }
 export interface TileSchemaNode {
-  /**
-   * A unique id identifying a tile schema (combination of an extent set and a zoom scale)
-   */
-  id: string;
-  /**
-   * The name to display in the basemap selector for the set of basemaps referencing this schema
-   */
-  name: string;
-  /**
-   * The extent set to be used for this basemap (should reference map.extentSets.id)
-   */
-  extentSetId: string;
-  /**
-   * Optional.  The level of details set to be used for this basemap (should reference map.lod.id)
-   */
-  lodSetId: string;
-  /**
-   * Optional. If set, the overview map will use this layer instead of the active basemap
-   */
-  overviewUrl?: {
+    /**
+     * A unique id identifying a tile schema (combination of an extent set and a zoom scale)
+     */
+    id: string;
+    /**
+     * The name to display in the basemap selector for the set of basemaps referencing this schema
+     */
+    name: string;
+    /**
+     * The extent set to be used for this basemap (should reference map.extentSets.id)
+     */
+    extentSetId: string;
+    /**
+     * Optional.  The level of details set to be used for this basemap (should reference map.lod.id)
+     */
+    lodSetId: string;
+    /**
+     * Optional. If set, the overview map will use this layer instead of the active basemap
+     */
+    overviewUrl?: {
+        /**
+         * The id of the layer for referencing within the viewer (does not relate directly to any external service)
+         */
+        id: string;
+        /**
+         * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
+         */
+        name?: string;
+        /**
+         * The service endpoint of the layer.  It should match the type provided in layerType.
+         */
+        url: string;
+        /**
+         * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+         */
+        refreshInterval?: number;
+        /**
+         * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+         */
+        expectedResponseTime?: number;
+        /**
+         * The metadata url of the layer service
+         */
+        metadataUrl?: string;
+        /**
+         * The catalogue url of the layer service
+         */
+        catalogueUrl?: string;
+        layerType: 'esriImage' | 'esriTile';
+        extent?: ExtentWithReferenceNode;
+        controls?: LegendEntryControls;
+        /**
+         * A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array.
+         */
+        disabledControls?: (
+            | 'opacity'
+            | 'visibility'
+            | 'boundingBox'
+            | 'query'
+            | 'snapshot'
+            | 'metadata'
+            | 'boundaryZoom'
+            | 'refresh'
+            | 'reload'
+            | 'remove'
+            | 'settings'
+            | 'data'
+            | 'styles'
+        )[];
+        /**
+         * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+         */
+        enableStructuredDelete?: boolean;
+        state?: InitialLayerSettings;
+        details?: {
+            /**
+             * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+             */
+            parser?: string;
+            /**
+             * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+             */
+            template: string;
+        };
+    };
+    /**
+     * Indicates if the map projection includes a north pole.  Defaults to false to avoid errors.
+     */
+    hasNorthPole?: boolean;
+}
+export interface ExtentWithReferenceNode {
+    xmin: number;
+    ymin: number;
+    xmax: number;
+    ymax: number;
+    spatialReference?: SpatialReferenceNode;
+}
+export interface InitialLayerSettings {
+    /**
+     * Initial opacity
+     */
+    opacity?: number;
+    /**
+     * Initial visibility setting
+     */
+    visibility?: boolean;
+    /**
+     * Display bounding box
+     */
+    boundingBox?: boolean;
+    /**
+     * Allow querying
+     */
+    query?: boolean;
+    /**
+     * Retrieve all feature data immediately on load
+     */
+    snapshot?: boolean;
+    /**
+     * Disable hover tips
+     */
+    hovertips?: boolean;
+}
+export interface BaseMapNode {
+    /**
+     * A unique identifier for the basemap
+     */
+    id: string;
+    /**
+     * Name of the basemap used for labeling
+     */
+    name: string;
+    /**
+     * Description of the basemap. Will be visible when basemap selector is expanded.Description of the basemap. Will be visible when basemap selector is expanded.
+     */
+    description: string;
+    /**
+     * Optional base map type. This is descriptive only, and will be shown in the basemap selector.
+     */
+    typeSummary?: string;
+    /**
+     * Alt text for the basemap thumbnail image.
+     */
+    altText: string;
+    /**
+     * Path to image file to display in the basemap selector.
+     */
+    thumbnailUrl?: string;
+    /**
+     * The tile schema for this basemap (should reference map.tileSchemas.id)
+     */
+    tileSchemaId: string;
+    /**
+     * A set of URLs which should be composited to form a basemap entry
+     */
+    layers: {
+        id: string;
+        layerType: string;
+        url: string;
+        /**
+         * Initial opacity
+         */
+        opacity?: number;
+    }[];
+    attribution?: AttributionNode;
+    zoomLevels?: {
+        min?: number;
+        max?: number;
+    };
+}
+export interface AttributionNode {
+    text: {
+        enabled: boolean;
+        /**
+         * Optional. Contains the attribution value. If empty, it will use copyright text from the server.
+         */
+        value?: string;
+    };
+    logo: {
+        enabled: boolean;
+        /**
+         * Alternate text for the image.
+         */
+        altText?: string;
+        /**
+         * URL for the image.
+         */
+        value?: string;
+        /**
+         * URL to go to when clicked.
+         */
+        link?: string;
+    };
+}
+export interface BasicLayerNode {
     /**
      * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
@@ -691,26 +866,26 @@ export interface TileSchemaNode {
      * The catalogue url of the layer service
      */
     catalogueUrl?: string;
-    layerType: "esriImage" | "esriTile";
+    layerType: 'esriImage' | 'esriTile';
     extent?: ExtentWithReferenceNode;
     controls?: LegendEntryControls;
     /**
      * A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array.
      */
     disabledControls?: (
-      | "opacity"
-      | "visibility"
-      | "boundingBox"
-      | "query"
-      | "snapshot"
-      | "metadata"
-      | "boundaryZoom"
-      | "refresh"
-      | "reload"
-      | "remove"
-      | "settings"
-      | "data"
-      | "styles"
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
     )[];
     /**
      * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
@@ -718,982 +893,807 @@ export interface TileSchemaNode {
     enableStructuredDelete?: boolean;
     state?: InitialLayerSettings;
     details?: {
-      /**
-       * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-       */
-      parser?: string;
-      /**
-       * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-       */
-      template: string;
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
     };
-  };
-  /**
-   * Indicates if the map projection includes a north pole.  Defaults to false to avoid errors.
-   */
-  hasNorthPole?: boolean;
-}
-export interface ExtentWithReferenceNode {
-  xmin: number;
-  ymin: number;
-  xmax: number;
-  ymax: number;
-  spatialReference?: SpatialReferenceNode;
-}
-export interface InitialLayerSettings {
-  /**
-   * Initial opacity
-   */
-  opacity?: number;
-  /**
-   * Initial visibility setting
-   */
-  visibility?: boolean;
-  /**
-   * Display bounding box
-   */
-  boundingBox?: boolean;
-  /**
-   * Allow querying
-   */
-  query?: boolean;
-  /**
-   * Retrieve all feature data immediately on load
-   */
-  snapshot?: boolean;
-  /**
-   * Disable hover tips
-   */
-  hovertips?: boolean;
-}
-export interface BaseMapNode {
-  /**
-   * A unique identifier for the basemap
-   */
-  id: string;
-  /**
-   * Name of the basemap used for labeling
-   */
-  name: string;
-  /**
-   * Description of the basemap. Will be visible when basemap selector is expanded.Description of the basemap. Will be visible when basemap selector is expanded.
-   */
-  description: string;
-  /**
-   * Optional base map type. This is descriptive only, and will be shown in the basemap selector.
-   */
-  typeSummary?: string;
-  /**
-   * Alt text for the basemap thumbnail image.
-   */
-  altText: string;
-  /**
-   * Path to image file to display in the basemap selector.
-   */
-  thumbnailUrl?: string;
-  /**
-   * The tile schema for this basemap (should reference map.tileSchemas.id)
-   */
-  tileSchemaId: string;
-  /**
-   * A set of URLs which should be composited to form a basemap entry
-   */
-  layers: {
-    id: string;
-    layerType: string;
-    url: string;
-    /**
-     * Initial opacity
-     */
-    opacity?: number;
-  }[];
-  attribution?: AttributionNode;
-  zoomLevels?: {
-    min?: number;
-    max?: number;
-  };
-}
-export interface AttributionNode {
-  text: {
-    enabled: boolean;
-    /**
-     * Optional. Contains the attribution value. If empty, it will use copyright text from the server.
-     */
-    value?: string;
-  };
-  logo: {
-    enabled: boolean;
-    /**
-     * Alternate text for the image.
-     */
-    altText?: string;
-    /**
-     * URL for the image.
-     */
-    value?: string;
-    /**
-     * URL to go to when clicked.
-     */
-    link?: string;
-  };
-}
-export interface BasicLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  name?: string;
-  /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
-   */
-  refreshInterval?: number;
-  /**
-   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
-   */
-  expectedResponseTime?: number;
-  /**
-   * The metadata url of the layer service
-   */
-  metadataUrl?: string;
-  /**
-   * The catalogue url of the layer service
-   */
-  catalogueUrl?: string;
-  layerType: "esriImage" | "esriTile";
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are blocked from modification either by the user or programmatically. These controls can be visible or not as defined in the `controls` array.
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  /**
-   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
-   */
-  enableStructuredDelete?: boolean;
-  state?: InitialLayerSettings;
-  details?: {
-    /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-     */
-    parser?: string;
-    /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-     */
-    template: string;
-  };
 }
 export interface FeatureLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  name?: string;
-  /**
-   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  nameField?: string;
-  /**
-   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
-   */
-  tooltipField?: string;
-  /**
-   * A comma separated list of attribute names that should be requested on query.
-   */
-  outfields?: string;
-  /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
-   */
-  refreshInterval?: number;
-  /**
-   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
-   */
-  expectedResponseTime?: number;
-  /**
-   * The metadata url of the layer service
-   */
-  metadataUrl?: string;
-  /**
-   * The catalogue url of the layer service
-   */
-  catalogueUrl?: string;
-  layerType: "esriFeature";
-  /**
-   * Allows individual symbols to have visibility toggled on/off.
-   */
-  toggleSymbology?: boolean;
-  /**
-   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
-   */
-  tolerance?: number;
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are visible, but disabled for user modification
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  /**
-   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
-   */
-  enableStructuredDelete?: boolean;
-  state?: InitialLayerSettings;
-  /**
-   * Settings for the table
-   */
-  table?: {
     /**
-     * Specifies the table title to apply.
+     * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
-    title?: string;
+    id: string;
     /**
-     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+     * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    description?: string;
+    name?: string;
     /**
-     * Specifies the default table size when first open. True: maximize view; False: split view.
+     * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    maximize?: boolean;
-    search?: {
-      [k: string]: any;
+    nameField?: string;
+    /**
+     * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+     */
+    tooltipField?: string;
+    /**
+     * A comma separated list of attribute names that should be requested on query.
+     */
+    outfields?: string;
+    /**
+     * The service endpoint of the layer.  It should match the type provided in layerType.
+     */
+    url: string;
+    /**
+     * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+     */
+    refreshInterval?: number;
+    /**
+     * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+     */
+    expectedResponseTime?: number;
+    /**
+     * The metadata url of the layer service
+     */
+    metadataUrl?: string;
+    /**
+     * The catalogue url of the layer service
+     */
+    catalogueUrl?: string;
+    layerType: 'esriFeature';
+    /**
+     * Allows individual symbols to have visibility toggled on/off.
+     */
+    toggleSymbology?: boolean;
+    /**
+     * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+     */
+    tolerance?: number;
+    extent?: ExtentWithReferenceNode;
+    controls?: LegendEntryControls;
+    /**
+     * A list of controls which are visible, but disabled for user modification
+     */
+    disabledControls?: (
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
+    )[];
+    /**
+     * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+     */
+    enableStructuredDelete?: boolean;
+    state?: InitialLayerSettings;
+    /**
+     * Settings for the table
+     */
+    table?: {
+        /**
+         * Specifies the table title to apply.
+         */
+        title?: string;
+        /**
+         * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+         */
+        description?: string;
+        /**
+         * Specifies the default table size when first open. True: maximize view; False: split view.
+         */
+        maximize?: boolean;
+        search?: {
+            [k: string]: any;
+        };
+        /**
+         * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+         */
+        lazyFilter?: boolean;
+        /**
+         * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+         */
+        applyMap?: boolean;
+        /**
+         * Specifies if the column filters should be displayed on the table.
+         */
+        showFilter?: boolean;
+        /**
+         * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
+         */
+        filterByExtent?: boolean;
+        /**
+         * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+         */
+        columns?: ColumnNode[];
+        /**
+         * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+         */
+        searchStrictMatch?: boolean;
+        /**
+         * Specifies if print button is available on the datatable. Defaults to false.
+         */
+        printEnabled?: boolean;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+     * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
      */
-    lazyFilter?: boolean;
+    customRenderer?: {
+        [k: string]: any;
+    };
+    details?: {
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
+    };
     /**
-     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     * Specifies options for the fields of a layer.
      */
-    applyMap?: boolean;
-    /**
-     * Specifies if the column filters should be displayed on the table.
-     */
-    showFilter?: boolean;
-    /**
-     * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
-     */
-    filterByExtent?: boolean;
-    /**
-     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
-     */
-    columns?: ColumnNode[];
-    /**
-     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
-     */
-    searchStrictMatch?: boolean;
-    /**
-     * Specifies if print button is available on the datatable. Defaults to false.
-     */
-    printEnabled?: boolean;
-  };
-  /**
-   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
-   */
-  customRenderer?: {
-    [k: string]: any;
-  };
-  details?: {
-    /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-     */
-    parser?: string;
-    /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-     */
-    template: string;
-  };
-  /**
-   * Specifies options for the fields of a layer.
-   */
-  fieldMetadata?: FieldMetadataEntry[];
+    fieldMetadata?: FieldMetadataEntry[];
 }
 /**
  * Specifies option for each column. OID field must be present, if not data will not appear. The order they appears inside the table is the same as the order of this array.
  */
 export interface ColumnNode {
-  /**
-   * Specifies the field name (data) to use to link to the layer column. Must exist in the layer.
-   */
-  data: string;
-  /**
-   * Specifies the column title, uses the layer column name or alias if missing.
-   */
-  title?: string;
-  /**
-   * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
-   */
-  description?: string;
-  /**
-   * Specifies if column is visible by default. True: column is visible; False: column is hidden.
-   */
-  visible?: boolean;
-  /**
-   * Specifies the column width. The minimum column width is set to 100px. If missing, calculated column width will be use.
-   */
-  width?: number;
-  /**
-   * Specifies if column is sort. If missing, no sort is applied.
-   */
-  sort?: "asc" | "desc";
-  /**
-   * Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use.
-   */
-  searchable?: boolean;
-  filter?: FilterNode;
+    /**
+     * Specifies the field name (data) to use to link to the layer column. Must exist in the layer.
+     */
+    data: string;
+    /**
+     * Specifies the column title, uses the layer column name or alias if missing.
+     */
+    title?: string;
+    /**
+     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a column. Do not add description if missing.
+     */
+    description?: string;
+    /**
+     * Specifies if column is visible by default. True: column is visible; False: column is hidden.
+     */
+    visible?: boolean;
+    /**
+     * Specifies the column width. The minimum column width is set to 100px. If missing, calculated column width will be use.
+     */
+    width?: number;
+    /**
+     * Specifies if column is sort. If missing, no sort is applied.
+     */
+    sort?: 'asc' | 'desc';
+    /**
+     * Specifies if column can be filter. True: column can be filter; False: no filter can be applied from global search or filter. If this is false, do not set a filter because it will not be use.
+     */
+    searchable?: boolean;
+    filter?: FilterNode;
 }
 /**
  * Specifies the filter information for a column.
  */
 export interface FilterNode {
-  /**
-   * Specifies the filter type to use. Mainly used to change default text filters to selector filters if the user wishes.
-   */
-  type: "string" | "number" | "date" | "selector";
-  /**
-   * Specifies the filter value. For date and number values are split by ',' (e.g. 0,100). For selector it needs an array like ["Fire", "Fatality"]
-   */
-  value?: string;
-  /**
-   * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
-   */
-  static?: boolean;
+    /**
+     * Specifies the filter type to use. Mainly used to change default text filters to selector filters if the user wishes.
+     */
+    type: 'string' | 'number' | 'date' | 'selector';
+    /**
+     * Specifies the filter value. For date and number values are split by ',' (e.g. 0,100). For selector it needs an array like ["Fire", "Fatality"]
+     */
+    value?: string;
+    /**
+     * Specifies if filter is modifiable. True: filter value can't be modified; False: filter value can be modified.
+     */
+    static?: boolean;
 }
 /**
  * Specifies options for a field in a layer.
  */
 export interface FieldMetadataEntry {
-  /**
-   * Specifies the field name (data) to use to link to the identifier. Must exist in the layer.
-   */
-  data: string;
-  /**
-   * Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name.
-   */
-  alias?: string;
-  [k: string]: any;
+    /**
+     * Specifies the field name (data) to use to link to the identifier. Must exist in the layer.
+     */
+    data: string;
+    /**
+     * Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name.
+     */
+    alias?: string;
+    [k: string]: any;
 }
 export interface FileLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.
-   */
-  name?: string;
-  /**
-   * The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field.
-   */
-  nameField?: string;
-  /**
-   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
-   */
-  tooltipField?: string;
-  /**
-   * The url path to the file.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The hex code representing the layer symbology colour.
-   */
-  colour?: string;
-  layerType: "esriFeature";
-  fileType: "csv" | "geojson" | "shapefile";
-  /**
-   * The latitude field of the layer (only for CSVs).
-   */
-  latField?: string;
-  /**
-   * The longitude field of the layer (only for CSVs).
-   */
-  longField?: string;
-  /**
-   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
-   */
-  tolerance?: number;
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are visible, but disabled for user modification
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  state?: InitialLayerSettings;
-  /**
-   * Settings for the table
-   */
-  table?: {
     /**
-     * Specifies the table title to apply.
+     * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
-    title?: string;
+    id: string;
     /**
-     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+     * The display name of the layer.
      */
-    description?: string;
+    name?: string;
     /**
-     * Specifies the default table size when first open. True: maximize view; False: split view.
+     * The display field of the layer.  If it is not present the viewer will make an attempt to find the first valid field.
      */
-    maximize?: boolean;
-    search?: {
-      [k: string]: any;
+    nameField?: string;
+    /**
+     * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+     */
+    tooltipField?: string;
+    /**
+     * The url path to the file.  It should match the type provided in layerType.
+     */
+    url: string;
+    /**
+     * The hex code representing the layer symbology colour.
+     */
+    colour?: string;
+    layerType: 'esriFeature';
+    fileType: 'csv' | 'geojson' | 'shapefile';
+    /**
+     * The latitude field of the layer (only for CSVs).
+     */
+    latField?: string;
+    /**
+     * The longitude field of the layer (only for CSVs).
+     */
+    longField?: string;
+    /**
+     * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+     */
+    tolerance?: number;
+    extent?: ExtentWithReferenceNode;
+    controls?: LegendEntryControls;
+    /**
+     * A list of controls which are visible, but disabled for user modification
+     */
+    disabledControls?: (
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
+    )[];
+    state?: InitialLayerSettings;
+    /**
+     * Settings for the table
+     */
+    table?: {
+        /**
+         * Specifies the table title to apply.
+         */
+        title?: string;
+        /**
+         * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+         */
+        description?: string;
+        /**
+         * Specifies the default table size when first open. True: maximize view; False: split view.
+         */
+        maximize?: boolean;
+        search?: {
+            [k: string]: any;
+        };
+        /**
+         * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+         */
+        lazyFilter?: boolean;
+        /**
+         * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+         */
+        applyMap?: boolean;
+        /**
+         * Specifies if the column filters should be displayed on the table.
+         */
+        showFilter?: boolean;
+        /**
+         * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
+         */
+        filterByExtent?: boolean;
+        /**
+         * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+         */
+        columns?: ColumnNode[];
+        /**
+         * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+         */
+        searchStrictMatch?: boolean;
+        /**
+         * Specifies if print button is available on the datatable. Defaults to false.
+         */
+        printEnabled?: boolean;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+     * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
      */
-    lazyFilter?: boolean;
+    customRenderer?: {
+        [k: string]: any;
+    };
+    details?: {
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
+    };
     /**
-     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     * Specifies options for the fields of a layer.
      */
-    applyMap?: boolean;
-    /**
-     * Specifies if the column filters should be displayed on the table.
-     */
-    showFilter?: boolean;
-    /**
-     * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
-     */
-    filterByExtent?: boolean;
-    /**
-     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
-     */
-    columns?: ColumnNode[];
-    /**
-     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
-     */
-    searchStrictMatch?: boolean;
-    /**
-     * Specifies if print button is available on the datatable. Defaults to false.
-     */
-    printEnabled?: boolean;
-  };
-  /**
-   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
-   */
-  customRenderer?: {
-    [k: string]: any;
-  };
-  details?: {
-    /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-     */
-    parser?: string;
-    /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-     */
-    template: string;
-  };
-  /**
-   * Specifies options for the fields of a layer.
-   */
-  fieldMetadata?: FieldMetadataEntry[];
+    fieldMetadata?: FieldMetadataEntry[];
 }
 export interface WfsLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  name?: string;
-  /**
-   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  nameField?: string;
-  /**
-   * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
-   */
-  tooltipField?: string;
-  /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The hex code representing the layer symbology colour.
-   */
-  colour?: string;
-  layerType: "ogcWfs";
-  /**
-   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
-   */
-  tolerance?: number;
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are visible, but disabled for user modification
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  state?: InitialLayerSettings;
-  /**
-   * Settings for the table
-   */
-  table?: {
     /**
-     * Specifies the table title to apply.
+     * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
-    title?: string;
+    id: string;
     /**
-     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+     * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    description?: string;
+    name?: string;
     /**
-     * Specifies the default table size when first open. True: maximize view; False: split view.
+     * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    maximize?: boolean;
-    search?: {
-      [k: string]: any;
+    nameField?: string;
+    /**
+     * The field to be used for tooltips.  If it is not present the viewer will use nameField (if provided).
+     */
+    tooltipField?: string;
+    /**
+     * The service endpoint of the layer.  It should match the type provided in layerType.
+     */
+    url: string;
+    /**
+     * The hex code representing the layer symbology colour.
+     */
+    colour?: string;
+    layerType: 'ogcWfs';
+    /**
+     * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+     */
+    tolerance?: number;
+    extent?: ExtentWithReferenceNode;
+    controls?: LegendEntryControls;
+    /**
+     * A list of controls which are visible, but disabled for user modification
+     */
+    disabledControls?: (
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
+    )[];
+    state?: InitialLayerSettings;
+    /**
+     * Settings for the table
+     */
+    table?: {
+        /**
+         * Specifies the table title to apply.
+         */
+        title?: string;
+        /**
+         * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+         */
+        description?: string;
+        /**
+         * Specifies the default table size when first open. True: maximize view; False: split view.
+         */
+        maximize?: boolean;
+        search?: {
+            [k: string]: any;
+        };
+        /**
+         * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+         */
+        lazyFilter?: boolean;
+        /**
+         * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+         */
+        applyMap?: boolean;
+        /**
+         * Specifies if the column filters should be displayed on the table.
+         */
+        showFilter?: boolean;
+        /**
+         * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
+         */
+        filterByExtent?: boolean;
+        /**
+         * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+         */
+        columns?: ColumnNode[];
+        /**
+         * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+         */
+        searchStrictMatch?: boolean;
+        /**
+         * Specifies if print button is available on the datatable. Defaults to false.
+         */
+        printEnabled?: boolean;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+     * Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons.
      */
-    lazyFilter?: boolean;
+    xyInAttribs?: boolean;
     /**
-     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+     * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
      */
-    applyMap?: boolean;
+    customRenderer?: {
+        [k: string]: any;
+    };
+    details?: {
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
+    };
     /**
-     * Specifies if the column filters should be displayed on the table.
+     * Specifies options for the fields of a layer.
      */
-    showFilter?: boolean;
-    /**
-     * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
-     */
-    filterByExtent?: boolean;
-    /**
-     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
-     */
-    columns?: ColumnNode[];
-    /**
-     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
-     */
-    searchStrictMatch?: boolean;
-    /**
-     * Specifies if print button is available on the datatable. Defaults to false.
-     */
-    printEnabled?: boolean;
-  };
-  /**
-   * Indicates if the point co-ords should be copied to the feature attributes. Ignored for lines and polygons.
-   */
-  xyInAttribs?: boolean;
-  /**
-   * Optional renderer object to apply to the layer. Follows ESRI ArcGIS Server json convention
-   */
-  customRenderer?: {
-    [k: string]: any;
-  };
-  details?: {
-    /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
-     */
-    parser?: string;
-    /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
-     */
-    template: string;
-  };
-  /**
-   * Specifies options for the fields of a layer.
-   */
-  fieldMetadata?: FieldMetadataEntry[];
+    fieldMetadata?: FieldMetadataEntry[];
 }
 export interface WmsLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  name?: string;
-  /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
-   */
-  refreshInterval?: number;
-  /**
-   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
-   */
-  expectedResponseTime?: number;
-  /**
-   * The metadata url of the layer service
-   */
-  metadataUrl?: string;
-  /**
-   * The catalogue url of the layer service
-   */
-  catalogueUrl?: string;
-  /**
-   * Prevents a getCapabilities request, instead relying on info provided in layerEntries
-   */
-  suppressGetCapabilities?: boolean;
-  layerEntries: WmsLayerEntryNode[];
-  layerType: "ogcWms";
-  /**
-   * If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested.
-   */
-  featureInfoMimeType?: "text/html;fgpv=summary" | "text/html" | "text/plain" | "application/json";
-  /**
-   * If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements
-   */
-  legendMimeType?: "image/png" | "image/gif" | "image/jpeg" | "image/svg" | "image/svg+xml";
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are visible, but disabled for user modification
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  /**
-   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
-   */
-  enableStructuredDelete?: boolean;
-  state?: InitialLayerSettings;
-  details?: {
     /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
-    parser?: string;
+    id: string;
     /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    template: string;
-  };
+    name?: string;
+    /**
+     * The service endpoint of the layer.  It should match the type provided in layerType.
+     */
+    url: string;
+    /**
+     * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+     */
+    refreshInterval?: number;
+    /**
+     * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+     */
+    expectedResponseTime?: number;
+    /**
+     * The metadata url of the layer service
+     */
+    metadataUrl?: string;
+    /**
+     * The catalogue url of the layer service
+     */
+    catalogueUrl?: string;
+    /**
+     * Prevents a getCapabilities request, instead relying on info provided in layerEntries
+     */
+    suppressGetCapabilities?: boolean;
+    layerEntries: WmsLayerEntryNode[];
+    layerType: 'ogcWms';
+    /**
+     * If specified indicates that GetFeatureInfo should be enabled for this WMS and indicates the format that should be requested.
+     */
+    featureInfoMimeType?: 'text/html;fgpv=summary' | 'text/html' | 'text/plain' | 'application/json';
+    /**
+     * If specified indicates that GetLegendGraphic should be enabled for this WMS and indicates the format that should be requested.  FIXME check legendUrl for additional requirements
+     */
+    legendMimeType?: 'image/png' | 'image/gif' | 'image/jpeg' | 'image/svg' | 'image/svg+xml';
+    extent?: ExtentWithReferenceNode;
+    controls?: LegendEntryControls;
+    /**
+     * A list of controls which are visible, but disabled for user modification
+     */
+    disabledControls?: (
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
+    )[];
+    /**
+     * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+     */
+    enableStructuredDelete?: boolean;
+    state?: InitialLayerSettings;
+    details?: {
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
+    };
 }
 export interface WmsLayerEntryNode {
-  /**
-   * The id of the layer entry in the WMS
-   */
-  id: string;
-  /**
-   * A descriptive name for the layer.  To be used in the legend.
-   */
-  name?: string;
-  /**
-   * All the styles for the layer entry in the WMS
-   */
-  allStyles?: string[];
-  /**
-   * The current style for the layer entry in the WMS
-   */
-  currentStyle?: string;
-  controls?: LegendEntryControls;
-  state?: InitialLayerSettings;
+    /**
+     * The id of the layer entry in the WMS
+     */
+    id: string;
+    /**
+     * A descriptive name for the layer.  To be used in the legend.
+     */
+    name?: string;
+    /**
+     * All the styles for the layer entry in the WMS
+     */
+    allStyles?: string[];
+    /**
+     * The current style for the layer entry in the WMS
+     */
+    currentStyle?: string;
+    controls?: LegendEntryControls;
+    state?: InitialLayerSettings;
 }
 export interface DynamicLayerNode {
-  /**
-   * The id of the layer for referencing within the viewer (does not relate directly to any external service)
-   */
-  id: string;
-  /**
-   * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  name?: string;
-  /**
-   * The service endpoint of the layer.  It should match the type provided in layerType.
-   */
-  url: string;
-  /**
-   * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
-   */
-  refreshInterval?: number;
-  /**
-   * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
-   */
-  expectedResponseTime?: number;
-  /**
-   * The metadata url of the layer service
-   */
-  metadataUrl?: string;
-  /**
-   * The catalogue url of the layer service
-   */
-  catalogueUrl?: string;
-  layerType: "esriDynamic";
-  /**
-   * Allows individual symbols to have visibility toggled on/off.
-   */
-  toggleSymbology?: boolean;
-  /**
-   * Indicates that the dynamic layer with a single layer entry should be rendered without the root group.
-   */
-  singleEntryCollapse?: boolean;
-  layerEntries: DynamicLayerEntryNode[];
-  /**
-   * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
-   */
-  tolerance?: number;
-  extent?: ExtentWithReferenceNode;
-  controls?: LegendEntryControls;
-  /**
-   * A list of controls which are visible, but disabled for user modification
-   */
-  disabledControls?: (
-    | "opacity"
-    | "visibility"
-    | "boundingBox"
-    | "query"
-    | "snapshot"
-    | "metadata"
-    | "boundaryZoom"
-    | "refresh"
-    | "reload"
-    | "remove"
-    | "settings"
-    | "data"
-    | "styles"
-  )[];
-  /**
-   * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
-   */
-  enableStructuredDelete?: boolean;
-  state?: InitialLayerSettings;
-  /**
-   * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
-   */
-  imageFormat?: "png" | "png8" | "png24" | "png32" | "jpg" | "pdf" | "bmp" | "gif" | "svg";
-  details?: {
     /**
-     * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+     * The id of the layer for referencing within the viewer (does not relate directly to any external service)
      */
-    parser?: string;
+    id: string;
     /**
-     * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+     * The display name of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    template: string;
-  };
+    name?: string;
+    /**
+     * The service endpoint of the layer.  It should match the type provided in layerType.
+     */
+    url: string;
+    /**
+     * The automatic refresh interval of the layer in minutes. Maximum interval is 100 minutes.
+     */
+    refreshInterval?: number;
+    /**
+     * The time span after which a 'slow-to-respond' notification is shown for any loading or refreshing layer.
+     */
+    expectedResponseTime?: number;
+    /**
+     * The metadata url of the layer service
+     */
+    metadataUrl?: string;
+    /**
+     * The catalogue url of the layer service
+     */
+    catalogueUrl?: string;
+    layerType: 'esriDynamic';
+    /**
+     * Allows individual symbols to have visibility toggled on/off.
+     */
+    toggleSymbology?: boolean;
+    /**
+     * Indicates that the dynamic layer with a single layer entry should be rendered without the root group.
+     */
+    singleEntryCollapse?: boolean;
+    layerEntries: DynamicLayerEntryNode[];
+    /**
+     * Specifies the tolerance in pixels when determining if a feature was clicked. Should be non-negative integer
+     */
+    tolerance?: number;
+    extent?: ExtentWithReferenceNode;
+    controls?: LegendEntryControls;
+    /**
+     * A list of controls which are visible, but disabled for user modification
+     */
+    disabledControls?: (
+        | 'opacity'
+        | 'visibility'
+        | 'boundingBox'
+        | 'query'
+        | 'snapshot'
+        | 'metadata'
+        | 'boundaryZoom'
+        | 'refresh'
+        | 'reload'
+        | 'remove'
+        | 'settings'
+        | 'data'
+        | 'styles'
+    )[];
+    /**
+     * Allows Remove menu control on any layer in a structured legend. Caution: may allow users to delete layers and break legend
+     */
+    enableStructuredDelete?: boolean;
+    state?: InitialLayerSettings;
+    /**
+     * The format of the layer image output. It should only be in one of png, png8, png28, png32, jpg, pdf, bmp, gif, svg.  Defaults to png32 if not provided
+     */
+    imageFormat?: 'png' | 'png8' | 'png24' | 'png32' | 'jpg' | 'pdf' | 'bmp' | 'gif' | 'svg';
+    details?: {
+        /**
+         * A path to a javascript file with a function for parsing the layers identify output. Only needed if a custom template is being used.
+         */
+        parser?: string;
+        /**
+         * A path to an html template that will override default identify output. The template can contain angular bindings, directives, etc.
+         */
+        template: string;
+    };
 }
 export interface DynamicLayerEntryNode {
-  /**
-   * The index of the layer in the map service.
-   */
-  index: number;
-  /**
-   * A descriptive name for the layer, can override the name coming from the service.
-   */
-  name?: string;
-  /**
-   * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
-   */
-  nameField?: string;
-  /**
-   * A comma separated list of attribute names that should be requested on query.
-   */
-  outfields?: string;
-  /**
-   * Allows for overriding the bounding box supplied by the service.
-   */
-  extent?: {
-    xmin: number;
-    ymin: number;
-    xmax: number;
-    ymax: number;
-    spatialReference?: SpatialReferenceNode;
-  };
-  controls?: LegendEntryControls;
-  state?: InitialLayerSettings;
-  /**
-   * A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings).
-   */
-  stateOnly?: boolean;
-  /**
-   * Settings for table panel
-   */
-  table?: {
     /**
-     * Specifies the table title to apply.
+     * The index of the layer in the map service.
      */
-    title?: string;
+    index: number;
     /**
-     * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+     * A descriptive name for the layer, can override the name coming from the service.
      */
-    description?: string;
+    name?: string;
     /**
-     * Specifies the default table size when first open. True: maximize view; False: split view.
+     * The display field of the layer.  If it is not present the viewer will make an attempt to scrape this information.
      */
-    maximize?: boolean;
-    search?: {
-      [k: string]: any;
+    nameField?: string;
+    /**
+     * A comma separated list of attribute names that should be requested on query.
+     */
+    outfields?: string;
+    /**
+     * Allows for overriding the bounding box supplied by the service.
+     */
+    extent?: {
+        xmin: number;
+        ymin: number;
+        xmax: number;
+        ymax: number;
+        spatialReference?: SpatialReferenceNode;
+    };
+    controls?: LegendEntryControls;
+    state?: InitialLayerSettings;
+    /**
+     * A flag indicating this entry is only for state tracking (i.e. it should not be displayed on the UI and all of the controls will be ignored, but the layer itself will be displayed on the map with the given state settings).
+     */
+    stateOnly?: boolean;
+    /**
+     * Settings for table panel
+     */
+    table?: {
+        /**
+         * Specifies the table title to apply.
+         */
+        title?: string;
+        /**
+         * Deprecated as settings panel no longer exists. Specifies the additional information to display in the setting panel to give more information about a table.
+         */
+        description?: string;
+        /**
+         * Specifies the default table size when first open. True: maximize view; False: split view.
+         */
+        maximize?: boolean;
+        search?: {
+            [k: string]: any;
+        };
+        /**
+         * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+         */
+        lazyFilter?: boolean;
+        /**
+         * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
+         */
+        applyMap?: boolean;
+        /**
+         * Specifies if the column filters should be displayed on the table.
+         */
+        showFilter?: boolean;
+        /**
+         * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
+         */
+        filterByExtent?: boolean;
+        /**
+         * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
+         */
+        columns?: ColumnNode[];
+        /**
+         * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
+         */
+        searchStrictMatch?: boolean;
+        /**
+         * Specifies if print button is available on the datatable. Defaults to false.
+         */
+        printEnabled?: boolean;
     };
     /**
-     * Specifies if simple filtering is on. If true, we match any substring of text entered. If false, search field accepts regex expressions. Note: Only effects text fields
+     * Specifies options for the fields of a layer.
      */
-    lazyFilter?: boolean;
-    /**
-     * Specifies if the default filters (from columns filter) are apply to the map (definition query). True: it is applied; False: it is not applied.
-     */
-    applyMap?: boolean;
-    /**
-     * Specifies if the column filters should be displayed on the table.
-     */
-    showFilter?: boolean;
-    /**
-     * Specifies if the table should filter rows by extent by default. If true, the table will filter by extent when it is opened.
-     */
-    filterByExtent?: boolean;
-    /**
-     * Specifies the array of columns for the table. When there is an item in this array, it will be use to define wich and how column will be set for the table. If a column is not in the array it will be assume as disabled.
-     */
-    columns?: ColumnNode[];
-    /**
-     * Specifies if text must match identical (including accents) when filtering and searching. Defaults to false allowing for accents and such to be ignored. Used in table plugins (if applicable). Else has no effect.
-     */
-    searchStrictMatch?: boolean;
-    /**
-     * Specifies if print button is available on the datatable. Defaults to false.
-     */
-    printEnabled?: boolean;
-  };
-  /**
-   * Specifies options for the fields of a layer.
-   */
-  fieldMetadata?: FieldMetadataEntry[];
+    fieldMetadata?: FieldMetadataEntry[];
 }
 export interface LegendAuto {
-  type: "autopopulate";
+    type: 'autopopulate';
 }
 export interface LegendStructured {
-  type: "structured";
-  root: EntryGroup;
+    type: 'structured';
+    root: EntryGroup;
 }
 export interface EntryGroup {
-  /**
-   * Title of the group
-   */
-  name: string;
-  /**
-   * Indicates that the legend group will be hidden from the UI and all its controls will be inaccessible to the user.
-   */
-  hidden?: boolean;
-  expanded?: boolean;
-  children: (EntryGroup | VisibilitySet | Entry | InfoSection)[];
-  controls?: LegendGroupControls;
-  disabledControls?: LegendGroupControls;
+    /**
+     * Title of the group
+     */
+    name: string;
+    /**
+     * Indicates that the legend group will be hidden from the UI and all its controls will be inaccessible to the user.
+     */
+    hidden?: boolean;
+    expanded?: boolean;
+    children: (EntryGroup | VisibilitySet | Entry | InfoSection)[];
+    controls?: LegendGroupControls;
+    disabledControls?: LegendGroupControls;
 }
 export interface VisibilitySet {
-  /**
-   * Renders a visiblity set as a single (currently selected) legend entry. The selection cannot be directly changed by the user, but can be modified through the API or other legend entries linked to the same layers.
-   */
-  collapse?: boolean;
-  exclusiveVisibility: (EntryGroup | Entry)[];
+    /**
+     * Renders a visiblity set as a single (currently selected) legend entry. The selection cannot be directly changed by the user, but can be modified through the API or other legend entries linked to the same layers.
+     */
+    collapse?: boolean;
+    exclusiveVisibility: (EntryGroup | Entry)[];
 }
 export interface Entry {
-  /**
-   * Link to a layer defined in the layers section
-   */
-  layerId: string;
-  /**
-   * Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user.
-   */
-  hidden?: boolean;
-  controlledIds?: string[];
-  /**
-   * Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true .
-   */
-  entryIndex?: number;
-  /**
-   * Id of the 'sublayer' in the case of an OGC WMS layer
-   */
-  entryId?: string;
-  /**
-   * An optional icon, if present it will be used to primarily represent the layer
-   */
-  coverIcon?: string;
-  /**
-   * Optional description displayed above the symbology stack.
-   */
-  description?: string;
-  symbologyStack?: SymbologyStack;
-  /**
-   * An optional style, describes how the symbology stack should be rendered
-   */
-  symbologyRenderStyle?: "icons" | "images";
-  /**
-   * Indicates if symbology stack is expand by default
-   */
-  symbologyExpanded?: boolean;
+    /**
+     * Link to a layer defined in the layers section
+     */
+    layerId: string;
+    /**
+     * Indicates that the legend block will be hidden from the UI and all its controls will be inaccessible to the user.
+     */
+    hidden?: boolean;
+    controlledIds?: string[];
+    /**
+     * Index of the 'sublayer' in the case of an ESRI dynamic layer.  This cannot point to an entry with stateOnly:true .
+     */
+    entryIndex?: number;
+    /**
+     * Id of the 'sublayer' in the case of an OGC WMS layer
+     */
+    entryId?: string;
+    /**
+     * An optional icon, if present it will be used to primarily represent the layer
+     */
+    coverIcon?: string;
+    /**
+     * Optional description displayed above the symbology stack.
+     */
+    description?: string;
+    symbologyStack?: SymbologyStack;
+    /**
+     * An optional style, describes how the symbology stack should be rendered
+     */
+    symbologyRenderStyle?: 'icons' | 'images';
+    /**
+     * Indicates if symbology stack is expand by default
+     */
+    symbologyExpanded?: boolean;
 }

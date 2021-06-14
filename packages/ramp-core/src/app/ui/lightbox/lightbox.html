@@ -3,18 +3,20 @@
         aria-label="{{ contentPane.aria.close | translate }}"
         class="rv-close md-icon-button black rv-button-32"
         ng-click="self.close()"
-        rv-close-button>
+        rv-close-button
+    >
         <md-tooltip>{{'contentPane.tooltip.close' | translate}}</md-tooltip>
         <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
     </md-button>
 
-    <img class="rv-lightbox-image" src="{{ self.currImage }}"></img>
+    <img class="rv-lightbox-image" src="{{ self.currImage }}" />
 
     <md-button
         aria-label="{{ lightbox.tooltip.previous | translate }}"
         class="rv-lightbox-previous md-icon-button black rv-button-32"
         ng-click="self.previous()"
-        ng-if="self.length > 1">
+        ng-if="self.length > 1"
+    >
         <md-tooltip>{{'lightbox.tooltip.previous' | translate}}</md-tooltip>
         <md-icon class="rv-lg" md-svg-src="hardware:keyboard_arrow_left"></md-icon>
     </md-button>
@@ -23,7 +25,8 @@
         aria-label="{{ lightbox.tooltip.next | translate }}"
         class="rv-lightbox-next md-icon-button black rv-button-32"
         ng-click="self.next()"
-        ng-if="self.length > 1">
+        ng-if="self.length > 1"
+    >
         <md-tooltip>{{'lightbox.tooltip.next' | translate}}</md-tooltip>
         <md-icon class="rv-lg" md-svg-src="hardware:keyboard_arrow_right"></md-icon>
     </md-button>

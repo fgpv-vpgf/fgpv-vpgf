@@ -12,9 +12,7 @@
  *
  */
 
-angular
-    .module('material.components.menuBar')
-    .decorator('mdMenuItemDirective', mdMenuItemDirectiveDecorator);
+angular.module('material.components.menuBar').decorator('mdMenuItemDirective', mdMenuItemDirectiveDecorator);
 
 function mdMenuItemDirectiveDecorator($delegate, $compile) {
     'ngInject';
@@ -23,7 +21,7 @@ function mdMenuItemDirectiveDecorator($delegate, $compile) {
     const originalCompile = mdMenuItemDirective.compile; // store reference to its compile function
     mdMenuItemDirective.compile = decorateCompile(originalCompile); // decorate compile function
 
-    return ([mdMenuItemDirective]);
+    return [mdMenuItemDirective];
 
     /**
      * Decorates the original menuItem compile functions.
@@ -47,9 +45,12 @@ function mdMenuItemDirectiveDecorator($delegate, $compile) {
                 // specify icon for checkbox and radio in rv-right-icon - done here since angular material actively removes icons to place its own checkmark icon
                 if (attrs.rvRightIcon) {
                     if (attrs.type === 'checkbox' || attrs.type === 'radio') {
-
                         if (attrs.rvRightIcon !== 'none') {
-                            button.prepend($compile(`<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`)(scope).removeAttr('aria-label'));
+                            button.prepend(
+                                $compile(`<md-icon md-svg-icon="${attrs.rvRightIcon}"></md-icon>`)(scope).removeAttr(
+                                    'aria-label'
+                                )
+                            );
                         }
 
                         // reverse the checkbox icon so it is icon/text and remove the ident class

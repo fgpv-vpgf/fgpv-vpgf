@@ -15,7 +15,7 @@ function graphicsService($q) {
         svgToCanvas,
         createCanvas,
         mergeCanvases,
-        isTainted
+        isTainted,
     };
 
     const service = {
@@ -26,7 +26,7 @@ function graphicsService($q) {
         getTextWidth,
         setSvgHref,
         imageLoader,
-        isTainted
+        isTainted,
     };
 
     return service;
@@ -43,10 +43,10 @@ function graphicsService($q) {
     function svgToCanvas(svg, canvas, optionOverrides = {}) {
         const defaultOptions = {
             ignoreAnimation: true,
-            ignoreMouse: true
+            ignoreMouse: true,
         };
 
-        const svgPromise = $q(resolve => {
+        const svgPromise = $q((resolve) => {
             const options = angular.extend(
                 defaultOptions,
                 optionOverrides,

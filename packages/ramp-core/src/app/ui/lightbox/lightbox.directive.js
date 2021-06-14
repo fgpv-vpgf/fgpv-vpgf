@@ -9,15 +9,13 @@ const templateUrl = require('./lightbox.html');
  * The `rvLightbox` directive creates the lightbox control
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvLightbox', rvLightbox);
+angular.module('app.ui').directive('rvLightbox', rvLightbox);
 
 function rvLightbox($mdDialog, referenceService) {
     const directive = {
         restrict: 'A',
         scope: '=',
-        link: link
+        link: link,
     };
 
     return directive;
@@ -25,8 +23,7 @@ function rvLightbox($mdDialog, referenceService) {
     /*********/
 
     function link(scope, element) {
-
-        element.on('click', event => {
+        element.on('click', (event) => {
             // exit if the element is a link but not an image since they should be able to open
             if (event.target.nodeName === 'A') {
                 return;
@@ -40,13 +37,15 @@ function rvLightbox($mdDialog, referenceService) {
 
             if (imgs.length > 0) {
                 const images = [];
-                imgs.each(index => { images.push(imgs[index].src); });
+                imgs.each((index) => {
+                    images.push(imgs[index].src);
+                });
 
                 $mdDialog.show({
                     controller: LightboxController,
                     parent: referenceService.panels.shell,
                     locals: {
-                        items: { images }
+                        items: { images },
                     },
                     templateUrl,
                     clickOutsideToClose: true,
@@ -54,7 +53,7 @@ function rvLightbox($mdDialog, referenceService) {
                     escapeToClose: true,
                     controllerAs: 'self',
                     bindToController: true,
-                    hasBackdrop: true
+                    hasBackdrop: true,
                 });
             }
         });

@@ -2,12 +2,7 @@
     "ui": {
         "navBar": {
             "zoom": "buttons",
-            "extra": [
-                "fullscreen",
-                "geoLocator",
-                "home",
-                "help"
-            ]
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
         },
         "sideMenu": {
             "logo": true
@@ -82,9 +77,7 @@
                 "id": "powerplant100mw-electric",
                 "name": "Electric Transmission Line",
                 "layerType": "esriFeature",
-                "controls": [
-                    "remove"
-                ],
+                "controls": ["remove"],
                 "state": {
                     "visibility": false,
                     "boundingBox": false

@@ -9,9 +9,7 @@ const templateUrl = require('./geosearch.html');
  * The `rvGeosearch` directive let user enter text for a geolocation search.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvGeosearch', rvGeosearch);
+angular.module('app.ui').directive('rvGeosearch', rvGeosearch);
 
 /**
  * `rvGeosearch` directive body.
@@ -28,7 +26,6 @@ function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope
         controllerAs: 'self',
         bindToController: true,
         link: (scope, element) => {
-
             // https://github.com/fgpv-vpgf/fgpv-vpgf/issues/1668
             // IE requires a specific fix because it will not size a flex child's height correctly unless its parent has a set height (not percentage); so the height is set explicitly every time the main panel height changes;
             // read here for more details http://stackoverflow.com/a/35537510
@@ -36,15 +33,19 @@ function rvGeosearch(referenceService, debounceService, $rootElement, $rootScope
             if (appInfo.isIE11) {
                 const geosearchContentNode = element.find('.rv-geosearch-content:first');
 
-                const debounceUpdateMaxHeight = debounceService.registerDebounce(newDimensions =>
-                    geosearchContentNode.css('max-height', newDimensions.height - 10), 175, false, true); // 10 accounts for top margin :()
+                const debounceUpdateMaxHeight = debounceService.registerDebounce(
+                    (newDimensions) => geosearchContentNode.css('max-height', newDimensions.height - 10),
+                    175,
+                    false,
+                    true
+                ); // 10 accounts for top margin :()
 
                 referenceService.onResize(appInfo.mapi.panels.geoSearch.element, debounceUpdateMaxHeight);
             }
 
             // force focus on open geosearch because sometimes it is lost
             $rootScope.$on(events.rvGeosearchClose, () => $rootElement.find('.rv-app-geosearch').rvFocus());
-        }
+        },
     };
 
     return directive;
@@ -57,7 +58,7 @@ function Controller(geosearchService, events, debounceService, layoutService) {
     self.service = geosearchService;
 
     const ref = {
-        extentChangeListener: angular.noop
+        extentChangeListener: angular.noop,
     };
 
     self.onTopFiltersUpdate = onTopFiltersUpdate;
@@ -107,7 +108,7 @@ function Controller(geosearchService, events, debounceService, layoutService) {
         const location = target.children[1];
         const type = target.children[3];
 
-        result.isNameTruncated = (location.scrollWidth + type.scrollWidth) > (target.clientWidth - 50);
+        result.isNameTruncated = location.scrollWidth + type.scrollWidth > target.clientWidth - 50;
     }
 
     /**

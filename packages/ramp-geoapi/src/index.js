@@ -14,20 +14,22 @@ const symbology = require('./symbology.js');
 // interfaces with the dojo module loader, wraps everything in a promise.
 function makeDojoRequests(modules, window) {
     return new Promise(function (resolve, reject) {
-
         // NOTE: do not change the callback to an arrow function since we don't know if
         // Dojo's require has any expectations of the scope within that function or
         // does any odd metaprogramming
-        window.require(modules.map(mod => mod[0]), function () {
-            const esriBundle = {};
+        window.require(
+            modules.map((mod) => mod[0]),
+            function () {
+                const esriBundle = {};
 
-            // iterate over arguments to avoid creating an ugly giant function call
-            // arguments is not an array so we do this the hard way
-            for (let i = 0; i < arguments.length; ++i) {
-                esriBundle[modules[i][1]] = arguments[i];
+                // iterate over arguments to avoid creating an ugly giant function call
+                // arguments is not an array so we do this the hard way
+                for (let i = 0; i < arguments.length; ++i) {
+                    esriBundle[modules[i][1]] = arguments[i];
+                }
+                resolve(esriBundle);
             }
-            resolve(esriBundle);
-        });
+        );
 
         window.require.on('error', () => reject());
     });
@@ -63,13 +65,12 @@ function initAll(esriBundle, window) {
     // e.g. [['esri/tasks/FindTask', 'findTaskClass'], ['esri/geometry/mathUtils', 'mathUtils']]
     // return value is object with properties containing the dojo classes defined in the param.
     // e.g. { findTaskClass: <FindTask Dojo Class>, mathUtils: <mathUtils Dojo Class> }
-    api.esriLoadApiClasses = modules => makeDojoRequests(modules, window);
+    api.esriLoadApiClasses = (modules) => makeDojoRequests(modules, window);
 
     return api;
 }
 
 module.exports = function (esriLoaderUrl, window) {
-
     // esriDeps is an array pairing ESRI JSAPI dependencies with their imported names
     // in esriBundle
     const esriDeps = [
@@ -118,7 +119,7 @@ module.exports = function (esriLoaderUrl, window) {
         ['esri/tasks/QueryTask', 'QueryTask'],
         ['esri/tasks/PrintParameters', 'PrintParameters'],
         ['esri/tasks/PrintTask', 'PrintTask'],
-        ['esri/tasks/PrintTemplate', 'PrintTemplate']
+        ['esri/tasks/PrintTemplate', 'PrintTemplate'],
     ];
 
     // the startup for this module is:
@@ -129,8 +130,9 @@ module.exports = function (esriLoaderUrl, window) {
     // a reference to our API
     return new Promise(function (resolve, reject) {
         if (window.require) {
-            console.warn('window.require has been set, ' +
-                'attempting to reuse existing loader with no new script tag created');
+            console.warn(
+                'window.require has been set, ' + 'attempting to reuse existing loader with no new script tag created'
+            );
             resolve();
             return;
         }
@@ -138,12 +140,13 @@ module.exports = function (esriLoaderUrl, window) {
         const oScript = window.document.createElement('script');
         const oHead = window.document.head || window.document.getElementsByTagName('head')[0];
 
-        oScript.type = 'text\/javascript';
-        oScript.onerror = err => reject(err);
+        oScript.type = 'text/javascript';
+        oScript.onerror = (err) => reject(err);
         oScript.onload = () => resolve();
         oHead.appendChild(oScript);
         oScript.src = esriLoaderUrl; // '//ec.cloudapp.net/~aly/esri/dojo/dojo.js';
         console.log('made a promise');
-    }).then(() => makeDojoRequests(esriDeps, window))
-      .then(esriBundle => initAll(esriBundle, window));
+    })
+        .then(() => makeDojoRequests(esriDeps, window))
+        .then((esriBundle) => initAll(esriBundle, window));
 };

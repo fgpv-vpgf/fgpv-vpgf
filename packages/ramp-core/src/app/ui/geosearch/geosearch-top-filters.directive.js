@@ -9,9 +9,7 @@ const templateUrl = require('./geosearch-top-filters.html');
  * The `rvGeosearchTopFilters` directive to set filters such as Province and Type.
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvGeosearchTopFilters', rvGeosearchTopFilters);
+angular.module('app.ui').directive('rvGeosearchTopFilters', rvGeosearchTopFilters);
 
 /**
  * `rvGeosearchTopFilters` directive body.
@@ -24,11 +22,11 @@ function rvGeosearchTopFilters() {
         restrict: 'E',
         templateUrl,
         scope: {
-            onUpdate: '='
+            onUpdate: '=',
         },
         controller: Controller,
         controllerAs: 'self',
-        bindToController: true
+        bindToController: true,
     };
 
     return directive;

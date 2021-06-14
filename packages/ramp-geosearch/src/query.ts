@@ -1,8 +1,10 @@
 import * as defs from './definitions';
 
 export function make(config: defs.MainConfig, query: string): Query {
-    const latLngRegDD = /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
-    const latLngRegDMS = /^[-+]?([0-8]?\d|90)\s*([0-5]?\d)\s*([0-5]?\d)\s*[,|;\s]\s*[-+]?(\d{2}|1[0-7]\d|180)\s*([0-5]?\d)\s*([0-5]?\d)[*]$/;
+    const latLngRegDD =
+        /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
+    const latLngRegDMS =
+        /^[-+]?([0-8]?\d|90)\s*([0-5]?\d)\s*([0-5]?\d)\s*[,|;\s]\s*[-+]?(\d{2}|1[0-7]\d|180)\s*([0-5]?\d)\s*([0-5]?\d)[*]$/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
     const ntsReg = /^\d{2,3}[A-P]/;
     const scaleReg = /^[1][:]\d{1,3}[ ]*\d{1,3}[ ]*\d{1,3}[*]$/; // from 1:100 to 1:100 000 000
@@ -20,11 +22,11 @@ export function make(config: defs.MainConfig, query: string): Query {
         return new LatLongQuery(config, queryStr, 'dd');
     } else if (latLngRegDMS.test(query)) {
         // Lat/Long Degree Minute Second test
-        return new LatLongQuery(config, queryStr, 'dms')
+        return new LatLongQuery(config, queryStr, 'dms');
     } else if (/^[A-Za-z]/.test(query)) {
         // name based search
         const q = new Query(config, query);
-        q.onComplete = q.search().then(results => {
+        q.onComplete = q.search().then((results) => {
             q.results = results;
             return q;
         });
@@ -33,8 +35,7 @@ export function make(config: defs.MainConfig, query: string): Query {
         // scale search
         const q = new Query(config, query);
         const typeCode = 'SCALE';
-        q.onComplete = q.search().then(_ => {
-
+        q.onComplete = q.search().then((_) => {
             q.scale = [{ name: queryStr, type: { name: q.config.types.validTypes[typeCode], code: typeCode } }];
             return q;
         });
@@ -67,12 +68,10 @@ export class Query {
         const query = altQuery ? altQuery : this.query;
         if (useLocate) {
             url = this.config.geoLocateUrl + '?q=' + query;
-
         } else if (lat && lon) {
-            url = `${this.config.geoNameUrl}?lat=${lat}&lon=${lon}&num=${this.config.maxResults}`
-
+            url = `${this.config.geoNameUrl}?lat=${lat}&lon=${lon}&num=${this.config.maxResults}`;
         } else {
-            url = `${this.config.geoNameUrl}?q=${query}&num=${this.config.maxResults}`
+            url = `${this.config.geoNameUrl}?q=${query}&num=${this.config.maxResults}`;
         }
 
         if (restrict) {
@@ -95,30 +94,36 @@ export class Query {
     }
 
     normalizeNameItems(items: defs.NameResponse[]): defs.NameResultList {
-        return items.filter(i => this.config.types.validTypes[i.concise.code]).map(i => {
-            return {
-                name: i.name,
-                location: i.location,
-                province: this.config.provinces.list[i.province.code],
-                type: this.config.types.allTypes[i.concise.code],
-                LatLon: { lat: i.latitude, lon: i.longitude },
-                bbox: i.bbox
-            }
-        });
+        return items
+            .filter((i) => this.config.types.validTypes[i.concise.code])
+            .map((i) => {
+                return {
+                    name: i.name,
+                    location: i.location,
+                    province: this.config.provinces.list[i.province.code],
+                    type: this.config.types.allTypes[i.concise.code],
+                    LatLon: { lat: i.latitude, lon: i.longitude },
+                    bbox: i.bbox,
+                };
+            });
     }
 
     search(restrict?: number[]): Promise<defs.NameResultList> {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then(r => this.normalizeNameItems(r.items));
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict))).then((r) =>
+            this.normalizeNameItems(r.items)
+        );
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
-        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(r => {
-            return this.normalizeNameItems(r.items)
-        });
+        return (<Promise<defs.RawNameResult>>this.jsonRequest(this.getUrl(false, restrict, undefined, lat, lon))).then(
+            (r) => {
+                return this.normalizeNameItems(r.items);
+            }
+        );
     }
 
     locateByQuery(altQuery?: string): Promise<defs.LocateResponseList> {
-        return (<Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined, altQuery)));
+        return <Promise<defs.LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined, altQuery));
     }
 
     jsonRequest(url: string) {
@@ -144,18 +149,22 @@ export class Query {
 
     sortResults(response: any): any {
         if (this.config.sortOrder.length === 0 || !response.items || response.items.length === 0) {
-            return response
+            return response;
         }
 
-        const diff = this.config.categories.filter(x => !this.config.sortOrder.includes(x));
+        const diff = this.config.categories.filter((x) => !this.config.sortOrder.includes(x));
         const sortOrder = this.config.sortOrder.concat(diff);
 
         // add a custom property to indicate the sort index location
         // if `categories` were not provided, then there may be results in the list that do not appear in `sortOrder`; must sort them to the end of the results list
-        response.items.forEach((res: any) => res._customIdx = (sortOrder.indexOf(res.concise.code) >= 0 ? sortOrder.indexOf(res.concise.code) : sortOrder.length));
+        response.items.forEach(
+            (res: any) =>
+                (res._customIdx =
+                    sortOrder.indexOf(res.concise.code) >= 0 ? sortOrder.indexOf(res.concise.code) : sortOrder.length)
+        );
 
         // sort now based on the custom property added above
-        response.items.sort((a: any, b: any) => (a._customIdx >= b._customIdx) ? 1 : -1)
+        response.items.sort((a: any, b: any) => (a._customIdx >= b._customIdx ? 1 : -1));
         return response;
     }
 }
@@ -188,7 +197,7 @@ export class NTSQuery extends Query {
         super(config, query);
         this.unitName = query;
         this.onComplete = new Promise((resolve, reject) => {
-            this.locateByQuery().then(lr => {
+            this.locateByQuery().then((lr) => {
                 // query check added since it can be null but will never be in this case (make TS happy)
                 if (lr.length > 0 && this.query) {
                     const allSheets = this.locateToResult(lr);
@@ -209,7 +218,7 @@ export class NTSQuery extends Query {
     }
 
     locateToResult(lrl: defs.LocateResponseList): defs.NTSResultList {
-        const results = lrl.map(ls => {
+        const results = lrl.map((ls) => {
             const title = ls.title.split(' ');
             return {
                 nts: title.shift() || '', // 064D or 064D06
@@ -217,7 +226,7 @@ export class NTSQuery extends Query {
                 code: 'NTS', // "NTS"
                 desc: this.config.types.allTypes.NTS, // "National Topographic System"
                 LatLon: { lat: ls.geometry.coordinates[1], lon: ls.geometry.coordinates[0] },
-                bbox: (<number[]>ls.bbox)
+                bbox: <number[]>ls.bbox,
             };
         });
 
@@ -231,15 +240,18 @@ export class NTSQuery extends Query {
 
 export class FSAQuery extends Query {
     constructor(config: defs.MainConfig, query: string) {
-
         query = query.substring(0, 3).toUpperCase();
         super(config, query);
 
         this.onComplete = new Promise((resolve, reject) => {
-            this.formatLocationResult().then(fLR => {
+            this.formatLocationResult().then((fLR) => {
                 if (fLR) {
                     this.featureResults = fLR;
-                    this.nameByLatLon(fLR.LatLon.lat, fLR.LatLon.lon, Object.keys(fLR._provinces).map(x => parseInt(x))).then((r: any) => {
+                    this.nameByLatLon(
+                        fLR.LatLon.lat,
+                        fLR.LatLon.lon,
+                        Object.keys(fLR._provinces).map((x) => parseInt(x))
+                    ).then((r: any) => {
                         this.results = r;
                         resolve(this);
                     });
@@ -251,7 +263,7 @@ export class FSAQuery extends Query {
     }
 
     formatLocationResult(): Promise<defs.FSAResult | undefined> {
-        return this.locateByQuery().then(locateResponseList => {
+        return this.locateByQuery().then((locateResponseList) => {
             // query check added since it can be null but will never be in this case (make TS happy)
             if (locateResponseList.length === 1 && this.query) {
                 const provList = this.config.provinces.fsaToProvinces(this.query);
@@ -259,10 +271,15 @@ export class FSAQuery extends Query {
                     fsa: this.query,
                     code: 'FSA',
                     desc: this.config.types.allTypes.FSA,
-                    province: Object.keys(provList).map(i => provList[i]).join(','),
+                    province: Object.keys(provList)
+                        .map((i) => provList[i])
+                        .join(','),
                     _provinces: provList,
-                    LatLon: { lat: locateResponseList[0].geometry.coordinates[1], lon: locateResponseList[0].geometry.coordinates[0] }
-                }
+                    LatLon: {
+                        lat: locateResponseList[0].geometry.coordinates[1],
+                        lon: locateResponseList[0].geometry.coordinates[0],
+                    },
+                };
             }
         });
     }
@@ -274,7 +291,10 @@ export class LatLongQuery extends Query {
         let coords: number[];
 
         // remove extra spaces and delimiters (the filter). convert string numbers to floaty numbers
-        const filteredQuery = query.split(/[\s|,|;|]/).filter(n => !isNaN(n as any) && n !== '').map(n => parseFloat(n));
+        const filteredQuery = query
+            .split(/[\s|,|;|]/)
+            .filter((n) => !isNaN(n as any) && n !== '')
+            .map((n) => parseFloat(n));
 
         if (type === 'dms') {
             // if degree, minute, second, convert to decimal degree
@@ -282,8 +302,8 @@ export class LatLongQuery extends Query {
             let longdd = Math.abs(filteredQuery[3]) + filteredQuery[4] / 60 + filteredQuery[5] / 3600; // unsigned
 
             // check if we need to reset sign
-            latdd = (filteredQuery[0] > 0) ? latdd : latdd * -1;
-            longdd = (filteredQuery[3] > 0) ? longdd : longdd * -1;
+            latdd = filteredQuery[0] > 0 ? latdd : latdd * -1;
+            longdd = filteredQuery[3] > 0 ? longdd : longdd * -1;
 
             coords = [latdd, longdd];
         } else {
@@ -299,12 +319,12 @@ export class LatLongQuery extends Query {
             name: `${coords[0]},${coords[1]}`,
             location: {
                 latitude: coords[0],
-                longitude: coords[1]
+                longitude: coords[1],
             },
             type: { name: 'Latitude/Longitude', code: 'COORD' },
             position: [coords[0], coords[1]],
-            bbox: boundingBox
-        }
+            bbox: boundingBox,
+        };
 
         this.onComplete = new Promise((resolve, reject) => {
             //this.getLatLonResults(query, coords[0], coords[1]).then((r: any) => {

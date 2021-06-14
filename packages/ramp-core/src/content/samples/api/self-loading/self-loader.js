@@ -1,8 +1,8 @@
-$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css') );
+$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '../../../rv-styles.css'));
 
-$.getScript('../../../rv-main.js', function() {
-    RAMP.mapAdded.subscribe(mapi => {
-        mapi.centerChanged.subscribe(xy => console.log(`Center changed to x: ${xy.x}, y: ${xy.y}`));
+$.getScript('../../../rv-main.js', function () {
+    RAMP.mapAdded.subscribe((mapi) => {
+        mapi.centerChanged.subscribe((xy) => console.log(`Center changed to x: ${xy.x}, y: ${xy.y}`));
     });
 
     $('body').append(`

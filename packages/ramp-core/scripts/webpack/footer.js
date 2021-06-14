@@ -1,2 +1,2 @@
-
+// prettier-ignore
 })();

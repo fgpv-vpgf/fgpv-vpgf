@@ -12,12 +12,12 @@ angular.module('app.ui').factory('layerSource', layerSource);
 function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configService) {
     const ref = {
         idCounter: 0, // layer counter for generating layer ids
-        serviceType: Geo.Service.Types
+        serviceType: Geo.Service.Types,
     };
 
     const service = {
         fetchServiceInfo,
-        fetchFileInfo
+        fetchFileInfo,
     };
 
     const geoServiceTypes = Geo.Service.Types;
@@ -46,20 +46,18 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             [geoServiceTypes.DynamicService]: () => [_parseAsDynamic],
             [geoServiceTypes.RasterLayer]: () => [_parseAsDynamic],
             [geoServiceTypes.GroupLayer]: () => [_parseAsDynamic],
-            [geoServiceTypes.TileService]: () => [_parseAsTile]
+            [geoServiceTypes.TileService]: () => [_parseAsTile],
         };
 
         let fetchPromise;
 
         // check if it's a WMS first
         if (layerType === geoServiceTypes.WMS) {
-            fetchPromise = gapiService.gapi.layer.ogc
-            .parseCapabilities(serviceUrl)
-            .then(data => {
+            fetchPromise = gapiService.gapi.layer.ogc.parseCapabilities(serviceUrl).then((data) => {
                 // if the service doesn't have any layers, we reject it. either the service isn't a WMS, or it's a WMS
                 // with no layers, in which case there's no point in adding it anyways.
                 if (data.layers.length === 0) {
-                    $q.reject()
+                    $q.reject();
                 } else {
                     return _parseAsWMS(serviceUrl, data);
                 }
@@ -67,15 +65,14 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
         } else if (layerType === geoServiceTypes.WFS) {
             // by having the user specify whether the layer is wfs, we can skip the
             // esri request. This saves tons of loading time.
-            fetchPromise = Promise.resolve()
-            .then(() => {
+            fetchPromise = Promise.resolve().then(() => {
                 let layerInfo = _parseAsWfs(serviceUrl);
                 const updatedServiceInfo = {
                     serviceType: 'wfs',
                     index: '-1',
                     tileSupport: false,
-                    rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo))
-                }
+                    rawData: new TextEncoder('utf-8').encode(JSON.stringify(layerInfo)),
+                };
                 return _parseAsSomethingElse(updatedServiceInfo, serviceUrl);
             });
         } else {
@@ -99,9 +96,10 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 // i.e: GET /collections/{collectionId}/items/{featureId}
                 // https://github.com/opengeospatial/WFS_FES#overview
                 const splitUrl = sUrl.split('/');
-                const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
-                const indexOfCollections = splitUrl.findIndex(item => item  === 'collections');
-                isFakeWFS = serviceInfo.serviceType === Geo.Service.Types.WFS && indexOfItems - 2 !== indexOfCollections
+                const indexOfItems = splitUrl.findIndex((item) => item.startsWith('items'));
+                const indexOfCollections = splitUrl.findIndex((item) => item === 'collections');
+                isFakeWFS =
+                    serviceInfo.serviceType === Geo.Service.Types.WFS && indexOfItems - 2 !== indexOfCollections;
             }
 
             if (serviceInfo.serviceType === geoServiceTypes.Error || isFakeWFS) {
@@ -113,7 +111,7 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 return $q.reject(serviceInfo); // reject promise if the provided url cannot be accessed
             }
 
-            const parsingPromise = matrix[layerType]().map(layerInfoBuilder =>
+            const parsingPromise = matrix[layerType]().map((layerInfoBuilder) =>
                 layerInfoBuilder(serviceUrl, serviceInfo)
             );
 
@@ -135,12 +133,12 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
             // it is mandatory to set featureInfoMimeType attribute to get fct identifyOgcWmsLayer to work.
             // get the first supported format available in the GetFeatureInfo section of the Capabilities XML.
             const formatType = Object.values(data.queryTypes)
-                .filter(format => typeof format === 'string')
-                .find(format => format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
+                .filter((format) => typeof format === 'string')
+                .find((format) => format in Geo.Layer.Ogc.INFO_FORMAT_MAP);
 
             const typedWmsLayerList = _flattenWmsLayerList(data.layers)
                 // filter out all sublayers with no id/name (they can't be targeted and probably have no legend)
-                .filter(layerEntry => layerEntry.id)
+                .filter((layerEntry) => layerEntry.id)
                 .map((layerEntry, index) => {
                     layerEntry.index = index;
                     return new ConfigObject.layers.WMSLayerEntryNode(layerEntry);
@@ -154,8 +152,8 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerEntries: [],
                 featureInfoMimeType: formatType,
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             const layerInfo = new LayerBlueprint.WMSServiceSource(layerConfig);
@@ -180,8 +178,8 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerType: Geo.Layer.Types.ESRI_FEATURE,
                 name: data.serviceName,
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             const layerInfo = new LayerBlueprint.FeatureServiceSource(layerRawConfig);
@@ -200,7 +198,7 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
          */
         function _parseAsWfs(url) {
             const splitUrl = url.split('/');
-            const indexOfItems = splitUrl.findIndex(item => item.startsWith('items'));
+            const indexOfItems = splitUrl.findIndex((item) => item.startsWith('items'));
 
             const layerRawConfig = {
                 id: `${Geo.Layer.Types.OGC_WFS}#${++ref.idCounter}`,
@@ -208,8 +206,8 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerType: Geo.Layer.Types.OGC_WFS,
                 name: splitUrl[indexOfItems - 1], // may not be the best way to find the name
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             const layerInfo = new LayerBlueprint.WFSServiceSource(layerRawConfig);
@@ -236,19 +234,19 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 name: data.serviceName,
                 layerEntries: [],
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             if (data.index !== -1) {
-                layerRawConfig.layerEntries = [dynamicLayerList.find(layerEntry => layerEntry.index === data.index)];
+                layerRawConfig.layerEntries = [dynamicLayerList.find((layerEntry) => layerEntry.index === data.index)];
                 layerRawConfig.singleEntryCollapse = true;
             }
 
             const layerInfo = new LayerBlueprint.DynamicServiceSource(layerRawConfig);
 
             const typedDynamicLayerList = dynamicLayerList.map(
-                layerEntry => new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)
+                (layerEntry) => new ConfigObject.layers.DynamicLayerEntryNode(layerEntry)
             );
             layerInfo.setLayersOptions(typedDynamicLayerList);
 
@@ -271,8 +269,8 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerType: Geo.Layer.Types.ESRI_TILE,
                 name: data.serviceName,
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             const layerInfo = new LayerBlueprint.TileServiceSource(layerRawConfig);
@@ -296,8 +294,8 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerType: Geo.Layer.Types.ESRI_IMAGE,
                 name: data.serviceName,
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             const layerInfo = new LayerBlueprint.ImageServiceSource(layerRawConfig);
@@ -314,11 +312,9 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
         function _flattenWmsLayerList(layers, level = 0) {
             return [].concat.apply(
                 [],
-                layers.map(layer => {
+                layers.map((layer) => {
                     layer.level = level;
-                    layer.indent = Array.from(Array(level))
-                        .fill('-')
-                        .join('');
+                    layer.indent = Array.from(Array(level)).fill('-').join('');
                     layer.id = layer.name;
 
                     if (layer.layers.length > 0) {
@@ -336,13 +332,11 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
          * @return {Array} layer list
          */
         function _flattenDynamicLayerList(layers) {
-            return layers.map(layer => {
+            return layers.map((layer) => {
                 const level = calculateLevel(layer, layers);
 
                 layer.level = level;
-                layer.indent = Array.from(Array(level))
-                    .fill('-')
-                    .join('');
+                layer.indent = Array.from(Array(level)).fill('-').join('');
                 layer.index = layer.id;
 
                 return layer;
@@ -367,12 +361,9 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
      */
     function fetchFileInfo(path, arrayBuffer) {
         // convert forward slashes to backward slashes and poop the file name
-        const fileName = path
-            .replace(/\\/g, '/')
-            .split('/')
-            .pop();
+        const fileName = path.replace(/\\/g, '/').split('/').pop();
 
-        const fetchPromise = gapiService.gapi.layer.predictFileUrl(fileName).then(fileInfo => {
+        const fetchPromise = gapiService.gapi.layer.predictFileUrl(fileName).then((fileInfo) => {
             // fileData is returned only if path is a url; if it's just a file name, only serviceType is returned
             // this.fileData = fileInfo.fileData;
             this.layerType = Geo.Layer.Types.ESRI_FEATURE;
@@ -389,26 +380,26 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 layerType: Geo.Layer.Types.ESRI_FEATURE,
                 name: fileName,
                 state: {
-                    userAdded: true
-                }
+                    userAdded: true,
+                },
             };
 
             // upfront validation is expensive and time consuming - create all file options and let the user decide, then validate
             const blueprintOptions = [
                 new LayerBlueprint.CSVSource(layerRawConfig, arrayBuffer),
                 new LayerBlueprint.GeoJSONSource(layerRawConfig, arrayBuffer),
-                new LayerBlueprint.ShapefileSource(layerRawConfig, arrayBuffer)
+                new LayerBlueprint.ShapefileSource(layerRawConfig, arrayBuffer),
             ];
 
-            blueprintOptions.forEach(blueprintOption => blueprintOption.setRawData(arrayBuffer));
+            blueprintOptions.forEach((blueprintOption) => blueprintOption.setRawData(arrayBuffer));
 
             const preselectedIndex = fileInfo.serviceType
-                ? blueprintOptions.findIndex(option => option.type === fileInfo.serviceType)
+                ? blueprintOptions.findIndex((option) => option.type === fileInfo.serviceType)
                 : 0;
 
             return {
                 options: blueprintOptions,
-                preselectedIndex
+                preselectedIndex,
             };
         });
 

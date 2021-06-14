@@ -1,9 +1,8 @@
 import * as jsontypes from '../data/types.json';
 import * as defs from './definitions';
 
-const typeObj: {[key: string]: Types} = {};
+const typeObj: { [key: string]: Types } = {};
 const types: defs.GenericObjectType = (<any>jsontypes).default;
-
 
 class Types {
     allTypes: defs.GenericObjectType = {};
@@ -11,7 +10,7 @@ class Types {
     filterComplete: boolean = false;
 
     constructor(language: string) {
-        Object.keys(types[language]).forEach(typeKey => {
+        Object.keys(types[language]).forEach((typeKey) => {
             this.allTypes[typeKey] = (<any>types[language])[typeKey];
             this.validTypes[typeKey] = (<any>types[language])[typeKey];
         });
@@ -35,7 +34,6 @@ class Types {
     }
 }
 
-export default function(language: string): defs.Types {
-    return typeObj[language] = typeObj[language] ? typeObj[language] : new Types(language);
+export default function (language: string): defs.Types {
+    return (typeObj[language] = typeObj[language] ? typeObj[language] : new Types(language));
 }
-

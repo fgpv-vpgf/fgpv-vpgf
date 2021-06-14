@@ -1,12 +1,17 @@
 /* Sets styles on base elements: html, body, a, ul, li, etc. */
 // include all base files
 
-span, p {
+span,
+p {
     @extend %text !optional;
 }
 
-h1, h2, h3,
-h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     @extend %headings !optional;
 }
 
@@ -18,7 +23,7 @@ h4, h5, h6 {
 & {
     color: $primary-text-color;
     font-family: $font-family;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 }
 
 a {

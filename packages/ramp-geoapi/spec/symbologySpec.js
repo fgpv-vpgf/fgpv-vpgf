@@ -12,9 +12,9 @@ describe('Symbology', () => {
                         {
                             label: 'label1',
                             imageData: 'imgData1',
-                            contentType: 'type1'
-                        }
-                    ]
+                            contentType: 'type1',
+                        },
+                    ],
                 },
                 {
                     layerId: 2,
@@ -22,18 +22,20 @@ describe('Symbology', () => {
                         {
                             label: 'label2',
                             imageData: 'imgData2',
-                            contentType: 'type2'
-                        }
-                    ]
-                }
+                            contentType: 'type2',
+                        },
+                    ],
+                },
             ];
             return Promise.resolve(x);
-        }
+        },
     };
     const fakeGapi = {
         symbology: {
-            rendererToLegend: (x) => { return x; },
-        }
+            rendererToLegend: (x) => {
+                return x;
+            },
+        },
     };
     let symbology;
     beforeEach(() => {
@@ -44,13 +46,13 @@ describe('Symbology', () => {
         let renderer;
         let legend;
         beforeEach(() => {
-            renderer = { };
+            renderer = {};
             legend = {
                 layers: [
                     {
-                        legend: [ ]
-                    }
-                ]
+                        legend: [],
+                    },
+                ],
             };
         });
 
@@ -60,7 +62,7 @@ describe('Symbology', () => {
             legend.layers[0].legend.push(
                 Promise.resolve({
                     label: 'la',
-                    svgcode: '1'
+                    svgcode: '1',
                 })
             );
             expect(renderer.svgcode).toBeUndefined();
@@ -68,8 +70,7 @@ describe('Symbology', () => {
             res.then(() => {
                 expect(renderer.svgcode).toEqual('1');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -78,23 +79,21 @@ describe('Symbology', () => {
         it('should work for a UniqueValueRenderer', (done) => {
             renderer.type = 'uniqueValue';
             renderer.defaultLabel = 'def';
-            renderer.uniqueValueInfos = [
-                { label: 'uvi1' },
-                { label: 'uvi2' }
-            ];
+            renderer.uniqueValueInfos = [{ label: 'uvi1' }, { label: 'uvi2' }];
             legend.layers[0].legend.push(
                 Promise.resolve({
                     label: 'def',
-                    svgcode: '1'
+                    svgcode: '1',
                 }),
                 Promise.resolve({
                     label: 'uvi1',
-                    svgcode: '1a'
+                    svgcode: '1a',
                 }),
                 Promise.resolve({
                     label: 'uvi2',
-                    svgcode: '1b'
-                }));
+                    svgcode: '1b',
+                })
+            );
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
             res.then(() => {
@@ -102,8 +101,7 @@ describe('Symbology', () => {
                 expect(renderer.uniqueValueInfos[0].svgcode).toEqual('1a');
                 expect(renderer.uniqueValueInfos[1].svgcode).toEqual('1b');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -112,23 +110,21 @@ describe('Symbology', () => {
         it('should work for a ClassBreaksRenderer', (done) => {
             renderer.type = 'classBreaks';
             renderer.defaultLabel = 'cla';
-            renderer.classBreakInfos = [
-                { label: 'cbi1' },
-                { label: 'cbi2' }
-            ];
+            renderer.classBreakInfos = [{ label: 'cbi1' }, { label: 'cbi2' }];
             legend.layers[0].legend.push(
                 Promise.resolve({
                     label: 'cla',
-                    svgcode: '1'
+                    svgcode: '1',
                 }),
                 Promise.resolve({
                     label: 'cbi1',
-                    svgcode: '1a'
+                    svgcode: '1a',
                 }),
                 Promise.resolve({
                     label: 'cbi2',
-                    svgcode: '1b'
-                }));
+                    svgcode: '1b',
+                })
+            );
             expect(renderer.defaultsvgcode).toBeUndefined();
             const res = symbology.enhanceRenderer(renderer, legend);
             res.then(() => {
@@ -136,8 +132,7 @@ describe('Symbology', () => {
                 expect(renderer.classBreakInfos[0].svgcode).toEqual('1a');
                 expect(renderer.classBreakInfos[1].svgcode).toEqual('1b');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -149,7 +144,7 @@ describe('Symbology', () => {
             legend.layers[0].legend.push(
                 Promise.resolve({
                     label: 'la',
-                    svgcode: '1'
+                    svgcode: '1',
                 })
             );
             expect(renderer.svgcode).toBeUndefined();
@@ -157,18 +152,16 @@ describe('Symbology', () => {
             res.then(() => {
                 expect(renderer.svgcode).toBeUndefined();
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
         });
-
     });
 
     describe('getGraphicIcon and getGraphicSymbol', () => {
-        let renderer = { };
-        let attributes = { };
+        let renderer = {};
+        let attributes = {};
 
         describe('Renderer Type: SimpleRenderer', () => {
             beforeEach(() => {
@@ -176,7 +169,7 @@ describe('Symbology', () => {
                 renderer.svgcode = '1';
                 renderer.symbol = {
                     color: 'white',
-                    type: 'simplelinesymbol'
+                    type: 'simplelinesymbol',
                 };
             });
 
@@ -185,7 +178,6 @@ describe('Symbology', () => {
                     const res = symbology.getGraphicIcon(attributes, renderer);
                     expect(res).toEqual('1');
                 });
-
             });
 
             describe('getGraphicSymbol', () => {
@@ -194,9 +186,7 @@ describe('Symbology', () => {
                     expect(res.color).toEqual('white');
                     expect(res.type).toEqual('simplelinesymbol');
                 });
-
             });
-
         });
 
         describe('Renderer Type: UniqueValueRenderer', () => {
@@ -205,7 +195,7 @@ describe('Symbology', () => {
                 renderer.defaultsvgcode = '1';
                 renderer.defaultSymbol = {
                     color: 'white',
-                    type: 'simplelinesymbol'
+                    type: 'simplelinesymbol',
                 };
                 renderer.field1 = 'f1';
                 renderer.field2 = '';
@@ -216,14 +206,14 @@ describe('Symbology', () => {
                         svgcode: '123',
                         symbol: {
                             color: 'uviwhite',
-                            type: 'uvisimplefillsymbol'
-                        }
-                    }
+                            type: 'uvisimplefillsymbol',
+                        },
+                    },
                 ];
                 attributes = {
                     f1: 'att',
                     f2: 'att2',
-                    f3: 'att3'
+                    f3: 'att3',
                 };
             });
 
@@ -247,7 +237,6 @@ describe('Symbology', () => {
                     const res = symbology.getGraphicIcon(attributes, renderer);
                     expect(res).toEqual('1');
                 });
-
             });
 
             describe('getGraphicSymbol', () => {
@@ -273,9 +262,7 @@ describe('Symbology', () => {
                     expect(res.color).toEqual('white');
                     expect(res.type).toEqual('simplelinesymbol');
                 });
-
             });
-
         });
 
         describe('Renderer Type: ClassBreaksRenderer', () => {
@@ -285,7 +272,7 @@ describe('Symbology', () => {
                 renderer.defaultsvgcode = 'def1';
                 renderer.defaultSymbol = {
                     color: 'defwhite',
-                    type: 'simplefillsymbol'
+                    type: 'simplefillsymbol',
                 };
                 renderer.classBreakInfos = [
                     {
@@ -293,17 +280,17 @@ describe('Symbology', () => {
                         svgcode: 'cbi1',
                         symbol: {
                             color: 'cbi1white',
-                            type: 'cbi1simpleline'
-                        }
+                            type: 'cbi1simpleline',
+                        },
                     },
                     {
                         classMaxValue: 1,
                         svgcode: 'cbi2',
                         symbol: {
                             color: 'cbi2black',
-                            type: 'cbi2simplemarker'
-                        }
-                    }
+                            type: 'cbi2simplemarker',
+                        },
+                    },
                 ];
                 renderer.field = 'fi';
             });
@@ -326,7 +313,6 @@ describe('Symbology', () => {
                     const res = symbology.getGraphicIcon(attributes, renderer);
                     expect(res).toEqual('cbi1');
                 });
-
             });
 
             describe('getGraphicSymbol', () => {
@@ -350,11 +336,8 @@ describe('Symbology', () => {
                     expect(res.color).toEqual('cbi1white');
                     expect(res.type).toEqual('cbi1simpleline');
                 });
-
             });
-
         });
-
     });
 
     describe('mapServerToLocalLegend', () => {
@@ -362,13 +345,12 @@ describe('Symbology', () => {
 
         it('should work for a mapServerURL and layerIndex provided', (done) => {
             const res = symbology.mapServerToLocalLegend(fakeURL, 1);
-            res.then(x => {
+            res.then((x) => {
                 expect(x.uniqueValueInfos[0].label).toEqual('label1');
                 expect(x.uniqueValueInfos[0].symbol.imageData).toEqual('imgData1');
                 expect(x.uniqueValueInfos[0].symbol.contentType).toEqual('type1');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
@@ -376,7 +358,7 @@ describe('Symbology', () => {
 
         it('should work for a mapServerURL with no layerIndex provided', (done) => {
             const res = symbology.mapServerToLocalLegend(fakeURL);
-            res.then(x => {
+            res.then((x) => {
                 expect(x.uniqueValueInfos[0].label).toEqual('label1');
                 expect(x.uniqueValueInfos[0].symbol.imageData).toEqual('imgData1');
                 expect(x.uniqueValueInfos[0].symbol.contentType).toEqual('type1');
@@ -384,13 +366,10 @@ describe('Symbology', () => {
                 expect(x.uniqueValueInfos[1].symbol.imageData).toEqual('imgData2');
                 expect(x.uniqueValueInfos[1].symbol.contentType).toEqual('type2');
                 done();
-            })
-            .catch(e => {
+            }).catch((e) => {
                 fail(`Exception was thrown ${e}`);
                 done();
             });
         });
-
     });
-
 });

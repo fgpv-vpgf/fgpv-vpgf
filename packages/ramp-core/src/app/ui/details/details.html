@@ -11,27 +11,28 @@ WARNING be sure to change the detail content display logic in both blocks (singl
 
     <!-- this handles the case of only one layer returning results. hides the side selector  -->
     <div class="rv-details" ng-if="self.display.data.length === 1">
-
-        <md-content class="rv-details-data rv-content"
+        <md-content
+            class="rv-details-data rv-content"
             rv-detect-scrollbar
             rv-details-content
             rv-item="self.selectedItem"
-            rv-map-point="self.display.requester.mapPoint">
+            rv-map-point="self.display.requester.mapPoint"
+        >
         </md-content>
-
     </div>
 
     <!-- this handles the case of multiple layers returning results. shows the side selector  -->
     <div class="rv-details rv-multiple" ng-if="self.display.data.length > 1">
-
         <!-- the detail content  -->
-        <md-content class="rv-details-data rv-content"
+        <md-content
+            class="rv-details-data rv-content"
             ng-show="self.selectedItem"
             rv-detect-scrollbar
             rv-details-content
             rv-item="self.selectedItem"
             rv-map-point="self.display.requester.mapPoint"
-            rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data">
+            rv-is-hidden="(self.display.data.length > 1 && self.selectedItem.isLoading) || !self.display.data"
+        >
         </md-content>
 
         <!-- the side selector  -->

@@ -8,7 +8,7 @@ const shared = require('../shared.js')();
 const XML_ATTRIBUTES = {
     xmlns: 'http://www.w3.org/2000/svg',
     'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-    version: '1.1'
+    version: '1.1',
 };
 
 /**
@@ -48,7 +48,7 @@ function generateServerImage(esriBundle, map, options) {
     printTemplate.exportOptions = {
         height: options.height || map.height,
         width: options.width || map.width,
-        dpi: 96
+        dpi: 96,
     };
 
     // pdf | png32 | png8 | jpg | gif | eps | svg | svgz
@@ -80,7 +80,7 @@ function generateServerImage(esriBundle, map, options) {
         // monkey-patch printTaks handler to detect 'esriJobFailed' errors which are otherwise not acted upon
         // `esriJobFailed` does not trigger the complete or the error event. Need a way to catch it!
         const originalHandler = printTask._handler;
-        printTask._handler = function(a, e, f, b, c) {
+        printTask._handler = function (a, e, f, b, c) {
             if (a.jobStatus === 'esriJobFailed') {
                 // if the job has failed, call errorHandler right away
                 printTask._errorHandler.apply(printTask, [a, b, c]);
@@ -94,8 +94,8 @@ function generateServerImage(esriBundle, map, options) {
         // execute the print task
         printTask.execute(
             printParams,
-            response => resolve(shared.convertImageToCanvas(response.url)),
-            error => reject(error)
+            (response) => resolve(shared.convertImageToCanvas(response.url)),
+            (error) => reject(error)
         );
     });
 
@@ -113,9 +113,9 @@ function generateServerImage(esriBundle, map, options) {
  */
 function hideLayers(map) {
     return map.graphicsLayerIds
-        .map(layerId => map.getLayer(layerId))
-        .filter(layer => layer.visible)
-        .map(layer => {
+        .map((layerId) => map.getLayer(layerId))
+        .filter((layer) => layer.visible)
+        .map((layer) => {
             layer.setVisibility(false);
             return layer;
         });
@@ -127,7 +127,7 @@ function hideLayers(map) {
  * @param {Array} layers array of graphic layers to set visibility to true
  */
 function showLayers(layers) {
-    layers.forEach(layer => layer.setVisibility(true));
+    layers.forEach((layer) => layer.setVisibility(true));
 }
 
 /**
@@ -173,7 +173,7 @@ function generateLocalCanvas(map, options = null, canvas = null) {
                 ignoreMouse: true,
                 renderCallback: () => {
                     resolve(canvas);
-                }
+                },
             });
         } catch (error) {
             reject(error);
@@ -208,7 +208,7 @@ function generateLocalCanvas(map, options = null, canvas = null) {
     function resizeSVGElement(element, targetSize, targetViewbox = null) {
         const originalSize = {
             width: element.width.baseVal.value,
-            height: element.height.baseVal.value
+            height: element.height.baseVal.value,
         };
 
         // get the current viewbox sizes
@@ -223,7 +223,7 @@ function generateLocalCanvas(map, options = null, canvas = null) {
             minX: ovMinX,
             minY: ovMinY,
             width: ovWidth,
-            height: ovHeight
+            height: ovHeight,
         };
 
         // set the width/height of the svg element to the target values
@@ -237,21 +237,21 @@ function generateLocalCanvas(map, options = null, canvas = null) {
                 (targetViewbox || originalViewbox).minX,
                 (targetViewbox || originalViewbox).minY,
                 (targetViewbox || originalViewbox).width,
-                (targetViewbox || originalViewbox).height
+                (targetViewbox || originalViewbox).height,
             ].join(' ')
         );
 
         return {
             originalSize,
-            originalViewbox
+            originalViewbox,
         };
     }
 }
 
 // Print map related modules
-module.exports = esriBundle => {
+module.exports = (esriBundle) => {
     return {
         printLocal: (map, options) => generateLocalCanvas(map, options),
-        printServer: (map, options) => generateServerImage(esriBundle, map, options)
+        printServer: (map, options) => generateServerImage(esriBundle, map, options),
     };
 };

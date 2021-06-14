@@ -11,9 +11,7 @@ const templateUrl = require('./help-search.html');
  * TODO: as search is used in a couple of places (datatable, geosearch), turn this into a generic directive to be reused
  *
  */
-angular
-    .module('app.ui')
-    .directive('rvHelpSearch', rvHelpSearch);
+angular.module('app.ui').directive('rvHelpSearch', rvHelpSearch);
 
 /**
  * `rvHelpSearch` directive body.
@@ -25,7 +23,7 @@ function rvHelpSearch() {
     const directive = {
         restrict: 'E',
         templateUrl,
-        controller: () => {}
+        controller: () => {},
     };
 
     return directive;

@@ -26,16 +26,18 @@ function FakeQuery() {
 
 describe('Query', () => {
     const fakeBundle = {
-            Query: () => {return new FakeQuery();},
-            QueryTask: () => {
-                return {
-                    execute: (query, returnFeatureSet) => {
-                        returnFeatureSet(query);
-                    }
-                };
-            }
-        };
-    let queryGeo;   // the module
+        Query: () => {
+            return new FakeQuery();
+        },
+        QueryTask: () => {
+            return {
+                execute: (query, returnFeatureSet) => {
+                    returnFeatureSet(query);
+                },
+            };
+        },
+    };
+    let queryGeo; // the module
 
     beforeEach(() => {
         spyOn(fakeBundle, 'Query').and.callThrough();
@@ -52,12 +54,12 @@ describe('Query', () => {
     xit('checks whether query atrributes matches options atrributes from the user', (done) => {
         const options = {
             geometry: 'point',
-            url:'./',
+            url: './',
             featureLayer: new FakeFeatureLayer(),
             outFields: 'outfields',
             where: 'letter = b',
             returnGeometry: true,
-            outSpatialReference: new FakeSpatialReference()
+            outSpatialReference: new FakeSpatialReference(),
         };
 
         const query = queryGeo.queryGeometry(options);
@@ -65,22 +67,24 @@ describe('Query', () => {
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
 
         // when the promise returns
-        query.then(value => {
-            expect(value.outSpatialReference).toEqual(options.outSpatialReference);
-            expect(value.outFields).toEqual(options.outFields);
-            expect(value.where).toEqual(options.where);
-            expect(value.geometry).toEqual(options.geometry);
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
-        });
+        query
+            .then((value) => {
+                expect(value.outSpatialReference).toEqual(options.outSpatialReference);
+                expect(value.outFields).toEqual(options.outFields);
+                expect(value.where).toEqual(options.where);
+                expect(value.geometry).toEqual(options.geometry);
+                done();
+            })
+            .catch((e) => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
     });
 
     it('takes in options with url but not featureLayer and should return a query', (done) => {
         const options = {
             geometry: 'point',
-            url:'./'
+            url: './',
         };
         const query = queryGeo.queryGeometry(options);
 
@@ -88,43 +92,47 @@ describe('Query', () => {
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
 
         // when the promise returns
-        query.then(value => {
-            expect(value.geometry).toEqual('point');
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
-        });
+        query
+            .then((value) => {
+                expect(value.geometry).toEqual('point');
+                done();
+            })
+            .catch((e) => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
     });
 
     xit('takes in options with featureLayer but not url and should return a query', (done) => {
         const options = {
             geometry: 'point',
-            featureLayer: new FakeFeatureLayer()
+            featureLayer: new FakeFeatureLayer(),
         };
         const query = queryGeo.queryGeometry(options);
 
         expect(fakeBundle.Query).toHaveBeenCalled();
 
         // when the promise returns
-        query.then(value => {
-            expect(value.geometry).toEqual('point');
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
-        });
+        query
+            .then((value) => {
+                expect(value.geometry).toEqual('point');
+                done();
+            })
+            .catch((e) => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
     });
 
     xit('takes in options with url and featureLayer and should return a query', (done) => {
         const options = {
             geometry: 'point',
-            url:'./',
+            url: './',
             featureLayer: new FakeFeatureLayer(),
             outFields: 'outfields',
             where: 'letter = b',
             returnGeometry: true,
-            outSpatialReference: new FakeSpatialReference()
+            outSpatialReference: new FakeSpatialReference(),
         };
         const query = queryGeo.queryGeometry(options);
 
@@ -132,12 +140,14 @@ describe('Query', () => {
         expect(fakeBundle.QueryTask).toHaveBeenCalled();
 
         // when the promise returns
-        query.then(value => {
-            expect(value.geometry).toEqual('point');
-            done();
-        }).catch(e => {
-            fail(`Exception was thrown: ${e}`);
-            done();
-        });
+        query
+            .then((value) => {
+                expect(value.geometry).toEqual('point');
+                done();
+            })
+            .catch((e) => {
+                fail(`Exception was thrown: ${e}`);
+                done();
+            });
     });
 });

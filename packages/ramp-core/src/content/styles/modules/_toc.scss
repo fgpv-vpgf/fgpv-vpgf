@@ -1,11 +1,10 @@
 $toc-padding: rem(0.4);
 
-$group-item-height: rem(4.0);
-$layer-item-height: rem(6.0);
+$group-item-height: rem(4);
+$layer-item-height: rem(6);
 
 $group-item-height-touch: rem(5.6);
 $layer-item-height-touch: rem(7.2);
-
 
 @mixin toc {
     .mainToc {
@@ -37,12 +36,11 @@ $layer-item-height-touch: rem(7.2);
 
     @include keyboard {
         @include entry-controls-hover;
-    };
+    }
 
     @include touch {
         @include entry-controls-hover;
-    };
-
+    }
 
     @include newLegend;
 }
@@ -51,15 +49,14 @@ $layer-item-height-touch: rem(7.2);
 @mixin legend-set-item {
     > ul.rv-group-collapsed > li > rv-legend-block,
     > rv-legend-block {
-        rv-legend-control[name="scale"],
-        rv-legend-control[name="visibilityset"] {
+        rv-legend-control[name='scale'],
+        rv-legend-control[name='visibilityset'] {
             @content;
         }
     }
 }
 
 @mixin newLegend {
-
     .rv-legend-list {
         @extend %base-list;
         @extend %grouped-list;
@@ -93,15 +90,17 @@ $layer-item-height-touch: rem(7.2);
 
     ul.rv-legend-set-highlight > li {
         @include legend-set-item {
-            &:before, &:after {
+            &:before,
+            &:after {
                 background-color: rgba($accent-color, 0.075);
             }
         }
     }
 
-   ul.rv-legend-set.rv-legend-set-collapse > li {
+    ul.rv-legend-set.rv-legend-set-collapse > li {
         @include legend-set-item {
-            &:before, &:after {
+            &:before,
+            &:after {
                 display: none;
             }
         }
@@ -113,8 +112,9 @@ $layer-item-height-touch: rem(7.2);
             display: flex;
             align-items: center;
 
-            &:before, &:after {
-                content: "";
+            &:before,
+            &:after {
+                content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -126,11 +126,15 @@ $layer-item-height-touch: rem(7.2);
             }
         }
 
-
         &:first-child {
             @include legend-set-item {
                 &:before {
-                    border-image: linear-gradient(to bottom, rgba($divider-color, 1) 0%, rgba($divider-color, 1) 6px, rgba(0,0,0,0) 7px);
+                    border-image: linear-gradient(
+                        to bottom,
+                        rgba($divider-color, 1) 0%,
+                        rgba($divider-color, 1) 6px,
+                        rgba(0, 0, 0, 0) 7px
+                    );
                     border-image-slice: 1;
                 }
             }
@@ -139,7 +143,12 @@ $layer-item-height-touch: rem(7.2);
         &:last-child {
             @include legend-set-item {
                 &:after {
-                    border-image: linear-gradient(to top, rgba($divider-color, 1) 0%, rgba($divider-color, 1) 6px, rgba(0,0,0,0) 7px);
+                    border-image: linear-gradient(
+                        to top,
+                        rgba($divider-color, 1) 0%,
+                        rgba($divider-color, 1) 6px,
+                        rgba(0, 0, 0, 0) 7px
+                    );
                     border-image-slice: 1;
                 }
             }
@@ -147,7 +156,6 @@ $layer-item-height-touch: rem(7.2);
     }
 
     rv-legend-block {
-
         @extend %list-item;
 
         padding-right: $toc-padding;
@@ -211,13 +219,12 @@ $layer-item-height-touch: rem(7.2);
         }
 
         &.rv-legend-bad-projection {
-            rv-legend-flag[name="badProjection"] md-icon {
+            rv-legend-flag[name='badProjection'] md-icon {
                 color: $warning-color;
             }
         }
 
         &.rv-legend-info {
-
             height: auto;
 
             .rv-list-item-content {
@@ -336,9 +343,8 @@ $layer-item-height-touch: rem(7.2);
 }
 
 @mixin sort-group($index) {
-    &[data-sort-group="#{$index}"] {
-
-        > li:not([data-sort-group="#{$index}"]) {
+    &[data-sort-group='#{$index}'] {
+        > li:not([data-sort-group='#{$index}']) {
             opacity: 0.5 !important;
 
             &:after {
@@ -354,7 +360,7 @@ $layer-item-height-touch: rem(7.2);
     }
 
     &.rv-reorder {
-        li[data-sort-group="#{$index}"] {
+        li[data-sort-group='#{$index}'] {
             margin-top: 0; // !important;
 
             rv-legend-block:before {
@@ -362,7 +368,7 @@ $layer-item-height-touch: rem(7.2);
             }
         }
 
-        li[data-sort-group="#{$index}"] + li[data-sort-group="#{$index + 1}"] {
+        li[data-sort-group='#{$index}'] + li[data-sort-group='#{$index + 1}'] {
             margin-top: rem(3.6);
         }
     }
@@ -386,7 +392,7 @@ $layer-item-height-touch: rem(7.2);
         flex-direction: column;
         flex: 1; // content tries to take all available space
         min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
-        margin: 0 rem(1.0) 0 rem(1.6);
+        margin: 0 rem(1) 0 rem(1.6);
 
         .rv-list-item-name {
             font-size: rem(1.6);
@@ -405,7 +411,7 @@ $layer-item-height-touch: rem(7.2);
     // selection indicator
     &:before {
         position: absolute;
-        content: "";
+        content: '';
         background-color: transparent;
         width: rem(0.5);
         right: 0;
@@ -437,17 +443,18 @@ $layer-item-height-touch: rem(7.2);
 
                 @include keyboard {
                     display: flex !important;
-                };
+                }
 
                 @include touch {
                     display: flex !important;
-                };
+                }
             }
         }
     }
 
     // force-display list item controls when the list item gets focus or is hovered over
-    &:hover, &.rv-selected {
+    &:hover,
+    &.rv-selected {
         .rv-list-item-controls .rv-list-item-control {
             display: flex;
             //display: block;
@@ -478,7 +485,7 @@ $layer-item-height-touch: rem(7.2);
         margin-bottom: rem(0.8);
 
         .md-subhead {
-            margin-left: rem(1.0);
+            margin-left: rem(1);
         }
 
         md-menu > .md-button,
@@ -569,9 +576,8 @@ $layer-item-height-touch: rem(7.2);
 }
 
 @mixin _sort-group($index) {
-    &[data-sort-group="#{$index}"] {
-
-        > li:not([data-sort-group="#{$index}"]) {
+    &[data-sort-group='#{$index}'] {
+        > li:not([data-sort-group='#{$index}']) {
             opacity: 0.5 !important;
 
             &:after {
@@ -587,7 +593,7 @@ $layer-item-height-touch: rem(7.2);
     }
 
     &.rv-reorder {
-        li[data-sort-group="#{$index}"] {
+        li[data-sort-group='#{$index}'] {
             margin-top: 0; // !important;
 
             rv-toc-entry:before {
@@ -595,7 +601,7 @@ $layer-item-height-touch: rem(7.2);
             }
         }
 
-        li[data-sort-group="#{$index}"] + li[data-sort-group="#{$index + 1}"] {
+        li[data-sort-group='#{$index}'] + li[data-sort-group='#{$index + 1}'] {
             margin-top: rem(3.6);
         }
     }
@@ -615,10 +621,9 @@ $layer-item-height-touch: rem(7.2);
             padding-left: $offset * ($index) + rem(1.6) + $toc-padding;
 
             .item-name-on-top {
-
                 .rv-symbology-item-name {
                     position: absolute;
-                    left: - rem(1.0);
+                    left: -rem(1);
                 }
             }
         }
@@ -628,7 +633,7 @@ $layer-item-height-touch: rem(7.2);
         }
 
         .rv-layer-list-divider {
-            left: ($offset + rem(1.0) + $toc-padding) * $index;
+            left: ($offset + rem(1) + $toc-padding) * $index;
         }
     }
 }
@@ -637,9 +642,7 @@ $layer-item-height-touch: rem(7.2);
 absolutely position a button underneath an item so it acts like a button body for the item; add content to it using aria labels; make the actual text not pronounceable by aria as well or something like that. this should work for both layer items and layer group toggles;
 */
 @mixin layer-group-toggle {
-
     .rv-toc-group-entry {
-
         @extend %action-list-group;
 
         @include entry-controls;
@@ -670,7 +673,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         @include entry-controls-hover;
 
         // the colour md-buttons get on hover
-        background-color: rgba(158,158,158,0.2);
+        background-color: rgba(158, 158, 158, 0.2);
 
         &:before {
             background-color: $accent-color;
@@ -680,7 +683,7 @@ absolutely position a button underneath an item so it acts like a button body fo
     // selection indicator
     &:before {
         position: absolute;
-        content: "";
+        content: '';
         background-color: transparent;
         width: rem(0.5);
         right: 0;
@@ -720,7 +723,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         .rv-toc-entry-content {
             flex: 1; // content tries to take all available space
             min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
-            margin: 0 rem(1.0) 0 rem(1.6);
+            margin: 0 rem(1) 0 rem(1.6);
 
             .rv-toc-entry-name {
                 font-size: rem(1.6);
@@ -735,7 +738,6 @@ absolutely position a button underneath an item so it acts like a button body fo
 
 @mixin layer-item {
     .rv-toc-layer-entry {
-
         @include entry-controls;
         @include selected-layer-entry;
 
@@ -763,7 +765,7 @@ absolutely position a button underneath an item so it acts like a button body fo
         .rv-layer-item-content {
             flex: 1; // content tries to take all available space
             min-width: 0; // Firefox fix for flexbox not wanting to shrink: http://stackoverflow.com/a/31349707
-            margin: 0 rem(1.0) 0 rem(1.6);
+            margin: 0 rem(1) 0 rem(1.6);
 
             .rv-layer-item-name {
                 font-size: rem(1.6);

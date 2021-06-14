@@ -9,26 +9,31 @@ const placeholderFC = require('./placeholderFC.js')();
 class BasicFC extends placeholderFC.PlaceholderFC {
     // base class for feature class object. deals with stuff specific to a feature class (or raster equivalent)
 
-    get queryable () { return this._queryable; }
-    set queryable (value) { this._queryable = value; }
+    get queryable() {
+        return this._queryable;
+    }
+    set queryable(value) {
+        this._queryable = value;
+    }
 
     // non-attributes have no geometry.
     // TODO decide on proper defaulting or handling of non-geometry layers.
-    get geomType () { return Promise.resolve('none'); }
+    get geomType() {
+        return Promise.resolve('none');
+    }
 
     /**
      * @param {Object} parent        the Record object that this Feature Class belongs to
      * @param {String} idx           the service index of this Feature Class. an integer in string format. use '0' for non-indexed sources.
      * @param {Object} config        the config object for this sublayer
      */
-    constructor (parent, idx, config) {
+    constructor(parent, idx, config) {
         super(parent, config.name || '');
         this._idx = idx;
         this.queryable = config.state.query;
-        this.extent = config.extent;  // if missing, will fill more values after layer loads
+        this.extent = config.extent; // if missing, will fill more values after layer loads
 
         // TODO do we need to store a copy of the config? for the memories?
-
     }
 
     /**
@@ -37,13 +42,13 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @function getScaleSet
      * @returns {Object} scale set for the feature class
      */
-    getScaleSet () {
+    getScaleSet() {
         // basic case - we get it from the esri layer
         // TODO need to test for missing layer??
         const l = this._parent._layer;
         return {
             minScale: l.minScale,
-            maxScale: l.maxScale
+            maxScale: l.maxScale,
         };
     }
 
@@ -55,7 +60,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @param {Integer}  mapScale the scale to test against
      * @returns {Object} has boolean properties `offScale` and `zoomIn`
      */
-    isOffScale (mapScale) {
+    isOffScale(mapScale) {
         const scaleSet = this.getScaleSet();
 
         // GIS for dummies.
@@ -65,7 +70,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         // 0 value for min or max scale means there is no hiding in effect
         const result = {
             offScale: false,
-            zoomIn: false
+            zoomIn: false,
         };
 
         // check if out of scale and set zoom direction to scaleSet
@@ -86,7 +91,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @function getVisibility
      * @returns {Boolean} visibility of the feature class
      */
-    getVisibility () {
+    getVisibility() {
         return this._parent._layer.visible;
     }
 
@@ -96,7 +101,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @function setVisibility
      * @param {Boolean} value the new visibility setting
      */
-    setVisibility (value) {
+    setVisibility(value) {
         // basic case - set layer visibility
         this._parent._layer.setVisibility(value);
     }
@@ -110,7 +115,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @param {Boolean}     mergeAllLayers take entire service legend, no just legend for this FC. Defaults to false.
      * @returns {Promise}   resolves when symbology has been downloaded
      */
-    loadSymbology (mergeAllLayers = false) {
+    loadSymbology(mergeAllLayers = false) {
         // get symbology from service legend.
         // this is used for non-feature based sources (tiles, image, raster).
         // wms will override with own special logic.
@@ -118,10 +123,9 @@ class BasicFC extends placeholderFC.PlaceholderFC {
         if (url) {
             // fetch legend from server, convert to local format, process local format
             const legendIndex = mergeAllLayers ? undefined : this._idx;
-            return this._parent._apiRef.symbology.mapServerToLocalLegend(url, legendIndex)
-                .then(legendData => {
-                    this.symbology = shared.makeSymbologyArray(legendData.layers[0].legend);
-                });
+            return this._parent._apiRef.symbology.mapServerToLocalLegend(url, legendIndex).then((legendData) => {
+                this.symbology = shared.makeSymbologyArray(legendData.layers[0].legend);
+            });
         } else {
             // this shouldn't happen. non-url layers should be files, which are features,
             // which will have a basic renderer and will use FeatureFC override.
@@ -134,7 +138,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @param {Object} map  esriMap object we want to execute the zoom on
      * @return {Promise} resolves when map is done zooming
      */
-    zoomToBoundary (map) {
+    zoomToBoundary(map) {
         return map.zoomToExtent(this.extent);
     }
 
@@ -148,7 +152,7 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @param {Boolean} positionOverLayer    ensures the map is over the layer's extent after zooming. only applied if zoomIn is true. defaults to true
      * @returns {Promise}                    promise that resolves after map finishes moving about
      */
-    zoomToScale (map, lods, zoomIn, positionOverLayer = true) {
+    zoomToScale(map, lods, zoomIn, positionOverLayer = true) {
         // get scale set from child, then execute zoom
         const scaleSet = this.getScaleSet();
         return this._parent._zoomToScaleSet(map, lods, zoomIn, scaleSet, positionOverLayer);
@@ -160,20 +164,19 @@ class BasicFC extends placeholderFC.PlaceholderFC {
      * @function dataSource
      * @returns {String}        The source of the feature class. Will be a member of the shared.dataSources enum
      */
-    dataSource () {
+    dataSource() {
         return this._parent.dataSource();
     }
 
-    applyFilterToLayer () {
+    applyFilterToLayer() {
         throw new Error('Cannot apply filters to non-attribute layers');
     }
 
-    getFilterOIDs () {
+    getFilterOIDs() {
         throw new Error('Cannot get OIDs for non-attribute layers');
     }
-
 }
 
 module.exports = () => ({
-    BasicFC
+    BasicFC,
 });

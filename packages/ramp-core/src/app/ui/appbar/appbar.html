@@ -1,15 +1,17 @@
-<div class="main-appbar rv-whiteframe-z2"
+<div
+    class="main-appbar rv-whiteframe-z2"
     ng-if="self.config.ui.appBar.enabled"
     ng-class="{ 'rv-appbar-collapsed': !(self.panelRegistry.legend.isOpen || self.panelRegistry.details.isOpen || self.panelRegistry.fileLoader.isOpen || self.panelRegistry.serviceLoader.isOpen) && self.config.ui.appBar.sideMenuOnly }"
-    ng-show="self.panelRegistry.geoSearch.isClosed">
-
+    ng-show="self.panelRegistry.geoSearch.isClosed"
+>
     <md-button
         ng-if="self.config.ui.appBar.sideMenu"
         translate
         aria-label="{{ 'appbar.aria.menu' | translate }}"
         class="md-icon-button black"
         rv-help="sidenav-button"
-        ng-click="self.sideNavigationService.open()">
+        ng-click="self.sideNavigationService.open()"
+    >
         <md-tooltip>{{'appbar.tooltip.menu' | translate}}</md-tooltip>
         <md-icon md-svg-src="navigation:menu"></md-icon>
     </md-button>
@@ -25,7 +27,8 @@
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
-        ng-if="self.config.map.components.geoSearch.enabled && !self.geosearchService.externalApiError && self.config.ui.appBar.geoSearch">
+        ng-if="self.config.map.components.geoSearch.enabled && !self.geosearchService.externalApiError && self.config.ui.appBar.geoSearch"
+    >
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </md-button>
@@ -35,7 +38,8 @@
         class="md-icon-button primary rv-app-geosearch"
         disabled="disabled"
         ng-if="self.geosearchService.externalApiError"
-        aria-label="{{ 'appbar.aria.geosearch' | translate }}">
+        aria-label="{{ 'appbar.aria.geosearch' | translate }}"
+    >
         <md-tooltip>{{ 'appbar.aria.geoApiError' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:search"></md-icon>
     </div>
@@ -45,14 +49,13 @@
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
         ng-click="self.openBasemapSelector()"
-        ng-show="self.panelRegistry.legend.isOpen">
+        ng-show="self.panelRegistry.legend.isOpen"
+    >
         <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:map"></md-icon>
     </md-button>
 
-    <span ng-if="self.config.ui.appBar.layers"
-        class="rv-button-divider">
-    </span>
+    <span ng-if="self.config.ui.appBar.layers" class="rv-button-divider"> </span>
 
     <md-button
         aria-label="{{ 'appbar.aria.pointInfo' | translate }}"
@@ -60,7 +63,8 @@
         rv-help="details-button"
         ng-class="{ selected: self.panelRegistry.details.isOpen }"
         ng-click="self.toggleDetails()"
-        ng-show="self.stateManager.display.details.requestId">
+        ng-show="self.stateManager.display.details.requestId"
+    >
         <md-tooltip>{{ 'appbar.tooltip.pointInfo' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:place"></md-icon>
     </md-button>
@@ -71,7 +75,8 @@
         class="md-icon-button primary"
         rv-help="toc-button"
         ng-class="{ selected: self.panelRegistry.legend.isOpen }"
-        ng-click="self.toggleToc()">
+        ng-click="self.toggleToc()"
+    >
         <md-tooltip>{{ 'appbar.tooltip.layers' | translate }}</md-tooltip>
         <md-icon md-svg-src="maps:layers"></md-icon>
     </md-button>

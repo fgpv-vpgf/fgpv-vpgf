@@ -9,7 +9,7 @@ export default class AreasOfInterest {
 
         // standardize the configuration language titles for translation
         this.config.areas.forEach((area, i) => {
-            Object.keys(area).forEach(key => {
+            Object.keys(area).forEach((key) => {
                 const matchResult = key.match(/title-(.*)/);
                 if (matchResult) {
                     const translation = this.translations[matchResult[1]];
@@ -38,7 +38,7 @@ export default class AreasOfInterest {
             topElement.append(areaHTML);
 
             const currBtn = topElement.find('button').last();
-            currBtn.click(() => (this.api.setExtent(area)));
+            currBtn.click(() => this.api.setExtent(area));
         });
 
         this.button = this.api.mapI.addPluginButton(
@@ -57,7 +57,7 @@ export default class AreasOfInterest {
         const openPanel = () => {
             this._RV.toggleSideNav('close');
             this.panel.open();
-        }
+        };
 
         return () => {
             this.button.isActive ? this.panel.close() : openPanel();
@@ -73,7 +73,7 @@ export default class AreasOfInterest {
         this.panel = this.api.panels.create('area-of-interest');
 
         this.panel.element.css({
-            width: '400px'
+            width: '400px',
         });
 
         this.panel.element.addClass('mobile-fullscreen');
@@ -107,11 +107,11 @@ export default interface AreasOfInterest {
 
 AreasOfInterest.prototype.translations = {
     'en-CA': {
-        title: 'Areas of Interest'
+        title: 'Areas of Interest',
     },
     'fr-CA': {
-        title: `Zones d'intérêt`
-    }
+        title: `Zones d'intérêt`,
+    },
 };
 
 (<any>window).areasOfInterest = AreasOfInterest;
