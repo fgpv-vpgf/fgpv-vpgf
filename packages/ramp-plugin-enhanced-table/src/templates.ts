@@ -54,6 +54,15 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
         <md-menu-content class="rv-menu rv-dense">
+            <md-menu-item>
+                <md-button
+                    ng-click="ctrl.toggleAllColumns()"
+                    aria-label="{{ 'plugins.enhancedTable.table.hideAllColumns' | translate }}"
+                    md-prevent-menu-close="md-prevent-menu-close">
+                    <span style='flex-basis: auto; overflow-wrap:normal;'>{{ 'plugins.enhancedTable.table.hideAllColumns' | translate }}</span>
+                    <md-icon md-svg-icon="action:done" ng-if="!ctrl.allColumnsVisible()"></md-icon>
+                </md-button>
+            </md-menu-item>
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
                 <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }}" md-prevent-menu-close="md-prevent-menu-close">
                     <span style='flex-basis: auto; overflow-wrap:normal;'>{{col.title}}</span>

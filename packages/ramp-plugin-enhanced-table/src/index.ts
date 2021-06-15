@@ -434,6 +434,7 @@ TableBuilder.prototype.translations = {
                 apply: 'Apply filters to map',
             },
             hideColumns: 'Hide columns',
+            hideAllColumns: 'All',
             complexValue: 'Complex Value',
         },
         menu: {
@@ -479,6 +480,7 @@ TableBuilder.prototype.translations = {
                 apply: 'Appliquer des filtres à la carte', // TODO: Add official French translation
             },
             hideColumns: 'Masquer les colonnes', // TODO: Add Official French translation
+            hideAllColumns: 'Tous les',
             complexValue: 'Valeur Complexes',
         },
         menu: {
