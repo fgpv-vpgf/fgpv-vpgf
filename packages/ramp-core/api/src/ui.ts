@@ -9,8 +9,11 @@ import { ConfigLegend } from 'api/legend';
  * TODO: move mouse over/out to layer objects once implemented in the API.
  */
 class ToolTip {
+    /** @ignore */
     _mouseOver: Subject<Event> = new Subject();
+    /** @ignore */
     _mouseOut: Subject<Event> = new Subject();
+    /** @ignore */
     _added: Subject<Object> = new Subject();
 
     mouseOver: Observable<Event>;
@@ -69,14 +72,17 @@ export class Basemap {
 
     /** @ignore */
     _isActive: boolean;
+    /** @ignore */
     _activeChanged: Subject<boolean>;
 
     /** @ignore */
     _description: string;
+    /** @ignore */
     _descriptionChanged: Subject<string>;
 
     /** @ignore */
     _name: string;
+    /** @ignore */
     _nameChanged: Subject<string>;
 
     constructor(id: string, name: string, layers: Array<JSON>, description: string, mapInstance: any) {
@@ -199,10 +205,11 @@ export class BasemapGroup {
     _mapInstance: any;
     /** @ignore */
     _basemapsArray: Array<Basemap> = [];
-
+    /** @ignore */
     _basemapAdded: Subject<Basemap>;
+    /** @ignore */
     _basemapRemoved: Subject<Basemap>;
-
+    /** @ignore */
     _click: Subject<Basemap>;
 
     constructor(mapInstance: any) {
@@ -353,9 +360,13 @@ export class BasemapGroup {
  * ```
  */
 export class UI {
+    /** @ignore */
     _mapI: Map;
+    /** @ignore */
     _tooltip: ToolTip = new ToolTip();
+    /** @ignore */
     _basemaps: BasemapGroup;
+    /** @ignore */
     _configLegend: ConfigLegend;
 
     constructor(mapInstance: Map) {

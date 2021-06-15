@@ -91,24 +91,24 @@ For more information on this project, please see one of the sections below:
 - [Usage](#usage)
 - [Support](#support)
 
-Also, please visit the [Documentation Site](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/home) for additional content on:
+Also, please visit the [Documentation Site](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/home) for additional content on:
 
-- [Map Author Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/mapauthor/intro)
-- [Contributing to the RAMP Project](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/contribute/getting_started)
+- [Map Author Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro)
+- [Contributing to the RAMP Project](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/contribute/getting_started)
 - [Interactive Schema Documentation](https://fgpv-vpgf.github.io/schema-to-docs/)
-- [Developer Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/developer/intro)
-- [Technical Documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/technical/architecture)
+- [Developer Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/developer/intro)
+- [Technical Documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/technical/architecture)
 
 ### Usage
 
 #### Quick guide
 
-We'll go through the simplest way to use RAMP, for more information see the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/mapauthor/intro)
+We'll go through the simplest way to use RAMP, for more information see the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro)
 
 First, grab the most recent release from the [github releases](https://github.com/fgpv-vpgf/fgpv-vpgf/releases)
 Place the files `rv-main.js` and `rv-styles.css` within your webpage's folder structure. We usually put our JavaScript files under a `js` folder and our stylesheets under a `css` folder.
 
-Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/mapauthor/intro)):
+Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the [map author guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro)):
 
 1. Within `head`
 
@@ -149,4 +149,4 @@ A map should now load on your page. Theres much more you can do with RAMP, a goo
 - **Bugs:** If you have a bug to report you can open up an issue at https://github.com/fgpv-vpgf/fgpv-vpgf/issues by clicking the green button above the issue list
 - **Questions:** You can ask questions through github team discussions at https://github.com/orgs/fgpv-vpgf/teams
 
-For more information on contributing read the [Contributing Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/v3.2.0/#/contribute/getting_started). Note there may be some references to the pre-monorepo setup, pull requests are now only needed in one place (this repo).
+For more information on contributing read the [Contributing Guide](http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/contribute/getting_started). Note there may be some references to the pre-monorepo setup, pull requests are now only needed in one place (this repo).

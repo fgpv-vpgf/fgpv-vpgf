@@ -8,10 +8,15 @@ import { Panel, Element, CloseButton, ToggleButton } from '.';
  * Note: only one header instance is allowed per panel.
  */
 export default class Header extends Element {
+    /** @ignore */
     _header: JQuery<HTMLElement>;
+    /** @ignore */
     _controls: JQuery<HTMLElement>;
+    /** @ignore */
     _closeButton: CloseButton;
+    /** @ignore */
     _toggleButton: ToggleButton;
+    /** @ignore */
     _elements: any;
 
     /**

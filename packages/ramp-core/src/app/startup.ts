@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const domNodes = $('[is=rv-map]');
 const customAttrs = ['config', 'langs', 'service-endpoint', 'restore-bookmark', 'wait', 'keys', 'fullpage-app'];
 

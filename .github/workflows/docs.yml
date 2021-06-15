@@ -1,0 +1,39 @@
+on:
+    push:
+        tags:
+            - '*'
+        branches: [master, develop]
+env:
+    NODE_VERSION: '14.15.4'
+jobs:
+    generate-deploy-docs:
+        name: Generate and deploy the docs
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Extract branch or tag name
+              shell: bash
+              run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/*/})"
+              id: extract_ref
+
+            - name: Install dependencies 🔧
+              shell: bash
+              run: node common/scripts/install-run-rush.js install
+
+            - name: Generate docs 🏭
+              working-directory: ./packages/ramp-core
+              shell: bash
+              run: ./scripts/docs/docs.sh
+              env:
+                  REF_NAME: ${{ steps.extract_ref.outputs.name }}
+
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@4.1.4
+              with:
+                  branch: gh-pages
+                  folder: ./packages/ramp-core/gh-page-files
