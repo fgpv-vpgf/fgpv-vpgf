@@ -8,11 +8,17 @@ import { Subject } from 'rxjs';
  * Used to get a list of panels (all, opened, closed), to create panels, etc.
  */
 export class PanelRegistry {
+    /** @ignore */
     private _mapI: Map;
+    /** @ignore */
     private _panels: Panel[] = [];
+    /** @ignore */
     private _openPanels: Panel[] = [];
+    /** @ignore */
     private _reopenList: Panel[] = [];
+    /** @ignore */
     private _panelOpening = new Subject();
+    /** @ignore */
     private _panelClosing = new Subject();
 
     PANEL_TYPES = PanelTypes;
@@ -36,7 +42,7 @@ export class PanelRegistry {
     reopenOverlay() {
         this._reopenList.forEach((p) => p.reopen());
     }
-
+    /** @ignore */
     _init() {
         // create the core panels
         this.legend = this.getById('mainToc') ? <Panel>this.getById('mainToc') : this.create('mainToc');

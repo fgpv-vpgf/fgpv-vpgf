@@ -5,7 +5,7 @@ This guide is intended for users comfortable with JavaScript and geo mapping. It
 You should also have a basic understanding of **observables** which are used to handle asynchronous events. For this, we use [RxJS](https://rxjs-dev.firebaseapp.com/). Feel free to check out the [RxJS documentation](https://rxjs-dev.firebaseapp.com/) for more detailed information on how they work. For this guide, understanding `subscribe` is sufficient.
 
 <p class="tip">
-  Use this guide as an introduction to the [technical documentation](http://fgpv-vpgf.github.io/fgpv-vpgf/ghpages-docs/developer/api_tech_docs/). It will give you a basic understanding of how the API is structured and some of what it can do but you should refer to the technical documentation after reading this guide for complete information.
+  Use this guide as an introduction to the [technical documentation](developer/api_tech_docs/index.html). It will give you a basic understanding of how the API is structured and some of what it can do but you should refer to the technical documentation after reading this guide for complete information.
 </p>
 
 ## How to access the API

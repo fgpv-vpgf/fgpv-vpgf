@@ -6,8 +6,11 @@ import { Panel } from '.';
  * It also automatically triggers the angular compiler for the user.
  */
 export default class Element {
+    /** @ignore */
     _element: JQuery<HTMLElement>;
+    /** @ignore */
     _panel: Panel;
+    /** @ignore */
     _digest: boolean;
 
     /**

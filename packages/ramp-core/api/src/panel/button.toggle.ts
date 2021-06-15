@@ -2,6 +2,7 @@ import { Panel } from '.';
 import Button from './button';
 
 export default class ToggleButton extends Button {
+    /** @ignore */
     _isOpen: boolean = true;
 
     get isExpanded() {
