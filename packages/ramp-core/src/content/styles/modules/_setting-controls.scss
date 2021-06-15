@@ -103,6 +103,10 @@
                     padding: 0 rem(0.4);
                     height: rem(2);
 
+                    &.md-focused {
+                        border: 1px solid;
+                    }
+
                     span {
                         text-align: left;
                         width: 250px;
@@ -207,6 +211,11 @@
                     margin: 0;
                     padding: 0 rem(0.4);
                     height: rem(2);
+
+                    &.md-focused {
+                        border: 1px solid;
+                    }
+
                     span {
                         text-align: left;
                         width: 250px;
