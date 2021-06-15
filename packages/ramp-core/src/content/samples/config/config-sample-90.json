@@ -8,7 +8,8 @@
             "logo": true
         },
         "tableIsOpen": {
-            "id": "DateLayer",
+            "id": "1",
+            "dynamicIndex": "34",
             "large": true,
             "medium": true,
             "small": false

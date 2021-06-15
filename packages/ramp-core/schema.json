@@ -2081,6 +2081,10 @@
                             "type": "string",
                             "description": "The id of the layer for referencing within the viewer"
                         },
+                        "dynamicIndex": {
+                            "type": "string",
+                            "description": "If the layer is a dynamic layer, specify the index of the sublayer to open."
+                        },
                         "large": {
                             "type": "boolean",
                             "default": false,

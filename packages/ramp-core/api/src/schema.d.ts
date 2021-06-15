@@ -204,6 +204,10 @@ export interface FgpvConfigSchema {
              */
             id: string;
             /**
+             * If the layer is a dynamic layer, specify the index of the sublayer to open.
+             */
+            dynamicIndex?: string;
+            /**
              * Whether the table panel is opened by default on initial loading of the map for large viewports
              */
             large?: boolean;
