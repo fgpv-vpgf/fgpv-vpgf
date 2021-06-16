@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
+        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Nest/MapServer',
         nameField: 'siteShortName_en',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',

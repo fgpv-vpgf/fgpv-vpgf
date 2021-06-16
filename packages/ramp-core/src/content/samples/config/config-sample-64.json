@@ -65,7 +65,7 @@
                     "visibility": false,
                     "boundingBox": false
                 },
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
             }
         ],
         "extentSets": [
@@ -339,7 +339,7 @@
                     {
                         "id": "CBMT",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -353,7 +353,7 @@
                     {
                         "id": "World_Imagery",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"

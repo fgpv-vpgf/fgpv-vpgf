@@ -172,7 +172,7 @@
             "name": "Transportation",
             "layerType": "esriDynamic",
             "layerEntries": [{ "index": 0 }, { "index": 1 }],
-            "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
+            "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer"
         },
         {
             "id": "ogc_map_service",
@@ -208,7 +208,7 @@
                 {
                     "id": "CBMT",
                     "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
                 }
             ]
         },
@@ -225,12 +225,12 @@
                 {
                     "id": "SMR",
                     "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
                 },
                 {
                     "id": "SMW",
                     "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
+                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_TXT_3978/MapServer"
                 },
                 {
                     "id": "SMB",
@@ -252,7 +252,7 @@
                 {
                     "id": "CBME_CBCE_HS_RO_3978",
                     "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
                 }
             ]
         },
@@ -269,7 +269,7 @@
                 {
                     "id": "CBMT_CBCT_GEOM_3978",
                     "layerType": "esriFeature",
-                    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
                 }
             ]
         },
@@ -286,7 +286,7 @@
                 {
                     "id": "World_Imagery",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
                 }
             ]
         },
@@ -303,7 +303,7 @@
                 {
                     "id": "World_Physical_Map",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer"
                 }
             ]
         },
@@ -320,7 +320,7 @@
                 {
                     "id": "World_Shaded_Relief",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer"
                 }
             ]
         },
@@ -337,7 +337,7 @@
                 {
                     "id": "World_Street_Map",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
                 }
             ]
         },
@@ -354,7 +354,7 @@
                 {
                     "id": "World_Terrain_Base",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer"
                 }
             ]
         },
@@ -371,7 +371,7 @@
                 {
                     "id": "World_Topo_Map",
                     "layerType": "esriFeature",
-                    "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+                    "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"
                 }
             ]
         }

@@ -22,8 +22,8 @@
     "version": "2.0",
     "language": "en",
     "services": {
-        "proxyUrl": "http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-        "exportMapUrl": "http://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        "proxyUrl": "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy",
+        "exportMapUrl": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
         "export": {
             "title": {
                 "value": "Title"
@@ -115,7 +115,7 @@
                     "visibility": false,
                     "boundingBox": false
                 },
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
             },
             {
                 "id": "powerplant100mw-naturalGas",
@@ -126,7 +126,7 @@
                     "visibility": false,
                     "boundingBox": false
                 },
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2",
                 "refreshInterval": 0.1
             },
             {
@@ -150,7 +150,7 @@
                 "state": {
                     "visibility": true
                 },
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
             }
         ],
         "extentSets": [
@@ -412,7 +412,7 @@
                     {
                         "id": "CBMT",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978",
@@ -435,7 +435,7 @@
                     {
                         "id": "SMR",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -449,7 +449,7 @@
                     {
                         "id": "CBME_CBCE_HS_RO_3978",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -463,7 +463,7 @@
                     {
                         "id": "CBMT_CBCT_GEOM_3978",
                         "layerType": "esriFeature",
-                        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -477,7 +477,7 @@
                     {
                         "id": "World_Imagery",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
@@ -491,7 +491,7 @@
                     {
                         "id": "World_Physical_Map",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
@@ -505,7 +505,7 @@
                     {
                         "id": "World_Shaded_Relief",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
@@ -519,7 +519,7 @@
                     {
                         "id": "World_Street_Map",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
@@ -533,7 +533,7 @@
                     {
                         "id": "World_Terrain_Base",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"
@@ -547,7 +547,7 @@
                     {
                         "id": "World_Topo_Map",
                         "layerType": "esriFeature",
-                        "url": "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer"
+                        "url": "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857"

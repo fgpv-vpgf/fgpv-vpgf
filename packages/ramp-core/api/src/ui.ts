@@ -183,7 +183,7 @@ export class Basemap {
  *         {
  *             "id": "CBMT",
  *              "layerType": "esriFeature",
- *              "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+ *              "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
  *         }
  *     ],
  *     "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"

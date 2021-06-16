@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'dog',
         name: 'Feature Test',
-        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0',
+        url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/NEB/Incident/MapServer/0',
         nameField: 'siteShortName_en',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriFeature',

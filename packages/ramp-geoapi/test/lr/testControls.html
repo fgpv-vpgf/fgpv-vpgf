@@ -20,7 +20,7 @@
                 // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
 
                 var realLayer = new api.layer.ArcGISDynamicMapServiceLayer(
-                    'http://section917.cloudapp.net/arcgis/rest/services/TestData/Nest/MapServer',
+                    'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Nest/MapServer',
                     {
                         id: 'dogguts',
                     }
@@ -46,7 +46,7 @@
             formAttr.then(a => {
                 console.log('attrib PROOF ', a);
             });
-            
+
             var countProm = layerRec.getFeatureCount();
             countProm.then(c => {
                 console.log('the count ', c);

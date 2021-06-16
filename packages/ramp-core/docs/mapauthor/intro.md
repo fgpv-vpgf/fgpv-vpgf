@@ -16,7 +16,7 @@ Also see the [Helpful Links](#helpful-links) for more advanced topics, such as u
 
 ## Loading Scripts
 
-As a baseline the page must include `rv-styles.css`, `rv-main.js` , jQuery and the polyfills required for RAMP. 
+As a baseline the page must include `rv-styles.css`, `rv-main.js` , jQuery and the polyfills required for RAMP.
 
 ### Adding the viewer to a page
 
@@ -265,19 +265,19 @@ Its as simple as that. RAMP will generate a legend for you at run time, which di
         "id": "powerplant100mw-electric",
         "name": "Electric Transmission Line",
         "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
     },
     {
         "id": "powerplant100mw-naturalGas",
         "name": "Natural Gas Pipeline",
         "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
     },
     {
         "id": "powerplant100mw-liquids",
         "name": "Liquids Pipeline",
         "layerType": "esriFeature",
-        "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
+        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3"
     }
 ]
 ```
@@ -309,7 +309,7 @@ Lets take a look at a simple ESRI feature layer as it would look in the config;
     "id": "powerplant100mw-naturalGas",
     "name": "Natural Gas Pipeline",
     "layerType": "esriFeature",
-    "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
+    "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/2"
 },
 ```
 

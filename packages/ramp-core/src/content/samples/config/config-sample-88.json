@@ -19,8 +19,8 @@
     "version": "2.0",
     "language": "en",
     "services": {
-        "proxyUrl": "https://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-        "exportMapUrl": "https://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        "proxyUrl": "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy",
+        "exportMapUrl": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
         "export": {
             "title": {
                 "value": "Title"

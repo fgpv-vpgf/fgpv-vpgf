@@ -17,7 +17,7 @@
             // http://localhost:6002/test/testClass.html
 
             geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
-                api.Map.proxy = 'http://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy';
+                api.Map.proxy = 'https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy';
                 console.log('whut?', api.Map.proxy);
 
                 // var map = api.mapManager.Map(document.getElementById('map'), { basemap: 'topo', zoom: 6, center: [-100, 50] });
@@ -89,7 +89,7 @@
                 proxy.symbology.then(sym => {
                     console.log('symbology - sb 1 element', sym);
                 });
-                
+
 */
                 }
             });

@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'dog',
         name: 'Tile Test',
-        url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Graticule/MapServer',
+        url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Graticule/MapServer',
 
         metadataUrl: 'http://www.github.com',
         layerType: 'esriTile',
@@ -73,7 +73,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
         proxy.symbology.then(sym => {
             console.log('symbology - sb 1 element', sym);
         });
-        
+
 */
     }
 });

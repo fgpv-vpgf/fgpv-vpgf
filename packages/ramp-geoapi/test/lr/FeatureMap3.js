@@ -76,7 +76,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                     {
                         id: 'World_Imagery',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer',
+                        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
                     },
                 ],
                 tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
