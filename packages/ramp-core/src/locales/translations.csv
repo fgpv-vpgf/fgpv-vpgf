@@ -78,6 +78,8 @@ Datatable settings sort column label,filter.settings.label.sort,Sort,1,Trier,1
 Datatable settings display column label,filter.settings.label.show,Show,1,Montrer,1
 Details pane title,details.title,Feature Information,1,Information sur l'élément,1
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
+Details pane aria label for dialog modal,details.aria.dialog,Details Summary,1,Détails Résumé,0
+Details pane aria label for toggle button,details.aria.toggle,Toggle Details,1,Détails à bascule,0
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
 Details pane label for searching,details.label.searching,Searching ...,1,Rechercher ...,1
