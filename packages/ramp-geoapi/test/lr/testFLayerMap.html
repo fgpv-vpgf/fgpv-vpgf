@@ -25,7 +25,7 @@
                 var config1 = {
                     id: 'dog',
                     name: 'Feature Test',
-                    url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
                     nameField: 'siteShortName_en',
                     metadataUrl: 'http://www.github.com',
                     layerType: 'esriFeature',
@@ -89,7 +89,7 @@
             formAttr.then(a => {
                 console.log('attrib PROOF ', a);
             });
-            
+
             var countProm = layerRec.getFeatureCount();
             countProm.then(c => {
                 console.log('the count ', c);

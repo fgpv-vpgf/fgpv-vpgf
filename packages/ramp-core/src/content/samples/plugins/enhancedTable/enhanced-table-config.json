@@ -19,8 +19,8 @@
     "version": "2.0",
     "language": "en",
     "services": {
-        "proxyUrl": "https://167.40.64.74/wmsproxy/ws/wmsproxy/executeFromProxy",
-        "exportMapUrl": "https://section917.cloudapp.net/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+        "proxyUrl": "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy",
+        "exportMapUrl": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
         "export": {
             "title": {
                 "value": "Title"
@@ -378,7 +378,7 @@
                 "id": "9",
                 "name": "BadDates",
                 "layerType": "esriFeature",
-                "url": "http://section917.cloudapp.net/arcgis/rest/services/TestData/BadDates/MapServer/0",
+                "url": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/BadDates/MapServer/0",
                 "table": {
                     "columns": [
                         {
@@ -401,7 +401,7 @@
                 "id": "10",
                 "name": "Eco Geo",
                 "layerType": "esriFeature",
-                "url": "http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6",
+                "url": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EcoGeo/MapServer/6",
                 "metadataUrl": "http://intranet.ecdmp-stage.cmc.ec.gc.ca/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecordById&outputSchema=csw:IsoRecord&id=1c0eb1b2-93ae-49ae-a3ce-e495d8fd767b&_=1417717957845"
             },
             {
@@ -416,7 +416,7 @@
                         "index": 30
                     }
                 ],
-                "url": "http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer"
             }
         ],
         "extentSets": [

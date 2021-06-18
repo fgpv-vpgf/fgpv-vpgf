@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'dog',
         name: 'Feature Test',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
+        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/JOSM/Oilsands_en/MapServer/2',
         nameField: 'siteShortName_en',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriFeature',

@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test Child Raster',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer',
+        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/aafc_crop_spatial_density_wheat/MapServer',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
         tolerance: 5,

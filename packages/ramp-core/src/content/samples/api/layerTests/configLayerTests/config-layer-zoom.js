@@ -11,7 +11,7 @@ $.getScript('../../../../rv-main.js', function () {
             state: {
                 visibility: true,
             },
-            url: 'http://section917.cloudapp.net/arcgis/rest/services/TestData/SupportData/MapServer/2',
+            url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/SupportData/MapServer/2',
         };
 
         //add config layer

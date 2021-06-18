@@ -16,7 +16,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'guts',
         name: 'Dynamic Test',
-        url: 'http://section917.cloudapp.net/arcgis/rest/services/JOSM/Oilsands/MapServer',
+        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/JOSM/Oilsands/MapServer',
         metadataUrl: 'http://www.github.com',
         layerType: 'esriDynamic',
         tolerance: 5,
@@ -99,7 +99,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
                     {
                         id: 'World_Imagery',
                         layerType: 'esriFeature',
-                        url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer',
+                        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
                     },
                 ],
                 tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',

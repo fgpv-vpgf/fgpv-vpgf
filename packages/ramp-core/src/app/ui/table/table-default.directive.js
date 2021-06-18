@@ -460,7 +460,7 @@ function rvTableDefault(
 
                 // get column length (only type string have length)
                 if (length) {
-                    // some layer like http://section917.cloudapp.net/arcgis/rest/services/EcoGeo/MapServer/6
+                    // some layer like https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/EcoGeo/MapServer/6
                     // can have length = 2147483647 and it make the function crash
                     length = length < fieldLength ? length : fieldLength;
 

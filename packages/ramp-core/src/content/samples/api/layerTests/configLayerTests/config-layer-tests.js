@@ -11,7 +11,7 @@ $.getScript('../../../../rv-main.js', function () {
             state: {
                 visibility: true,
             },
-            url: 'http://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3',
+            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/3',
         };
 
         let setAttrib = false;

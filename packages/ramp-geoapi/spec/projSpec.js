@@ -176,7 +176,7 @@ describe('esri projection conversion function', () => {
 
         // fake call to esri server
         let newPt = esri.esriServerProject(
-            'http://section917.cloudapp.net/arcgis/rest/services/Utilities/Geometry/GeometryServer',
+            'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/Geometry/GeometryServer',
             [0],
             12345
         );
