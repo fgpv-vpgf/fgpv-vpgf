@@ -323,6 +323,7 @@ export class Panel {
 
     /**
      * Initialize the various Subjects and Observables.
+     * @ignore
      */
     private _initRXJS(): void {
         this.openingSubject = new Subject();
@@ -344,6 +345,7 @@ export class Panel {
      * Creates the various panel elements, styling, and DOM operations for placing the panel on the page.
      *
      * @param id A unique ID for the panel (and the DOM)
+     * @ignore
      */
     private _initElements(id: string, cssClass: string): void {
         this._element = $(document.createElement('div'));
@@ -468,7 +470,9 @@ export class Panel {
 }
 
 export interface Panel {
+    /** @ignore */
     _api: ViewerAPI;
+    /** @ignore */
     _style: {
         [index: string]: string | undefined;
         top?: string;
@@ -478,17 +482,27 @@ export interface Panel {
         width?: string;
         height?: string;
     };
+    /** @ignore */
     _reopenAfterOverlay: boolean;
+    /** @ignore */
     _isDialog: boolean;
+    /** @ignore */
     _isCloseable: boolean;
 
     //HTML parent Components
+    /** @ignore */
     _element: JQuery<HTMLElement>;
+    /** @ignore */
     _body: JQuery<HTMLElement>;
+    /** @ignore */
     _header: Header;
+    /** @ignore */
     _underlay: boolean;
+    /** @ignore */
     _offscreen: boolean;
+    /** @ignore */
     _observer: MutationObserver;
+    /** @ignore */
     _openPanelSubscriber: Subscription;
 
     //subjects initialized for observables that are fired through method calls

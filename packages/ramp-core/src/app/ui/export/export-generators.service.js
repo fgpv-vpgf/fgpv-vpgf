@@ -638,7 +638,7 @@ function exportGenerators(
      *
      * @param {Function} showToast a function display a toast notification for the user
      * @param {*} value HTML string
-     * @returns
+     * @returns {Promise<any>}
      */
     function htmlMarkupGenerator(showToast, value) {
         // NOTE: example

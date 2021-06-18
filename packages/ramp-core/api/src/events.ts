@@ -71,7 +71,9 @@ export class MapClickEvent extends MouseEvent {
 }
 
 export class PanelEvent {
+    /** @ignore */
     _name: string;
+    /** @ignore */
     _content: Node;
 
     constructor(name: string, node: Node) {

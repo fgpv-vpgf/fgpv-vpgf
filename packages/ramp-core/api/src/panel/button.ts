@@ -5,6 +5,7 @@ import Element from './element';
  * The button class handles wrapping the supplied content into a button element.
  */
 export default class Button extends Element {
+    /** @ignore */
     _btnElem: JQuery<HTMLElement>;
     private elemSet: boolean = false;
 

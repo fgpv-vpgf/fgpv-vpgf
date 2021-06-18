@@ -300,21 +300,13 @@ export interface Map {
 
     Panel: Panel;
 
-    /**
-     * @ignore
-     */
+    /** @ignore */
     _identify: any;
-    /**
-     * @ignore
-     */
+    /** @ignore */
     _panels: Panel[];
-    /**
-     * @ignore
-     */
+    /** @ignore */
     _panelOpened: Subject<Panel>;
-    /**
-     * @ignore
-     */
+    /** @ignore */
     _panelClosed: Subject<ClosingResponse>;
 }
 

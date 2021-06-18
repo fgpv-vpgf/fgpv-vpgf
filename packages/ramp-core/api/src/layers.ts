@@ -38,18 +38,22 @@ export class BaseLayer {
 
     /** @ignore */
     _name: string;
+    /** @ignore */
     _nameChanged: Subject<string>;
 
     /** @ignore */
     _opacity: number;
+    /** @ignore */
     _opacityChanged: Subject<number>;
 
     /** @ignore */
     _visibility: boolean;
+    /** @ignore */
     _visibilityChanged: Subject<boolean>;
 
     /** @ignore */
     _queryable: boolean;
+    /** @ignore */
     _queryableChanged: Subject<boolean>;
 
     /** @ignore */
@@ -63,8 +67,11 @@ export class BaseLayer {
     /** @ignore */
     _layerProxy: any;
 
+    /** @ignore */
     _attributesAdded: BehaviorSubject<Array<Object>>;
+    /** @ignore */
     _attributesChanged: Subject<ChangedAttribs>;
+    /** @ignore */
     _attributesRemoved: Subject<Array<Object>>;
 
     /** Sets the layers viewer map instance. */
@@ -596,6 +603,7 @@ export class ConfigLayer extends BaseLayer {
     }
 
     /** Set the appropriate layer properties such as id, visibility and opacity. Called whenever layer is created or reloaded. */
+    /** @ignore */
     _initLayerSettings(layerRecord: any, layerIndex?: number): void {
         this._viewerLayer = layerRecord;
 
@@ -674,8 +682,9 @@ export class ConfigLayer extends BaseLayer {
 export class SimpleLayer extends BaseLayer {
     /** @ignore */
     _geometryArray: Array<BaseGeometry>;
-
+    /** @ignore */
     _geometryAdded: Subject<Array<BaseGeometry>>;
+    /** @ignore */
     _geometryRemoved: Subject<Array<BaseGeometry>>;
 
     /** Sets the initial layer settings. The id is equivalent to the name. */
@@ -909,16 +918,20 @@ export class LayerGroup {
         IdentifyMode.Details,
     ];
 
+    /** @ignore */
     _layerAdded: Subject<BaseLayer>;
+    /** @ignore */
     _layerRemoved: Subject<BaseLayer>;
-
+    /** @ignore */
     _attributesAdded: Subject<LayerAndAttribs>;
+    /** @ignore */
     _attributesChanged: Subject<LayerAndChangedAttribs>;
+    /** @ignore */
     _attributesRemoved: Subject<LayerAndAttribs>;
-
+    /** @ignore */
     _click: Subject<BaseLayer>;
+    /** @ignore */
     _reload: Subject<BaseLayer>;
-
     /** @ignore */
     _identify: Subject<any>;
 
