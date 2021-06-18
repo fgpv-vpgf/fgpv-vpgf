@@ -177,7 +177,7 @@
     }
 }
 
-@mixin icon($color: auto, $opacity-from: 0.62, $opacity-to: 0.9, $opacity-full: 1) {
+@mixin icon($color: auto, $opacity-from: 0.72, $opacity-to: 0.9, $opacity-full: 1) {
     padding: 0;
 
     md-icon {
