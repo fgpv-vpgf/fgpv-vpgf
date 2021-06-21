@@ -59,6 +59,13 @@ function rvDetailsRecordHtml($compile, $translate, events, detailService, $timeo
             }
 
             detailService.getTemplate(l.layerId, self.details.template).then((template) => {
+                // ensure custom template does not contain non-existent attributes (ng-show) that will disrupt content rendering
+                const $div = $('<div>').html(template);
+                $div.find('[ng-show]').each((idx, el) => {
+                    $(el).attr('ng-show', 'self.item.data[0]');
+                });
+                const updatedTemplate = $div.html();
+
                 if (!self.details.parser) {
                     compileTemplate();
                     return;
@@ -92,7 +99,7 @@ function rvDetailsRecordHtml($compile, $translate, events, detailService, $timeo
                     // this ensures we have the data and don't display and "{{ VARIABLE }}"s
                     $timeout(() => {
                         // compile the template with the scope and append it to the mount
-                        el.find('.template-mount').empty().append($compile(template)(scope));
+                        el.find('.template-mount').empty().append($compile(updatedTemplate)(scope));
                     });
                 }
             });
