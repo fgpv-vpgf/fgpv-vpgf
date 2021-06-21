@@ -617,6 +617,7 @@ function LegendElementFactory(
                 get esriFeature() {
                     return {
                         esriGeometryPoint: 'community:vector-point',
+                        esriGeometryMultipoint: 'community:vector-point',
                         esriGeometryPolygon: 'community:vector-polygon',
                         esriGeometryPolyline: 'community:vector-polyline',
                     }[geometryType];

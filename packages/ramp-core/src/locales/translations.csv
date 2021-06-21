@@ -270,6 +270,7 @@ ToC slider mixed values,toc.slider.mixed,Mixed values,1,Valeurs mixtes,1
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
+Geometry types,geometry.type.esriGeometryMultipoint,multipoint|multipoints,1,multipoint|multipoints,0
 Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|polygones,1
 Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
 Geometry types,geometry.type.imagery,imagery,1,imagerie,1
