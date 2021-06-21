@@ -10,7 +10,7 @@
         "serve": "webpack-dev-server --mode=development --progress --hot --inline --env.hmr",
         "protractor": "node scripts/protractor/run.js",
         "server": "http-server ./build -p 6002",
-        "docs": "jsdoc -p -r -c .jsdoc.json -R README.md -d ./docs/contribute/jsDocs ./src/app && typedoc --target ES6 --out docs/developer/api_tech_docs api/src",
+        "docs": "jsdoc -p -r -c .jsdoc.json -R ../../README.md -d ./docs/contribute/jsDocs ./src/app && typedoc --target ES6 --out docs/developer/api_tech_docs api/src",
         "svgcache": "node scripts/svgCache.js",
         "angular-material": "node scripts/generateAngularMaterial.js",
         "docute": "docute ./docs",
