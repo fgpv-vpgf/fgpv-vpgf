@@ -21,6 +21,7 @@ const GEO = {
         Esri: {
             GEOMETRY_TYPES: {
                 esriGeometryPoint: 'geometry.type.esriGeometryPoint',
+                esriGeometryMultipoint: 'geometry.type.esriGeometryMultipoint',
                 esriGeometryPolygon: 'geometry.type.esriGeometryPolygon',
                 esriGeometryPolyline: 'geometry.type.esriGeometryPolyline',
                 generic: 'geometry.type.generic',
