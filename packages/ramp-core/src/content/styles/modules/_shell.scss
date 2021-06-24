@@ -61,6 +61,28 @@
             display: none;
         }
 
+        // position this button offscreen.
+        .rv-keyboard-controls-button {
+            position: absolute;
+            top: -20px;
+            opacity: 0;
+        }
+
+        .rv-keyboard-controls-close {
+            position: absolute;
+            top: 20px;
+            right: 15px;
+        }
+
+        .rv-keyboard-controls-confirm {
+            margin-top: 20px;
+            float: right;
+        }
+
+        .rv-keyboard-instruction {
+            padding: 5px 0px;
+        }
+
         .rv-north-arrow {
             position: absolute;
             transform-origin: top center;

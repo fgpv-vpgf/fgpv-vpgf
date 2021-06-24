@@ -624,21 +624,12 @@ function onFocusin(event) {
         return;
     }
 
-    history.push(targetEl);
-    viewer.setStatus(statuses.WAITING);
+    // force focus on the `open keyboard controls` button.
+    const keyControlsElem = viewer.rootElement.find('.rv-keyboard-controls-button > button')[0];
+    keyControlsElem.origfocus();
 
-    viewer.setDialogAction(() =>
-        viewer.mdDialog
-            .show({
-                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                disableParentScroll: false,
-                parent: viewer.rootElement.find('rv-shell'),
-                focusOnOpen: false,
-            })
-            .then(() => viewer.clearTabindex())
-    );
+    history.push(targetEl);
+    viewer.setStatus(statuses.ACTIVE);
 }
 
 /**
@@ -665,6 +656,8 @@ function onKeydown(event) {
         if (event.which === 9 && keys[27]) {
             // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
+            viewerActive.clearTabindex();
+
             // Fixes an issue where keyup is not called in some cases causing focus manager to have an incorrect pressed key state
             delete keys[27];
         } else if (

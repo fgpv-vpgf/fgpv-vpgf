@@ -1,0 +1,45 @@
+<md-dialog>
+    <md-dialog-content class="md-dialog-content" tabindex="0" role="document" rv-trap-focus>
+        <h2 class="md-title ng-binding">{{ 'focus.dialog.keyboardInstructions' | translate }}</h2>
+
+        <div class="md-dialog-content-body rv-keyboard-instruction">
+            {{ 'focus.dialog.main' | translate }}
+            <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.escape' | translate }}</div>
+            +
+            <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.tab' | translate }}</div>
+        </div>
+
+        <div class="md-dialog-content-body rv-keyboard-instruction">{{ 'focus.dialog.movement' | translate }}</div>
+
+        <div class="md-dialog-content-body rv-keyboard-instruction">
+            {{ 'focus.dialog.speedup' | translate }}
+            <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.shift' | translate }}</div>
+            {{ 'focus.dialog.slowdown' | translate }}
+            <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.control' | translate }}</div>
+        </div>
+
+        <div class="md-dialog-content-body rv-keyboard-instruction">
+            {{ 'focus.dialog.press' | translate }}
+            <div class="md-button sm-button md-subhead md-raised">{{ 'focus.dialog.enter' | translate }}</div>
+            {{ 'focus.dialog.features' | translate }}
+        </div>
+
+        <md-button
+            aria-label="{{ 'contentPane.aria.close' | translate }}"
+            class="rv-keyboard-controls-close rv-close md-icon-button black rv-button-24"
+            ng-click="ctrl.close()"
+        >
+            <md-tooltip>{{ 'contentPane.tooltip.close' | translate }}</md-tooltip>
+            <md-icon class="rv-lt-lg" md-svg-src="navigation:arrow_back"></md-icon>
+            <md-icon class="rv-lg" md-svg-src="navigation:close"></md-icon>
+        </md-button>
+
+        <md-button
+            aria-label="{{ 'contentPane.aria.close' | translate }}"
+            class="rv-keyboard-controls-confirm md-button"
+            ng-click="ctrl.close()"
+        >
+            {{ 'focus.dialog.confirm' | translate }}
+        </md-button>
+    </md-dialog-content>
+</md-dialog>
