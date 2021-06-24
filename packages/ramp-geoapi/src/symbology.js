@@ -2,6 +2,8 @@
 'use strict';
 const svgjs = require('svg.js');
 const shared = require('./shared.js')();
+const rcolour = require('rcolor');
+const defaultSymbols = require('./defaultSymbols.json');
 
 // Functions for turning ESRI Renderers into images
 // Specifically, converting ESRI "Simple" symbols into images,
@@ -142,7 +144,7 @@ function enhanceRenderer(renderer, legend) {
     return Promise.all(legendItemPromises).then(() => {
         switch (renderer.type) {
             case SIMPLE:
-                renderer.svgcode = legendLookup[renderer.label];
+                renderer.svgcode = renderer.svgcode ? renderer.svgcode : legendLookup[renderer.label];
                 break;
 
             case UNIQUE_VALUE:
@@ -212,6 +214,21 @@ function cleanRenderer(renderer, fields) {
         case SIMPLE:
             break;
         case UNIQUE_VALUE:
+            // detect layer with arcade symbology (no field values)
+            const containsField = renderer.field1 || renderer.field2 || renderer.field3;
+            if (renderer.valueExpression && !containsField) {
+                // convert to simple renderer with generated placeholder symbology using '?'
+                renderer.type = SIMPLE;
+                const color = rcolour({ saturation: 0.4, value: 0.8 });
+                const placeholder = generatePlaceholderSymbology('?', color);
+
+                // setup new renderer properties
+                renderer.svgcode = placeholder.svgcode;
+                renderer.symbol = defaultSymbols.placeholderSymbol;
+                renderer.symbol.imageData = btoa(renderer.svgcode);
+                break;
+            }
+
             ['field1', 'field2', 'field3'].forEach((f) => {
                 // call ehnace case for each field
                 renderer[f] = enhanceField(renderer[f], fields);
@@ -242,7 +259,8 @@ function searchRenderer(attributes, renderer) {
     switch (renderer.type) {
         case SIMPLE:
             svgcode = renderer.svgcode;
-            symbol = renderer.symbol;
+            // check for layer with arcade symbology converted to simple renderer
+            symbol = !renderer.valueExpression ? renderer.symbol : {};
 
             break;
 
